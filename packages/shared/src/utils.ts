@@ -11,12 +11,13 @@ export function getQuotaPeriodStart(period: QuotaPeriod): Date {
     case 'day':
       start.setHours(0, 0, 0, 0);
       break;
-    case 'week':
+    case 'week': {
       const day = start.getDay();
       const diff = start.getDate() - day + (day === 0 ? -6 : 1); // Monday
       start.setDate(diff);
       start.setHours(0, 0, 0, 0);
       break;
+    }
     case 'month':
       start.setDate(1);
       start.setHours(0, 0, 0, 0);
