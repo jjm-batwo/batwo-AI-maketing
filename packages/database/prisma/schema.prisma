@@ -1,0 +1,136 @@
+// Prisma Schema for Batow Service
+// PostgreSQL Database
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===========================================
+// User 모델
+// ===========================================
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  image     String?
+
+  // OAuth 관련
+  provider  String?  // 'google', 'kakao', 'credentials'
+  providerId String? // OAuth provider user ID
+
+  // 계정 상태
+  isActive  Boolean  @default(true)
+  role      UserRole @default(USER)
+
+  // 쿼터 관리
+  quotaLimit Int     @default(100) // 월간 AI 사용 한도
+
+  // 타임스탬프
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 관계
+  usageLogs          UsageLog[]
+  agentExecutionLogs AgentExecutionLog[]
+  metaAdAccounts     MetaAdAccount[]
+
+  @@index([email])
+  @@index([provider, providerId])
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+// ===========================================
+// UsageLog 모델 (쿼터 추적용)
+// ===========================================
+model UsageLog {
+  id        Int          @id @default(autoincrement())
+  userId    Int
+  type      UsageType
+  metadata  Json?        // 추가 정보 (토큰 사용량, 모델명 등)
+  createdAt DateTime     @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type, createdAt])
+  @@index([createdAt])
+}
+
+enum UsageType {
+  AI_COPY_GEN        // AI 광고 카피 생성
+  CAMPAIGN_CREATE    // 캠페인 생성
+  AI_ANALYSIS        // AI 성과 분석
+  REPORT_GENERATE    // 보고서 생성
+}
+
+// ===========================================
+// AgentExecutionLog 모델 (에이전트 실행 로그)
+// ===========================================
+model AgentExecutionLog {
+  id          String               @id @default(cuid())
+  userId      Int
+  agentType   String               // 'campaign-setup', 'copy-generation', 'analysis'
+
+  // 입출력
+  input       Json                 // 에이전트 입력 데이터
+  output      Json?                // 에이전트 출력 데이터
+
+  // 상태
+  status      AgentExecutionStatus @default(RUNNING)
+  errorMessage String?
+
+  // 메트릭
+  tokensUsed  Int                  @default(0)
+  duration    Int?                 // 밀리초 단위 실행 시간
+
+  // 타임스탬프
+  createdAt   DateTime             @default(now())
+  completedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, agentType])
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum AgentExecutionStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+// ===========================================
+// MetaAdAccount 모델 (Meta Ads 연동)
+// ===========================================
+model MetaAdAccount {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+
+  // Meta API 정보
+  accountId       String   @unique // Meta Ad Account ID (act_xxx)
+  accountName     String?
+  accessToken     String   // 암호화된 액세스 토큰
+  tokenExpiresAt  DateTime?
+
+  // 상태
+  isActive        Boolean  @default(true)
+  lastSyncAt      DateTime?
+
+  // 타임스탬프
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([accountId])
+}
