@@ -73,3 +73,15 @@ export { Container } from './components/container';
 export type { ContainerProps } from './components/container';
 export { PageHeader } from './components/page-header';
 export type { PageHeaderProps } from './components/page-header';
+
+// Accordion Components
+export {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from './components/accordion';
+
+// Badge Components
+export { Badge, badgeVariants } from './components/badge';
+export type { BadgeProps } from './components/badge';
