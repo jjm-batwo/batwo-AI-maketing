@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: batwo-postgres
+    environment:
+      POSTGRES_USER: batwo
+      POSTGRES_PASSWORD: batwo_dev_password
+      POSTGRES_DB: batwo_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U batwo -d batwo_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: batwo-postgres-test
+    environment:
+      POSTGRES_USER: batwo_test
+      POSTGRES_PASSWORD: batwo_test_password
+      POSTGRES_DB: batwo_test
+    ports:
+      - "5433:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+
+volumes:
+  postgres_data:
