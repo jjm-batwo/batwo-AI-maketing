@@ -13,7 +13,14 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.d.ts', 'src/**/index.ts'],
+      exclude: [
+        'src/**/*.d.ts',
+        'src/**/index.ts',
+        'src/domain/repositories/**', // Interfaces only, no runtime code
+        'src/app/**', // Next.js pages (tested separately)
+        'src/components/ui/**', // UI components (tested separately)
+        'src/lib/**', // Utility functions (tested separately)
+      ],
     },
   },
   resolve: {

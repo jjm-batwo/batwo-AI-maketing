@@ -1,0 +1,175 @@
+import { PrismaClient } from '@/generated/prisma'
+import { IKPIRepository, KPIFilters } from '@domain/repositories/IKPIRepository'
+import { KPI } from '@domain/entities/KPI'
+import { KPIMapper } from '../mappers/KPIMapper'
+
+export class PrismaKPIRepository implements IKPIRepository {
+  constructor(private readonly prisma: PrismaClient) {}
+
+  async save(kpi: KPI): Promise<KPI> {
+    const data = KPIMapper.toCreateInput(kpi)
+
+    const created = await this.prisma.kPISnapshot.create({
+      data: {
+        id: data.id,
+        impressions: data.impressions,
+        clicks: data.clicks,
+        conversions: data.conversions,
+        spend: data.spend,
+        currency: data.currency,
+        revenue: data.revenue,
+        date: data.date,
+        createdAt: data.createdAt,
+        campaign: {
+          connect: { id: data.campaignId },
+        },
+      },
+    })
+
+    return KPIMapper.toDomain(created)
+  }
+
+  async saveMany(kpis: KPI[]): Promise<KPI[]> {
+    const results: KPI[] = []
+
+    for (const kpi of kpis) {
+      const saved = await this.save(kpi)
+      results.push(saved)
+    }
+
+    return results
+  }
+
+  async findById(id: string): Promise<KPI | null> {
+    const kpi = await this.prisma.kPISnapshot.findUnique({
+      where: { id },
+    })
+
+    if (!kpi) {
+      return null
+    }
+
+    return KPIMapper.toDomain(kpi)
+  }
+
+  async findByCampaignId(campaignId: string): Promise<KPI[]> {
+    const kpis = await this.prisma.kPISnapshot.findMany({
+      where: { campaignId },
+      orderBy: { date: 'desc' },
+    })
+
+    return kpis.map(KPIMapper.toDomain)
+  }
+
+  async findByCampaignIdAndDateRange(
+    campaignId: string,
+    startDate: Date,
+    endDate: Date
+  ): Promise<KPI[]> {
+    const kpis = await this.prisma.kPISnapshot.findMany({
+      where: {
+        campaignId,
+        date: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+      orderBy: { date: 'asc' },
+    })
+
+    return kpis.map(KPIMapper.toDomain)
+  }
+
+  async findLatestByCampaignId(campaignId: string): Promise<KPI | null> {
+    const kpi = await this.prisma.kPISnapshot.findFirst({
+      where: { campaignId },
+      orderBy: { createdAt: 'desc' },
+    })
+
+    if (!kpi) {
+      return null
+    }
+
+    return KPIMapper.toDomain(kpi)
+  }
+
+  async findByFilters(filters: KPIFilters): Promise<KPI[]> {
+    const where = this.buildWhereClause(filters)
+
+    const kpis = await this.prisma.kPISnapshot.findMany({
+      where,
+      orderBy: { date: 'desc' },
+    })
+
+    return kpis.map(KPIMapper.toDomain)
+  }
+
+  async aggregateByCampaignId(
+    campaignId: string,
+    startDate: Date,
+    endDate: Date
+  ): Promise<{
+    totalImpressions: number
+    totalClicks: number
+    totalConversions: number
+    totalSpend: number
+    totalRevenue: number
+  }> {
+    const result = await this.prisma.kPISnapshot.aggregate({
+      where: {
+        campaignId,
+        date: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+      _sum: {
+        impressions: true,
+        clicks: true,
+        conversions: true,
+        spend: true,
+        revenue: true,
+      },
+    })
+
+    return {
+      totalImpressions: result._sum.impressions ?? 0,
+      totalClicks: result._sum.clicks ?? 0,
+      totalConversions: result._sum.conversions ?? 0,
+      totalSpend: Number(result._sum.spend ?? 0),
+      totalRevenue: Number(result._sum.revenue ?? 0),
+    }
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.prisma.kPISnapshot.delete({
+      where: { id },
+    })
+  }
+
+  async deleteByCampaignId(campaignId: string): Promise<void> {
+    await this.prisma.kPISnapshot.deleteMany({
+      where: { campaignId },
+    })
+  }
+
+  private buildWhereClause(filters: KPIFilters) {
+    const where: Record<string, unknown> = {}
+
+    if (filters.campaignId) {
+      where.campaignId = filters.campaignId
+    }
+
+    if (filters.dateFrom || filters.dateTo) {
+      where.date = {}
+      if (filters.dateFrom) {
+        (where.date as Record<string, Date>).gte = filters.dateFrom
+      }
+      if (filters.dateTo) {
+        (where.date as Record<string, Date>).lte = filters.dateTo
+      }
+    }
+
+    return where
+  }
+}

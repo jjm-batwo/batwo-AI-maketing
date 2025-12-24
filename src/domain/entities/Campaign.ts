@@ -1,0 +1,273 @@
+import { Money } from '../value-objects/Money'
+import {
+  CampaignStatus,
+  canTransition,
+  isEditableStatus,
+  isActiveStatus,
+  isTerminalStatus,
+} from '../value-objects/CampaignStatus'
+import { CampaignObjective } from '../value-objects/CampaignObjective'
+import { InvalidCampaignError } from '../errors/InvalidCampaignError'
+
+export interface TargetAudience {
+  ageMin?: number
+  ageMax?: number
+  genders?: ('male' | 'female' | 'all')[]
+  locations?: string[]
+  interests?: string[]
+  behaviors?: string[]
+}
+
+export interface CreateCampaignProps {
+  userId: string
+  name: string
+  objective: CampaignObjective
+  dailyBudget: Money
+  startDate: Date
+  endDate?: Date
+  targetAudience?: TargetAudience
+}
+
+export interface CampaignProps extends CreateCampaignProps {
+  id: string
+  status: CampaignStatus
+  metaCampaignId?: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+export class Campaign {
+  private constructor(
+    private readonly _id: string,
+    private readonly _userId: string,
+    private readonly _name: string,
+    private readonly _objective: CampaignObjective,
+    private readonly _status: CampaignStatus,
+    private readonly _dailyBudget: Money,
+    private readonly _startDate: Date,
+    private readonly _endDate: Date | undefined,
+    private readonly _targetAudience: TargetAudience | undefined,
+    private readonly _metaCampaignId: string | undefined,
+    private readonly _createdAt: Date,
+    private readonly _updatedAt: Date
+  ) {}
+
+  static create(props: CreateCampaignProps): Campaign {
+    Campaign.validateName(props.name)
+    Campaign.validateBudget(props.dailyBudget)
+    Campaign.validateDates(props.startDate, props.endDate)
+
+    const now = new Date()
+
+    return new Campaign(
+      crypto.randomUUID(),
+      props.userId,
+      props.name,
+      props.objective,
+      CampaignStatus.DRAFT,
+      props.dailyBudget,
+      props.startDate,
+      props.endDate,
+      props.targetAudience,
+      undefined,
+      now,
+      now
+    )
+  }
+
+  static restore(props: CampaignProps): Campaign {
+    return new Campaign(
+      props.id,
+      props.userId,
+      props.name,
+      props.objective,
+      props.status,
+      props.dailyBudget,
+      props.startDate,
+      props.endDate,
+      props.targetAudience,
+      props.metaCampaignId,
+      props.createdAt,
+      props.updatedAt
+    )
+  }
+
+  private static validateName(name: string): void {
+    if (!name || name.trim().length === 0) {
+      throw InvalidCampaignError.emptyName()
+    }
+
+    if (name.length > 255) {
+      throw InvalidCampaignError.nameTooLong()
+    }
+  }
+
+  private static validateBudget(budget: Money): void {
+    if (budget.isZero() || budget.amount < 0) {
+      throw InvalidCampaignError.invalidBudget()
+    }
+  }
+
+  private static validateDates(startDate: Date, endDate?: Date): void {
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+
+    if (startDate < today) {
+      throw InvalidCampaignError.pastStartDate()
+    }
+
+    if (endDate && endDate < startDate) {
+      throw InvalidCampaignError.invalidDateRange()
+    }
+  }
+
+  // Getters
+  get id(): string {
+    return this._id
+  }
+  get userId(): string {
+    return this._userId
+  }
+  get name(): string {
+    return this._name
+  }
+  get objective(): CampaignObjective {
+    return this._objective
+  }
+  get status(): CampaignStatus {
+    return this._status
+  }
+  get dailyBudget(): Money {
+    return this._dailyBudget
+  }
+  get startDate(): Date {
+    return new Date(this._startDate)
+  }
+  get endDate(): Date | undefined {
+    return this._endDate ? new Date(this._endDate) : undefined
+  }
+  get targetAudience(): TargetAudience | undefined {
+    return this._targetAudience ? { ...this._targetAudience } : undefined
+  }
+  get metaCampaignId(): string | undefined {
+    return this._metaCampaignId
+  }
+  get createdAt(): Date {
+    return new Date(this._createdAt)
+  }
+  get updatedAt(): Date {
+    return new Date(this._updatedAt)
+  }
+
+  // State checks
+  isActive(): boolean {
+    return isActiveStatus(this._status)
+  }
+
+  isEditable(): boolean {
+    return isEditableStatus(this._status) || this._status === CampaignStatus.PENDING_REVIEW
+  }
+
+  isCompleted(): boolean {
+    return isTerminalStatus(this._status)
+  }
+
+  // Commands
+  changeStatus(newStatus: CampaignStatus): Campaign {
+    if (isTerminalStatus(this._status)) {
+      throw new Error('Cannot change status of a completed campaign')
+    }
+
+    if (!canTransition(this._status, newStatus)) {
+      throw InvalidCampaignError.invalidStatusTransition(this._status, newStatus)
+    }
+
+    return new Campaign(
+      this._id,
+      this._userId,
+      this._name,
+      this._objective,
+      newStatus,
+      this._dailyBudget,
+      this._startDate,
+      this._endDate,
+      this._targetAudience,
+      this._metaCampaignId,
+      this._createdAt,
+      new Date()
+    )
+  }
+
+  updateBudget(newBudget: Money): Campaign {
+    if (isTerminalStatus(this._status)) {
+      throw new Error('Cannot update budget of a completed campaign')
+    }
+
+    Campaign.validateBudget(newBudget)
+
+    return new Campaign(
+      this._id,
+      this._userId,
+      this._name,
+      this._objective,
+      this._status,
+      newBudget,
+      this._startDate,
+      this._endDate,
+      this._targetAudience,
+      this._metaCampaignId,
+      this._createdAt,
+      new Date()
+    )
+  }
+
+  setMetaCampaignId(metaCampaignId: string): Campaign {
+    if (this._metaCampaignId) {
+      throw new Error('Meta campaign ID is already set')
+    }
+
+    return new Campaign(
+      this._id,
+      this._userId,
+      this._name,
+      this._objective,
+      this._status,
+      this._dailyBudget,
+      this._startDate,
+      this._endDate,
+      this._targetAudience,
+      metaCampaignId,
+      this._createdAt,
+      new Date()
+    )
+  }
+
+  calculateTotalBudget(): Money {
+    if (!this._endDate) {
+      return this._dailyBudget
+    }
+
+    const days = Math.ceil(
+      (this._endDate.getTime() - this._startDate.getTime()) / (1000 * 60 * 60 * 24)
+    )
+
+    return this._dailyBudget.multiply(days)
+  }
+
+  toJSON(): CampaignProps {
+    return {
+      id: this._id,
+      userId: this._userId,
+      name: this._name,
+      objective: this._objective,
+      status: this._status,
+      dailyBudget: this._dailyBudget,
+      startDate: this._startDate,
+      endDate: this._endDate,
+      targetAudience: this._targetAudience,
+      metaCampaignId: this._metaCampaignId,
+      createdAt: this._createdAt,
+      updatedAt: this._updatedAt,
+    }
+  }
+}
