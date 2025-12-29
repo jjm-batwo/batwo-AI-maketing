@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next'
+import { withSentryConfig } from '@sentry/nextjs'
 
 /**
  * 보안 헤더 설정
@@ -206,4 +207,46 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default nextConfig
+/**
+ * Sentry 설정 옵션
+ * https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+ */
+const sentryWebpackPluginOptions = {
+  // 조직 및 프로젝트 설정 (Sentry에서 확인)
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+
+  // 인증 토큰 (Source Maps 업로드용)
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+
+  // Source Maps 설정
+  sourcemaps: {
+    // 빌드 시에만 Source Maps 삭제 (프로덕션)
+    deleteSourcemapsAfterUpload: process.env.NODE_ENV === 'production',
+  },
+
+  // 빌드 로그 숨김
+  silent: !process.env.CI,
+
+  // Sentry가 설정되지 않은 경우 빌드 실패 방지
+  disableLogger: !process.env.SENTRY_DSN,
+
+  // Turbopack 호환성 (Next.js 15)
+  tunnelRoute: '/monitoring',
+
+  // 클라이언트에서 Sentry 숨기기
+  hideSourceMaps: true,
+
+  // Webpack 플러그인 비활성화 (인증 토큰 없을 때)
+  widenClientFileUpload: true,
+
+  // React 컴포넌트 이름 표시
+  reactComponentAnnotation: {
+    enabled: true,
+  },
+}
+
+// Sentry DSN이 있을 때만 Sentry 설정 적용
+export default process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN
+  ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
+  : nextConfig

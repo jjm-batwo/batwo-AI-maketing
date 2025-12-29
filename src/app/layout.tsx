@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 import { Providers } from './providers'
 import { getMetadata, getJsonLdScript, SEO } from '@/lib/constants/seo'
@@ -48,6 +50,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>{children}</Providers>
+        {/* Vercel Analytics - 사용자 분석 */}
+        <Analytics />
+        {/* Vercel Speed Insights - 성능 모니터링 */}
+        <SpeedInsights />
       </body>
     </html>
   )

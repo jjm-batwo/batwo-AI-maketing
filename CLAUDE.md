@@ -81,6 +81,21 @@ npx playwright test  # E2E 테스트
 - AI 카피 생성: 20회/일
 - AI 분석: 5회/주
 
+## 계획 수립 규칙
+
+**기능 구현 계획 시 반드시 `/feature-planner` 스킬 사용**:
+- 새 기능 구현 요청 시 → `/feature-planner` 실행
+- 복잡한 리팩토링 계획 시 → `/feature-planner` 실행
+- 다단계 작업 계획 시 → `/feature-planner` 실행
+
+```bash
+# 예시
+/feature-planner "사용자 인증 시스템 구현"
+/feature-planner "Meta Ads API 연동"
+```
+
+계획 파일은 `docs/plans/` 디렉토리에 저장됩니다.
+
 ## 참고 문서
 - 상세 구현 계획: `docs/plans/PLAN_batwo-ai-marketing.md`
 - Prisma 스키마: `prisma/schema.prisma`
