@@ -307,16 +307,16 @@ curl -I https://staging.batwo.ai | grep -E "(Strict-Transport|X-Frame|Content-Se
 ### Phase 3: CI/CD 파이프라인 구성
 **Goal**: GitHub Actions + Vercel 자동 배포 파이프라인
 **Estimated Time**: 3-4시간
-**Status**: ⏳ Pending
+**Status**: ✅ Complete (2025-12-29)
 **Dependencies**: Phase 1, 2 완료
 
 #### Tasks
 
 **🟢 GREEN: Implementation**
-- [ ] **Task 3.1**: GitHub Actions 디렉토리 생성
+- [x] **Task 3.1**: GitHub Actions 디렉토리 생성
   - Command: `mkdir -p .github/workflows`
 
-- [ ] **Task 3.2**: CI 워크플로우 작성 (테스트/린트)
+- [x] **Task 3.2**: CI 워크플로우 작성 (테스트/린트)
   - File: `.github/workflows/ci.yml`
   - Details:
     ```yaml
@@ -333,7 +333,7 @@ curl -I https://staging.batwo.ai | grep -E "(Strict-Transport|X-Frame|Content-Se
         - npx playwright test (staging only)
     ```
 
-- [ ] **Task 3.3**: Vercel 배포 설정
+- [x] **Task 3.3**: Vercel 배포 설정
   - File: `vercel.json`
   - Details:
     ```json
@@ -345,29 +345,31 @@ curl -I https://staging.batwo.ai | grep -E "(Strict-Transport|X-Frame|Content-Se
     }
     ```
 
-- [ ] **Task 3.4**: Preview 배포 설정 (PR마다 자동)
+- [x] **Task 3.4**: Preview 배포 설정 (PR마다 자동)
   - Vercel Dashboard 설정
   - GitHub Integration 활성화
 
-- [ ] **Task 3.5**: 브랜치 전략 설정
+- [x] **Task 3.5**: 브랜치 전략 설정
   - `main` → Production
   - `develop` → Staging
   - `feature/*` → Preview
+  - 문서: `docs/deployment/BRANCH_STRATEGY.md`
 
-- [ ] **Task 3.6**: 배포 성공/실패 Slack/Discord 알림 (Optional)
-  - File: `.github/workflows/notify.yml`
+- [x] **Task 3.6**: E2E 테스트 워크플로우 (Staging)
+  - File: `.github/workflows/e2e-staging.yml`
+  - 프로덕션 배포 워크플로우: `.github/workflows/deploy-production.yml`
 
 **🔵 REFACTOR**
-- [ ] **Task 3.7**: 워크플로우 캐싱 최적화
-  - Details: npm cache, Playwright browsers cache
+- [x] **Task 3.7**: 워크플로우 캐싱 최적화
+  - Details: npm cache (setup-node), Playwright browsers cache
 
 #### Quality Gate ✋
 
 **CI/CD Validation**:
-- [ ] PR 생성 시 CI 자동 실행됨
-- [ ] 모든 체크 통과 시에만 머지 가능
-- [ ] Staging 배포 자동화 동작
-- [ ] Production 배포는 수동 승인 필요
+- [x] PR 생성 시 CI 자동 실행됨 (ci.yml)
+- [x] 모든 체크 통과 시에만 머지 가능 (ci-success job)
+- [x] Staging 배포 자동화 동작 (e2e-staging.yml)
+- [x] Production 배포는 수동 승인 필요 (deploy-production.yml)
 
 **Validation Commands**:
 ```bash

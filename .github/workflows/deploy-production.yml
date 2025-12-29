@@ -1,0 +1,149 @@
+# Production Deployment
+# Manual trigger with approval workflow
+
+name: Deploy to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "deploy" to confirm production deployment'
+        required: true
+        type: string
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # =============================================================================
+  # Validation Gate
+  # =============================================================================
+  validate:
+    name: Validate Deployment
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Validate confirmation
+        if: ${{ github.event.inputs.confirm != 'deploy' }}
+        run: |
+          echo "::error::Deployment not confirmed. Please type 'deploy' to confirm."
+          exit 1
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run all checks
+        run: |
+          npm run lint
+          npm run type-check
+          npm run test:unit -- --reporter=verbose
+          npm run test:integration -- --reporter=verbose
+
+      - name: Build check
+        run: npm run build
+        env:
+          SKIP_ENV_VALIDATION: 'true'
+
+  # =============================================================================
+  # Production Deployment
+  # =============================================================================
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: validate
+    environment:
+      name: production
+      url: https://batwo.ai
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Pull Vercel Environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Production
+        id: deploy
+        run: |
+          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$url" >> $GITHUB_OUTPUT
+
+      - name: Deployment Summary
+        run: |
+          echo "## Production Deployment Complete :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**URL**: ${{ steps.deploy.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployed by**: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+
+  # =============================================================================
+  # Post-Deployment Verification
+  # =============================================================================
+  verify:
+    name: Verify Deployment
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: deploy
+
+    steps:
+      - name: Health Check
+        run: |
+          echo "Waiting for deployment to stabilize..."
+          sleep 30
+
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://batwo.ai/api/health || echo "000")
+          if [ "$response" != "200" ]; then
+            echo "::warning::Health check returned $response (expected 200)"
+          else
+            echo "Health check passed!"
+          fi
+
+      - name: Verify Security Headers
+        run: |
+          headers=$(curl -sI https://batwo.ai)
+
+          if echo "$headers" | grep -qi "strict-transport-security"; then
+            echo "✅ HSTS header present"
+          else
+            echo "::warning::HSTS header missing"
+          fi
+
+          if echo "$headers" | grep -qi "x-frame-options"; then
+            echo "✅ X-Frame-Options header present"
+          else
+            echo "::warning::X-Frame-Options header missing"
+          fi
+
+          if echo "$headers" | grep -qi "content-security-policy"; then
+            echo "✅ CSP header present"
+          else
+            echo "::warning::CSP header missing"
+          fi
