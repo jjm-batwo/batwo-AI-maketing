@@ -8,6 +8,9 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  // URL 설정은 prisma.config.ts에서 관리 (Prisma 7.x)
+  // - url: Connection Pooler (일반 쿼리)
+  // - directUrl: Direct Connection (마이그레이션용)
 }
 
 // ========================================

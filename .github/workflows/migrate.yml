@@ -1,0 +1,221 @@
+# Database Migration Workflow
+# Staging 배포 시 자동으로 마이그레이션을 실행합니다.
+
+name: Database Migration
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      dry_run:
+        description: 'Dry run (preview only)'
+        required: false
+        default: true
+        type: boolean
+
+  # Staging 배포 완료 후 자동 실행
+  workflow_run:
+    workflows: ["E2E Tests (Staging)"]
+    types:
+      - completed
+    branches:
+      - develop
+
+concurrency:
+  group: migration-${{ github.event.inputs.environment || 'staging' }}
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # =============================================================================
+  # 마이그레이션 상태 확인
+  # =============================================================================
+  check-status:
+    name: Check Migration Status
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    outputs:
+      has_pending: ${{ steps.status.outputs.has_pending }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check migration status
+        id: status
+        run: |
+          # Prisma migrate status 실행
+          output=$(npx prisma migrate status 2>&1) || true
+          echo "$output"
+
+          # 대기 중인 마이그레이션이 있는지 확인
+          if echo "$output" | grep -q "Following migrations have not yet been applied"; then
+            echo "has_pending=true" >> $GITHUB_OUTPUT
+            echo "::notice::대기 중인 마이그레이션이 있습니다."
+          else
+            echo "has_pending=false" >> $GITHUB_OUTPUT
+            echo "::notice::모든 마이그레이션이 적용되었습니다."
+          fi
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+
+  # =============================================================================
+  # Staging 마이그레이션
+  # =============================================================================
+  migrate-staging:
+    name: Migrate Staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: check-status
+    if: |
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging') ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    environment:
+      name: staging
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate schema
+        run: npx prisma validate
+        env:
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.STAGING_DIRECT_URL }}
+
+      - name: Deploy migrations (Dry Run)
+        if: github.event.inputs.dry_run == 'true'
+        run: |
+          echo "🔍 Dry Run: 마이그레이션 미리보기"
+          npx prisma migrate status
+        env:
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.STAGING_DIRECT_URL }}
+
+      - name: Deploy migrations
+        if: github.event.inputs.dry_run != 'true'
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.STAGING_DIRECT_URL }}
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Verify migration
+        run: npx prisma migrate status
+        env:
+          DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.STAGING_DIRECT_URL }}
+
+      - name: Migration Summary
+        run: |
+          echo "## Staging Migration Complete :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment**: Staging" >> $GITHUB_STEP_SUMMARY
+          echo "**Dry Run**: ${{ github.event.inputs.dry_run || 'false' }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by**: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+
+  # =============================================================================
+  # Production 마이그레이션 (수동 승인 필요)
+  # =============================================================================
+  migrate-production:
+    name: Migrate Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: check-status
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production'
+    environment:
+      name: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate schema
+        run: npx prisma validate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+
+      - name: Check migration status
+        run: npx prisma migrate status
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+
+      - name: Deploy migrations (Dry Run)
+        if: github.event.inputs.dry_run == 'true'
+        run: |
+          echo "🔍 Dry Run: 마이그레이션 미리보기 (프로덕션)"
+          echo "실제 배포를 위해서는 dry_run을 false로 설정하세요."
+          npx prisma migrate status
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+
+      - name: Deploy migrations
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          echo "⚠️ 프로덕션 마이그레이션 실행 중..."
+          npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Verify migration
+        run: npx prisma migrate status
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+
+      - name: Migration Summary
+        run: |
+          echo "## Production Migration Complete :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment**: Production" >> $GITHUB_STEP_SUMMARY
+          echo "**Dry Run**: ${{ github.event.inputs.dry_run }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by**: @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ 프로덕션 마이그레이션이 완료되었습니다. 애플리케이션 동작을 확인하세요." >> $GITHUB_STEP_SUMMARY

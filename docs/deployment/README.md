@@ -55,6 +55,7 @@ vercel --prod
 |-----------|--------|------|
 | `ci.yml` | push, PR | Lint, 타입체크, 테스트, 빌드 |
 | `e2e-staging.yml` | deployment_status | Staging 배포 후 E2E 테스트 |
+| `migrate.yml` | workflow_dispatch, workflow_run | 데이터베이스 마이그레이션 |
 | `deploy-production.yml` | workflow_dispatch | 수동 프로덕션 배포 |
 
 ### CI 파이프라인 흐름
