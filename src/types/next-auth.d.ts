@@ -5,6 +5,8 @@ declare module 'next-auth' {
   interface Session {
     user: {
       id: string
+      provider?: string
+      metaAccessToken?: string // Meta Ads API 호출용
     } & DefaultSession['user']
   }
 
@@ -20,5 +22,6 @@ declare module 'next-auth/jwt' {
   interface JWT {
     id: string
     provider?: string
+    metaAccessToken?: string // Meta Ads API 호출용
   }
 }

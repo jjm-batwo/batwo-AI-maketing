@@ -3,10 +3,21 @@ import { PrismaAdapter } from '@auth/prisma-adapter'
 import Credentials from 'next-auth/providers/credentials'
 import Google from 'next-auth/providers/google'
 import Kakao from 'next-auth/providers/kakao'
+import Facebook from 'next-auth/providers/facebook'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { authConfig } from './auth.config'
+
+// Meta Ads API에 필요한 권한 스코프
+const META_ADS_SCOPES = [
+  'email',
+  'public_profile',
+  'ads_management',        // 캠페인 생성/수정
+  'ads_read',              // 광고 데이터 읽기
+  'business_management',   // 비즈니스 계정 관리
+  'pages_read_engagement', // 페이지 참여도 읽기
+].join(',')
 
 const credentialsSchema = z.object({
   email: z.string().email(),
@@ -29,6 +40,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       clientId: process.env.KAKAO_CLIENT_ID ?? '',
       clientSecret: process.env.KAKAO_CLIENT_SECRET ?? '',
       allowDangerousEmailAccountLinking: true,
+    }),
+    Facebook({
+      clientId: process.env.META_APP_ID ?? '',
+      clientSecret: process.env.META_APP_SECRET ?? '',
+      allowDangerousEmailAccountLinking: true,
+      authorization: {
+        params: {
+          scope: META_ADS_SCOPES,
+        },
+      },
     }),
     Credentials({
       name: 'credentials',

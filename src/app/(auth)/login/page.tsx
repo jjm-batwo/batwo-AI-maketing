@@ -60,7 +60,7 @@ function LoginForm() {
     }
   }
 
-  const handleSocialLogin = async (provider: 'google' | 'kakao') => {
+  const handleSocialLogin = async (provider: 'google' | 'kakao' | 'facebook') => {
     setIsLoading(true)
     await signIn(provider, { callbackUrl })
   }
@@ -169,6 +169,19 @@ function LoginForm() {
               <path d="M12 3C6.477 3 2 6.463 2 10.71c0 2.746 1.829 5.158 4.582 6.528l-.916 3.407c-.082.307.257.554.52.381l4.059-2.67c.558.073 1.127.114 1.755.114 5.523 0 10-3.463 10-7.76S17.523 3 12 3z" />
             </svg>
             카카오로 로그인
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full bg-[#1877F2] text-white hover:bg-[#1877F2]/90"
+            onClick={() => handleSocialLogin('facebook')}
+            disabled={isLoading}
+          >
+            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+            </svg>
+            Meta로 로그인
           </Button>
         </div>
 

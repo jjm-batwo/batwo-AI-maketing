@@ -2,6 +2,7 @@ import type { NextAuthConfig } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import Google from 'next-auth/providers/google'
 import Kakao from 'next-auth/providers/kakao'
+import Facebook from 'next-auth/providers/facebook'
 import { z } from 'zod'
 
 const credentialsSchema = z.object({
@@ -47,14 +48,23 @@ export const authConfig = {
       if (user) {
         token.id = user.id
       }
-      if (account?.provider === 'kakao' || account?.provider === 'google') {
+      if (account) {
         token.provider = account.provider
+        // Meta(Facebook) 로그인 시 access_token 저장 (Ads API 호출용)
+        if (account.provider === 'facebook' && account.access_token) {
+          token.metaAccessToken = account.access_token
+        }
       }
       return token
     },
     session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id as string
+        session.user.provider = token.provider as string | undefined
+        // Meta access token을 세션에 포함 (API 호출용)
+        if (token.metaAccessToken) {
+          session.user.metaAccessToken = token.metaAccessToken as string
+        }
       }
       return session
     },
@@ -67,6 +77,10 @@ export const authConfig = {
     Kakao({
       clientId: process.env.KAKAO_CLIENT_ID ?? '',
       clientSecret: process.env.KAKAO_CLIENT_SECRET ?? '',
+    }),
+    Facebook({
+      clientId: process.env.META_APP_ID ?? '',
+      clientSecret: process.env.META_APP_SECRET ?? '',
     }),
     Credentials({
       name: 'credentials',
