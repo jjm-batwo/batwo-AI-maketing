@@ -3,8 +3,11 @@
 import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
-// Use test database if DATABASE_URL_TEST is set for integration tests
-const databaseUrl = process.env["DATABASE_URL_TEST"] || process.env["DATABASE_URL"];
+// Use DATABASE_URL by default, use DATABASE_URL_TEST only when NODE_ENV=test
+const isTestEnv = process.env["NODE_ENV"] === "test";
+const databaseUrl = isTestEnv
+  ? (process.env["DATABASE_URL_TEST"] || process.env["DATABASE_URL"])
+  : process.env["DATABASE_URL"];
 
 export default defineConfig({
   schema: "prisma/schema.prisma",

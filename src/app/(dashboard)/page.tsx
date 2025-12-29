@@ -1,6 +1,6 @@
 'use client'
 
-import { KPICard, KPIChart, CampaignSummaryTable } from '@/presentation/components/dashboard'
+import { KPICard, KPIChart, CampaignSummaryTable, AIInsights } from '@/presentation/components/dashboard'
 import { useDashboardKPI } from '@/presentation/hooks'
 import { useUIStore } from '@/presentation/stores'
 import { Button } from '@/components/ui/button'
@@ -133,15 +133,18 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      {/* Campaign Summary Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>활성 캠페인</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <CampaignSummaryTable isLoading={isLoading} />
-        </CardContent>
-      </Card>
+      {/* AI Insights & Campaign Summary */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <AIInsights isLoading={isLoading} />
+        <Card>
+          <CardHeader>
+            <CardTitle>활성 캠페인</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CampaignSummaryTable isLoading={isLoading} />
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

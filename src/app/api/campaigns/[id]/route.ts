@@ -1,45 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-// Mock data for MVP
-const mockCampaigns = new Map([
-  ['1', {
-    id: '1',
-    name: '여름 시즌 프로모션',
-    objective: 'CONVERSIONS',
-    status: 'ACTIVE',
-    dailyBudget: 50000,
-    totalSpent: 350000,
-    impressions: 150000,
-    clicks: 4500,
-    conversions: 120,
-    roas: 3.2,
-    startDate: '2024-06-01',
-    endDate: '2024-06-30',
-    createdAt: '2024-05-28T10:00:00Z',
-  }],
-  ['2', {
-    id: '2',
-    name: '신규 고객 유입',
-    objective: 'TRAFFIC',
-    status: 'ACTIVE',
-    dailyBudget: 30000,
-    totalSpent: 180000,
-    impressions: 80000,
-    clicks: 3200,
-    conversions: 45,
-    roas: 2.1,
-    startDate: '2024-06-05',
-    createdAt: '2024-06-03T14:30:00Z',
-  }],
-])
+import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
+import { container, DI_TOKENS } from '@/lib/di/container'
+import { GetCampaignUseCase } from '@application/use-cases/campaign/GetCampaignUseCase'
+import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
+import { CampaignStatus } from '@domain/value-objects/CampaignStatus'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const user = await getAuthenticatedUser()
+  if (!user) return unauthorizedResponse()
+
   try {
     const { id } = await params
-    const campaign = mockCampaigns.get(id)
+
+    const getCampaign = container.resolve<GetCampaignUseCase>(
+      DI_TOKENS.GetCampaignUseCase
+    )
+
+    const campaign = await getCampaign.execute({
+      campaignId: id,
+      userId: user.id,
+    })
 
     if (!campaign) {
       return NextResponse.json(
@@ -62,9 +45,18 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const user = await getAuthenticatedUser()
+  if (!user) return unauthorizedResponse()
+
   try {
     const { id } = await params
-    const campaign = mockCampaigns.get(id)
+    const body = await request.json()
+
+    const campaignRepository = container.resolve<ICampaignRepository>(
+      DI_TOKENS.CampaignRepository
+    )
+
+    const campaign = await campaignRepository.findById(id)
 
     if (!campaign) {
       return NextResponse.json(
@@ -73,11 +65,35 @@ export async function PATCH(
       )
     }
 
-    const body = await request.json()
-    const updatedCampaign = { ...campaign, ...body }
-    mockCampaigns.set(id, updatedCampaign)
+    // Check ownership
+    if (campaign.userId !== user.id) {
+      return NextResponse.json(
+        { message: '캠페인을 찾을 수 없습니다' },
+        { status: 404 }
+      )
+    }
 
-    return NextResponse.json(updatedCampaign)
+    // Update campaign status if provided
+    let updatedCampaign = campaign
+    if (body.status) {
+      const newStatus = body.status as CampaignStatus
+      updatedCampaign = campaign.changeStatus(newStatus)
+    }
+
+    const saved = await campaignRepository.update(updatedCampaign)
+
+    return NextResponse.json({
+      id: saved.id,
+      name: saved.name,
+      objective: saved.objective,
+      status: saved.status,
+      dailyBudget: saved.dailyBudget.amount,
+      currency: saved.dailyBudget.currency,
+      startDate: saved.startDate.toISOString(),
+      endDate: saved.endDate?.toISOString(),
+      createdAt: saved.createdAt.toISOString(),
+      updatedAt: saved.updatedAt.toISOString(),
+    })
   } catch (error) {
     console.error('Failed to update campaign:', error)
     return NextResponse.json(
@@ -91,9 +107,17 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const user = await getAuthenticatedUser()
+  if (!user) return unauthorizedResponse()
+
   try {
     const { id } = await params
-    const campaign = mockCampaigns.get(id)
+
+    const campaignRepository = container.resolve<ICampaignRepository>(
+      DI_TOKENS.CampaignRepository
+    )
+
+    const campaign = await campaignRepository.findById(id)
 
     if (!campaign) {
       return NextResponse.json(
@@ -102,7 +126,15 @@ export async function DELETE(
       )
     }
 
-    mockCampaigns.delete(id)
+    // Check ownership
+    if (campaign.userId !== user.id) {
+      return NextResponse.json(
+        { message: '캠페인을 찾을 수 없습니다' },
+        { status: 404 }
+      )
+    }
+
+    await campaignRepository.delete(id)
 
     return new NextResponse(null, { status: 204 })
   } catch (error) {

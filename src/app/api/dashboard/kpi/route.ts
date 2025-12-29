@@ -1,67 +1,73 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
+import { container, DI_TOKENS } from '@/lib/di/container'
+import { GetDashboardKPIUseCase } from '@application/use-cases/kpi/GetDashboardKPIUseCase'
+import type { DateRangePreset } from '@application/dto/kpi/DashboardKPIDTO'
 
-// Mock KPI data for MVP
-function generateMockKPIData(period: string) {
-  const days = period === '7d' ? 7 : period === '30d' ? 30 : 90
-  const chartData = []
-
-  const baseDate = new Date()
-  for (let i = days - 1; i >= 0; i--) {
-    const date = new Date(baseDate)
-    date.setDate(date.getDate() - i)
-
-    chartData.push({
-      date: date.toISOString().split('T')[0],
-      spend: Math.floor(Math.random() * 50000) + 30000,
-      revenue: Math.floor(Math.random() * 150000) + 80000,
-      roas: Math.random() * 2 + 1.5,
-      impressions: Math.floor(Math.random() * 30000) + 10000,
-      clicks: Math.floor(Math.random() * 1500) + 500,
-      conversions: Math.floor(Math.random() * 50) + 10,
-    })
-  }
-
-  const totalSpend = chartData.reduce((sum, d) => sum + d.spend, 0)
-  const totalRevenue = chartData.reduce((sum, d) => sum + d.revenue, 0)
-  const totalImpressions = chartData.reduce((sum, d) => sum + d.impressions, 0)
-  const totalClicks = chartData.reduce((sum, d) => sum + d.clicks, 0)
-  const totalConversions = chartData.reduce((sum, d) => sum + d.conversions, 0)
-
-  return {
-    summary: {
-      totalSpend,
-      totalRevenue,
-      totalImpressions,
-      totalClicks,
-      totalConversions,
-      averageRoas: totalRevenue / totalSpend,
-      averageCtr: (totalClicks / totalImpressions) * 100,
-      averageCpa: totalSpend / totalConversions,
-      activeCampaigns: 3,
-      changes: {
-        spend: Math.random() * 20 - 10,
-        revenue: Math.random() * 30 - 5,
-        roas: Math.random() * 0.5 - 0.1,
-        ctr: Math.random() * 2 - 0.5,
-        conversions: Math.random() * 25 - 5,
-      },
-    },
-    chartData,
-    period: {
-      startDate: chartData[0].date,
-      endDate: chartData[chartData.length - 1].date,
-    },
+// Map API period format to Use Case DateRangePreset
+function mapPeriodToPreset(period: string): DateRangePreset {
+  switch (period) {
+    case '7d':
+      return 'last_7d'
+    case '30d':
+      return 'last_30d'
+    case 'today':
+      return 'today'
+    case 'yesterday':
+      return 'yesterday'
+    default:
+      return 'last_7d'
   }
 }
 
 export async function GET(request: NextRequest) {
+  const user = await getAuthenticatedUser()
+  if (!user) return unauthorizedResponse()
+
   try {
     const { searchParams } = new URL(request.url)
     const period = searchParams.get('period') || '7d'
+    const includeComparison = searchParams.get('comparison') === 'true'
+    const includeBreakdown = searchParams.get('breakdown') === 'true'
 
-    const data = generateMockKPIData(period)
+    const getDashboardKPI = container.resolve<GetDashboardKPIUseCase>(
+      DI_TOKENS.GetDashboardKPIUseCase
+    )
 
-    return NextResponse.json(data)
+    const result = await getDashboardKPI.execute({
+      userId: user.id,
+      dateRange: mapPeriodToPreset(period),
+      includeComparison,
+      includeBreakdown,
+    })
+
+    // Transform to API response format for backwards compatibility
+    const response = {
+      summary: {
+        totalSpend: result.totalSpend,
+        totalRevenue: result.totalRevenue,
+        totalImpressions: result.totalImpressions,
+        totalClicks: result.totalClicks,
+        totalConversions: result.totalConversions,
+        averageRoas: result.roas,
+        averageCtr: result.ctr,
+        averageCpa: result.cpa,
+        cvr: result.cvr,
+        activeCampaigns: result.campaignBreakdown?.length ?? 0,
+        changes: result.comparison
+          ? {
+              spend: result.comparison.spendChange,
+              revenue: result.comparison.revenueChange,
+              roas: result.comparison.roasChange,
+              ctr: result.comparison.ctrChange,
+              conversions: result.comparison.conversionsChange,
+            }
+          : undefined,
+      },
+      campaignBreakdown: result.campaignBreakdown,
+    }
+
+    return NextResponse.json(response)
   } catch (error) {
     console.error('Failed to fetch dashboard KPI:', error)
     return NextResponse.json(
