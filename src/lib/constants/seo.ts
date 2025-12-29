@@ -13,7 +13,7 @@ import type { Metadata } from 'next'
 export const SEO = {
   // 사이트 기본 정보
   siteName: '바투 AI 마케팅' as const,
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://batwo.ai',
+  siteUrl: process.env.NEXT_PUBLIC_APP_URL || 'https://batwo.ai',
 
   // 기본 메타데이터
   defaultTitle: '바투 - AI 마케팅 솔루션 | 커머스 사업자를 위한 광고 자동화',
