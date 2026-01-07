@@ -74,7 +74,7 @@ export function KPICard({
   if (isLoading) {
     return (
       <Card className={cn('relative overflow-hidden', className)}>
-        <CardContent className="p-6">
+        <CardContent className="p-4 md:p-6">
           <div data-testid="kpi-skeleton" className="animate-pulse space-y-3">
             <div className="h-4 w-24 rounded bg-gray-200" />
             <div className="h-8 w-32 rounded bg-gray-200" />
@@ -91,11 +91,11 @@ export function KPICard({
       role="article"
       aria-label={`${title}: ${formattedValue}`}
     >
-      <CardContent className="p-6">
+      <CardContent className="p-4 md:p-6">
         <div className="flex items-start justify-between">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <p className="text-2xl font-bold tracking-tight">{formattedValue}</p>
+          <div className="space-y-1 md:space-y-2">
+            <p className="text-xs md:text-sm font-medium text-muted-foreground">{title}</p>
+            <p className="text-xl md:text-2xl font-bold tracking-tight">{formattedValue}</p>
             <div className="flex items-center gap-1">
               {(changeType === 'increase' || changeType === 'positive') && (
                 <TrendingUp className="h-4 w-4 text-green-600" />

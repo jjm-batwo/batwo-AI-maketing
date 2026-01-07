@@ -74,17 +74,18 @@ export function CampaignSummaryTable({
           </Link>
         </div>
       </CardHeader>
-      <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>캠페인명</TableHead>
-              <TableHead>상태</TableHead>
-              <TableHead className="text-right">지출</TableHead>
-              <TableHead className="text-right">ROAS</TableHead>
-              <TableHead className="text-right">CTR</TableHead>
-            </TableRow>
-          </TableHeader>
+      <CardContent className="p-0 md:p-6">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="whitespace-nowrap">캠페인명</TableHead>
+                <TableHead className="whitespace-nowrap">상태</TableHead>
+                <TableHead className="whitespace-nowrap text-right">지출</TableHead>
+                <TableHead className="whitespace-nowrap text-right">ROAS</TableHead>
+                <TableHead className="whitespace-nowrap text-right">CTR</TableHead>
+              </TableRow>
+            </TableHeader>
           <TableBody>
             {campaigns.map((campaign) => {
               const status = statusConfig[campaign.status]
@@ -121,7 +122,8 @@ export function CampaignSummaryTable({
               )
             })}
           </TableBody>
-        </Table>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   )

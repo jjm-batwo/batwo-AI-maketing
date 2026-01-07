@@ -6,6 +6,7 @@ import { useUIStore } from '@/presentation/stores'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { OnboardingWizard } from '@/presentation/components/onboarding'
 
 export default function DashboardPage() {
   const { dashboardPeriod, setDashboardPeriod } = useUIStore()
@@ -39,11 +40,14 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
+      {/* Onboarding Wizard for new users */}
+      <OnboardingWizard />
+
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">대시보드</h1>
-          <p className="text-muted-foreground">광고 성과를 한눈에 확인하세요</p>
+          <h1 className="text-xl md:text-2xl font-bold">대시보드</h1>
+          <p className="text-sm md:text-base text-muted-foreground">광고 성과를 한눈에 확인하세요</p>
         </div>
         <Tabs value={dashboardPeriod} onValueChange={(v) => setDashboardPeriod(v as '7d' | '30d' | '90d')}>
           <TabsList>

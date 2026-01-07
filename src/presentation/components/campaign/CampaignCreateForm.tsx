@@ -6,8 +6,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
-import { MousePointerClick, Target, Eye, AlertTriangle } from 'lucide-react'
+import { MousePointerClick, Target, Eye, AlertTriangle, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { TemplateSelector } from './TemplateSelector'
+import { CampaignTemplate, CampaignTemplateId } from '@domain/value-objects/CampaignTemplate'
 
 interface CampaignFormData {
   name: string
@@ -70,7 +72,8 @@ export function CampaignCreateForm({
   quotaExceeded = false,
   isSubmitting = false,
 }: CampaignCreateFormProps) {
-  const [step, setStep] = useState(1)
+  const [step, setStep] = useState(0) // 0 = template selection, 1-4 = form steps
+  const [selectedTemplateId, setSelectedTemplateId] = useState<CampaignTemplateId | undefined>()
   const totalSteps = 4
 
   const {
@@ -99,6 +102,36 @@ export function CampaignCreateForm({
   const selectedObjective = watch('objective')
   const formData = watch()
 
+  const handleTemplateSelect = (template: CampaignTemplate) => {
+    setSelectedTemplateId(template.id)
+    // Pre-fill form with template values
+    setValue('objective', template.objective)
+    setValue('dailyBudget', template.suggestedDailyBudget)
+    if (template.suggestedTargetAudience.ageMin) {
+      setValue('targetAudience.ageMin', template.suggestedTargetAudience.ageMin)
+    }
+    if (template.suggestedTargetAudience.ageMax) {
+      setValue('targetAudience.ageMax', template.suggestedTargetAudience.ageMax)
+    }
+    if (template.suggestedTargetAudience.genders) {
+      // Convert template genders array to form gender value
+      const genders = template.suggestedTargetAudience.genders
+      if (genders.includes('all')) {
+        setValue('targetAudience.gender', 'ALL')
+      } else if (genders.includes('male') && !genders.includes('female')) {
+        setValue('targetAudience.gender', 'MALE')
+      } else if (genders.includes('female') && !genders.includes('male')) {
+        setValue('targetAudience.gender', 'FEMALE')
+      }
+    }
+    // Move to step 1
+    setStep(1)
+  }
+
+  const handleSkipTemplate = () => {
+    setStep(1)
+  }
+
   const handleNext = async () => {
     if (step === 1) {
       const isValid = await trigger('name')
@@ -118,7 +151,7 @@ export function CampaignCreateForm({
   }
 
   const handlePrev = () => {
-    if (step > 1) {
+    if (step > 0) {
       setStep(step - 1)
     }
   }
@@ -317,6 +350,33 @@ export function CampaignCreateForm({
     </div>
   )
 
+  const renderStep0Template = () => (
+    <div className="space-y-6">
+      <div className="flex items-center gap-2">
+        <Sparkles className="h-5 w-5 text-primary" />
+        <h3 className="text-lg font-medium">빠른 시작</h3>
+      </div>
+      <p className="text-sm text-muted-foreground">
+        템플릿을 선택하면 목표, 예산, 타겟이 자동으로 설정됩니다
+      </p>
+      <TemplateSelector
+        onSelect={handleTemplateSelect}
+        selectedTemplateId={selectedTemplateId}
+        showTips
+      />
+      <div className="text-center">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={handleSkipTemplate}
+          className="text-muted-foreground"
+        >
+          템플릿 없이 직접 설정하기
+        </Button>
+      </div>
+    </div>
+  )
+
   const renderStep4Review = () => (
     <div className="space-y-6">
       <h3 className="text-lg font-medium">최종 확인</h3>
@@ -352,11 +412,13 @@ export function CampaignCreateForm({
 
   return (
     <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
-          {step}/{totalSteps}
+      {step > 0 && (
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            {step}/{totalSteps}
+          </div>
         </div>
-      </div>
+      )}
 
       {quotaExceeded && (
         <div className="flex items-center gap-2 rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-yellow-800">
@@ -365,33 +427,36 @@ export function CampaignCreateForm({
         </div>
       )}
 
+      {step === 0 && renderStep0Template()}
       {step === 1 && renderStep1()}
       {step === 2 && renderStep2()}
       {step === 3 && renderStep3()}
       {step === 4 && renderStep4Review()}
 
-      <div className="flex justify-between pt-4">
-        <Button type="button" variant="outline" onClick={onCancel}>
-          취소
-        </Button>
+      {step > 0 && (
+        <div className="flex justify-between pt-4">
+          <Button type="button" variant="outline" onClick={onCancel}>
+            취소
+          </Button>
 
-        <div className="flex gap-2">
-          {step > 1 && (
-            <Button type="button" variant="outline" onClick={handlePrev}>
-              이전
-            </Button>
-          )}
-          {step < totalSteps ? (
-            <Button type="button" onClick={handleNext}>
-              다음
-            </Button>
-          ) : (
-            <Button type="submit" disabled={quotaExceeded || isSubmitting}>
-              캠페인 생성
-            </Button>
-          )}
+          <div className="flex gap-2">
+            {step > 1 && (
+              <Button type="button" variant="outline" onClick={handlePrev}>
+                이전
+              </Button>
+            )}
+            {step < totalSteps ? (
+              <Button type="button" onClick={handleNext}>
+                다음
+              </Button>
+            ) : (
+              <Button type="submit" disabled={quotaExceeded || isSubmitting}>
+                캠페인 생성
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </form>
   )
 }
