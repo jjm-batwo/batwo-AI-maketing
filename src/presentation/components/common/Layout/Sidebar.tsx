@@ -22,7 +22,7 @@ export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <aside className="flex w-64 flex-col border-r bg-white">
+    <aside className="hidden w-64 flex-col border-r bg-white md:flex">
       <div className="flex h-16 items-center border-b px-6">
         <Link href="/" className="flex items-center gap-2">
           <span className="text-xl font-bold text-primary">바투</span>

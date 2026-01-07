@@ -1,8 +1,9 @@
 'use client'
 
-import { Bell, User } from 'lucide-react'
+import { Bell, User, Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { QuotaStatusBadge } from '@/presentation/components/quota/QuotaStatusBadge'
+import { useUIStore } from '@presentation/stores/uiStore'
 
 interface HeaderProps {
   quotaStatus?: {
@@ -13,9 +14,22 @@ interface HeaderProps {
 }
 
 export function Header({ quotaStatus }: HeaderProps) {
+  const { toggleMobileMenu } = useUIStore()
+
   return (
-    <header className="flex h-16 items-center justify-between border-b bg-white px-6">
+    <header className="flex h-16 items-center justify-between border-b bg-white px-4 md:px-6">
       <div className="flex items-center gap-4">
+        {/* Mobile menu button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden"
+          onClick={toggleMobileMenu}
+          aria-label="메뉴 열기"
+        >
+          <Menu className="h-5 w-5" />
+        </Button>
+
         {quotaStatus && (
           <div className="flex items-center gap-2">
             <QuotaStatusBadge

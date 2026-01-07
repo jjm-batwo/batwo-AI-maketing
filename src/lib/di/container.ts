@@ -31,6 +31,10 @@ import { AIService } from '@infrastructure/external/openai/AIService'
 // Application services and use cases
 import { QuotaService } from '@application/services/QuotaService'
 import { BudgetAlertService } from '@application/services/BudgetAlertService'
+import { AnomalyDetectionService } from '@application/services/AnomalyDetectionService'
+import { ReportPDFGenerator, type IReportPDFGenerator } from '@infrastructure/pdf/ReportPDFGenerator'
+import { EmailService } from '@infrastructure/email/EmailService'
+import type { IEmailService } from '@application/ports/IEmailService'
 import { CreateCampaignUseCase } from '@application/use-cases/campaign/CreateCampaignUseCase'
 import { UpdateCampaignUseCase } from '@application/use-cases/campaign/UpdateCampaignUseCase'
 import { PauseCampaignUseCase } from '@application/use-cases/campaign/PauseCampaignUseCase'
@@ -129,6 +133,26 @@ container.registerSingleton(
       container.resolve(DI_TOKENS.BudgetAlertRepository),
       container.resolve(DI_TOKENS.KPIRepository)
     )
+)
+
+container.registerSingleton(
+  DI_TOKENS.AnomalyDetectionService,
+  () =>
+    new AnomalyDetectionService(
+      container.resolve(DI_TOKENS.KPIRepository),
+      container.resolve(DI_TOKENS.CampaignRepository)
+    )
+)
+
+// Register Infrastructure Services (Singletons)
+container.registerSingleton<IReportPDFGenerator>(
+  DI_TOKENS.ReportPDFGenerator,
+  () => new ReportPDFGenerator()
+)
+
+container.registerSingleton<IEmailService>(
+  DI_TOKENS.EmailService,
+  () => new EmailService(process.env.RESEND_API_KEY || '')
 )
 
 // Register Use Cases (Transient - new instance each time)
@@ -259,4 +283,20 @@ export function getBudgetAlertService(): BudgetAlertService {
 
 export function getBudgetAlertRepository(): IBudgetAlertRepository {
   return container.resolve(DI_TOKENS.BudgetAlertRepository)
+}
+
+export function getAIService(): IAIService {
+  return container.resolve(DI_TOKENS.AIService)
+}
+
+export function getAnomalyDetectionService(): AnomalyDetectionService {
+  return container.resolve(DI_TOKENS.AnomalyDetectionService)
+}
+
+export function getReportPDFGenerator(): IReportPDFGenerator {
+  return container.resolve(DI_TOKENS.ReportPDFGenerator)
+}
+
+export function getEmailService(): IEmailService {
+  return container.resolve(DI_TOKENS.EmailService)
 }

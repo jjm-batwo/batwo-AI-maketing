@@ -21,6 +21,11 @@ export const DI_TOKENS = {
   // Application Services
   QuotaService: Symbol.for('QuotaService'),
   BudgetAlertService: Symbol.for('BudgetAlertService'),
+  AnomalyDetectionService: Symbol.for('AnomalyDetectionService'),
+
+  // Infrastructure Services
+  ReportPDFGenerator: Symbol.for('ReportPDFGenerator'),
+  EmailService: Symbol.for('EmailService'),
 
   // Use Cases
   CreateCampaignUseCase: Symbol.for('CreateCampaignUseCase'),
