@@ -1,5 +1,5 @@
 import { KPI } from '@domain/entities/KPI'
-import { IKPIRepository, KPIFilters } from '@domain/repositories/IKPIRepository'
+import { IKPIRepository, KPIFilters, DailyKPIAggregate } from '@domain/repositories/IKPIRepository'
 
 export class MockKPIRepository implements IKPIRepository {
   private kpis: Map<string, KPI> = new Map()
@@ -98,6 +98,70 @@ export class MockKPIRepository implements IKPIRepository {
         totalRevenue: 0,
       }
     )
+  }
+
+  async getDailyAggregates(
+    campaignIds: string[],
+    startDate: Date,
+    endDate: Date
+  ): Promise<DailyKPIAggregate[]> {
+    if (campaignIds.length === 0) {
+      return []
+    }
+
+    const kpis = Array.from(this.kpis.values()).filter(
+      (kpi) =>
+        campaignIds.includes(kpi.campaignId) &&
+        kpi.date >= startDate &&
+        kpi.date <= endDate
+    )
+
+    // Group by date (YYYY-MM-DD)
+    const grouped = new Map<string, DailyKPIAggregate>()
+
+    for (const kpi of kpis) {
+      const dateKey = kpi.date.toISOString().split('T')[0]
+      const existing = grouped.get(dateKey)
+
+      if (existing) {
+        existing.totalImpressions += kpi.impressions
+        existing.totalClicks += kpi.clicks
+        existing.totalConversions += kpi.conversions
+        existing.totalSpend += kpi.spend.amount
+        existing.totalRevenue += kpi.revenue.amount
+      } else {
+        grouped.set(dateKey, {
+          date: new Date(dateKey),
+          totalImpressions: kpi.impressions,
+          totalClicks: kpi.clicks,
+          totalConversions: kpi.conversions,
+          totalSpend: kpi.spend.amount,
+          totalRevenue: kpi.revenue.amount,
+        })
+      }
+    }
+
+    // Sort by date ascending
+    return Array.from(grouped.values()).sort(
+      (a, b) => a.date.getTime() - b.date.getTime()
+    )
+  }
+
+  async getCumulativeSpend(campaignId: string, date: Date): Promise<number> {
+    const startOfDay = new Date(date)
+    startOfDay.setHours(0, 0, 0, 0)
+
+    const endOfDay = new Date(date)
+    endOfDay.setHours(23, 59, 59, 999)
+
+    const kpis = Array.from(this.kpis.values()).filter(
+      (kpi) =>
+        kpi.campaignId === campaignId &&
+        kpi.date >= startOfDay &&
+        kpi.date <= endOfDay
+    )
+
+    return kpis.reduce((total, kpi) => total + kpi.spend.amount, 0)
   }
 
   async delete(id: string): Promise<void> {

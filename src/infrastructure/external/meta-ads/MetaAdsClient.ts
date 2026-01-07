@@ -3,6 +3,7 @@ import {
   MetaCampaignData,
   MetaInsightsData,
   CreateMetaCampaignInput,
+  UpdateMetaCampaignInput,
 } from '@application/ports/IMetaAdsService'
 import { MetaAdsApiError } from '../errors'
 import { withRetry } from '@lib/utils/retry'
@@ -171,6 +172,32 @@ export class MetaAdsClient implements IMetaAdsService {
       {
         method: 'POST',
         body: JSON.stringify({ status }),
+      }
+    )
+
+    return this.mapCampaignResponse(response)
+  }
+
+  async updateCampaign(
+    accessToken: string,
+    campaignId: string,
+    input: UpdateMetaCampaignInput
+  ): Promise<MetaCampaignData> {
+    const body: Record<string, unknown> = {}
+
+    if (input.name !== undefined) body.name = input.name
+    if (input.dailyBudget !== undefined) body.daily_budget = input.dailyBudget
+    if (input.status !== undefined) body.status = input.status
+    if (input.endTime !== undefined) {
+      body.end_time = input.endTime ? input.endTime.toISOString() : null
+    }
+
+    const response = await this.requestWithRetry<MetaApiCampaignResponse>(
+      accessToken,
+      `/${campaignId}`,
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
       }
     )
 

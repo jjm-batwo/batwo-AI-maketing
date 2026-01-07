@@ -6,6 +6,17 @@ export interface GetDashboardKPIDTO {
   campaignIds?: string[]
   includeComparison?: boolean
   includeBreakdown?: boolean
+  includeChartData?: boolean
+}
+
+export interface ChartDataPointDTO {
+  date: string // YYYY-MM-DD format
+  spend: number
+  revenue: number
+  roas: number
+  impressions: number
+  clicks: number
+  conversions: number
 }
 
 export interface KPIComparisonDTO {
@@ -43,4 +54,5 @@ export interface DashboardKPIDTO {
   cvr: number
   comparison?: KPIComparisonDTO
   campaignBreakdown?: CampaignKPIBreakdownDTO[]
+  chartData?: ChartDataPointDTO[]
 }

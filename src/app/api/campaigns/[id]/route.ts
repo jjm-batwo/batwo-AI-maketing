@@ -2,8 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS } from '@/lib/di/container'
 import { GetCampaignUseCase } from '@application/use-cases/campaign/GetCampaignUseCase'
+import {
+  UpdateCampaignUseCase,
+  CampaignNotFoundError,
+  UnauthorizedCampaignAccessError,
+} from '@application/use-cases/campaign/UpdateCampaignUseCase'
+import { DuplicateCampaignNameError } from '@application/use-cases/campaign/CreateCampaignUseCase'
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
-import { CampaignStatus } from '@domain/value-objects/CampaignStatus'
 
 export async function GET(
   request: NextRequest,
@@ -52,49 +57,57 @@ export async function PATCH(
     const { id } = await params
     const body = await request.json()
 
-    const campaignRepository = container.resolve<ICampaignRepository>(
-      DI_TOKENS.CampaignRepository
+    const updateCampaign = container.resolve<UpdateCampaignUseCase>(
+      DI_TOKENS.UpdateCampaignUseCase
     )
 
-    const campaign = await campaignRepository.findById(id)
-
-    if (!campaign) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
-    }
-
-    // Check ownership
-    if (campaign.userId !== user.id) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
-    }
-
-    // Update campaign status if provided
-    let updatedCampaign = campaign
-    if (body.status) {
-      const newStatus = body.status as CampaignStatus
-      updatedCampaign = campaign.changeStatus(newStatus)
-    }
-
-    const saved = await campaignRepository.update(updatedCampaign)
-
-    return NextResponse.json({
-      id: saved.id,
-      name: saved.name,
-      objective: saved.objective,
-      status: saved.status,
-      dailyBudget: saved.dailyBudget.amount,
-      currency: saved.dailyBudget.currency,
-      startDate: saved.startDate.toISOString(),
-      endDate: saved.endDate?.toISOString(),
-      createdAt: saved.createdAt.toISOString(),
-      updatedAt: saved.updatedAt.toISOString(),
+    const result = await updateCampaign.execute({
+      campaignId: id,
+      userId: user.id,
+      name: body.name,
+      dailyBudget: body.dailyBudget,
+      currency: body.currency,
+      startDate: body.startDate,
+      endDate: body.endDate,
+      targetAudience: body.targetAudience,
+      syncToMeta: body.syncToMeta,
+      accessToken: body.accessToken,
+      adAccountId: body.adAccountId,
     })
+
+    return NextResponse.json(result)
   } catch (error) {
+    if (error instanceof CampaignNotFoundError) {
+      return NextResponse.json(
+        { message: '캠페인을 찾을 수 없습니다' },
+        { status: 404 }
+      )
+    }
+
+    if (error instanceof UnauthorizedCampaignAccessError) {
+      return NextResponse.json(
+        { message: '캠페인을 찾을 수 없습니다' },
+        { status: 404 }
+      )
+    }
+
+    if (error instanceof DuplicateCampaignNameError) {
+      return NextResponse.json(
+        { message: error.message },
+        { status: 400 }
+      )
+    }
+
+    if (error instanceof Error) {
+      // Handle domain errors (e.g., "Cannot update a completed campaign")
+      if (error.message.includes('Cannot update')) {
+        return NextResponse.json(
+          { message: error.message },
+          { status: 400 }
+        )
+      }
+    }
+
     console.error('Failed to update campaign:', error)
     return NextResponse.json(
       { message: 'Failed to update campaign' },

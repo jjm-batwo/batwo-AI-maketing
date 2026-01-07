@@ -15,3 +15,4 @@ export {
   type CreateReportProps,
   type ReportProps,
 } from './Report'
+export { BudgetAlert, type BudgetAlertProps } from './BudgetAlert'

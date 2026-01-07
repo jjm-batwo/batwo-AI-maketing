@@ -13,6 +13,7 @@ import type { ICampaignRepository } from '@domain/repositories/ICampaignReposito
 import type { IReportRepository } from '@domain/repositories/IReportRepository'
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
 import type { IUsageLogRepository } from '@domain/repositories/IUsageLogRepository'
+import type { IBudgetAlertRepository } from '@domain/repositories/IBudgetAlertRepository'
 
 // Port interfaces
 import type { IMetaAdsService } from '@application/ports/IMetaAdsService'
@@ -23,12 +24,17 @@ import { PrismaCampaignRepository } from '@infrastructure/database/repositories/
 import { PrismaReportRepository } from '@infrastructure/database/repositories/PrismaReportRepository'
 import { PrismaKPIRepository } from '@infrastructure/database/repositories/PrismaKPIRepository'
 import { PrismaUsageLogRepository } from '@infrastructure/database/repositories/PrismaUsageLogRepository'
+import { PrismaBudgetAlertRepository } from '@infrastructure/database/repositories/PrismaBudgetAlertRepository'
 import { MetaAdsClient } from '@infrastructure/external/meta-ads/MetaAdsClient'
 import { AIService } from '@infrastructure/external/openai/AIService'
 
 // Application services and use cases
 import { QuotaService } from '@application/services/QuotaService'
+import { BudgetAlertService } from '@application/services/BudgetAlertService'
 import { CreateCampaignUseCase } from '@application/use-cases/campaign/CreateCampaignUseCase'
+import { UpdateCampaignUseCase } from '@application/use-cases/campaign/UpdateCampaignUseCase'
+import { PauseCampaignUseCase } from '@application/use-cases/campaign/PauseCampaignUseCase'
+import { ResumeCampaignUseCase } from '@application/use-cases/campaign/ResumeCampaignUseCase'
 import { GetCampaignUseCase } from '@application/use-cases/campaign/GetCampaignUseCase'
 import { ListCampaignsUseCase } from '@application/use-cases/campaign/ListCampaignsUseCase'
 import { GenerateWeeklyReportUseCase } from '@application/use-cases/report/GenerateWeeklyReportUseCase'
@@ -94,6 +100,11 @@ container.registerSingleton<IUsageLogRepository>(
   () => new PrismaUsageLogRepository(prisma)
 )
 
+container.registerSingleton<IBudgetAlertRepository>(
+  DI_TOKENS.BudgetAlertRepository,
+  () => new PrismaBudgetAlertRepository(prisma)
+)
+
 // Register External Services (Singletons)
 container.registerSingleton<IMetaAdsService>(
   DI_TOKENS.MetaAdsService,
@@ -111,6 +122,15 @@ container.registerSingleton(
   () => new QuotaService(container.resolve(DI_TOKENS.UsageLogRepository))
 )
 
+container.registerSingleton(
+  DI_TOKENS.BudgetAlertService,
+  () =>
+    new BudgetAlertService(
+      container.resolve(DI_TOKENS.BudgetAlertRepository),
+      container.resolve(DI_TOKENS.KPIRepository)
+    )
+)
+
 // Register Use Cases (Transient - new instance each time)
 container.register(
   DI_TOKENS.CreateCampaignUseCase,
@@ -118,7 +138,34 @@ container.register(
     new CreateCampaignUseCase(
       container.resolve(DI_TOKENS.CampaignRepository),
       container.resolve(DI_TOKENS.MetaAdsService),
-      container.resolve(DI_TOKENS.QuotaService)
+      container.resolve(DI_TOKENS.UsageLogRepository)
+    )
+)
+
+container.register(
+  DI_TOKENS.UpdateCampaignUseCase,
+  () =>
+    new UpdateCampaignUseCase(
+      container.resolve(DI_TOKENS.CampaignRepository),
+      container.resolve(DI_TOKENS.MetaAdsService)
+    )
+)
+
+container.register(
+  DI_TOKENS.PauseCampaignUseCase,
+  () =>
+    new PauseCampaignUseCase(
+      container.resolve(DI_TOKENS.CampaignRepository),
+      container.resolve(DI_TOKENS.MetaAdsService)
+    )
+)
+
+container.register(
+  DI_TOKENS.ResumeCampaignUseCase,
+  () =>
+    new ResumeCampaignUseCase(
+      container.resolve(DI_TOKENS.CampaignRepository),
+      container.resolve(DI_TOKENS.MetaAdsService)
     )
 )
 
@@ -186,10 +233,30 @@ export function getCreateCampaignUseCase(): CreateCampaignUseCase {
   return container.resolve(DI_TOKENS.CreateCampaignUseCase)
 }
 
+export function getUpdateCampaignUseCase(): UpdateCampaignUseCase {
+  return container.resolve(DI_TOKENS.UpdateCampaignUseCase)
+}
+
+export function getPauseCampaignUseCase(): PauseCampaignUseCase {
+  return container.resolve(DI_TOKENS.PauseCampaignUseCase)
+}
+
+export function getResumeCampaignUseCase(): ResumeCampaignUseCase {
+  return container.resolve(DI_TOKENS.ResumeCampaignUseCase)
+}
+
 export function getGenerateWeeklyReportUseCase(): GenerateWeeklyReportUseCase {
   return container.resolve(DI_TOKENS.GenerateWeeklyReportUseCase)
 }
 
 export function getGetDashboardKPIUseCase(): GetDashboardKPIUseCase {
   return container.resolve(DI_TOKENS.GetDashboardKPIUseCase)
+}
+
+export function getBudgetAlertService(): BudgetAlertService {
+  return container.resolve(DI_TOKENS.BudgetAlertService)
+}
+
+export function getBudgetAlertRepository(): IBudgetAlertRepository {
+  return container.resolve(DI_TOKENS.BudgetAlertRepository)
 }

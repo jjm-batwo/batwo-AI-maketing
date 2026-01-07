@@ -3,6 +3,7 @@ import {
   MetaCampaignData,
   MetaInsightsData,
   CreateMetaCampaignInput,
+  UpdateMetaCampaignInput,
 } from '@application/ports/IMetaAdsService'
 
 export class MockMetaAdsService implements IMetaAdsService {
@@ -86,6 +87,30 @@ export class MockMetaAdsService implements IMetaAdsService {
     }
 
     campaign.status = status
+    return campaign
+  }
+
+  async updateCampaign(
+    accessToken: string,
+    campaignId: string,
+    input: UpdateMetaCampaignInput
+  ): Promise<MetaCampaignData> {
+    if (this.shouldFail && this.failureError) {
+      throw this.failureError
+    }
+
+    const campaign = this.campaigns.get(campaignId)
+    if (!campaign) {
+      throw new Error(`Campaign ${campaignId} not found`)
+    }
+
+    if (input.name !== undefined) campaign.name = input.name
+    if (input.dailyBudget !== undefined) campaign.dailyBudget = input.dailyBudget
+    if (input.status !== undefined) campaign.status = input.status
+    if (input.endTime !== undefined) {
+      campaign.endTime = input.endTime ? input.endTime.toISOString() : undefined
+    }
+
     return campaign
   }
 

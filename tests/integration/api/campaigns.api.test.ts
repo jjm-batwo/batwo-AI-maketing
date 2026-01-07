@@ -36,6 +36,7 @@ describe('Campaigns API Integration', () => {
       createCampaign: vi.fn(),
       getCampaign: vi.fn(),
       getCampaignInsights: vi.fn(),
+      updateCampaign: vi.fn(),
       updateCampaignStatus: vi.fn(),
       deleteCampaign: vi.fn(),
     }

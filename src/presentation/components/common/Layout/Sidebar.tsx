@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 
 const navigation = [
-  { name: '대시보드', href: '/', icon: LayoutDashboard },
+  { name: '대시보드', href: '/dashboard', icon: LayoutDashboard },
   { name: '캠페인', href: '/campaigns', icon: Megaphone },
   { name: '보고서', href: '/reports', icon: FileText },
   { name: '설정', href: '/settings', icon: Settings },
@@ -34,10 +34,7 @@ export function Sidebar() {
 
       <nav className="flex-1 space-y-1 p-4">
         {navigation.map((item) => {
-          const isActive =
-            item.href === '/'
-              ? pathname === '/'
-              : pathname.startsWith(item.href)
+          const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
 
           return (
             <Link

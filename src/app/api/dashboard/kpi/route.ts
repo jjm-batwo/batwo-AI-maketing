@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
       dateRange: mapPeriodToPreset(period),
       includeComparison,
       includeBreakdown,
+      includeChartData: true,
     })
 
     // Transform to API response format for backwards compatibility
@@ -65,6 +66,7 @@ export async function GET(request: NextRequest) {
           : undefined,
       },
       campaignBreakdown: result.campaignBreakdown,
+      chartData: result.chartData ?? [],
     }
 
     return NextResponse.json(response)

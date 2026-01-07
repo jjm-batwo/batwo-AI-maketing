@@ -26,7 +26,16 @@ export default function DashboardPage() {
   }
 
   const summary = data?.summary
-  const chartData = data?.chartData || []
+  const changes = summary?.changes
+  const chartData = data?.chartData ?? []
+
+  // Helper to determine change type
+  const getChangeType = (value: number | undefined): 'positive' | 'negative' | 'neutral' => {
+    const v = value ?? 0
+    if (v > 0) return 'positive'
+    if (v < 0) return 'negative'
+    return 'neutral'
+  }
 
   return (
     <div className="space-y-6">
@@ -52,14 +61,8 @@ export default function DashboardPage() {
           value={summary?.averageRoas ?? 0}
           unit="x"
           format="multiplier"
-          change={summary?.changes.roas ?? 0}
-          changeType={
-            (summary?.changes.roas ?? 0) > 0
-              ? 'positive'
-              : (summary?.changes.roas ?? 0) < 0
-              ? 'negative'
-              : 'neutral'
-          }
+          change={changes?.roas ?? 0}
+          changeType={getChangeType(changes?.roas)}
           icon="chart"
           isLoading={isLoading}
         />
@@ -68,7 +71,7 @@ export default function DashboardPage() {
           value={summary?.totalSpend ?? 0}
           unit="원"
           format="currency"
-          change={summary?.changes.spend ?? 0}
+          change={changes?.spend ?? 0}
           changeType="neutral"
           icon="dollar"
           isLoading={isLoading}
@@ -77,14 +80,8 @@ export default function DashboardPage() {
           title="전환수"
           value={summary?.totalConversions ?? 0}
           format="number"
-          change={summary?.changes.conversions ?? 0}
-          changeType={
-            (summary?.changes.conversions ?? 0) > 0
-              ? 'positive'
-              : (summary?.changes.conversions ?? 0) < 0
-              ? 'negative'
-              : 'neutral'
-          }
+          change={changes?.conversions ?? 0}
+          changeType={getChangeType(changes?.conversions)}
           icon="target"
           isLoading={isLoading}
         />
@@ -93,14 +90,8 @@ export default function DashboardPage() {
           value={summary?.averageCtr ?? 0}
           unit="%"
           format="percentage"
-          change={summary?.changes.ctr ?? 0}
-          changeType={
-            (summary?.changes.ctr ?? 0) > 0
-              ? 'positive'
-              : (summary?.changes.ctr ?? 0) < 0
-              ? 'negative'
-              : 'neutral'
-          }
+          change={changes?.ctr ?? 0}
+          changeType={getChangeType(changes?.ctr)}
           icon="click"
           isLoading={isLoading}
         />

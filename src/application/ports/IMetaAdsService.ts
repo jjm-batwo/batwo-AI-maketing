@@ -40,6 +40,13 @@ export interface CreateMetaCampaignInput {
   }
 }
 
+export interface UpdateMetaCampaignInput {
+  name?: string
+  dailyBudget?: number
+  status?: 'ACTIVE' | 'PAUSED'
+  endTime?: Date | null
+}
+
 export interface IMetaAdsService {
   createCampaign(
     accessToken: string,
@@ -62,6 +69,12 @@ export interface IMetaAdsService {
     accessToken: string,
     campaignId: string,
     status: 'ACTIVE' | 'PAUSED'
+  ): Promise<MetaCampaignData>
+
+  updateCampaign(
+    accessToken: string,
+    campaignId: string,
+    input: UpdateMetaCampaignInput
   ): Promise<MetaCampaignData>
 
   deleteCampaign(accessToken: string, campaignId: string): Promise<void>

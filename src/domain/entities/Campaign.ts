@@ -221,6 +221,74 @@ export class Campaign {
     )
   }
 
+  update(props: {
+    name?: string
+    dailyBudget?: Money
+    startDate?: Date
+    endDate?: Date | null
+    targetAudience?: TargetAudience | null
+  }): Campaign {
+    if (isTerminalStatus(this._status)) {
+      throw new Error('Cannot update a completed campaign')
+    }
+
+    // For ACTIVE campaigns, only budget updates are allowed
+    if (
+      this._status === CampaignStatus.ACTIVE &&
+      (props.name !== undefined ||
+        props.startDate !== undefined ||
+        props.endDate !== undefined ||
+        props.targetAudience !== undefined)
+    ) {
+      const hasOnlyBudget =
+        Object.keys(props).filter((k) => k !== 'dailyBudget').length === 0 ||
+        (props.name === undefined &&
+          props.startDate === undefined &&
+          props.endDate === undefined &&
+          props.targetAudience === undefined)
+
+      if (!hasOnlyBudget) {
+        throw new Error('Only budget can be updated for active campaigns')
+      }
+    }
+
+    const newName = props.name ?? this._name
+    const newBudget = props.dailyBudget ?? this._dailyBudget
+    const newStartDate = props.startDate ?? this._startDate
+    const newEndDate = props.endDate === null ? undefined : (props.endDate ?? this._endDate)
+    const newTargetAudience =
+      props.targetAudience === null ? undefined : (props.targetAudience ?? this._targetAudience)
+
+    // Validate if values changed
+    if (props.name !== undefined) {
+      Campaign.validateName(newName)
+    }
+    if (props.dailyBudget !== undefined) {
+      Campaign.validateBudget(newBudget)
+    }
+    if (props.startDate !== undefined || props.endDate !== undefined) {
+      // Skip past date validation for updates (campaign may already be started)
+      if (newEndDate && newEndDate < newStartDate) {
+        throw InvalidCampaignError.invalidDateRange()
+      }
+    }
+
+    return new Campaign(
+      this._id,
+      this._userId,
+      newName,
+      this._objective,
+      this._status,
+      newBudget,
+      newStartDate,
+      newEndDate,
+      newTargetAudience,
+      this._metaCampaignId,
+      this._createdAt,
+      new Date()
+    )
+  }
+
   setMetaCampaignId(metaCampaignId: string): Campaign {
     if (this._metaCampaignId) {
       throw new Error('Meta campaign ID is already set')

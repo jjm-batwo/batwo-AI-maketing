@@ -123,12 +123,31 @@ model Campaign {
   endDate        DateTime?
   targetAudience Json?
   kpiSnapshots   KPISnapshot[]
+  budgetAlert    BudgetAlert?
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
 
   @@index([userId])
   @@index([status])
   @@index([startDate])
+}
+
+// ========================================
+// Budget Alerts
+// ========================================
+
+model BudgetAlert {
+  id                String    @id @default(cuid())
+  campaignId        String
+  campaign          Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  thresholdPercent  Int       @default(80) // 예산 소진 임계값 (%)
+  alertedAt         DateTime? // 알림 발송 시점
+  isEnabled         Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([campaignId]) // 캠페인당 하나의 알림 설정
+  @@index([isEnabled])
 }
 
 // ========================================

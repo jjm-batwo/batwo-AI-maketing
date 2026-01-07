@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { MoreVertical, Play, Pause, BarChart3 } from 'lucide-react'
+import { MoreVertical, Play, Pause, BarChart3, Pencil } from 'lucide-react'
 
 interface CampaignCardProps {
   id: string
@@ -109,6 +109,14 @@ export function CampaignCard({
             >
               <Play className="mr-1 h-4 w-4" />
               재개
+            </Button>
+          )}
+          {status !== 'COMPLETED' && (
+            <Button variant="outline" size="sm" asChild>
+              <Link href={`/campaigns/${id}/edit`}>
+                <Pencil className="mr-1 h-4 w-4" />
+                수정
+              </Link>
             </Button>
           )}
           <Button variant="outline" size="sm" asChild>

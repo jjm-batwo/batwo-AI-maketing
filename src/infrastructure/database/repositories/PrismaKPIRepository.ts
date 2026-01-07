@@ -1,5 +1,5 @@
 import { PrismaClient } from '@/generated/prisma'
-import { IKPIRepository, KPIFilters } from '@domain/repositories/IKPIRepository'
+import { IKPIRepository, KPIFilters, DailyKPIAggregate } from '@domain/repositories/IKPIRepository'
 import { KPI } from '@domain/entities/KPI'
 import { KPIMapper } from '../mappers/KPIMapper'
 
@@ -139,6 +139,68 @@ export class PrismaKPIRepository implements IKPIRepository {
       totalSpend: Number(result._sum.spend ?? 0),
       totalRevenue: Number(result._sum.revenue ?? 0),
     }
+  }
+
+  async getDailyAggregates(
+    campaignIds: string[],
+    startDate: Date,
+    endDate: Date
+  ): Promise<DailyKPIAggregate[]> {
+    if (campaignIds.length === 0) {
+      return []
+    }
+
+    const results = await this.prisma.kPISnapshot.groupBy({
+      by: ['date'],
+      where: {
+        campaignId: { in: campaignIds },
+        date: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+      _sum: {
+        impressions: true,
+        clicks: true,
+        conversions: true,
+        spend: true,
+        revenue: true,
+      },
+      orderBy: { date: 'asc' },
+    })
+
+    return results.map((r) => ({
+      date: r.date,
+      totalImpressions: r._sum.impressions ?? 0,
+      totalClicks: r._sum.clicks ?? 0,
+      totalConversions: r._sum.conversions ?? 0,
+      totalSpend: Number(r._sum.spend ?? 0),
+      totalRevenue: Number(r._sum.revenue ?? 0),
+    }))
+  }
+
+  async getCumulativeSpend(campaignId: string, date: Date): Promise<number> {
+    // 해당 날짜의 지출액 조회
+    const startOfDay = new Date(date)
+    startOfDay.setHours(0, 0, 0, 0)
+
+    const endOfDay = new Date(date)
+    endOfDay.setHours(23, 59, 59, 999)
+
+    const result = await this.prisma.kPISnapshot.aggregate({
+      where: {
+        campaignId,
+        date: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+      _sum: {
+        spend: true,
+      },
+    })
+
+    return Number(result._sum.spend ?? 0)
   }
 
   async delete(id: string): Promise<void> {

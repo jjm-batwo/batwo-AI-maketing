@@ -12,6 +12,7 @@ export const DI_TOKENS = {
   KPIRepository: Symbol.for('KPIRepository'),
   UserRepository: Symbol.for('UserRepository'),
   UsageLogRepository: Symbol.for('UsageLogRepository'),
+  BudgetAlertRepository: Symbol.for('BudgetAlertRepository'),
 
   // External Services
   MetaAdsService: Symbol.for('MetaAdsService'),
@@ -19,9 +20,13 @@ export const DI_TOKENS = {
 
   // Application Services
   QuotaService: Symbol.for('QuotaService'),
+  BudgetAlertService: Symbol.for('BudgetAlertService'),
 
   // Use Cases
   CreateCampaignUseCase: Symbol.for('CreateCampaignUseCase'),
+  UpdateCampaignUseCase: Symbol.for('UpdateCampaignUseCase'),
+  PauseCampaignUseCase: Symbol.for('PauseCampaignUseCase'),
+  ResumeCampaignUseCase: Symbol.for('ResumeCampaignUseCase'),
   GetCampaignUseCase: Symbol.for('GetCampaignUseCase'),
   ListCampaignsUseCase: Symbol.for('ListCampaignsUseCase'),
   GenerateWeeklyReportUseCase: Symbol.for('GenerateWeeklyReportUseCase'),

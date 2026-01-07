@@ -5,6 +5,7 @@ import {
   DashboardKPIDTO,
   KPIComparisonDTO,
   CampaignKPIBreakdownDTO,
+  ChartDataPointDTO,
   DateRangePreset,
 } from '@application/dto/kpi/DashboardKPIDTO'
 
@@ -69,7 +70,7 @@ export class GetDashboardKPIUseCase {
     }
 
     if (campaigns.length === 0) {
-      return this.createEmptyResult()
+      return this.createEmptyResult(dto.includeChartData)
     }
 
     // Aggregate KPIs across all campaigns
@@ -148,6 +149,28 @@ export class GetDashboardKPIUseCase {
     // Add breakdown if requested
     if (dto.includeBreakdown) {
       result.campaignBreakdown = breakdowns
+    }
+
+    // Add chart data if requested
+    if (dto.includeChartData) {
+      const campaignIds = campaigns.map((c) => c.id)
+      const dailyAggregates = await this.kpiRepository.getDailyAggregates(
+        campaignIds,
+        startDate,
+        endDate
+      )
+
+      result.chartData = dailyAggregates.map(
+        (agg): ChartDataPointDTO => ({
+          date: agg.date.toISOString().split('T')[0],
+          spend: agg.totalSpend,
+          revenue: agg.totalRevenue,
+          roas: agg.totalSpend > 0 ? agg.totalRevenue / agg.totalSpend : 0,
+          impressions: agg.totalImpressions,
+          clicks: agg.totalClicks,
+          conversions: agg.totalConversions,
+        })
+      )
     }
 
     return result
@@ -241,8 +264,8 @@ export class GetDashboardKPIUseCase {
     }
   }
 
-  private createEmptyResult(): DashboardKPIDTO {
-    return {
+  private createEmptyResult(includeChartData?: boolean): DashboardKPIDTO {
+    const result: DashboardKPIDTO = {
       totalImpressions: 0,
       totalClicks: 0,
       totalConversions: 0,
@@ -253,5 +276,11 @@ export class GetDashboardKPIUseCase {
       cpa: 0,
       cvr: 0,
     }
+
+    if (includeChartData) {
+      result.chartData = []
+    }
+
+    return result
   }
 }
