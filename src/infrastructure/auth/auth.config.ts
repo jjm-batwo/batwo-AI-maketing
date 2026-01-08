@@ -11,6 +11,7 @@ const credentialsSchema = z.object({
 })
 
 export const authConfig = {
+  trustHost: true, // Required for Vercel deployment
   pages: {
     signIn: '/login',
     signOut: '/login',
