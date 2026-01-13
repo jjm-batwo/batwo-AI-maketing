@@ -273,3 +273,49 @@ model UsageLog {
   @@index([userId, type, createdAt])
   @@index([createdAt])
 }
+
+// ========================================
+// Team Collaboration
+// ========================================
+
+enum TeamRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+model Team {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  ownerId     String
+  maxMembers  Int          @default(10)
+  members     TeamMember[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([ownerId])
+}
+
+model TeamMember {
+  id          String    @id @default(cuid())
+  teamId      String
+  team        Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  userId      String
+  email       String
+  name        String?
+  role        TeamRole  @default(MEMBER)
+  permissions String[]  @default([])
+  invitedBy   String?
+  invitedAt   DateTime  @default(now())
+  joinedAt    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([teamId, userId])
+  @@unique([teamId, email])
+  @@index([teamId])
+  @@index([userId])
+  @@index([email])
+}

@@ -14,6 +14,7 @@ export const DI_TOKENS = {
   UsageLogRepository: Symbol.for('UsageLogRepository'),
   BudgetAlertRepository: Symbol.for('BudgetAlertRepository'),
   ABTestRepository: Symbol.for('ABTestRepository'),
+  TeamRepository: Symbol.for('TeamRepository'),
 
   // External Services
   MetaAdsService: Symbol.for('MetaAdsService'),

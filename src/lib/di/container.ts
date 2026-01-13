@@ -15,6 +15,7 @@ import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
 import type { IUsageLogRepository } from '@domain/repositories/IUsageLogRepository'
 import type { IBudgetAlertRepository } from '@domain/repositories/IBudgetAlertRepository'
 import type { IABTestRepository } from '@domain/repositories/IABTestRepository'
+import type { ITeamRepository } from '@domain/repositories/ITeamRepository'
 
 // Port interfaces
 import type { IMetaAdsService } from '@application/ports/IMetaAdsService'
@@ -27,6 +28,7 @@ import { PrismaKPIRepository } from '@infrastructure/database/repositories/Prism
 import { PrismaUsageLogRepository } from '@infrastructure/database/repositories/PrismaUsageLogRepository'
 import { PrismaBudgetAlertRepository } from '@infrastructure/database/repositories/PrismaBudgetAlertRepository'
 import { PrismaABTestRepository } from '@infrastructure/database/repositories/PrismaABTestRepository'
+import { PrismaTeamRepository } from '@infrastructure/database/repositories/PrismaTeamRepository'
 import { MetaAdsClient } from '@infrastructure/external/meta-ads/MetaAdsClient'
 import { AIService } from '@infrastructure/external/openai/AIService'
 
@@ -114,6 +116,11 @@ container.registerSingleton<IBudgetAlertRepository>(
 container.registerSingleton<IABTestRepository>(
   DI_TOKENS.ABTestRepository,
   () => new PrismaABTestRepository(prisma)
+)
+
+container.registerSingleton<ITeamRepository>(
+  DI_TOKENS.TeamRepository,
+  () => new PrismaTeamRepository(prisma)
 )
 
 // Register External Services (Singletons)
@@ -310,4 +317,8 @@ export function getEmailService(): IEmailService {
 
 export function getABTestRepository(): IABTestRepository {
   return container.resolve(DI_TOKENS.ABTestRepository)
+}
+
+export function getTeamRepository(): ITeamRepository {
+  return container.resolve(DI_TOKENS.TeamRepository)
 }
