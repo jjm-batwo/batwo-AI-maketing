@@ -15,3 +15,13 @@ export interface QuotaLimitConfig {
 }
 
 export type QuotaLimits = Record<UsageType, QuotaLimitConfig>
+
+export interface TrialStatusDTO {
+  isInTrial: boolean
+  daysRemaining: number
+}
+
+export interface FullQuotaStatusDTO {
+  quotas: QuotaStatusDTO
+  trial: TrialStatusDTO
+}

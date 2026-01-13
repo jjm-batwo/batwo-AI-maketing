@@ -2,7 +2,10 @@ import {
   IUsageLogRepository,
   UsageType,
 } from '@domain/repositories/IUsageLogRepository'
-import { QuotaStatusDTO, QuotaLimits } from '@application/dto/quota/QuotaStatusDTO'
+import { IUserRepository } from '@domain/repositories/IUserRepository'
+import { QuotaStatusDTO, QuotaLimits, FullQuotaStatusDTO } from '@application/dto/quota/QuotaStatusDTO'
+
+const TRIAL_DAYS = 14
 
 export class QuotaExceededError extends Error {
   constructor(
@@ -24,9 +27,41 @@ const QUOTA_LIMITS: QuotaLimits = {
 }
 
 export class QuotaService {
-  constructor(private readonly usageLogRepository: IUsageLogRepository) {}
+  constructor(
+    private readonly usageLogRepository: IUsageLogRepository,
+    private readonly userRepository?: IUserRepository
+  ) {}
+
+  async isInTrialPeriod(userId: string): Promise<boolean> {
+    if (!this.userRepository) return false
+
+    const user = await this.userRepository.findById(userId)
+    if (!user) return false
+
+    const daysSinceRegistration = Math.floor(
+      (Date.now() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24)
+    )
+    return daysSinceRegistration < TRIAL_DAYS
+  }
+
+  async getTrialDaysRemaining(userId: string): Promise<number> {
+    if (!this.userRepository) return 0
+
+    const user = await this.userRepository.findById(userId)
+    if (!user) return 0
+
+    const daysSinceRegistration = Math.floor(
+      (Date.now() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24)
+    )
+    return Math.max(0, TRIAL_DAYS - daysSinceRegistration)
+  }
 
   async checkQuota(userId: string, type: UsageType): Promise<boolean> {
+    // 체험 기간 중에는 항상 true 반환
+    if (await this.isInTrialPeriod(userId)) {
+      return true
+    }
+
     const limit = QUOTA_LIMITS[type]
     const count = await this.usageLogRepository.countByPeriod(
       userId,
@@ -63,7 +98,28 @@ export class QuotaService {
     return result
   }
 
+  async getFullQuotaStatus(userId: string): Promise<FullQuotaStatusDTO> {
+    const [quotas, isInTrial, daysRemaining] = await Promise.all([
+      this.getRemainingQuota(userId),
+      this.isInTrialPeriod(userId),
+      this.getTrialDaysRemaining(userId),
+    ])
+
+    return {
+      quotas,
+      trial: {
+        isInTrial,
+        daysRemaining,
+      },
+    }
+  }
+
   async enforceQuota(userId: string, type: UsageType): Promise<void> {
+    // 체험 기간 중에는 제한 없음
+    if (await this.isInTrialPeriod(userId)) {
+      return
+    }
+
     const hasQuota = await this.checkQuota(userId, type)
     if (!hasQuota) {
       const limit = QUOTA_LIMITS[type]

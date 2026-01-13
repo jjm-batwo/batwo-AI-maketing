@@ -8,6 +8,9 @@ interface QuotaStatusBadgeProps {
   label: string
   period?: string
   className?: string
+  // 체험 기간 관련 props
+  isInTrial?: boolean
+  trialDaysRemaining?: number
 }
 
 export function QuotaStatusBadge({
@@ -16,7 +19,41 @@ export function QuotaStatusBadge({
   label,
   period,
   className,
+  isInTrial = false,
+  trialDaysRemaining = 0,
 }: QuotaStatusBadgeProps) {
+  // 체험 기간 중이면 체험 기간 배지 표시
+  if (isInTrial && trialDaysRemaining > 0) {
+    return (
+      <span
+        data-testid="quota-badge"
+        className={cn(
+          'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium',
+          'bg-blue-100 text-blue-700 border-blue-200',
+          className
+        )}
+      >
+        체험 기간: {trialDaysRemaining}일 남음
+      </span>
+    )
+  }
+
+  // 체험 기간 종료된 경우
+  if (isInTrial === false && trialDaysRemaining === 0 && used === 0 && limit === 0) {
+    return (
+      <span
+        data-testid="quota-badge"
+        className={cn(
+          'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium',
+          'bg-gray-100 text-gray-700 border-gray-200',
+          className
+        )}
+      >
+        체험 기간 종료
+      </span>
+    )
+  }
+
   const remaining = limit - used
   const percentage = (used / limit) * 100
 
