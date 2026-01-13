@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation'
+import { auth } from '@/infrastructure/auth'
 import {
   LandingHeader,
   HeroSection,
@@ -12,7 +14,15 @@ import {
   LandingFooter,
 } from '@/presentation/components/landing'
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  // 서버 컴포넌트에서 세션 확인
+  const session = await auth()
+
+  // 로그인한 사용자는 캠페인 페이지로 리다이렉트
+  if (session?.user) {
+    redirect('/campaigns')
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <LandingHeader />
