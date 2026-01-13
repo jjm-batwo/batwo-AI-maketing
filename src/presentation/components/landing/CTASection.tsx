@@ -23,7 +23,7 @@ export function CTASection() {
               asChild
             >
               <Link href="/register">
-                무료로 시작하기
+                14일 무료 체험 시작하기
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
@@ -35,6 +35,18 @@ export function CTASection() {
             >
               <Link href="/login">로그인</Link>
             </Button>
+          </div>
+
+          {/* Trust Indicators */}
+          <div
+            className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-primary-foreground/70"
+            data-testid="cta-trust-indicators"
+          >
+            <span>신용카드 불필요</span>
+            <span className="hidden sm:inline">•</span>
+            <span>5분 설정</span>
+            <span className="hidden sm:inline">•</span>
+            <span>언제든 취소</span>
           </div>
         </div>
       </div>

@@ -8,11 +8,11 @@ interface StatCardProps {
 
 function StatCard({ icon, value, label }: StatCardProps) {
   return (
-    <div className="flex flex-col items-center p-6 bg-card rounded-lg border">
-      <div className="p-3 mb-4 bg-primary/10 rounded-full text-primary">
+    <div className="group flex flex-col items-center p-6 bg-card rounded-lg border transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-primary/30 cursor-default">
+      <div className="p-3 mb-4 bg-primary/10 rounded-full text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110">
         {icon}
       </div>
-      <span className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+      <span className="text-3xl md:text-4xl font-bold text-foreground mb-2 transition-colors duration-300 group-hover:text-primary">
         {value}
       </span>
       <span className="text-sm text-muted-foreground text-center">{label}</span>
@@ -89,9 +89,9 @@ export function SocialProofSection() {
           {trustBadges.map((badge, index) => (
             <div
               key={index}
-              className="flex items-center gap-2 text-muted-foreground"
+              className="group flex items-center gap-2 text-muted-foreground transition-all duration-300 hover:text-primary cursor-default"
             >
-              <div className="p-2 bg-background rounded-full border">
+              <div className="p-2 bg-background rounded-full border transition-all duration-300 group-hover:bg-primary/10 group-hover:border-primary/30 group-hover:scale-110">
                 {badge.icon}
               </div>
               <span className="text-sm font-medium">{badge.label}</span>

@@ -46,12 +46,17 @@ export function FeaturesSection() {
         {/* Features Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => (
-            <Card key={feature.title} className="border-0 shadow-sm">
+            <Card
+              key={feature.title}
+              className="group border-0 shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-primary/30 cursor-default"
+            >
               <CardHeader>
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                  <feature.icon className="h-6 w-6 text-primary" />
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110">
+                  <feature.icon className="h-6 w-6 text-primary transition-transform duration-300 group-hover:scale-110" />
                 </div>
-                <CardTitle className="text-lg">{feature.title}</CardTitle>
+                <CardTitle className="text-lg transition-colors duration-300 group-hover:text-primary">
+                  {feature.title}
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground text-sm">

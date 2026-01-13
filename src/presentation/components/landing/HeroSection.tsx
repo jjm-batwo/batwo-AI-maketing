@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, Sparkles, BarChart3, TrendingUp, DollarSign } from 'lucide-react'
+import { ArrowRight, Sparkles, BarChart3, TrendingUp, DollarSign, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useIntersectionObserver } from '@/presentation/hooks'
 
@@ -116,7 +116,7 @@ export function HeroSection() {
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
               <Button size="lg" asChild>
                 <Link href="/register" className="gap-2">
-                  무료로 시작하기
+                  14일 무료 체험 시작하기
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -125,10 +125,40 @@ export function HeroSection() {
               </Button>
             </div>
 
+            {/* Social Proof Badge */}
+            <div className="mt-6 flex items-center justify-center lg:justify-start gap-3">
+              <div
+                className="flex -space-x-2"
+                aria-hidden="true"
+                data-testid="social-proof-avatars"
+              >
+                <div className="w-8 h-8 rounded-full bg-primary/20 border-2 border-background" />
+                <div className="w-8 h-8 rounded-full bg-primary/30 border-2 border-background" />
+                <div className="w-8 h-8 rounded-full bg-primary/40 border-2 border-background" />
+              </div>
+              <span className="text-sm font-medium text-muted-foreground">
+                1,000+ 마케터가 사용 중
+              </span>
+            </div>
+
             {/* Trust Indicators */}
-            <p className="mt-8 text-sm text-muted-foreground">
-              신용카드 없이 시작 &middot; 설정 5분 &middot; 언제든 취소 가능
-            </p>
+            <div
+              className="mt-4 flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-2 text-sm text-muted-foreground"
+              data-testid="trust-indicators"
+            >
+              <span className="flex items-center gap-1.5">
+                <Check className="h-4 w-4 text-green-500" />
+                신용카드 불필요
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Check className="h-4 w-4 text-green-500" />
+                5분 설정
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Check className="h-4 w-4 text-green-500" />
+                언제든 취소
+              </span>
+            </div>
           </div>
 
           {/* Dashboard Preview - Right */}

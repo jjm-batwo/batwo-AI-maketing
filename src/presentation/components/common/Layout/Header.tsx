@@ -1,7 +1,15 @@
 'use client'
 
-import { Bell, User, Menu } from 'lucide-react'
+import { Bell, User, Menu, LogOut } from 'lucide-react'
+import { signOut, useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { QuotaStatusBadge } from '@/presentation/components/quota/QuotaStatusBadge'
 import { useUIStore } from '@presentation/stores/uiStore'
 
@@ -15,6 +23,11 @@ interface HeaderProps {
 
 export function Header({ quotaStatus }: HeaderProps) {
   const { toggleMobileMenu } = useUIStore()
+  const { data: session } = useSession()
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: '/' })
+  }
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-white px-4 md:px-6">
@@ -52,9 +65,27 @@ export function Header({ quotaStatus }: HeaderProps) {
           <Bell className="h-5 w-5" />
           <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500" />
         </Button>
-        <Button variant="ghost" size="icon">
-          <User className="h-5 w-5" />
-        </Button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" aria-label="사용자 메뉴">
+              <User className="h-5 w-5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <div className="px-2 py-1.5">
+              <p className="text-sm font-medium">{session?.user?.name || '사용자'}</p>
+              {session?.user?.email && (
+                <p className="text-xs text-muted-foreground">{session.user.email}</p>
+              )}
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer">
+              <LogOut className="mr-2 h-4 w-4" />
+              로그아웃
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   )

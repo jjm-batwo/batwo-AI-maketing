@@ -39,24 +39,24 @@ export function HowItWorksSection() {
         <div className="max-w-4xl mx-auto">
           <div className="grid gap-8 md:grid-cols-3">
             {steps.map((step, index) => (
-              <div key={step.step} className="relative text-center">
+              <div key={step.step} className="group relative text-center cursor-default">
                 {/* Connector Line (hidden on mobile, shown on desktop) */}
                 {index < steps.length - 1 && (
                   <div className="hidden md:block absolute top-8 left-[60%] w-[80%] h-0.5 bg-border" />
                 )}
 
                 {/* Step Number */}
-                <div className="relative z-10 w-16 h-16 mx-auto rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-4">
-                  <step.icon className="h-7 w-7" />
+                <div className="relative z-10 w-16 h-16 mx-auto rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/30">
+                  <step.icon className="h-7 w-7 transition-transform duration-300 group-hover:scale-110" />
                 </div>
 
                 {/* Step Badge */}
-                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-muted text-xs font-bold mb-3">
+                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-muted text-xs font-bold mb-3 transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
                   {step.step}
                 </div>
 
                 {/* Content */}
-                <h3 className="text-lg font-semibold mb-2">{step.title}</h3>
+                <h3 className="text-lg font-semibold mb-2 transition-colors duration-300 group-hover:text-primary">{step.title}</h3>
                 <p className="text-sm text-muted-foreground">
                   {step.description}
                 </p>

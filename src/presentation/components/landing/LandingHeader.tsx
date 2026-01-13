@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { useSession } from 'next-auth/react'
 import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -13,6 +14,8 @@ const navLinks = [
 
 export function LandingHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { data: session, status } = useSession()
+  const isLoggedIn = !!session?.user
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b">
@@ -41,12 +44,25 @@ export function LandingHeader() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" asChild>
-              <Link href="/login">로그인</Link>
-            </Button>
-            <Button asChild>
-              <Link href="/register">무료로 시작하기</Link>
-            </Button>
+            {isLoggedIn ? (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link href="/campaigns">대시보드</Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link href="/api/auth/signout">로그아웃</Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link href="/login">로그인</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/register">무료로 시작하기</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -74,12 +90,25 @@ export function LandingHeader() {
                 </a>
               ))}
               <div className="flex flex-col gap-2 pt-4 border-t">
-                <Button variant="outline" asChild>
-                  <Link href="/login">로그인</Link>
-                </Button>
-                <Button asChild>
-                  <Link href="/register">무료로 시작하기</Link>
-                </Button>
+                {isLoggedIn ? (
+                  <>
+                    <Button variant="outline" asChild>
+                      <Link href="/campaigns">대시보드</Link>
+                    </Button>
+                    <Button variant="ghost" asChild>
+                      <Link href="/api/auth/signout">로그아웃</Link>
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="outline" asChild>
+                      <Link href="/login">로그인</Link>
+                    </Button>
+                    <Button asChild>
+                      <Link href="/register">무료로 시작하기</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>
