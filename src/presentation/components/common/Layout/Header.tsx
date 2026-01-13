@@ -1,6 +1,6 @@
 'use client'
 
-import { Bell, User, Menu, LogOut } from 'lucide-react'
+import { User, Menu, LogOut } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { QuotaStatusBadge } from '@/presentation/components/quota/QuotaStatusBadge'
+import { NotificationCenter } from '@/presentation/components/alerts/NotificationCenter'
 import { useUIStore } from '@presentation/stores/uiStore'
 
 interface HeaderProps {
@@ -61,10 +62,7 @@ export function Header({ quotaStatus }: HeaderProps) {
       </div>
 
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
-          <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500" />
-        </Button>
+        <NotificationCenter />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
