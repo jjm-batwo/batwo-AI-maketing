@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useCampaign, useCampaignKPI, useUpdateCampaign } from '@/presentation/hooks'
 import { KPICard } from '@/presentation/components/dashboard/KPICard'
 import { KPIChart } from '@/presentation/components/dashboard/KPIChart'
+import { ABTestList } from '@/presentation/components/ab-test'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -405,6 +406,9 @@ export default function CampaignDetailPage() {
           </dl>
         </CardContent>
       </Card>
+
+      {/* A/B Tests */}
+      <ABTestList campaignId={campaignId} />
     </div>
   )
 }

@@ -14,6 +14,7 @@ import type { IReportRepository } from '@domain/repositories/IReportRepository'
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
 import type { IUsageLogRepository } from '@domain/repositories/IUsageLogRepository'
 import type { IBudgetAlertRepository } from '@domain/repositories/IBudgetAlertRepository'
+import type { IABTestRepository } from '@domain/repositories/IABTestRepository'
 
 // Port interfaces
 import type { IMetaAdsService } from '@application/ports/IMetaAdsService'
@@ -25,6 +26,7 @@ import { PrismaReportRepository } from '@infrastructure/database/repositories/Pr
 import { PrismaKPIRepository } from '@infrastructure/database/repositories/PrismaKPIRepository'
 import { PrismaUsageLogRepository } from '@infrastructure/database/repositories/PrismaUsageLogRepository'
 import { PrismaBudgetAlertRepository } from '@infrastructure/database/repositories/PrismaBudgetAlertRepository'
+import { PrismaABTestRepository } from '@infrastructure/database/repositories/PrismaABTestRepository'
 import { MetaAdsClient } from '@infrastructure/external/meta-ads/MetaAdsClient'
 import { AIService } from '@infrastructure/external/openai/AIService'
 
@@ -107,6 +109,11 @@ container.registerSingleton<IUsageLogRepository>(
 container.registerSingleton<IBudgetAlertRepository>(
   DI_TOKENS.BudgetAlertRepository,
   () => new PrismaBudgetAlertRepository(prisma)
+)
+
+container.registerSingleton<IABTestRepository>(
+  DI_TOKENS.ABTestRepository,
+  () => new PrismaABTestRepository(prisma)
 )
 
 // Register External Services (Singletons)
@@ -299,4 +306,8 @@ export function getReportPDFGenerator(): IReportPDFGenerator {
 
 export function getEmailService(): IEmailService {
   return container.resolve(DI_TOKENS.EmailService)
+}
+
+export function getABTestRepository(): IABTestRepository {
+  return container.resolve(DI_TOKENS.ABTestRepository)
 }

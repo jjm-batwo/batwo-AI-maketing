@@ -151,6 +151,55 @@ model BudgetAlert {
 }
 
 // ========================================
+// A/B Testing
+// ========================================
+
+enum ABTestStatus {
+  DRAFT
+  RUNNING
+  PAUSED
+  COMPLETED
+}
+
+model ABTest {
+  id               String         @id @default(cuid())
+  campaignId       String
+  name             String
+  description      String?
+  status           ABTestStatus   @default(DRAFT)
+  variants         ABTestVariant[]
+  startDate        DateTime
+  endDate          DateTime?
+  confidenceLevel  Int            @default(95) // 신뢰수준 (%)
+  minimumSampleSize Int           @default(1000)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@index([campaignId])
+  @@index([status])
+}
+
+model ABTestVariant {
+  id             String   @id @default(cuid())
+  abTestId       String
+  abTest         ABTest   @relation(fields: [abTestId], references: [id], onDelete: Cascade)
+  name           String
+  description    String?
+  trafficPercent Int      @default(50) // 트래픽 비율 (%)
+  impressions    Int      @default(0)
+  clicks         Int      @default(0)
+  conversions    Int      @default(0)
+  spend          Decimal  @db.Decimal(15, 2) @default(0)
+  currency       String   @default("KRW")
+  revenue        Decimal  @db.Decimal(15, 2) @default(0)
+  isControl      Boolean  @default(false) // 컨트롤 그룹 여부
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([abTestId])
+}
+
+// ========================================
 // KPI Tracking
 // ========================================
 

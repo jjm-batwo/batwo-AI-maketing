@@ -13,6 +13,7 @@ export const DI_TOKENS = {
   UserRepository: Symbol.for('UserRepository'),
   UsageLogRepository: Symbol.for('UsageLogRepository'),
   BudgetAlertRepository: Symbol.for('BudgetAlertRepository'),
+  ABTestRepository: Symbol.for('ABTestRepository'),
 
   // External Services
   MetaAdsService: Symbol.for('MetaAdsService'),
