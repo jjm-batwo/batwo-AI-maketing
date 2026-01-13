@@ -1,5 +1,6 @@
 export * from './useCampaigns'
 export * from './useCampaignMutations'
+export * from './useCampaignKPI'
 export * from './useDashboardKPI'
 export * from './useReports'
 export * from './useQuota'
