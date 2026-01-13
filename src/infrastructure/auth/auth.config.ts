@@ -1,3 +1,4 @@
+import NextAuth from 'next-auth'
 import type { NextAuthConfig } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import Google from 'next-auth/providers/google'
@@ -19,6 +20,16 @@ export const authConfig = {
     newUser: '/',
   },
   callbacks: {
+    async signIn({ user, account, profile }) {
+      console.log('[AUTH] signIn callback:', {
+        userEmail: user?.email,
+        userId: user?.id,
+        provider: account?.provider,
+        profileEmail: profile?.email,
+      })
+      // Allow all sign-ins by default
+      return true
+    },
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user
       const isLandingPage = nextUrl.pathname === '/'
@@ -28,6 +39,15 @@ export const authConfig = {
         nextUrl.pathname.startsWith('/settings')
       const isOnAuth = nextUrl.pathname.startsWith('/login') ||
         nextUrl.pathname.startsWith('/register')
+
+      console.log('[AUTH] authorized callback:', {
+        pathname: nextUrl.pathname,
+        isLoggedIn,
+        isLandingPage,
+        isOnDashboard,
+        isOnAuth,
+        authUser: auth?.user?.email,
+      })
 
       // 랜딩 페이지는 누구나 접근 가능
       if (isLandingPage) {
@@ -46,26 +66,32 @@ export const authConfig = {
       return true
     },
     jwt({ token, user, account }) {
+      console.log('[AUTH] jwt callback:', {
+        hasUser: !!user,
+        userEmail: user?.email,
+        hasAccount: !!account,
+        provider: account?.provider,
+        tokenId: token?.id,
+      })
       if (user) {
         token.id = user.id
       }
       if (account) {
         token.provider = account.provider
-        // Meta(Facebook) 로그인 시 access_token 저장 (Ads API 호출용)
-        if (account.provider === 'facebook' && account.access_token) {
-          token.metaAccessToken = account.access_token
-        }
+        // Note: Meta Ads API 토큰은 /settings/meta-connect에서 별도 OAuth로 획득
+        // 여기서는 로그인용 기본 권한(email, public_profile)만 처리
       }
       return token
     },
     session({ session, token }) {
+      console.log('[AUTH] session callback:', {
+        hasToken: !!token,
+        tokenId: token?.id,
+        sessionUser: session?.user?.email,
+      })
       if (token && session.user) {
         session.user.id = token.id as string
         session.user.provider = token.provider as string | undefined
-        // Meta access token을 세션에 포함 (API 호출용)
-        if (token.metaAccessToken) {
-          session.user.metaAccessToken = token.metaAccessToken as string
-        }
       }
       return session
     },
@@ -102,3 +128,9 @@ export const authConfig = {
     }),
   ],
 } satisfies NextAuthConfig
+
+// Edge-compatible NextAuth instance for middleware (no adapter, no bcrypt)
+const { auth, handlers } = NextAuth(authConfig)
+
+// Export auth wrapper for middleware use
+export { auth as authMiddleware }
