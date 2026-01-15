@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { MetaAdsWarmupClient } from '@infrastructure/external/meta-ads/MetaAdsWarmupClient'
+import { MetaAdsWarmupClient, WarmupSummary } from '@infrastructure/external/meta-ads/MetaAdsWarmupClient'
 
 interface AccountResult {
   accountId: string
@@ -10,6 +9,92 @@ interface AccountResult {
   failedCalls: number
   durationMs: number
   tokenValid: boolean
+}
+
+interface AccountInfo {
+  accessToken: string
+  metaAccountId: string
+  businessName: string | null
+}
+
+// DB에서 계정 목록 조회 시도
+async function tryGetAccountsFromDB(targetAccountId: string | undefined): Promise<{
+  accounts: AccountInfo[]
+  fromDb: boolean
+  error?: string
+}> {
+  try {
+    const { prisma } = await import('@/lib/prisma')
+    const accounts = await prisma.metaAdAccount.findMany({
+      where: {
+        OR: [
+          { tokenExpiry: null },
+          { tokenExpiry: { gt: new Date() } },
+        ],
+        ...(targetAccountId && { metaAccountId: targetAccountId }),
+      },
+    })
+    return {
+      accounts: accounts.map(a => ({
+        accessToken: a.accessToken,
+        metaAccountId: a.metaAccountId,
+        businessName: a.businessName,
+      })),
+      fromDb: true,
+    }
+  } catch (error) {
+    console.warn('[Meta Warmup] DB access failed, falling back to env vars:', error instanceof Error ? error.message : 'Unknown')
+    return {
+      accounts: [],
+      fromDb: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }
+  }
+}
+
+// DB에 로그 저장 시도
+async function tryLogToDatabase(summary: WarmupSummary, accountId: string): Promise<boolean> {
+  try {
+    const { prisma } = await import('@/lib/prisma')
+    const { MetaApiLogRepository } = await import('@infrastructure/external/meta-ads/MetaApiLogRepository')
+    const logRepository = new MetaApiLogRepository(prisma)
+
+    for (const result of summary.results) {
+      await logRepository.log({
+        endpoint: result.endpoint,
+        method: 'GET',
+        statusCode: result.success ? 200 : 400,
+        success: result.success,
+        errorCode: result.errorCode?.toString(),
+        errorMsg: result.errorMessage,
+        latencyMs: result.latencyMs,
+        accountId: accountId,
+      })
+    }
+    return true
+  } catch (error) {
+    console.warn('[Meta Warmup] DB logging failed:', error instanceof Error ? error.message : 'Unknown')
+    return false
+  }
+}
+
+// 앱 검수 상태 조회 시도
+async function tryGetReviewStatus(): Promise<{
+  passed: boolean
+  totalCalls: number
+  errorRate: number
+  requiredCalls: number
+  maxErrorRate: number
+  message: string
+} | null> {
+  try {
+    const { prisma } = await import('@/lib/prisma')
+    const { MetaApiLogRepository } = await import('@infrastructure/external/meta-ads/MetaApiLogRepository')
+    const logRepository = new MetaApiLogRepository(prisma)
+    return await logRepository.checkAppReviewStatus()
+  } catch {
+    return null
+  }
 }
 
 /**
@@ -45,17 +130,25 @@ export async function GET(request: NextRequest) {
     // 특정 계정만 웜업 (환경 변수로 제한)
     const targetAccountId = process.env.WARMUP_ACCOUNT_ID
 
-    // Get MetaAdAccounts with valid tokens
-    const accounts = await prisma.metaAdAccount.findMany({
-      where: {
-        OR: [
-          { tokenExpiry: null },
-          { tokenExpiry: { gt: new Date() } },
-        ],
-        // 특정 계정만 필터링
-        ...(targetAccountId && { metaAccountId: targetAccountId }),
-      },
-    })
+    // DB에서 계정 조회 시도, 실패시 환경 변수 사용
+    const dbResult = await tryGetAccountsFromDB(targetAccountId)
+
+    let accounts: AccountInfo[] = dbResult.accounts
+
+    // DB 실패 시 환경 변수 폴백
+    if (!dbResult.fromDb || accounts.length === 0) {
+      const envToken = process.env.META_ACCESS_TOKEN
+      const envAccountId = process.env.META_AD_ACCOUNT_ID
+
+      if (envToken && envAccountId) {
+        console.log('[Meta Warmup] Using env vars fallback (DB unavailable or empty)')
+        accounts = [{
+          accessToken: envToken,
+          metaAccountId: envAccountId,
+          businessName: 'Env Config',
+        }]
+      }
+    }
 
     if (targetAccountId) {
       console.log(`[Meta Warmup] Targeting specific account: ${targetAccountId}`)
@@ -69,6 +162,8 @@ export async function GET(request: NextRequest) {
         totalApiCalls: 0,
         successfulCalls: 0,
         failedCalls: 0,
+        dbStatus: dbResult.fromDb ? 'connected' : 'fallback',
+        dbError: dbResult.error,
         durationMs: Date.now() - startTime,
         executedAt: new Date().toISOString(),
       })
@@ -84,11 +179,14 @@ export async function GET(request: NextRequest) {
           account.accessToken,
           account.metaAccountId,
           {
-            maxCampaigns: 5,
-            maxAdSets: 3,
-            maxAds: 3,
+            maxCampaigns: 10,  // 일 1회 실행으로 변경되어 호출 수 증가
+            maxAdSets: 5,
+            maxAds: 5,
           }
         )
+
+        // DB 로깅 시도 (실패해도 웜업은 성공)
+        const logged = await tryLogToDatabase(summary, account.metaAccountId)
 
         accountResults.push({
           accountId: account.metaAccountId,
@@ -101,7 +199,7 @@ export async function GET(request: NextRequest) {
         })
 
         console.log(
-          `[Meta Warmup] Account ${account.metaAccountId}: ${summary.successfulCalls}/${summary.totalCalls} successful`
+          `[Meta Warmup] Account ${account.metaAccountId}: ${summary.successfulCalls}/${summary.totalCalls} successful${logged ? ' (logged to DB)' : ' (DB logging skipped)'}`
         )
       } catch (error) {
         console.error(
@@ -130,6 +228,12 @@ export async function GET(request: NextRequest) {
       `[Meta Warmup] Summary: ${accountResults.length} accounts, ${successfulCalls}/${totalApiCalls} successful calls`
     )
 
+    // 검수 상태 확인 시도
+    const reviewStatus = await tryGetReviewStatus()
+    if (reviewStatus) {
+      console.log(`[Meta Warmup] App Review Status: ${reviewStatus.message}`)
+    }
+
     return NextResponse.json({
       success: true,
       accountsProcessed: accountResults.length,
@@ -143,6 +247,8 @@ export async function GET(request: NextRequest) {
         success: r.successfulCalls,
         tokenValid: r.tokenValid,
       })),
+      appReviewStatus: reviewStatus,
+      dbStatus: dbResult.fromDb ? 'connected' : 'fallback',
       durationMs: Date.now() - startTime,
       executedAt: new Date().toISOString(),
     })

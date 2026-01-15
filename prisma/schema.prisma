@@ -319,3 +319,25 @@ model TeamMember {
   @@index([userId])
   @@index([email])
 }
+
+// ========================================
+// Meta API Call Logging (App Review 대응)
+// ========================================
+
+model MetaApiLog {
+  id         String   @id @default(cuid())
+  endpoint   String   // e.g., "campaigns", "insights", "adaccount"
+  method     String   // GET, POST, DELETE
+  statusCode Int      // HTTP status code
+  success    Boolean  // API 호출 성공 여부
+  errorCode  String?  // Meta API 에러 코드 (실패 시)
+  errorMsg   String?  // 에러 메시지 (실패 시)
+  latencyMs  Int      // 응답 시간 (ms)
+  accountId  String?  // Meta 광고 계정 ID (batowcompany)
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([success])
+  @@index([accountId])
+  @@index([createdAt, success]) // 15일 통계 조회용 복합 인덱스
+}
