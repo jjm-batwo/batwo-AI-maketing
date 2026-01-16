@@ -59,7 +59,7 @@
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted-foreground: oklch(0.45 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
@@ -117,34 +117,58 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
+  
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Visible focus indicators for accessibility */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+  }
+  
+  /* Skip to content link */
+  .skip-to-content {
+    @apply sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md;
+  }
+  
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
-/* Landing Page Animations */
-@layer utilities {
-  .animate-fade-in {
-    animation: fadeIn 0.6s ease-out forwards;
-  }
+/* Landing Page Animations - Tailwind v4 utilities */
+@utility animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
 
-  .animate-slide-up {
-    animation: slideUp 0.6s ease-out forwards;
-  }
+@utility animate-slide-up {
+  animation: slideUp 0.6s ease-out forwards;
+}
 
-  .animate-slide-in-left {
-    animation: slideInLeft 0.6s ease-out forwards;
-  }
+@utility animate-slide-in-left {
+  animation: slideInLeft 0.6s ease-out forwards;
+}
 
-  .animate-slide-in-right {
-    animation: slideInRight 0.6s ease-out forwards;
-  }
+@utility animate-slide-in-right {
+  animation: slideInRight 0.6s ease-out forwards;
+}
 
-  .opacity-0-initial {
-    opacity: 0;
-  }
+@utility opacity-0-initial {
+  opacity: 0;
+}
+
+@utility scroll-smooth {
+  scroll-behavior: smooth;
 }
 
 @keyframes fadeIn {

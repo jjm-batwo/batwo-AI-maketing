@@ -23,7 +23,7 @@ interface OnboardingState {
 
 export const useOnboardingStore = create<OnboardingState>((set, get) => ({
   currentStep: 1,
-  totalSteps: 3,
+  totalSteps: 4,  // 1: Welcome, 2: Meta 연결, 3: 픽셀 설치, 4: Completion
   isCompleted: false,
 
   nextStep: () => {

@@ -5,16 +5,16 @@ import { ArrowRight, Sparkles, BarChart3, TrendingUp, DollarSign, Check } from '
 import { Button } from '@/components/ui/button'
 import { useIntersectionObserver } from '@/presentation/hooks'
 
-// Mini Dashboard Preview Component
+// Mini Dashboard Preview Component with animations
 function DashboardPreview() {
   return (
-    <div className="relative bg-card border rounded-xl shadow-2xl p-4 md:p-6">
+    <div className="relative bg-card border rounded-xl shadow-2xl p-4 md:p-6 transition-all duration-500 hover:shadow-3xl hover:scale-[1.02]">
       {/* Browser Chrome */}
       <div className="flex items-center gap-2 mb-4 pb-4 border-b">
-        <div className="flex gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-red-400" />
-          <div className="w-3 h-3 rounded-full bg-yellow-400" />
-          <div className="w-3 h-3 rounded-full bg-green-400" />
+        <div className="flex gap-1.5" role="presentation" aria-label="Browser window controls">
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ff5f56' }} />
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ffbd2e' }} />
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#27c93f' }} />
         </div>
         <div className="flex-1 mx-4">
           <div className="bg-muted rounded-full px-3 py-1 text-xs text-muted-foreground text-center">
@@ -55,20 +55,20 @@ function DashboardPreview() {
       </div>
 
       {/* Mini Chart */}
-      <div className="h-20 bg-gradient-to-r from-primary/5 via-primary/15 to-primary/5 rounded-lg flex items-end justify-around p-2">
+      <div className="h-20 bg-gradient-to-r from-primary/5 via-primary/15 to-primary/5 rounded-lg flex items-end justify-around p-2" role="img" aria-label="Performance chart showing daily metrics">
         {[35, 55, 40, 70, 50, 85, 60].map((height, i) => (
           <div
             key={i}
-            className="w-4 bg-primary/50 rounded-t transition-all hover:bg-primary"
+            className="w-4 bg-primary/50 rounded-t transition-all duration-300 hover:bg-primary hover:scale-105"
             style={{ height: `${height}%` }}
           />
         ))}
       </div>
 
       {/* AI Insight Badge */}
-      <div className="mt-4 p-3 bg-green-50 dark:bg-green-950/30 rounded-lg border border-green-200 dark:border-green-900">
+      <div className="mt-4 p-3 bg-green-50 dark:bg-green-950/30 rounded-lg border border-green-200 dark:border-green-900" role="status" aria-live="polite">
         <div className="flex items-start gap-2">
-          <Sparkles className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+          <Sparkles className="h-4 w-4 text-green-600 dark:text-green-400 mt-0.5 shrink-0" aria-hidden="true" />
           <p className="text-xs text-green-700 dark:text-green-300">
             AI 분석: 25-34세 여성 타겟 전환율이 42% 높습니다. 예산 재배분을 권장합니다.
           </p>
@@ -94,8 +94,8 @@ export function HeroSection() {
             }`}
           >
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 text-sm font-medium bg-primary/10 text-primary rounded-full">
-              <Sparkles className="h-4 w-4" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 text-sm font-medium bg-primary/10 text-primary rounded-full" role="status">
+              <Sparkles className="h-4 w-4" aria-hidden="true" />
               <span>AI 기반 마케팅 자동화</span>
             </div>
 
@@ -114,19 +114,19 @@ export function HeroSection() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-              <Button size="lg" asChild>
-                <Link href="/register" className="gap-2">
+              <Button size="lg" asChild className="min-h-[44px]">
+                <Link href="/register" className="gap-2" aria-label="14일 무료 체험 시작하기">
                   14일 무료 체험 시작하기
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
-                <Link href="#how-it-works">작동 방식 보기</Link>
+              <Button size="lg" variant="outline" asChild className="min-h-[44px]">
+                <Link href="#how-it-works" aria-label="작동 방식 보기">작동 방식 보기</Link>
               </Button>
             </div>
 
             {/* Social Proof Badge */}
-            <div className="mt-6 flex items-center justify-center lg:justify-start gap-3">
+            <div className="mt-6 flex items-center justify-center lg:justify-start gap-3" role="group" aria-label="Social proof">
               <div
                 className="flex -space-x-2"
                 aria-hidden="true"
@@ -142,29 +142,31 @@ export function HeroSection() {
             </div>
 
             {/* Trust Indicators */}
-            <div
-              className="mt-4 flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-2 text-sm text-muted-foreground"
+            <ul
+              className="mt-4 flex flex-wrap items-center justify-center lg:justify-start gap-x-4 gap-y-2 text-sm text-muted-foreground list-none"
               data-testid="trust-indicators"
+              role="list"
+              aria-label="Trust indicators"
             >
-              <span className="flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-green-500" />
-                신용카드 불필요
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-green-500" />
-                5분 설정
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-green-500" />
-                언제든 취소
-              </span>
-            </div>
+              <li className="flex items-center gap-1.5">
+                <Check className="h-4 w-4 text-green-500" aria-hidden="true" />
+                <span>신용카드 불필요</span>
+              </li>
+              <li className="flex items-center gap-1.5">
+                <Check className="h-4 w-4 text-green-500" aria-hidden="true" />
+                <span>5분 설정</span>
+              </li>
+              <li className="flex items-center gap-1.5">
+                <Check className="h-4 w-4 text-green-500" aria-hidden="true" />
+                <span>언제든 취소</span>
+              </li>
+            </ul>
           </div>
 
-          {/* Dashboard Preview - Right */}
+          {/* Dashboard Preview - Right - Now visible on all screen sizes */}
           <div
             ref={previewRef}
-            className={`hidden lg:block ${
+            className={`${
               previewVisible ? 'animate-slide-in-right' : 'opacity-0'
             }`}
           >

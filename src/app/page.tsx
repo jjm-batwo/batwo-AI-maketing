@@ -24,9 +24,9 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background scroll-smooth">
       <LandingHeader />
-      <main>
+      <main id="main-content">
         <HeroSection />
         <SocialProofSection />
         <FeaturesSection />

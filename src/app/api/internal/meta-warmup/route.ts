@@ -93,9 +93,9 @@ export async function POST(request: NextRequest) {
     // Warmup 클라이언트 실행 (DB 없이 동작)
     const warmupClient = new MetaAdsWarmupClient()
     const summary = await warmupClient.runWarmupSequence(accessToken, adAccountId, {
-      maxCampaigns: 10,
-      maxAdSets: 5,
-      maxAds: 5,
+      maxCampaigns: 50,  // 앱 검수를 위해 최대화
+      maxAdSets: 30,
+      maxAds: 30,
     })
 
     // 결과를 DB에 로깅 시도 (실패해도 웜업 결과는 반환)

@@ -7,6 +7,7 @@ import {
 } from '@application/ports/IMetaAdsService'
 import { MetaAdsApiError } from '../errors'
 import { withRetry } from '@lib/utils/retry'
+import { MetaApiLogRepository, MetaApiLogEntry } from './MetaApiLogRepository'
 
 const META_API_VERSION = 'v18.0'
 const META_API_BASE = `https://graph.facebook.com/${META_API_VERSION}`
@@ -44,6 +45,31 @@ interface MetaApiInsightsResponse {
 }
 
 export class MetaAdsClient implements IMetaAdsService {
+  private logger?: MetaApiLogRepository
+  private accountId?: string
+
+  /**
+   * 로거 설정 (옵션)
+   * @param logger MetaApiLogRepository 인스턴스
+   * @param accountId 로깅에 사용할 계정 ID (batowcompany)
+   */
+  setLogger(logger: MetaApiLogRepository, accountId?: string): void {
+    this.logger = logger
+    this.accountId = accountId
+  }
+
+  private async logApiCall(entry: Omit<MetaApiLogEntry, 'accountId'>): Promise<void> {
+    if (!this.logger) return
+    try {
+      await this.logger.log({
+        ...entry,
+        accountId: this.accountId,
+      })
+    } catch {
+      // 로깅 실패는 무시 (API 호출에 영향 주지 않음)
+    }
+  }
+
   private async request<T>(
     accessToken: string,
     endpoint: string,
@@ -56,20 +82,45 @@ export class MetaAdsClient implements IMetaAdsService {
       ...options.headers,
     }
 
-    const response = await fetch(url, { ...options, headers })
-    const data = await response.json()
+    const startTime = Date.now()
+    let statusCode = 0
+    let success = false
+    let errorCode: string | undefined
+    let errorMsg: string | undefined
 
-    if (!response.ok || (data as MetaApiError).error) {
-      const error = (data as MetaApiError).error
-      throw new MetaAdsApiError(
-        error?.message || 'Unknown Meta API error',
-        error?.code,
-        error?.error_subcode,
-        response.status
-      )
+    try {
+      const response = await fetch(url, { ...options, headers })
+      statusCode = response.status
+      const data = await response.json()
+
+      if (!response.ok || (data as MetaApiError).error) {
+        const error = (data as MetaApiError).error
+        errorCode = error?.code?.toString()
+        errorMsg = error?.message
+        throw new MetaAdsApiError(
+          error?.message || 'Unknown Meta API error',
+          error?.code,
+          error?.error_subcode,
+          response.status
+        )
+      }
+
+      success = true
+      return data as T
+    } finally {
+      const latencyMs = Date.now() - startTime
+      const endpointPath = endpoint.split('?')[0].replace(/^\//, '')
+
+      await this.logApiCall({
+        endpoint: endpointPath,
+        method: (options.method || 'GET').toUpperCase(),
+        statusCode: statusCode || 0,
+        success,
+        errorCode,
+        errorMsg,
+        latencyMs,
+      })
     }
-
-    return data as T
   }
 
   private async requestWithRetry<T>(

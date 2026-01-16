@@ -49,6 +49,13 @@ export async function cleanDatabase(): Promise<void> {
     client.report.deleteMany(),
     client.campaign.deleteMany(),
     client.metaAdAccount.deleteMany(),
+    client.teamMember.deleteMany(),
+    client.team.deleteMany(),
+    // Meta Pixel related tables
+    client.conversionEvent.deleteMany(),
+    client.platformIntegration.deleteMany(),
+    client.metaPixel.deleteMany(),
+    // Auth tables
     client.session.deleteMany(),
     client.account.deleteMany(),
     client.verificationToken.deleteMany(),

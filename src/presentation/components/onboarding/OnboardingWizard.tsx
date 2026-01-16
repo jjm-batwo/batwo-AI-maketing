@@ -11,13 +11,14 @@ import { Button } from '@/components/ui/button'
 import { useOnboardingStore } from '@presentation/stores/onboardingStore'
 import { WelcomeStep } from './steps/WelcomeStep'
 import { MetaConnectStep } from './steps/MetaConnectStep'
+import { PixelSetupStep } from './steps/PixelSetupStep'
 import { CompletionStep } from './steps/CompletionStep'
 
 interface OnboardingWizardProps {
   onComplete?: () => void
 }
 
-const stepTitles = ['시작하기', 'Meta 연결', '완료']
+const stepTitles = ['시작하기', 'Meta 연결', '픽셀 설치', '완료']
 
 export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const {
@@ -60,6 +61,8 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
       case 2:
         return <MetaConnectStep />
       case 3:
+        return <PixelSetupStep />
+      case 4:
         return <CompletionStep />
       default:
         return null

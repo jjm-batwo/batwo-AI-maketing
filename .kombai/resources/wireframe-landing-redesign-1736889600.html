@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>바투 Landing Page - Redesign Wireframe</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Comic Sans MS', 'Chalkboard SE', 'Bradley Hand', cursive;
+      background: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    .wireframe-header {
+      background: #fff;
+      border-bottom: 3px solid #333;
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      border: 2px solid #333;
+      padding: 5px 15px;
+      background: #fff;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+    
+    .nav-links a {
+      text-decoration: none;
+      color: #666;
+      border-bottom: 2px dashed #999;
+      padding-bottom: 2px;
+    }
+    
+    .cta-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border: 2px solid #333;
+      background: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      position: relative;
+    }
+    
+    .btn-primary {
+      background: #333;
+      color: #fff;
+    }
+    
+    .hero-section {
+      padding: 60px 0;
+      background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+      border-bottom: 3px solid #ddd;
+    }
+    
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border: 2px dashed #666;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    
+    h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+    
+    h2 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+    
+    h3 {
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+    
+    .subtitle {
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 30px;
+    }
+    
+    .hero-cta {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    
+    .social-proof {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .avatars {
+      display: flex;
+      margin-left: -10px;
+    }
+    
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      background: #ddd;
+      margin-left: -10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    
+    .trust-badges {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
+      color: #666;
+    }
+    
+    .checkmark {
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border: 2px solid #4CAF50;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4CAF50;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    
+    .dashboard-preview {
+      border: 3px solid #333;
+      background: #fff;
+      padding: 20px;
+      position: relative;
+    }
+    
+    .browser-chrome {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #ddd;
+      margin-bottom: 20px;
+    }
+    
+    .browser-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid #333;
+    }
+    
+    .browser-dot.red { background: #ff5f56; }
+    .browser-dot.yellow { background: #ffbd2e; }
+    .browser-dot.green { background: #27c93f; }
+    
+    .url-bar {
+      flex: 1;
+      padding: 5px 15px;
+      border: 2px solid #ddd;
+      background: #f5f5f5;
+      text-align: center;
+      font-size: 12px;
+      color: #999;
+    }
+    
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .kpi-card {
+      border: 2px solid #ddd;
+      padding: 15px;
+      background: #fafafa;
+    }
+    
+    .kpi-card.highlight {
+      border-color: #4CAF50;
+      background: #f1f8f4;
+    }
+    
+    .kpi-label {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 5px;
+    }
+    
+    .kpi-value {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    
+    .chart {
+      height: 100px;
+      border: 2px solid #ddd;
+      background: #fafafa;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      padding: 10px;
+      gap: 5px;
+    }
+    
+    .chart-bar {
+      flex: 1;
+      background: #ddd;
+      border: 2px solid #999;
+      transition: all 0.3s;
+    }
+    
+    .chart-bar:hover {
+      background: #999;
+    }
+    
+    .ai-insight {
+      padding: 15px;
+      border: 2px dashed #4CAF50;
+      background: #f1f8f4;
+      margin-top: 20px;
+    }
+    
+    .ai-insight-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #4CAF50;
+    }
+    
+    .sparkle {
+      width: 20px;
+      height: 20px;
+      background: #4CAF50;
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    }
+    
+    .section {
+      padding: 80px 0;
+      border-bottom: 3px solid #ddd;
+    }
+    
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+    }
+    
+    .feature-card {
+      border: 2px solid #333;
+      padding: 30px 20px;
+      background: #fff;
+      text-align: center;
+      position: relative;
+    }
+    
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      border: 2px solid #333;
+      background: #f0f0f0;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 40px;
+      text-align: center;
+    }
+    
+    .stat-box {
+      border: 3px solid #333;
+      padding: 40px 20px;
+      background: #fff;
+    }
+    
+    .stat-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #f0f0f0;
+      border: 2px solid #333;
+      margin: 0 auto 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    
+    .stat-number {
+      font-size: 42px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .stat-label {
+      color: #666;
+      font-size: 14px;
+    }
+    
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 40px;
+    }
+    
+    .step-card {
+      text-align: center;
+      position: relative;
+    }
+    
+    .step-number {
+      width: 60px;
+      height: 60px;
+      border: 3px solid #333;
+      background: #fff;
+      border-radius: 50%;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    
+    .step-arrow {
+      position: absolute;
+      top: 30px;
+      right: -50px;
+      font-size: 36px;
+      color: #ddd;
+    }
+    
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+    }
+    
+    .testimonial-card {
+      border: 2px solid #333;
+      padding: 30px;
+      background: #fff;
+      position: relative;
+    }
+    
+    .quote-mark {
+      font-size: 60px;
+      color: #ddd;
+      line-height: 0.5;
+      margin-bottom: 20px;
+    }
+    
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px dashed #ddd;
+    }
+    
+    .author-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid #333;
+      background: #ddd;
+    }
+    
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .faq-item {
+      border: 2px solid #333;
+      background: #fff;
+      margin-bottom: 15px;
+      padding: 20px;
+    }
+    
+    .faq-question {
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    
+    .faq-icon {
+      width: 24px;
+      height: 24px;
+      border: 2px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    
+    .cta-section {
+      background: #333;
+      color: #fff;
+      text-align: center;
+      padding: 80px 0;
+    }
+    
+    .cta-section h2 {
+      color: #fff;
+      margin-bottom: 20px;
+    }
+    
+    .cta-section .subtitle {
+      color: #ccc;
+    }
+    
+    .footer {
+      background: #fff;
+      border-top: 3px solid #333;
+      padding: 40px 0;
+    }
+    
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .footer-links {
+      display: flex;
+      gap: 30px;
+    }
+    
+    .footer-links a {
+      text-decoration: none;
+      color: #666;
+      border-bottom: 1px dashed #999;
+    }
+    
+    .component-tag {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: bold;
+      z-index: 10;
+      font-family: Arial, sans-serif;
+      white-space: nowrap;
+    }
+    
+    .tag-reuse {
+      background: #4CAF50;
+      color: white;
+    }
+    
+    .tag-new {
+      background: #FF9800;
+      color: white;
+    }
+    
+    .tagged-component {
+      position: relative;
+    }
+    
+    @media (max-width: 768px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .step-arrow {
+        display: none;
+      }
+      
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <!-- REUSABLE: LandingHeader from src/presentation/components/landing/LandingHeader.tsx -->
+  <header class="wireframe-header tagged-component">
+    <span class="component-tag tag-reuse" title="src/presentation/components/landing/LandingHeader.tsx">[REUSE] LandingHeader</span>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">바투 Beta</div>
+        <nav class="nav-links">
+          <a href="#features">기능</a>
+          <a href="#how-it-works">작동방식</a>
+          <a href="#pricing">가격</a>
+        </nav>
+        <div class="cta-buttons">
+          <!-- REUSABLE: Button from src/components/ui/button.tsx -->
+          <button class="btn tagged-component">
+            <span class="component-tag tag-reuse" title="src/components/ui/button.tsx">[REUSE] Button</span>
+            로그인
+          </button>
+          <button class="btn btn-primary tagged-component">
+            <span class="component-tag tag-reuse" title="src/components/ui/button.tsx">[REUSE] Button</span>
+            무료로 시작하기
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <!-- REUSABLE: HeroSection from src/presentation/components/landing/HeroSection.tsx -->
+  <section class="hero-section tagged-component">
+    <span class="component-tag tag-reuse" title="src/presentation/components/landing/HeroSection.tsx">[REUSE] HeroSection</span>
+    <div class="container">
+      <div class="hero-grid">
+        <div>
+          <div class="badge">✨ AI 기반 마케팅 자동화</div>
+          <h1>마케팅 지식 없이도<br><strong>Meta 광고 자동화</strong></h1>
+          <p class="subtitle">AI가 캠페인 세팅부터 성과 분석까지 전 과정을 지원합니다. 누구나 쉽게 온라인 광고를 직접 운영하세요.</p>
+          
+          <div class="hero-cta">
+            <!-- REUSABLE: Button from src/components/ui/button.tsx -->
+            <button class="btn btn-primary tagged-component">
+              <span class="component-tag tag-reuse" title="src/components/ui/button.tsx">[REUSE] Button</span>
+              14일 무료 체험 시작하기 →
+            </button>
+            <button class="btn tagged-component">
+              <span class="component-tag tag-reuse" title="src/components/ui/button.tsx">[REUSE] Button</span>
+              작동 방식 보기
+            </button>
+          </div>
+          
+          <div class="social-proof">
+            <div class="avatars">
+              <div class="avatar">👤</div>
+              <div class="avatar">👤</div>
+              <div class="avatar">👤</div>
+            </div>
+            <span>1,000+ 마케터가 사용 중</span>
+          </div>
+          
+          <div class="trust-badges">
+            <div class="trust-badge">
+              <div class="checkmark">✓</div>
+              <span>신용카드 불필요</span>
+            </div>
+            <div class="trust-badge">
+              <div class="checkmark">✓</div>
+              <span>5분 설정</span>
+            </div>
+            <div class="trust-badge">
+              <div class="checkmark">✓</div>
+              <span>언제든 취소</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- NEW COMPONENT: EnhancedDashboardPreview -->
+        <div class="dashboard-preview tagged-component">
+          <span class="component-tag tag-new" title="To be created - enhanced version with animations">[NEW] EnhancedDashboardPreview</span>
+          <div class="browser-chrome">
+            <div class="browser-dot red"></div>
+            <div class="browser-dot yellow"></div>
+            <div class="browser-dot green"></div>
+            <div class="url-bar">app.batwo.io/dashboard</div>
+          </div>
+          
+          <div class="dashboard-header">
+            <h4>오늘의 광고 성과</h4>
+            <span style="font-size: 12px; color: #4CAF50;">● 실시간</span>
+          </div>
+          
+          <div class="kpi-grid">
+            <!-- REUSABLE: Card from src/components/ui/card.tsx -->
+            <div class="kpi-card tagged-component">
+              <span class="component-tag tag-reuse" title="src/components/ui/card.tsx">[REUSE] Card</span>
+              <div class="kpi-label">💰 광고비</div>
+              <div class="kpi-value">₩1.2M</div>
+            </div>
+            <div class="kpi-card tagged-component">
+              <span class="component-tag tag-reuse" title="src/components/ui/card.tsx">[REUSE] Card</span>
+              <div class="kpi-label">📈 매출</div>
+              <div class="kpi-value">₩4.3M</div>
+            </div>
+            <div class="kpi-card highlight tagged-component">
+              <span class="component-tag tag-reuse" title="src/components/ui/card.tsx">[REUSE] Card</span>
+              <div class="kpi-label" style="color: #4CAF50;">📊 ROAS</div>
+              <div class="kpi-value" style="color: #4CAF50;">3.5x</div>
+            </div>
+          </div>
+          
+          <div class="chart">
+            <div class="chart-bar" style="height: 35%;"></div>
+            <div class="chart-bar" style="height: 55%;"></div>
+            <div class="chart-bar" style="height: 40%;"></div>
+            <div class="chart-bar" style="height: 70%;"></div>
+            <div class="chart-bar" style="height: 50%;"></div>
+            <div class="chart-bar" style="height: 85%;"></div>
+            <div class="chart-bar" style="height: 60%;"></div>
+          </div>
+          
+          <div class="ai-insight">
+            <div class="ai-insight-header">
+              <div class="sparkle"></div>
+              <span>AI 분석</span>
+            </div>
+            <p style="font-size: 12px;">25-34세 여성 타겟 전환율이 42% 높습니다. 예산 재배분을 권장합니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social Proof Section -->
+  <!-- REUSABLE: SocialProofSection from src/presentation/components/landing/SocialProofSection.tsx -->
+  <section class="section tagged-component" style="background: #fff;">
+    <span class="component-tag tag-reuse" title="src/presentation/components/landing/SocialProofSection.tsx">[REUSE] SocialProofSection</span>
+    <div class="container">
+      <div class="section-header">
+        <h2>이미 많은 사업자가 바투와 함께하고 있습니다</h2>
+        <p class="subtitle">AI 기반 마케팅 자동화로 광고 성과를 높이고 시간을 절약하세요</p>
+      </div>
+      
+      <div class="stats-grid">
+        <!-- NEW COMPONENT: StatCard -->
+        <div class="stat-box tagged-component">
+          <span class="component-tag tag-new" title="To be created at src/components/landing/StatCard.tsx">[NEW] StatCard</span>
+          <div class="stat-icon">👥</div>
+          <div class="stat-number">1,000+</div>
+          <div class="stat-label">활성 사용자</div>
+        </div>
+        <div class="stat-box tagged-component">
+          <span class="component-tag tag-new" title="To be created at src/components/landing/StatCard.tsx">[NEW] StatCard</span>
+          <div class="stat-icon">📈</div>
+          <div class="stat-number">35%</div>
+          <div class="stat-label">평균 ROAS 향상</div>
+        </div>
+        <div class="stat-box tagged-component">
+          <span class="component-tag tag-new" title="To be created at src/components/landing/StatCard.tsx">[NEW] StatCard</span>
+          <div class="stat-icon">⏱️</div>
+          <div class="stat-number">10시간</div>
+          <div class="stat-label">주간 시간 절약</div>
+        </div>
+        <div class="stat-box tagged-component">
+          <span class="component-tag tag-new" title="To be created at src/components/landing/StatCard.tsx">[NEW] StatCard</span>
+          <div class="stat-icon">🏆</div>
+          <div class="stat-number">98%</div>
+          <div class="stat-label">고객 만족도</div>
+        </div>
+      </div>
+      
+      <div style="text-align: center; margin-top: 40px; padding-top: 40px; border-top: 2px dashed #ddd;">
+        <div style="display: flex; justify-content: center; gap: 40px; align-items: center;">
+          <div style="font-size: 14px; color: #999;">🛡️ Meta 공식 파트너</div>
+          <div style="font-size: 14px; color: #999;">⚡ ISO 27001 인증</div>
+          <div style="font-size: 14px; color: #999;">🎖️ 2024 마케팅 어워드</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <!-- REUSABLE: FeaturesSection from src/presentation/components/landing/FeaturesSection.tsx -->
+  <section id="features" class="section tagged-component" style="background: #fafafa;">
+    <span class="component-tag tag-reuse" title="src/presentation/components/landing/FeaturesSection.tsx">[REUSE] FeaturesSection</span>
+    <div class="container">
+      <div class="section-header">
+        <h2>왜 바투인가요?</h2>
+        <p class="subtitle">복잡한 광고 운영을 AI가 대신합니다. 당신은 비즈니스에만 집중하세요.</p>
+      </div>
+      
+      <div class="features-grid">
+        <!-- REUSABLE: Card from src/components/ui/card.tsx -->
+        <div class="feature-card tagged-component">
+          <span class="component-tag tag-reuse" title="src/components/ui/card.tsx">[REUSE] Card</span>
+          <div class="feature-icon">⚡</div>
+          <h3>AI 캠페인 자동 세팅</h3>
+          <p style="color: #666; font-size: 14px;">비즈니스 정보만 입력하면 AI가 최적의 Meta 광고 캠페인을 자동으로 구성합니다.</p>
+        </div>
+        <div class="feature-card tagged-component">
+          <span class="component-tag tag-reuse" title="src/components/ui/card.tsx">[REUSE] Card</span>
+          <div class="feature-icon">📊</div>
+          <h3>실시간 KPI 대시보드</h3>
+          <p style="color: #666; font-size: 14px;">ROAS, CTR, 전환율 등 핵심 지표를 한눈에 확인하고 광고 성과를 추적하세요.</p>
+        </div>
+        <div class="feature-card tagged-component">
+          <span class="component-tag tag-reuse" title="src/components/ui/card.tsx">[REUSE] Card</span>
+          <div class="feature-icon">📝</div>
+          <h3>AI 주간 보고서</h3>
+          <p style="color: #666; font-size: 14px;">광고 성과를 분석한 인사이트와 개선 제안을 매주 자동으로 받아보세요.</p>
+        </div>
+        <div class="feature-card tagged-component">
+          <span class="component-tag tag-reuse" title="src/components/ui/card.tsx">[REUSE] Card</span>
+          <div class="feature-icon">🔒</div>
+          <h3>Meta 공식 연동</h3>
+          <p style="color: #666; font-size: 14px;">Meta Business API와 안전하게 연동하여 광고 계정을 직접 관리합니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <!-- REUSABLE: HowItWorksSection from src/presentation/components/landing/HowItWorksSection.tsx -->
+  <section id="how-it-works" class="section tagged-component" style="background: #fff;">
+    <span class="component-tag tag-reuse" title="src/presentation/components/landing/HowItWorksSection.tsx">[REUSE] HowItWorksSection</span>
+    <div class="container">
+      <div class="section-header">
+        <h2>3단계로 시작하세요</h2>
+        <p class="subtitle">복잡한 설정 없이 간단한 3단계로 AI 마케팅을 시작할 수 있습니다</p>
+      </div>
+      
+      <div class="steps-grid">
+        <!-- NEW COMPONENT: StepCard -->
+        <div class="step-card tagged-component">
+          <span class="component-tag tag-new" title="To be created at src/components/landing/StepCard.tsx">[NEW] StepCard</span>
+          <div class="step-number">1</div>
+          <h3>비즈니스 정보 입력</h3>
+          <p style="color: #666;">상품, 타겟 고객, 예산 등 기본 정보만 입력하세요.</p>
+          <span class="step-arrow">→</span>
+        </div>
+        <div class="step-card tagged-component">
+          <span class="component-tag tag-new" title="To be created at src/components/landing/StepCard.tsx">[NEW] StepCard</span>
+          <div class="step-number">2</div>
+          <h3>AI가 캠페인 자동 생성</h3>
+          <p style="color: #666;">AI가 최적의 광고 소재와 타겟팅을 자동으로 설정합니다.</p>
+          <span class="step-arrow">→</span>
+        </div>
+        <div class="step-card tagged-component">
+          <span class="component-tag tag-new" title="To be created at src/components/landing/StepCard.tsx">[NEW] StepCard</span>
+          <div class="step-number">3</div>
+          <h3>성과 확인 및 최적화</h3>
+          <p style="color: #666;">실시간 대시보드로 성과를 확인하고 AI 추천을 받아보세요.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <!-- REUSABLE: TestimonialsSection from src/presentation/components/landing/TestimonialsSection.tsx -->
+  <section class="section tagged-component" style="background: #fafafa;">
+    <span class="component-tag tag-reuse" title="src/presentation/components/landing/TestimonialsSection.tsx">[REUSE] TestimonialsSection</span>
+    <div class="container">
+      <div class="section-header">
+        <h2>실제 사용자들의 이야기</h2>
+      </div>
+      
+      <div class="testimonials-grid">
+        <!-- REUSABLE: Card from src/components/ui/card.tsx -->
+        <div class="testimonial-card tagged-component">
+          <span class="component-tag tag-reuse" title="src/components/ui/card.tsx">[REUSE] Card</span>
+          <div class="quote-mark">"</div>
+          <p style="color: #666; margin-bottom: 15px;">광고 전문 지식이 없어도 바투 덕분에 ROAS 3배 향상! 정말 놀라운 결과입니다.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar"></div>
+            <div>
+              <div style="font-weight: bold;">김민수</div>
+              <div style="font-size: 12px; color: #999;">쇼핑몰 운영자</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card tagged-component">
+          <span class="component-tag tag-reuse" title="src/components/ui/card.tsx">[REUSE] Card</span>
+          <div class="quote-mark">"</div>
+          <p style="color: #666; margin-bottom: 15px;">매주 10시간 이상 절약되었어요. 이제 비즈니스 성장에만 집중할 수 있습니다.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar"></div>
+            <div>
+              <div style="font-weight: bold;">이지영</div>
+              <div style="font-size: 12px; color: #999;">스타트업 대표</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card tagged-component">
+          <span class="component-tag tag-reuse" title="src/components/ui/card.tsx">[REUSE] Card</span>
+          <div class="quote-mark">"</div>
+          <p style="color: #666; margin-bottom: 15px;">AI 추천이 정말 정확해요. 타겟팅 최적화로 광고비를 35% 절감했습니다.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar"></div>
+            <div>
+              <div style="font-weight: bold;">박준혁</div>
+              <div style="font-size: 12px; color: #999;">마케팅 담당자</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <!-- REUSABLE: FAQSection from src/presentation/components/landing/FAQSection.tsx -->
+  <section class="section tagged-component" style="background: #fff;">
+    <span class="component-tag tag-reuse" title="src/presentation/components/landing/FAQSection.tsx">[REUSE] FAQSection</span>
+    <div class="container">
+      <div class="section-header">
+        <h2>자주 묻는 질문</h2>
+        <p class="subtitle">바투 서비스에 대해 궁금하신 점을 확인해보세요</p>
+      </div>
+      
+      <div class="faq-list">
+        <!-- REUSABLE: Accordion from src/components/ui/accordion.tsx -->
+        <div class="faq-item tagged-component">
+          <span class="component-tag tag-reuse" title="src/components/ui/accordion.tsx">[REUSE] Accordion</span>
+          <div class="faq-question">
+            <span>바투는 어떤 서비스인가요?</span>
+            <div class="faq-icon">+</div>
+          </div>
+          <p style="color: #666; font-size: 14px; margin-top: 10px; display: none;">AI 기반 Meta 광고 자동화 플랫폼입니다...</p>
+        </div>
+        <div class="faq-item tagged-component">
+          <span class="component-tag tag-reuse" title="src/components/ui/accordion.tsx">[REUSE] Accordion</span>
+          <div class="faq-question">
+            <span>Meta 광고 계정 연동은 어떻게 하나요?</span>
+            <div class="faq-icon">+</div>
+          </div>
+        </div>
+        <div class="faq-item tagged-component">
+          <span class="component-tag tag-reuse" title="src/components/ui/accordion.tsx">[REUSE] Accordion</span>
+          <div class="faq-question">
+            <span>AI가 어떻게 광고를 최적화하나요?</span>
+            <div class="faq-icon">+</div>
+          </div>
+        </div>
+        <div class="faq-item tagged-component">
+          <span class="component-tag tag-reuse" title="src/components/ui/accordion.tsx">[REUSE] Accordion</span>
+          <div class="faq-question">
+            <span>무료 체험 기간이 있나요?</span>
+            <div class="faq-icon">+</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <!-- REUSABLE: CTASection from src/presentation/components/landing/CTASection.tsx -->
+  <section class="cta-section tagged-component">
+    <span class="component-tag tag-reuse" title="src/presentation/components/landing/CTASection.tsx">[REUSE] CTASection</span>
+    <div class="container">
+      <h2>지금 바로 AI 마케팅을 시작하세요</h2>
+      <p class="subtitle">마케팅 전문가가 아니어도 괜찮습니다.<br>바투가 당신의 광고를 성공으로 이끕니다.</p>
+      
+      <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px;">
+        <!-- REUSABLE: Button from src/components/ui/button.tsx -->
+        <button class="btn tagged-component" style="background: #fff; color: #333;">
+          <span class="component-tag tag-reuse" title="src/components/ui/button.tsx">[REUSE] Button</span>
+          14일 무료 체험 시작하기 →
+        </button>
+        <button class="btn tagged-component" style="border-color: #999; color: #fff;">
+          <span class="component-tag tag-reuse" title="src/components/ui/button.tsx">[REUSE] Button</span>
+          로그인
+        </button>
+      </div>
+      
+      <div style="margin-top: 20px; color: #ccc; font-size: 14px;">
+        신용카드 불필요 • 5분 설정 • 언제든 취소
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <!-- REUSABLE: LandingFooter from src/presentation/components/landing/LandingFooter.tsx -->
+  <footer class="footer tagged-component">
+    <span class="component-tag tag-reuse" title="src/presentation/components/landing/LandingFooter.tsx">[REUSE] LandingFooter</span>
+    <div class="container">
+      <div class="footer-content">
+        <div style="display: flex; align-items: center; gap: 15px;">
+          <div class="logo" style="font-size: 18px;">바투</div>
+          <span style="color: #999; font-size: 14px;">© 2025 바투. All rights reserved.</span>
+        </div>
+        <div class="footer-links">
+          <a href="/terms">이용약관</a>
+          <a href="/privacy">개인정보처리방침</a>
+          <a href="mailto:support@batwo.io">문의하기</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div style="position: fixed; bottom: 20px; right: 20px; background: #fff; border: 3px solid #333; padding: 15px; max-width: 300px; font-size: 12px; z-index: 1000;">
+    <strong>Wireframe Legend:</strong><br>
+    <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px;">
+      <span style="background: #4CAF50; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold;">[REUSE]</span>
+      <span>Existing component</span>
+    </div>
+    <div style="margin-top: 5px; display: flex; align-items: center; gap: 8px;">
+      <span style="background: #FF9800; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold;">[NEW]</span>
+      <span>New component to create</span>
+    </div>
+  </div>
+
+</body>
+</html>

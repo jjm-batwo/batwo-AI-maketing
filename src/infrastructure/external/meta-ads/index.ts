@@ -1,1 +1,3 @@
 export * from './MetaAdsClient'
+export * from './MetaAdsWarmupClient'
+export * from './MetaApiLogRepository'

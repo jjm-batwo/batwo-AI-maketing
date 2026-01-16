@@ -1,12 +1,40 @@
+import type { EcommercePlatform } from '@domain/entities/PlatformIntegration'
+
+export type ExternalService = 'meta-ads' | 'openai' | 'platform'
+
 export class ExternalServiceError extends Error {
   constructor(
     message: string,
-    public readonly service: 'meta-ads' | 'openai',
+    public readonly service: ExternalService,
     public readonly statusCode?: number,
     public readonly originalError?: Error
   ) {
     super(message)
     this.name = 'ExternalServiceError'
+  }
+}
+
+export class PlatformApiError extends ExternalServiceError {
+  constructor(
+    message: string,
+    public readonly platform: EcommercePlatform,
+    statusCode?: number,
+    originalError?: Error
+  ) {
+    super(message, 'platform', statusCode, originalError)
+    this.name = 'PlatformApiError'
+  }
+
+  static isRateLimitError(error: PlatformApiError): boolean {
+    return error.statusCode === 429
+  }
+
+  static isAuthError(error: PlatformApiError): boolean {
+    return error.statusCode === 401 || error.statusCode === 403
+  }
+
+  static isNotFoundError(error: PlatformApiError): boolean {
+    return error.statusCode === 404
   }
 }
 

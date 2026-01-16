@@ -18,7 +18,7 @@ vi.mock('next-auth/react', () => ({
 
 const mockStore = {
   currentStep: 1,
-  totalSteps: 3,
+  totalSteps: 4,
   isCompleted: false,
   nextStep: vi.fn(),
   prevStep: vi.fn(),
@@ -45,7 +45,7 @@ describe('OnboardingWizard', () => {
     it('should show progress indicator', () => {
       render(<OnboardingWizard />)
 
-      expect(screen.getByText('1/3')).toBeInTheDocument()
+      expect(screen.getByText('1/4')).toBeInTheDocument()
     })
 
     it('should not render if onboarding completed', () => {
@@ -108,10 +108,23 @@ describe('OnboardingWizard', () => {
       expect(screen.getByText(/Meta 광고 계정 연결/i)).toBeInTheDocument()
     })
 
-    it('should render completion step at step 3', () => {
+    it('should render pixel setup step at step 3', () => {
       vi.mocked(useOnboardingStore).mockReturnValue({
         ...mockStore,
         currentStep: 3,
+      })
+
+      render(<OnboardingWizard />)
+
+      // Pixel setup step shows unique content
+      expect(screen.getByText(/Meta 픽셀을 설치하여/i)).toBeInTheDocument()
+      expect(screen.getByText(/픽셀 설치 효과/i)).toBeInTheDocument()
+    })
+
+    it('should render completion step at step 4', () => {
+      vi.mocked(useOnboardingStore).mockReturnValue({
+        ...mockStore,
+        currentStep: 4,
       })
 
       render(<OnboardingWizard />)
@@ -125,7 +138,7 @@ describe('OnboardingWizard', () => {
       const onComplete = vi.fn()
       vi.mocked(useOnboardingStore).mockReturnValue({
         ...mockStore,
-        currentStep: 3,
+        currentStep: 4,
       })
 
       render(<OnboardingWizard onComplete={onComplete} />)

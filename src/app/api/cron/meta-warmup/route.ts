@@ -179,9 +179,9 @@ export async function GET(request: NextRequest) {
           account.accessToken,
           account.metaAccountId,
           {
-            maxCampaigns: 10,  // 일 1회 실행으로 변경되어 호출 수 증가
-            maxAdSets: 5,
-            maxAds: 5,
+            maxCampaigns: 50,  // 앱 검수를 위해 최대화
+            maxAdSets: 30,
+            maxAds: 30,
           }
         )
 

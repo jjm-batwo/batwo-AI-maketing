@@ -19,35 +19,37 @@ export function CTASection() {
             <Button
               size="lg"
               variant="secondary"
-              className="gap-2"
+              className="gap-2 min-h-[44px] transition-transform hover:scale-105"
               asChild
             >
-              <Link href="/register">
+              <Link href="/register" aria-label="14일 무료 체험 시작하기">
                 14일 무료 체험 시작하기
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             </Button>
             <Button
               size="lg"
-              variant="outline"
-              className="border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10"
+              variant="secondary"
+              className="min-h-[44px] transition-transform hover:scale-105"
               asChild
             >
-              <Link href="/login">로그인</Link>
+              <Link href="/login" aria-label="로그인">로그인</Link>
             </Button>
           </div>
 
           {/* Trust Indicators */}
-          <div
-            className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-primary-foreground/70"
+          <ul
+            className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-primary-foreground/70 list-none"
             data-testid="cta-trust-indicators"
+            role="list"
+            aria-label="Benefits"
           >
-            <span>신용카드 불필요</span>
-            <span className="hidden sm:inline">•</span>
-            <span>5분 설정</span>
-            <span className="hidden sm:inline">•</span>
-            <span>언제든 취소</span>
-          </div>
+            <li>신용카드 불필요</li>
+            <li className="hidden sm:inline" aria-hidden="true">•</li>
+            <li>5분 설정</li>
+            <li className="hidden sm:inline" aria-hidden="true">•</li>
+            <li>언제든 취소</li>
+          </ul>
         </div>
       </div>
     </section>

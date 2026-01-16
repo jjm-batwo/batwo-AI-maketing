@@ -1,3 +1,6 @@
 export * from './IMetaAdsService'
 export * from './IAIService'
+export * from './IMetaPixelService'
+export * from './ICAPIService'
+export * from './IPlatformAdapter'
 export * from './ai-team-port'

@@ -18,22 +18,25 @@ export function LandingFooter() {
           </div>
 
           {/* Links */}
-          <nav className="flex items-center gap-6">
+          <nav className="flex items-center gap-6" aria-label="Footer navigation">
             <Link
               href="/terms"
-              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
+              aria-label="이용약관 보기"
             >
               이용약관
             </Link>
             <Link
               href="/privacy"
-              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
+              aria-label="개인정보처리방침 보기"
             >
               개인정보처리방침
             </Link>
             <a
               href="mailto:support@batwo.io"
-              className="text-sm text-muted-foreground hover:text-primary transition-colors"
+              className="text-sm text-muted-foreground hover:text-primary transition-colors min-h-[44px] flex items-center"
+              aria-label="이메일로 문의하기"
             >
               문의하기
             </a>

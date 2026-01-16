@@ -18,8 +18,8 @@ datasource db {
 // ========================================
 
 model User {
-  id            String          @id @default(cuid())
-  email         String          @unique
+  id            String         @id @default(cuid())
+  email         String         @unique
   name          String?
   emailVerified DateTime?
   image         String?
@@ -29,8 +29,9 @@ model User {
   reports       Report[]
   usageLogs     UsageLog[]
   metaAccount   MetaAdAccount?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  metaPixels    MetaPixel[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 }
 
 model Account {
@@ -73,17 +74,17 @@ model VerificationToken {
 // ========================================
 
 model MetaAdAccount {
-  id            String   @id @default(cuid())
-  userId        String   @unique
-  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   metaAccountId String
-  accessToken   String   @db.Text
+  accessToken   String    @db.Text
   tokenExpiry   DateTime?
   businessName  String?
-  currency      String   @default("KRW")
-  timezone      String   @default("Asia/Seoul")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  currency      String    @default("KRW")
+  timezone      String    @default("Asia/Seoul")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 // ========================================
@@ -137,14 +138,14 @@ model Campaign {
 // ========================================
 
 model BudgetAlert {
-  id                String    @id @default(cuid())
-  campaignId        String
-  campaign          Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-  thresholdPercent  Int       @default(80) // 예산 소진 임계값 (%)
-  alertedAt         DateTime? // 알림 발송 시점
-  isEnabled         Boolean   @default(true)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id               String    @id @default(cuid())
+  campaignId       String
+  campaign         Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  thresholdPercent Int       @default(80) // 예산 소진 임계값 (%)
+  alertedAt        DateTime? // 알림 발송 시점
+  isEnabled        Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   @@unique([campaignId]) // 캠페인당 하나의 알림 설정
   @@index([isEnabled])
@@ -162,18 +163,18 @@ enum ABTestStatus {
 }
 
 model ABTest {
-  id               String         @id @default(cuid())
-  campaignId       String
-  name             String
-  description      String?
-  status           ABTestStatus   @default(DRAFT)
-  variants         ABTestVariant[]
-  startDate        DateTime
-  endDate          DateTime?
-  confidenceLevel  Int            @default(95) // 신뢰수준 (%)
-  minimumSampleSize Int           @default(1000)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  id                String          @id @default(cuid())
+  campaignId        String
+  name              String
+  description       String?
+  status            ABTestStatus    @default(DRAFT)
+  variants          ABTestVariant[]
+  startDate         DateTime
+  endDate           DateTime?
+  confidenceLevel   Int             @default(95) // 신뢰수준 (%)
+  minimumSampleSize Int             @default(1000)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
 
   @@index([campaignId])
   @@index([status])
@@ -189,9 +190,9 @@ model ABTestVariant {
   impressions    Int      @default(0)
   clicks         Int      @default(0)
   conversions    Int      @default(0)
-  spend          Decimal  @db.Decimal(15, 2) @default(0)
+  spend          Decimal  @default(0) @db.Decimal(15, 2)
   currency       String   @default("KRW")
-  revenue        Decimal  @db.Decimal(15, 2) @default(0)
+  revenue        Decimal  @default(0) @db.Decimal(15, 2)
   isControl      Boolean  @default(false) // 컨트롤 그룹 여부
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -267,7 +268,7 @@ model UsageLog {
   id        Int      @id @default(autoincrement())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type      String   // 'CAMPAIGN_CREATE', 'AI_COPY_GEN', 'AI_ANALYSIS'
+  type      String // 'CAMPAIGN_CREATE', 'AI_COPY_GEN', 'AI_ANALYSIS'
   createdAt DateTime @default(now())
 
   @@index([userId, type, createdAt])
@@ -326,18 +327,99 @@ model TeamMember {
 
 model MetaApiLog {
   id         String   @id @default(cuid())
-  endpoint   String   // e.g., "campaigns", "insights", "adaccount"
-  method     String   // GET, POST, DELETE
-  statusCode Int      // HTTP status code
-  success    Boolean  // API 호출 성공 여부
-  errorCode  String?  // Meta API 에러 코드 (실패 시)
-  errorMsg   String?  // 에러 메시지 (실패 시)
-  latencyMs  Int      // 응답 시간 (ms)
-  accountId  String?  // Meta 광고 계정 ID (batowcompany)
+  endpoint   String // e.g., "campaigns", "insights", "adaccount"
+  method     String // GET, POST, DELETE
+  statusCode Int // HTTP status code
+  success    Boolean // API 호출 성공 여부
+  errorCode  String? // Meta API 에러 코드 (실패 시)
+  errorMsg   String? // 에러 메시지 (실패 시)
+  latencyMs  Int // 응답 시간 (ms)
+  accountId  String? // Meta 광고 계정 ID (batowcompany)
   createdAt  DateTime @default(now())
 
   @@index([createdAt])
   @@index([success])
   @@index([accountId])
   @@index([createdAt, success]) // 15일 통계 조회용 복합 인덱스
+}
+
+// ========================================
+// Meta Pixel One-Click Setup
+// ========================================
+
+enum PixelSetupMethod {
+  MANUAL // 수동 스크립트 복사
+  PLATFORM_API // 카페24 API로 자동 설치
+}
+
+enum EcommercePlatform {
+  CAFE24
+  CUSTOM
+}
+
+enum IntegrationStatus {
+  PENDING
+  CONNECTED
+  SCRIPT_INJECTED
+  ACTIVE
+  ERROR
+  DISCONNECTED
+}
+
+model MetaPixel {
+  id          String           @id @default(cuid())
+  userId      String
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  metaPixelId String // Meta 픽셀 ID (예: "123456789012345")
+  name        String
+  isActive    Boolean          @default(true)
+  setupMethod PixelSetupMethod @default(MANUAL)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  platformIntegration PlatformIntegration?
+  conversionEvents    ConversionEvent[]
+
+  @@unique([userId, metaPixelId])
+  @@index([userId])
+}
+
+model PlatformIntegration {
+  id              String            @id @default(cuid())
+  pixelId         String            @unique
+  pixel           MetaPixel         @relation(fields: [pixelId], references: [id], onDelete: Cascade)
+  platform        EcommercePlatform
+  platformStoreId String // 카페24 몰 ID
+  accessToken     String            @db.Text
+  refreshToken    String?           @db.Text
+  tokenExpiry     DateTime?
+  scriptTagId     String? // 설치된 스크립트 태그 ID
+  webhookId       String? // 주문 웹훅 ID
+  status          IntegrationStatus @default(PENDING)
+  lastSyncAt      DateTime?
+  errorMessage    String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([platform])
+  @@index([status])
+}
+
+model ConversionEvent {
+  id             String    @id @default(cuid())
+  pixelId        String
+  pixel          MetaPixel @relation(fields: [pixelId], references: [id], onDelete: Cascade)
+  eventName      String // PageView, Purchase, AddToCart 등
+  eventId        String // 중복 제거용 고유 ID
+  eventTime      DateTime
+  eventSourceUrl String?
+  userData       Json? // 해시된 사용자 정보
+  customData     Json? // 주문 금액, 상품 ID 등
+  sentToMeta     Boolean   @default(false)
+  metaResponseId String?
+  createdAt      DateTime  @default(now())
+
+  @@unique([pixelId, eventId])
+  @@index([pixelId, sentToMeta])
+  @@index([eventTime])
 }

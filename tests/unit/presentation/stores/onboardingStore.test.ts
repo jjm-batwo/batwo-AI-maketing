@@ -41,10 +41,10 @@ describe('onboardingStore', () => {
       expect(result.current.isCompleted).toBe(false)
     })
 
-    it('should have total of 3 steps', () => {
+    it('should have total of 4 steps', () => {
       const { result } = renderHook(() => useOnboardingStore())
 
-      expect(result.current.totalSteps).toBe(3)
+      expect(result.current.totalSteps).toBe(4)
     })
   })
 
@@ -65,10 +65,11 @@ describe('onboardingStore', () => {
       act(() => {
         result.current.nextStep() // 2
         result.current.nextStep() // 3
-        result.current.nextStep() // should stay at 3
+        result.current.nextStep() // 4
+        result.current.nextStep() // should stay at 4
       })
 
-      expect(result.current.currentStep).toBe(3)
+      expect(result.current.currentStep).toBe(4)
     })
 
     it('should go back to previous step', () => {
@@ -96,10 +97,10 @@ describe('onboardingStore', () => {
       const { result } = renderHook(() => useOnboardingStore())
 
       act(() => {
-        result.current.goToStep(3)
+        result.current.goToStep(4)
       })
 
-      expect(result.current.currentStep).toBe(3)
+      expect(result.current.currentStep).toBe(4)
     })
   })
 
