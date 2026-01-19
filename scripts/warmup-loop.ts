@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import { MetaAdsWarmupClient } from '../src/infrastructure/external/meta-ads/MetaAdsWarmupClient'
 
-const token = 'EAASoIP0CqaABQRCr3yM8NjJfhNiyE4VuJX2WACWZA4AhI1Qrvr5y3ovprmdT8mvjoZB7JXfYdAyhc1jezlZBhD8OKESP8kqhQxmyjU4dr7TmTk11WMEgXTLLIVq4PL6QSewgvNGiZB1mZBP882m5WMDwQRyW2Iki4bvEpqHTAKNDvDvZCeibIYfPadOiknRZBoN'
+const token = 'EAASoIP0CqaABQcYGZBaRCaXSQ9EnIYRrp83PUgquIw1p1ji6qzNRX8FfFxwHTZClMZAoagttJXiqhtWJb1LDMnh8J4VCSRWREfcI3RBjXaU6ZB7nm7aNm2810RcQ21hjzoVTHn5amok4O3f6wqCW6pzP6ZC8pz18AVZC5pK5Khg8NDpnJW1ClT7MVGqJPxcRJd'
 const accountId = 'act_517762859391394'
 
 const TARGET_CALLS = 1500
