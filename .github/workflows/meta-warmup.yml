@@ -80,7 +80,7 @@ jobs:
             echo ""
             echo "=== Warmup Execution $i/$REPEAT_COUNT ==="
 
-            RESPONSE=$(curl -s -w "\n%{http_code}" \
+            RESPONSE=$(curl -s -w "\n%{http_code}" --max-time 120 \
               -X GET "${VERCEL_URL}/api/cron/meta-warmup" \
               -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
               -H "Content-Type: application/json")
