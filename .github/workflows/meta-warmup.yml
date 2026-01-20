@@ -9,6 +9,8 @@
 # - 6시간마다 자동 실행 (하루 4회)
 # - 1회 실행당 ~98회 API 호출
 # - 하루 ~400회 호출 (목표 대비 충분)
+#
+# Updated: 2026-01-20 - workflow_dispatch 활성화
 
 name: Meta API Warmup
 
