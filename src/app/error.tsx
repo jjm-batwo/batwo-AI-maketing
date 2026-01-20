@@ -18,23 +18,25 @@ interface ErrorPageProps {
   reset: () => void
 }
 
+// Sentry에 에러 리포팅 (컴포넌트 외부에서 호출)
+function captureErrorToSentry(error: Error & { digest?: string }): string {
+  return Sentry.captureException(error, {
+    extra: {
+      digest: error.digest,
+      componentStack: error.stack,
+    },
+    tags: {
+      error_boundary: 'app',
+    },
+  })
+}
+
 export default function ErrorPage({ error, reset }: ErrorPageProps) {
-  const [eventId, setEventId] = useState<string | null>(null)
   const [showFeedback, setShowFeedback] = useState(false)
+  // 초기값으로 Sentry 이벤트 ID 설정 (한 번만 실행됨)
+  const [eventId] = useState(() => captureErrorToSentry(error))
 
   useEffect(() => {
-    // Sentry에 에러 리포팅
-    const id = Sentry.captureException(error, {
-      extra: {
-        digest: error.digest,
-        componentStack: error.stack,
-      },
-      tags: {
-        error_boundary: 'app',
-      },
-    })
-    setEventId(id)
-
     // 개발 모드에서는 콘솔에도 출력
     if (process.env.NODE_ENV === 'development') {
       console.error('Application error:', error)
