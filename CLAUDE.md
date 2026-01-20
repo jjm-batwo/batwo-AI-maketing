@@ -4,13 +4,14 @@
 커머스 사업자를 위한 AI 마케팅 대행 솔루션. Meta 광고 캠페인 자동화, KPI 대시보드, 주간 보고서 생성.
 
 ## 기술 스택
-- **Framework**: Next.js 15 (App Router)
+- **Framework**: Next.js 16.1 (App Router, Turbopack)
+- **Runtime**: React 19.2 + React Compiler
 - **Language**: TypeScript 5.x
 - **Database**: PostgreSQL + Prisma 7.x
-- **Auth**: NextAuth.js v5
-- **UI**: shadcn/ui + Tailwind CSS
-- **State**: Zustand + TanStack Query
-- **Testing**: Vitest + Playwright
+- **Auth**: NextAuth.js v5 (beta)
+- **UI**: shadcn/ui + Tailwind CSS 4
+- **State**: Zustand 5 + TanStack Query 5
+- **Testing**: Vitest 4 + Playwright 1.57
 
 ## 클린 아키텍처 구조
 
@@ -96,6 +97,42 @@ npx playwright test  # E2E 테스트
 
 계획 파일은 `docs/plans/` 디렉토리에 저장됩니다.
 
+## TCREI 프롬프트 프레임워크
+
+> 구조화된 프롬프트로 AI 코드 생성 품질을 높입니다.
+
+### TCREI 구성요소
+
+| 요소 | 설명 |
+|------|------|
+| **R** (Role) | AI가 수행할 전문가 역할 |
+| **C** (Context) | 프로젝트 상황 및 제약조건 |
+| **T** (Task) | 구체적인 작업 지시 |
+| **E** (Examples) | 참조 코드 및 패턴 |
+| **I** (Input/Format) | 입출력 형식 |
+
+### 기본 역할 정의
+
+| 역할 | 전문 분야 | 위치 |
+|------|----------|------|
+| **도메인 모델러** | 엔티티, 값 객체, 도메인 오류 | `src/domain/` |
+| **API 설계자** | Route Handlers, UseCase, DTO | `src/app/api/` |
+| **React UI 엔지니어** | shadcn/ui, Tailwind CSS 4 | `src/presentation/` |
+| **TDD 전문가** | Vitest, Playwright | `tests/` |
+
+### TCREI 명령어
+
+```
+/tcrei entity [EntityName]       도메인 엔티티 생성
+/tcrei api [경로] [메서드]        API 엔드포인트 생성
+/tcrei component [ComponentName] UI 컴포넌트 생성
+/tcrei bugfix [경로] [설명]      TDD 기반 버그 수정
+```
+
+> `/기능요청`, `/버그신고` 시 TCREI 템플릿이 자동 적용됩니다.
+
+상세 템플릿: `docs/ai-team/tcrei-templates.md`
+
 ## 바투 AI 개발팀 시스템
 
 **모든 개발 관련 요청은 AI 개발팀을 통해 처리**
@@ -142,6 +179,79 @@ npx playwright test  # E2E 테스트
 - **기능 요청** → PM Agent 접수 → 설계 담당 검토 → 개발 담당 구현 → 품질 관리자 검증 → 문서 담당 기록
 - **버그 신고** → PM Agent 접수 → 분석 담당 조사 → 개발 담당 수정 → 품질 관리자 검증
 - **코드 변경** → 자동 테스트 → 보안 검사 (API/인증 변경 시) → 빌드 검증
+
+### Plan Mode 에이전트 자동 연동
+
+> **Plan Mode 진입 시 개발 에이전트가 자동으로 활성화됩니다.**
+
+#### 에이전트 자동 선택 규칙
+
+| Task 키워드 | 활성화 에이전트 | TCREI 템플릿 |
+|------------|----------------|--------------|
+| entity, 엔티티, domain, 도메인 | 설계 담당 → 개발 담당 | `/tcrei entity` |
+| api, route, endpoint | 설계 담당 → 개발 담당 → 보안 책임자 | `/tcrei api` |
+| component, 컴포넌트, ui, 화면 | 설계 담당 → 개발 담당 | `/tcrei component` |
+| bug, fix, 버그, 수정, 오류 | 분석 담당 → 개발 담당 | `/tcrei bugfix` |
+| test, 테스트, 검증 | 품질 관리자 | - |
+| security, auth, 보안, 인증 | 보안 책임자 → 개발 담당 | `/tcrei api` |
+| refactor, 리팩토링 | 설계 담당 → 개발 담당 → 품질 관리자 | - |
+| deploy, 배포 | PM → 품질 관리자 → 보안 책임자 | - |
+
+#### Plan Mode 실행 흐름
+
+```
+Plan Mode 진입
+    │
+    ▼
+┌─────────────────────────────────────────────────┐
+│ 1. PM Agent 활성화                               │
+│    - Task 키워드 분석                            │
+│    - 적절한 에이전트 선택                         │
+│    - TCREI 템플릿 자동 적용                       │
+└─────────────────────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────────────────────┐
+│ 2. 설계 담당 (해당 시)                           │
+│    - 아키텍처 검토                               │
+│    - 의존성 분석                                 │
+│    - 구현 계획 수립                              │
+└─────────────────────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────────────────────┐
+│ 3. Plan 파일 생성                                │
+│    - .claude/plans/ 디렉토리에 저장              │
+│    - TCREI 형식으로 구조화                       │
+│    - 에이전트별 작업 항목 명시                    │
+└─────────────────────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────────────────────┐
+│ 4. 사용자 승인 대기                              │
+│    - Plan 검토 요청                              │
+│    - 수정 사항 반영                              │
+└─────────────────────────────────────────────────┘
+    │
+    ▼
+Plan Mode 종료 → 실행 단계 (에이전트 순차 작동)
+```
+
+#### 예시: 기능 구현 Plan Mode
+
+```
+사용자: "주문 엔티티 구현해줘"
+    │
+    ▼
+[PM Agent 활성화]
+├── 키워드 분석: "엔티티" → 설계 담당 + 개발 담당
+├── TCREI 템플릿: /tcrei entity Order
+└── 작업 분배:
+    ├── 설계 담당: Order 엔티티 설계 검토
+    ├── 개발 담당: TDD 기반 구현
+    ├── 품질 관리자: 테스트 커버리지 검증
+    └── 문서 담당: 변경사항 기록
+```
 
 ### 승인 필요 작업
 | 작업 유형 | 이유 |
