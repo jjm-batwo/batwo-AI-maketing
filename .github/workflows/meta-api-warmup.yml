@@ -18,7 +18,7 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/meta-warmup.yml'
+      - '.github/workflows/meta-api-warmup.yml'
 
   schedule:
     # 6시간마다 실행 (UTC 기준)
