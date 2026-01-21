@@ -10,7 +10,7 @@
 # - 1회 실행당 ~98회 API 호출
 # - 하루 ~400회 호출 (목표 대비 충분)
 #
-# Updated: 2026-01-21 - schedule/workflow_dispatch 재등록
+# Updated: 2026-01-21 - workflow_dispatch with English description
 
 name: Meta API Warmup
 
@@ -29,7 +29,7 @@ on:
   workflow_dispatch:
     inputs:
       repeat_count:
-        description: '반복 실행 횟수 (1-10)'
+        description: 'Number of warmup iterations (1-10)'
         required: false
         default: '1'
         type: choice
