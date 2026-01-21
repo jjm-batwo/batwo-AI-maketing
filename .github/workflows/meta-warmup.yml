@@ -10,16 +10,11 @@
 # - 1회 실행당 ~98회 API 호출
 # - 하루 ~400회 호출 (목표 대비 충분)
 #
-# Updated: 2026-01-20 - workflow_dispatch 활성화
+# Updated: 2026-01-21 - schedule/workflow_dispatch 재등록
 
 name: Meta API Warmup
 
 on:
-  # 워크플로우 인식을 위한 임시 push 트리거 (나중에 제거 가능)
-  push:
-    paths:
-      - '.github/workflows/meta-warmup.yml'
-
   schedule:
     # 6시간마다 실행 (UTC 기준)
     # 00:00, 06:00, 12:00, 18:00 UTC
@@ -27,7 +22,6 @@ on:
     - cron: '0 */6 * * *'
 
   workflow_dispatch:
-    # 수동 실행 지원
     inputs:
       repeat_count:
         description: '반복 실행 횟수 (1-10)'
