@@ -1,0 +1,159 @@
+# Meta Marketing API Warmup - GitHub Actions
+# 앱 고급 액세스 승인을 위한 API 호출량 증가
+#
+# 목표:
+# - 15일간 1,500회 이상 마케팅 API 호출
+# - 에러율 15% 미만 유지
+#
+# 실행 빈도:
+# - 6시간마다 자동 실행 (하루 4회)
+# - 1회 실행당 ~98회 API 호출
+# - 하루 ~400회 호출 (목표 대비 충분)
+#
+# Updated: 2026-01-21 - schedule/workflow_dispatch 재등록
+
+name: Meta API Warmup
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/meta-api-warmup.yml'
+
+  schedule:
+    # 6시간마다 실행 (UTC 기준)
+    # 00:00, 06:00, 12:00, 18:00 UTC
+    # 09:00, 15:00, 21:00, 03:00 KST
+    - cron: '0 */6 * * *'
+
+  workflow_dispatch:
+    inputs:
+      repeat_count:
+        description: '반복 실행 횟수 (1-10)'
+        required: false
+        default: '1'
+        type: choice
+        options:
+          - '1'
+          - '3'
+          - '5'
+          - '10'
+
+env:
+  VERCEL_URL: ${{ secrets.VERCEL_URL }}
+
+jobs:
+  warmup:
+    name: Meta API Warmup
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check secrets
+        run: |
+          if [ -z "${{ secrets.CRON_SECRET }}" ]; then
+            echo "❌ CRON_SECRET is not set"
+            exit 1
+          fi
+          if [ -z "${{ secrets.VERCEL_URL }}" ]; then
+            echo "⚠️ VERCEL_URL is not set, using default"
+          fi
+          echo "✅ Secrets configured"
+
+      - name: Execute Warmup
+        id: warmup
+        run: |
+          VERCEL_URL="${{ secrets.VERCEL_URL }}"
+          if [ -z "$VERCEL_URL" ]; then
+            VERCEL_URL="https://batwo.vercel.app"
+          fi
+
+          REPEAT_COUNT="${{ github.event.inputs.repeat_count || '1' }}"
+          echo "🔄 Executing warmup ${REPEAT_COUNT} time(s)"
+
+          TOTAL_CALLS=0
+          TOTAL_SUCCESS=0
+          TOTAL_FAILED=0
+
+          for i in $(seq 1 $REPEAT_COUNT); do
+            echo ""
+            echo "=== Warmup Execution $i/$REPEAT_COUNT ==="
+
+            RESPONSE=$(curl -s -w "\n%{http_code}" --max-time 120 \
+              -X GET "${VERCEL_URL}/api/cron/meta-warmup" \
+              -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+              -H "Content-Type: application/json")
+
+            HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+            BODY=$(echo "$RESPONSE" | sed '$d')
+
+            if [ "$HTTP_CODE" = "200" ]; then
+              echo "✅ HTTP 200 OK"
+
+              # Parse response
+              CALLS=$(echo "$BODY" | jq -r '.totalApiCalls // 0')
+              SUCCESS=$(echo "$BODY" | jq -r '.successfulCalls // 0')
+              FAILED=$(echo "$BODY" | jq -r '.failedCalls // 0')
+              REVIEW_STATUS=$(echo "$BODY" | jq -r '.appReviewStatus.message // "Unknown"')
+
+              echo "📊 API Calls: $CALLS (Success: $SUCCESS, Failed: $FAILED)"
+              echo "📋 Review Status: $REVIEW_STATUS"
+
+              TOTAL_CALLS=$((TOTAL_CALLS + CALLS))
+              TOTAL_SUCCESS=$((TOTAL_SUCCESS + SUCCESS))
+              TOTAL_FAILED=$((TOTAL_FAILED + FAILED))
+            else
+              echo "❌ HTTP $HTTP_CODE"
+              echo "$BODY" | head -c 500
+            fi
+
+            # 반복 실행 시 API 과부하 방지
+            if [ $i -lt $REPEAT_COUNT ]; then
+              echo "⏳ Waiting 30 seconds before next execution..."
+              sleep 30
+            fi
+          done
+
+          echo ""
+          echo "=== Summary ==="
+          echo "📊 Total API Calls: $TOTAL_CALLS"
+          echo "✅ Successful: $TOTAL_SUCCESS"
+          echo "❌ Failed: $TOTAL_FAILED"
+
+          # Calculate error rate
+          if [ $TOTAL_CALLS -gt 0 ]; then
+            ERROR_RATE=$(echo "scale=2; $TOTAL_FAILED * 100 / $TOTAL_CALLS" | bc)
+            echo "📉 Error Rate: ${ERROR_RATE}%"
+          fi
+
+          # Set outputs for summary
+          echo "total_calls=$TOTAL_CALLS" >> $GITHUB_OUTPUT
+          echo "success_calls=$TOTAL_SUCCESS" >> $GITHUB_OUTPUT
+          echo "failed_calls=$TOTAL_FAILED" >> $GITHUB_OUTPUT
+
+      - name: Create Summary
+        run: |
+          echo "## 🔥 Meta API Warmup Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Total API Calls | ${{ steps.warmup.outputs.total_calls }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Successful | ${{ steps.warmup.outputs.success_calls }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Failed | ${{ steps.warmup.outputs.failed_calls }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Target**: 1,500 calls over 15 days (100 calls/day)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "_Executed at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')_" >> $GITHUB_STEP_SUMMARY
+
+  notify-on-failure:
+    name: Notify on Failure
+    runs-on: ubuntu-latest
+    needs: warmup
+    if: failure()
+
+    steps:
+      - name: Log failure
+        run: |
+          echo "❌ Meta API Warmup failed!"
+          echo "Check the workflow logs for details."
+          echo "Manual execution: https://github.com/${{ github.repository }}/actions/workflows/meta-api-warmup.yml"
