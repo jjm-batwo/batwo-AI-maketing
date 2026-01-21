@@ -22,10 +22,32 @@ const mockQuotaService = {
     CAMPAIGN_CREATE: { used: 0, limit: 5, remaining: 5, period: 'week' },
   }),
 }
+const mockCopyLearningService = {
+  getGenerationHints: vi.fn().mockReturnValue({
+    industry: 'ecommerce',
+    currentSeason: '겨울',
+    isSpecialPeriod: false,
+    specialPeriodName: undefined,
+    recommendedHooks: [
+      { hook: 'benefit', reason: 'ecommerce 업종 벤치마크 기준 우수 성과', expectedCTR: 2.1, confidence: 0.6 },
+    ],
+    avoidHooks: [],
+    keywordSuggestions: ['할인', '특가', '무료배송'],
+    characterGuidelines: {
+      headline: '15-25자 (핵심 메시지 전달)',
+      primaryText: '50-90자 (상세 설명)',
+      description: '20-40자 (행동 유도)',
+    },
+    timingAdvice: 'ecommerce 업종 최적 시간대: 10시, 14시, 20시, 21시',
+    ctaRecommendations: ['지금 구매하기', '장바구니 담기'],
+  }),
+  analyzePerformance: vi.fn(),
+}
 
 vi.mock('@/lib/di/container', () => ({
   getAIService: () => mockAIService,
   getQuotaService: () => mockQuotaService,
+  getCopyLearningService: () => mockCopyLearningService,
 }))
 
 // Import after mocks

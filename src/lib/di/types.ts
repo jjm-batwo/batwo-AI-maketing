@@ -15,6 +15,8 @@ export const DI_TOKENS = {
   BudgetAlertRepository: Symbol.for('BudgetAlertRepository'),
   ABTestRepository: Symbol.for('ABTestRepository'),
   TeamRepository: Symbol.for('TeamRepository'),
+  SubscriptionRepository: Symbol.for('SubscriptionRepository'),
+  InvoiceRepository: Symbol.for('InvoiceRepository'),
 
   // External Services
   MetaAdsService: Symbol.for('MetaAdsService'),
@@ -24,6 +26,11 @@ export const DI_TOKENS = {
   QuotaService: Symbol.for('QuotaService'),
   BudgetAlertService: Symbol.for('BudgetAlertService'),
   AnomalyDetectionService: Symbol.for('AnomalyDetectionService'),
+  AnomalyRootCauseService: Symbol.for('AnomalyRootCauseService'),
+  AnomalySegmentAnalysisService: Symbol.for('AnomalySegmentAnalysisService'),
+  CopyLearningService: Symbol.for('CopyLearningService'),
+  CampaignAnalyzer: Symbol.for('CampaignAnalyzer'),
+  CompetitorBenchmarkService: Symbol.for('CompetitorBenchmarkService'),
 
   // Infrastructure Services
   ReportPDFGenerator: Symbol.for('ReportPDFGenerator'),

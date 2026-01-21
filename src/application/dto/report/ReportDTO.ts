@@ -14,6 +14,10 @@ export interface GenerateReportDTO {
   endDate: string
 }
 
+// Re-export domain types for backward compatibility
+export type ReportAIInsightDTO = AIInsight
+export type ReportSummaryMetricsDTO = ReportSummaryMetrics
+
 export interface ReportDTO {
   id: string
   type: ReportType
@@ -34,6 +38,8 @@ export interface ReportDTO {
 }
 
 export function toReportDTO(report: Report): ReportDTO {
+  const metrics = report.calculateSummaryMetrics()
+
   return {
     id: report.id,
     type: report.type,
@@ -41,11 +47,13 @@ export function toReportDTO(report: Report): ReportDTO {
     campaignIds: report.campaignIds,
     dateRange: {
       startDate: report.dateRange.startDate.toISOString(),
-      endDate: report.dateRange.endDate?.toISOString() ?? report.dateRange.startDate.toISOString(),
+      endDate:
+        report.dateRange.endDate?.toISOString() ??
+        report.dateRange.startDate.toISOString(),
     },
     sections: report.sections,
     aiInsights: report.aiInsights,
-    summaryMetrics: report.calculateSummaryMetrics(),
+    summaryMetrics: metrics,
     status: report.status,
     generatedAt: report.generatedAt?.toISOString(),
     sentAt: report.sentAt?.toISOString(),

@@ -16,6 +16,9 @@ import type { IUsageLogRepository } from '@domain/repositories/IUsageLogReposito
 import type { IBudgetAlertRepository } from '@domain/repositories/IBudgetAlertRepository'
 import type { IABTestRepository } from '@domain/repositories/IABTestRepository'
 import type { ITeamRepository } from '@domain/repositories/ITeamRepository'
+import type { IUserRepository } from '@domain/repositories/IUserRepository'
+import type { ISubscriptionRepository } from '@domain/repositories/ISubscriptionRepository'
+import type { IInvoiceRepository } from '@domain/repositories/IInvoiceRepository'
 
 // Port interfaces
 import type { IMetaAdsService } from '@application/ports/IMetaAdsService'
@@ -29,6 +32,9 @@ import { PrismaUsageLogRepository } from '@infrastructure/database/repositories/
 import { PrismaBudgetAlertRepository } from '@infrastructure/database/repositories/PrismaBudgetAlertRepository'
 import { PrismaABTestRepository } from '@infrastructure/database/repositories/PrismaABTestRepository'
 import { PrismaTeamRepository } from '@infrastructure/database/repositories/PrismaTeamRepository'
+import { PrismaUserRepository } from '@infrastructure/database/repositories/PrismaUserRepository'
+import { PrismaSubscriptionRepository } from '@infrastructure/database/repositories/PrismaSubscriptionRepository'
+import { PrismaInvoiceRepository } from '@infrastructure/database/repositories/PrismaInvoiceRepository'
 import { MetaAdsClient } from '@infrastructure/external/meta-ads/MetaAdsClient'
 import { AIService } from '@infrastructure/external/openai/AIService'
 
@@ -36,6 +42,11 @@ import { AIService } from '@infrastructure/external/openai/AIService'
 import { QuotaService } from '@application/services/QuotaService'
 import { BudgetAlertService } from '@application/services/BudgetAlertService'
 import { AnomalyDetectionService } from '@application/services/AnomalyDetectionService'
+import { AnomalyRootCauseService } from '@application/services/AnomalyRootCauseService'
+import { AnomalySegmentAnalysisService } from '@application/services/AnomalySegmentAnalysisService'
+import { CopyLearningService } from '@application/services/CopyLearningService'
+import { CampaignAnalyzer } from '@application/services/CampaignAnalyzer'
+import { CompetitorBenchmarkService } from '@application/services/CompetitorBenchmarkService'
 import { ReportPDFGenerator, type IReportPDFGenerator } from '@infrastructure/pdf/ReportPDFGenerator'
 import { EmailService } from '@infrastructure/email/EmailService'
 import type { IEmailService } from '@application/ports/IEmailService'
@@ -123,6 +134,21 @@ container.registerSingleton<ITeamRepository>(
   () => new PrismaTeamRepository(prisma)
 )
 
+container.registerSingleton<IUserRepository>(
+  DI_TOKENS.UserRepository,
+  () => new PrismaUserRepository(prisma)
+)
+
+container.registerSingleton<ISubscriptionRepository>(
+  DI_TOKENS.SubscriptionRepository,
+  () => new PrismaSubscriptionRepository(prisma)
+)
+
+container.registerSingleton<IInvoiceRepository>(
+  DI_TOKENS.InvoiceRepository,
+  () => new PrismaInvoiceRepository(prisma)
+)
+
 // Register External Services (Singletons)
 container.registerSingleton<IMetaAdsService>(
   DI_TOKENS.MetaAdsService,
@@ -156,6 +182,31 @@ container.registerSingleton(
       container.resolve(DI_TOKENS.KPIRepository),
       container.resolve(DI_TOKENS.CampaignRepository)
     )
+)
+
+container.registerSingleton(
+  DI_TOKENS.AnomalyRootCauseService,
+  () => new AnomalyRootCauseService()
+)
+
+container.registerSingleton(
+  DI_TOKENS.AnomalySegmentAnalysisService,
+  () => new AnomalySegmentAnalysisService()
+)
+
+container.registerSingleton(
+  DI_TOKENS.CopyLearningService,
+  () => new CopyLearningService()
+)
+
+container.registerSingleton(
+  DI_TOKENS.CampaignAnalyzer,
+  () => new CampaignAnalyzer()
+)
+
+container.registerSingleton(
+  DI_TOKENS.CompetitorBenchmarkService,
+  () => new CompetitorBenchmarkService()
 )
 
 // Register Infrastructure Services (Singletons)
@@ -307,6 +358,10 @@ export function getAnomalyDetectionService(): AnomalyDetectionService {
   return container.resolve(DI_TOKENS.AnomalyDetectionService)
 }
 
+export function getAnomalyRootCauseService(): AnomalyRootCauseService {
+  return container.resolve(DI_TOKENS.AnomalyRootCauseService)
+}
+
 export function getReportPDFGenerator(): IReportPDFGenerator {
   return container.resolve(DI_TOKENS.ReportPDFGenerator)
 }
@@ -321,4 +376,32 @@ export function getABTestRepository(): IABTestRepository {
 
 export function getTeamRepository(): ITeamRepository {
   return container.resolve(DI_TOKENS.TeamRepository)
+}
+
+export function getCopyLearningService(): CopyLearningService {
+  return container.resolve(DI_TOKENS.CopyLearningService)
+}
+
+export function getAnomalySegmentAnalysisService(): AnomalySegmentAnalysisService {
+  return container.resolve(DI_TOKENS.AnomalySegmentAnalysisService)
+}
+
+export function getCampaignAnalyzer(): CampaignAnalyzer {
+  return container.resolve(DI_TOKENS.CampaignAnalyzer)
+}
+
+export function getCompetitorBenchmarkService(): CompetitorBenchmarkService {
+  return container.resolve(DI_TOKENS.CompetitorBenchmarkService)
+}
+
+export function getUserRepository(): IUserRepository {
+  return container.resolve(DI_TOKENS.UserRepository)
+}
+
+export function getSubscriptionRepository(): ISubscriptionRepository {
+  return container.resolve(DI_TOKENS.SubscriptionRepository)
+}
+
+export function getInvoiceRepository(): IInvoiceRepository {
+  return container.resolve(DI_TOKENS.InvoiceRepository)
 }

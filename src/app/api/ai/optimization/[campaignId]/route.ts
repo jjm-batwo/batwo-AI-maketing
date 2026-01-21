@@ -5,15 +5,72 @@ import {
   getQuotaService,
   getCampaignRepository,
   getKPIRepository,
+  getCampaignAnalyzer,
+  getCompetitorBenchmarkService,
 } from '@/lib/di/container'
 import type { GenerateOptimizationInput } from '@application/ports/IAIService'
+import type { Industry } from '@infrastructure/external/openai/prompts/adCopyGeneration'
+
+/**
+ * 최적화 제안 응답 타입
+ */
+interface OptimizationResponse {
+  campaignId: string
+  campaignName: string
+  industry?: Industry
+  suggestions: Array<{
+    category: 'budget' | 'targeting' | 'creative' | 'timing' | 'bidding'
+    priority: 'high' | 'medium' | 'low'
+    suggestion: string
+    expectedImpact: string
+    rationale: string
+  }>
+  metrics: {
+    roas: number
+    cpa: number
+    ctr: number
+    cvr: number
+    cpc: number
+    impressions: number
+    clicks: number
+    conversions: number
+    spend: number
+    revenue?: number
+  }
+  analysis?: {
+    performanceGrade: 'excellent' | 'good' | 'average' | 'below_average' | 'poor'
+    insights: Array<{
+      category: string
+      priority: string
+      title: string
+      description: string
+      expectedImpact: {
+        metric: string
+        improvement: number
+        unit: string
+      }
+    }>
+  }
+  benchmark?: {
+    overallScore: number
+    overallGrade: string
+    summary: string
+  }
+  remainingQuota: number
+  generatedAt: string
+}
 
 /**
  * GET /api/ai/optimization/[campaignId]
  * 캠페인 최적화 제안 조회
+ *
+ * Query Parameters:
+ * - industry: 업종 (ecommerce, food_beverage, beauty, fashion, education, service, saas, health)
+ * - includeAnalysis: 상세 분석 포함 여부 (default: true)
+ * - includeBenchmark: 벤치마크 비교 포함 여부 (default: true)
  */
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ campaignId: string }> }
 ) {
   const user = await getAuthenticatedUser()
@@ -21,6 +78,10 @@ export async function GET(
 
   try {
     const { campaignId } = await params
+    const searchParams = request.nextUrl.searchParams
+    const industry = searchParams.get('industry') as Industry | null
+    const includeAnalysis = searchParams.get('includeAnalysis') !== 'false'
+    const includeBenchmark = searchParams.get('includeBenchmark') !== 'false'
 
     // Verify campaign ownership
     const campaignRepo = getCampaignRepository()
@@ -61,48 +122,125 @@ export async function GET(
       )
     }
 
+    // Calculate additional metrics
+    const cvr = latestKPI.clicks > 0 ? (latestKPI.conversions / latestKPI.clicks) * 100 : 0
+    const cpc = latestKPI.clicks > 0 ? latestKPI.spend.amount / latestKPI.clicks : 0
+    const roas = latestKPI.calculateROAS()
+    const cpa = latestKPI.calculateCPA().amount
+    const ctr = latestKPI.calculateCTR().value
+
     // Build optimization input from campaign and KPI data
     const input: GenerateOptimizationInput = {
       campaignName: campaign.name,
       objective: campaign.objective,
+      industry: industry || undefined,
       currentMetrics: {
-        roas: latestKPI.calculateROAS(),
-        cpa: latestKPI.calculateCPA().amount,
-        ctr: latestKPI.calculateCTR().value,
+        roas,
+        cpa,
+        ctr,
+        cvr,
+        cpc,
         impressions: latestKPI.impressions,
         clicks: latestKPI.clicks,
         conversions: latestKPI.conversions,
         spend: latestKPI.spend.amount,
+        revenue: latestKPI.revenue?.amount,
       },
       targetAudience: campaign.targetAudience
         ? {
-            ageRange: campaign.targetAudience.ageMin && campaign.targetAudience.ageMax
-              ? `${campaign.targetAudience.ageMin}-${campaign.targetAudience.ageMax}세`
-              : undefined,
+            ageRange:
+              campaign.targetAudience.ageMin && campaign.targetAudience.ageMax
+                ? `${campaign.targetAudience.ageMin}-${campaign.targetAudience.ageMax}세`
+                : undefined,
             interests: campaign.targetAudience.interests,
             locations: campaign.targetAudience.locations,
           }
         : undefined,
     }
 
-    // Generate optimization suggestions
+    // Generate optimization suggestions using AI
     const aiService = getAIService()
     const suggestions = await aiService.generateCampaignOptimization(input)
+
+    // Build response
+    const response: OptimizationResponse = {
+      campaignId,
+      campaignName: campaign.name,
+      industry: industry || undefined,
+      suggestions,
+      metrics: {
+        roas,
+        cpa,
+        ctr,
+        cvr,
+        cpc,
+        impressions: latestKPI.impressions,
+        clicks: latestKPI.clicks,
+        conversions: latestKPI.conversions,
+        spend: latestKPI.spend.amount,
+        revenue: latestKPI.revenue?.amount,
+      },
+      remainingQuota: 0,
+      generatedAt: new Date().toISOString(),
+    }
+
+    // Add campaign analysis if requested and industry is provided
+    if (includeAnalysis && industry) {
+      const analyzer = getCampaignAnalyzer()
+      const analysisResult = analyzer.analyze(
+        {
+          impressions: latestKPI.impressions,
+          clicks: latestKPI.clicks,
+          conversions: latestKPI.conversions,
+          spend: latestKPI.spend.amount,
+          revenue: latestKPI.revenue?.amount || 0,
+          ctr,
+          cvr,
+          cpa,
+          roas,
+          cpc,
+        },
+        industry
+      )
+
+      response.analysis = {
+        performanceGrade: analysisResult.performanceGrade,
+        insights: analysisResult.insights.slice(0, 5).map((insight) => ({
+          category: insight.category,
+          priority: insight.priority,
+          title: insight.title,
+          description: insight.description,
+          expectedImpact: insight.expectedImpact,
+        })),
+      }
+    }
+
+    // Add benchmark comparison if requested and industry is provided
+    if (includeBenchmark && industry) {
+      const benchmarkService = getCompetitorBenchmarkService()
+      const benchmarkReport = benchmarkService.generateReport(
+        { ctr, cvr, cpa, roas, cpc, spend: latestKPI.spend.amount, revenue: latestKPI.revenue?.amount || 0 },
+        industry
+      )
+
+      response.benchmark = {
+        overallScore: benchmarkReport.overallScore,
+        overallGrade: benchmarkReport.overallGrade,
+        summary: benchmarkService.getPerformanceSummary(
+          { ctr, cvr, cpa, roas, cpc, spend: latestKPI.spend.amount, revenue: latestKPI.revenue?.amount || 0 },
+          industry
+        ),
+      }
+    }
 
     // Log usage only on success
     await quotaService.logUsage(user.id, 'AI_ANALYSIS')
 
     // Get remaining quota
     const quotaStatus = await quotaService.getRemainingQuota(user.id)
+    response.remainingQuota = quotaStatus.AI_ANALYSIS?.remaining ?? 0
 
-    return NextResponse.json({
-      campaignId,
-      campaignName: campaign.name,
-      suggestions,
-      metrics: input.currentMetrics,
-      remainingQuota: quotaStatus.AI_ANALYSIS?.remaining ?? 0,
-      generatedAt: new Date().toISOString(),
-    })
+    return NextResponse.json(response)
   } catch (error) {
     console.error('Failed to generate optimization suggestions:', error)
     return NextResponse.json(

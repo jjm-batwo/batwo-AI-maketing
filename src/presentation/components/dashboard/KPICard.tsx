@@ -42,9 +42,9 @@ function formatValue(value: number, format: KPIFormat, unit?: string): string {
     case 'currency':
       return `${value.toLocaleString('ko-KR')}${unit || '원'}`
     case 'percentage':
-      return `${value}${unit || '%'}`
+      return `${Number(value).toFixed(1)}${unit || '%'}`
     case 'multiplier':
-      return `${value}${unit || 'x'}`
+      return `${Number(value).toFixed(1)}${unit || 'x'}`
     case 'number':
     default:
       return `${value.toLocaleString('ko-KR')}${unit || ''}`

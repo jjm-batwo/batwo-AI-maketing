@@ -6,20 +6,24 @@ import type {
   GenerateOptimizationInput,
   GenerateReportInsightInput,
   GenerateAdCopyInput,
+  AIConfig,
 } from '@application/ports/IAIService'
 import { OpenAIApiError } from '../errors'
 import { withRetry } from '@lib/utils/retry'
 import {
   buildCampaignOptimizationPrompt,
   CAMPAIGN_OPTIMIZATION_SYSTEM_PROMPT,
+  CAMPAIGN_OPTIMIZATION_AI_CONFIG,
 } from './prompts/campaignOptimization'
 import {
   buildReportInsightPrompt,
   REPORT_INSIGHT_SYSTEM_PROMPT,
+  REPORT_INSIGHT_AI_CONFIG,
 } from './prompts/reportInsight'
 import {
   buildAdCopyPrompt,
   AD_COPY_SYSTEM_PROMPT,
+  AD_COPY_AI_CONFIG,
 } from './prompts/adCopyGeneration'
 
 const OPENAI_API_BASE = 'https://api.openai.com/v1'
@@ -63,20 +67,28 @@ export class AIService implements IAIService {
 
   private async chatCompletion(
     systemPrompt: string,
-    userPrompt: string
+    userPrompt: string,
+    config?: AIConfig
   ): Promise<string> {
+    // 설정값 적용: config > 기본값
+    const finalModel = config?.model ?? this.model
+    const finalTemperature = config?.temperature ?? 0.7
+    const finalMaxTokens = config?.maxTokens ?? 2000
+    const finalTopP = config?.topP ?? 1
+
     const response = await this.requestWithRetry<ChatCompletionResponse>(
       '/chat/completions',
       {
         method: 'POST',
         body: JSON.stringify({
-          model: this.model,
+          model: finalModel,
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userPrompt },
           ],
-          temperature: 0.7,
-          max_tokens: 2000,
+          temperature: finalTemperature,
+          max_tokens: finalMaxTokens,
+          top_p: finalTopP,
         }),
       }
     )
@@ -152,7 +164,8 @@ export class AIService implements IAIService {
     const prompt = buildCampaignOptimizationPrompt(input)
     const response = await this.chatCompletion(
       CAMPAIGN_OPTIMIZATION_SYSTEM_PROMPT,
-      prompt
+      prompt,
+      CAMPAIGN_OPTIMIZATION_AI_CONFIG
     )
 
     return this.parseJsonResponse<CampaignOptimizationSuggestion[]>(response)
@@ -164,7 +177,8 @@ export class AIService implements IAIService {
     const prompt = buildReportInsightPrompt(input)
     const response = await this.chatCompletion(
       REPORT_INSIGHT_SYSTEM_PROMPT,
-      prompt
+      prompt,
+      REPORT_INSIGHT_AI_CONFIG
     )
 
     return this.parseJsonResponse<ReportInsight>(response)
@@ -172,7 +186,11 @@ export class AIService implements IAIService {
 
   async generateAdCopy(input: GenerateAdCopyInput): Promise<AdCopyVariant[]> {
     const prompt = buildAdCopyPrompt(input)
-    const response = await this.chatCompletion(AD_COPY_SYSTEM_PROMPT, prompt)
+    const response = await this.chatCompletion(
+      AD_COPY_SYSTEM_PROMPT,
+      prompt,
+      AD_COPY_AI_CONFIG
+    )
 
     return this.parseJsonResponse<AdCopyVariant[]>(response)
   }

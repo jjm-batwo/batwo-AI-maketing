@@ -66,6 +66,9 @@
   "prisma": {
     "seed": "tsx prisma/seed.ts"
   },
+  "overrides": {
+    "hono": "4.11.4"
+  },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "@prisma/client": "^7.2.0",

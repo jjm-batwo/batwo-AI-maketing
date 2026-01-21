@@ -5,6 +5,7 @@ import Google from 'next-auth/providers/google'
 import Kakao from 'next-auth/providers/kakao'
 import Facebook from 'next-auth/providers/facebook'
 import { z } from 'zod'
+import { GlobalRole } from '@domain/value-objects/GlobalRole'
 
 const credentialsSchema = z.object({
   email: z.string().email(),
@@ -39,6 +40,7 @@ export const authConfig = {
         nextUrl.pathname.startsWith('/settings')
       const isOnAuth = nextUrl.pathname.startsWith('/login') ||
         nextUrl.pathname.startsWith('/register')
+      const isOnAdmin = nextUrl.pathname.startsWith('/admin')
 
       console.log('[AUTH] authorized callback:', {
         pathname: nextUrl.pathname,
@@ -46,7 +48,9 @@ export const authConfig = {
         isLandingPage,
         isOnDashboard,
         isOnAuth,
+        isOnAdmin,
         authUser: auth?.user?.email,
+        globalRole: auth?.user?.globalRole,
       })
 
       // 랜딩 페이지는 누구나 접근 가능
@@ -54,6 +58,17 @@ export const authConfig = {
         // 로그인 사용자는 캠페인 페이지로 리다이렉트
         if (isLoggedIn) return Response.redirect(new URL('/campaigns', nextUrl))
         return true
+      }
+
+      // Admin 페이지는 ADMIN 또는 SUPER_ADMIN만 접근 가능
+      if (isOnAdmin) {
+        if (!isLoggedIn) return false
+        const userRole = auth?.user?.globalRole as GlobalRole | undefined
+        if (userRole === GlobalRole.ADMIN || userRole === GlobalRole.SUPER_ADMIN) {
+          return true
+        }
+        // 권한 없는 사용자는 캠페인 페이지로 리다이렉트
+        return Response.redirect(new URL('/campaigns', nextUrl))
       }
 
       if (isOnDashboard) {
@@ -72,9 +87,12 @@ export const authConfig = {
         hasAccount: !!account,
         provider: account?.provider,
         tokenId: token?.id,
+        globalRole: user?.globalRole || token?.globalRole,
       })
       if (user) {
         token.id = user.id
+        // globalRole은 auth.ts에서 DB 조회 후 설정됨
+        token.globalRole = user.globalRole || GlobalRole.USER
       }
       if (account) {
         token.provider = account.provider
@@ -88,10 +106,12 @@ export const authConfig = {
         hasToken: !!token,
         tokenId: token?.id,
         sessionUser: session?.user?.email,
+        globalRole: token?.globalRole,
       })
       if (token && session.user) {
         session.user.id = token.id as string
         session.user.provider = token.provider as string | undefined
+        session.user.globalRole = (token.globalRole as GlobalRole) || GlobalRole.USER
       }
       return session
     },

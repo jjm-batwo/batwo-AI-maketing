@@ -5,8 +5,27 @@ import {
   Text,
   View,
   StyleSheet,
+  Font,
 } from '@react-pdf/renderer'
 import type { ReportDTO } from '@application/dto/report/ReportDTO'
+
+// Noto Sans KR 폰트 등록 (한글 지원)
+Font.register({
+  family: 'NotoSansKR',
+  fonts: [
+    {
+      src: 'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-400-normal.ttf',
+      fontWeight: 'normal',
+    },
+    {
+      src: 'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-700-normal.ttf',
+      fontWeight: 'bold',
+    },
+  ],
+})
+
+// Hyphenation callback 비활성화 (한글 줄바꿈 개선)
+Font.registerHyphenationCallback((word) => [word])
 
 // Define styles
 const styles = StyleSheet.create({
@@ -14,7 +33,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: '#ffffff',
     padding: 40,
-    fontFamily: 'Helvetica',
+    fontFamily: 'NotoSansKR',
   },
   header: {
     marginBottom: 30,
@@ -95,7 +114,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   campaignMetric: {
-    width: '22%',
+    width: '18%',
   },
   campaignMetricLabel: {
     fontSize: 9,
@@ -272,6 +291,12 @@ export function WeeklyReportTemplate({ report }: WeeklyReportTemplateProps) {
                     <Text style={styles.campaignMetricLabel}>지출</Text>
                     <Text style={styles.campaignMetricValue}>
                       {formatCurrency(section.metrics.spend || 0)}
+                    </Text>
+                  </View>
+                  <View style={styles.campaignMetric}>
+                    <Text style={styles.campaignMetricLabel}>매출</Text>
+                    <Text style={styles.campaignMetricValue}>
+                      {formatCurrency(section.metrics.revenue || 0)}
                     </Text>
                   </View>
                 </View>

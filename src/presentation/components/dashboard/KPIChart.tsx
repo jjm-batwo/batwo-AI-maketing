@@ -46,6 +46,14 @@ export function KPIChart({
     </div>
   )
 
+  const formatChartValue = (value: number): string => {
+    // 값이 100 미만이면 소수점 3자리까지 (ROAS 등), 그 외에는 일반 포맷
+    if (value < 100) {
+      return Number(value).toFixed(3)
+    }
+    return value.toLocaleString()
+  }
+
   const renderChart = () => {
     const maxValue = Math.max(...data.map((d) => d.value), 1)
     return (
@@ -57,7 +65,7 @@ export function KPIChart({
               <div
                 key={index}
                 className="group relative flex-1"
-                title={`${point.date || point.label}: ${point.value.toLocaleString()}`}
+                title={`${point.date || point.label}: ${formatChartValue(point.value)}`}
               >
                 <div
                   className={cn(
@@ -67,7 +75,7 @@ export function KPIChart({
                   style={{ height: `${height}%` }}
                 />
                 <div className="absolute -top-8 left-1/2 hidden -translate-x-1/2 rounded bg-gray-900 px-2 py-1 text-xs text-white group-hover:block">
-                  {point.value.toLocaleString()}
+                  {formatChartValue(point.value)}
                 </div>
               </div>
             )

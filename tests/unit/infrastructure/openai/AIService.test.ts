@@ -7,7 +7,13 @@ import type {
   GenerateOptimizationInput,
   GenerateReportInsightInput,
   GenerateAdCopyInput,
+  AIConfig,
 } from '@application/ports/IAIService'
+import {
+  AD_COPY_AI_CONFIG,
+  CAMPAIGN_OPTIMIZATION_AI_CONFIG,
+  REPORT_INSIGHT_AI_CONFIG,
+} from '@infrastructure/external/openai/prompts'
 
 const OPENAI_API_BASE = 'https://api.openai.com/v1'
 
@@ -119,11 +125,11 @@ const handlers = [
     const systemMessage = body.messages[0]?.content || ''
 
     // Match based on system prompt content
-    if (systemMessage.includes('campaign optimization') || systemMessage.includes('Meta Ads campaign optimization')) {
+    if (systemMessage.includes('campaign optimization') || systemMessage.includes('Meta Ads campaign optimization') || systemMessage.includes('Meta Ads 캠페인 최적화') || systemMessage.includes('최적화 전문가')) {
       return HttpResponse.json(mockOptimizationResponse)
-    } else if (systemMessage.includes('report analyst') || systemMessage.includes('marketing report')) {
+    } else if (systemMessage.includes('report analyst') || systemMessage.includes('marketing report') || systemMessage.includes('마케팅 리포트') || systemMessage.includes('리포트 전문 분석가')) {
       return HttpResponse.json(mockReportInsightResponse)
-    } else if (systemMessage.includes('copywriter') || systemMessage.includes('digital advertising')) {
+    } else if (systemMessage.includes('copywriter') || systemMessage.includes('digital advertising') || systemMessage.includes('카피라이터') || systemMessage.includes('디지털 광고')) {
       return HttpResponse.json(mockAdCopyResponse)
     }
 
@@ -396,6 +402,122 @@ describe('AIService', () => {
 
       expect(result).toBeDefined()
       // The service should successfully complete without exceeding limits
+    })
+  })
+
+  describe('AI configuration', () => {
+    it('should have valid AD_COPY_AI_CONFIG', () => {
+      expect(AD_COPY_AI_CONFIG).toBeDefined()
+      expect(AD_COPY_AI_CONFIG.temperature).toBe(0.8)
+      expect(AD_COPY_AI_CONFIG.maxTokens).toBe(2500)
+      expect(AD_COPY_AI_CONFIG.model).toBe('gpt-4o')
+      expect(AD_COPY_AI_CONFIG.topP).toBe(0.95)
+    })
+
+    it('should have valid CAMPAIGN_OPTIMIZATION_AI_CONFIG', () => {
+      expect(CAMPAIGN_OPTIMIZATION_AI_CONFIG).toBeDefined()
+      expect(CAMPAIGN_OPTIMIZATION_AI_CONFIG.temperature).toBe(0.5)
+      expect(CAMPAIGN_OPTIMIZATION_AI_CONFIG.maxTokens).toBe(2000)
+      expect(CAMPAIGN_OPTIMIZATION_AI_CONFIG.model).toBe('gpt-4o-mini')
+      expect(CAMPAIGN_OPTIMIZATION_AI_CONFIG.topP).toBe(0.9)
+    })
+
+    it('should have valid REPORT_INSIGHT_AI_CONFIG', () => {
+      expect(REPORT_INSIGHT_AI_CONFIG).toBeDefined()
+      expect(REPORT_INSIGHT_AI_CONFIG.temperature).toBe(0.4)
+      expect(REPORT_INSIGHT_AI_CONFIG.maxTokens).toBe(3000)
+      expect(REPORT_INSIGHT_AI_CONFIG.model).toBe('gpt-4o-mini')
+      expect(REPORT_INSIGHT_AI_CONFIG.topP).toBe(0.85)
+    })
+
+    it('should apply correct config for generateAdCopy', async () => {
+      let capturedBody: Record<string, unknown> | undefined
+
+      server.use(
+        http.post(`${OPENAI_API_BASE}/chat/completions`, async ({ request }) => {
+          capturedBody = await request.json() as Record<string, unknown>
+          return HttpResponse.json(mockAdCopyResponse)
+        })
+      )
+
+      await service.generateAdCopy({
+        productName: 'Test Product',
+        productDescription: 'Test description',
+        targetAudience: 'Test audience',
+        tone: 'professional',
+        objective: 'conversion',
+      })
+
+      expect(capturedBody).toBeDefined()
+      expect(capturedBody!.temperature).toBe(AD_COPY_AI_CONFIG.temperature)
+      expect(capturedBody!.max_tokens).toBe(AD_COPY_AI_CONFIG.maxTokens)
+      expect(capturedBody!.model).toBe(AD_COPY_AI_CONFIG.model)
+      expect(capturedBody!.top_p).toBe(AD_COPY_AI_CONFIG.topP)
+    })
+
+    it('should apply correct config for generateCampaignOptimization', async () => {
+      let capturedBody: Record<string, unknown> | undefined
+
+      server.use(
+        http.post(`${OPENAI_API_BASE}/chat/completions`, async ({ request }) => {
+          capturedBody = await request.json() as Record<string, unknown>
+          return HttpResponse.json(mockOptimizationResponse)
+        })
+      )
+
+      await service.generateCampaignOptimization({
+        campaignName: 'Test Campaign',
+        objective: 'OUTCOME_SALES',
+        currentMetrics: {
+          roas: 3.5,
+          cpa: 15000,
+          ctr: 2.3,
+          impressions: 100000,
+          clicks: 2300,
+          conversions: 150,
+          spend: 2250000,
+        },
+      })
+
+      expect(capturedBody).toBeDefined()
+      expect(capturedBody!.temperature).toBe(CAMPAIGN_OPTIMIZATION_AI_CONFIG.temperature)
+      expect(capturedBody!.max_tokens).toBe(CAMPAIGN_OPTIMIZATION_AI_CONFIG.maxTokens)
+      expect(capturedBody!.model).toBe(CAMPAIGN_OPTIMIZATION_AI_CONFIG.model)
+      expect(capturedBody!.top_p).toBe(CAMPAIGN_OPTIMIZATION_AI_CONFIG.topP)
+    })
+
+    it('should apply correct config for generateReportInsights', async () => {
+      let capturedBody: Record<string, unknown> | undefined
+
+      server.use(
+        http.post(`${OPENAI_API_BASE}/chat/completions`, async ({ request }) => {
+          capturedBody = await request.json() as Record<string, unknown>
+          return HttpResponse.json(mockReportInsightResponse)
+        })
+      )
+
+      await service.generateReportInsights({
+        reportType: 'weekly',
+        campaignSummaries: [
+          {
+            name: 'Test Campaign',
+            objective: 'OUTCOME_SALES',
+            metrics: {
+              impressions: 10000,
+              clicks: 500,
+              conversions: 50,
+              spend: 100000,
+              revenue: 500000,
+            },
+          },
+        ],
+      })
+
+      expect(capturedBody).toBeDefined()
+      expect(capturedBody!.temperature).toBe(REPORT_INSIGHT_AI_CONFIG.temperature)
+      expect(capturedBody!.max_tokens).toBe(REPORT_INSIGHT_AI_CONFIG.maxTokens)
+      expect(capturedBody!.model).toBe(REPORT_INSIGHT_AI_CONFIG.model)
+      expect(capturedBody!.top_p).toBe(REPORT_INSIGHT_AI_CONFIG.topP)
     })
   })
 })

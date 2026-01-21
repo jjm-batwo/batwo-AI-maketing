@@ -1,5 +1,6 @@
 import 'next-auth'
 import { DefaultSession } from 'next-auth'
+import { GlobalRole } from '@domain/value-objects/GlobalRole'
 
 declare module 'next-auth' {
   interface Session {
@@ -7,6 +8,7 @@ declare module 'next-auth' {
       id: string
       provider?: string
       metaAccessToken?: string // Meta Ads API 호출용
+      globalRole: GlobalRole // Admin 권한 관리용
     } & DefaultSession['user']
   }
 
@@ -15,6 +17,7 @@ declare module 'next-auth' {
     email: string
     name?: string | null
     image?: string | null
+    globalRole?: GlobalRole
   }
 }
 
@@ -23,5 +26,6 @@ declare module 'next-auth/jwt' {
     id: string
     provider?: string
     metaAccessToken?: string // Meta Ads API 호출용
+    globalRole?: GlobalRole // Admin 권한 관리용
   }
 }

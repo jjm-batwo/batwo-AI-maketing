@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { PixelSetupStep } from '@presentation/components/onboarding/steps/PixelSetupStep'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
+import { GlobalRole } from '@domain/value-objects/GlobalRole'
 
 // Mock next-auth
 vi.mock('next-auth/react', () => ({
@@ -11,6 +12,7 @@ vi.mock('next-auth/react', () => ({
       user: {
         id: 'user-123',
         metaAccessToken: 'mock-token',
+        globalRole: 'USER',
       },
     },
     status: 'authenticated',
@@ -132,6 +134,7 @@ describe('PixelSetupStep', () => {
           user: {
             id: 'user-123',
             email: 'test@example.com',
+            globalRole: GlobalRole.USER,
             // No metaAccessToken
           },
           expires: new Date(Date.now() + 86400000).toISOString(),
@@ -157,6 +160,7 @@ describe('PixelSetupStep', () => {
             id: 'user-123',
             email: 'test@example.com',
             metaAccessToken: 'mock-token',
+            globalRole: GlobalRole.USER,
           },
           expires: new Date(Date.now() + 86400000).toISOString(),
         },

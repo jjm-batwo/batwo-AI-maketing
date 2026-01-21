@@ -1,5 +1,6 @@
 import { CampaignObjective } from './CampaignObjective'
 import { TargetAudience } from '../entities/Campaign'
+import { MINIMUM_DAILY_BUDGET } from './BudgetRecommendation'
 
 export type CampaignTemplateId = 'traffic' | 'conversions' | 'awareness' | 'engagement' | 'leads'
 
@@ -21,7 +22,7 @@ export const CAMPAIGN_TEMPLATES: Record<CampaignTemplateId, CampaignTemplate> = 
     name: '트래픽 늘리기',
     description: '웹사이트나 앱으로 더 많은 방문자를 유도합니다',
     objective: CampaignObjective.TRAFFIC,
-    suggestedDailyBudget: 30000, // 3만원
+    suggestedDailyBudget: MINIMUM_DAILY_BUDGET, // 최소 5만원
     suggestedTargetAudience: {
       ageMin: 18,
       ageMax: 55,
@@ -59,7 +60,7 @@ export const CAMPAIGN_TEMPLATES: Record<CampaignTemplateId, CampaignTemplate> = 
     name: '브랜드 인지도',
     description: '브랜드를 더 많은 사람들에게 알립니다',
     objective: CampaignObjective.AWARENESS,
-    suggestedDailyBudget: 20000, // 2만원
+    suggestedDailyBudget: MINIMUM_DAILY_BUDGET, // 최소 5만원
     suggestedTargetAudience: {
       ageMin: 18,
       ageMax: 65,
@@ -78,7 +79,7 @@ export const CAMPAIGN_TEMPLATES: Record<CampaignTemplateId, CampaignTemplate> = 
     name: '참여 유도',
     description: '게시물 반응, 댓글, 공유를 늘립니다',
     objective: CampaignObjective.TRAFFIC, // Meta maps engagement to traffic objective
-    suggestedDailyBudget: 25000, // 2.5만원
+    suggestedDailyBudget: MINIMUM_DAILY_BUDGET, // 최소 5만원
     suggestedTargetAudience: {
       ageMin: 18,
       ageMax: 45,
@@ -97,7 +98,7 @@ export const CAMPAIGN_TEMPLATES: Record<CampaignTemplateId, CampaignTemplate> = 
     name: '리드 수집',
     description: '잠재고객 정보를 수집합니다',
     objective: CampaignObjective.CONVERSIONS,
-    suggestedDailyBudget: 40000, // 4만원
+    suggestedDailyBudget: MINIMUM_DAILY_BUDGET, // 최소 5만원
     suggestedTargetAudience: {
       ageMin: 25,
       ageMax: 55,
