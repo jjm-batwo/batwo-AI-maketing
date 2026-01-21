@@ -10,9 +10,9 @@
 # - 1회 실행당 ~98회 API 호출
 # - 하루 ~400회 호출 (목표 대비 충분)
 #
-# Updated: 2026-01-21 - workflow_dispatch with English description
+# Updated: 2026-01-21 - workflow_dispatch with new workflow name
 
-name: Meta API Warmup
+name: Meta Marketing API Warmup v2
 
 on:
   push:
