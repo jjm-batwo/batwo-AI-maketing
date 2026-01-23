@@ -1,17 +1,42 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+import { useState, Suspense, useEffect } from 'react'
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { AlertCircle, Loader2 } from 'lucide-react'
 
+const ERROR_MESSAGES: Record<string, string> = {
+  Configuration: '서버 설정 오류입니다. 관리자에게 문의하세요.',
+  AccessDenied: '접근이 거부되었습니다. 권한을 확인해주세요.',
+  Verification: '인증 링크가 만료되었거나 이미 사용되었습니다.',
+  OAuthSignin: 'OAuth 로그인 시작 중 오류가 발생했습니다.',
+  OAuthCallback: 'OAuth 인증 처리 중 오류가 발생했습니다.',
+  OAuthCreateAccount: '계정 생성 중 오류가 발생했습니다.',
+  EmailCreateAccount: '이메일 계정 생성 중 오류가 발생했습니다.',
+  Callback: '인증 콜백 처리 중 오류가 발생했습니다.',
+  OAuthAccountNotLinked: '이미 다른 방법으로 가입된 이메일입니다. 기존 로그인 방법을 사용해주세요.',
+  EmailSignin: '이메일 전송 중 오류가 발생했습니다.',
+  CredentialsSignin: '이메일 또는 비밀번호가 올바르지 않습니다.',
+  SessionRequired: '로그인이 필요합니다.',
+  Default: '로그인 중 오류가 발생했습니다. 다시 시도해주세요.',
+}
+
 function LoginForm() {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/'
+  const urlError = searchParams.get('error')
   const [isLoading, setIsLoading] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (urlError) {
+      const message = ERROR_MESSAGES[urlError] || ERROR_MESSAGES.Default
+      setError(message)
+      console.error('[LOGIN] OAuth error from URL:', urlError)
+    }
+  }, [urlError])
 
   const handleSocialLogin = async (provider: 'google' | 'kakao' | 'facebook') => {
     setIsLoading(provider)
