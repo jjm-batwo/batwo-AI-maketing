@@ -1,6 +1,18 @@
 import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
 
 export async function GET() {
+  // Test database connection
+  let dbStatus = 'not_tested'
+  let dbError = null
+  let userCount = 0
+  try {
+    userCount = await prisma.user.count()
+    dbStatus = 'connected'
+  } catch (error) {
+    dbStatus = 'error'
+    dbError = error instanceof Error ? error.message : String(error)
+  }
   // Check Google OAuth configuration
   const googleClientId = process.env.GOOGLE_CLIENT_ID ?? ''
   const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET ?? ''
@@ -24,6 +36,10 @@ export async function GET() {
   }
 
   const envCheck = {
+    // Database status
+    dbStatus,
+    dbError,
+    userCount,
     hasGoogleClientId: !!googleClientId,
     googleClientIdLength: googleClientId.length,
     googleClientIdPrefix: googleClientId.substring(0, 15),
