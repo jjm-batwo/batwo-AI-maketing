@@ -42,7 +42,11 @@ function LoginForm() {
     setIsLoading(provider)
     setError(null)
     try {
-      await signIn(provider, { callbackUrl })
+      // Use redirect: true explicitly to force page redirect instead of fetch
+      await signIn(provider, {
+        callbackUrl,
+        redirect: true,
+      })
     } catch {
       setError('로그인 중 오류가 발생했습니다')
       setIsLoading(null)
