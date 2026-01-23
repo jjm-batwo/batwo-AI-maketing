@@ -84,45 +84,71 @@ export async function GET(request: NextRequest) {
     // Store the first ad account (for MVP)
     const primaryAdAccount = adAccountsResponse.data?.[0]
 
+    // Try to store in database, but don't fail if database is unavailable
+    let dbSuccess = false
     if (primaryAdAccount) {
-      // Check if account already exists
-      const existingAccount = await prisma.metaAdAccount.findFirst({
-        where: {
-          userId: user.id,
-          metaAccountId: primaryAdAccount.id,
-        },
-      })
-
-      if (existingAccount) {
-        // Update existing account
-        await prisma.metaAdAccount.update({
-          where: { id: existingAccount.id },
-          data: {
-            accessToken: longLivedTokenResponse.access_token,
-            tokenExpiry: new Date(
-              Date.now() + longLivedTokenResponse.expires_in * 1000
-            ),
-          },
-        })
-      } else {
-        // Create new account
-        await prisma.metaAdAccount.create({
-          data: {
+      try {
+        // Check if account already exists
+        const existingAccount = await prisma.metaAdAccount.findFirst({
+          where: {
             userId: user.id,
             metaAccountId: primaryAdAccount.id,
-            businessName: primaryAdAccount.name,
-            accessToken: longLivedTokenResponse.access_token,
-            tokenExpiry: new Date(
-              Date.now() + longLivedTokenResponse.expires_in * 1000
-            ),
           },
         })
+
+        if (existingAccount) {
+          // Update existing account
+          await prisma.metaAdAccount.update({
+            where: { id: existingAccount.id },
+            data: {
+              accessToken: longLivedTokenResponse.access_token,
+              tokenExpiry: new Date(
+                Date.now() + longLivedTokenResponse.expires_in * 1000
+              ),
+            },
+          })
+        } else {
+          // Create new account
+          await prisma.metaAdAccount.create({
+            data: {
+              userId: user.id,
+              metaAccountId: primaryAdAccount.id,
+              businessName: primaryAdAccount.name,
+              accessToken: longLivedTokenResponse.access_token,
+              tokenExpiry: new Date(
+                Date.now() + longLivedTokenResponse.expires_in * 1000
+              ),
+            },
+          })
+        }
+        dbSuccess = true
+      } catch (dbError) {
+        console.error('Failed to store Meta account in database:', dbError)
+        // Continue without database - OAuth still succeeded
       }
     }
 
-    return NextResponse.redirect(
-      new URL('/settings/meta-connect?success=true', request.url)
-    )
+    // Log the token for debugging (TEMPORARY - remove in production)
+    console.log('[META CALLBACK] OAuth successful:', {
+      hasToken: !!longLivedTokenResponse.access_token,
+      tokenLength: longLivedTokenResponse.access_token?.length,
+      expiresIn: longLivedTokenResponse.expires_in,
+      adAccountId: primaryAdAccount?.id,
+      adAccountName: primaryAdAccount?.name,
+      dbSuccess,
+    })
+
+    // Return success even if database storage failed
+    // The OAuth itself was successful
+    const successUrl = new URL('/settings/meta-connect', request.url)
+    successUrl.searchParams.set('success', 'true')
+    if (!dbSuccess) {
+      successUrl.searchParams.set('warning', 'db_unavailable')
+    }
+    if (primaryAdAccount) {
+      successUrl.searchParams.set('account', primaryAdAccount.name)
+    }
+    return NextResponse.redirect(successUrl)
   } catch (error) {
     console.error('Meta OAuth callback error:', error)
     return NextResponse.redirect(
