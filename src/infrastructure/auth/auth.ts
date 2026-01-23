@@ -10,16 +10,19 @@ import { authConfig } from './auth.config'
 // 고급 권한(ads_management 등)은 /settings/meta-connect에서 별도 OAuth로 요청
 const META_LOGIN_SCOPES = 'email,public_profile'
 
-console.log('[AUTH] Initializing NextAuth with PrismaAdapter')
+// TEMPORARY: Skip database adapter if database is unavailable
+// This allows OAuth to work while we fix the Supabase connection
+// TODO: Re-enable PrismaAdapter once database is restored
+const USE_DATABASE_ADAPTER = process.env.SKIP_DATABASE_ADAPTER !== 'true'
+
+console.log('[AUTH] Initializing NextAuth')
+console.log('[AUTH] Using database adapter:', USE_DATABASE_ADAPTER)
 console.log('[AUTH] Google Client ID exists:', !!process.env.GOOGLE_CLIENT_ID)
-console.log('[AUTH] Google Client ID length:', process.env.GOOGLE_CLIENT_ID?.length)
-console.log('[AUTH] Google Client Secret exists:', !!process.env.GOOGLE_CLIENT_SECRET)
-console.log('[AUTH] AUTH_SECRET exists:', !!process.env.AUTH_SECRET)
-console.log('[AUTH] AUTH_URL:', process.env.AUTH_URL)
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
-  adapter: PrismaAdapter(prisma),
+  // Only use adapter if database is available
+  ...(USE_DATABASE_ADAPTER ? { adapter: PrismaAdapter(prisma) } : {}),
   secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
   session: {
     strategy: 'jwt',
