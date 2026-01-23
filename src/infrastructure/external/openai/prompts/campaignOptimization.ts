@@ -150,7 +150,6 @@ export function buildCampaignOptimizationPrompt(input: GenerateOptimizationInput
   const { campaignName, objective, industry, currentMetrics, targetAudience } = input
 
   const seasonContext = getCurrentSeasonContext()
-  const industryData = industry ? INDUSTRY_BENCHMARKS[industry] : null
   const peakHours = industry ? INDUSTRY_PEAK_HOURS[industry] : null
 
   // 타겟 오디언스 정보

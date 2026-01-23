@@ -2,10 +2,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import {
   CopyLearningService,
   type CopyPerformanceData,
-  type LearningReport,
-  type CopyGenerationHint,
 } from '@application/services/CopyLearningService'
-import type { CopyHookType, Industry } from '@infrastructure/external/openai/prompts/adCopyGeneration'
+import type { CopyHookType } from '@infrastructure/external/openai/prompts/adCopyGeneration'
 
 describe('CopyLearningService', () => {
   let service: CopyLearningService

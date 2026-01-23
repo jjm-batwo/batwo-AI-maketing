@@ -52,27 +52,28 @@ describe('KPICard', () => {
           changeType="increase"
         />
       )
-      expect(screen.getByText('2.35%')).toBeInTheDocument()
+      // formatValue uses toFixed(1), so 2.35 becomes "2.4%"
+      expect(screen.getByText('2.4%')).toBeInTheDocument()
     })
   })
 
   describe('change indicator', () => {
     it('should show green color for positive change', () => {
       render(<KPICard {...defaultProps} change={10} changeType="increase" />)
-      const changeElement = screen.getByText('+10%')
-      expect(changeElement).toHaveClass('text-green-600')
+      const changeElement = screen.getByText('+10%').closest('div')
+      expect(changeElement).toHaveClass('text-green-700')
     })
 
     it('should show red color for negative change', () => {
       render(<KPICard {...defaultProps} change={-10} changeType="decrease" />)
-      const changeElement = screen.getByText('-10%')
-      expect(changeElement).toHaveClass('text-red-600')
+      const changeElement = screen.getByText('-10%').closest('div')
+      expect(changeElement).toHaveClass('text-red-700')
     })
 
     it('should show neutral color for no change', () => {
       render(<KPICard {...defaultProps} change={0} changeType="neutral" />)
-      const changeElement = screen.getByText('0%')
-      expect(changeElement).toHaveClass('text-gray-500')
+      const changeElement = screen.getByText('0%').closest('div')
+      expect(changeElement).toHaveClass('text-gray-600')
     })
   })
 

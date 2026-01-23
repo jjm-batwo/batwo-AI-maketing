@@ -44,7 +44,6 @@ import {
   Zap,
   MoreHorizontal,
   UserMinus,
-  UserPlus,
   AlertCircle,
   CheckCircle2,
   Info,

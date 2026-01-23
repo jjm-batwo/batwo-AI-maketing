@@ -39,18 +39,20 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       {/* Onboarding Wizard for new users */}
       <OnboardingWizard />
 
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between pb-2 border-b border-border/10">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold">대시보드</h1>
-          <p className="text-sm md:text-base text-muted-foreground">광고 성과를 한눈에 확인하세요</p>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">대시보드</h1>
+          <p className="text-muted-foreground mt-2">
+            오늘의 광고 성과를 <span className="text-primary font-medium">실시간</span>으로 확인하세요
+          </p>
         </div>
-        <Tabs value={dashboardPeriod} onValueChange={(v) => setDashboardPeriod(v as '7d' | '30d' | '90d')}>
-          <TabsList>
+        <Tabs value={dashboardPeriod} onValueChange={(v) => setDashboardPeriod(v as '7d' | '30d' | '90d')} className="w-full sm:w-auto">
+          <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-muted/50 dark:bg-muted/20">
             <TabsTrigger value="7d">7일</TabsTrigger>
             <TabsTrigger value="30d">30일</TabsTrigger>
             <TabsTrigger value="90d">90일</TabsTrigger>

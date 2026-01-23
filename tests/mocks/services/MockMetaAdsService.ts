@@ -49,7 +49,7 @@ export class MockMetaAdsService implements IMetaAdsService {
   async getCampaignInsights(
     accessToken: string,
     campaignId: string,
-    datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d'
+    _datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d'
   ): Promise<MetaInsightsData> {
     if (this.shouldFail && this.failureError) {
       throw this.failureError

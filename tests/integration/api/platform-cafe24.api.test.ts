@@ -5,7 +5,7 @@
  * Tests cover OAuth flow, script injection, and platform disconnection.
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { setupIntegrationTest, getPrismaClient, createTestUser } from '../setup'
 import { IntegrationStatus, EcommercePlatform } from '@domain/entities/PlatformIntegration'
 import { PixelSetupMethod } from '@domain/entities/MetaPixel'
@@ -61,8 +61,8 @@ describe('Cafe24 Platform API Integration', () => {
       const prisma = getPrismaClient()
 
       // Given: OAuth 인증 코드와 state
-      const code = 'test-auth-code'
-      const state = testPixelId // state에 픽셀 ID 포함
+      const _code = 'test-auth-code'
+      const _state = testPixelId // state에 픽셀 ID 포함
 
       // When: PlatformIntegration 생성 (OAuth 콜백 후 저장되는 데이터)
       const integration = await prisma.platformIntegration.create({
@@ -92,7 +92,7 @@ describe('Cafe24 Platform API Integration', () => {
       const prisma = getPrismaClient()
 
       // Given: 잘못된 인증 코드
-      const invalidCode = 'invalid-auth-code'
+      const _invalidCode = 'invalid-auth-code'
 
       // When: 에러 상태의 PlatformIntegration 생성
       const integration = await prisma.platformIntegration.create({

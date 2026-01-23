@@ -5,7 +5,6 @@
  */
 
 import type { Industry } from '@infrastructure/external/openai/prompts/adCopyGeneration'
-import { INDUSTRY_BENCHMARKS } from '@infrastructure/external/openai/prompts/adCopyGeneration'
 
 /**
  * 업종별 상세 벤치마크 데이터
@@ -437,7 +436,7 @@ export class CompetitorBenchmarkService {
 
   private estimatePotentialImpact(
     comparison: BenchmarkComparison,
-    performance: CampaignPerformance
+    _performance: CampaignPerformance
   ): number {
     // 업계 평균까지 개선했을 때 예상 매출 영향
     const gap = Math.abs(comparison.gapToTop10)

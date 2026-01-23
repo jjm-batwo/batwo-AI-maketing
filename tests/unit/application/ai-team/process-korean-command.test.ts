@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ProcessKoreanCommandUseCase } from '@/application/use-cases/ai-team/process-korean-command';
 import { AITeamPort } from '@/application/ports/ai-team-port';
-import { CommandType, CommandResult } from '@/domain/services/ai-team-command-types';
+import { CommandType } from '@/domain/services/ai-team-command-types';
 
 describe('ProcessKoreanCommandUseCase', () => {
   let useCase: ProcessKoreanCommandUseCase;

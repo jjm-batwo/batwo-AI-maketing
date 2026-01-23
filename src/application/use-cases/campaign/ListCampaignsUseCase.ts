@@ -1,7 +1,6 @@
 import { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import { CampaignStatus } from '@domain/value-objects/CampaignStatus'
 import {
-  CampaignDTO,
   CampaignListDTO,
   toCampaignDTO,
 } from '@application/dto/campaign/CampaignDTO'

@@ -1,5 +1,7 @@
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { auth } from '@/infrastructure/auth'
+import { getMetadata } from '@/lib/constants/seo'
 import {
   LandingHeader,
   HeroSection,
@@ -13,6 +15,8 @@ import {
   CTASection,
   LandingFooter,
 } from '@/presentation/components/landing'
+
+export const metadata: Metadata = getMetadata({ path: '/' })
 
 export default async function LandingPage() {
   // 서버 컴포넌트에서 세션 확인

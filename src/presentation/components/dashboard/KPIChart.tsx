@@ -103,11 +103,11 @@ export function KPIChart({
 
   // With title - wrap in Card
   return (
-    <Card className={className}>
-      <CardHeader>
+    <Card className={cn("glass-card overflow-hidden", className)}>
+      <CardHeader className="border-b border-border/50 bg-muted/20 pb-4">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         {isLoading ? renderSkeleton() : renderChart()}
       </CardContent>
     </Card>

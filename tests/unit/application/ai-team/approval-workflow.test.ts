@@ -6,10 +6,6 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import {
   ApprovalWorkflow,
-  ApprovalRequest,
-  ApprovalType,
-  ApprovalStatus,
-  ApprovalConfig,
 } from '@/application/use-cases/ai-team/approval-workflow';
 
 describe('ApprovalWorkflow', () => {
@@ -320,39 +316,31 @@ describe('ApprovalWorkflow', () => {
 
   describe('승인 필요 여부 판단', () => {
     it('데이터베이스 스키마 변경은 승인이 필요해야 함', () => {
-      const needsApproval = workflow.needsApproval('database_schema', [
-        'prisma/schema.prisma',
-      ]);
+      const needsApproval = workflow.needsApproval('database_schema');
 
       expect(needsApproval).toBe(true);
     });
 
     it('API 변경은 승인이 필요해야 함', () => {
-      const needsApproval = workflow.needsApproval('api_change', [
-        'src/app/api/test/route.ts',
-      ]);
+      const needsApproval = workflow.needsApproval('api_change');
 
       expect(needsApproval).toBe(true);
     });
 
     it('새 라이브러리 추가는 승인이 필요해야 함', () => {
-      const needsApproval = workflow.needsApproval('new_library', [
-        'package.json',
-      ]);
+      const needsApproval = workflow.needsApproval('new_library');
 
       expect(needsApproval).toBe(true);
     });
 
     it('보안 변경은 승인이 필요해야 함', () => {
-      const needsApproval = workflow.needsApproval('security', [
-        'src/infrastructure/auth/auth.ts',
-      ]);
+      const needsApproval = workflow.needsApproval('security');
 
       expect(needsApproval).toBe(true);
     });
 
     it('프로덕션 배포는 승인이 필요해야 함', () => {
-      const needsApproval = workflow.needsApproval('production_deploy', []);
+      const needsApproval = workflow.needsApproval('production_deploy');
 
       expect(needsApproval).toBe(true);
     });

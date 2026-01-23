@@ -1,9 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { TemplateSelector } from '@presentation/components/campaign/TemplateSelector'
 import {
   getAllCampaignTemplates,
-  CampaignTemplate,
 } from '@domain/value-objects/CampaignTemplate'
 
 describe('TemplateSelector', () => {
@@ -65,7 +64,7 @@ describe('TemplateSelector', () => {
 
     it('should highlight selected template', () => {
       const templates = getAllCampaignTemplates()
-      const { rerender } = render(
+      const { rerender: _rerender } = render(
         <TemplateSelector
           onSelect={mockOnSelect}
           selectedTemplateId={templates[0].id}

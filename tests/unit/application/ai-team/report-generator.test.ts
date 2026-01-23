@@ -3,7 +3,7 @@
  * TDD RED 단계: 실패하는 테스트 먼저 작성
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   ReportGenerator,
   DailyReportData,

@@ -169,24 +169,19 @@ export class BudgetRecommendationService {
     const performanceRatio = data.avgROAS / 3.0 // 기준 ROAS 대비
 
     let recommended: number
-    let adjustmentReason: string
 
     if (performanceRatio >= 1.2) {
       // ROAS가 목표의 120% 이상: 20% 증액 권장
       recommended = Math.round(currentSpend * 1.2)
-      adjustmentReason = 'excellent_performance'
     } else if (performanceRatio >= 0.9) {
       // ROAS가 목표의 90~120%: 10% 증액 권장
       recommended = Math.round(currentSpend * 1.1)
-      adjustmentReason = 'good_performance'
     } else if (performanceRatio >= 0.7) {
       // ROAS가 목표의 70~90%: 현상 유지
       recommended = currentSpend
-      adjustmentReason = 'maintain'
     } else {
       // ROAS가 목표의 70% 미만: 감액 또는 유지 + 최적화
       recommended = currentSpend
-      adjustmentReason = 'needs_optimization'
     }
 
     // 최소 예산 보장

@@ -1,7 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { QuotaService } from '@application/services/QuotaService'
 import { MockUsageLogRepository } from '@tests/mocks/repositories/MockUsageLogRepository'
-import { UsageType } from '@domain/repositories/IUsageLogRepository'
 
 describe('QuotaService', () => {
   let quotaService: QuotaService

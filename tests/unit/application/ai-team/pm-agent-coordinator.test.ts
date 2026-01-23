@@ -3,9 +3,9 @@
  * TDD RED 단계: 실패하는 테스트 먼저 작성
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { PMAgentCoordinator } from '@/application/use-cases/ai-team/pm-agent-coordinator';
-import { CommandType, CommandResult } from '@/domain/services/ai-team-command-types';
+import { CommandType } from '@/domain/services/ai-team-command-types';
 
 describe('PMAgentCoordinator', () => {
   let coordinator: PMAgentCoordinator;

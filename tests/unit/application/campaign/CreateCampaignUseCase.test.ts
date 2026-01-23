@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { CreateCampaignUseCase } from '@application/use-cases/campaign/CreateCampaignUseCase'
 import { CreateCampaignDTO } from '@application/dto/campaign/CreateCampaignDTO'
 import { MockCampaignRepository } from '@tests/mocks/repositories/MockCampaignRepository'

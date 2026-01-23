@@ -139,7 +139,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       }
 
       // Invite member (generate a temporary userId - will be updated when user accepts)
-      const { team: updatedTeam, member: newMember } = team.inviteMember({
+      const { member: newMember } = team.inviteMember({
         userId: `pending_${Date.now()}_${Math.random().toString(36).substring(7)}`,
         email: email.toLowerCase(),
         name: name?.trim(),

@@ -16,7 +16,7 @@ export class MockAIService implements IAIService {
   private mockAdCopies: AdCopyVariant[] = []
 
   async generateCampaignOptimization(
-    input: GenerateOptimizationInput
+    _input: GenerateOptimizationInput
   ): Promise<CampaignOptimizationSuggestion[]> {
     if (this.shouldFail && this.failureError) {
       throw this.failureError
@@ -38,7 +38,7 @@ export class MockAIService implements IAIService {
   }
 
   async generateReportInsights(
-    input: GenerateReportInsightInput
+    _input: GenerateReportInsightInput
   ): Promise<ReportInsight> {
     if (this.shouldFail && this.failureError) {
       throw this.failureError

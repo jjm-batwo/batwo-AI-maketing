@@ -71,8 +71,8 @@ describe('Campaigns API Integration', () => {
   describe('ListCampaignsUseCase (GET /api/campaigns)', () => {
     it('인증된 사용자의 캠페인 목록을 DB에서 반환해야 함', async () => {
       // Given: 테스트 사용자의 캠페인이 DB에 존재
-      const campaign1 = await createTestCampaignInDB({ name: 'Campaign A' })
-      const campaign2 = await createTestCampaignInDB({ name: 'Campaign B' })
+      const _campaign1 = await createTestCampaignInDB({ name: 'Campaign A' })
+      const _campaign2 = await createTestCampaignInDB({ name: 'Campaign B' })
 
       const useCase = new ListCampaignsUseCase(campaignRepository)
 

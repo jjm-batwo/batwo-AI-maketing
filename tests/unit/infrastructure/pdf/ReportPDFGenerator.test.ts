@@ -9,8 +9,13 @@ vi.mock('@react-pdf/renderer', () => ({
   Page: vi.fn(({ children }) => children),
   Text: vi.fn(({ children }) => children),
   View: vi.fn(({ children }) => children),
+  Image: vi.fn(() => null),
   StyleSheet: {
     create: vi.fn((styles) => styles),
+  },
+  Font: {
+    register: vi.fn(),
+    registerHyphenationCallback: vi.fn(),
   },
   renderToBuffer: vi.fn().mockResolvedValue(Buffer.from('mock-pdf-content')),
 }))

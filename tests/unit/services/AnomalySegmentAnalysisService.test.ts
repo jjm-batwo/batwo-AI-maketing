@@ -1,10 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import {
   AnomalySegmentAnalysisService,
-  type SegmentAnalysisResult,
-  type CampaignComparison,
-  type TimePatternAnalysis,
-  type MetricCategory,
 } from '@application/services/AnomalySegmentAnalysisService'
 import type { EnhancedAnomaly } from '@application/services/AnomalyDetectionService'
 import type { DailyKPIAggregate } from '@domain/repositories/IKPIRepository'

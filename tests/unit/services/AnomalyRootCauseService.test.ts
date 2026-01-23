@@ -11,9 +11,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import {
   AnomalyRootCauseService,
-  type CauseCategory,
-  type PossibleCause,
-  type RootCauseAnalysis,
   type AnalysisContext,
 } from '@application/services/AnomalyRootCauseService'
 import type { MetricName, AnomalySeverity, AnomalyDetail, AnomalyType, Anomaly } from '@application/services/AnomalyDetectionService'
@@ -127,7 +124,7 @@ describe('AnomalyRootCauseService', () => {
       }
 
       const analysis = service.analyzeRootCause(anomaly, context)
-      const marketCauses = analysis.allCauses.filter(c => c.category === 'market')
+      const _marketCauses = analysis.allCauses.filter(c => c.category === 'market')
 
       // 특별일이면 market cause가 추가됨
       expect(analysis.allCauses.length).toBeGreaterThan(0)
@@ -377,7 +374,7 @@ describe('AnomalyRootCauseService', () => {
       })
 
       const criticalAnalysis = service.analyzeRootCause(criticalAnomaly)
-      const mildAnalysis = service.analyzeRootCause(mildAnomaly)
+      const _mildAnalysis = service.analyzeRootCause(mildAnomaly)
 
       // Critical anomaly should have higher probability causes
       const criticalMaxProb = Math.max(...criticalAnalysis.topCauses.map(c => c.probability))

@@ -8,10 +8,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
   FeaturePlannerConfig,
-  FeaturePlan,
-  FeatureLayer,
-  TDDStep,
-  ComplexityLevel,
 } from '@/application/use-cases/ai-team/feature-planner-config';
 
 describe('FeaturePlannerConfig', () => {

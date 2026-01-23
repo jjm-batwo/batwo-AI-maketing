@@ -25,7 +25,6 @@ import { cn } from '@/lib/utils'
 // Simple Collapsible Component (inline implementation)
 function SimpleCollapsible({
   open,
-  onOpenChange,
   children,
 }: {
   open: boolean
@@ -223,23 +222,6 @@ function MetricDisplay({ label, value, unit = '' }: { label: string; value: numb
   )
 }
 
-function ConfidenceBar({ confidence }: { confidence: number }) {
-  const percentage = Math.round(confidence * 100)
-  const color = confidence >= 0.8 ? 'bg-green-500' : confidence >= 0.6 ? 'bg-amber-500' : 'bg-red-500'
-
-  return (
-    <div className="flex items-center gap-2">
-      <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-        <div
-          className={cn('h-full rounded-full transition-all', color)}
-          style={{ width: `${percentage}%` }}
-        />
-      </div>
-      <span className="text-xs text-muted-foreground">{percentage}%</span>
-    </div>
-  )
-}
-
 function RootCauseSection({ analysis }: { analysis: RootCauseAnalysis }) {
   const [isOpen, setIsOpen] = useState(false)
 
@@ -326,7 +308,7 @@ function RootCauseSection({ analysis }: { analysis: RootCauseAnalysis }) {
   )
 }
 
-function BaselineSection({ baseline, metric }: { baseline: StatisticalBaseline; metric: string }) {
+function BaselineSection({ baseline }: { baseline: StatisticalBaseline; metric: string }) {
   return (
     <div className="mt-2 pt-2 border-t border-current/10 grid grid-cols-2 gap-1">
       <MetricDisplay label="평균" value={baseline.mean} />

@@ -83,6 +83,7 @@ function generateCSP(): string {
       'https://*.googleusercontent.com',
       'https://*.vercel.app',
       'https://*.supabase.co',
+      'https://ui-avatars.com',
     ],
 
     'font-src': [
@@ -194,6 +195,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: '*.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ui-avatars.com',
       },
     ],
   },

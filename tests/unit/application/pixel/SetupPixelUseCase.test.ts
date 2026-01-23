@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { SetupPixelUseCase, SetupMode } from '@application/use-cases/pixel/SetupPixelUseCase'
 import { MockMetaPixelRepository } from '@tests/mocks/repositories/MockMetaPixelRepository'
 import { MetaPixel, PixelSetupMethod } from '@domain/entities/MetaPixel'

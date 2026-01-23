@@ -358,7 +358,7 @@ export class AnomalySegmentAnalysisService {
    */
   analyzeKPITimePatterns(
     kpiData: DailyKPIAggregate[],
-    baselineWindow: number = 14
+    _baselineWindow: number = 14
   ): {
     weekdayAvg: Record<string, number>
     weekendAvg: Record<string, number>

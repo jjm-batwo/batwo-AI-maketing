@@ -7,7 +7,6 @@ import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import {
   ReportScheduler,
   ScheduleConfig,
-  ScheduledReport,
   ReportTrigger,
 } from '@/application/use-cases/ai-team/report-scheduler';
 

@@ -1,5 +1,8 @@
+'use client'
+
 import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useIntersectionObserver } from '@/presentation/hooks'
 import { Star, Quote } from 'lucide-react'
 
 interface Testimonial {
@@ -91,9 +94,8 @@ function StarRating({ rating }: { rating: number }) {
       {Array.from({ length: 5 }).map((_, i) => (
         <Star
           key={i}
-          className={`h-4 w-4 ${
-            i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted'
-          }`}
+          className={`h-4 w-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted'
+            }`}
         />
       ))}
     </div>
@@ -142,9 +144,15 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
 }
 
 export function TestimonialsSection() {
+  const { ref, isIntersecting } = useIntersectionObserver()
+
   return (
-    <section id="testimonials" className="py-16 md:py-24 bg-muted/30">
-      <div className="container mx-auto px-4">
+    <section id="testimonials" className="py-16 md:py-24 bg-muted/30 overflow-hidden">
+      <div
+        ref={ref}
+        className={`container mx-auto px-4 transition-all duration-1000 ${isIntersecting ? 'animate-slide-up opacity-100' : 'opacity-0 translate-y-10'
+          }`}
+      >
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">

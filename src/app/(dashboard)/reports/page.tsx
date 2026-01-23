@@ -27,12 +27,12 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-fade-in">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold">보고서</h1>
-        <p className="text-muted-foreground">
-          AI가 생성한 성과 보고서를 확인하세요
+      <div className="border-b border-border/10 pb-6">
+        <h1 className="text-3xl font-bold tracking-tight">보고서</h1>
+        <p className="text-muted-foreground mt-2">
+          AI가 분석한 주간 성과 보고서를 확인하세요
         </p>
       </div>
 
@@ -46,11 +46,13 @@ export default function ReportsPage() {
       )}
 
       {/* Report List */}
-      <ReportList
-        reports={reports}
-        isLoading={isLoading}
-        onDownload={handleDownload}
-      />
+      <div className="glass-card rounded-2xl p-6">
+        <ReportList
+          reports={reports}
+          isLoading={isLoading}
+          onDownload={handleDownload}
+        />
+      </div>
     </div>
   )
 }

@@ -116,7 +116,7 @@ export function TeamSettings({ teamId, userId }: TeamSettingsProps) {
     )
   }
 
-  const { team, currentUserRole, currentUserPermissions } = data
+  const { team, currentUserRole } = data
   const isOwner = currentUserRole === 'OWNER'
   const canManageTeam = isOwner || currentUserRole === 'ADMIN'
 

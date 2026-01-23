@@ -5,7 +5,7 @@
  * The tracker.js and event endpoints are public (no auth required).
  */
 
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { setupIntegrationTest, getPrismaClient, createTestUser } from '../setup'
 import { TrackingScriptService } from '@infrastructure/external/tracking/TrackingScriptService'
 

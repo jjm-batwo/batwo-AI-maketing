@@ -381,12 +381,12 @@ interface CauseTemplate {
   actions: RecommendedAction[]
 }
 
-// Map AnomalySeverity to urgency level
-type SeverityToUrgency = {
-  critical: 'critical'
-  warning: 'high' | 'medium'
-  info: 'low'
-}
+// Map AnomalySeverity to urgency level (reserved for future use)
+// type SeverityToUrgency = {
+//   critical: 'critical'
+//   warning: 'high' | 'medium'
+//   info: 'low'
+// }
 
 // ============================================================================
 // Service Implementation
@@ -551,8 +551,8 @@ export class AnomalyRootCauseService {
    */
   private rankCauses(
     causes: PossibleCause[],
-    anomaly: EnhancedAnomaly,
-    context?: AnalysisContext
+    _anomaly: EnhancedAnomaly,
+    _context?: AnalysisContext
   ): PossibleCause[] {
     return causes.sort((a, b) => {
       // 1차: 확률

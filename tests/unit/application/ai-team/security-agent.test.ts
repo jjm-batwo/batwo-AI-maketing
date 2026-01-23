@@ -6,10 +6,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
   SecurityAgent,
-  SecurityScanResult,
-  VulnerabilityType,
-  SeverityLevel,
-  SecurityCheckType,
 } from '@/application/use-cases/ai-team/security-agent';
 
 describe('SecurityAgent', () => {

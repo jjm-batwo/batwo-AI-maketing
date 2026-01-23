@@ -2,6 +2,7 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
+import { useIntersectionObserver } from '@/presentation/hooks'
 import {
   BarChart3,
   Target,
@@ -194,9 +195,15 @@ function ReportPreview() {
 }
 
 export function ProductShowcaseSection() {
+  const { ref, isIntersecting } = useIntersectionObserver()
+
   return (
-    <section id="product-showcase" className="py-16 md:py-24">
-      <div className="container mx-auto px-4">
+    <section id="product-showcase" className="py-16 md:py-24 overflow-hidden">
+      <div
+        ref={ref}
+        className={`container mx-auto px-4 transition-all duration-1000 ${isIntersecting ? 'animate-slide-up opacity-100' : 'opacity-0 translate-y-10'
+          }`}
+      >
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">

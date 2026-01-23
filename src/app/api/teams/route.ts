@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/infrastructure/auth/auth'
 import { getTeamRepository } from '@/lib/di/container'
-import { Team, TeamRole, DEFAULT_ROLE_PERMISSIONS, TeamPermission } from '@/domain/entities/Team'
+import { Team } from '@/domain/entities/Team'
 
 /**
  * GET /api/teams
  * List teams for the current user
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const session = await auth()
     if (!session?.user?.id) {

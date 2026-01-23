@@ -3,17 +3,10 @@
  * TDD RED 단계: 실패하는 테스트 먼저 작성
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   GitHubIssueManager,
   IssueCreateInput,
-  IssueUpdateInput,
-  IssuePriority,
-  IssueType,
-  IssueStatus,
-  Issue,
-  IssueLabel,
-  TDDStageComment,
 } from '@/application/use-cases/ai-team/github-issue-manager';
 
 describe('GitHubIssueManager', () => {

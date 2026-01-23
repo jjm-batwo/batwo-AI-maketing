@@ -150,7 +150,7 @@ export const authConfig = {
 } satisfies NextAuthConfig
 
 // Edge-compatible NextAuth instance for middleware (no adapter, no bcrypt)
-const { auth, handlers } = NextAuth(authConfig)
+const { auth } = NextAuth(authConfig)
 
 // Export auth wrapper for middleware use
 export { auth as authMiddleware }

@@ -410,7 +410,7 @@ export class CopyLearningService {
 
     // 빈도와 CTR을 조합한 점수로 정렬
     const scored = Array.from(keywordCounts.entries())
-      .filter(([_, stats]) => stats.count >= 3) // 최소 3회 이상 사용
+      .filter(([_word, stats]) => stats.count >= 3) // 최소 3회 이상 사용
       .map(([word, stats]) => ({
         word,
         score: stats.count * (stats.totalCTR / stats.count),
@@ -472,7 +472,7 @@ export class CopyLearningService {
 
     // 최고/최저 훅 찾기
     const validPatterns = Object.entries(hookPatterns)
-      .filter(([_, pattern]) => pattern !== null && pattern.sampleSize >= MIN_SAMPLE_SIZE)
+      .filter(([_hook, pattern]) => pattern !== null && pattern.sampleSize >= MIN_SAMPLE_SIZE)
       .map(([hook, pattern]) => ({ hook: hook as CopyHookType, pattern: pattern! }))
 
     let bestPerformingHook: CopyHookType = 'benefit'
@@ -596,7 +596,7 @@ export class CopyLearningService {
 
       // 학습 기반 추천
       const validPatterns = Object.entries(report.hookPatterns)
-        .filter(([_, pattern]) => pattern !== null)
+        .filter(([_hook, pattern]) => pattern !== null)
         .map(([hook, pattern]) => ({ hook: hook as CopyHookType, pattern: pattern! }))
         .sort((a, b) => b.pattern.avgROAS - a.pattern.avgROAS)
 

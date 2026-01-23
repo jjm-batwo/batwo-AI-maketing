@@ -248,7 +248,7 @@ export class CampaignAnalyzer {
   private createCVRInsight(
     metrics: CampaignMetrics,
     benchmark: (typeof INDUSTRY_BENCHMARKS)[Industry],
-    industry: Industry
+    _industry: Industry
   ): OptimizationInsight {
     return {
       category: 'targeting',
@@ -283,7 +283,7 @@ export class CampaignAnalyzer {
   private createCPAInsight(
     metrics: CampaignMetrics,
     industryCPA: number,
-    industry: Industry
+    _industry: Industry
   ): OptimizationInsight {
     return {
       category: 'budget',
@@ -388,7 +388,7 @@ export class CampaignAnalyzer {
    */
   private createSpecialPeriodInsight(
     marketContext: ReturnType<KoreanMarketCalendar['getDateEventInfo']>,
-    industry: Industry
+    _industry: Industry
   ): OptimizationInsight {
     const eventNames = marketContext.events.map((e) => e.name)
     const eventName = eventNames[0] || '특수 기간'
@@ -425,7 +425,7 @@ export class CampaignAnalyzer {
    */
   private createBudgetEfficiencyInsight(
     metrics: CampaignMetrics,
-    industry: Industry
+    _industry: Industry
   ): OptimizationInsight {
     return {
       category: 'budget',

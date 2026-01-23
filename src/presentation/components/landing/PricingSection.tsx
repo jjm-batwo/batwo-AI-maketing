@@ -1,7 +1,10 @@
+'use client'
+
 import Link from 'next/link'
 import { Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useIntersectionObserver } from '@/presentation/hooks'
 
 const features = [
   '캠페인 무제한 생성',
@@ -12,9 +15,15 @@ const features = [
 ]
 
 export function PricingSection() {
+  const { ref, isIntersecting } = useIntersectionObserver()
+
   return (
-    <section id="pricing" className="py-16 md:py-24 bg-muted/30">
-      <div className="container mx-auto px-4">
+    <section id="pricing" className="py-16 md:py-24 bg-muted/30 overflow-hidden">
+      <div
+        ref={ref}
+        className={`container mx-auto px-4 transition-all duration-1000 ${isIntersecting ? 'animate-slide-up opacity-100' : 'opacity-0 translate-y-10'
+          }`}
+      >
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">

@@ -7,7 +7,6 @@ import type {
   GenerateOptimizationInput,
   GenerateReportInsightInput,
   GenerateAdCopyInput,
-  AIConfig,
 } from '@application/ports/IAIService'
 import {
   AD_COPY_AI_CONFIG,

@@ -8,7 +8,6 @@ import {
   AdminDashboardDTO,
   UserStatsDTO,
   RevenueStatsDTO,
-  SubscriptionStatsDTO,
   CampaignStatsDTO,
   RecentUserDTO,
   RecentPaymentDTO,

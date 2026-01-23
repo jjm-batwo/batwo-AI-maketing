@@ -7,7 +7,7 @@ import {
   useRemoveMember,
   TeamMember,
 } from '@/presentation/hooks/useTeams'
-import { TeamRole, TeamPermission, DEFAULT_ROLE_PERMISSIONS } from '@/domain/entities/Team'
+import { TeamRole, DEFAULT_ROLE_PERMISSIONS } from '@/domain/entities/Team'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {

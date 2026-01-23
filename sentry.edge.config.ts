@@ -27,7 +27,7 @@ if (SENTRY_DSN) {
     debug: false,
 
     // 민감한 데이터 필터링
-    beforeSend(event, hint) {
+    beforeSend(event, _hint) {
       // 개발 모드에서는 전송하지 않음
       if (process.env.NODE_ENV === 'development') {
         console.log('[Sentry Edge] Event captured (dev mode, not sent):', {

@@ -21,8 +21,6 @@ const DATE_PRESETS = [
   'this_month',
 ] as const
 
-type DatePreset = (typeof DATE_PRESETS)[number]
-
 export interface WarmupResult {
   endpoint: string
   success: boolean

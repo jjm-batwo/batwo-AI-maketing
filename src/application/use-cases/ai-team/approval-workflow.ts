@@ -242,7 +242,7 @@ export class ApprovalWorkflow {
   /**
    * 승인 필요 여부 판단
    */
-  needsApproval(type: ApprovalType, _changes: string[]): boolean {
+  needsApproval(type: ApprovalType): boolean {
     // 모든 승인 유형은 승인 필요
     const approvalRequiredTypes: ApprovalType[] = [
       'database_schema',

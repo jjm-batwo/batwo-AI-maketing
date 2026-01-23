@@ -15,8 +15,6 @@
 const isDevelopment = process.env.NODE_ENV === 'development'
 const isProduction = process.env.NODE_ENV === 'production'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://batwo.ai'
-
 // =============================================================================
 // 허용 도메인
 // =============================================================================

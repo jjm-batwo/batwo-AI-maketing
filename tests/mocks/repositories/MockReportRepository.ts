@@ -1,4 +1,4 @@
-import { Report, ReportType, ReportStatus } from '@domain/entities/Report'
+import { Report, ReportType } from '@domain/entities/Report'
 import {
   IReportRepository,
   ReportFilters,

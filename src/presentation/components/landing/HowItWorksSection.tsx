@@ -1,4 +1,7 @@
+'use client'
+
 import { ClipboardList, Cpu, TrendingUp } from 'lucide-react'
+import { useIntersectionObserver } from '@/presentation/hooks'
 
 const steps = [
   {
@@ -22,9 +25,15 @@ const steps = [
 ]
 
 export function HowItWorksSection() {
+  const { ref, isIntersecting } = useIntersectionObserver()
+
   return (
-    <section id="how-it-works" className="py-16 md:py-24">
-      <div className="container mx-auto px-4">
+    <section id="how-it-works" className="py-16 md:py-24 overflow-hidden">
+      <div
+        ref={ref}
+        className={`container mx-auto px-4 transition-all duration-1000 ${isIntersecting ? 'animate-slide-up opacity-100' : 'opacity-0 translate-y-10'
+          }`}
+      >
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">

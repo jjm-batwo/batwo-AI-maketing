@@ -4,7 +4,6 @@ import { container, DI_TOKENS } from '@/lib/di/container'
 import type { IReportRepository } from '@domain/repositories/IReportRepository'
 import { GenerateWeeklyReportUseCase } from '@application/use-cases/report/GenerateWeeklyReportUseCase'
 import { UnauthorizedCampaignError } from '@application/use-cases/report/GenerateWeeklyReportUseCase'
-import { toReportDTO } from '@application/dto/report/ReportDTO'
 import { ReportType } from '@domain/entities/Report'
 
 export async function GET(request: NextRequest) {

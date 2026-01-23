@@ -13,7 +13,6 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import {
   KoreanMarketCalendar,
   getKoreanMarketCalendar,
-  type DateEventInfo,
 } from '@domain/value-objects/KoreanMarketCalendar'
 
 describe('KoreanMarketCalendar', () => {

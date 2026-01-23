@@ -4,7 +4,6 @@ import {
   GlobalRole,
   isAdmin,
   isSuperAdmin,
-  canAccessAdminPanel,
 } from '@domain/value-objects/GlobalRole'
 
 export interface AdminAuthResult {

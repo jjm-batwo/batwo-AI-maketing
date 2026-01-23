@@ -3,7 +3,7 @@ import {
   requireSuperAdmin,
   handleAdminAuth,
 } from '@/infrastructure/auth/adminMiddleware'
-import { PLAN_CONFIGS, SubscriptionPlan } from '@domain/value-objects/SubscriptionPlan'
+import { PLAN_CONFIGS } from '@domain/value-objects/SubscriptionPlan'
 
 // 시스템 설정 조회 (SUPER_ADMIN 전용)
 export async function GET() {

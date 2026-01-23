@@ -3,9 +3,8 @@
  * TDD RED 단계: 실패하는 테스트 먼저 작성
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { TDDWorkflowRunner } from '@/application/use-cases/ai-team/tdd-workflow-runner';
-import { TDDStage } from '@/domain/services/ai-team-command-types';
 
 describe('TDDWorkflowRunner', () => {
   let runner: TDDWorkflowRunner;

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { SelectPixelUseCase } from '@application/use-cases/pixel/SelectPixelUseCase'
 import { MockMetaPixelRepository } from '@tests/mocks/repositories/MockMetaPixelRepository'
-import { MetaPixel, PixelSetupMethod } from '@domain/entities/MetaPixel'
+import { PixelSetupMethod } from '@domain/entities/MetaPixel'
 
 describe('SelectPixelUseCase', () => {
   let useCase: SelectPixelUseCase
