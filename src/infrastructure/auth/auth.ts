@@ -11,6 +11,11 @@ import { authConfig } from './auth.config'
 const META_LOGIN_SCOPES = 'email,public_profile'
 
 console.log('[AUTH] Initializing NextAuth with PrismaAdapter')
+console.log('[AUTH] Google Client ID exists:', !!process.env.GOOGLE_CLIENT_ID)
+console.log('[AUTH] Google Client ID length:', process.env.GOOGLE_CLIENT_ID?.length)
+console.log('[AUTH] Google Client Secret exists:', !!process.env.GOOGLE_CLIENT_SECRET)
+console.log('[AUTH] AUTH_SECRET exists:', !!process.env.AUTH_SECRET)
+console.log('[AUTH] AUTH_URL:', process.env.AUTH_URL)
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,

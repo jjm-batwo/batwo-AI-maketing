@@ -10,7 +10,12 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
+    video: 'on',
+    launchOptions: {
+      slowMo: 500,
+    },
   },
+  outputDir: './docs/meta-app-review/recordings',
   projects: [
     {
       name: 'chromium',

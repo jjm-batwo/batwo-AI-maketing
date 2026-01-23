@@ -46,7 +46,7 @@ function MetaConnectContent() {
     setIsConnecting(true)
     const appId = process.env.NEXT_PUBLIC_META_APP_ID
     const redirectUri = encodeURIComponent(`${window.location.origin}/api/meta/callback`)
-    const scope = encodeURIComponent('ads_management,ads_read,business_management')
+    const scope = encodeURIComponent('ads_management,ads_read,business_management,pages_show_list,pages_read_engagement')
 
     window.location.href = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code`
   }
