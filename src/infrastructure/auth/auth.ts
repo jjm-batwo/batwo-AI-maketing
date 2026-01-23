@@ -15,10 +15,11 @@ console.log('[AUTH] Initializing NextAuth with PrismaAdapter')
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
   adapter: PrismaAdapter(prisma),
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
   session: {
     strategy: 'jwt',
   },
-  debug: true, // Always enable debug for now
+  debug: process.env.NODE_ENV === 'development', // Only debug in dev
   // Override providers with full configuration including allowDangerousEmailAccountLinking
   providers: [
     Google({
