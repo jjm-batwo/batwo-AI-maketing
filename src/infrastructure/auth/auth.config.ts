@@ -21,12 +21,14 @@ export const authConfig = {
   },
   callbacks: {
     async signIn({ user, account, profile }) {
-      console.log('[AUTH] signIn callback:', {
-        userEmail: user?.email,
-        userId: user?.id,
-        provider: account?.provider,
-        profileEmail: profile?.email,
-      })
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[AUTH] signIn callback:', {
+          userEmail: user?.email,
+          userId: user?.id,
+          provider: account?.provider,
+          profileEmail: profile?.email,
+        })
+      }
       // Allow all sign-ins by default
       return true
     },
@@ -41,16 +43,18 @@ export const authConfig = {
         nextUrl.pathname.startsWith('/register')
       const isOnAdmin = nextUrl.pathname.startsWith('/admin')
 
-      console.log('[AUTH] authorized callback:', {
-        pathname: nextUrl.pathname,
-        isLoggedIn,
-        isLandingPage,
-        isOnDashboard,
-        isOnAuth,
-        isOnAdmin,
-        authUser: auth?.user?.email,
-        globalRole: auth?.user?.globalRole,
-      })
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[AUTH] authorized callback:', {
+          pathname: nextUrl.pathname,
+          isLoggedIn,
+          isLandingPage,
+          isOnDashboard,
+          isOnAuth,
+          isOnAdmin,
+          authUser: auth?.user?.email,
+          globalRole: auth?.user?.globalRole,
+        })
+      }
 
       // 랜딩 페이지는 누구나 접근 가능
       if (isLandingPage) {
@@ -80,18 +84,27 @@ export const authConfig = {
       return true
     },
     jwt({ token, user, account }) {
-      console.log('[AUTH] jwt callback:', {
-        hasUser: !!user,
-        userEmail: user?.email,
-        hasAccount: !!account,
-        provider: account?.provider,
-        tokenId: token?.id,
-        globalRole: user?.globalRole || token?.globalRole,
-      })
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[AUTH] jwt callback:', {
+          hasUser: !!user,
+          userEmail: user?.email,
+          hasAccount: !!account,
+          provider: account?.provider,
+          tokenId: token?.id,
+          globalRole: user?.globalRole || token?.globalRole,
+        })
+      }
       if (user) {
         token.id = user.id
         // globalRole은 auth.ts에서 DB 조회 후 설정됨
         token.globalRole = user.globalRole || GlobalRole.USER
+
+        // Handle missing email (development mode without email scope)
+        // Use account.providerAccountId which contains the Facebook user ID
+        if (!user?.email && account?.providerAccountId) {
+          // Generate a placeholder email based on provider account ID
+          token.email = `fb_${account.providerAccountId}@placeholder.batwo.local`
+        }
       }
       if (account) {
         token.provider = account.provider
@@ -101,12 +114,14 @@ export const authConfig = {
       return token
     },
     session({ session, token }) {
-      console.log('[AUTH] session callback:', {
-        hasToken: !!token,
-        tokenId: token?.id,
-        sessionUser: session?.user?.email,
-        globalRole: token?.globalRole,
-      })
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[AUTH] session callback:', {
+          hasToken: !!token,
+          tokenId: token?.id,
+          sessionUser: session?.user?.email,
+          globalRole: token?.globalRole,
+        })
+      }
       if (token && session.user) {
         session.user.id = token.id as string
         session.user.provider = token.provider as string | undefined

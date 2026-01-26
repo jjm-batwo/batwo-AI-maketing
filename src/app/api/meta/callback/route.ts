@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { oauthCache } from '@/lib/cache/oauthCache'
 
 const META_API_URL = 'https://graph.facebook.com/v18.0'
 
@@ -81,12 +82,30 @@ export async function GET(request: NextRequest) {
       `${META_API_URL}/me/adaccounts?fields=id,name,account_status,currency&access_token=${longLivedTokenResponse.access_token}`
     ).then((res) => res.json() as Promise<{ data: MetaAdAccount[] }>)
 
-    // Store the first ad account (for MVP)
-    const primaryAdAccount = adAccountsResponse.data?.[0]
+    const accounts = adAccountsResponse.data || []
 
-    // Try to store in database, but don't fail if database is unavailable
-    let dbSuccess = false
-    if (primaryAdAccount) {
+    // Development logging only (no sensitive data)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[META CALLBACK] OAuth successful:', {
+        hasToken: !!longLivedTokenResponse.access_token,
+        tokenLength: longLivedTokenResponse.access_token?.length,
+        expiresIn: longLivedTokenResponse.expires_in,
+        accountCount: accounts.length,
+      })
+    }
+
+    // 계정이 없는 경우
+    if (accounts.length === 0) {
+      return NextResponse.redirect(
+        new URL('/settings/meta-connect?error=광고 계정이 없습니다', request.url)
+      )
+    }
+
+    // 계정이 1개인 경우: 기존 로직대로 자동 선택
+    if (accounts.length === 1) {
+      const primaryAdAccount = accounts[0]
+      let dbSuccess = false
+
       try {
         // Check if account already exists
         const existingAccount = await prisma.metaAdAccount.findFirst({
@@ -126,29 +145,29 @@ export async function GET(request: NextRequest) {
         console.error('Failed to store Meta account in database:', dbError)
         // Continue without database - OAuth still succeeded
       }
+
+      const successUrl = new URL('/settings/meta-connect', request.url)
+      successUrl.searchParams.set('success', 'true')
+      if (!dbSuccess) {
+        successUrl.searchParams.set('warning', 'db_unavailable')
+      }
+      successUrl.searchParams.set('account', primaryAdAccount.name)
+      return NextResponse.redirect(successUrl)
     }
 
-    // Log the token for debugging (TEMPORARY - remove in production)
-    console.log('[META CALLBACK] OAuth successful:', {
-      hasToken: !!longLivedTokenResponse.access_token,
-      tokenLength: longLivedTokenResponse.access_token?.length,
-      expiresIn: longLivedTokenResponse.expires_in,
-      adAccountId: primaryAdAccount?.id,
-      adAccountName: primaryAdAccount?.name,
-      dbSuccess,
+    // 계정이 여러 개인 경우: 선택 페이지로 리다이렉트
+    // accessToken을 임시 캐시에 저장 (5분 TTL)
+    const sessionId = oauthCache.set(user.id, {
+      accessToken: longLivedTokenResponse.access_token,
+      tokenExpiry: longLivedTokenResponse.expires_in,
+      accounts: accounts,
     })
 
-    // Return success even if database storage failed
-    // The OAuth itself was successful
-    const successUrl = new URL('/settings/meta-connect', request.url)
-    successUrl.searchParams.set('success', 'true')
-    if (!dbSuccess) {
-      successUrl.searchParams.set('warning', 'db_unavailable')
-    }
-    if (primaryAdAccount) {
-      successUrl.searchParams.set('account', primaryAdAccount.name)
-    }
-    return NextResponse.redirect(successUrl)
+    const selectUrl = new URL('/settings/meta-connect', request.url)
+    selectUrl.searchParams.set('mode', 'select')
+    selectUrl.searchParams.set('session', sessionId)
+    selectUrl.searchParams.set('count', accounts.length.toString())
+    return NextResponse.redirect(selectUrl)
   } catch (error) {
     console.error('Meta OAuth callback error:', error)
     return NextResponse.redirect(

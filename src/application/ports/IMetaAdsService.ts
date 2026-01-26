@@ -47,6 +47,27 @@ export interface UpdateMetaCampaignInput {
   endTime?: Date | null
 }
 
+export interface MetaCampaignListItem {
+  id: string
+  name: string
+  status: 'ACTIVE' | 'PAUSED' | 'DELETED' | 'ARCHIVED'
+  objective: string
+  dailyBudget?: number
+  lifetimeBudget?: number
+  startTime?: string
+  endTime?: string
+  createdTime: string
+  updatedTime: string
+}
+
+export interface ListCampaignsResponse {
+  campaigns: MetaCampaignListItem[]
+  paging?: {
+    after?: string
+    hasNext: boolean
+  }
+}
+
 export interface IMetaAdsService {
   createCampaign(
     accessToken: string,
@@ -78,4 +99,10 @@ export interface IMetaAdsService {
   ): Promise<MetaCampaignData>
 
   deleteCampaign(accessToken: string, campaignId: string): Promise<void>
+
+  listCampaigns(
+    accessToken: string,
+    adAccountId: string,
+    options?: { limit?: number; after?: string }
+  ): Promise<ListCampaignsResponse>
 }

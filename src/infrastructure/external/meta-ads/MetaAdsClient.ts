@@ -4,13 +4,18 @@ import {
   MetaInsightsData,
   CreateMetaCampaignInput,
   UpdateMetaCampaignInput,
+  ListCampaignsResponse,
+  MetaCampaignListItem,
 } from '@application/ports/IMetaAdsService'
 import { MetaAdsApiError } from '../errors'
 import { withRetry } from '@lib/utils/retry'
+import { fetchWithTimeout } from '@lib/utils/timeout'
 import { MetaApiLogRepository, MetaApiLogEntry } from './MetaApiLogRepository'
+import { withSpan } from '@infrastructure/telemetry'
 
 const META_API_VERSION = 'v18.0'
 const META_API_BASE = `https://graph.facebook.com/${META_API_VERSION}`
+const META_API_TIMEOUT_MS = 30000 // 30 seconds for Meta API calls
 
 interface MetaApiError {
   error: {
@@ -42,6 +47,29 @@ interface MetaApiInsightsResponse {
     date_start: string
     date_stop: string
   }[]
+}
+
+interface MetaApiCampaignListResponse {
+  data: {
+    id: string
+    name: string
+    status: string
+    effective_status?: string
+    objective: string
+    daily_budget?: string
+    lifetime_budget?: string
+    start_time?: string
+    stop_time?: string
+    created_time: string
+    updated_time: string
+  }[]
+  paging?: {
+    cursors?: {
+      before?: string
+      after?: string
+    }
+    next?: string
+  }
 }
 
 export class MetaAdsClient implements IMetaAdsService {
@@ -89,7 +117,7 @@ export class MetaAdsClient implements IMetaAdsService {
     let errorMsg: string | undefined
 
     try {
-      const response = await fetch(url, { ...options, headers })
+      const response = await fetchWithTimeout(url, { ...options, headers }, META_API_TIMEOUT_MS)
       statusCode = response.status
       const data = await response.json()
 
@@ -148,51 +176,69 @@ export class MetaAdsClient implements IMetaAdsService {
     adAccountId: string,
     input: CreateMetaCampaignInput
   ): Promise<MetaCampaignData> {
-    const body = {
-      name: input.name,
-      objective: input.objective,
-      status: 'PAUSED',
-      special_ad_categories: [],
-      daily_budget: input.dailyBudget,
-      start_time: input.startTime.toISOString(),
-      ...(input.endTime && { end_time: input.endTime.toISOString() }),
-      ...(input.targeting && { targeting: this.formatTargeting(input.targeting) }),
-    }
+    return withSpan(
+      'meta.createCampaign',
+      async () => {
+        const body = {
+          name: input.name,
+          objective: input.objective,
+          status: 'PAUSED',
+          special_ad_categories: [],
+          daily_budget: input.dailyBudget,
+          start_time: input.startTime.toISOString(),
+          ...(input.endTime && { end_time: input.endTime.toISOString() }),
+          ...(input.targeting && { targeting: this.formatTargeting(input.targeting) }),
+        }
 
-    const response = await this.requestWithRetry<MetaApiCampaignResponse>(
-      accessToken,
-      `/${adAccountId}/campaigns`,
+        const response = await this.requestWithRetry<MetaApiCampaignResponse>(
+          accessToken,
+          `/${adAccountId}/campaigns`,
+          {
+            method: 'POST',
+            body: JSON.stringify(body),
+          }
+        )
+
+        return this.mapCampaignResponse(response)
+      },
       {
-        method: 'POST',
-        body: JSON.stringify(body),
+        'meta.adAccountId': adAccountId,
+        'meta.campaign.name': input.name,
+        'meta.campaign.objective': input.objective,
       }
     )
-
-    return this.mapCampaignResponse(response)
   }
 
   async getCampaign(
     accessToken: string,
     campaignId: string
   ): Promise<MetaCampaignData | null> {
-    try {
-      const fields = 'id,name,status,objective,daily_budget,start_time,end_time'
-      const response = await this.requestWithRetry<MetaApiCampaignResponse>(
-        accessToken,
-        `/${campaignId}?fields=${fields}`,
-        { method: 'GET' }
-      )
+    return withSpan(
+      'meta.getCampaign',
+      async () => {
+        try {
+          const fields = 'id,name,status,objective,daily_budget,start_time,end_time'
+          const response = await this.requestWithRetry<MetaApiCampaignResponse>(
+            accessToken,
+            `/${campaignId}?fields=${fields}`,
+            { method: 'GET' }
+          )
 
-      return this.mapCampaignResponse(response)
-    } catch (error) {
-      if (
-        error instanceof MetaAdsApiError &&
-        (error.statusCode === 404 || error.errorCode === 100)
-      ) {
-        return null
+          return this.mapCampaignResponse(response)
+        } catch (error) {
+          if (
+            error instanceof MetaAdsApiError &&
+            (error.statusCode === 404 || error.errorCode === 100)
+          ) {
+            return null
+          }
+          throw error
+        }
+      },
+      {
+        'meta.campaignId': campaignId,
       }
-      throw error
-    }
+    )
   }
 
   async getCampaignInsights(
@@ -200,16 +246,25 @@ export class MetaAdsClient implements IMetaAdsService {
     campaignId: string,
     datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' = 'last_7d'
   ): Promise<MetaInsightsData> {
-    const fields =
-      'campaign_id,impressions,clicks,spend,actions,action_values,date_start,date_stop'
+    return withSpan(
+      'meta.getCampaignInsights',
+      async () => {
+        const fields =
+          'campaign_id,impressions,clicks,spend,actions,action_values,date_start,date_stop'
 
-    const response = await this.requestWithRetry<MetaApiInsightsResponse>(
-      accessToken,
-      `/${campaignId}/insights?fields=${fields}&date_preset=${datePreset}`,
-      { method: 'GET' }
+        const response = await this.requestWithRetry<MetaApiInsightsResponse>(
+          accessToken,
+          `/${campaignId}/insights?fields=${fields}&date_preset=${datePreset}`,
+          { method: 'GET' }
+        )
+
+        return this.mapInsightsResponse(campaignId, response)
+      },
+      {
+        'meta.campaignId': campaignId,
+        'meta.datePreset': datePreset,
+      }
     )
-
-    return this.mapInsightsResponse(campaignId, response)
   }
 
   async updateCampaignStatus(
@@ -260,6 +315,76 @@ export class MetaAdsClient implements IMetaAdsService {
       accessToken,
       `/${campaignId}`,
       { method: 'DELETE' }
+    )
+  }
+
+  async listCampaigns(
+    accessToken: string,
+    adAccountId: string,
+    options?: { limit?: number; after?: string }
+  ): Promise<ListCampaignsResponse> {
+    return withSpan(
+      'meta.listCampaigns',
+      async () => {
+        const limit = options?.limit || 50
+        const params = new URLSearchParams({
+          access_token: accessToken,
+          fields:
+            'id,name,status,effective_status,objective,daily_budget,lifetime_budget,start_time,stop_time,created_time,updated_time',
+          limit: limit.toString(),
+        })
+
+        if (options?.after) {
+          params.append('after', options.after)
+        }
+
+        // Include all campaign statuses (default API may filter some out)
+        params.append('filtering', JSON.stringify([
+          {
+            field: 'effective_status',
+            operator: 'IN',
+            value: ['ACTIVE', 'PAUSED', 'DELETED', 'ARCHIVED', 'IN_PROCESS', 'WITH_ISSUES', 'CAMPAIGN_PAUSED', 'ADSET_PAUSED', 'PENDING_REVIEW', 'DISAPPROVED', 'PENDING_BILLING_INFO']
+          }
+        ]))
+
+        const endpoint = `/${adAccountId}/campaigns?${params.toString()}`
+
+        const response = await this.requestWithRetry<MetaApiCampaignListResponse>(
+          accessToken,
+          endpoint,
+          { method: 'GET' }
+        )
+
+        const campaigns: MetaCampaignListItem[] = response.data.map((campaign) => ({
+          id: campaign.id,
+          name: campaign.name,
+          status: (campaign.effective_status || campaign.status) as MetaCampaignListItem['status'],
+          objective: campaign.objective,
+          dailyBudget: campaign.daily_budget ? parseInt(campaign.daily_budget, 10) : undefined,
+          lifetimeBudget: campaign.lifetime_budget
+            ? parseInt(campaign.lifetime_budget, 10)
+            : undefined,
+          startTime: campaign.start_time,
+          endTime: campaign.stop_time,
+          createdTime: campaign.created_time,
+          updatedTime: campaign.updated_time,
+        }))
+
+        return {
+          campaigns,
+          paging: response.paging?.cursors?.after
+            ? {
+                after: response.paging.cursors.after,
+                hasNext: !!response.paging.next,
+              }
+            : undefined,
+        }
+      },
+      {
+        'meta.adAccountId': adAccountId,
+        'meta.limit': options?.limit ?? 50,
+        'meta.after': options?.after ?? '',
+      }
     )
   }
 
