@@ -5,6 +5,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 import { Providers } from './providers'
 import { getMetadata, getJsonLdScript, SEO } from '@/lib/constants/seo'
+import { FacebookSDK } from '@/presentation/components/common/FacebookSDK'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -52,6 +53,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>{children}</Providers>
+        {/* Facebook SDK - Meta 통합 */}
+        <FacebookSDK />
         {/* Vercel Analytics - 사용자 분석 */}
         <Analytics />
         {/* Vercel Speed Insights - 성능 모니터링 */}

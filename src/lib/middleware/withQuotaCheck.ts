@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { UsageType } from '@domain/repositories/IUsageLogRepository'
-import { QuotaService, QuotaExceededError } from '@application/services/QuotaService'
+import { QuotaService } from '@application/services/QuotaService'
+import { QuotaExceededError } from '@domain/errors'
 
 export interface QuotaCheckContext {
   userId: string
@@ -95,6 +96,8 @@ function getQuotaExceededMessage(
       return `${periodKo} AI 카피 생성 횟수(${limit}회)를 모두 사용했어요`
     case 'AI_ANALYSIS':
       return `${periodKo} AI 분석 횟수(${limit}회)를 모두 사용했어요`
+    case 'AI_SCIENCE':
+      return `${periodKo} AI 과학 분석 횟수(${limit}회)를 모두 사용했어요`
     default:
       return `${periodKo} 사용량 한도(${limit}회)에 도달했어요`
   }

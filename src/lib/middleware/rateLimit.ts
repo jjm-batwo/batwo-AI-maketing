@@ -105,9 +105,14 @@ async function initUpstash(): Promise<boolean> {
   const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN
 
   if (!redisUrl || !redisToken) {
-    // 개발 환경에서는 경고 없이 조용히 메모리 폴백 사용
-    if (process.env.NODE_ENV === 'production') {
-      console.warn('[RateLimit] Upstash not configured, using memory fallback')
+    // 개발 환경에서는 경고 로그 출력, 프로덕션은 에러로 처리
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(
+        '[RateLimit] Upstash not configured in development, using memory fallback. ' +
+        'For production, set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN'
+      )
+    } else {
+      console.error('[RateLimit] Upstash not configured in production - Rate limiting may not work correctly')
     }
     return false
   }
@@ -132,8 +137,10 @@ async function initUpstash(): Promise<boolean> {
     }
 
     if (!upstashRatelimitModule || !upstashRedisModule) {
-      if (process.env.NODE_ENV === 'production') {
+      if (process.env.NODE_ENV !== 'production') {
         console.warn('[RateLimit] Upstash packages not installed, using memory fallback')
+      } else {
+        console.error('[RateLimit] Upstash packages not installed in production')
       }
       return false
     }
@@ -169,11 +176,19 @@ async function upstashRateLimitCheck(
   }
 
   try {
-    // Upstash Ratelimit은 Ratelimit 인스턴스 재생성이 필요할 수 있음
-    // 여기서는 간단하게 메모리 폴백 사용
-    // 실제 프로덕션에서는 type별 Ratelimit 인스턴스 캐싱 권장
-    return memoryRateLimit(identifier, config)
-  } catch {
+    // Upstash Ratelimit 사용
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ratelimit = upstashRatelimit as any
+    const result = await ratelimit.limit(identifier)
+
+    return {
+      success: result.success,
+      limit: config.tokens,
+      remaining: result.remaining ?? config.tokens - (result.success ? 1 : 0),
+      reset: result.resetAfter ?? Date.now() + config.interval,
+    }
+  } catch (error) {
+    console.error('[RateLimit] Upstash check failed, falling back to memory', error)
     return memoryRateLimit(identifier, config)
   }
 }

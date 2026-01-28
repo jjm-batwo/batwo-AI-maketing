@@ -33,6 +33,9 @@ export default defineConfig({
       '@presentation': path.resolve(__dirname, './src/presentation'),
       '@lib': path.resolve(__dirname, './src/lib'),
       '@tests': path.resolve(__dirname, './tests'),
+      // Mock optional dependencies
+      '@upstash/ratelimit': path.resolve(__dirname, './tests/__mocks__/upstash-ratelimit.ts'),
+      '@upstash/redis': path.resolve(__dirname, './tests/__mocks__/upstash-redis.ts'),
     },
   },
 })

@@ -1,6 +1,15 @@
 import '@testing-library/jest-dom'
-import { afterAll, afterEach, beforeAll } from 'vitest'
+import { afterAll, afterEach, beforeAll, vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
+
+// Mock @upstash/ratelimit and @upstash/redis since they're optional dependencies
+vi.mock('@upstash/ratelimit', () => ({
+  Ratelimit: vi.fn(),
+}))
+
+vi.mock('@upstash/redis', () => ({
+  Redis: vi.fn(),
+}))
 
 // Clean up after each test
 afterEach(() => {

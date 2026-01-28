@@ -6,6 +6,7 @@
  * without external DI libraries.
  */
 
+import { env } from '@/lib/env'
 import { DI_TOKENS } from './types'
 
 // Repository interfaces
@@ -19,10 +20,13 @@ import type { ITeamRepository } from '@domain/repositories/ITeamRepository'
 import type { IUserRepository } from '@domain/repositories/IUserRepository'
 import type { ISubscriptionRepository } from '@domain/repositories/ISubscriptionRepository'
 import type { IInvoiceRepository } from '@domain/repositories/IInvoiceRepository'
+import type { IMetaPixelRepository } from '@domain/repositories/IMetaPixelRepository'
 
 // Port interfaces
 import type { IMetaAdsService } from '@application/ports/IMetaAdsService'
 import type { IAIService } from '@application/ports/IAIService'
+import type { IKnowledgeBaseService } from '@application/ports/IKnowledgeBaseService'
+import type { IResearchService } from '@application/ports/IResearchService'
 
 // Infrastructure implementations
 import { PrismaCampaignRepository } from '@infrastructure/database/repositories/PrismaCampaignRepository'
@@ -35,8 +39,13 @@ import { PrismaTeamRepository } from '@infrastructure/database/repositories/Pris
 import { PrismaUserRepository } from '@infrastructure/database/repositories/PrismaUserRepository'
 import { PrismaSubscriptionRepository } from '@infrastructure/database/repositories/PrismaSubscriptionRepository'
 import { PrismaInvoiceRepository } from '@infrastructure/database/repositories/PrismaInvoiceRepository'
+import { PrismaMetaPixelRepository } from '@infrastructure/database/repositories/PrismaMetaPixelRepository'
 import { MetaAdsClient } from '@infrastructure/external/meta-ads/MetaAdsClient'
 import { AIService } from '@infrastructure/external/openai/AIService'
+import { KnowledgeBaseService } from '@infrastructure/knowledge'
+import { MarketingIntelligenceService } from '@application/services/MarketingIntelligenceService'
+import { ScienceAIService } from '@infrastructure/external/openai/ScienceAIService'
+import { PerplexityResearchService } from '@infrastructure/external/research'
 
 // Application services and use cases
 import { QuotaService } from '@application/services/QuotaService'
@@ -47,6 +56,7 @@ import { AnomalySegmentAnalysisService } from '@application/services/AnomalySegm
 import { CopyLearningService } from '@application/services/CopyLearningService'
 import { CampaignAnalyzer } from '@application/services/CampaignAnalyzer'
 import { CompetitorBenchmarkService } from '@application/services/CompetitorBenchmarkService'
+import { TargetingRecommendationService } from '@application/services/TargetingRecommendationService'
 import { ReportPDFGenerator, type IReportPDFGenerator } from '@infrastructure/pdf/ReportPDFGenerator'
 import { EmailService } from '@infrastructure/email/EmailService'
 import type { IEmailService } from '@application/ports/IEmailService'
@@ -56,9 +66,12 @@ import { PauseCampaignUseCase } from '@application/use-cases/campaign/PauseCampa
 import { ResumeCampaignUseCase } from '@application/use-cases/campaign/ResumeCampaignUseCase'
 import { GetCampaignUseCase } from '@application/use-cases/campaign/GetCampaignUseCase'
 import { ListCampaignsUseCase } from '@application/use-cases/campaign/ListCampaignsUseCase'
+import { SyncCampaignsUseCase } from '@application/use-cases/campaign/SyncCampaignsUseCase'
 import { GenerateWeeklyReportUseCase } from '@application/use-cases/report/GenerateWeeklyReportUseCase'
 import { GetDashboardKPIUseCase } from '@application/use-cases/kpi/GetDashboardKPIUseCase'
 import { SyncMetaInsightsUseCase } from '@application/use-cases/kpi/SyncMetaInsightsUseCase'
+import { ListUserPixelsUseCase } from '@application/use-cases/pixel/ListUserPixelsUseCase'
+import { SelectPixelUseCase } from '@application/use-cases/pixel/SelectPixelUseCase'
 
 import { prisma } from '@/lib/prisma'
 
@@ -149,6 +162,11 @@ container.registerSingleton<IInvoiceRepository>(
   () => new PrismaInvoiceRepository(prisma)
 )
 
+container.registerSingleton<IMetaPixelRepository>(
+  DI_TOKENS.MetaPixelRepository,
+  () => new PrismaMetaPixelRepository(prisma)
+)
+
 // Register External Services (Singletons)
 container.registerSingleton<IMetaAdsService>(
   DI_TOKENS.MetaAdsService,
@@ -209,6 +227,11 @@ container.registerSingleton(
   () => new CompetitorBenchmarkService()
 )
 
+container.registerSingleton(
+  DI_TOKENS.TargetingRecommendationService,
+  () => new TargetingRecommendationService()
+)
+
 // Register Infrastructure Services (Singletons)
 container.registerSingleton<IReportPDFGenerator>(
   DI_TOKENS.ReportPDFGenerator,
@@ -217,7 +240,38 @@ container.registerSingleton<IReportPDFGenerator>(
 
 container.registerSingleton<IEmailService>(
   DI_TOKENS.EmailService,
-  () => new EmailService(process.env.RESEND_API_KEY || '')
+  () => new EmailService(env.RESEND_API_KEY || '')
+)
+
+// Register Marketing Intelligence Services (Singletons)
+container.registerSingleton<IKnowledgeBaseService>(
+  DI_TOKENS.KnowledgeBaseService,
+  () => new KnowledgeBaseService()
+)
+
+container.registerSingleton<IResearchService>(
+  DI_TOKENS.ResearchService,
+  () => new PerplexityResearchService(process.env.PERPLEXITY_API_KEY)
+)
+
+container.registerSingleton(
+  DI_TOKENS.MarketingIntelligenceService,
+  () => {
+    const knowledgeBase = container.resolve<IKnowledgeBaseService>(DI_TOKENS.KnowledgeBaseService)
+    const researchEnabled = process.env.RESEARCH_ENABLED === 'true'
+    const researchService = researchEnabled
+      ? container.resolve<IResearchService>(DI_TOKENS.ResearchService)
+      : undefined
+    return new MarketingIntelligenceService(knowledgeBase, researchService)
+  }
+)
+
+container.registerSingleton<IAIService>(
+  DI_TOKENS.ScienceAIService,
+  () => new ScienceAIService(
+    container.resolve(DI_TOKENS.AIService),
+    container.resolve(DI_TOKENS.MarketingIntelligenceService)
+  )
 )
 
 // Register Use Cases (Transient - new instance each time)
@@ -269,6 +323,15 @@ container.register(
 )
 
 container.register(
+  DI_TOKENS.SyncCampaignsUseCase,
+  () =>
+    new SyncCampaignsUseCase(
+      container.resolve(DI_TOKENS.CampaignRepository),
+      container.resolve(DI_TOKENS.MetaAdsService)
+    )
+)
+
+container.register(
   DI_TOKENS.GenerateWeeklyReportUseCase,
   () =>
     new GenerateWeeklyReportUseCase(
@@ -297,6 +360,17 @@ container.register(
       container.resolve(DI_TOKENS.KPIRepository),
       container.resolve(DI_TOKENS.MetaAdsService)
     )
+)
+
+// Pixel Use Cases
+container.register(
+  DI_TOKENS.ListUserPixelsUseCase,
+  () => new ListUserPixelsUseCase(container.resolve(DI_TOKENS.MetaPixelRepository))
+)
+
+container.register(
+  DI_TOKENS.SelectPixelUseCase,
+  () => new SelectPixelUseCase(container.resolve(DI_TOKENS.MetaPixelRepository))
 )
 
 export { container, DI_TOKENS }
@@ -394,6 +468,10 @@ export function getCompetitorBenchmarkService(): CompetitorBenchmarkService {
   return container.resolve(DI_TOKENS.CompetitorBenchmarkService)
 }
 
+export function getTargetingRecommendationService(): TargetingRecommendationService {
+  return container.resolve(DI_TOKENS.TargetingRecommendationService)
+}
+
 export function getUserRepository(): IUserRepository {
   return container.resolve(DI_TOKENS.UserRepository)
 }
@@ -404,4 +482,36 @@ export function getSubscriptionRepository(): ISubscriptionRepository {
 
 export function getInvoiceRepository(): IInvoiceRepository {
   return container.resolve(DI_TOKENS.InvoiceRepository)
+}
+
+export function getMetaPixelRepository(): IMetaPixelRepository {
+  return container.resolve(DI_TOKENS.MetaPixelRepository)
+}
+
+export function getListUserPixelsUseCase(): ListUserPixelsUseCase {
+  return container.resolve(DI_TOKENS.ListUserPixelsUseCase)
+}
+
+export function getSelectPixelUseCase(): SelectPixelUseCase {
+  return container.resolve(DI_TOKENS.SelectPixelUseCase)
+}
+
+export function getSyncCampaignsUseCase(): SyncCampaignsUseCase {
+  return container.resolve(DI_TOKENS.SyncCampaignsUseCase)
+}
+
+export function getKnowledgeBaseService(): IKnowledgeBaseService {
+  return container.resolve(DI_TOKENS.KnowledgeBaseService)
+}
+
+export function getMarketingIntelligenceService(): MarketingIntelligenceService {
+  return container.resolve(DI_TOKENS.MarketingIntelligenceService)
+}
+
+export function getScienceAIService(): IAIService {
+  return container.resolve(DI_TOKENS.ScienceAIService)
+}
+
+export function getResearchService(): IResearchService {
+  return container.resolve(DI_TOKENS.ResearchService)
 }

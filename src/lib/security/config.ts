@@ -271,10 +271,12 @@ export function getCorsHeaders(origin: string | null): Record<string, string> {
 // Exports
 // =============================================================================
 
-export default {
+const securityConfig = {
   securityHeaders: SECURITY_HEADERS,
   csp: buildCSP,
   cors: CORS_CONFIG,
   rateLimit: RATE_LIMIT_CONFIG,
   allowedOrigins: ALLOWED_ORIGINS,
 }
+
+export default securityConfig

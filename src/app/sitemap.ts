@@ -33,7 +33,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ]
 
-  // TODO: 추후 동적 페이지 추가 (예: 공개 캠페인 페이지)
+  // FUTURE: 동적 페이지 추가
+  // - 공개 캠페인 페이지 (사용자가 공개로 설정한 캠페인)
+  // - 블로그/케이스 스터디 (마케팅 성공 사례)
   // const dynamicPages = await getCampaignPages()
 
   return [...staticPages]

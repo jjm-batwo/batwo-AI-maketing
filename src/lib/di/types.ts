@@ -17,6 +17,7 @@ export const DI_TOKENS = {
   TeamRepository: Symbol.for('TeamRepository'),
   SubscriptionRepository: Symbol.for('SubscriptionRepository'),
   InvoiceRepository: Symbol.for('InvoiceRepository'),
+  MetaPixelRepository: Symbol.for('MetaPixelRepository'),
 
   // External Services
   MetaAdsService: Symbol.for('MetaAdsService'),
@@ -31,10 +32,17 @@ export const DI_TOKENS = {
   CopyLearningService: Symbol.for('CopyLearningService'),
   CampaignAnalyzer: Symbol.for('CampaignAnalyzer'),
   CompetitorBenchmarkService: Symbol.for('CompetitorBenchmarkService'),
+  TargetingRecommendationService: Symbol.for('TargetingRecommendationService'),
 
   // Infrastructure Services
   ReportPDFGenerator: Symbol.for('ReportPDFGenerator'),
   EmailService: Symbol.for('EmailService'),
+
+  // Marketing Intelligence
+  KnowledgeBaseService: Symbol.for('KnowledgeBaseService'),
+  MarketingIntelligenceService: Symbol.for('MarketingIntelligenceService'),
+  ScienceAIService: Symbol.for('ScienceAIService'),
+  ResearchService: Symbol.for('ResearchService'),
 
   // Use Cases
   CreateCampaignUseCase: Symbol.for('CreateCampaignUseCase'),
@@ -43,9 +51,14 @@ export const DI_TOKENS = {
   ResumeCampaignUseCase: Symbol.for('ResumeCampaignUseCase'),
   GetCampaignUseCase: Symbol.for('GetCampaignUseCase'),
   ListCampaignsUseCase: Symbol.for('ListCampaignsUseCase'),
+  SyncCampaignsUseCase: Symbol.for('SyncCampaignsUseCase'),
   GenerateWeeklyReportUseCase: Symbol.for('GenerateWeeklyReportUseCase'),
   GetDashboardKPIUseCase: Symbol.for('GetDashboardKPIUseCase'),
   SyncMetaInsightsUseCase: Symbol.for('SyncMetaInsightsUseCase'),
+
+  // Pixel Use Cases
+  ListUserPixelsUseCase: Symbol.for('ListUserPixelsUseCase'),
+  SelectPixelUseCase: Symbol.for('SelectPixelUseCase'),
 } as const
 
 export type DIToken = (typeof DI_TOKENS)[keyof typeof DI_TOKENS]
