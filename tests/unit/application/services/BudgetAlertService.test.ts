@@ -61,7 +61,7 @@ describe('BudgetAlertService', () => {
           campaignId: 'campaign-1',
           thresholdPercent: 80,
         })
-      ).rejects.toThrow('이 캠페인에 이미 예산 알림이 설정되어 있습니다')
+      ).rejects.toThrow('Budget alert already exists for campaign campaign-1')
     })
 
     it('임계값이 0-100 범위를 벗어나면 에러를 던져야 한다', async () => {
@@ -72,14 +72,14 @@ describe('BudgetAlertService', () => {
           campaignId: 'campaign-1',
           thresholdPercent: 150,
         })
-      ).rejects.toThrow('임계값은 1-100 사이여야 합니다')
+      ).rejects.toThrow('Invalid threshold: 150. Must be between 1 and 100.')
 
       await expect(
         service.createAlert({
           campaignId: 'campaign-1',
           thresholdPercent: 0,
         })
-      ).rejects.toThrow('임계값은 1-100 사이여야 합니다')
+      ).rejects.toThrow('Invalid threshold: 0. Must be between 1 and 100.')
     })
   })
 
@@ -114,7 +114,7 @@ describe('BudgetAlertService', () => {
           campaignId: 'campaign-1',
           thresholdPercent: 90,
         })
-      ).rejects.toThrow('예산 알림 설정을 찾을 수 없습니다')
+      ).rejects.toThrow('Budget alert not found for campaign campaign-1')
     })
   })
 

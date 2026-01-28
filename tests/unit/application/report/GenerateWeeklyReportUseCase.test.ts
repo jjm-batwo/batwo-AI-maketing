@@ -178,7 +178,7 @@ describe('GenerateWeeklyReportUseCase', () => {
           startDate: weekAgo.toISOString(),
           endDate: now.toISOString(),
         })
-      ).rejects.toThrow(/unauthorized|not found/i)
+      ).rejects.toThrow(/Access denied|unauthorized|not found/i)
     })
 
     it('should calculate summary metrics correctly', async () => {

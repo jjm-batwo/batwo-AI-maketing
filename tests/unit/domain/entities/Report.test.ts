@@ -206,7 +206,7 @@ describe('Report', () => {
         dateRange: DateRange.create(new Date('2025-01-13'), new Date('2025-01-19')),
       })
         .markAsGenerated()
-        .markAsSent()
+        .markAsSent('user@example.com', 'SendGrid')
 
       expect(report.status).toBe('SENT')
       expect(report.sentAt).toBeDefined()
@@ -219,7 +219,9 @@ describe('Report', () => {
         dateRange: DateRange.create(new Date('2025-01-13'), new Date('2025-01-19')),
       })
 
-      expect(() => report.markAsSent()).toThrow('Cannot send report that has not been generated')
+      expect(() => report.markAsSent('user@example.com')).toThrow(
+        'Cannot send report that has not been generated'
+      )
     })
   })
 
