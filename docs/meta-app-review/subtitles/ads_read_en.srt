@@ -1,0 +1,179 @@
+1
+00:00:00,000 --> 00:00:03,000
+Batwo AI Marketing - ads_read Permission Demo
+
+2
+00:00:03,000 --> 00:00:06,000
+This permission allows users to read campaign performance data.
+
+3
+00:00:06,000 --> 00:00:09,000
+Navigate to the Dashboard main page.
+
+4
+00:00:09,000 --> 00:00:12,000
+KPI (Key Performance Indicator) cards are displayed at the top.
+
+5
+00:00:12,000 --> 00:00:15,000
+First card: ROAS (Return on Ad Spend)
+
+6
+00:00:15,000 --> 00:00:18,000
+ROAS: 3.45 (₩3.45 revenue per ₩1 spent)
+
+7
+00:00:18,000 --> 00:00:21,000
+API call: GET /act_{account-id}/insights?fields=roas
+
+8
+00:00:21,000 --> 00:00:24,000
+Second card: Total Spend
+
+9
+00:00:24,000 --> 00:00:27,000
+Total Spend: ₩1,234,567
+
+10
+00:00:27,000 --> 00:00:30,000
+API call: GET /act_{account-id}/insights?fields=spend
+
+11
+00:00:30,000 --> 00:00:33,000
+Third card: Conversions
+
+12
+00:00:33,000 --> 00:00:36,000
+Conversions: 358
+
+13
+00:00:36,000 --> 00:00:39,000
+API call: GET /act_{account-id}/insights?fields=conversions
+
+14
+00:00:39,000 --> 00:00:42,000
+Fourth card: CTR (Click-Through Rate)
+
+15
+00:00:42,000 --> 00:00:45,000
+CTR: 2.34%
+
+16
+00:00:45,000 --> 00:00:48,000
+API call: GET /act_{account-id}/insights?fields=ctr
+
+17
+00:00:48,000 --> 00:00:51,000
+Scroll down to see the performance charts.
+
+18
+00:00:51,000 --> 00:00:54,000
+First chart: Daily Spend Trend
+
+19
+00:00:54,000 --> 00:00:57,000
+Last 7 days of spending data shown as a bar chart.
+
+20
+00:00:57,000 --> 00:01:00,000
+API call: GET /act_{account-id}/insights?time_range={date_range}
+
+21
+00:01:00,000 --> 00:01:03,000
+Second chart: ROAS Trend
+
+22
+00:01:03,000 --> 00:01:06,000
+Daily ROAS changes shown as a line graph.
+
+23
+00:01:06,000 --> 00:01:09,000
+Highest ROAS is 4.12, lowest is 2.89.
+
+24
+00:01:09,000 --> 00:01:12,000
+Continue scrolling to see the campaign performance table.
+
+25
+00:01:12,000 --> 00:01:15,000
+Campaign list table is displayed.
+
+26
+00:01:15,000 --> 00:01:18,000
+Performance metrics for each campaign are shown:
+
+27
+00:01:18,000 --> 00:01:21,000
+- Campaign Name
+- Spend
+- Impressions
+- Clicks
+- ROAS
+
+28
+00:01:21,000 --> 00:01:24,000
+"Summer Campaign 2024": ₩500,000 spend, ROAS 3.67
+
+29
+00:01:24,000 --> 00:01:27,000
+"Flash Sale Week": ₩300,000 spend, ROAS 2.89
+
+30
+00:01:27,000 --> 00:01:30,000
+"New Product Launch": ₩434,567 spend, ROAS 3.55
+
+31
+00:01:30,000 --> 00:01:33,000
+API call: GET /act_{account-id}/campaigns?fields=name,spend,insights
+
+32
+00:01:33,000 --> 00:01:36,000
+Click on a campaign to view detailed information.
+
+33
+00:01:36,000 --> 00:01:39,000
+Campaign detail page is displayed.
+
+34
+00:01:39,000 --> 00:01:42,000
+Campaign name: "Summer Campaign 2024"
+
+35
+00:01:42,000 --> 00:01:45,000
+Detailed performance metrics:
+
+36
+00:01:45,000 --> 00:01:48,000
+- Impressions: 145,678
+- Clicks: 3,421
+- Spend: ₩500,000
+- Conversions: 156
+- CPC: ₩146
+- Conversion Rate: 4.56%
+
+37
+00:01:48,000 --> 00:01:51,000
+API call: GET /act_{account-id}/insights with detailed metrics
+
+38
+00:01:51,000 --> 00:01:54,000
+With ads_read permission, you can:
+
+39
+00:01:54,000 --> 00:01:57,000
+- View real-time KPI dashboard
+- Check campaign performance data
+- Analyze daily, weekly, and monthly trends
+- Generate performance-based reports
+
+40
+00:01:57,000 --> 00:02:00,000
+Users always see the latest campaign data.
+
+41
+00:02:00,000 --> 00:02:03,000
+Dashboard data is synced in real-time from Meta.
+
+42
+00:02:03,000 --> 00:02:06,000
+ads_read permission demo completed.

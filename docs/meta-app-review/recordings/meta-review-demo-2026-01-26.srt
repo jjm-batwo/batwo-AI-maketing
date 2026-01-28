@@ -1,0 +1,286 @@
+1
+00:00:00,000 --> 00:00:04,000
+Batwo AI Marketing Solution
+Meta App Review Demo
+
+2
+00:00:04,000 --> 00:00:08,000
+This video demonstrates the end-to-end experience
+for each requested Meta permission.
+
+3
+00:00:08,000 --> 00:00:12,000
+The app is loaded at the Campaigns page.
+Real campaign data from Meta Ads is displayed.
+
+4
+00:00:12,000 --> 00:00:16,000
+Multiple campaigns are shown with status,
+budget, and ROAS metrics.
+
+5
+00:00:16,000 --> 00:00:20,000
+This demonstrates that the app is connected
+to Meta and has real data access.
+
+6
+00:00:20,000 --> 00:00:25,000
+Navigating to the App Review Demo page
+to show all requested permissions.
+
+7
+00:00:25,000 --> 00:00:30,000
+Meta Account Connection Status: Connected
+
+8
+00:00:30,000 --> 00:00:35,000
+All 5 requested permissions are displayed:
+
+9
+00:00:35,000 --> 00:00:40,000
+1. pages_show_list - GRANTED
+Display list of Facebook Pages managed by the user
+
+10
+00:00:40,000 --> 00:00:45,000
+2. pages_read_engagement - GRANTED
+Read engagement metrics from Pages
+
+11
+00:00:45,000 --> 00:00:50,000
+3. business_management - GRANTED
+Manage business assets including Meta Pixels
+
+12
+00:00:50,000 --> 00:00:55,000
+4. ads_read - GRANTED
+Read campaign performance data and insights
+
+13
+00:00:55,000 --> 00:01:00,000
+5. ads_management - GRANTED
+Create, update, and manage advertising campaigns
+
+14
+00:01:00,000 --> 00:01:05,000
+Feature Demonstrations section shows
+all permission use cases.
+
+15
+00:01:05,000 --> 00:01:10,000
+API Endpoints table shows the
+Meta Graph API calls used by this application.
+
+16
+00:01:10,000 --> 00:01:15,000
+Now demonstrating pages_show_list permission.
+
+17
+00:01:15,000 --> 00:01:20,000
+Navigating to Settings > Meta Pages Management
+
+18
+00:01:20,000 --> 00:01:25,000
+API Call: GET /me/accounts
+This retrieves the list of Facebook Pages.
+
+19
+00:01:25,000 --> 00:01:30,000
+The user's Facebook Page is displayed:
+"BATWO Company" page
+
+20
+00:01:30,000 --> 00:01:35,000
+Page details include name, category,
+and follower count.
+
+21
+00:01:35,000 --> 00:01:40,000
+pages_show_list permission allows users
+to select which Page to use with our app.
+
+22
+00:01:40,000 --> 00:01:45,000
+Now demonstrating ads_read permission.
+
+23
+00:01:45,000 --> 00:01:50,000
+Navigating to the Dashboard page.
+
+24
+00:01:50,000 --> 00:01:55,000
+KPI cards are displayed at the top:
+ROAS, Total Spend, Conversions, CTR
+
+25
+00:01:55,000 --> 00:02:00,000
+API Call: GET /act_{account-id}/insights
+Real-time performance data from Meta.
+
+26
+00:02:00,000 --> 00:02:05,000
+The dashboard shows campaign performance
+fetched directly from Meta Ads API.
+
+27
+00:02:05,000 --> 00:02:10,000
+AI Insights section provides automated
+recommendations based on campaign data.
+
+28
+00:02:10,000 --> 00:02:15,000
+Active campaigns table shows all
+campaigns with their performance metrics.
+
+29
+00:02:15,000 --> 00:02:20,000
+Scrolling to see more dashboard content
+and campaign analytics.
+
+30
+00:02:20,000 --> 00:02:25,000
+Now demonstrating ads_management permission.
+
+31
+00:02:25,000 --> 00:02:30,000
+Navigating to the Campaigns page.
+
+32
+00:02:30,000 --> 00:02:35,000
+Campaign list shows existing campaigns
+with status indicators.
+
+33
+00:02:35,000 --> 00:02:40,000
+Each campaign displays: name, objective,
+daily budget, spend, and ROAS.
+
+34
+00:02:40,000 --> 00:02:45,000
+Action buttons allow users to Edit
+or view Analytics for each campaign.
+
+35
+00:02:45,000 --> 00:02:50,000
+Multiple campaigns visible: LEADS campaigns,
+Traffic campaigns with various budgets.
+
+36
+00:02:50,000 --> 00:02:55,000
+Scrolling to show more campaigns
+in the list.
+
+37
+00:02:55,000 --> 00:03:00,000
+Now navigating to Create New Campaign page.
+
+38
+00:03:00,000 --> 00:03:05,000
+Campaign creation form with quick-start templates.
+
+39
+00:03:05,000 --> 00:03:10,000
+Available templates:
+- Traffic: Drive website visitors
+- Conversions: Maximize purchases
+
+40
+00:03:10,000 --> 00:03:15,000
+- Brand Awareness: Reach new audiences
+- Engagement: Increase interactions
+- Lead Collection: Gather customer info
+
+41
+00:03:15,000 --> 00:03:20,000
+Each template pre-configures objective,
+budget, and targeting settings.
+
+42
+00:03:20,000 --> 00:03:25,000
+API Call: POST /act_{account-id}/campaigns
+Creates campaign in Meta Ads Manager.
+
+43
+00:03:25,000 --> 00:03:30,000
+Users can also set up campaigns manually
+without using templates.
+
+44
+00:03:30,000 --> 00:03:35,000
+Now demonstrating business_management permission.
+
+45
+00:03:35,000 --> 00:03:40,000
+Navigating to Settings page.
+
+46
+00:03:40,000 --> 00:03:45,000
+Settings menu shows:
+- Meta Ad Account connection
+- Pixel Installation
+
+47
+00:03:45,000 --> 00:03:50,000
+Pixel Installation uses business_management
+to manage Meta Pixels.
+
+48
+00:03:50,000 --> 00:03:55,000
+API Calls: GET /me/businesses
+GET /{business-id}/adspixels
+
+49
+00:03:55,000 --> 00:04:00,000
+Users can view, select, and manage
+their Meta Pixels for conversion tracking.
+
+50
+00:04:00,000 --> 00:04:05,000
+Returning to App Review Demo page
+for final summary.
+
+51
+00:04:05,000 --> 00:04:10,000
+All 5 permissions have been demonstrated:
+
+52
+00:04:10,000 --> 00:04:15,000
+pages_show_list - View Facebook Pages
+pages_read_engagement - Read Page metrics
+
+53
+00:04:15,000 --> 00:04:20,000
+business_management - Manage Pixels
+ads_read - View campaign performance
+
+54
+00:04:20,000 --> 00:04:25,000
+ads_management - Create and manage campaigns
+
+55
+00:04:25,000 --> 00:04:30,000
+All permissions are GRANTED and
+actively used by this application.
+
+56
+00:04:30,000 --> 00:04:35,000
+Batwo AI Marketing Solution provides
+e-commerce advertising automation.
+
+57
+00:04:35,000 --> 00:04:40,000
+Users can manage all their Meta advertising
+through a single integrated platform.
+
+58
+00:04:40,000 --> 00:04:45,000
+Thank you for reviewing our application.
+
+59
+00:04:45,000 --> 00:04:50,000
+For questions, contact: support@batwo.ai
+
+60
+00:04:50,000 --> 00:05:54,000
+Batwo AI Marketing Solution
+Meta App Review Demo - Complete

@@ -1,0 +1,188 @@
+1
+00:00:00,000 --> 00:00:03,000
+Batwo AI Marketing - pages_show_list Permission Demo
+
+2
+00:00:03,000 --> 00:00:06,000
+This permission allows users to view their managed Facebook Pages.
+
+3
+00:00:06,000 --> 00:00:09,000
+Click the Settings menu.
+
+4
+00:00:09,000 --> 00:00:12,000
+Select "Meta Pages Management" from the Settings menu.
+
+5
+00:00:12,000 --> 00:00:15,000
+The Meta Pages Management page is displayed.
+
+6
+00:00:15,000 --> 00:00:18,000
+Click the "Connect Meta Account" button.
+
+7
+00:00:18,000 --> 00:00:21,000
+Facebook login dialog is displayed.
+
+8
+00:00:21,000 --> 00:00:24,000
+Enter test email.
+
+9
+00:00:24,000 --> 00:00:27,000
+Enter password.
+
+10
+00:00:27,000 --> 00:00:30,000
+Click the "Log In" button.
+
+11
+00:00:30,000 --> 00:00:33,000
+Permission consent screen is displayed.
+
+12
+00:00:33,000 --> 00:00:36,000
+Requested Permissions:
+- pages_show_list
+- pages_read_engagement
+- business_management
+- ads_read
+- ads_management
+
+13
+00:00:36,000 --> 00:00:39,000
+Click the "Continue" button.
+
+14
+00:00:39,000 --> 00:00:42,000
+Facebook authentication is completed.
+
+15
+00:00:42,000 --> 00:00:45,000
+API call: GET /me/accounts (using pages_show_list permission)
+
+16
+00:00:45,000 --> 00:00:48,000
+User's Facebook Pages list is loaded.
+
+17
+00:00:48,000 --> 00:00:51,000
+Pages list displayed:
+
+18
+00:00:51,000 --> 00:00:54,000
+Page 1: "My Fashion Store"
+- Category: Online Retail
+- Followers: 15,234
+- Status: Active
+
+19
+00:00:54,000 --> 00:00:57,000
+Page 2: "Beauty Products"
+- Category: Beauty/Cosmetics
+- Followers: 8,567
+- Status: Active
+
+20
+00:00:57,000 --> 00:01:00,000
+Page 3: "Home & Living"
+- Category: Home Decor
+- Followers: 12,890
+- Status: Active
+
+21
+00:01:00,000 --> 00:01:03,000
+Each page includes the following information:
+
+22
+00:01:03,000 --> 00:01:06,000
+- Page Name
+- Page Category
+- Total Followers
+- Page Status (Active/Inactive)
+
+23
+00:01:06,000 --> 00:01:09,000
+Click the first page "My Fashion Store".
+
+24
+00:01:09,000 --> 00:01:12,000
+Page detail information page is displayed.
+
+25
+00:01:12,000 --> 00:01:15,000
+Page Name: "My Fashion Store"
+
+26
+00:01:15,000 --> 00:01:18,000
+Page ID: 1234567890
+
+27
+00:01:18,000 --> 00:01:21,000
+Category: Online Retail
+
+28
+00:01:21,000 --> 00:01:24,000
+Total Followers: 15,234
+
+29
+00:01:24,000 --> 00:01:27,000
+Page Description: "Your go-to fashion destination"
+
+30
+00:01:27,000 --> 00:01:30,000
+Page Created: March 15, 2022
+
+31
+00:01:30,000 --> 00:01:33,000
+Page Link: https://facebook.com/myfashionstore
+
+32
+00:01:33,000 --> 00:01:36,000
+Click "View Analytics" to check engagement data.
+
+33
+00:01:36,000 --> 00:01:39,000
+(This uses pages_read_engagement permission)
+
+34
+00:01:39,000 --> 00:01:42,000
+Click Pages List button to return.
+
+35
+00:01:42,000 --> 00:01:45,000
+Other pages can be viewed the same way.
+
+36
+00:01:45,000 --> 00:01:48,000
+Select the "Beauty Products" page as well.
+
+37
+00:01:48,000 --> 00:01:51,000
+Page: "Beauty Products"
+- Followers: 8,567
+- Category: Beauty/Cosmetics
+
+38
+00:01:51,000 --> 00:01:54,000
+With pages_show_list permission, you can:
+
+39
+00:01:54,000 --> 00:01:57,000
+- View all Facebook Pages managed by the user
+- Check basic page information (name, category, followers)
+- Select pages to use other features
+
+40
+00:01:57,000 --> 00:02:00,000
+Users can manage multiple pages at once.
+
+41
+00:02:00,000 --> 00:02:03,000
+Analytics and advertising are managed separately for each page.
+
+42
+00:02:03,000 --> 00:02:06,000
+pages_show_list permission demo completed.

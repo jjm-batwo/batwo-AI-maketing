@@ -1,0 +1,166 @@
+1
+00:00:00,000 --> 00:00:03,000
+Batwo AI Marketing - business_management Permission Demo
+
+2
+00:00:03,000 --> 00:00:06,000
+This permission allows users to manage business assets like Meta Pixels.
+
+3
+00:00:06,000 --> 00:00:09,000
+Click the Settings menu.
+
+4
+00:00:09,000 --> 00:00:12,000
+Select "Pixel Installation" from the Settings menu.
+
+5
+00:00:12,000 --> 00:00:15,000
+The Pixel Management page is displayed.
+
+6
+00:00:15,000 --> 00:00:18,000
+API call: GET /me/businesses
+
+7
+00:00:18,000 --> 00:00:21,000
+User's business accounts are loaded.
+
+8
+00:00:21,000 --> 00:00:24,000
+API call: GET /{business-id}/adspixels
+
+9
+00:00:24,000 --> 00:00:27,000
+List of connected Meta Pixels is displayed.
+
+10
+00:00:27,000 --> 00:00:30,000
+Pixel 1: "Main Store Pixel"
+- Pixel ID: 123456789
+- Status: Active
+- Connected Website: www.mystore.com
+
+11
+00:00:30,000 --> 00:00:33,000
+Pixel 2: "Mobile App Pixel"
+- Pixel ID: 987654321
+- Status: Active
+- Event Match Rate: 85%
+
+12
+00:00:33,000 --> 00:00:36,000
+Click "Main Store Pixel" to view detailed information.
+
+13
+00:00:36,000 --> 00:00:39,000
+Pixel detail page is displayed.
+
+14
+00:00:39,000 --> 00:00:42,000
+Pixel Name: "Main Store Pixel"
+
+15
+00:00:42,000 --> 00:00:45,000
+Pixel ID: 123456789
+
+16
+00:00:45,000 --> 00:00:48,000
+Installation Status: Verified
+
+17
+00:00:48,000 --> 00:00:51,000
+Tracked Events:
+- PageView: 1,245,678
+- ViewContent: 456,789
+- AddToCart: 123,456
+- Purchase: 45,678
+
+18
+00:00:51,000 --> 00:00:54,000
+Click the "Copy Installation Code" button.
+
+19
+00:00:54,000 --> 00:00:57,000
+Pixel installation code is copied to clipboard.
+
+20
+00:00:57,000 --> 00:01:00,000
+Meta Pixel Installation Code:
+<script>...</script>
+
+21
+00:01:00,000 --> 00:01:03,000
+Users paste this code into their website.
+
+22
+00:01:03,000 --> 00:01:06,000
+Once installed, the pixel automatically starts tracking visitors.
+
+23
+00:01:06,000 --> 00:01:09,000
+Click the "Create New Pixel" button.
+
+24
+00:01:09,000 --> 00:01:12,000
+New pixel creation form is displayed.
+
+25
+00:01:12,000 --> 00:01:15,000
+Enter pixel name: "New Campaign Pixel"
+
+26
+00:01:15,000 --> 00:01:18,000
+Pixel description: "Tracking for new product campaign"
+
+27
+00:01:18,000 --> 00:01:21,000
+Click the "Create" button.
+
+28
+00:01:21,000 --> 00:01:24,000
+API call: POST /{business-id}/adspixels
+
+29
+00:01:24,000 --> 00:01:27,000
+New pixel has been successfully created.
+
+30
+00:01:27,000 --> 00:01:30,000
+New Pixel ID: 111222333
+
+31
+00:01:30,000 --> 00:01:33,000
+Return to pixel list.
+
+32
+00:01:33,000 --> 00:01:36,000
+The newly created "New Campaign Pixel" is added to the list.
+
+33
+00:01:36,000 --> 00:01:39,000
+With business_management permission, you can:
+
+34
+00:01:39,000 --> 00:01:42,000
+- View pixels in business accounts
+- Check pixel details
+- Create new pixels
+- Get pixel installation code
+- Monitor event match rates
+
+35
+00:01:42,000 --> 00:01:45,000
+E-commerce merchants can manage all pixels from our app.
+
+36
+00:01:45,000 --> 00:01:48,000
+No need to access Meta Ads Manager separately.
+
+37
+00:01:48,000 --> 00:01:51,000
+Pixels enable visitor tracking and conversion measurement.
+
+38
+00:01:51,000 --> 00:01:54,000
+business_management permission demo completed.

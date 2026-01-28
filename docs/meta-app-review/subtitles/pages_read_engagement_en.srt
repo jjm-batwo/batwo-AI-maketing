@@ -1,0 +1,210 @@
+1
+00:00:00,000 --> 00:00:03,000
+Batwo AI Marketing - pages_read_engagement Permission Demo
+
+2
+00:00:03,000 --> 00:00:06,000
+This permission allows users to read engagement data from Facebook Pages.
+
+3
+00:00:06,000 --> 00:00:09,000
+Select "Meta Pages Management" from the Settings menu.
+
+4
+00:00:09,000 --> 00:00:12,000
+List of connected pages is displayed.
+
+5
+00:00:12,000 --> 00:00:15,000
+Click the "My Fashion Store" page.
+
+6
+00:00:15,000 --> 00:00:18,000
+Page detail page is displayed.
+
+7
+00:00:18,000 --> 00:00:21,000
+Click the "View Analytics" tab.
+
+8
+00:00:21,000 --> 00:00:24,000
+API call: GET /{page-id}/insights (using pages_read_engagement permission)
+
+9
+00:00:24,000 --> 00:00:27,000
+Page engagement analytics dashboard is displayed.
+
+10
+00:00:27,000 --> 00:00:30,000
+Key metrics in the dashboard:
+
+11
+00:00:30,000 --> 00:00:33,000
+1. Fans (Total Followers)
+   - Fan Count: 15,234
+
+12
+00:00:33,000 --> 00:00:36,000
+2. Page Impressions (28-day period)
+   - Impressions: 125,678
+
+13
+00:00:36,000 --> 00:00:39,000
+3. Engaged Users
+   - Engaged Users: 8,934
+
+14
+00:00:39,000 --> 00:00:42,000
+4. Post Engagement
+   - Total Engagement: 23,456 (likes/comments/shares)
+
+15
+00:00:42,000 --> 00:00:45,000
+API call: GET /{page-id}/insights?metric=page_fans
+
+16
+00:00:45,000 --> 00:00:48,000
+API call: GET /{page-id}/insights?metric=page_impressions
+
+17
+00:00:48,000 --> 00:00:51,000
+API call: GET /{page-id}/insights?metric=page_engaged_users
+
+18
+00:00:51,000 --> 00:00:54,000
+Scroll to recent posts section.
+
+19
+00:00:54,000 --> 00:00:57,000
+Engagement data for recent Facebook posts is displayed.
+
+20
+00:00:57,000 --> 00:01:00,000
+Post 1 (January 23, 2024)
+Title: "Winter Collection Launch - New Arrivals"
+
+21
+00:01:00,000 --> 00:01:03,000
+Engagement Metrics:
+- Likes: 342
+- Comments: 67
+- Shares: 23
+
+22
+00:01:03,000 --> 00:01:06,000
+Engagement Rate: 5.23%
+
+23
+00:01:06,000 --> 00:01:09,000
+Post 2 (January 21, 2024)
+Title: "Flash Sale - 50% Off Selected Items"
+
+24
+00:01:09,000 --> 00:01:12,000
+Engagement Metrics:
+- Likes: 1,245
+- Comments: 234
+- Shares: 156
+
+25
+00:01:12,000 --> 00:01:15,000
+Engagement Rate: 8.67%
+
+26
+00:01:15,000 --> 00:01:18,000
+Post 3 (January 19, 2024)
+Title: "Customer Testimonial - Happy Customer Feature"
+
+27
+00:01:18,000 --> 00:01:21,000
+Engagement Metrics:
+- Likes: 567
+- Comments: 89
+- Shares: 34
+
+28
+00:01:21,000 --> 00:01:24,000
+Engagement Rate: 6.12%
+
+29
+00:01:24,000 --> 00:01:27,000
+API call: GET /{page-id}/posts?fields=story,shares.limit(0).summary(true)
+
+30
+00:01:27,000 --> 00:01:30,000
+Period-based engagement trend chart is displayed.
+
+31
+00:01:30,000 --> 00:01:33,000
+Daily engagement trend for the last 7 days:
+
+32
+00:01:33,000 --> 00:01:36,000
+Jan 17: 2,345 engagements
+Jan 18: 3,123 engagements (Flash Sale)
+Jan 19: 3,890 engagements
+Jan 20: 2,567 engagements
+Jan 21: 4,234 engagements (Flash Sale)
+Jan 22: 2,145 engagements
+Jan 23: 1,876 engagements
+
+33
+00:01:36,000 --> 00:01:39,000
+Daily changes are visualized in a line chart.
+
+34
+00:01:39,000 --> 00:01:42,000
+Ratio of likes vs comments vs shares is displayed.
+
+35
+00:01:42,000 --> 00:01:45,000
+Likes: 71%
+Comments: 18%
+Shares: 11%
+
+36
+00:01:45,000 --> 00:01:48,000
+Peak engagement hours are displayed.
+
+37
+00:01:48,000 --> 00:01:51,000
+Peak engagement hours: 2-4 PM (14:00-16:00)
+Second peak: 7-9 PM (19:00-21:00)
+
+38
+00:01:51,000 --> 00:01:54,000
+Fan growth trend is displayed.
+
+39
+00:01:54,000 --> 00:01:57,000
+Fan Growth (last 30 days):
+15,000 (30 days ago) → 15,234 (today)
+Net Growth: +234 fans
+
+40
+00:01:57,000 --> 00:02:00,000
+With pages_read_engagement permission, you can:
+
+41
+00:02:00,000 --> 00:02:03,000
+- View fan count and growth trends
+- Check page impressions and reach
+- View post-level engagement data (likes, comments, shares)
+- Analyze engagement trends over time
+
+42
+00:02:03,000 --> 00:02:06,000
+- Identify peak engagement hours
+- Discover high-engagement content
+
+43
+00:02:06,000 --> 00:02:09,000
+E-commerce merchants can use this data to plan marketing strategy.
+
+44
+00:02:09,000 --> 00:02:12,000
+Decide when and what content to post.
+
+45
+00:02:12,000 --> 00:02:15,000
+pages_read_engagement permission demo completed.
