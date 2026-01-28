@@ -60,3 +60,6 @@ export {
   type InvoiceProps,
   type CreateInvoiceProps,
 } from './Invoice'
+
+// Re-export domain events for convenience
+export * from '../events'

@@ -1,4 +1,4 @@
-export type UsageType = 'CAMPAIGN_CREATE' | 'AI_COPY_GEN' | 'AI_ANALYSIS'
+export type UsageType = 'CAMPAIGN_CREATE' | 'AI_COPY_GEN' | 'AI_ANALYSIS' | 'AI_SCIENCE'
 
 export interface UsageLog {
   id: number

@@ -113,3 +113,24 @@ export {
   formatBudget,
   formatROAS,
 } from './BudgetRecommendation'
+export {
+  // Types
+  type KnowledgeDomain,
+  type ScienceGrade,
+  type Citation,
+  type ScoringFactor,
+  type DomainScore,
+  type DomainRecommendation,
+  type CompositeScore,
+  // Constants
+  ALL_KNOWLEDGE_DOMAINS,
+  GRADE_BOUNDARIES,
+  DEFAULT_DOMAIN_WEIGHTS,
+  INDUSTRY_BENCHMARKS,
+  MIN_REQUIRED_DOMAINS,
+  // Functions
+  getGrade,
+  calculateWeightedAverage,
+  rankRecommendations,
+  buildCompositeScore,
+} from './MarketingScience'

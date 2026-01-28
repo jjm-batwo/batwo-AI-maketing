@@ -79,6 +79,21 @@ export interface PaginatedResult<T> {
   totalPages: number
 }
 
+export interface UserWithActiveCampaigns {
+  id: string
+  email: string
+  name: string | null
+  campaigns: Array<{
+    id: string
+    name: string
+    status: string
+    dailyBudget: number
+    currency: string
+    startDate: Date
+    endDate: Date | null
+  }>
+}
+
 export interface IUserRepository {
   // Basic CRUD
   findById(id: string): Promise<User | null>
@@ -103,4 +118,7 @@ export interface IUserRepository {
   // Role management
   countByRole(role: GlobalRole): Promise<number>
   updateRole(userId: string, role: GlobalRole): Promise<void>
+
+  // Campaign-related queries
+  findUsersWithActiveCampaigns(): Promise<UserWithActiveCampaigns[]>
 }

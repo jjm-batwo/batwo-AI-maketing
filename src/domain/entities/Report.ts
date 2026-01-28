@@ -1,5 +1,7 @@
 import { DateRange } from '../value-objects/DateRange'
 import { InvalidReportError } from '../errors/InvalidReportError'
+import { AggregateRoot } from '../events/AggregateRoot'
+import { ReportGeneratedEvent, ReportEmailSentEvent } from '../events'
 
 export enum ReportType {
   DAILY = 'DAILY',
@@ -22,11 +24,45 @@ export interface ReportSection {
   }
 }
 
+export interface InsightItem {
+  type: 'performance' | 'trend' | 'comparison' | 'anomaly' | 'recommendation' | 'forecast' | 'benchmark'
+  title: string
+  description: string
+  importance: 'critical' | 'high' | 'medium' | 'low'
+  relatedMetrics?: string[]
+}
+
+export interface ActionItem {
+  priority: 'high' | 'medium' | 'low'
+  category: 'budget' | 'creative' | 'targeting' | 'timing' | 'general'
+  action: string
+  expectedImpact: string
+  deadline?: string
+}
+
+export interface ForecastMetric {
+  metric: string
+  current: number
+  predicted7d: number
+  predicted30d: number
+  confidence: 'high' | 'medium' | 'low'
+  trend: 'improving' | 'declining' | 'stable'
+}
+
 export interface AIInsight {
   type: 'performance' | 'recommendation' | 'trend' | 'anomaly'
   insight: string
   confidence: number
   recommendations: string[]
+  insights?: InsightItem[]
+  actionItems?: ActionItem[]
+  forecast?: ForecastMetric[]
+  benchmarkComparison?: {
+    industry: string
+    overallScore: number
+    grade: 'excellent' | 'good' | 'average' | 'below_average' | 'poor'
+    gaps: { metric: string; gap: string; suggestion: string }[]
+  }
 }
 
 export interface ReportSummaryMetrics {
@@ -58,7 +94,7 @@ export interface ReportProps extends CreateReportProps {
   updatedAt: Date
 }
 
-export class Report {
+export class Report extends AggregateRoot {
   private constructor(
     private readonly _id: string,
     private readonly _type: ReportType,
@@ -72,7 +108,9 @@ export class Report {
     private readonly _sentAt: Date | undefined,
     private readonly _createdAt: Date,
     private readonly _updatedAt: Date
-  ) {}
+  ) {
+    super()
+  }
 
   static createWeekly(props: CreateReportProps): Report {
     Report.validateCampaignIds(props.campaignIds)
@@ -104,6 +142,28 @@ export class Report {
     return new Report(
       crypto.randomUUID(),
       ReportType.DAILY,
+      props.userId,
+      [...props.campaignIds],
+      props.dateRange,
+      [],
+      [],
+      'DRAFT',
+      undefined,
+      undefined,
+      now,
+      now
+    )
+  }
+
+  static createMonthly(props: CreateReportProps): Report {
+    Report.validateCampaignIds(props.campaignIds)
+    Report.validateDateRangeForType(props.dateRange, ReportType.MONTHLY)
+
+    const now = new Date()
+
+    return new Report(
+      crypto.randomUUID(),
+      ReportType.MONTHLY,
       props.userId,
       [...props.campaignIds],
       props.dateRange,
@@ -149,6 +209,10 @@ export class Report {
 
     if (type === ReportType.DAILY && days !== undefined && days > 1) {
       throw InvalidReportError.invalidDateRange('Daily', 1)
+    }
+
+    if (type === ReportType.MONTHLY && days !== undefined && days > 31) {
+      throw InvalidReportError.invalidDateRange('Monthly', 31)
     }
   }
 
@@ -230,7 +294,7 @@ export class Report {
   }
 
   markAsGenerated(): Report {
-    return new Report(
+    const report = new Report(
       this._id,
       this._type,
       this._userId,
@@ -244,14 +308,29 @@ export class Report {
       this._createdAt,
       new Date()
     )
+
+    // Raise domain event
+    report.addDomainEvent(
+      new ReportGeneratedEvent(
+        this._id,
+        this._userId,
+        this._type,
+        this._campaignIds,
+        this._dateRange,
+        this._sections.length,
+        this._aiInsights.length
+      )
+    )
+
+    return report
   }
 
-  markAsSent(): Report {
+  markAsSent(recipientEmail: string, emailProvider?: string): Report {
     if (this._status !== 'GENERATED') {
       throw InvalidReportError.cannotSendBeforeGeneration()
     }
 
-    return new Report(
+    const report = new Report(
       this._id,
       this._type,
       this._userId,
@@ -265,6 +344,13 @@ export class Report {
       this._createdAt,
       new Date()
     )
+
+    // Raise domain event
+    report.addDomainEvent(
+      new ReportEmailSentEvent(this._id, this._userId, this._type, recipientEmail, emailProvider)
+    )
+
+    return report
   }
 
   calculateSummaryMetrics(): ReportSummaryMetrics {

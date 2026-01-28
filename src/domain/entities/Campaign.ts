@@ -8,6 +8,12 @@ import {
 } from '../value-objects/CampaignStatus'
 import { CampaignObjective } from '../value-objects/CampaignObjective'
 import { InvalidCampaignError } from '../errors/InvalidCampaignError'
+import { AggregateRoot } from '../events/AggregateRoot'
+import {
+  CampaignCreatedEvent,
+  CampaignStatusChangedEvent,
+  CampaignBudgetUpdatedEvent,
+} from '../events'
 
 export interface TargetAudience {
   ageMin?: number
@@ -36,7 +42,7 @@ export interface CampaignProps extends CreateCampaignProps {
   updatedAt: Date
 }
 
-export class Campaign {
+export class Campaign extends AggregateRoot {
   private constructor(
     private readonly _id: string,
     private readonly _userId: string,
@@ -50,7 +56,9 @@ export class Campaign {
     private readonly _metaCampaignId: string | undefined,
     private readonly _createdAt: Date,
     private readonly _updatedAt: Date
-  ) {}
+  ) {
+    super()
+  }
 
   static create(props: CreateCampaignProps): Campaign {
     Campaign.validateName(props.name)
@@ -58,9 +66,10 @@ export class Campaign {
     Campaign.validateDates(props.startDate, props.endDate)
 
     const now = new Date()
+    const campaignId = crypto.randomUUID()
 
-    return new Campaign(
-      crypto.randomUUID(),
+    const campaign = new Campaign(
+      campaignId,
       props.userId,
       props.name,
       props.objective,
@@ -73,6 +82,22 @@ export class Campaign {
       now,
       now
     )
+
+    // Raise domain event
+    campaign.addDomainEvent(
+      new CampaignCreatedEvent(
+        campaignId,
+        props.userId,
+        props.name,
+        props.objective,
+        props.dailyBudget,
+        props.startDate,
+        props.endDate,
+        props.targetAudience
+      )
+    )
+
+    return campaign
   }
 
   static restore(props: CampaignProps): Campaign {
@@ -182,7 +207,9 @@ export class Campaign {
       throw InvalidCampaignError.invalidStatusTransition(this._status, newStatus)
     }
 
-    return new Campaign(
+    const previousStatus = this._status
+
+    const campaign = new Campaign(
       this._id,
       this._userId,
       this._name,
@@ -196,6 +223,19 @@ export class Campaign {
       this._createdAt,
       new Date()
     )
+
+    // Raise domain event
+    campaign.addDomainEvent(
+      new CampaignStatusChangedEvent(
+        this._id,
+        this._userId,
+        previousStatus,
+        newStatus,
+        this._metaCampaignId
+      )
+    )
+
+    return campaign
   }
 
   updateBudget(newBudget: Money): Campaign {
@@ -205,7 +245,9 @@ export class Campaign {
 
     Campaign.validateBudget(newBudget)
 
-    return new Campaign(
+    const previousBudget = this._dailyBudget
+
+    const campaign = new Campaign(
       this._id,
       this._userId,
       this._name,
@@ -219,6 +261,19 @@ export class Campaign {
       this._createdAt,
       new Date()
     )
+
+    // Raise domain event
+    campaign.addDomainEvent(
+      new CampaignBudgetUpdatedEvent(
+        this._id,
+        this._userId,
+        previousBudget,
+        newBudget,
+        this._metaCampaignId
+      )
+    )
+
+    return campaign
   }
 
   update(props: {

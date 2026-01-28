@@ -7,3 +7,26 @@ export { InvalidPlatformIntegrationError } from './InvalidPlatformIntegrationErr
 export { InvalidConversionEventError } from './InvalidConversionEventError'
 export { InvalidSubscriptionError } from './InvalidSubscriptionError'
 export { InvalidInvoiceError } from './InvalidInvoiceError'
+export { UnauthorizedCampaignError } from './UnauthorizedCampaignError'
+export { QuotaExceededError } from './QuotaExceededError'
+export {
+  BudgetAlertError,
+  InvalidThresholdError,
+  DuplicateBudgetAlertError,
+  BudgetAlertNotFoundError,
+} from './BudgetAlertError'
+export {
+  PixelError,
+  InvalidPixelSetupError,
+  PixelNotFoundError,
+  DuplicatePixelError,
+} from './PixelError'
+export {
+  AdminError,
+  UserNotFoundError,
+  UnauthorizedAdminOperationError,
+  LastSuperAdminError,
+  InvoiceNotFoundError,
+  InvalidRefundAmountError,
+} from './AdminError'
+export { InsufficientAnalysisError } from './InsufficientAnalysisError'
