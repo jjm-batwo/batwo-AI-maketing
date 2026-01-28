@@ -121,10 +121,12 @@ export interface GenerateOptimizationInput {
     interests?: string[]
     locations?: string[]
   }
+  /** 과학 기반 마케팅 지식 컨텍스트 (자동 주입) */
+  scienceContext?: string
 }
 
 export interface GenerateReportInsightInput {
-  reportType: 'weekly' | 'monthly'
+  reportType: 'daily' | 'weekly' | 'monthly'
   /** 업종 (벤치마크 비교용) */
   industry?: 'ecommerce' | 'food_beverage' | 'beauty' | 'fashion' | 'education' | 'service' | 'saas' | 'health'
   campaignSummaries: {
@@ -163,6 +165,67 @@ export interface GenerateAdCopyInput {
   objective: 'awareness' | 'consideration' | 'conversion'
   keywords?: string[]
   variantCount?: number
+  /** 과학 기반 마케팅 지식 컨텍스트 (자동 주입) */
+  scienceContext?: string
+}
+
+export interface GenerateBudgetRecommendationInput {
+  industry: 'ecommerce' | 'food_beverage' | 'beauty' | 'fashion' | 'education' | 'service' | 'saas' | 'other'
+  businessScale: 'individual' | 'small' | 'medium' | 'large'
+  averageOrderValue?: number
+  monthlyMarketingBudget?: number
+  marginRate?: number
+  existingCampaignData?: {
+    avgDailySpend: number
+    avgROAS: number
+    avgCPA: number
+    avgAOV: number
+    totalSpend30Days: number
+    totalRevenue30Days: number
+    totalPurchases30Days: number
+  }
+  calculatedBudget: {
+    min: number
+    recommended: number
+    max: number
+  }
+  calculatedTargetROAS: number
+  calculatedTargetCPA: number
+}
+
+export interface BudgetRecommendationResult {
+  recommendedBudget: {
+    daily: number
+    testPeriod: number
+    reasoning: string
+  }
+  targetMetrics: {
+    roas: number
+    cpa: number
+    roasReasoning: string
+  }
+  tips: string[]
+  warnings: string[]
+  comparison?: {
+    currentVsRecommended: string
+    potentialImpact: string
+  }
+}
+
+export interface GenerateCreativeVariantsInput {
+  element: 'headline' | 'primary_text' | 'description' | 'cta'
+  currentText: string
+  productContext: string
+  targetAudience: string
+  weaknessAnalysis: string
+  /** 과학 기반 마케팅 지식 컨텍스트 (자동 주입) */
+  scienceContext?: string
+}
+
+export interface CreativeVariant {
+  text: string
+  hypothesis: string
+  hookType: string
 }
 
 export interface IAIService {
@@ -175,4 +238,18 @@ export interface IAIService {
   ): Promise<ReportInsight>
 
   generateAdCopy(input: GenerateAdCopyInput): Promise<AdCopyVariant[]>
+
+  generateBudgetRecommendation(
+    input: GenerateBudgetRecommendationInput
+  ): Promise<BudgetRecommendationResult>
+
+  generateCreativeVariants(
+    input: GenerateCreativeVariantsInput
+  ): Promise<CreativeVariant[]>
+
+  chatCompletion(
+    systemPrompt: string,
+    userPrompt: string,
+    config?: AIConfig
+  ): Promise<string>
 }

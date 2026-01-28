@@ -1,6 +1,11 @@
 import { BudgetAlert } from '@/domain/entities/BudgetAlert'
 import { IBudgetAlertRepository } from '@/domain/repositories/IBudgetAlertRepository'
 import { IKPIRepository } from '@/domain/repositories/IKPIRepository'
+import {
+  InvalidThresholdError,
+  DuplicateBudgetAlertError,
+  BudgetAlertNotFoundError,
+} from '@domain/errors'
 
 export type BudgetStatus = 'normal' | 'warning' | 'exceeded'
 
@@ -39,13 +44,13 @@ export class BudgetAlertService {
   async createAlert(input: CreateAlertInput): Promise<BudgetAlert> {
     // 임계값 검증
     if (input.thresholdPercent < 1 || input.thresholdPercent > 100) {
-      throw new Error('임계값은 1-100 사이여야 합니다')
+      throw new InvalidThresholdError(input.thresholdPercent)
     }
 
     // 기존 알림 확인
     const existing = await this.budgetAlertRepo.findByCampaignId(input.campaignId)
     if (existing) {
-      throw new Error('이 캠페인에 이미 예산 알림이 설정되어 있습니다')
+      throw new DuplicateBudgetAlertError(input.campaignId)
     }
 
     const alert = BudgetAlert.create({
@@ -63,7 +68,7 @@ export class BudgetAlertService {
   async updateAlert(input: UpdateAlertInput): Promise<BudgetAlert> {
     const alert = await this.budgetAlertRepo.findByCampaignId(input.campaignId)
     if (!alert) {
-      throw new Error('예산 알림 설정을 찾을 수 없습니다')
+      throw new BudgetAlertNotFoundError(input.campaignId)
     }
 
     let updatedAlert = alert
@@ -85,7 +90,7 @@ export class BudgetAlertService {
   async toggleAlert(campaignId: string, isEnabled: boolean): Promise<BudgetAlert> {
     const alert = await this.budgetAlertRepo.findByCampaignId(campaignId)
     if (!alert) {
-      throw new Error('예산 알림 설정을 찾을 수 없습니다')
+      throw new BudgetAlertNotFoundError(campaignId)
     }
 
     const updatedAlert = isEnabled ? alert.enable() : alert.disable()
@@ -144,7 +149,7 @@ export class BudgetAlertService {
   async markAsAlerted(campaignId: string): Promise<BudgetAlert> {
     const alert = await this.budgetAlertRepo.findByCampaignId(campaignId)
     if (!alert) {
-      throw new Error('예산 알림 설정을 찾을 수 없습니다')
+      throw new BudgetAlertNotFoundError(campaignId)
     }
 
     const alertedAlert = alert.markAsAlerted()

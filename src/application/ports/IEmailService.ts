@@ -4,6 +4,8 @@
  * Defines the contract for sending emails in the application.
  */
 
+import type { TrendAlert } from '@/application/services/TrendAlertService'
+
 export interface SendEmailInput {
   to: string | string[]
   subject: string
@@ -48,5 +50,14 @@ export interface IEmailService {
       filename: string
       content: Buffer
     }
+  }): Promise<SendEmailResult>
+
+  /**
+   * Send a trend alert email
+   */
+  sendTrendAlert(params: {
+    to: string | string[]
+    userName: string
+    digest: TrendAlert
   }): Promise<SendEmailResult>
 }

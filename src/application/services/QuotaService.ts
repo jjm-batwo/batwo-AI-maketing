@@ -4,26 +4,15 @@ import {
 } from '@domain/repositories/IUsageLogRepository'
 import { IUserRepository } from '@domain/repositories/IUserRepository'
 import { QuotaStatusDTO, QuotaLimits, FullQuotaStatusDTO } from '@application/dto/quota/QuotaStatusDTO'
+import { QuotaExceededError } from '@domain/errors'
 
 const TRIAL_DAYS = 14
-
-export class QuotaExceededError extends Error {
-  constructor(
-    public readonly usageType: UsageType,
-    public readonly limit: number,
-    public readonly period: 'day' | 'week'
-  ) {
-    super(
-      `Quota exceeded for ${usageType}: limit is ${limit} per ${period}`
-    )
-    this.name = 'QuotaExceededError'
-  }
-}
 
 const QUOTA_LIMITS: QuotaLimits = {
   CAMPAIGN_CREATE: { count: 5, period: 'week' },
   AI_COPY_GEN: { count: 20, period: 'day' },
   AI_ANALYSIS: { count: 5, period: 'week' },
+  AI_SCIENCE: { count: 10, period: 'week' },
 }
 
 export class QuotaService {

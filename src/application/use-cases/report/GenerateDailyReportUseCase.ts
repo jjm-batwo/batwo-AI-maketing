@@ -4,35 +4,35 @@ import { GenerateReportDTO } from '@application/dto/report/ReportDTO'
 import { BaseReportGenerationUseCase } from './BaseReportGenerationUseCase'
 
 /**
- * Generate Weekly Report Use Case
+ * Generate Daily Report Use Case
  *
- * Creates a weekly performance report (7-day period) with:
+ * Creates a daily performance report (1-day period) with:
  * - Campaign performance summaries
  * - AI-generated insights and recommendations
- * - 7-day and 30-day forecasts
+ * - No forecasting (insufficient data for 1-day period)
  */
-export class GenerateWeeklyReportUseCase extends BaseReportGenerationUseCase {
+export class GenerateDailyReportUseCase extends BaseReportGenerationUseCase {
   protected createReport(dto: GenerateReportDTO, dateRange: DateRange): Report {
-    return Report.createWeekly({
+    return Report.createDaily({
       userId: dto.userId,
       campaignIds: dto.campaignIds,
       dateRange,
     })
   }
 
-  protected getReportTypeName(): 'weekly' {
-    return 'weekly'
+  protected getReportTypeName(): 'daily' {
+    return 'daily'
   }
 
   protected getSectionLabel(): string {
-    return '주간'
+    return '일일'
   }
 
   protected getAIInsightOptions() {
     return {
       includeExtendedInsights: true,
-      includeForecast: true,
-      includeBenchmark: false, // Campaign entity doesn't have industry field yet
+      includeForecast: false, // No forecast for daily reports
+      includeBenchmark: false,
     }
   }
 }

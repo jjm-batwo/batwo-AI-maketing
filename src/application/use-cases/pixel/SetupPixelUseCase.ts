@@ -1,5 +1,6 @@
 import { IMetaPixelRepository } from '@domain/repositories/IMetaPixelRepository'
 import { MetaPixel, PixelSetupMethod } from '@domain/entities/MetaPixel'
+import { InvalidPixelSetupError, PixelNotFoundError } from '@domain/errors'
 
 export enum SetupMode {
   MANUAL = 'MANUAL',
@@ -35,16 +36,16 @@ export class SetupPixelUseCase {
   async execute(input: SetupPixelInput): Promise<SetupPixelResultDTO> {
     // Validation: Either pixelId or newPixel must be provided, but not both
     if (input.pixelId && input.newPixel) {
-      throw new Error('Cannot specify both pixelId and newPixel')
+      throw InvalidPixelSetupError.bothPixelIdAndNewPixel()
     }
 
     if (!input.pixelId && !input.newPixel) {
-      throw new Error('Either pixelId or newPixel must be provided')
+      throw InvalidPixelSetupError.neitherPixelIdNorNewPixel()
     }
 
     // Validation: Platform must be specified for PLATFORM_API mode
     if (input.setupMode === SetupMode.PLATFORM_API && !input.platform) {
-      throw new Error('Platform must be specified for PLATFORM_API mode')
+      throw InvalidPixelSetupError.platformRequiredForPlatformApi()
     }
 
     let pixel: MetaPixel
@@ -76,7 +77,7 @@ export class SetupPixelUseCase {
     const pixel = await this.pixelRepository.findById(pixelId)
 
     if (!pixel || pixel.userId !== userId) {
-      throw new Error('Pixel not found')
+      throw new PixelNotFoundError(pixelId)
     }
 
     return pixel
@@ -89,11 +90,11 @@ export class SetupPixelUseCase {
   ): Promise<MetaPixel> {
     // Validate new pixel input
     if (!newPixel.name || newPixel.name.trim() === '') {
-      throw new Error('Pixel name is required')
+      throw InvalidPixelSetupError.pixelNameRequired()
     }
 
     if (!this.isValidMetaPixelId(newPixel.metaPixelId)) {
-      throw new Error('Invalid Meta Pixel ID format. Must be a 15-16 digit numeric string.')
+      throw InvalidPixelSetupError.invalidMetaPixelIdFormat(newPixel.metaPixelId)
     }
 
     const setupMethod =
