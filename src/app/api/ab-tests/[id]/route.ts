@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { getABTestRepository, getCampaignRepository } from '@/lib/di/container'
+import { updateABTestSchema, validateBody } from '@/lib/validations'
 
 interface RouteParams {
   params: Promise<{ id: string }>
@@ -98,8 +99,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
   try {
     const { id } = await params
-    const body = await request.json()
-    const { action, variantMetrics } = body
+
+    // Validate request body
+    const validation = await validateBody(request, updateABTestSchema)
+    if (!validation.success) return validation.error
+
+    const { action, variantMetrics } = validation.data
 
     const abTestRepository = getABTestRepository()
     const campaignRepository = getCampaignRepository()

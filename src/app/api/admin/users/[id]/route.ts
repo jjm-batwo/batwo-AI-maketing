@@ -6,6 +6,7 @@ import {
 } from '@/infrastructure/auth/adminMiddleware'
 import { getUserRepository } from '@/lib/di/container'
 import { GlobalRole, canManageRole } from '@domain/value-objects/GlobalRole'
+import { updateUserSchema, validateBody } from '@/lib/validations'
 
 interface Params {
   id: string
@@ -51,7 +52,12 @@ export async function PATCH(
 
   try {
     const { id } = await context.params
-    const body = await request.json()
+
+    // Validate request body
+    const validation = await validateBody(request, updateUserSchema)
+    if (!validation.success) return validation.error
+
+    const { name, globalRole } = validation.data
     const userRepository = getUserRepository()
 
     // 사용자 존재 확인
@@ -64,9 +70,7 @@ export async function PATCH(
     }
 
     // 역할 변경인 경우 권한 검증
-    if (body.globalRole && body.globalRole !== existingUser.globalRole) {
-      const newRole = body.globalRole as GlobalRole
-
+    if (globalRole && globalRole !== existingUser.globalRole) {
       // 관리자 역할 관리 권한 검증
       if (!canManageRole(authResult.globalRole, existingUser.globalRole)) {
         return NextResponse.json(
@@ -76,7 +80,7 @@ export async function PATCH(
       }
 
       // ADMIN으로 변경하려면 SUPER_ADMIN 권한 필요
-      if (newRole === GlobalRole.ADMIN || newRole === GlobalRole.SUPER_ADMIN) {
+      if (globalRole === GlobalRole.ADMIN || globalRole === GlobalRole.SUPER_ADMIN) {
         const superAdminResult = await requireSuperAdmin()
         if (!superAdminResult.authorized) {
           return NextResponse.json(
@@ -89,8 +93,8 @@ export async function PATCH(
 
     // 업데이트 가능한 필드만 추출
     const updateData: Partial<typeof existingUser> = {}
-    if (body.name !== undefined) updateData.name = body.name
-    if (body.globalRole !== undefined) updateData.globalRole = body.globalRole
+    if (name !== undefined) updateData.name = name
+    if (globalRole !== undefined) updateData.globalRole = globalRole
 
     const updatedUser = await userRepository.update(id, updateData)
 

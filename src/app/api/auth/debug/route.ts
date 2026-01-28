@@ -2,6 +2,14 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
 export async function GET() {
+  // SECURITY: Only allow in development environment
+  if (process.env.NODE_ENV !== 'development') {
+    return NextResponse.json(
+      { error: 'Not Found' },
+      { status: 404 }
+    )
+  }
+
   // Test database connection
   let dbStatus = 'not_tested'
   let dbError = null
@@ -13,7 +21,8 @@ export async function GET() {
     dbStatus = 'error'
     dbError = error instanceof Error ? error.message : String(error)
   }
-  // Check Google OAuth configuration
+
+  // Check Google OAuth configuration (without exposing sensitive data)
   const googleClientId = process.env.GOOGLE_CLIENT_ID ?? ''
   const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET ?? ''
 
@@ -40,10 +49,9 @@ export async function GET() {
     dbStatus,
     dbError,
     userCount,
+    // OAuth configuration (minimized exposure)
     hasGoogleClientId: !!googleClientId,
     googleClientIdLength: googleClientId.length,
-    googleClientIdPrefix: googleClientId.substring(0, 15),
-    googleClientIdSuffix: googleClientId.substring(googleClientId.length - 30),
     isValidGoogleClientIdFormat,
     hasGoogleClientSecret: !!googleClientSecret,
     googleClientSecretLength: googleClientSecret.length,
@@ -51,13 +59,11 @@ export async function GET() {
     authSecretLength: process.env.AUTH_SECRET?.length ?? 0,
     hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET,
     nextAuthSecretLength: process.env.NEXTAUTH_SECRET?.length ?? 0,
-    authUrl: process.env.AUTH_URL ?? 'N/A',
-    nextAuthUrl: process.env.NEXTAUTH_URL ?? 'N/A',
     nodeEnv: process.env.NODE_ENV ?? 'N/A',
     // Google OIDC check
     googleOidcStatus,
     googleOidcError,
-    // Check for common issues
+    // Check for common configuration issues
     googleClientIdStartsWithQuote: googleClientId.startsWith('"'),
     googleClientIdEndsWithQuote: googleClientId.endsWith('"'),
     googleClientIdHasNewline: googleClientId.includes('\n'),

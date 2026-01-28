@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, Suspense, useEffect } from 'react'
+import { useState, Suspense } from 'react'
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { AlertCircle, Loader2 } from 'lucide-react'
+import { useFacebookLoginStatus } from '@/presentation/hooks/useFacebookLoginStatus'
 
 const ERROR_MESSAGES: Record<string, string> = {
   Configuration: '서버 설정 오류입니다. 관리자에게 문의하세요.',
@@ -20,6 +21,10 @@ const ERROR_MESSAGES: Record<string, string> = {
   EmailSignin: '이메일 전송 중 오류가 발생했습니다.',
   CredentialsSignin: '이메일 또는 비밀번호가 올바르지 않습니다.',
   SessionRequired: '로그인이 필요합니다.',
+  // Meta-specific errors
+  invalid_scope: 'Meta 앱 권한 설정이 필요합니다. 관리자에게 문의하세요.',
+  invalid_redirect_uri: 'OAuth 리다이렉트 URL이 등록되지 않았습니다.',
+  access_denied: 'Meta 로그인이 거부되었습니다. 다시 시도해주세요.',
   Default: '로그인 중 오류가 발생했습니다. 다시 시도해주세요.',
 }
 
@@ -28,15 +33,17 @@ function LoginForm() {
   const callbackUrl = searchParams.get('callbackUrl') || '/'
   const urlError = searchParams.get('error')
   const [isLoading, setIsLoading] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
+  const [error, setError] = useState<string | null>(() => {
     if (urlError) {
       const message = ERROR_MESSAGES[urlError] || ERROR_MESSAGES.Default
-      setError(message)
       console.error('[LOGIN] OAuth error from URL:', urlError)
+      return message
     }
-  }, [urlError])
+    return null
+  })
+
+  // Facebook login status check
+  const { isConnected: isFacebookConnected } = useFacebookLoginStatus()
 
   const handleSocialLogin = async (provider: 'google' | 'kakao' | 'facebook') => {
     setIsLoading(provider)
@@ -120,6 +127,11 @@ function LoginForm() {
           </Button>
 
           {/* Meta 로그인 - Meta 파란색 */}
+          {isFacebookConnected && (
+            <p className="text-xs text-green-600 text-center">
+              Facebook에 이미 로그인되어 있습니다
+            </p>
+          )}
           <Button
             type="button"
             className="w-full h-12 bg-[#1877F2] text-white hover:bg-[#1877F2]/90 font-medium"
@@ -133,8 +145,13 @@ function LoginForm() {
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
               </svg>
             )}
-            Meta로 계속하기
+            {isFacebookConnected ? 'Meta로 계속하기 (연결됨)' : 'Meta로 계속하기'}
           </Button>
+          {process.env.NODE_ENV === 'development' && (
+            <p className="text-xs text-amber-600 text-center">
+              개발 모드: Meta 로그인은 테스트 사용자로 제한됩니다
+            </p>
+          )}
         </div>
 
         <p className="text-center text-xs text-muted-foreground pt-4">

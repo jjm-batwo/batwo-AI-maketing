@@ -3,8 +3,10 @@ import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS } from '@/lib/di/container'
 import { ListCampaignsUseCase } from '@application/use-cases/campaign/ListCampaignsUseCase'
 import { CreateCampaignUseCase, DuplicateCampaignNameError } from '@application/use-cases/campaign/CreateCampaignUseCase'
-import { CampaignStatus } from '@domain/value-objects/CampaignStatus'
 import { CampaignObjective } from '@domain/value-objects/CampaignObjective'
+import { campaignQuerySchema, createCampaignSchema, validateQuery, validateBody } from '@/lib/validations'
+import { invalidateCache, getUserPattern } from '@/lib/cache/kpiCache'
+import { checkRateLimit, getClientIp, addRateLimitHeaders, rateLimitExceededResponse } from '@/lib/middleware/rateLimit'
 
 export async function GET(request: NextRequest) {
   const user = await getAuthenticatedUser()
@@ -12,9 +14,12 @@ export async function GET(request: NextRequest) {
 
   try {
     const { searchParams } = new URL(request.url)
-    const page = parseInt(searchParams.get('page') || '1')
-    const pageSize = parseInt(searchParams.get('pageSize') || '10')
-    const status = searchParams.get('status') as CampaignStatus | null
+
+    // Validate query parameters
+    const validation = validateQuery(searchParams, campaignQuerySchema)
+    if (!validation.success) return validation.error
+
+    const { page, pageSize, status } = validation.data
 
     const listCampaigns = container.resolve<ListCampaignsUseCase>(
       DI_TOKENS.ListCampaignsUseCase
@@ -24,7 +29,7 @@ export async function GET(request: NextRequest) {
       userId: user.id,
       page,
       limit: pageSize,
-      status: status || undefined,
+      status,
     })
 
     return NextResponse.json({
@@ -46,16 +51,21 @@ export async function POST(request: NextRequest) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
-  try {
-    const body = await request.json()
+  // Rate limiting for campaign creation
+  const clientIp = getClientIp(request)
+  const rateLimitKey = `${user.id}:${clientIp}`
+  const rateLimitResult = await checkRateLimit(rateLimitKey, 'campaignCreate')
 
-    // Validate required fields
-    if (!body.name || !body.objective || !body.dailyBudget || !body.startDate) {
-      return NextResponse.json(
-        { message: '필수 항목을 모두 입력해주세요' },
-        { status: 400 }
-      )
-    }
+  if (!rateLimitResult.success) {
+    return rateLimitExceededResponse(rateLimitResult)
+  }
+
+  try {
+    // Validate request body
+    const validation = await validateBody(request, createCampaignSchema)
+    if (!validation.success) return validation.error
+
+    const body = validation.data
 
     const createCampaign = container.resolve<CreateCampaignUseCase>(
       DI_TOKENS.CreateCampaignUseCase
@@ -66,7 +76,7 @@ export async function POST(request: NextRequest) {
       name: body.name,
       objective: body.objective as CampaignObjective,
       dailyBudget: body.dailyBudget,
-      currency: body.currency || 'KRW',
+      currency: body.currency,
       startDate: body.startDate,
       endDate: body.endDate,
       targetAudience: body.targetAudience,
@@ -75,7 +85,11 @@ export async function POST(request: NextRequest) {
       adAccountId: body.adAccountId,
     })
 
-    return NextResponse.json(result, { status: 201 })
+    // Invalidate KPI cache for this user
+    invalidateCache(getUserPattern(user.id))
+
+    const response = NextResponse.json(result, { status: 201 })
+    return addRateLimitHeaders(response, rateLimitResult)
   } catch (error) {
     console.error('Failed to create campaign:', error)
 

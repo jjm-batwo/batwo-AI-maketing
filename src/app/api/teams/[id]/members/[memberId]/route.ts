@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/infrastructure/auth/auth'
 import { getTeamRepository } from '@/lib/di/container'
 import { TeamRole, TeamPermission, DEFAULT_ROLE_PERMISSIONS } from '@/domain/entities/Team'
+import { updateTeamMemberSchema, validateBody } from '@/lib/validations'
 
 type RouteParams = { params: Promise<{ id: string; memberId: string }> }
 
@@ -75,8 +76,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     const { id, memberId } = await params
-    const body = await request.json()
-    const { role, permissions, action } = body
+
+    // Validate request body
+    const validation = await validateBody(request, updateTeamMemberSchema)
+    if (!validation.success) return validation.error
+
+    const { role, permissions, action } = validation.data
 
     const teamRepository = getTeamRepository()
     const team = await teamRepository.findById(id)

@@ -3,8 +3,8 @@ import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS } from '@/lib/di/container'
 import type { IReportRepository } from '@domain/repositories/IReportRepository'
 import { GenerateWeeklyReportUseCase } from '@application/use-cases/report/GenerateWeeklyReportUseCase'
-import { UnauthorizedCampaignError } from '@application/use-cases/report/GenerateWeeklyReportUseCase'
-import { ReportType } from '@domain/entities/Report'
+import { UnauthorizedCampaignError } from '@domain/errors'
+import { reportQuerySchema, createReportSchema, validateQuery, validateBody } from '@/lib/validations'
 
 export async function GET(request: NextRequest) {
   const user = await getAuthenticatedUser()
@@ -12,9 +12,12 @@ export async function GET(request: NextRequest) {
 
   try {
     const { searchParams } = new URL(request.url)
-    const page = parseInt(searchParams.get('page') || '1')
-    const pageSize = parseInt(searchParams.get('pageSize') || '10')
-    const type = searchParams.get('type') as ReportType | null
+
+    // Validate query parameters
+    const validation = validateQuery(searchParams, reportQuerySchema)
+    if (!validation.success) return validation.error
+
+    const { page, pageSize, type } = validation.data
 
     const reportRepository = container.resolve<IReportRepository>(
       DI_TOKENS.ReportRepository
@@ -63,22 +66,11 @@ export async function POST(request: NextRequest) {
   if (!user) return unauthorizedResponse()
 
   try {
-    const body = await request.json()
-    const { campaignIds, startDate, endDate } = body
+    // Validate request body
+    const validation = await validateBody(request, createReportSchema)
+    if (!validation.success) return validation.error
 
-    if (!campaignIds || !Array.isArray(campaignIds) || campaignIds.length === 0) {
-      return NextResponse.json(
-        { message: 'campaignIds is required and must be a non-empty array' },
-        { status: 400 }
-      )
-    }
-
-    if (!startDate || !endDate) {
-      return NextResponse.json(
-        { message: 'startDate and endDate are required' },
-        { status: 400 }
-      )
-    }
+    const { campaignIds, startDate, endDate } = validation.data
 
     const generateReport = container.resolve<GenerateWeeklyReportUseCase>(
       DI_TOKENS.GenerateWeeklyReportUseCase

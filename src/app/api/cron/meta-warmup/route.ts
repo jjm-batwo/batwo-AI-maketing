@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { MetaAdsWarmupClient, WarmupSummary } from '@infrastructure/external/meta-ads/MetaAdsWarmupClient'
+import { validateCronAuth } from '@/lib/middleware/cronAuth'
 
 interface AccountResult {
   accountId: string
@@ -117,14 +118,9 @@ export async function GET(request: NextRequest) {
 
   try {
     // Verify the request is from Vercel Cron or has valid secret
-    const authHeader = request.headers.get('authorization')
-    const cronSecret = process.env.CRON_SECRET
-
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json(
-        { message: 'Unauthorized' },
-        { status: 401 }
-      )
+    const authResult = validateCronAuth(request)
+    if (!authResult.authorized) {
+      return authResult.response!
     }
 
     // 특정 계정만 웜업 (환경 변수로 제한)

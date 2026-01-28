@@ -4,6 +4,7 @@ import { getAIService, getQuotaService, getCopyLearningService } from '@/lib/di/
 import type { GenerateAdCopyInput } from '@application/ports/IAIService'
 import type { Industry, CopyHookType } from '@infrastructure/external/openai/prompts/adCopyGeneration'
 import { INDUSTRY_BENCHMARKS } from '@infrastructure/external/openai/prompts/adCopyGeneration'
+import { checkRateLimit, getClientIp, addRateLimitHeaders, rateLimitExceededResponse } from '@/lib/middleware/rateLimit'
 
 const VALID_TONES = ['professional', 'casual', 'playful', 'urgent'] as const
 const VALID_OBJECTIVES = ['awareness', 'consideration', 'conversion'] as const
@@ -81,6 +82,15 @@ function isValidHook(hook: string): hook is CopyHookType {
 export async function POST(request: NextRequest) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
+
+  // Rate limiting for AI copy generation
+  const clientIp = getClientIp(request)
+  const rateLimitKey = `${user.id}:${clientIp}`
+  const rateLimitResult = await checkRateLimit(rateLimitKey, 'ai')
+
+  if (!rateLimitResult.success) {
+    return rateLimitExceededResponse(rateLimitResult)
+  }
 
   try {
     const body = (await request.json()) as GenerateCopyRequestBody
@@ -199,7 +209,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json(response)
+    const jsonResponse = NextResponse.json(response)
+    return addRateLimitHeaders(jsonResponse, rateLimitResult)
   } catch (error) {
     console.error('Failed to generate ad copy:', error)
     return NextResponse.json({ message: 'AI 카피 생성에 실패했습니다' }, { status: 500 })

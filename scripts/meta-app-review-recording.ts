@@ -11,7 +11,7 @@
  * npx playwright codegen http://localhost:3000 --save-storage=auth.json
  */
 
-import { test, expect, Page } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 import path from 'path'
 
 // 녹화 설정
@@ -22,7 +22,7 @@ const RECORDING_CONFIG = {
 }
 
 // 테스트 계정 (실제 테스트 계정으로 교체 필요)
-const TEST_ACCOUNT = {
+const _TEST_ACCOUNT = {
   email: process.env.TEST_ACCOUNT_EMAIL || 'test@example.com',
   password: process.env.TEST_ACCOUNT_PASSWORD || 'password',
 }

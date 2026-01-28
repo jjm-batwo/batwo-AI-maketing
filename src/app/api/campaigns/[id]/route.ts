@@ -9,6 +9,8 @@ import {
 } from '@application/use-cases/campaign/UpdateCampaignUseCase'
 import { DuplicateCampaignNameError } from '@application/use-cases/campaign/CreateCampaignUseCase'
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
+import { invalidateCache, getUserPattern } from '@/lib/cache/kpiCache'
+import { updateCampaignSchema, validateBody } from '@/lib/validations'
 
 export async function GET(
   request: NextRequest,
@@ -55,7 +57,12 @@ export async function PATCH(
 
   try {
     const { id } = await params
-    const body = await request.json()
+
+    // Validate request body
+    const validation = await validateBody(request, updateCampaignSchema)
+    if (!validation.success) return validation.error
+
+    const body = validation.data
 
     const updateCampaign = container.resolve<UpdateCampaignUseCase>(
       DI_TOKENS.UpdateCampaignUseCase
@@ -74,6 +81,9 @@ export async function PATCH(
       accessToken: body.accessToken,
       adAccountId: body.adAccountId,
     })
+
+    // Invalidate KPI cache for this user
+    invalidateCache(getUserPattern(user.id))
 
     return NextResponse.json(result)
   } catch (error) {
@@ -148,6 +158,9 @@ export async function DELETE(
     }
 
     await campaignRepository.delete(id)
+
+    // Invalidate KPI cache for this user
+    invalidateCache(getUserPattern(user.id))
 
     return new NextResponse(null, { status: 204 })
   } catch (error) {

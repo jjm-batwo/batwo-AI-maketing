@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/infrastructure/auth/auth'
-import { prisma } from '@/lib/prisma'
-import { PixelSetupMethod } from '@domain/entities/MetaPixel'
+import { container, DI_TOKENS } from '@/lib/di/container'
+import { ListUserPixelsUseCase } from '@application/use-cases/pixel/ListUserPixelsUseCase'
+import { SelectPixelUseCase } from '@application/use-cases/pixel/SelectPixelUseCase'
+import { pixelQuerySchema, createPixelSchema, validateQuery, validateBody } from '@/lib/validations'
 
 // GET /api/pixel - List user's pixels
 export async function GET(request: NextRequest) {
@@ -13,52 +15,31 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url)
-    const page = parseInt(searchParams.get('page') || '1', 10)
-    const limit = parseInt(searchParams.get('limit') || '10', 10)
-    const isActiveParam = searchParams.get('isActive')
-    const setupMethod = searchParams.get('setupMethod') as PixelSetupMethod | null
 
-    // Build where clause
-    const where: Record<string, unknown> = {
+    // Validate query parameters
+    const validation = validateQuery(searchParams, pixelQuerySchema)
+    if (!validation.success) return validation.error
+
+    const { page, limit, isActive, setupMethod } = validation.data
+
+    const listPixelsUseCase = container.resolve<ListUserPixelsUseCase>(
+      DI_TOKENS.ListUserPixelsUseCase
+    )
+
+    const result = await listPixelsUseCase.execute({
       userId: session.user.id,
-    }
-
-    if (isActiveParam !== null) {
-      where.isActive = isActiveParam === 'true'
-    }
-
-    if (setupMethod) {
-      where.setupMethod = setupMethod
-    }
-
-    // Get total count
-    const total = await prisma.metaPixel.count({ where })
-
-    // Get paginated results
-    const pixels = await prisma.metaPixel.findMany({
-      where,
-      skip: (page - 1) * limit,
-      take: limit,
-      orderBy: { createdAt: 'desc' },
-    })
-
-    const totalPages = Math.ceil(total / limit)
-
-    return NextResponse.json({
-      data: pixels.map((pixel) => ({
-        id: pixel.id,
-        userId: pixel.userId,
-        metaPixelId: pixel.metaPixelId,
-        name: pixel.name,
-        isActive: pixel.isActive,
-        setupMethod: pixel.setupMethod,
-        createdAt: pixel.createdAt.toISOString(),
-        updatedAt: pixel.updatedAt.toISOString(),
-      })),
-      total,
       page,
       limit,
-      totalPages,
+      isActive,
+      setupMethod,
+    })
+
+    return NextResponse.json({
+      data: result.data,
+      total: result.total,
+      page: result.page,
+      limit: result.limit,
+      totalPages: result.totalPages,
     })
   } catch (error) {
     console.error('Error fetching pixels:', error)
@@ -75,64 +56,31 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json()
-    const { metaPixelId, name, setupMethod } = body
+    // Validate request body
+    const validation = await validateBody(request, createPixelSchema)
+    if (!validation.success) return validation.error
 
-    // Validate name
-    if (!name || name.trim() === '') {
-      return NextResponse.json({ error: 'Pixel name is required' }, { status: 400 })
-    }
+    const { metaPixelId, name, setupMethod } = validation.data
 
-    // Validate Meta Pixel ID format
-    const pixelIdRegex = /^\d{15,16}$/
-    if (!pixelIdRegex.test(metaPixelId)) {
-      return NextResponse.json(
-        { error: 'Invalid Meta Pixel ID format. Must be a 15-16 digit numeric string.' },
-        { status: 400 }
-      )
-    }
-
-    // Check for duplicates
-    const existingPixel = await prisma.metaPixel.findFirst({
-      where: {
-        userId: session.user.id,
-        metaPixelId,
-      },
-    })
-
-    if (existingPixel) {
-      return NextResponse.json(
-        { error: `Pixel with Meta Pixel ID ${metaPixelId} already exists` },
-        { status: 409 }
-      )
-    }
-
-    // Create pixel
-    const pixel = await prisma.metaPixel.create({
-      data: {
-        userId: session.user.id,
-        metaPixelId,
-        name: name.trim(),
-        isActive: true,
-        setupMethod: setupMethod || 'MANUAL',
-      },
-    })
-
-    return NextResponse.json(
-      {
-        id: pixel.id,
-        userId: pixel.userId,
-        metaPixelId: pixel.metaPixelId,
-        name: pixel.name,
-        isActive: pixel.isActive,
-        setupMethod: pixel.setupMethod,
-        createdAt: pixel.createdAt.toISOString(),
-        updatedAt: pixel.updatedAt.toISOString(),
-      },
-      { status: 201 }
+    const selectPixelUseCase = container.resolve<SelectPixelUseCase>(
+      DI_TOKENS.SelectPixelUseCase
     )
+
+    const pixel = await selectPixelUseCase.execute({
+      userId: session.user.id,
+      metaPixelId,
+      name: name.trim(),
+      setupMethod,
+    })
+
+    return NextResponse.json(pixel, { status: 201 })
   } catch (error) {
     console.error('Error creating pixel:', error)
+
+    if (error instanceof Error && error.message.includes('already exists')) {
+      return NextResponse.json({ error: error.message }, { status: 409 })
+    }
+
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

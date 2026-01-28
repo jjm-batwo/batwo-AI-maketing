@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/infrastructure/auth/auth'
 import { getTeamRepository } from '@/lib/di/container'
+import { updateTeamSchema, validateBody } from '@/lib/validations'
 
 type RouteParams = { params: Promise<{ id: string }> }
 
@@ -76,8 +77,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     const { id } = await params
-    const body = await request.json()
-    const { name, description } = body
+
+    // Validate request body
+    const validation = await validateBody(request, updateTeamSchema)
+    if (!validation.success) return validation.error
+
+    const { name, description } = validation.data
 
     const teamRepository = getTeamRepository()
     const team = await teamRepository.findById(id)
@@ -89,20 +94,6 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     // Check if user can manage team
     if (!team.canUserManageTeam(session.user.id)) {
       return NextResponse.json({ error: 'Permission denied' }, { status: 403 })
-    }
-
-    // Validation
-    if (name !== undefined) {
-      if (typeof name !== 'string' || name.trim().length === 0) {
-        return NextResponse.json({ error: 'Team name cannot be empty' }, { status: 400 })
-      }
-      if (name.length > 100) {
-        return NextResponse.json({ error: 'Team name must be 100 characters or less' }, { status: 400 })
-      }
-    }
-
-    if (description !== undefined && description.length > 500) {
-      return NextResponse.json({ error: 'Description must be 500 characters or less' }, { status: 400 })
     }
 
     // Update team

@@ -3,6 +3,7 @@ import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS } from '@/lib/di/container'
 import { GetDashboardKPIUseCase } from '@application/use-cases/kpi/GetDashboardKPIUseCase'
 import type { DateRangePreset } from '@application/dto/kpi/DashboardKPIDTO'
+import { getCached, setCache, generateKPIKey } from '@/lib/cache/kpiCache'
 
 // Map API period format to Use Case DateRangePreset
 function mapPeriodToPreset(period: string): DateRangePreset {
@@ -29,6 +30,20 @@ export async function GET(request: NextRequest) {
     const period = searchParams.get('period') || '7d'
     const includeComparison = searchParams.get('comparison') === 'true'
     const includeBreakdown = searchParams.get('breakdown') === 'true'
+
+    // Generate cache key
+    const cacheKey = generateKPIKey(user.id, period, includeComparison, includeBreakdown)
+
+    // Check cache first
+    const cachedResponse = getCached<unknown>(cacheKey)
+    if (cachedResponse) {
+      return NextResponse.json(cachedResponse, {
+        headers: {
+          'Cache-Control': 'private, max-age=300',
+          'X-Cache': 'HIT',
+        },
+      })
+    }
 
     const getDashboardKPI = container.resolve<GetDashboardKPIUseCase>(
       DI_TOKENS.GetDashboardKPIUseCase
@@ -69,7 +84,15 @@ export async function GET(request: NextRequest) {
       chartData: result.chartData ?? [],
     }
 
-    return NextResponse.json(response)
+    // Store in cache with 5 minute TTL
+    setCache(cacheKey, response, 300)
+
+    return NextResponse.json(response, {
+      headers: {
+        'Cache-Control': 'private, max-age=300',
+        'X-Cache': 'MISS',
+      },
+    })
   } catch (error) {
     console.error('Failed to fetch dashboard KPI:', error)
     return NextResponse.json(

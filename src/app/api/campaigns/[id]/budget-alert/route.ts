@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { getBudgetAlertService, getCampaignRepository } from '@/lib/di/container'
+import { createBudgetAlertSchema, updateBudgetAlertSchema, validateBody } from '@/lib/validations'
 
 /**
  * GET /api/campaigns/[id]/budget-alert
@@ -72,7 +73,12 @@ export async function POST(
 
   try {
     const { id } = await params
-    const body = await request.json()
+
+    // Validate request body
+    const validation = await validateBody(request, createBudgetAlertSchema)
+    if (!validation.success) return validation.error
+
+    const { thresholdPercent } = validation.data
 
     // 캠페인 소유권 확인
     const campaignRepo = getCampaignRepository()
@@ -89,15 +95,6 @@ export async function POST(
       return NextResponse.json(
         { message: '캠페인을 찾을 수 없습니다' },
         { status: 404 }
-      )
-    }
-
-    const thresholdPercent = body.thresholdPercent ?? 80
-
-    if (thresholdPercent < 1 || thresholdPercent > 100) {
-      return NextResponse.json(
-        { message: '임계값은 1-100 사이여야 합니다' },
-        { status: 400 }
       )
     }
 
@@ -141,7 +138,12 @@ export async function PATCH(
 
   try {
     const { id } = await params
-    const body = await request.json()
+
+    // Validate request body
+    const validation = await validateBody(request, updateBudgetAlertSchema)
+    if (!validation.success) return validation.error
+
+    const { thresholdPercent, isEnabled } = validation.data
 
     // 캠페인 소유권 확인
     const campaignRepo = getCampaignRepository()
@@ -164,18 +166,11 @@ export async function PATCH(
     const budgetAlertService = getBudgetAlertService()
 
     // 임계값 또는 활성화 상태 업데이트
-    if (body.thresholdPercent !== undefined || body.isEnabled !== undefined) {
-      if (body.thresholdPercent !== undefined && (body.thresholdPercent < 1 || body.thresholdPercent > 100)) {
-        return NextResponse.json(
-          { message: '임계값은 1-100 사이여야 합니다' },
-          { status: 400 }
-        )
-      }
-
+    if (thresholdPercent !== undefined || isEnabled !== undefined) {
       await budgetAlertService.updateAlert({
         campaignId: id,
-        thresholdPercent: body.thresholdPercent,
-        isEnabled: body.isEnabled,
+        thresholdPercent,
+        isEnabled,
       })
     }
 
