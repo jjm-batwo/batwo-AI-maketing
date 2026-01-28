@@ -149,6 +149,14 @@ function getIndustryNameKo(industry: Industry): string {
 export function buildCampaignOptimizationPrompt(input: GenerateOptimizationInput): string {
   const { campaignName, objective, industry, currentMetrics, targetAudience } = input
 
+  const scienceContext = (input as { scienceContext?: string }).scienceContext || ''
+  const scienceSection = scienceContext
+    ? `
+과학 기반 마케팅 분석:
+${scienceContext}
+`
+    : ''
+
   const seasonContext = getCurrentSeasonContext()
   const peakHours = industry ? INDUSTRY_PEAK_HOURS[industry] : null
 
@@ -205,6 +213,7 @@ ${audienceInfo}
 ${benchmarkInfo}
 ${seasonInfo}
 ${peakHoursInfo}
+${scienceSection}
 
 다음 JSON 배열 형식으로 3-5개의 최적화 제안을 제공하세요:
 [

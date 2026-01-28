@@ -5,6 +5,8 @@ import type {
   SendEmailResult,
 } from '@application/ports/IEmailService'
 import { WeeklyReportEmailTemplate } from './templates/WeeklyReportEmailTemplate'
+import { TrendAlertEmailTemplate } from './templates/TrendAlertEmailTemplate'
+import type { TrendAlert } from '@/application/services/TrendAlertService'
 
 export class EmailService implements IEmailService {
   private readonly resend: Resend
@@ -85,6 +87,26 @@ export class EmailService implements IEmailService {
             },
           ]
         : undefined,
+    })
+  }
+
+  async sendTrendAlert(params: {
+    to: string | string[]
+    userName: string
+    digest: TrendAlert
+  }): Promise<SendEmailResult> {
+    const html = TrendAlertEmailTemplate({
+      userName: params.userName,
+      digest: params.digest,
+    })
+
+    const urgentCount = params.digest.weeklyDigest.urgentCount
+    const subjectPrefix = urgentCount > 0 ? `🔥 [긴급] ` : ''
+
+    return this.sendEmail({
+      to: params.to,
+      subject: `${subjectPrefix}[바투] 이번 주 마케팅 기회 알림`,
+      html,
     })
   }
 }

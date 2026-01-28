@@ -500,6 +500,14 @@ ${competitorContext}
 `
     : ''
 
+  const scienceContext = (input as { scienceContext?: string }).scienceContext || ''
+  const scienceSection = scienceContext
+    ? `
+## 과학 기반 마케팅 인텔리전스
+${scienceContext}
+`
+    : ''
+
   const baseOutputFormat = includeABVariants
     ? `{
     "headline": "헤드라인 (최대 40자, 한글 기준)",
@@ -535,6 +543,8 @@ ${seasonalContext}
 ${industryContext}
 
 ${competitorSection}
+
+${scienceSection}
 
 ${abTestingInstructions}
 

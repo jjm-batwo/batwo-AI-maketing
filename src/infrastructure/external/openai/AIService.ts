@@ -6,10 +6,16 @@ import type {
   GenerateOptimizationInput,
   GenerateReportInsightInput,
   GenerateAdCopyInput,
+  GenerateBudgetRecommendationInput,
+  BudgetRecommendationResult,
   AIConfig,
+  GenerateCreativeVariantsInput,
+  CreativeVariant,
 } from '@application/ports/IAIService'
 import { OpenAIApiError } from '../errors'
 import { withRetry } from '@lib/utils/retry'
+import { fetchWithTimeout } from '@lib/utils/timeout'
+import { withSpan } from '@infrastructure/telemetry'
 import {
   buildCampaignOptimizationPrompt,
   CAMPAIGN_OPTIMIZATION_SYSTEM_PROMPT,
@@ -25,8 +31,31 @@ import {
   AD_COPY_SYSTEM_PROMPT,
   AD_COPY_AI_CONFIG,
 } from './prompts/adCopyGeneration'
+import {
+  buildBudgetRecommendationPrompt,
+  BUDGET_RECOMMENDATION_SYSTEM_PROMPT,
+} from './prompts/budgetRecommendation'
+import {
+  buildCreativeTestDesignPrompt,
+  CREATIVE_TEST_DESIGN_SYSTEM_PROMPT,
+  CREATIVE_TEST_DESIGN_AI_CONFIG,
+} from './prompts/creativeTestDesign'
+import {
+  buildCompetitorTrendsPrompt,
+  buildCompetitorInsightsPrompt,
+  COMPETITOR_TRENDS_AI_CONFIG,
+  COMPETITOR_INSIGHTS_AI_CONFIG,
+} from './prompts/competitorAnalysis'
+import type { CompetitorAd } from '@application/services/CompetitorAnalysisService'
 
 const OPENAI_API_BASE = 'https://api.openai.com/v1'
+const OPENAI_TIMEOUT_MS = 60000 // 60 seconds for LLM responses
+
+const BUDGET_RECOMMENDATION_AI_CONFIG: AIConfig = {
+  model: 'gpt-4o-mini',
+  temperature: 0.5,
+  maxTokens: 2000,
+}
 
 interface OpenAIError {
   error: {
@@ -65,7 +94,7 @@ export class AIService implements IAIService {
     this.model = model
   }
 
-  private async chatCompletion(
+  async chatCompletion(
     systemPrompt: string,
     userPrompt: string,
     config?: AIConfig
@@ -112,7 +141,7 @@ export class AIService implements IAIService {
       ...options.headers,
     }
 
-    const response = await fetch(url, { ...options, headers })
+    const response = await fetchWithTimeout(url, { ...options, headers }, OPENAI_TIMEOUT_MS)
     const data = await response.json()
 
     if (!response.ok || (data as OpenAIError).error) {
@@ -161,37 +190,146 @@ export class AIService implements IAIService {
   async generateCampaignOptimization(
     input: GenerateOptimizationInput
   ): Promise<CampaignOptimizationSuggestion[]> {
-    const prompt = buildCampaignOptimizationPrompt(input)
-    const response = await this.chatCompletion(
-      CAMPAIGN_OPTIMIZATION_SYSTEM_PROMPT,
-      prompt,
-      CAMPAIGN_OPTIMIZATION_AI_CONFIG
-    )
+    return withSpan(
+      'openai.generateCampaignOptimization',
+      async () => {
+        const prompt = buildCampaignOptimizationPrompt(input)
+        const response = await this.chatCompletion(
+          CAMPAIGN_OPTIMIZATION_SYSTEM_PROMPT,
+          prompt,
+          CAMPAIGN_OPTIMIZATION_AI_CONFIG
+        )
 
-    return this.parseJsonResponse<CampaignOptimizationSuggestion[]>(response)
+        return this.parseJsonResponse<CampaignOptimizationSuggestion[]>(response)
+      },
+      {
+        'openai.model': CAMPAIGN_OPTIMIZATION_AI_CONFIG.model || this.model,
+        'openai.operation': 'campaign_optimization',
+      }
+    )
   }
 
   async generateReportInsights(
     input: GenerateReportInsightInput
   ): Promise<ReportInsight> {
-    const prompt = buildReportInsightPrompt(input)
-    const response = await this.chatCompletion(
-      REPORT_INSIGHT_SYSTEM_PROMPT,
-      prompt,
-      REPORT_INSIGHT_AI_CONFIG
-    )
+    return withSpan(
+      'openai.generateReportInsights',
+      async () => {
+        const prompt = buildReportInsightPrompt(input)
+        const response = await this.chatCompletion(
+          REPORT_INSIGHT_SYSTEM_PROMPT,
+          prompt,
+          REPORT_INSIGHT_AI_CONFIG
+        )
 
-    return this.parseJsonResponse<ReportInsight>(response)
+        return this.parseJsonResponse<ReportInsight>(response)
+      },
+      {
+        'openai.model': REPORT_INSIGHT_AI_CONFIG.model || this.model,
+        'openai.operation': 'report_insights',
+      }
+    )
   }
 
   async generateAdCopy(input: GenerateAdCopyInput): Promise<AdCopyVariant[]> {
-    const prompt = buildAdCopyPrompt(input)
+    return withSpan(
+      'openai.generateAdCopy',
+      async () => {
+        const prompt = buildAdCopyPrompt(input)
+        const response = await this.chatCompletion(
+          AD_COPY_SYSTEM_PROMPT,
+          prompt,
+          AD_COPY_AI_CONFIG
+        )
+
+        return this.parseJsonResponse<AdCopyVariant[]>(response)
+      },
+      {
+        'openai.model': AD_COPY_AI_CONFIG.model || this.model,
+        'openai.operation': 'ad_copy',
+      }
+    )
+  }
+
+  async generateBudgetRecommendation(
+    input: GenerateBudgetRecommendationInput
+  ): Promise<BudgetRecommendationResult> {
+    return withSpan(
+      'openai.generateBudgetRecommendation',
+      async () => {
+        const prompt = buildBudgetRecommendationPrompt(input)
+        const response = await this.chatCompletion(
+          BUDGET_RECOMMENDATION_SYSTEM_PROMPT,
+          prompt,
+          BUDGET_RECOMMENDATION_AI_CONFIG
+        )
+
+        return this.parseJsonResponse<BudgetRecommendationResult>(response)
+      },
+      {
+        'openai.model': BUDGET_RECOMMENDATION_AI_CONFIG.model || this.model,
+        'openai.operation': 'budget_recommendation',
+      }
+    )
+  }
+
+  async generateCreativeVariants(
+    input: GenerateCreativeVariantsInput
+  ): Promise<CreativeVariant[]> {
+    const prompt = buildCreativeTestDesignPrompt(input)
     const response = await this.chatCompletion(
-      AD_COPY_SYSTEM_PROMPT,
+      CREATIVE_TEST_DESIGN_SYSTEM_PROMPT,
       prompt,
-      AD_COPY_AI_CONFIG
+      CREATIVE_TEST_DESIGN_AI_CONFIG
     )
 
-    return this.parseJsonResponse<AdCopyVariant[]>(response)
+    return this.parseJsonResponse<CreativeVariant[]>(response)
+  }
+
+  async analyzeCompetitorTrends(input: {
+    ads: CompetitorAd[]
+    industry?: string
+  }): Promise<{
+    popularHooks: string[]
+    commonOffers: string[]
+    formatDistribution: { format: string; percentage: number }[]
+  }> {
+    const prompt = buildCompetitorTrendsPrompt(input)
+    const response = await this.chatCompletion(
+      'You are an expert ad analyst specializing in Korean commerce market.',
+      prompt,
+      COMPETITOR_TRENDS_AI_CONFIG
+    )
+
+    return this.parseJsonResponse<{
+      popularHooks: string[]
+      commonOffers: string[]
+      formatDistribution: { format: string; percentage: number }[]
+    }>(response)
+  }
+
+  async generateCompetitorInsights(input: {
+    competitors: Array<{
+      pageName: string
+      adCount: number
+      dominantFormats: string[]
+      commonHooks: string[]
+      averageAdLifespan: number
+    }>
+    trends: {
+      popularHooks: string[]
+      commonOffers: string[]
+      formatDistribution: { format: string; percentage: number }[]
+    }
+    industry?: string
+  }): Promise<string[]> {
+    const prompt = buildCompetitorInsightsPrompt(input)
+    const response = await this.chatCompletion(
+      'You are an expert ad strategist specializing in Korean commerce market.',
+      prompt,
+      COMPETITOR_INSIGHTS_AI_CONFIG
+    )
+
+    return this.parseJsonResponse<string[]>(response)
   }
 }

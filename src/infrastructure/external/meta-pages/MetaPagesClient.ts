@@ -3,7 +3,10 @@
  * pages_show_list와 pages_read_engagement 권한 사용
  */
 
+import { fetchWithTimeout } from '@lib/utils/timeout'
+
 const META_API_BASE = 'https://graph.facebook.com/v18.0'
+const META_API_TIMEOUT_MS = 30000 // 30 seconds for Meta API calls
 
 export interface MetaPage {
   id: string
@@ -54,8 +57,10 @@ export class MetaPagesClient {
    */
   async listPages(): Promise<MetaPage[]> {
     const fields = 'id,name,category,access_token,tasks,fan_count,followers_count,picture'
-    const response = await fetch(
-      `${META_API_BASE}/me/accounts?fields=${fields}&access_token=${this.accessToken}`
+    const response = await fetchWithTimeout(
+      `${META_API_BASE}/me/accounts?fields=${fields}&access_token=${this.accessToken}`,
+      {},
+      META_API_TIMEOUT_MS
     )
 
     if (!response.ok) {
@@ -73,8 +78,10 @@ export class MetaPagesClient {
    */
   async getPage(pageId: string): Promise<MetaPage> {
     const fields = 'id,name,category,access_token,tasks,fan_count,followers_count,picture'
-    const response = await fetch(
-      `${META_API_BASE}/${pageId}?fields=${fields}&access_token=${this.accessToken}`
+    const response = await fetchWithTimeout(
+      `${META_API_BASE}/${pageId}?fields=${fields}&access_token=${this.accessToken}`,
+      {},
+      META_API_TIMEOUT_MS
     )
 
     if (!response.ok) {
@@ -102,8 +109,10 @@ export class MetaPagesClient {
     ],
     period: 'day' | 'week' | 'days_28' = 'days_28'
   ): Promise<PageInsight[]> {
-    const response = await fetch(
-      `${META_API_BASE}/${pageId}/insights?metric=${metrics.join(',')}&period=${period}&access_token=${pageAccessToken}`
+    const response = await fetchWithTimeout(
+      `${META_API_BASE}/${pageId}/insights?metric=${metrics.join(',')}&period=${period}&access_token=${pageAccessToken}`,
+      {},
+      META_API_TIMEOUT_MS
     )
 
     if (!response.ok) {
@@ -132,8 +141,10 @@ export class MetaPagesClient {
     shares?: { count: number }
   }>> {
     const fields = 'id,message,created_time,likes.summary(true),comments.summary(true),shares'
-    const response = await fetch(
-      `${META_API_BASE}/${pageId}/posts?fields=${fields}&limit=${limit}&access_token=${pageAccessToken}`
+    const response = await fetchWithTimeout(
+      `${META_API_BASE}/${pageId}/posts?fields=${fields}&limit=${limit}&access_token=${pageAccessToken}`,
+      {},
+      META_API_TIMEOUT_MS
     )
 
     if (!response.ok) {

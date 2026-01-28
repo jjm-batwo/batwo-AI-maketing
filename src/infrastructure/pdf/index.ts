@@ -1,2 +1,6 @@
 export { ReportPDFGenerator, type IReportPDFGenerator, type PDFGeneratorResult } from './ReportPDFGenerator'
 export { WeeklyReportTemplate } from './templates/WeeklyReportTemplate'
+export { BarChart } from './components/BarChart'
+export { MetricCard } from './components/MetricCard'
+export { InsightCard } from './components/InsightCard'
+export { ActionItemCard } from './components/ActionItemCard'

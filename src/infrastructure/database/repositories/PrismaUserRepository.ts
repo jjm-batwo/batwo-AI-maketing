@@ -11,6 +11,7 @@ import {
   UserWithSubscription,
   UserWithDetails,
   UserFullDetails,
+  UserWithActiveCampaigns,
   AdminUserFilters,
   PaginatedResult,
 } from '@domain/repositories/IUserRepository'
@@ -347,6 +348,61 @@ export class PrismaUserRepository implements IUserRepository {
         globalRole: role as PrismaGlobalRole,
       },
     })
+  }
+
+  // ========================================
+  // Campaign-related queries
+  // ========================================
+
+  async findUsersWithActiveCampaigns(): Promise<UserWithActiveCampaigns[]> {
+    const users = await this.prisma.user.findMany({
+      where: {
+        campaigns: {
+          some: {
+            status: {
+              in: ['ACTIVE', 'PAUSED'],
+            },
+          },
+        },
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        campaigns: {
+          where: {
+            status: {
+              in: ['ACTIVE', 'PAUSED'],
+            },
+          },
+          select: {
+            id: true,
+            name: true,
+            status: true,
+            dailyBudget: true,
+            currency: true,
+            startDate: true,
+            endDate: true,
+          },
+        },
+      },
+    })
+
+    // Map Prisma Decimal to number
+    return users.map((user) => ({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      campaigns: user.campaigns.map((campaign) => ({
+        id: campaign.id,
+        name: campaign.name,
+        status: campaign.status,
+        dailyBudget: Number(campaign.dailyBudget),
+        currency: campaign.currency,
+        startDate: campaign.startDate,
+        endDate: campaign.endDate,
+      })),
+    }))
   }
 
   // ========================================

@@ -70,9 +70,62 @@ Your role is to provide personalized budget recommendations based on industry, b
 - Focus on sustainable growth`
 
 /**
- * 예산 추천 사용자 프롬프트 빌더
+ * 예산 추천 사용자 프롬프트 빌더 (API 인터페이스 호환)
  */
 export function buildBudgetRecommendationPrompt(
+  input: BuildBudgetRecommendationPromptInput | {
+    industry: Industry
+    businessScale: BusinessScale
+    averageOrderValue?: number
+    monthlyMarketingBudget?: number
+    marginRate?: number
+    existingCampaignData?: ExistingCampaignData
+    calculatedBudget: {
+      min: number
+      recommended: number
+      max: number
+    }
+    calculatedTargetROAS: number
+    calculatedTargetCPA: number
+  }
+): string {
+  // Normalize input to BuildBudgetRecommendationPromptInput
+  // Check if input has existingCampaignData property (from API) or existingData (from internal)
+  const hasExistingCampaignData = 'existingCampaignData' in input
+
+  type ApiInputType = {
+    industry: Industry
+    businessScale: BusinessScale
+    averageOrderValue?: number
+    monthlyMarketingBudget?: number
+    marginRate?: number
+    existingCampaignData?: ExistingCampaignData
+    calculatedBudget: { min: number; recommended: number; max: number }
+    calculatedTargetROAS: number
+    calculatedTargetCPA: number
+  }
+
+  const normalizedInput: BuildBudgetRecommendationPromptInput = {
+    industry: input.industry,
+    businessScale: input.businessScale,
+    averageOrderValue: input.averageOrderValue,
+    monthlyMarketingBudget: input.monthlyMarketingBudget,
+    marginRate: input.marginRate,
+    existingData: hasExistingCampaignData
+      ? (input as ApiInputType).existingCampaignData
+      : (input as BuildBudgetRecommendationPromptInput).existingData,
+    calculatedBudget: input.calculatedBudget,
+    calculatedTargetROAS: input.calculatedTargetROAS,
+    calculatedTargetCPA: input.calculatedTargetCPA,
+  }
+
+  return buildPromptInternal(normalizedInput)
+}
+
+/**
+ * Internal prompt builder
+ */
+function buildPromptInternal(
   input: BuildBudgetRecommendationPromptInput
 ): string {
   const {

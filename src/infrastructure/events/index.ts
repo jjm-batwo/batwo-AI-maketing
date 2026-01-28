@@ -1,0 +1,1 @@
+export { InMemoryEventDispatcher } from './InMemoryEventDispatcher'

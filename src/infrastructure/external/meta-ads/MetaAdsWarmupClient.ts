@@ -6,9 +6,11 @@
  */
 
 import { MetaAdsApiError } from '../errors'
+import { fetchWithTimeout } from '@lib/utils/timeout'
 
 const META_API_VERSION = 'v18.0'
 const META_API_BASE = `https://graph.facebook.com/${META_API_VERSION}`
+const META_API_TIMEOUT_MS = 30000 // 30 seconds for Meta API calls
 
 // 날짜 프리셋 목록 (7개)
 const DATE_PRESETS = [
@@ -88,7 +90,7 @@ export class MetaAdsWarmupClient {
       ...options.headers,
     }
 
-    const response = await fetch(url, { ...options, headers })
+    const response = await fetchWithTimeout(url, { ...options, headers }, META_API_TIMEOUT_MS)
     const data = await response.json()
 
     if (!response.ok || (data as MetaApiError).error) {

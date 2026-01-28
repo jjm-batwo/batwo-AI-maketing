@@ -7,9 +7,11 @@ import type {
 import type { CAPIEventFormat } from '@domain/entities/ConversionEvent'
 import { createHash } from 'crypto'
 import { MetaAdsApiError } from '../errors/ExternalServiceError'
+import { fetchWithTimeout } from '@lib/utils/timeout'
 
 const META_API_VERSION = 'v18.0'
 const META_API_BASE = `https://graph.facebook.com/${META_API_VERSION}`
+const META_API_TIMEOUT_MS = 30000 // 30 seconds for Meta API calls
 const MAX_BATCH_SIZE = 1000
 
 interface MetaApiError {
@@ -110,7 +112,7 @@ export class CAPIClient implements ICAPIService {
       ...options.headers,
     }
 
-    const response = await fetch(url, { ...options, headers })
+    const response = await fetchWithTimeout(url, { ...options, headers }, META_API_TIMEOUT_MS)
     const data = await response.json()
 
     if (!response.ok || (data as MetaApiError).error) {
