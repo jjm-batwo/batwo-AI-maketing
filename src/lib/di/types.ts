@@ -18,10 +18,12 @@ export const DI_TOKENS = {
   SubscriptionRepository: Symbol.for('SubscriptionRepository'),
   InvoiceRepository: Symbol.for('InvoiceRepository'),
   MetaPixelRepository: Symbol.for('MetaPixelRepository'),
+  AIFeedbackRepository: Symbol.for('AIFeedbackRepository'),
 
   // External Services
   MetaAdsService: Symbol.for('MetaAdsService'),
   AIService: Symbol.for('AIService'),
+  StreamingAIService: Symbol.for('StreamingAIService'),
 
   // Application Services
   QuotaService: Symbol.for('QuotaService'),
@@ -59,6 +61,18 @@ export const DI_TOKENS = {
   // Pixel Use Cases
   ListUserPixelsUseCase: Symbol.for('ListUserPixelsUseCase'),
   SelectPixelUseCase: Symbol.for('SelectPixelUseCase'),
+
+  // Payment
+  BillingKeyRepository: Symbol.for('BillingKeyRepository'),
+  PaymentLogRepository: Symbol.for('PaymentLogRepository'),
+  PaymentGateway: Symbol.for('PaymentGateway'),
+
+  // Payment Use Cases
+  IssueBillingKeyUseCase: Symbol.for('IssueBillingKeyUseCase'),
+  SubscribePlanUseCase: Symbol.for('SubscribePlanUseCase'),
+  CancelSubscriptionUseCase: Symbol.for('CancelSubscriptionUseCase'),
+  ChangePlanUseCase: Symbol.for('ChangePlanUseCase'),
+  GetPaymentHistoryUseCase: Symbol.for('GetPaymentHistoryUseCase'),
 } as const
 
 export type DIToken = (typeof DI_TOKENS)[keyof typeof DI_TOKENS]

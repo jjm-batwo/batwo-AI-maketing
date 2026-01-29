@@ -27,3 +27,9 @@ export type {
   InvoiceFilters,
   PaymentStats,
 } from './IInvoiceRepository'
+export type {
+  IAIFeedbackRepository,
+  AIFeedback,
+  CreateFeedbackInput,
+  FeedbackStats,
+} from './IAIFeedbackRepository'

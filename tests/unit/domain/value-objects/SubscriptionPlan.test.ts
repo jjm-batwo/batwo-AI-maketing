@@ -47,33 +47,33 @@ describe('SubscriptionPlan', () => {
       const config = PLAN_CONFIGS[SubscriptionPlan.FREE]
       expect(config.label).toBe('무료')
       expect(config.price).toBe(0)
-      expect(config.campaignsPerWeek).toBe(5)
-      expect(config.aiCopyPerDay).toBe(20)
-      expect(config.aiAnalysisPerWeek).toBe(5)
+      expect(config.campaignsPerWeek).toBe(3)
+      expect(config.aiCopyPerDay).toBe(5)
+      expect(config.aiAnalysisPerWeek).toBe(3)
     })
 
     it('should have config for STARTER plan', () => {
       const config = PLAN_CONFIGS[SubscriptionPlan.STARTER]
       expect(config.label).toBe('스타터')
-      expect(config.price).toBe(49000)
+      expect(config.price).toBe(39000)
       expect(config.campaignsPerWeek).toBe(20)
-      expect(config.aiCopyPerDay).toBe(100)
-      expect(config.aiAnalysisPerWeek).toBe(20)
+      expect(config.aiCopyPerDay).toBe(30)
+      expect(config.aiAnalysisPerWeek).toBe(15)
     })
 
     it('should have config for PRO plan', () => {
       const config = PLAN_CONFIGS[SubscriptionPlan.PRO]
       expect(config.label).toBe('프로')
-      expect(config.price).toBe(149000)
+      expect(config.price).toBe(99000)
       expect(config.campaignsPerWeek).toBe(-1) // unlimited
-      expect(config.aiCopyPerDay).toBe(-1) // unlimited
+      expect(config.aiCopyPerDay).toBe(100) // limited to 100/day
       expect(config.aiAnalysisPerWeek).toBe(-1) // unlimited
     })
 
     it('should have config for ENTERPRISE plan', () => {
       const config = PLAN_CONFIGS[SubscriptionPlan.ENTERPRISE]
       expect(config.label).toBe('엔터프라이즈')
-      expect(config.price).toBe(-1) // custom pricing
+      expect(config.price).toBe(199000)
       expect(config.campaignsPerWeek).toBe(-1) // unlimited
       expect(config.aiCopyPerDay).toBe(-1) // unlimited
       expect(config.aiAnalysisPerWeek).toBe(-1) // unlimited
@@ -85,7 +85,7 @@ describe('SubscriptionPlan', () => {
       it('should return config for given plan', () => {
         const config = getPlanConfig(SubscriptionPlan.STARTER)
         expect(config.label).toBe('스타터')
-        expect(config.price).toBe(49000)
+        expect(config.price).toBe(39000)
       })
     })
 
@@ -112,16 +112,16 @@ describe('SubscriptionPlan', () => {
         expect(getPlanPrice(SubscriptionPlan.FREE)).toBe(0)
       })
 
-      it('should return 49000 for STARTER', () => {
-        expect(getPlanPrice(SubscriptionPlan.STARTER)).toBe(49000)
+      it('should return 39000 for STARTER', () => {
+        expect(getPlanPrice(SubscriptionPlan.STARTER)).toBe(39000)
       })
 
-      it('should return 149000 for PRO', () => {
-        expect(getPlanPrice(SubscriptionPlan.PRO)).toBe(149000)
+      it('should return 99000 for PRO', () => {
+        expect(getPlanPrice(SubscriptionPlan.PRO)).toBe(99000)
       })
 
-      it('should return -1 (custom) for ENTERPRISE', () => {
-        expect(getPlanPrice(SubscriptionPlan.ENTERPRISE)).toBe(-1)
+      it('should return 199000 for ENTERPRISE', () => {
+        expect(getPlanPrice(SubscriptionPlan.ENTERPRISE)).toBe(199000)
       })
     })
 
@@ -129,14 +129,14 @@ describe('SubscriptionPlan', () => {
       it('should return features for given plan', () => {
         const features = getPlanFeatures(SubscriptionPlan.STARTER)
         expect(features).toContain('캠페인 20회/주')
-        expect(features).toContain('AI 카피 100회/일')
-        expect(features).toContain('AI 분석 20회/주')
+        expect(features).toContain('AI 카피 30회/일 (기본)')
+        expect(features).toContain('AI 분석 15회/주')
       })
 
       it('should return unlimited features for PRO plan', () => {
         const features = getPlanFeatures(SubscriptionPlan.PRO)
         expect(features).toContain('캠페인 무제한')
-        expect(features).toContain('AI 카피 무제한')
+        expect(features).toContain('AI 카피 100회/일 (기본)')
         expect(features).toContain('AI 분석 무제한')
       })
     })

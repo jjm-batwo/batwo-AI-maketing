@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
-import { getAIService, getQuotaService, getCopyLearningService } from '@/lib/di/container'
+import { getAIService, getQuotaService, getCopyLearningService, getStreamingAIService } from '@/lib/di/container'
 import type { GenerateAdCopyInput } from '@application/ports/IAIService'
 import type { Industry, CopyHookType } from '@infrastructure/external/openai/prompts/adCopyGeneration'
 import { INDUSTRY_BENCHMARKS } from '@infrastructure/external/openai/prompts/adCopyGeneration'
@@ -65,6 +65,9 @@ function isValidHook(hook: string): hook is CopyHookType {
 /**
  * POST /api/ai/copy
  * AI 광고 카피 생성
+ *
+ * Query Parameters:
+ * - stream=true: 스트리밍 응답 활성화 (SSE 형식)
  *
  * Body:
  * - productName: 제품명 (필수)
@@ -159,8 +162,7 @@ export async function POST(request: NextRequest) {
       generationHints = copyLearningService.getGenerationHints(body.industry, [], new Date())
     }
 
-    // Generate ad copy
-    const aiService = getAIService()
+    // Prepare input
     const input: GenerateAdCopyInput = {
       productName: body.productName,
       productDescription: body.productDescription,
@@ -171,6 +173,17 @@ export async function POST(request: NextRequest) {
       variantCount: body.variantCount ?? 3,
     }
 
+    // Check if streaming is requested
+    const url = new URL(request.url)
+    const shouldStream = url.searchParams.get('stream') === 'true'
+
+    if (shouldStream) {
+      // Return streaming response
+      return handleStreamingCopyResponse(user.id, input, rateLimitResult, quotaService)
+    }
+
+    // Non-streaming (backward compatible)
+    const aiService = getAIService()
     const variants = await aiService.generateAdCopy(input)
 
     // Log usage only on success
@@ -215,6 +228,63 @@ export async function POST(request: NextRequest) {
     console.error('Failed to generate ad copy:', error)
     return NextResponse.json({ message: 'AI 카피 생성에 실패했습니다' }, { status: 500 })
   }
+}
+
+/**
+ * 스트리밍 응답 처리
+ */
+async function handleStreamingCopyResponse(
+  userId: string,
+  input: GenerateAdCopyInput,
+  rateLimitResult: any,
+  quotaService: ReturnType<typeof getQuotaService>
+) {
+  const encoder = new TextEncoder()
+
+  const stream = new ReadableStream({
+    async start(controller) {
+      try {
+        const streamingService = getStreamingAIService()
+
+        // 스트리밍 시작
+        for await (const chunk of streamingService.streamAdCopy(input)) {
+          const data = `data: ${JSON.stringify(chunk)}\n\n`
+          controller.enqueue(encoder.encode(data))
+        }
+
+        // 완료 신호
+        controller.enqueue(encoder.encode('data: [DONE]\n\n'))
+
+        // 스트리밍 성공 후 쿼터 로깅
+        await quotaService.logUsage(userId, 'AI_COPY_GEN')
+
+        controller.close()
+      } catch (error) {
+        console.error('Streaming error:', error)
+        const errorChunk = {
+          type: 'error',
+          error: error instanceof Error ? error.message : 'Unknown error',
+        }
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(errorChunk)}\n\n`))
+        controller.close()
+      }
+    },
+  })
+
+  // Rate limit 헤더 추가
+  const headers = new Headers({
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+  })
+
+  if (rateLimitResult) {
+    headers.set('X-RateLimit-Limit', String(rateLimitResult.limit))
+    headers.set('X-RateLimit-Remaining', String(rateLimitResult.remaining))
+    headers.set('X-RateLimit-Reset', String(rateLimitResult.reset))
+  }
+
+  return new Response(stream, { headers })
 }
 
 /**

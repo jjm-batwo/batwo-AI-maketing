@@ -6,3 +6,9 @@ export * from './ForecastingService'
 export * from './TargetingRecommendationService'
 export * from './PortfolioOptimizationService'
 export * from './CompetitorAnalysisService'
+export * from './AIFallbackManager'
+export * from './BackgroundAnalysisService'
+
+// Contextual AI Suggestion System
+export * from './ContextDetectionEngine'
+export * from './AISuggestionTiming'

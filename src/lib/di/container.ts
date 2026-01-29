@@ -8,6 +8,7 @@
 
 import { env } from '@/lib/env'
 import { DI_TOKENS } from './types'
+import { SubscriptionPlan, getAIModelConfig } from '@domain/value-objects/SubscriptionPlan'
 
 // Repository interfaces
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
@@ -21,10 +22,15 @@ import type { IUserRepository } from '@domain/repositories/IUserRepository'
 import type { ISubscriptionRepository } from '@domain/repositories/ISubscriptionRepository'
 import type { IInvoiceRepository } from '@domain/repositories/IInvoiceRepository'
 import type { IMetaPixelRepository } from '@domain/repositories/IMetaPixelRepository'
+import type { IBillingKeyRepository } from '@domain/repositories/IBillingKeyRepository'
+import type { IPaymentLogRepository } from '@domain/repositories/IPaymentLogRepository'
+import type { IAIFeedbackRepository } from '@domain/repositories/IAIFeedbackRepository'
+import type { IPaymentGateway } from '@application/ports/IPaymentGateway'
 
 // Port interfaces
 import type { IMetaAdsService } from '@application/ports/IMetaAdsService'
 import type { IAIService } from '@application/ports/IAIService'
+import type { IStreamingAIService } from '@application/ports/IStreamingAIService'
 import type { IKnowledgeBaseService } from '@application/ports/IKnowledgeBaseService'
 import type { IResearchService } from '@application/ports/IResearchService'
 
@@ -40,8 +46,13 @@ import { PrismaUserRepository } from '@infrastructure/database/repositories/Pris
 import { PrismaSubscriptionRepository } from '@infrastructure/database/repositories/PrismaSubscriptionRepository'
 import { PrismaInvoiceRepository } from '@infrastructure/database/repositories/PrismaInvoiceRepository'
 import { PrismaMetaPixelRepository } from '@infrastructure/database/repositories/PrismaMetaPixelRepository'
+import { PrismaBillingKeyRepository } from '@infrastructure/database/repositories/PrismaBillingKeyRepository'
+import { PrismaPaymentLogRepository } from '@infrastructure/database/repositories/PrismaPaymentLogRepository'
+import { PrismaAIFeedbackRepository } from '@infrastructure/database/repositories/PrismaAIFeedbackRepository'
+import { TossPaymentsClient } from '@infrastructure/payment/TossPaymentsClient'
 import { MetaAdsClient } from '@infrastructure/external/meta-ads/MetaAdsClient'
 import { AIService } from '@infrastructure/external/openai/AIService'
+import { StreamingAIService } from '@infrastructure/external/openai/streaming/StreamingAIService'
 import { KnowledgeBaseService } from '@infrastructure/knowledge'
 import { MarketingIntelligenceService } from '@application/services/MarketingIntelligenceService'
 import { ScienceAIService } from '@infrastructure/external/openai/ScienceAIService'
@@ -72,6 +83,11 @@ import { GetDashboardKPIUseCase } from '@application/use-cases/kpi/GetDashboardK
 import { SyncMetaInsightsUseCase } from '@application/use-cases/kpi/SyncMetaInsightsUseCase'
 import { ListUserPixelsUseCase } from '@application/use-cases/pixel/ListUserPixelsUseCase'
 import { SelectPixelUseCase } from '@application/use-cases/pixel/SelectPixelUseCase'
+import { IssueBillingKeyUseCase } from '@application/use-cases/payment/IssueBillingKeyUseCase'
+import { SubscribePlanUseCase } from '@application/use-cases/payment/SubscribePlanUseCase'
+import { CancelSubscriptionUseCase } from '@application/use-cases/payment/CancelSubscriptionUseCase'
+import { ChangePlanUseCase } from '@application/use-cases/payment/ChangePlanUseCase'
+import { GetPaymentHistoryUseCase } from '@application/use-cases/payment/GetPaymentHistoryUseCase'
 
 import { prisma } from '@/lib/prisma'
 
@@ -167,6 +183,21 @@ container.registerSingleton<IMetaPixelRepository>(
   () => new PrismaMetaPixelRepository(prisma)
 )
 
+container.registerSingleton<IBillingKeyRepository>(
+  DI_TOKENS.BillingKeyRepository,
+  () => new PrismaBillingKeyRepository(prisma)
+)
+
+container.registerSingleton<IPaymentLogRepository>(
+  DI_TOKENS.PaymentLogRepository,
+  () => new PrismaPaymentLogRepository(prisma)
+)
+
+container.registerSingleton<IAIFeedbackRepository>(
+  DI_TOKENS.AIFeedbackRepository,
+  () => new PrismaAIFeedbackRepository(prisma)
+)
+
 // Register External Services (Singletons)
 container.registerSingleton<IMetaAdsService>(
   DI_TOKENS.MetaAdsService,
@@ -178,10 +209,24 @@ container.registerSingleton<IAIService>(
   () => new AIService(process.env.OPENAI_API_KEY || '', process.env.OPENAI_MODEL || 'gpt-4o-mini')
 )
 
+container.registerSingleton<IStreamingAIService>(
+  DI_TOKENS.StreamingAIService,
+  () => new StreamingAIService(process.env.OPENAI_MODEL || 'gpt-4o-mini')
+)
+
+container.registerSingleton<IPaymentGateway>(
+  DI_TOKENS.PaymentGateway,
+  () => new TossPaymentsClient()
+)
+
 // Register Application Services (Singletons)
 container.registerSingleton(
   DI_TOKENS.QuotaService,
-  () => new QuotaService(container.resolve(DI_TOKENS.UsageLogRepository))
+  () => new QuotaService(
+    container.resolve(DI_TOKENS.UsageLogRepository),
+    container.resolve(DI_TOKENS.UserRepository),
+    container.resolve(DI_TOKENS.SubscriptionRepository)
+  )
 )
 
 container.registerSingleton(
@@ -373,6 +418,52 @@ container.register(
   () => new SelectPixelUseCase(container.resolve(DI_TOKENS.MetaPixelRepository))
 )
 
+// Payment Use Cases
+container.register(
+  DI_TOKENS.IssueBillingKeyUseCase,
+  () => new IssueBillingKeyUseCase(
+    container.resolve(DI_TOKENS.BillingKeyRepository),
+    container.resolve(DI_TOKENS.PaymentGateway)
+  )
+)
+
+container.register(
+  DI_TOKENS.SubscribePlanUseCase,
+  () => new SubscribePlanUseCase(
+    container.resolve(DI_TOKENS.BillingKeyRepository),
+    container.resolve(DI_TOKENS.SubscriptionRepository),
+    container.resolve(DI_TOKENS.InvoiceRepository),
+    container.resolve(DI_TOKENS.PaymentLogRepository),
+    container.resolve(DI_TOKENS.PaymentGateway)
+  )
+)
+
+container.register(
+  DI_TOKENS.CancelSubscriptionUseCase,
+  () => new CancelSubscriptionUseCase(
+    container.resolve(DI_TOKENS.SubscriptionRepository),
+    container.resolve(DI_TOKENS.BillingKeyRepository)
+  )
+)
+
+container.register(
+  DI_TOKENS.ChangePlanUseCase,
+  () => new ChangePlanUseCase(
+    container.resolve(DI_TOKENS.SubscriptionRepository),
+    container.resolve(DI_TOKENS.BillingKeyRepository),
+    container.resolve(DI_TOKENS.InvoiceRepository),
+    container.resolve(DI_TOKENS.PaymentLogRepository),
+    container.resolve(DI_TOKENS.PaymentGateway)
+  )
+)
+
+container.register(
+  DI_TOKENS.GetPaymentHistoryUseCase,
+  () => new GetPaymentHistoryUseCase(
+    container.resolve(DI_TOKENS.PaymentLogRepository)
+  )
+)
+
 export { container, DI_TOKENS }
 
 // Convenience functions for resolving dependencies
@@ -426,6 +517,10 @@ export function getBudgetAlertRepository(): IBudgetAlertRepository {
 
 export function getAIService(): IAIService {
   return container.resolve(DI_TOKENS.AIService)
+}
+
+export function getStreamingAIService(): IStreamingAIService {
+  return container.resolve(DI_TOKENS.StreamingAIService)
 }
 
 export function getAnomalyDetectionService(): AnomalyDetectionService {
@@ -514,4 +609,57 @@ export function getScienceAIService(): IAIService {
 
 export function getResearchService(): IResearchService {
   return container.resolve(DI_TOKENS.ResearchService)
+}
+
+export function getBillingKeyRepository(): IBillingKeyRepository {
+  return container.resolve(DI_TOKENS.BillingKeyRepository)
+}
+
+export function getPaymentLogRepository(): IPaymentLogRepository {
+  return container.resolve(DI_TOKENS.PaymentLogRepository)
+}
+
+export function getPaymentGateway(): IPaymentGateway {
+  return container.resolve(DI_TOKENS.PaymentGateway)
+}
+
+export function getIssueBillingKeyUseCase(): IssueBillingKeyUseCase {
+  return container.resolve(DI_TOKENS.IssueBillingKeyUseCase)
+}
+
+export function getSubscribePlanUseCase(): SubscribePlanUseCase {
+  return container.resolve(DI_TOKENS.SubscribePlanUseCase)
+}
+
+export function getCancelSubscriptionUseCase(): CancelSubscriptionUseCase {
+  return container.resolve(DI_TOKENS.CancelSubscriptionUseCase)
+}
+
+export function getChangePlanUseCase(): ChangePlanUseCase {
+  return container.resolve(DI_TOKENS.ChangePlanUseCase)
+}
+
+export function getPaymentHistoryUseCase(): GetPaymentHistoryUseCase {
+  return container.resolve(DI_TOKENS.GetPaymentHistoryUseCase)
+}
+
+export function getAIFeedbackRepository(): IAIFeedbackRepository {
+  return container.resolve(DI_TOKENS.AIFeedbackRepository)
+}
+
+/**
+ * Get AIService configured for a specific subscription plan's copy model
+ */
+export function getAIServiceForPlan(plan: SubscriptionPlan): IAIService {
+  const modelConfig = getAIModelConfig(plan)
+  return new AIService(process.env.OPENAI_API_KEY || '', modelConfig.copyModel)
+}
+
+/**
+ * Get AIService configured for premium copy generation (gpt-4o)
+ */
+export function getPremiumAIService(plan: SubscriptionPlan): IAIService | null {
+  const modelConfig = getAIModelConfig(plan)
+  if (!modelConfig.premiumCopyModel) return null
+  return new AIService(process.env.OPENAI_API_KEY || '', modelConfig.premiumCopyModel)
 }

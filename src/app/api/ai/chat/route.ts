@@ -15,6 +15,7 @@ import { PrismaCampaignRepository } from '@infrastructure/database/repositories/
 import { PrismaReportRepository } from '@infrastructure/database/repositories/PrismaReportRepository'
 import { PrismaKPIRepository } from '@infrastructure/database/repositories/PrismaKPIRepository'
 import { AIService } from '@infrastructure/external/openai/AIService'
+import { StreamingAIService } from '@infrastructure/external/openai/streaming/StreamingAIService'
 import { prisma } from '@/lib/prisma'
 import { chatSchema, validateBody } from '@/lib/validations'
 import { checkRateLimit, getClientIp, addRateLimitHeaders, rateLimitExceededResponse } from '@/lib/middleware/rateLimit'
@@ -69,6 +70,9 @@ function getChatService(): ChatService {
 /**
  * POST /api/ai/chat
  * Send a message to the AI chatbot
+ *
+ * Query parameters:
+ * - stream=true: Enable streaming response (SSE format)
  */
 export async function POST(req: NextRequest) {
   try {
@@ -93,7 +97,16 @@ export async function POST(req: NextRequest) {
 
     const body = validation.data
 
-    // 4. ChatService 호출
+    // 4. 스트리밍 모드 확인
+    const url = new URL(req.url)
+    const shouldStream = url.searchParams.get('stream') === 'true'
+
+    if (shouldStream) {
+      // 스트리밍 응답
+      return handleStreamingResponse(user.id, body.message, body.conversationId, rateLimitResult)
+    }
+
+    // 5. 기존 비스트리밍 응답 (backward compatible)
     const service = getChatService()
     const response = await service.chat(
       user.id,
@@ -101,7 +114,7 @@ export async function POST(req: NextRequest) {
       body.conversationId
     )
 
-    // 5. 응답
+    // 6. 응답
     const responseData: ChatResponseData = {
       message: response.message,
       conversationId: response.conversationId,
@@ -127,6 +140,100 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     )
   }
+}
+
+/**
+ * 스트리밍 응답 처리
+ */
+async function handleStreamingResponse(
+  userId: string,
+  message: string,
+  conversationId: string | undefined,
+  rateLimitResult: any
+) {
+  const encoder = new TextEncoder()
+
+  const stream = new ReadableStream({
+    async start(controller) {
+      try {
+        // StreamingAIService 초기화
+        const streamingService = new StreamingAIService()
+        const chatService = getChatService()
+
+        // 컨텍스트 빌드
+        const context = await chatService.buildContext(userId)
+
+        // 시스템 프롬프트 생성 (ChatService의 private 메서드를 복제)
+        const campaignSummary = context.campaigns
+          .map(
+            (c) =>
+              `- ${c.name} (${c.status}): ROAS ${c.metrics.roas.toFixed(2)}x, 지출 ₩${c.metrics.spend.toLocaleString('ko-KR')}, 전환 ${c.metrics.conversions}개`
+          )
+          .join('\n')
+
+        const anomalySummary = context.recentAnomalies
+          .map(
+            (a) =>
+              `- ${a.campaignName}: ${a.metric} ${a.change > 0 ? '+' : ''}${a.change.toFixed(1)}x (${a.severity})`
+          )
+          .join('\n')
+
+        const systemPrompt = `당신은 한국 디지털 마케팅 전문 AI 어시스턴트입니다. 사용자의 Meta 광고 캠페인 성과를 분석하고, 실행 가능한 조언을 제공합니다.
+
+**현재 사용자 캠페인 현황:**
+${campaignSummary || '- 활성 캠페인 없음'}
+
+**최근 이상 징후:**
+${anomalySummary || '- 특이사항 없음'}
+
+**역할 및 원칙:**
+1. 사용자 데이터를 기반으로 구체적이고 맞춤화된 답변 제공
+2. 실행 가능한 액션 아이템 제시 (예: "XX 캠페인 예산 30% 증액")
+3. 명확하고 간결한 한국어 사용
+4. 근거 있는 권장사항 제공 (ROAS, CPA 등 수치 기반)
+5. 불확실한 경우 "추가 데이터가 필요합니다" 명시
+
+자연스러운 텍스트로 응답하세요.`
+
+        // 스트리밍 시작
+        for await (const chunk of streamingService.streamChatCompletion(
+          systemPrompt,
+          message,
+          { temperature: 0.6, maxTokens: 2000 }
+        )) {
+          const data = `data: ${JSON.stringify(chunk)}\n\n`
+          controller.enqueue(encoder.encode(data))
+        }
+
+        // 완료 신호
+        controller.enqueue(encoder.encode('data: [DONE]\n\n'))
+        controller.close()
+      } catch (error) {
+        console.error('Streaming error:', error)
+        const errorChunk = {
+          type: 'error',
+          error: error instanceof Error ? error.message : 'Unknown error',
+        }
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(errorChunk)}\n\n`))
+        controller.close()
+      }
+    },
+  })
+
+  // Rate limit 헤더 추가
+  const headers = new Headers({
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+  })
+
+  if (rateLimitResult) {
+    headers.set('X-RateLimit-Limit', String(rateLimitResult.limit))
+    headers.set('X-RateLimit-Remaining', String(rateLimitResult.remaining))
+    headers.set('X-RateLimit-Reset', String(rateLimitResult.reset))
+  }
+
+  return new Response(stream, { headers })
 }
 
 /**

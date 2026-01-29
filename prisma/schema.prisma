@@ -42,6 +42,9 @@ model User {
   metaAccount   MetaAdAccount?
   metaPixels    MetaPixel[]
   subscription  Subscription?
+  billingKeys   BillingKey[]
+  paymentLogs   PaymentLog[]
+  aiFeedback    AIFeedback[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
@@ -466,6 +469,25 @@ enum InvoiceStatus {
   PARTIALLY_REFUNDED
 }
 
+model BillingKey {
+  id              String   @id @default(cuid())
+  userId          String
+  billingKey      String   // AES-256-GCM encrypted
+  cardCompany     String?
+  cardNumber      String?  // masked card number
+  method          String   @default("CARD")
+  isActive        Boolean  @default(true)
+  authenticatedAt DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptions Subscription[]
+
+  @@index([userId])
+  @@map("billing_keys")
+}
+
 model Subscription {
   id                 String             @id @default(cuid())
   userId             String             @unique
@@ -478,6 +500,13 @@ model Subscription {
   invoices           Invoice[]
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
+  billingPeriod      String?            // MONTHLY | ANNUAL
+  billingKeyId       String?
+  nextBillingDate    DateTime?
+  tossCustomerKey    String?
+
+  billingKey  BillingKey?  @relation(fields: [billingKeyId], references: [id])
+  paymentLogs PaymentLog[]
 
   @@index([status])
   @@index([plan])
@@ -499,8 +528,67 @@ model Invoice {
   receiptUrl     String?       // 영수증 URL
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
+  paymentKey     String?       // Toss paymentKey
+  tossOrderId    String?       // Toss order ID
+
+  paymentLogs PaymentLog[]
 
   @@index([subscriptionId])
   @@index([status])
+  @@index([createdAt])
+}
+
+model PaymentLog {
+  id             String   @id @default(cuid())
+  userId         String
+  subscriptionId String?
+  invoiceId      String?
+  paymentKey     String?  @unique // Toss paymentKey
+  orderId        String   @unique // order ID
+  amount         Int
+  status         String   // READY, IN_PROGRESS, DONE, CANCELED, FAILED
+  method         String?  // CARD, BILLING
+  failReason     String?
+  receiptUrl     String?
+  rawResponse    Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id])
+  subscription Subscription? @relation(fields: [subscriptionId], references: [id])
+  invoice      Invoice?      @relation(fields: [invoiceId], references: [id])
+
+  @@index([userId])
+  @@index([subscriptionId])
+  @@map("payment_logs")
+}
+
+// ========================================
+// AI Feedback Tracking
+// ========================================
+
+model AIFeedback {
+  id           String   @id @default(cuid())
+  responseId   String   // AI response identifier
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Feedback data
+  rating       Int      // 1-5 stars
+  isHelpful    Boolean?
+  comment      String?  @db.Text
+
+  // Context
+  feature      String   // e.g., 'copy_generation', 'analysis', 'chat'
+  context      Json?    // Additional context data
+
+  // Response metadata
+  responseType String   // 'streaming' | 'standard'
+  modelUsed    String?
+
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([feature])
   @@index([createdAt])
 }
