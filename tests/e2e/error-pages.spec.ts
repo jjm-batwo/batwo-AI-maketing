@@ -6,6 +6,9 @@
 
 import { test, expect } from '@playwright/test'
 
+// 에러 페이지는 비인증 상태에서 테스트
+test.use({ storageState: { cookies: [], origins: [] } })
+
 test.describe('404 페이지', () => {
   test('존재하지 않는 페이지 접근 시 404 페이지가 표시되어야 함', async ({ page }) => {
     await page.goto('/this-page-does-not-exist-12345')

@@ -6,6 +6,9 @@
 
 import { test, expect } from '@playwright/test'
 
+// SEO 테스트는 공개 페이지이므로 비인증 상태 필요
+test.use({ storageState: { cookies: [], origins: [] } })
+
 test.describe('SEO 파일 접근성', () => {
   test('sitemap.xml이 접근 가능해야 함', async ({ request }) => {
     const response = await request.get('/sitemap.xml')
@@ -138,16 +141,31 @@ test.describe('메타데이터 검증', () => {
 
   test('홈페이지에 JSON-LD 구조화 데이터가 있어야 함', async ({ page }) => {
     await page.goto('/')
+    await page.waitForLoadState('domcontentloaded')
 
-    // JSON-LD script 태그 확인
-    const jsonLdScript = await page.locator('script[type="application/ld+json"]').textContent()
-    expect(jsonLdScript).toBeDefined()
+    // JSON-LD 스크립트들 찾기
+    const jsonLdScripts = page.locator('script[type="application/ld+json"]')
+    await expect(jsonLdScripts.first()).toBeAttached({ timeout: 5000 })
 
-    // JSON 파싱 및 검증
-    const jsonLd = JSON.parse(jsonLdScript!)
-    expect(jsonLd['@context']).toBe('https://schema.org')
-    expect(jsonLd['@type']).toBeDefined()
-    expect(jsonLd.name).toBeDefined()
+    // Organization 또는 WebSite 타입의 JSON-LD 찾기 (FAQPage 제외)
+    const count = await jsonLdScripts.count()
+    let foundOrganization = false
+
+    for (let i = 0; i < count; i++) {
+      const content = await jsonLdScripts.nth(i).textContent()
+      if (!content) continue
+
+      const jsonLd = JSON.parse(content)
+      if (jsonLd['@type'] === 'Organization' || jsonLd['@type'] === 'WebSite') {
+        expect(jsonLd['@context']).toBe('https://schema.org')
+        expect(jsonLd['@type']).toBeDefined()
+        expect(jsonLd.name).toBeDefined()
+        foundOrganization = true
+        break
+      }
+    }
+
+    expect(foundOrganization).toBe(true)
   })
 
   test('홈페이지에 canonical URL이 있어야 함', async ({ page }) => {
@@ -181,8 +199,13 @@ test.describe('OG 이미지 접근성', () => {
     const ogImage = await page.locator('meta[property="og:image"]').getAttribute('content')
     expect(ogImage).toBeDefined()
 
+    // 절대 URL을 상대 경로로 변환 (테스트 환경에서는 localhost 사용)
+    const imageUrl = ogImage?.startsWith('http')
+      ? new URL(ogImage).pathname
+      : ogImage
+
     // 이미지 접근 가능 확인
-    const imageResponse = await request.get(ogImage!)
+    const imageResponse = await request.get(imageUrl!)
     expect(imageResponse.status()).toBe(200)
     expect(imageResponse.headers()['content-type']).toMatch(/image\/(png|jpeg|jpg|webp)/)
   })

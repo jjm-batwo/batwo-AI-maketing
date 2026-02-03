@@ -6,6 +6,9 @@
 
 import { test, expect } from '@playwright/test'
 
+// 랜딩 페이지 기반 테스트이므로 비인증 상태 필요
+test.use({ storageState: { cookies: [], origins: [] } })
+
 test.describe('Legal Pages', () => {
   test('should navigate to terms page from footer', async ({ page }) => {
     await page.goto('/')

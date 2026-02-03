@@ -37,20 +37,17 @@ export const authFixture: AuthFixture = {
    * Note: Mock 인증 세션을 사용하는 경우 global-setup에서 이미 설정됨
    */
   async loginAsUser(page: Page, email = 'test@example.com', password = 'password123') {
-    // Mock 인증 API를 통한 세션 생성
-    const baseURL = 'http://localhost:3000' // Use configured baseURL from playwright.config.ts
+    // mock-auth API로 직접 네비게이션 - 브라우저가 Set-Cookie 헤더를 캡처함
+    const response = await page.goto('/api/test/mock-auth')
 
-    try {
-      const response = await page.goto(`${baseURL}/api/test/mock-auth`)
-      if (response && response.ok()) {
-        console.log('[Auth Fixture] Mock session created successfully')
-        // 홈페이지로 이동 (인증된 사용자는 /campaigns로 리다이렉트됨)
-        await page.goto('/')
-        return
-      }
-    } catch {
-      console.warn('[Auth Fixture] Mock auth API failed, falling back to manual login')
+    if (response?.ok()) {
+      console.log('[Auth Fixture] Mock session created successfully')
+      // 이제 대시보드로 이동 - 쿠키가 설정됨
+      await page.goto('/dashboard')
+      return
     }
+
+    console.warn('[Auth Fixture] Mock auth failed, session not established')
 
     // Fallback: 수동 로그인 (실제 로그인 폼이 있는 경우)
     await page.goto('/login')
@@ -106,10 +103,10 @@ export const authFixture: AuthFixture = {
    */
   async logout(page: Page) {
     // Mock 인증 세션 삭제
-    const baseURL = 'http://localhost:3000' // Use configured baseURL from playwright.config.ts
+    const baseURL = (page.context() as any).baseURL || 'http://localhost:3000'
 
     try {
-      await page.request.delete(`${baseURL}/api/test/mock-auth`)
+      await page.context().request.delete(`${baseURL}/api/test/mock-auth`)
       console.log('[Auth Fixture] Mock session deleted')
     } catch {
       console.warn('[Auth Fixture] Failed to delete mock session via API')

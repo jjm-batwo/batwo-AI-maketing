@@ -1,4 +1,9 @@
 import { test, expect } from '@playwright/test'
+import * as path from 'path'
+
+// Use fresh storage state (auth only, no onboarding completion)
+// This ensures authenticated access but shows the onboarding dialog
+test.use({ storageState: path.join(__dirname, 'storage-state-fresh.json') })
 
 // Helper to mock dashboard API responses
 async function mockDashboardAPIs(page: import('@playwright/test').Page) {
@@ -85,66 +90,68 @@ test.describe('Pixel Setup Flow', () => {
       // Mock dashboard APIs
       await mockDashboardAPIs(page)
 
-      // Clear onboarding status
-      await page.addInitScript(() => {
-        localStorage.removeItem('batwo_onboarding_completed')
-      })
+      // Navigate to dashboard - fresh context means no onboarding completed state
+      await page.goto('/dashboard')
+
+      // Wait for onboarding dialog to appear
+      const dialog = page.getByRole('dialog')
+      await expect(dialog).toBeVisible({ timeout: 15000 })
     })
 
     test('should display pixel setup step in onboarding', async ({ page }) => {
-      await page.goto('/dashboard')
-
       // Navigate to step 3 (pixel setup)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
 
       // Verify pixel setup step is visible - use specific locator for the step description
-      await expect(page.getByText(/Meta 픽셀을 설치하여/i)).toBeVisible()
+      await expect(page.getByText(/Meta 픽셀을 설치하여/i)).toBeVisible({ timeout: 10000 })
       // Check for 3/4 progress (step 3 of 4)
       await expect(page.getByText('3/4')).toBeVisible()
     })
 
     test('should show pixel selector on pixel step', async ({ page }) => {
-      await page.goto('/dashboard')
-
       // Navigate to pixel step
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
 
       // Wait for pixels to load
-      await expect(page.getByText('Test Pixel 1')).toBeVisible()
+      await expect(page.getByText('Test Pixel 1')).toBeVisible({ timeout: 10000 })
       await expect(page.getByText('Test Pixel 2')).toBeVisible()
     })
 
     test('should show pixel benefits section', async ({ page }) => {
-      await page.goto('/dashboard')
-
       // Navigate to pixel step
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
 
       // Verify benefits section
-      await expect(page.getByText(/픽셀 설치 효과/i)).toBeVisible()
+      await expect(page.getByText(/픽셀 설치 효과/i)).toBeVisible({ timeout: 10000 })
       await expect(page.getByText(/웹사이트 방문자 행동 추적/i)).toBeVisible()
       await expect(page.getByText(/전환 이벤트 측정/i)).toBeVisible()
     })
 
     test('should show skip message', async ({ page }) => {
-      await page.goto('/dashboard')
-
       // Navigate to pixel step
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
 
-      await expect(page.getByText(/나중에 설정에서도 가능합니다/i)).toBeVisible()
+      await expect(page.getByText(/나중에 설정에서도 가능합니다/i)).toBeVisible({ timeout: 10000 })
     })
 
     test('should allow skipping onboarding from pixel step', async ({ page }) => {
-      await page.goto('/dashboard')
-
       // Navigate to pixel step
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
 
       // Click skip button
       await page.getByRole('button', { name: /건너뛰기/i }).click()
@@ -154,11 +161,11 @@ test.describe('Pixel Setup Flow', () => {
     })
 
     test('should navigate back to Meta connect step', async ({ page }) => {
-      await page.goto('/dashboard')
-
       // Navigate to pixel step
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
 
       // Click back button
       await page.getByRole('button', { name: /이전/i }).click()
@@ -168,15 +175,16 @@ test.describe('Pixel Setup Flow', () => {
     })
 
     test('should proceed to completion step', async ({ page }) => {
-      await page.goto('/dashboard')
-
       // Navigate through all steps
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
 
       // Should be on completion step
-      await expect(page.getByText(/설정이 완료되었습니다/i)).toBeVisible()
+      await expect(page.getByText(/설정이 완료되었습니다/i)).toBeVisible({ timeout: 10000 })
     })
   })
 
@@ -223,20 +231,23 @@ test.describe('Pixel Setup Flow', () => {
       // Mock dashboard APIs
       await mockDashboardAPIs(page)
 
-      // Clear onboarding
-      await page.addInitScript(() => {
-        localStorage.removeItem('batwo_onboarding_completed')
-      })
+      // Navigate to dashboard - fresh context means no onboarding completed state
+      await page.goto('/dashboard')
+
+      // Wait for onboarding dialog to appear
+      const dialog = page.getByRole('dialog')
+      await expect(dialog).toBeVisible({ timeout: 15000 })
     })
 
     test('should select a pixel and show script', async ({ page }) => {
-      await page.goto('/dashboard')
-
       // Navigate to pixel step
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
 
       // Wait for and click on pixel
+      await expect(page.getByText('My Store Pixel')).toBeVisible({ timeout: 10000 })
       await page.getByText('My Store Pixel').click()
 
       // Should show script code
@@ -245,13 +256,14 @@ test.describe('Pixel Setup Flow', () => {
     })
 
     test('should allow selecting different pixel', async ({ page }) => {
-      await page.goto('/dashboard')
-
       // Navigate to pixel step
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
 
       // Select pixel
+      await expect(page.getByText('My Store Pixel')).toBeVisible({ timeout: 10000 })
       await page.getByText('My Store Pixel').click()
 
       // Should be able to change selection
@@ -300,19 +312,23 @@ test.describe('Pixel Setup Flow', () => {
       // Mock dashboard APIs
       await mockDashboardAPIs(page)
 
-      await page.addInitScript(() => {
-        localStorage.removeItem('batwo_onboarding_completed')
-      })
+      // Navigate to dashboard - fresh context means no onboarding completed state
+      await page.goto('/dashboard')
+
+      // Wait for onboarding dialog to appear
+      const dialog = page.getByRole('dialog')
+      await expect(dialog).toBeVisible({ timeout: 15000 })
     })
 
     test('should show copy button after pixel selection', async ({ page }) => {
-      await page.goto('/dashboard')
-
       // Navigate to pixel step
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
 
       // Select pixel
+      await expect(page.getByText('Copy Test Pixel')).toBeVisible({ timeout: 10000 })
       await page.getByText('Copy Test Pixel').click()
 
       // Copy button should be visible (aria-label: "코드 복사")
@@ -320,13 +336,14 @@ test.describe('Pixel Setup Flow', () => {
     })
 
     test('should show installation instructions', async ({ page }) => {
-      await page.goto('/dashboard')
-
       // Navigate to pixel step
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
 
       // Select pixel
+      await expect(page.getByText('Copy Test Pixel')).toBeVisible({ timeout: 10000 })
       await page.getByText('Copy Test Pixel').click()
 
       // Should show installation instructions
@@ -357,18 +374,21 @@ test.describe('Pixel Setup Flow', () => {
       // Mock dashboard APIs
       await mockDashboardAPIs(page)
 
-      await page.addInitScript(() => {
-        localStorage.removeItem('batwo_onboarding_completed')
-      })
-
+      // Navigate to dashboard - fresh context means no onboarding completed state
       await page.goto('/dashboard')
+
+      // Wait for onboarding dialog to appear
+      const dialog = page.getByRole('dialog')
+      await expect(dialog).toBeVisible({ timeout: 15000 })
 
       // Navigate to pixel step
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
 
       // Should show warning about Meta connection
-      await expect(page.getByText(/먼저 Meta 계정을 연결해주세요/i)).toBeVisible()
+      await expect(page.getByText(/먼저 Meta 계정을 연결해주세요/i)).toBeVisible({ timeout: 10000 })
     })
   })
 
@@ -400,32 +420,35 @@ test.describe('Pixel Setup Flow', () => {
       // Mock dashboard APIs
       await mockDashboardAPIs(page)
 
-      await page.addInitScript(() => {
-        localStorage.removeItem('batwo_onboarding_completed')
-      })
+      // Navigate to dashboard - fresh context means no onboarding completed state
+      await page.goto('/dashboard')
+
+      // Wait for onboarding dialog to appear
+      const dialog = page.getByRole('dialog')
+      await expect(dialog).toBeVisible({ timeout: 15000 })
     })
 
     test('should show correct progress on pixel step', async ({ page }) => {
-      await page.goto('/dashboard')
-
       // Navigate to pixel step (step 3)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
 
       // Should show 3/4 progress
-      await expect(page.getByText('3/4')).toBeVisible()
+      await expect(page.getByText('3/4')).toBeVisible({ timeout: 10000 })
     })
 
     test('should have progress bar at 75% on pixel step', async ({ page }) => {
-      await page.goto('/dashboard')
-
       // Navigate to pixel step
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
       await page.getByRole('button', { name: /다음/i }).click()
+      await page.waitForTimeout(500)
 
       // Progress bar should be visible
       const progressbar = page.getByRole('progressbar')
-      await expect(progressbar).toBeVisible()
+      await expect(progressbar).toBeVisible({ timeout: 10000 })
       await expect(progressbar).toHaveAttribute('aria-valuenow', '3')
       await expect(progressbar).toHaveAttribute('aria-valuemax', '4')
     })

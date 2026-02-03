@@ -12,6 +12,9 @@
 
 import { test, expect } from '@playwright/test'
 
+// 보안 헤더 테스트는 공개 페이지에서 실행
+test.use({ storageState: { cookies: [], origins: [] } })
+
 test.describe('보안 헤더 검증', () => {
   test('HSTS 헤더가 설정되어야 함', async ({ request }) => {
     const response = await request.get('/')

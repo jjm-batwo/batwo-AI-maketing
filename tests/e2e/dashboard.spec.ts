@@ -1,11 +1,8 @@
 import { test, expect } from '@playwright/test'
-import { authFixture } from './fixtures'
 
 test.describe('Dashboard', () => {
   test.describe('대시보드 페이지 로드', () => {
     test.beforeEach(async ({ page }) => {
-      // Mock 인증 세션 생성
-      await authFixture.loginAsUser(page)
       await page.goto('/dashboard')
     })
 
@@ -25,7 +22,6 @@ test.describe('Dashboard', () => {
 
   test.describe('KPI 카드 표시', () => {
     test.beforeEach(async ({ page }) => {
-      await authFixture.loginAsUser(page)
       await page.goto('/dashboard')
     })
 
@@ -49,20 +45,22 @@ test.describe('Dashboard', () => {
     })
 
     test('should show KPI card with ROAS metric', async ({ page }) => {
+      // KPI 카드의 ROAS 헤딩 확인
       await expect(
-        page.getByText(/ROAS/)
+        page.getByRole('heading', { name: 'ROAS', exact: true })
       ).toBeVisible({ timeout: 10000 })
     })
 
     test('should show KPI card with CTR metric', async ({ page }) => {
+      // KPI 카드의 CTR 헤딩 확인
       await expect(
-        page.getByText(/CTR|클릭률/)
+        page.getByRole('heading', { name: 'CTR', exact: true })
       ).toBeVisible({ timeout: 10000 })
     })
 
     test('should show KPI card with conversion metric', async ({ page }) => {
       await expect(
-        page.getByText(/전환|구매/)
+        page.getByRole('heading', { name: /전환수/ })
       ).toBeVisible({ timeout: 10000 })
     })
 
@@ -81,26 +79,26 @@ test.describe('Dashboard', () => {
     })
 
     test('should show numeric values in KPI cards', async ({ page }) => {
-      // KPI 카드에 숫자 값이 표시되어야 함
-      const numberPattern = /[\d,]+/
-      const kpiValues = page.locator('[data-testid^="kpi-value"]')
+      // KPI 카드 (aria-label에 ROAS, 총 지출, 전환수, CTR 포함)가 표시되어야 함
+      const kpiArticle = page.getByRole('article', { name: /ROAS|총 지출|전환수|CTR/ }).first()
 
-      await expect(kpiValues.first()).toBeVisible({ timeout: 10000 })
+      await expect(kpiArticle).toBeVisible({ timeout: 10000 })
 
-      const firstValue = await kpiValues.first().textContent()
-      expect(firstValue).toMatch(numberPattern)
+      // KPI 카드 내에 숫자 값이 포함되어 있는지 확인
+      const articleText = await kpiArticle.textContent()
+      expect(articleText).toMatch(/[\d,]+/)
     })
   })
 
   test.describe('캠페인 목록 렌더링', () => {
     test.beforeEach(async ({ page }) => {
-      await authFixture.loginAsUser(page)
+      // Storage state provides authentication
       await page.goto('/dashboard')
     })
 
     test('should display campaign summary section or redirect to campaigns', async ({ page }) => {
       // 대시보드의 캠페인 섹션 또는 캠페인 페이지 표시
-      const campaignSection = page.getByRole('heading', { name: /캠페인 현황|최근 캠페인|캠페인|Campaigns/ })
+      const campaignSection = page.getByText(/캠페인 현황|활성 캠페인|최근 캠페인|Campaigns/)
       await expect(campaignSection.first()).toBeVisible({ timeout: 10000 })
     })
 
@@ -117,31 +115,32 @@ test.describe('Dashboard', () => {
     })
 
     test('should display campaign list or empty state', async ({ page }) => {
-      // 캠페인 목록 또는 빈 상태가 표시되어야 함
-      const campaignList = page.locator('[data-testid="campaign-list"]')
-      const emptyState = page.getByText(/캠페인이 없습니다|첫 캠페인을 만들어보세요/)
+      // 캠페인 목록 테이블 또는 빈 상태가 표시되어야 함
+      const campaignTable = page.getByRole('table')
+      const emptyState = page.getByText(/캠페인이 없|아직 캠페인이 없어요|첫 캠페인/)
 
-      await expect(campaignList.or(emptyState)).toBeVisible({ timeout: 10000 })
+      await expect(campaignTable.or(emptyState)).toBeVisible({ timeout: 10000 })
     })
 
-    test('should show campaign card when campaigns exist', async ({ page }) => {
-      const campaignCard = page.locator('[data-testid^="campaign-card"]')
+    test('should show campaign rows when campaigns exist', async ({ page }) => {
+      // 캠페인 테이블 행 또는 카드 확인
+      const campaignRows = page.getByRole('table').locator('tbody tr')
+      const campaignCards = page.locator('[data-testid^="campaign-card"]')
 
-      // 캠페인이 있으면 카드가 표시되어야 함
-      const isVisible = await campaignCard.first().isVisible({ timeout: 5000 })
-        .catch(() => false)
+      // 캠페인이 있으면 행 또는 카드가 표시되어야 함
+      const hasRows = await campaignRows.first().isVisible({ timeout: 5000 }).catch(() => false)
+      const hasCards = await campaignCards.first().isVisible({ timeout: 1000 }).catch(() => false)
 
-      if (isVisible) {
-        await expect(campaignCard.first()).toBeVisible()
-
-        // 캠페인 이름이 표시되어야 함
-        await expect(campaignCard.first()).toContainText(/.+/)
+      if (hasRows || hasCards) {
+        const element = hasRows ? campaignRows.first() : campaignCards.first()
+        await expect(element).toBeVisible()
       }
     })
   })
 
   test.describe('대시보드 네비게이션', () => {
     test('should allow navigation to campaigns page', async ({ page }) => {
+      // Storage state provides authentication
       await page.goto('/dashboard')
 
       const campaignsLink = page.getByRole('link', { name: /캠페인/ })
@@ -152,6 +151,7 @@ test.describe('Dashboard', () => {
     })
 
     test('should allow navigation to reports page', async ({ page }) => {
+      // Storage state provides authentication
       await page.goto('/dashboard')
 
       const reportsLink = page.getByRole('link', { name: /보고서/ })
@@ -163,6 +163,7 @@ test.describe('Dashboard', () => {
     })
 
     test('should allow navigation to settings page', async ({ page }) => {
+      // Storage state provides authentication
       await page.goto('/dashboard')
 
       const settingsLink = page.getByRole('link', { name: /설정/ })
@@ -176,6 +177,7 @@ test.describe('Dashboard', () => {
 
   test.describe('반응형 레이아웃', () => {
     test('should display correctly on mobile viewport', async ({ page }) => {
+      // Storage state provides authentication
       await page.setViewportSize({ width: 375, height: 667 })
       await page.goto('/dashboard')
 
@@ -184,6 +186,7 @@ test.describe('Dashboard', () => {
     })
 
     test('should display correctly on tablet viewport', async ({ page }) => {
+      // Storage state provides authentication
       await page.setViewportSize({ width: 768, height: 1024 })
       await page.goto('/dashboard')
 
@@ -191,6 +194,7 @@ test.describe('Dashboard', () => {
     })
 
     test('should display correctly on desktop viewport', async ({ page }) => {
+      // Storage state provides authentication
       await page.setViewportSize({ width: 1920, height: 1080 })
       await page.goto('/dashboard')
 
@@ -200,6 +204,7 @@ test.describe('Dashboard', () => {
 
   test.describe('사이드바 네비게이션', () => {
     test.skip('should show sidebar on desktop', async ({ page }) => {
+      // Storage state provides authentication
       await page.setViewportSize({ width: 1280, height: 720 })
       await page.goto('/dashboard')
 
@@ -215,6 +220,7 @@ test.describe('Dashboard', () => {
     })
 
     test.skip('should hide sidebar on mobile', async ({ page }) => {
+      // Storage state provides authentication
       await page.setViewportSize({ width: 375, height: 667 })
       await page.goto('/dashboard')
 

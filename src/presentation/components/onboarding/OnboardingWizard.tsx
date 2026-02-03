@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -29,12 +28,14 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     prevStep,
     completeOnboarding,
     skipOnboarding,
-    checkOnboardingStatus,
+    _hasHydrated,
   } = useOnboardingStore()
 
-  useEffect(() => {
-    checkOnboardingStatus()
-  }, [checkOnboardingStatus])
+  // Wait for Zustand hydration before rendering
+  // This prevents the dialog from flashing open before localStorage is read
+  if (!_hasHydrated) {
+    return null
+  }
 
   if (isCompleted) {
     return null
