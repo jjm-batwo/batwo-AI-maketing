@@ -1,0 +1,353 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "openMenu": "Open menu",
+    "user": "User"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "campaigns": "Campaigns",
+    "reports": "Reports",
+    "settings": "Settings",
+    "help": "Help",
+    "logout": "Log out",
+    "mainNav": "Main navigation",
+    "mainMenu": "Main menu",
+    "goToHome": "Go to Batwo homepage",
+    "goToPage": "Go to {page}",
+    "goToHelp": "Go to Help",
+    "currentPage": "(current page)",
+    "betaVersion": "Beta version"
+  },
+  "brand": {
+    "name": "Batwo",
+    "tagline": "AI Marketing Solution"
+  },
+  "login": {
+    "title": "Sign in to Batwo",
+    "subtitle": "Access all features of our AI marketing solution",
+    "continueWith": {
+      "google": "Continue with Google",
+      "kakao": "Continue with Kakao",
+      "meta": "Continue with Meta",
+      "metaConnected": "Continue with Meta (Connected)"
+    },
+    "facebookConnected": "Already logged in to Facebook",
+    "devMode": "Dev mode: Meta login is restricted to test users",
+    "termsPrefix": "By signing in, you agree to Batwo's",
+    "termsSuffix": ".",
+    "termsAnd": "and",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "errors": {
+      "Configuration": "Server configuration error. Please contact administrator.",
+      "AccessDenied": "Access denied. Please check your permissions.",
+      "Verification": "Verification link has expired or has already been used.",
+      "OAuthSignin": "Error occurred while starting OAuth login.",
+      "OAuthCallback": "Error occurred during OAuth authentication.",
+      "OAuthCreateAccount": "Error occurred while creating account.",
+      "EmailCreateAccount": "Error occurred while creating email account.",
+      "Callback": "Error occurred during authentication callback.",
+      "OAuthAccountNotLinked": "This email is already registered with another method. Please use your existing login method.",
+      "EmailSignin": "Error occurred while sending email.",
+      "CredentialsSignin": "Invalid email or password.",
+      "SessionRequired": "Login required.",
+      "invalid_scope": "Meta app permission settings required. Please contact administrator.",
+      "invalid_redirect_uri": "OAuth redirect URL is not registered.",
+      "access_denied": "Meta login was denied. Please try again.",
+      "Default": "Error occurred during login. Please try again.",
+      "generic": "Error occurred during login"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Check your ad performance in {realtime}",
+    "realtime": "real-time",
+    "errorTitle": "Failed to load data",
+    "sync": "Sync",
+    "syncing": "Syncing...",
+    "syncSuccess": "Sync completed",
+    "syncError": "Sync failed",
+    "kpi": {
+      "roas": "ROAS",
+      "totalSpend": "Total Spend",
+      "conversions": "Conversions",
+      "ctr": "CTR"
+    },
+    "charts": {
+      "spendTrend": "Spend Trend",
+      "roasTrend": "ROAS Trend"
+    },
+    "activeCampaigns": "Active Campaigns",
+    "period": {
+      "7d": "7 days",
+      "30d": "30 days",
+      "90d": "90 days"
+    }
+  },
+  "campaigns": {
+    "title": "Campaigns",
+    "subtitle": "Manage all your advertising campaigns",
+    "newCampaign": "Create New Campaign",
+    "searchPlaceholder": "Search by campaign name...",
+    "status": {
+      "label": "Status",
+      "all": "All Status",
+      "active": "Active",
+      "paused": "Paused",
+      "draft": "Draft",
+      "completed": "Completed"
+    },
+    "sort": {
+      "label": "Sort",
+      "createdAt": "Newest",
+      "name": "Name",
+      "spend": "Spend",
+      "roas": "ROAS"
+    },
+    "errorLoad": "Failed to load campaigns",
+    "filter": "Filter",
+    "newCampaignShort": "New Campaign",
+    "remaining": "{count} remaining",
+    "empty": {
+      "title": "No campaigns yet",
+      "description": "Create your first campaign to start marketing",
+      "button": "Create First Campaign"
+    }
+  },
+  "metaConnect": {
+    "title": "Connect Meta Ad Account",
+    "selectTitle": "Select Meta Ad Account",
+    "cardTitle": "Meta Ad Account",
+    "cardDescription": "Connect your Meta (Facebook/Instagram) ad account to manage campaigns",
+    "whyConnect": {
+      "title": "Why connect your Meta account?",
+      "description": "Connecting enables powerful AI-driven marketing features",
+      "permissions": {
+        "adsRead": {
+          "title": "View Ad Performance",
+          "description": "Access real-time campaign metrics including ROAS, CTR, and conversions"
+        },
+        "adsManagement": {
+          "title": "Optimize Campaigns",
+          "description": "Receive AI-powered recommendations to improve ad performance"
+        },
+        "businessManagement": {
+          "title": "Multi-Account Management",
+          "description": "Manage multiple ad accounts from a single dashboard"
+        },
+        "pagesAccess": {
+          "title": "Page Insights",
+          "description": "Analyze engagement data from your Facebook and Instagram pages"
+        }
+      }
+    },
+    "selectCardTitle": "Select Ad Account",
+    "selectCardDescription": "Multiple ad accounts found. Select an account to connect.",
+    "successMessage": "Meta ad account connected successfully!",
+    "noAccount": "No Meta ad account connected",
+    "accountId": "Account ID",
+    "connectedDate": "Connected",
+    "connectButton": "Connect Meta Account",
+    "connecting": "Connecting...",
+    "disconnectButton": "Disconnect",
+    "disconnecting": "Disconnecting...",
+    "disconnectConfirm": "Are you sure you want to disconnect your Meta ad account?",
+    "syncButton": "Sync Campaigns",
+    "syncing": "Syncing...",
+    "syncComplete": "Sync complete: {created} created, {updated} updated, {archived} archived",
+    "syncError": "Failed to sync campaigns",
+    "selectButton": "Connect Selected Account",
+    "selecting": "Selecting...",
+    "selectNote": "Manage ad campaigns with the selected account",
+    "connectNote": "Meta ad management permissions will be requested",
+    "loadError": "Failed to load account list",
+    "selectError": "Failed to select account",
+    "syncSuccess": "Sync complete: {created} created, {updated} updated, {archived} archived",
+    "errors": {
+      "fetchAccountsFailed": "Failed to load account list",
+      "syncFailed": "Failed to sync campaigns",
+      "syncError": "Error occurred during campaign sync",
+      "selectFailed": "Failed to select account",
+      "selectError": "Error occurred during account selection"
+    },
+    "sessionExpired": {
+      "title": "Session Expired",
+      "description": "Your session has expired for security. Please reconnect.",
+      "reconnect": "Reconnect"
+    },
+    "features": {
+      "title": "Available Features After Connection",
+      "realTimeData": "Real-time campaign performance data",
+      "kpiDashboard": "Auto-updating KPI dashboard",
+      "aiOptimization": "AI-powered campaign optimization suggestions",
+      "weeklyReport": "Automated weekly reports"
+    },
+    "notConnected": {
+      "title": "Connect Your Meta Account",
+      "description": "To view campaign data, please connect your Meta ad account first.",
+      "dashboardDescription": "Connect your Meta account to see real-time KPIs and AI insights on your dashboard.",
+      "button": "Connect Meta Account"
+    }
+  },
+  "header": {
+    "userMenu": "User menu",
+    "campaign": "Campaign",
+    "aiCopy": "AI Copy",
+    "today": "Today"
+  },
+  "aiInsights": {
+    "title": "AI Insights",
+    "empty": "AI will provide insights once campaign data is collected.",
+    "insights": {
+      "roasOpportunity": {
+        "title": "ROAS Improvement Opportunity",
+        "description": "Campaign A's weekend performance is 32% higher than weekdays. Increasing weekend budget by 15% could raise overall ROAS by ~0.3x.",
+        "action": "Adjust Budget"
+      },
+      "budgetWarning": {
+        "title": "Budget Depletion Warning",
+        "description": "At the current spend rate, Campaign B's daily budget will be depleted around 3 PM. Consider increasing the budget.",
+        "action": "Check Budget"
+      },
+      "targetingTip": {
+        "title": "Targeting Optimization Suggestion",
+        "description": "Conversion rate for women aged 25-34 is 2.1x higher than other groups. We recommend increasing bids for this target."
+      },
+      "weeklySuccess": {
+        "title": "Excellent Performance This Week",
+        "description": "CTR increased by 18% compared to last week. The new creative strategy is proving effective."
+      }
+    }
+  },
+  "campaignSummary": {
+    "title": "Campaign Status",
+    "viewAll": "View All",
+    "columns": {
+      "name": "Campaign Name",
+      "status": "Status",
+      "spend": "Spend",
+      "roas": "ROAS",
+      "ctr": "CTR"
+    }
+  },
+  "notifications": {
+    "open": "Open Notification Center",
+    "title": "Notification Center",
+    "severity": {
+      "critical": "Critical",
+      "warning": "Warning",
+      "info": "Info"
+    },
+    "empty": {
+      "title": "No notifications",
+      "description": "We'll notify you here when campaign performance anomalies are detected."
+    },
+    "metrics": {
+      "conversionRate": "Conv. Rate",
+      "spend": "Spend",
+      "previous": "Previous",
+      "current": "Current"
+    }
+  },
+  "currency": {
+    "krw": "₩",
+    "suffix": ""
+  },
+  "pixel": {
+    "loading": "Loading pixels...",
+    "loadError": "Failed to load pixels",
+    "unknownError": "Unknown error",
+    "noPixels": "No pixels registered",
+    "newPixel": "Register New Pixel",
+    "list": "Pixel list",
+    "setupMethod": {
+      "manual": "Manual Install",
+      "platformApi": "Platform Integration"
+    }
+  },
+  "onboarding": {
+    "steps": {
+      "start": "Getting Started",
+      "metaConnect": "Meta Connection",
+      "pixelSetup": "Pixel Setup",
+      "complete": "Complete"
+    },
+    "buttons": {
+      "start": "Get Started",
+      "next": "Next",
+      "previous": "Previous",
+      "skip": "Skip"
+    },
+    "progress": "Onboarding progress",
+    "aria": {
+      "wizard": "Onboarding wizard",
+      "progress": "Onboarding progress"
+    },
+    "welcome": {
+      "title": "Welcome to Batwo",
+      "description": "Maximize your advertising performance with AI-powered marketing solutions",
+      "feature1": {
+        "title": "Real-time Performance Analysis",
+        "description": "View campaign KPIs at a glance and gain insights"
+      },
+      "feature2": {
+        "title": "AI Optimization Recommendations",
+        "description": "Receive customized optimization suggestions analyzed by AI"
+      }
+    },
+    "metaConnect": {
+      "title": "Connect Meta Ad Account",
+      "description": "Connect your Meta (Facebook/Instagram) ad account to automatically sync campaign data",
+      "connected": "Meta account is connected",
+      "connectedNext": "Proceed to the next step to complete setup",
+      "connectButton": "Connect Meta Account",
+      "connectLater": "You can also connect your account later in settings",
+      "dataCollection": {
+        "title": "Information collected upon connection",
+        "item1": "Ad campaign performance data (impressions, clicks, conversions)",
+        "item2": "Ad spend and budget information",
+        "item3": "Target audience insights"
+      }
+    },
+    "pixelSetup": {
+      "title": "Pixel Setup",
+      "description": "Install Meta Pixel to track website visitor behavior and run conversion-optimized ads",
+      "connectFirst": "Please connect your Meta account first. You can do this in the previous step.",
+      "selected": "selected",
+      "selectOther": "Select Different Pixel",
+      "copyCode": "Copy code",
+      "installation": {
+        "title": "Installation Guide",
+        "description": "Add the script below to your website's <head> tag",
+        "copy": "Copy",
+        "copied": "Copied!",
+        "skipMessage": "You can also install the pixel later in settings."
+      },
+      "benefits": {
+        "title": "Benefits of Installing Pixel",
+        "item1": "Track website visitor behavior",
+        "item2": "Measure conversion events (purchases, cart, etc.)",
+        "item3": "Run retargeting ads",
+        "item4": "Collect data for ad optimization"
+      }
+    },
+    "completion": {
+      "title": "Setup Complete!",
+      "description": "You're now ready to use all features of Batwo",
+      "nextSteps": {
+        "title": "Next Steps",
+        "item1": "Check overall performance on the dashboard",
+        "item2": "Create your first campaign",
+        "item3": "Receive AI insight reports"
+      },
+      "helpNote": "If you have any questions, please visit our Help Center"
+    }
+  }
+}

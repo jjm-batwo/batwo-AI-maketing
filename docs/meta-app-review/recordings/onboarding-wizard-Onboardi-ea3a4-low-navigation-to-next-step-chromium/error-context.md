@@ -1,0 +1,131 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary "주요 네비게이션" [ref=e3]:
+      - link "바투 홈페이지로 이동" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: B
+        - generic [ref=e7]: 바투
+        - generic "베타 버전" [ref=e8]: Beta
+      - navigation "메인 메뉴" [ref=e9]:
+        - link "대시보드 페이지로 이동 (현재 페이지)" [ref=e10] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e12]
+          - generic [ref=e17]: 대시보드
+        - link "캠페인 페이지로 이동" [ref=e19] [cursor=pointer]:
+          - /url: /campaigns
+          - img [ref=e20]
+          - generic [ref=e23]: 캠페인
+        - link "보고서 페이지로 이동" [ref=e24] [cursor=pointer]:
+          - /url: /reports
+          - img [ref=e25]
+          - generic [ref=e28]: 보고서
+        - link "설정 페이지로 이동" [ref=e29] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e30]
+          - generic [ref=e33]: 설정
+      - link "도움말 페이지로 이동" [ref=e35] [cursor=pointer]:
+        - /url: /help
+        - img [ref=e36]
+        - text: 도움말
+    - generic [ref=e39]:
+      - banner [ref=e40]:
+        - generic [ref=e41]:
+          - button "Switch to English" [ref=e42]:
+            - img
+            - generic [ref=e43]: KO
+          - button "알림 센터 열기" [ref=e44]:
+            - img
+          - button "사용자 메뉴" [ref=e45]:
+            - img
+      - main [ref=e46]:
+        - generic [ref=e47]:
+          - generic [ref=e48]:
+            - generic [ref=e49]:
+              - heading "대시보드" [level=1] [ref=e50]
+              - paragraph [ref=e51]: dashboard.subtitle실시간
+            - generic [ref=e52]:
+              - button "동기화" [ref=e53]:
+                - img
+                - text: 동기화
+              - tablist [ref=e55]:
+                - tab "7일" [selected] [ref=e56]
+                - tab "30일" [ref=e57]
+                - tab "90일" [ref=e58]
+          - generic [ref=e59]:
+            - 'article "ROAS: 0.0x" [ref=e60]':
+              - generic [ref=e61]:
+                - heading "ROAS" [level=3] [ref=e62]
+                - img [ref=e64]
+              - generic [ref=e66]:
+                - generic [ref=e67]: 0.0xx
+                - generic [ref=e68]:
+                  - generic [ref=e69]:
+                    - img [ref=e70]
+                    - text: 0%
+                  - generic [ref=e71]: 지난달 대비
+            - 'article "총 지출: 0원" [ref=e72]':
+              - generic [ref=e73]:
+                - heading "총 지출" [level=3] [ref=e74]
+                - img [ref=e76]
+              - generic [ref=e78]:
+                - generic [ref=e79]: 0원원
+                - generic [ref=e80]:
+                  - generic [ref=e81]:
+                    - img [ref=e82]
+                    - text: 0%
+                  - generic [ref=e83]: 지난달 대비
+            - 'article "전환수: 0" [ref=e84]':
+              - generic [ref=e85]:
+                - heading "전환수" [level=3] [ref=e86]
+                - img [ref=e88]
+              - generic [ref=e92]:
+                - generic [ref=e93]: "0"
+                - generic [ref=e94]:
+                  - generic [ref=e95]:
+                    - img [ref=e96]
+                    - text: 0%
+                  - generic [ref=e97]: 지난달 대비
+            - 'article "CTR: 0.0%" [ref=e98]':
+              - generic [ref=e99]:
+                - heading "CTR" [level=3] [ref=e100]
+                - img [ref=e102]
+              - generic [ref=e108]:
+                - generic [ref=e109]: 0.0%%
+                - generic [ref=e110]:
+                  - generic [ref=e111]:
+                    - img [ref=e112]
+                    - text: 0%
+                  - generic [ref=e113]: 지난달 대비
+          - generic [ref=e114]:
+            - generic [ref=e117]: 지출 추이
+            - generic [ref=e123]: ROAS 추이
+          - generic [ref=e127]:
+            - generic [ref=e128]:
+              - generic [ref=e130]:
+                - img [ref=e131]
+                - generic [ref=e134]: AI 인사이트
+              - generic [ref=e136]:
+                - img [ref=e137]
+                - paragraph [ref=e140]: 캠페인 데이터가 쌓이면 AI가 분석한 인사이트를 제공합니다.
+            - generic [ref=e141]:
+              - generic [ref=e143]: 활성 캠페인
+              - generic [ref=e145]:
+                - generic [ref=e147]:
+                  - generic [ref=e148]: 캠페인 현황
+                  - link "전체 보기" [ref=e149] [cursor=pointer]:
+                    - /url: /campaigns
+                - table [ref=e153]:
+                  - rowgroup [ref=e154]:
+                    - row "캠페인명 상태 지출 ROAS CTR" [ref=e155]:
+                      - columnheader "캠페인명" [ref=e156]
+                      - columnheader "상태" [ref=e157]
+                      - columnheader "지출" [ref=e158]
+                      - columnheader "ROAS" [ref=e159]
+                      - columnheader "CTR" [ref=e160]
+                  - rowgroup
+  - button "Open Next.js Dev Tools" [ref=e166] [cursor=pointer]:
+    - img [ref=e167]
+```

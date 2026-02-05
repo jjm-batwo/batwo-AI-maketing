@@ -1,0 +1,353 @@
+{
+  "common": {
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다",
+    "retry": "다시 시도",
+    "cancel": "취소",
+    "save": "저장",
+    "delete": "삭제",
+    "confirm": "확인",
+    "openMenu": "메뉴 열기",
+    "user": "사용자"
+  },
+  "navigation": {
+    "dashboard": "대시보드",
+    "campaigns": "캠페인",
+    "reports": "보고서",
+    "settings": "설정",
+    "help": "도움말",
+    "logout": "로그아웃",
+    "mainNav": "주요 네비게이션",
+    "mainMenu": "메인 메뉴",
+    "goToHome": "바투 홈페이지로 이동",
+    "goToPage": "{page} 페이지로 이동",
+    "goToHelp": "도움말 페이지로 이동",
+    "currentPage": "(현재 페이지)",
+    "betaVersion": "베타 버전"
+  },
+  "brand": {
+    "name": "바투",
+    "tagline": "AI 마케팅 솔루션"
+  },
+  "login": {
+    "title": "바투에 로그인하기",
+    "subtitle": "AI 마케팅 솔루션의 모든 기능을 이용해보세요",
+    "continueWith": {
+      "google": "Google로 계속하기",
+      "kakao": "카카오로 계속하기",
+      "meta": "Meta로 계속하기",
+      "metaConnected": "Meta로 계속하기 (연결됨)"
+    },
+    "facebookConnected": "Facebook에 이미 로그인되어 있습니다",
+    "devMode": "개발 모드: Meta 로그인은 테스트 사용자로 제한됩니다",
+    "termsPrefix": "로그인 시 바투의",
+    "termsSuffix": "에 동의하게 됩니다.",
+    "termsAnd": "및",
+    "terms": "이용약관",
+    "privacy": "개인정보처리방침",
+    "errors": {
+      "Configuration": "서버 설정 오류입니다. 관리자에게 문의하세요.",
+      "AccessDenied": "접근이 거부되었습니다. 권한을 확인해주세요.",
+      "Verification": "인증 링크가 만료되었거나 이미 사용되었습니다.",
+      "OAuthSignin": "OAuth 로그인 시작 중 오류가 발생했습니다.",
+      "OAuthCallback": "OAuth 인증 처리 중 오류가 발생했습니다.",
+      "OAuthCreateAccount": "계정 생성 중 오류가 발생했습니다.",
+      "EmailCreateAccount": "이메일 계정 생성 중 오류가 발생했습니다.",
+      "Callback": "인증 콜백 처리 중 오류가 발생했습니다.",
+      "OAuthAccountNotLinked": "이미 다른 방법으로 가입된 이메일입니다. 기존 로그인 방법을 사용해주세요.",
+      "EmailSignin": "이메일 전송 중 오류가 발생했습니다.",
+      "CredentialsSignin": "이메일 또는 비밀번호가 올바르지 않습니다.",
+      "SessionRequired": "로그인이 필요합니다.",
+      "invalid_scope": "Meta 앱 권한 설정이 필요합니다. 관리자에게 문의하세요.",
+      "invalid_redirect_uri": "OAuth 리다이렉트 URL이 등록되지 않았습니다.",
+      "access_denied": "Meta 로그인이 거부되었습니다. 다시 시도해주세요.",
+      "Default": "로그인 중 오류가 발생했습니다. 다시 시도해주세요.",
+      "generic": "로그인 중 오류가 발생했습니다"
+    }
+  },
+  "dashboard": {
+    "title": "대시보드",
+    "subtitle": "오늘의 광고 성과를 {realtime}으로 확인하세요",
+    "realtime": "실시간",
+    "errorTitle": "데이터를 불러오는데 실패했습니다",
+    "sync": "동기화",
+    "syncing": "동기화 중...",
+    "syncSuccess": "동기화가 완료되었습니다",
+    "syncError": "동기화에 실패했습니다",
+    "kpi": {
+      "roas": "ROAS",
+      "totalSpend": "총 지출",
+      "conversions": "전환수",
+      "ctr": "CTR"
+    },
+    "charts": {
+      "spendTrend": "지출 추이",
+      "roasTrend": "ROAS 추이"
+    },
+    "activeCampaigns": "활성 캠페인",
+    "period": {
+      "7d": "7일",
+      "30d": "30일",
+      "90d": "90일"
+    }
+  },
+  "campaigns": {
+    "title": "캠페인",
+    "subtitle": "진행 중인 모든 광고 캠페인을 관리하세요",
+    "newCampaign": "새 캠페인 만들기",
+    "searchPlaceholder": "캠페인 이름으로 검색...",
+    "status": {
+      "label": "상태",
+      "all": "전체 상태",
+      "active": "활성",
+      "paused": "일시중지",
+      "draft": "초안",
+      "completed": "완료"
+    },
+    "sort": {
+      "label": "정렬",
+      "createdAt": "최신순",
+      "name": "이름순",
+      "spend": "지출순",
+      "roas": "ROAS순"
+    },
+    "errorLoad": "캠페인을 불러오는데 실패했습니다",
+    "filter": "필터",
+    "newCampaignShort": "새 캠페인",
+    "remaining": "{count}회 남음",
+    "empty": {
+      "title": "아직 캠페인이 없어요",
+      "description": "첫 번째 캠페인을 만들어 마케팅을 시작해보세요",
+      "button": "첫 캠페인 만들기"
+    }
+  },
+  "metaConnect": {
+    "title": "Meta 광고 계정 연결",
+    "selectTitle": "Meta 광고 계정 선택",
+    "cardTitle": "Meta 광고 계정",
+    "cardDescription": "Meta (Facebook/Instagram) 광고 계정을 연결하여 캠페인을 관리하세요",
+    "whyConnect": {
+      "title": "왜 Meta 계정을 연결하나요?",
+      "description": "연결하면 강력한 AI 기반 마케팅 기능을 사용할 수 있습니다",
+      "permissions": {
+        "adsRead": {
+          "title": "광고 성과 조회",
+          "description": "ROAS, CTR, 전환수 등 실시간 캠페인 지표를 확인하세요"
+        },
+        "adsManagement": {
+          "title": "캠페인 최적화",
+          "description": "AI 기반 추천으로 광고 성과를 개선하세요"
+        },
+        "businessManagement": {
+          "title": "멀티 계정 관리",
+          "description": "여러 광고 계정을 하나의 대시보드에서 관리하세요"
+        },
+        "pagesAccess": {
+          "title": "페이지 인사이트",
+          "description": "Facebook과 Instagram 페이지의 참여 데이터를 분석하세요"
+        }
+      }
+    },
+    "selectCardTitle": "광고 계정 선택",
+    "selectCardDescription": "여러 개의 광고 계정이 발견되었습니다. 연결할 계정을 선택하세요.",
+    "successMessage": "Meta 광고 계정이 성공적으로 연결되었습니다!",
+    "noAccount": "연결된 Meta 광고 계정이 없습니다",
+    "accountId": "계정 ID",
+    "connectedDate": "연결일",
+    "connectButton": "Meta 계정 연결하기",
+    "connecting": "연결 중...",
+    "disconnectButton": "연결 해제",
+    "disconnecting": "연결 해제 중...",
+    "disconnectConfirm": "Meta 광고 계정 연결을 해제하시겠습니까?",
+    "syncButton": "캠페인 동기화",
+    "syncing": "동기화 중...",
+    "syncComplete": "동기화 완료: {created}개 생성, {updated}개 업데이트, {archived}개 아카이브",
+    "syncError": "캠페인 동기화에 실패했습니다",
+    "selectButton": "선택한 계정 연결하기",
+    "selecting": "선택 중...",
+    "selectNote": "선택한 계정으로 광고 캠페인을 관리합니다",
+    "connectNote": "연결 시 Meta의 광고 관리 권한을 요청합니다",
+    "loadError": "계정 목록을 불러오는데 실패했습니다",
+    "selectError": "계정 선택에 실패했습니다",
+    "syncSuccess": "동기화 완료: {created}개 생성, {updated}개 업데이트, {archived}개 아카이브",
+    "errors": {
+      "fetchAccountsFailed": "계정 목록을 불러오는데 실패했습니다",
+      "syncFailed": "캠페인 동기화에 실패했습니다",
+      "syncError": "캠페인 동기화 중 오류가 발생했습니다",
+      "selectFailed": "계정 선택에 실패했습니다",
+      "selectError": "계정 선택 중 오류가 발생했습니다"
+    },
+    "sessionExpired": {
+      "title": "세션이 만료되었습니다",
+      "description": "보안을 위해 세션이 만료되었습니다. 다시 연결해주세요.",
+      "reconnect": "다시 연결하기"
+    },
+    "features": {
+      "title": "연결 후 사용 가능한 기능",
+      "realTimeData": "캠페인 실시간 성과 데이터 조회",
+      "kpiDashboard": "KPI 대시보드 자동 업데이트",
+      "aiOptimization": "AI 기반 캠페인 최적화 제안",
+      "weeklyReport": "주간 보고서 자동 생성"
+    },
+    "notConnected": {
+      "title": "Meta 계정을 연결해주세요",
+      "description": "캠페인 데이터를 보려면 먼저 Meta 광고 계정을 연결해야 합니다.",
+      "dashboardDescription": "대시보드의 실시간 KPI와 AI 인사이트를 확인하려면 Meta 계정을 연결하세요.",
+      "button": "Meta 계정 연결하기"
+    }
+  },
+  "header": {
+    "userMenu": "사용자 메뉴",
+    "campaign": "캠페인",
+    "aiCopy": "AI 카피",
+    "today": "오늘"
+  },
+  "aiInsights": {
+    "title": "AI 인사이트",
+    "empty": "캠페인 데이터가 쌓이면 AI가 분석한 인사이트를 제공합니다.",
+    "insights": {
+      "roasOpportunity": {
+        "title": "ROAS 개선 기회 발견",
+        "description": "캠페인 A의 주말 성과가 평일 대비 32% 높습니다. 주말 예산을 15% 증가시키면 전체 ROAS가 약 0.3x 상승할 것으로 예상됩니다.",
+        "action": "예산 조정하기"
+      },
+      "budgetWarning": {
+        "title": "예산 소진 예상",
+        "description": "현재 지출 속도로는 캠페인 B의 일일 예산이 오후 3시경 소진될 예정입니다. 예산 증액을 고려해주세요.",
+        "action": "예산 확인"
+      },
+      "targetingTip": {
+        "title": "타겟팅 최적화 제안",
+        "description": "25-34세 여성 타겟의 전환율이 다른 그룹 대비 2.1배 높습니다. 이 타겟에 대한 입찰가 상향을 권장합니다."
+      },
+      "weeklySuccess": {
+        "title": "이번 주 성과 우수",
+        "description": "지난주 대비 CTR이 18% 상승했습니다. 새로운 크리에이티브 전략이 효과를 보이고 있습니다."
+      }
+    }
+  },
+  "campaignSummary": {
+    "title": "캠페인 현황",
+    "viewAll": "전체 보기",
+    "columns": {
+      "name": "캠페인명",
+      "status": "상태",
+      "spend": "지출",
+      "roas": "ROAS",
+      "ctr": "CTR"
+    }
+  },
+  "notifications": {
+    "open": "알림 센터 열기",
+    "title": "알림 센터",
+    "severity": {
+      "critical": "긴급",
+      "warning": "주의",
+      "info": "정보"
+    },
+    "empty": {
+      "title": "알림이 없습니다",
+      "description": "캠페인 성과에 이상이 감지되면 이곳에서 알려드립니다."
+    },
+    "metrics": {
+      "conversionRate": "전환율",
+      "spend": "지출",
+      "previous": "이전",
+      "current": "현재"
+    }
+  },
+  "currency": {
+    "krw": "원",
+    "suffix": "원"
+  },
+  "pixel": {
+    "loading": "픽셀을 불러오는 중...",
+    "loadError": "픽셀을 불러오는데 실패했습니다",
+    "unknownError": "알 수 없는 오류",
+    "noPixels": "등록된 픽셀이 없습니다",
+    "newPixel": "새 픽셀 등록",
+    "list": "픽셀 목록",
+    "setupMethod": {
+      "manual": "수동 설치",
+      "platformApi": "플랫폼 연동"
+    }
+  },
+  "onboarding": {
+    "steps": {
+      "start": "시작하기",
+      "metaConnect": "Meta 연결",
+      "pixelSetup": "픽셀 설치",
+      "complete": "완료"
+    },
+    "buttons": {
+      "start": "시작하기",
+      "next": "다음",
+      "previous": "이전",
+      "skip": "건너뛰기"
+    },
+    "progress": "온보딩 진행률",
+    "aria": {
+      "wizard": "온보딩 위저드",
+      "progress": "온보딩 진행률"
+    },
+    "welcome": {
+      "title": "바투에 오신 것을 환영합니다",
+      "description": "AI 기반 마케팅 솔루션으로 광고 성과를 극대화하세요",
+      "feature1": {
+        "title": "실시간 성과 분석",
+        "description": "캠페인 KPI를 한눈에 확인하고 인사이트를 얻으세요"
+      },
+      "feature2": {
+        "title": "AI 최적화 추천",
+        "description": "AI가 분석한 맞춤형 최적화 제안을 받아보세요"
+      }
+    },
+    "metaConnect": {
+      "title": "Meta 광고 계정 연결",
+      "description": "Meta(Facebook/Instagram) 광고 계정을 연결하여 캠페인 데이터를 자동으로 동기화하세요",
+      "connected": "Meta 계정이 연결되었습니다",
+      "connectedNext": "다음 단계로 진행하여 설정을 완료하세요",
+      "connectButton": "Meta 계정 연결하기",
+      "connectLater": "계정 연결은 나중에 설정에서도 가능합니다",
+      "dataCollection": {
+        "title": "연결 시 수집되는 정보",
+        "item1": "광고 캠페인 성과 데이터 (노출, 클릭, 전환)",
+        "item2": "광고 비용 및 예산 정보",
+        "item3": "타겟 오디언스 인사이트"
+      }
+    },
+    "pixelSetup": {
+      "title": "픽셀 설치",
+      "description": "Meta 픽셀을 설치하여 웹사이트 방문자 행동을 추적하고 전환 최적화된 광고를 운영하세요",
+      "connectFirst": "먼저 Meta 계정을 연결해주세요. 이전 단계에서 연결하실 수 있습니다.",
+      "selected": "선택됨",
+      "selectOther": "다른 픽셀 선택",
+      "copyCode": "코드 복사",
+      "installation": {
+        "title": "설치 방법",
+        "description": "아래 스크립트를 웹사이트의 <head> 태그에 추가하세요",
+        "copy": "복사",
+        "copied": "복사됨!",
+        "skipMessage": "픽셀 설치는 나중에 설정에서도 가능합니다"
+      },
+      "benefits": {
+        "title": "픽셀 설치 효과",
+        "item1": "웹사이트 방문자 행동 추적",
+        "item2": "전환 이벤트 측정 (구매, 장바구니 등)",
+        "item3": "리타겟팅 광고 운영",
+        "item4": "광고 최적화를 위한 데이터 수집"
+      }
+    },
+    "completion": {
+      "title": "설정이 완료되었습니다!",
+      "description": "이제 바투의 모든 기능을 사용할 준비가 되었습니다",
+      "nextSteps": {
+        "title": "다음 단계",
+        "item1": "대시보드에서 전체 성과 확인하기",
+        "item2": "첫 번째 캠페인 만들기",
+        "item3": "AI 인사이트 리포트 받아보기"
+      },
+      "helpNote": "궁금한 점이 있으시면 언제든 도움말 센터를 이용해주세요"
+    }
+  }
+}

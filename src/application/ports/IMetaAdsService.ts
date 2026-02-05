@@ -20,6 +20,16 @@ export interface MetaInsightsData {
   dateStop: string
 }
 
+export interface MetaDailyInsightsData {
+  campaignId: string
+  date: string
+  impressions: number
+  clicks: number
+  spend: number
+  conversions: number
+  revenue: number
+}
+
 export interface CreateMetaCampaignInput {
   name: string
   objective: string
@@ -85,6 +95,12 @@ export interface IMetaAdsService {
     campaignId: string,
     datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d'
   ): Promise<MetaInsightsData>
+
+  getCampaignDailyInsights(
+    accessToken: string,
+    campaignId: string,
+    datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d'
+  ): Promise<MetaDailyInsightsData[]>
 
   updateCampaignStatus(
     accessToken: string,

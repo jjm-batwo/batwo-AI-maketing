@@ -1,0 +1,7 @@
+{
+  "active": true,
+  "started_at": "2026-01-25T10:42:59.604Z",
+  "original_prompt": "전체 코드베이스 품질 검토해 한번에 전체 검토하려면 힘드니까 알아서 분할해서 순차적으로 진행해 ulw",
+  "reinforcement_count": 10,
+  "last_checked_at": "2026-01-26T00:27:04.371Z"
+}

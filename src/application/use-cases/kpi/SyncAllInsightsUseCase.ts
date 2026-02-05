@@ -45,28 +45,31 @@ export class SyncAllInsightsUseCase {
       errors: [],
     }
 
-    // Sync insights for each campaign
+    // Sync daily insights for each campaign (for chart data)
     for (const campaign of metaCampaigns) {
       try {
-        const insights = await this.metaAdsService.getCampaignInsights(
+        const dailyInsights = await this.metaAdsService.getCampaignDailyInsights(
           metaAccount.accessToken,
           campaign.metaCampaignId!,
           input.datePreset || 'last_7d'
         )
 
-        // Create KPI entity - spend/revenue are in the base currency unit from Meta
-        const kpi = KPI.create({
-          campaignId: campaign.id,
-          impressions: insights.impressions,
-          clicks: insights.clicks,
-          conversions: insights.conversions,
-          spend: Money.create(Math.round(insights.spend), 'KRW'),
-          revenue: Money.create(Math.round(insights.revenue), 'KRW'),
-          date: new Date(insights.dateStart),
-        })
+        // Save each daily KPI record
+        for (const daily of dailyInsights) {
+          const kpi = KPI.create({
+            campaignId: campaign.id,
+            impressions: daily.impressions,
+            clicks: daily.clicks,
+            conversions: daily.conversions,
+            spend: Money.create(Math.round(daily.spend), 'KRW'),
+            revenue: Money.create(Math.round(daily.revenue), 'KRW'),
+            date: new Date(daily.date),
+          })
 
-        await this.kpiRepository.save(kpi)
-        result.synced++
+          await this.kpiRepository.save(kpi)
+        }
+
+        result.synced += dailyInsights.length
       } catch (error) {
         result.failed++
         result.errors.push({

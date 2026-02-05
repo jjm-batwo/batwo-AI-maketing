@@ -1,12 +1,17 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-05T05:05:06.049Z",
+  "lastUpdated": "2026-02-05T08:09:19.638Z",
   "activeFeatures": [
     "dashboard",
     "batwo-maketting service-saas",
     "campaign",
     "presentation",
-    "scripts"
+    "scripts",
+    "analytics",
+    "campaigns",
+    "ports",
+    "meta-ads",
+    "kpi"
   ],
   "primaryFeature": "dashboard",
   "features": {
@@ -72,9 +77,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-05T04:55:17.316Z",
-        "lastUpdated": "2026-02-05T05:00:01.708Z"
+        "lastUpdated": "2026-02-05T08:07:48.591Z"
       },
-      "lastFile": "/Users/jm/batwo-maketting service-saas/tests/unit/presentation/components/dashboard/AIInsights.test.tsx"
+      "lastFile": "/Users/jm/batwo-maketting service-saas/src/presentation/components/dashboard/KPIChart.tsx"
     },
     "batwo-maketting service-saas": {
       "phase": "do",
@@ -98,9 +103,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-05T04:55:46.226Z",
-        "lastUpdated": "2026-02-05T05:01:55.013Z"
+        "lastUpdated": "2026-02-05T07:35:26.515Z"
       },
-      "lastFile": "/Users/jm/batwo-maketting service-saas/tests/unit/presentation/components/campaign/CampaignList.test.tsx"
+      "lastFile": "/Users/jm/batwo-maketting service-saas/src/presentation/components/campaign/CampaignList.tsx"
     },
     "presentation": {
       "phase": "do",
@@ -111,9 +116,9 @@
       "documents": {},
       "timestamps": {
         "started": "2026-02-05T04:57:57.259Z",
-        "lastUpdated": "2026-02-05T05:05:06.049Z"
+        "lastUpdated": "2026-02-05T07:59:17.883Z"
       },
-      "lastFile": "/Users/jm/batwo-maketting service-saas/tests/unit/presentation/components/common/Header.test.tsx"
+      "lastFile": "/Users/jm/batwo-maketting service-saas/src/presentation/hooks/useDashboardKPI.ts"
     },
     "scripts": {
       "phase": "do",
@@ -127,6 +132,71 @@
         "lastUpdated": "2026-02-05T05:00:08.032Z"
       },
       "lastFile": "/Users/jm/batwo-maketting service-saas/scripts/validate-openapi.ts"
+    },
+    "analytics": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-05T07:33:53.606Z",
+        "lastUpdated": "2026-02-05T07:37:34.477Z"
+      },
+      "lastFile": "/Users/jm/batwo-maketting service-saas/src/app/(dashboard)/campaigns/[id]/analytics/page.tsx"
+    },
+    "campaigns": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-05T07:53:43.389Z",
+        "lastUpdated": "2026-02-05T07:56:30.874Z"
+      },
+      "lastFile": "/Users/jm/batwo-maketting service-saas/src/app/(dashboard)/campaigns/page.tsx"
+    },
+    "ports": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-05T08:08:35.197Z",
+        "lastUpdated": "2026-02-05T08:08:41.092Z"
+      },
+      "lastFile": "/Users/jm/batwo-maketting service-saas/src/application/ports/IMetaAdsService.ts"
+    },
+    "meta-ads": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-05T08:08:56.065Z",
+        "lastUpdated": "2026-02-05T08:09:06.783Z"
+      },
+      "lastFile": "/Users/jm/batwo-maketting service-saas/src/infrastructure/external/meta-ads/MetaAdsClient.ts"
+    },
+    "kpi": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-05T08:09:19.638Z",
+        "lastUpdated": "2026-02-05T08:09:19.638Z"
+      },
+      "lastFile": "/Users/jm/batwo-maketting service-saas/src/application/use-cases/kpi/SyncAllInsightsUseCase.ts"
     }
   },
   "pipeline": {
@@ -137,7 +207,7 @@
   "session": {
     "startedAt": "2026-02-05T02:54:49.024Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-02-05T05:05:06.049Z"
+    "lastActivity": "2026-02-05T08:09:19.638Z"
   },
   "history": [
     {
@@ -581,6 +651,234 @@
     {
       "timestamp": "2026-02-05T05:05:06.049Z",
       "feature": "presentation",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:33:53.607Z",
+      "feature": "analytics",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:35:15.915Z",
+      "feature": "campaign",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:35:19.143Z",
+      "feature": "campaign",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:35:24.136Z",
+      "feature": "campaign",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:35:24.937Z",
+      "feature": "campaign",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:35:26.515Z",
+      "feature": "campaign",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:36:27.141Z",
+      "feature": "analytics",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:36:30.842Z",
+      "feature": "analytics",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:36:41.652Z",
+      "feature": "analytics",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:36:43.641Z",
+      "feature": "analytics",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:36:50.173Z",
+      "feature": "analytics",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:36:52.339Z",
+      "feature": "analytics",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:37:02.802Z",
+      "feature": "analytics",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:37:08.276Z",
+      "feature": "analytics",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:37:17.797Z",
+      "feature": "analytics",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:37:27.084Z",
+      "feature": "analytics",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:37:34.477Z",
+      "feature": "analytics",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:53:43.389Z",
+      "feature": "campaigns",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:56:30.874Z",
+      "feature": "campaigns",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:58:32.143Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:58:37.842Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:58:44.065Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:58:52.257Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:59:04.094Z",
+      "feature": "presentation",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:59:11.952Z",
+      "feature": "presentation",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T07:59:17.883Z",
+      "feature": "presentation",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T08:01:51.897Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T08:01:59.170Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T08:02:12.925Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T08:06:26.113Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T08:06:41.342Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T08:07:40.623Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T08:07:48.591Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T08:08:35.197Z",
+      "feature": "ports",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T08:08:41.092Z",
+      "feature": "ports",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T08:08:56.065Z",
+      "feature": "meta-ads",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T08:09:06.783Z",
+      "feature": "meta-ads",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-05T08:09:19.638Z",
+      "feature": "kpi",
       "phase": "do",
       "action": "updated"
     }

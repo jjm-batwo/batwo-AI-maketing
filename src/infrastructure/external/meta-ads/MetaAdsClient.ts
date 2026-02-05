@@ -2,6 +2,7 @@ import {
   IMetaAdsService,
   MetaCampaignData,
   MetaInsightsData,
+  MetaDailyInsightsData,
   CreateMetaCampaignInput,
   UpdateMetaCampaignInput,
   ListCampaignsResponse,
@@ -265,6 +266,64 @@ export class MetaAdsClient implements IMetaAdsService {
         'meta.datePreset': datePreset,
       }
     )
+  }
+
+  async getCampaignDailyInsights(
+    accessToken: string,
+    campaignId: string,
+    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' = 'last_7d'
+  ): Promise<MetaDailyInsightsData[]> {
+    return withSpan(
+      'meta.getCampaignDailyInsights',
+      async () => {
+        const fields =
+          'campaign_id,impressions,clicks,spend,actions,action_values,date_start,date_stop'
+
+        // time_increment=1 returns daily breakdown
+        const response = await this.requestWithRetry<MetaApiInsightsResponse>(
+          accessToken,
+          `/${campaignId}/insights?fields=${fields}&date_preset=${datePreset}&time_increment=1`,
+          { method: 'GET' }
+        )
+
+        return this.mapDailyInsightsResponse(campaignId, response)
+      },
+      {
+        'meta.campaignId': campaignId,
+        'meta.datePreset': datePreset,
+      }
+    )
+  }
+
+  private mapDailyInsightsResponse(
+    campaignId: string,
+    response: MetaApiInsightsResponse
+  ): MetaDailyInsightsData[] {
+    if (!response.data || response.data.length === 0) {
+      return []
+    }
+
+    return response.data.map((item) => {
+      const conversions =
+        item.actions?.find(
+          (a) => a.action_type === 'purchase' || a.action_type === 'omni_purchase'
+        )?.value ?? '0'
+
+      const revenue =
+        item.action_values?.find(
+          (a) => a.action_type === 'purchase' || a.action_type === 'omni_purchase'
+        )?.value ?? '0'
+
+      return {
+        campaignId,
+        date: item.date_start,
+        impressions: parseInt(item.impressions ?? '0', 10),
+        clicks: parseInt(item.clicks ?? '0', 10),
+        spend: parseFloat(item.spend ?? '0'),
+        conversions: parseInt(conversions, 10),
+        revenue: parseFloat(revenue),
+      }
+    })
   }
 
   async updateCampaignStatus(
