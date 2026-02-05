@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, lazy } from 'react'
+import { Suspense, lazy, useMemo } from 'react'
 import Link from 'next/link'
 import { KPICard, KPIChart } from '@/presentation/components/dashboard'
 import { useDashboardKPI, useMetaConnection, useSync } from '@/presentation/hooks'
@@ -28,6 +28,7 @@ export default function DashboardPage() {
   const { isConnected, isLoading: isCheckingConnection } = useMetaConnection()
   const { data, isLoading, error } = useDashboardKPI({
     period: dashboardPeriod,
+    includeBreakdown: true, // 캠페인별 KPI 데이터 포함
     enabled: isConnected, // Meta 연결 시에만 데이터 fetch
   })
   const sync = useSync()
@@ -89,6 +90,21 @@ export default function DashboardPage() {
   const summary = data?.summary
   const changes = summary?.changes
   const chartData = data?.chartData ?? []
+
+  // CampaignSummaryTable용 캠페인 데이터 변환
+  const campaignSummaries = useMemo(() => {
+    const breakdown = data?.campaignBreakdown
+    if (!breakdown || breakdown.length === 0) return []
+
+    return breakdown.map((campaign: { campaignId: string; campaignName: string; spend: number; roas: number; ctr: number }) => ({
+      id: campaign.campaignId,
+      name: campaign.campaignName,
+      status: 'ACTIVE' as const, // 활성 캠페인만 대시보드에 표시
+      spend: campaign.spend,
+      roas: campaign.roas,
+      ctr: campaign.ctr,
+    }))
+  }, [data?.campaignBreakdown])
 
   // Helper to determine change type
   const getChangeType = (value: number | undefined): 'positive' | 'negative' | 'neutral' => {
@@ -222,7 +238,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <Suspense fallback={<div className="h-48 animate-pulse bg-gray-100 rounded" />}>
-              <CampaignSummaryTable isLoading={isLoading} />
+              <CampaignSummaryTable campaigns={campaignSummaries} isLoading={isLoading} />
             </Suspense>
           </CardContent>
         </Card>

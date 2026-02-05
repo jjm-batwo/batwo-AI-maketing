@@ -31,9 +31,23 @@ interface KPIChartData {
   conversions: number
 }
 
+interface CampaignBreakdown {
+  campaignId: string
+  campaignName: string
+  impressions: number
+  clicks: number
+  conversions: number
+  spend: number
+  revenue: number
+  roas: number
+  ctr: number
+  cpa: number
+}
+
 interface DashboardKPIResponse {
   summary: KPIData
   chartData: KPIChartData[]
+  campaignBreakdown?: CampaignBreakdown[]
   period: {
     startDate: string
     endDate: string
@@ -46,11 +60,15 @@ async function fetchDashboardKPI(params?: {
   period?: '7d' | '30d' | '90d'
   startDate?: string
   endDate?: string
+  includeBreakdown?: boolean
+  includeComparison?: boolean
 }): Promise<DashboardKPIResponse> {
   const searchParams = new URLSearchParams()
   if (params?.period) searchParams.set('period', params.period)
   if (params?.startDate) searchParams.set('startDate', params.startDate)
   if (params?.endDate) searchParams.set('endDate', params.endDate)
+  if (params?.includeBreakdown) searchParams.set('breakdown', 'true')
+  if (params?.includeComparison) searchParams.set('comparison', 'true')
 
   const response = await fetch(`/api/dashboard/kpi?${searchParams.toString()}`)
   if (!response.ok) {
@@ -63,6 +81,8 @@ export function useDashboardKPI(params?: {
   period?: '7d' | '30d' | '90d'
   startDate?: string
   endDate?: string
+  includeBreakdown?: boolean
+  includeComparison?: boolean
   enabled?: boolean
 }) {
   const { enabled = true, ...queryParams } = params ?? {}
