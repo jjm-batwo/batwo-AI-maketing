@@ -5,7 +5,11 @@
  * Teams have owners (the creator) and members with different roles.
  */
 
-export type TeamRole = 'OWNER' | 'ADMIN' | 'MEMBER' | 'VIEWER'
+export type TeamRoleType = 'OWNER' | 'ADMIN' | 'MEMBER' | 'VIEWER'
+
+// Backward compatibility alias - deprecated, use TeamRoleType
+/** @deprecated Use TeamRoleType instead */
+export type TeamRole = TeamRoleType
 
 export type TeamPermission =
   | 'campaign:read'
@@ -24,7 +28,7 @@ export type TeamPermission =
 /**
  * Default permissions for each role
  */
-export const DEFAULT_ROLE_PERMISSIONS: Record<TeamRole, TeamPermission[]> = {
+export const DEFAULT_ROLE_PERMISSIONS: Record<TeamRoleType, TeamPermission[]> = {
   OWNER: [
     'campaign:read',
     'campaign:write',
@@ -67,7 +71,7 @@ export interface TeamMemberProps {
   userId: string
   email: string
   name?: string
-  role: TeamRole
+  role: TeamRoleType
   permissions: TeamPermission[]
   invitedBy?: string
   invitedAt: Date
@@ -81,7 +85,7 @@ export interface CreateTeamMemberProps {
   userId: string
   email: string
   name?: string
-  role: TeamRole
+  role: TeamRoleType
   permissions?: TeamPermission[]
   invitedBy?: string
 }
@@ -204,7 +208,7 @@ export class TeamMember {
   }
 
   // Mutation methods (return new instance)
-  updateRole(role: TeamRole, customPermissions?: TeamPermission[]): TeamMember {
+  updateRole(role: TeamRoleType, customPermissions?: TeamPermission[]): TeamMember {
     const permissions = customPermissions || DEFAULT_ROLE_PERMISSIONS[role]
     return new TeamMember({
       ...this.props,
@@ -436,7 +440,7 @@ export class Team {
     userId: string
     email: string
     name?: string
-    role: TeamRole
+    role: TeamRoleType
     invitedBy: string
     permissions?: TeamPermission[]
   }): { team: Team; member: TeamMember } {
@@ -492,7 +496,7 @@ export class Team {
     })
   }
 
-  updateMemberRole(userId: string, role: TeamRole, permissions?: TeamPermission[]): Team {
+  updateMemberRole(userId: string, role: TeamRoleType, permissions?: TeamPermission[]): Team {
     // Cannot change owner's role
     if (this.isOwner(userId)) {
       throw new Error('Cannot change owner role')

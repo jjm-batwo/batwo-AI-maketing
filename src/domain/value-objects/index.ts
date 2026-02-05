@@ -134,3 +134,4 @@ export {
   rankRecommendations,
   buildCompositeScore,
 } from './MarketingScience'
+export { Permission, type Resource, type Action } from './Permission'

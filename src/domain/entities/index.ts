@@ -23,7 +23,8 @@ export {
   type TeamMemberProps,
   type CreateTeamProps,
   type CreateTeamMemberProps,
-  type TeamRole,
+  type TeamRoleType,
+  type TeamRole, // Backward compatibility - deprecated
   type TeamPermission,
   DEFAULT_ROLE_PERMISSIONS,
 } from './Team'
@@ -60,6 +61,11 @@ export {
   type InvoiceProps,
   type CreateInvoiceProps,
 } from './Invoice'
+export {
+  TeamRoleEntity,
+  type TeamRoleName,
+  type TeamRoleProps,
+} from './TeamRole'
 
 // Re-export domain events for convenience
 export * from '../events'

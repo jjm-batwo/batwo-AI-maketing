@@ -33,3 +33,4 @@ export type {
   CreateFeedbackInput,
   FeedbackStats,
 } from './IAIFeedbackRepository'
+export type { ITeamRoleRepository } from './ITeamRoleRepository'
