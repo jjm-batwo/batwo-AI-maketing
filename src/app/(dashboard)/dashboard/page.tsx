@@ -3,7 +3,7 @@
 import { Suspense, lazy, useMemo } from 'react'
 import Link from 'next/link'
 import { KPICard, KPIChart } from '@/presentation/components/dashboard'
-import { useDashboardKPI, useMetaConnection, useSync } from '@/presentation/hooks'
+import { useDashboardKPI, useMetaConnection, useSync, useCampaigns } from '@/presentation/hooks'
 import { useUIStore } from '@/presentation/stores'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -30,6 +30,10 @@ export default function DashboardPage() {
     period: dashboardPeriod,
     includeBreakdown: true, // 캠페인별 KPI 데이터 포함
     enabled: isConnected, // Meta 연결 시에만 데이터 fetch
+  })
+  const { data: campaignsData } = useCampaigns({
+    pageSize: 100,
+    enabled: isConnected,
   })
   const sync = useSync()
 
@@ -92,19 +96,28 @@ export default function DashboardPage() {
   const chartData = data?.chartData ?? []
 
   // CampaignSummaryTable용 캠페인 데이터 변환
+  // 캠페인 목록에서 실제 status를 가져와 병합
   const campaignSummaries = useMemo(() => {
-    const breakdown = data?.campaignBreakdown
-    if (!breakdown || breakdown.length === 0) return []
+    const campaigns = campaignsData?.campaigns ?? []
+    if (campaigns.length === 0) return []
 
-    return breakdown.map((campaign: { campaignId: string; campaignName: string; spend: number; roas: number; ctr: number }) => ({
-      id: campaign.campaignId,
-      name: campaign.campaignName,
-      status: 'ACTIVE' as const, // 활성 캠페인만 대시보드에 표시
-      spend: campaign.spend,
-      roas: campaign.roas,
-      ctr: campaign.ctr,
-    }))
-  }, [data?.campaignBreakdown])
+    // 캠페인 ID로 빠른 조회를 위한 맵 생성
+    const breakdownMap = new Map(
+      (data?.campaignBreakdown ?? []).map((b: { campaignId: string; spend: number; roas: number; ctr: number }) => [b.campaignId, b])
+    )
+
+    return campaigns.map((campaign: { id: string; name: string; status: string; spend?: number; roas?: number }) => {
+      const breakdown = breakdownMap.get(campaign.id)
+      return {
+        id: campaign.id,
+        name: campaign.name,
+        status: campaign.status as 'ACTIVE' | 'PAUSED' | 'COMPLETED' | 'DRAFT',
+        spend: breakdown?.spend ?? campaign.spend ?? 0,
+        roas: breakdown?.roas ?? campaign.roas ?? 0,
+        ctr: breakdown?.ctr ?? 0,
+      }
+    })
+  }, [campaignsData?.campaigns, data?.campaignBreakdown])
 
   // Helper to determine change type
   const getChangeType = (value: number | undefined): 'positive' | 'negative' | 'neutral' => {
