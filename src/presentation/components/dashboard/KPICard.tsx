@@ -54,7 +54,7 @@ function formatValue(value: number, format: KPIFormat, unit?: string): string {
 function formatChange(change: number): string {
   if (change === 0) return '0%'
   const sign = change > 0 ? '+' : ''
-  return `${sign}${change}%`
+  return `${sign}${change.toFixed(2)}%`
 }
 
 export function KPICard({
