@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { CampaignList } from '@/presentation/components/campaign'
@@ -17,6 +18,15 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
+// 상태별 정렬 우선순위 (낮을수록 상단에 배치)
+const STATUS_PRIORITY: Record<string, number> = {
+  ACTIVE: 0,
+  PAUSED: 1,
+  PENDING_REVIEW: 2,
+  DRAFT: 3,
+  COMPLETED: 4,
+}
+
 export default function CampaignsPage() {
   const t = useTranslations()
   const { filters, setFilters } = useCampaignStore()
@@ -27,7 +37,28 @@ export default function CampaignsPage() {
     enabled: isConnected, // Meta 연결 시에만 데이터 fetch
   })
 
-  const campaigns = isConnected ? (data?.campaigns || []) : []
+  const rawCampaigns = isConnected ? (data?.campaigns || []) : []
+
+  // 활성 캠페인을 상단에 배치하는 정렬 로직
+  const campaigns = useMemo(() => {
+    if (filters.status !== 'ALL') {
+      // 특정 상태 필터가 적용된 경우 기존 정렬 유지
+      return rawCampaigns
+    }
+
+    // 전체 상태일 때: 활성 캠페인 우선 → 상태별 우선순위 → 생성일 순
+    return [...rawCampaigns].sort((a, b) => {
+      const priorityA = STATUS_PRIORITY[a.status] ?? 99
+      const priorityB = STATUS_PRIORITY[b.status] ?? 99
+
+      if (priorityA !== priorityB) {
+        return priorityA - priorityB
+      }
+
+      // 같은 상태 내에서는 생성일 최신순
+      return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+    })
+  }, [rawCampaigns, filters.status])
 
   // Meta 미연결 시 안내 UI
   if (!isCheckingConnection && !isConnected) {
