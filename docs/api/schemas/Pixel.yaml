@@ -1,0 +1,117 @@
+MetaPixel:
+  type: object
+  required:
+    - id
+    - userId
+    - metaPixelId
+    - name
+    - isActive
+    - setupMethod
+    - createdAt
+    - updatedAt
+  properties:
+    id:
+      type: string
+      description: 픽셀 레코드 ID
+      example: "pxl_123abc"
+    userId:
+      type: string
+      description: 사용자 ID
+      example: "usr_123"
+    metaPixelId:
+      type: string
+      description: Meta 픽셀 ID
+      example: "123456789012345"
+    name:
+      type: string
+      description: 픽셀 이름
+      example: "바투 쇼핑몰 픽셀"
+    isActive:
+      type: boolean
+      description: 활성화 상태
+      example: true
+    setupMethod:
+      type: string
+      enum: [MANUAL, CAFE24_AUTO, SHOPIFY_AUTO]
+      description: 설치 방법
+      example: MANUAL
+    createdAt:
+      type: string
+      format: date-time
+      example: "2024-02-01T09:00:00.000Z"
+    updatedAt:
+      type: string
+      format: date-time
+      example: "2024-02-01T09:00:00.000Z"
+
+PixelStatus:
+  type: object
+  description: 픽셀 상태 정보
+  properties:
+    isInstalled:
+      type: boolean
+      description: 설치 여부
+      example: true
+    lastEventReceived:
+      type: string
+      format: date-time
+      nullable: true
+      description: 마지막 이벤트 수신 시간
+      example: "2024-02-05T14:30:00.000Z"
+    eventCount24h:
+      type: integer
+      description: 최근 24시간 이벤트 수
+      example: 152
+    topEvents:
+      type: array
+      items:
+        type: object
+        properties:
+          eventName:
+            type: string
+            example: "PageView"
+          count:
+            type: integer
+            example: 87
+
+PixelSnippet:
+  type: object
+  description: 픽셀 설치 스크립트
+  properties:
+    htmlSnippet:
+      type: string
+      description: HTML 헤드에 삽입할 스크립트
+      example: |
+        <!-- Meta Pixel Code -->
+        <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '123456789012345');
+        fbq('track', 'PageView');
+        </script>
+        <noscript><img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=123456789012345&ev=PageView&noscript=1"
+        /></noscript>
+        <!-- End Meta Pixel Code -->
+    universalTrackerUrl:
+      type: string
+      description: 범용 추적 스크립트 URL (CAPI 자동 전송)
+      example: "https://batwo.ai/api/pixel/pxl_123abc/tracker.js"
+    instructions:
+      type: object
+      properties:
+        manual:
+          type: string
+          description: 수동 설치 가이드
+        cafe24:
+          type: string
+          description: 카페24 자동 설치 가이드
+        shopify:
+          type: string
+          description: Shopify 자동 설치 가이드

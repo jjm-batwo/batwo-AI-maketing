@@ -1,0 +1,270 @@
+GenerateCopyRequest:
+  type: object
+  required:
+    - productName
+    - productDescription
+    - targetAudience
+    - tone
+    - objective
+  properties:
+    productName:
+      type: string
+      description: 제품명
+      example: "프리미엄 유기농 녹차"
+      minLength: 1
+      maxLength: 100
+    productDescription:
+      type: string
+      description: 제품 설명
+      example: "제주도에서 자란 100% 유기농 녹차로 만든 프리미엄 티백"
+      minLength: 1
+      maxLength: 500
+    targetAudience:
+      type: string
+      description: 타겟 오디언스
+      example: "건강을 중시하는 30-40대 여성"
+      minLength: 1
+      maxLength: 200
+    tone:
+      type: string
+      enum: [professional, casual, playful, urgent]
+      description: 카피 톤앤매너
+      example: professional
+    objective:
+      type: string
+      enum: [awareness, consideration, conversion]
+      description: 광고 목표
+      example: conversion
+    keywords:
+      type: array
+      items:
+        type: string
+      description: 포함할 키워드
+      example: ["유기농", "건강", "제주"]
+      maxItems: 10
+    variantCount:
+      type: integer
+      minimum: 1
+      maximum: 5
+      default: 3
+      description: 생성할 변형 수
+      example: 3
+    industry:
+      type: string
+      enum: [ecommerce, food_beverage, beauty, fashion, education, service, saas, health]
+      description: 업종
+      example: food_beverage
+    preferredHooks:
+      type: array
+      items:
+        type: string
+        enum: [benefit, urgency, social_proof, curiosity, fear_of_missing, authority, emotional]
+      description: 선호하는 훅 타입
+      example: ["benefit", "urgency"]
+      maxItems: 3
+    includeABVariants:
+      type: boolean
+      default: false
+      description: A/B 테스트 변형 포함 여부
+    competitorContext:
+      type: string
+      description: 경쟁사 컨텍스트
+      maxLength: 300
+
+GenerateCopyResponse:
+  type: object
+  required:
+    - variants
+    - remainingQuota
+  properties:
+    variants:
+      type: array
+      items:
+        $ref: '#/AdCopyVariant'
+      description: 생성된 광고 카피 변형들
+    remainingQuota:
+      type: integer
+      description: 남은 할당량
+      example: 17
+    industryInsights:
+      $ref: '#/IndustryInsights'
+    generationHints:
+      $ref: '#/GenerationHints'
+
+AdCopyVariant:
+  type: object
+  required:
+    - headline
+    - primaryText
+    - description
+    - callToAction
+  properties:
+    headline:
+      type: string
+      description: 헤드라인 (최대 40자)
+      example: "제주 유기농 녹차, 건강한 하루의 시작"
+      maxLength: 40
+    primaryText:
+      type: string
+      description: 주요 텍스트 (최대 125자)
+      example: "100% 제주산 유기농 녹차로 만든 프리미엄 티백. 화학비료 없이 자란 순수한 녹차로 건강을 챙기세요."
+      maxLength: 125
+    description:
+      type: string
+      description: 설명 (최대 30자)
+      example: "첫 구매 20% 할인"
+      maxLength: 30
+    callToAction:
+      type: string
+      description: 행동 유도 문구
+      example: "지금 구매하기"
+
+IndustryInsights:
+  type: object
+  description: 업종별 인사이트
+  properties:
+    industry:
+      type: string
+      example: food_beverage
+    avgCTR:
+      type: number
+      description: 평균 CTR (%)
+      example: 2.15
+    avgCVR:
+      type: number
+      description: 평균 CVR (%)
+      example: 3.8
+    topKeywords:
+      type: array
+      items:
+        type: string
+      description: 업종 상위 키워드
+      example: ["유기농", "건강", "천연"]
+    bestPerformingHooks:
+      type: array
+      items:
+        type: string
+      description: 가장 성과가 좋은 훅 타입
+      example: ["benefit", "social_proof"]
+    peakHours:
+      type: array
+      items:
+        type: integer
+      description: 피크 시간대 (시간)
+      example: [10, 14, 20]
+
+GenerationHints:
+  type: object
+  description: 카피 생성 힌트
+  properties:
+    currentSeason:
+      type: string
+      description: 현재 시즌
+      example: "봄"
+    isSpecialPeriod:
+      type: boolean
+      description: 특별 기간 여부
+      example: true
+    specialPeriodName:
+      type: string
+      description: 특별 기간 이름
+      example: "설 명절"
+    recommendedHooks:
+      type: array
+      items:
+        $ref: '#/RecommendedHook'
+    keywordSuggestions:
+      type: array
+      items:
+        type: string
+      description: 키워드 제안
+      example: ["새해", "선물", "건강"]
+    characterGuidelines:
+      type: object
+      description: 문자 수 가이드라인
+      properties:
+        headline:
+          type: string
+          example: "25-35자 권장"
+        primaryText:
+          type: string
+          example: "80-100자 권장"
+        description:
+          type: string
+          example: "20-25자 권장"
+    timingAdvice:
+      type: string
+      description: 타이밍 조언
+      example: "점심시간 직후(14-15시) 게재 시 CTR이 18% 높습니다."
+    ctaRecommendations:
+      type: array
+      items:
+        type: string
+      description: CTA 추천
+      example: ["지금 구매하기", "할인 받기", "더 알아보기"]
+
+RecommendedHook:
+  type: object
+  properties:
+    hook:
+      type: string
+      enum: [benefit, urgency, social_proof, curiosity, fear_of_missing, authority, emotional]
+      example: benefit
+    reason:
+      type: string
+      description: 추천 이유
+      example: "건강 식품은 혜택 강조 시 전환율이 15% 높습니다."
+    expectedCTR:
+      type: number
+      description: 예상 CTR (%)
+      example: 2.8
+    confidence:
+      type: number
+      minimum: 0
+      maximum: 1
+      description: 신뢰도
+      example: 0.85
+
+CopyHints:
+  type: object
+  description: 카피 생성 힌트 조회 응답
+  properties:
+    industry:
+      type: string
+      example: food_beverage
+    hints:
+      $ref: '#/GenerationHints'
+    benchmark:
+      type: object
+      properties:
+        avgCTR:
+          type: number
+          example: 2.15
+        avgCVR:
+          type: number
+          example: 3.8
+        topKeywords:
+          type: array
+          items:
+            type: string
+          example: ["유기농", "건강", "천연"]
+        bestPerformingHooks:
+          type: array
+          items:
+            type: string
+          example: ["benefit", "social_proof"]
+        peakHours:
+          type: array
+          items:
+            type: integer
+          example: [10, 14, 20]
+        characterTips:
+          type: object
+          description: 문자 수 팁
+          properties:
+            headline:
+              type: string
+            primaryText:
+              type: string
+            description:
+              type: string

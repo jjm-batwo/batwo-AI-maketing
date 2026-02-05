@@ -1,0 +1,155 @@
+Error:
+  type: object
+  required:
+    - message
+  properties:
+    message:
+      type: string
+      description: 에러 메시지
+      example: "Failed to create campaign"
+    code:
+      type: string
+      description: 에러 코드
+      example: "VALIDATION_ERROR"
+    details:
+      type: object
+      description: 추가 에러 상세 정보
+      additionalProperties: true
+      example:
+        field: "dailyBudget"
+        constraint: "minimum 1000"
+
+Pagination:
+  type: object
+  required:
+    - page
+    - pageSize
+    - total
+    - totalPages
+  properties:
+    page:
+      type: integer
+      minimum: 1
+      description: 현재 페이지 번호
+      example: 1
+    pageSize:
+      type: integer
+      minimum: 1
+      maximum: 100
+      description: 페이지당 항목 수
+      example: 10
+    total:
+      type: integer
+      description: 전체 항목 수
+      example: 42
+    totalPages:
+      type: integer
+      description: 전체 페이지 수
+      example: 5
+
+DateRange:
+  type: object
+  required:
+    - startDate
+    - endDate
+  properties:
+    startDate:
+      type: string
+      format: date
+      description: 시작일
+      example: "2024-02-01"
+    endDate:
+      type: string
+      format: date
+      description: 종료일
+      example: "2024-02-07"
+
+Currency:
+  type: string
+  enum: [KRW, USD]
+  default: KRW
+  description: 통화 코드
+  example: KRW
+
+SubscriptionPlan:
+  type: string
+  enum: [FREE, BASIC, PREMIUM, ENTERPRISE]
+  description: |
+    요금제 플랜
+    - FREE: 무료 (캠페인 5개/주, AI 카피 20개/일, AI 분석 5회/주)
+    - BASIC: 베이직 (캠페인 20개/주, AI 카피 100개/일, AI 분석 20회/주)
+    - PREMIUM: 프리미엄 (캠페인 무제한, AI 카피 무제한, AI 분석 무제한)
+    - ENTERPRISE: 기업 (커스텀)
+  example: FREE
+
+UsageType:
+  type: string
+  enum: [CAMPAIGN_CREATE, AI_COPY_GEN, AI_ANALYSIS]
+  description: |
+    사용량 유형
+    - CAMPAIGN_CREATE: 캠페인 생성
+    - AI_COPY_GEN: AI 카피 생성
+    - AI_ANALYSIS: AI 분석
+  example: AI_COPY_GEN
+
+MetaConnectionStatus:
+  type: object
+  description: Meta 연동 상태
+  properties:
+    isConnected:
+      type: boolean
+      description: 연동 여부
+      example: true
+    accountId:
+      type: string
+      nullable: true
+      description: Meta Ad Account ID
+      example: "act_123456789"
+    accountName:
+      type: string
+      nullable: true
+      description: Meta Ad Account 이름
+      example: "바투 광고 계정"
+    lastSyncedAt:
+      type: string
+      format: date-time
+      nullable: true
+      description: 마지막 동기화 시간
+      example: "2024-02-05T10:30:00.000Z"
+
+HealthCheck:
+  type: object
+  required:
+    - status
+    - timestamp
+  properties:
+    status:
+      type: string
+      enum: [ok, degraded, down]
+      description: 시스템 상태
+      example: ok
+    timestamp:
+      type: string
+      format: date-time
+      description: 체크 시간
+      example: "2024-02-05T15:30:00.000Z"
+    services:
+      type: object
+      description: 서비스별 상태
+      properties:
+        database:
+          type: string
+          enum: [ok, down]
+          example: ok
+        redis:
+          type: string
+          enum: [ok, down]
+          example: ok
+        metaApi:
+          type: string
+          enum: [ok, degraded, down]
+          example: ok
+    version:
+      type: string
+      description: API 버전
+      example: "1.0.0"

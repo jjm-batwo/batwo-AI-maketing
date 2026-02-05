@@ -1,0 +1,174 @@
+DashboardKPI:
+  type: object
+  required:
+    - totalImpressions
+    - totalClicks
+    - totalConversions
+    - totalSpend
+    - totalRevenue
+    - roas
+    - ctr
+    - cpa
+    - cvr
+  properties:
+    totalImpressions:
+      type: integer
+      description: 총 노출 수
+      example: 1250000
+    totalClicks:
+      type: integer
+      description: 총 클릭 수
+      example: 25000
+    totalConversions:
+      type: integer
+      description: 총 전환 수
+      example: 850
+    totalSpend:
+      type: number
+      description: 총 광고비 (원)
+      example: 1500000
+    totalRevenue:
+      type: number
+      description: 총 매출 (원)
+      example: 8500000
+    roas:
+      type: number
+      description: ROAS (Return on Ad Spend)
+      example: 5.67
+    ctr:
+      type: number
+      description: CTR (Click-Through Rate, %)
+      example: 2.0
+    cpa:
+      type: number
+      description: CPA (Cost Per Acquisition, 원)
+      example: 1764.71
+    cvr:
+      type: number
+      description: CVR (Conversion Rate, %)
+      example: 3.4
+    comparison:
+      $ref: '#/KPIComparison'
+    campaignBreakdown:
+      type: array
+      items:
+        $ref: '#/CampaignKPIBreakdown'
+    chartData:
+      type: array
+      items:
+        $ref: '#/ChartDataPoint'
+
+KPIComparison:
+  type: object
+  description: 이전 기간 대비 변화율 (%)
+  properties:
+    impressionsChange:
+      type: number
+      example: 15.3
+      description: 노출 수 변화율
+    clicksChange:
+      type: number
+      example: 12.5
+      description: 클릭 수 변화율
+    conversionsChange:
+      type: number
+      example: 8.2
+      description: 전환 수 변화율
+    spendChange:
+      type: number
+      example: 5.1
+      description: 광고비 변화율
+    revenueChange:
+      type: number
+      example: 18.7
+      description: 매출 변화율
+    roasChange:
+      type: number
+      example: 13.0
+      description: ROAS 변화율
+    ctrChange:
+      type: number
+      example: 2.3
+      description: CTR 변화율
+
+CampaignKPIBreakdown:
+  type: object
+  description: 캠페인별 성과 분석
+  required:
+    - campaignId
+    - campaignName
+    - impressions
+    - clicks
+    - conversions
+    - spend
+    - revenue
+    - roas
+    - ctr
+    - cpa
+  properties:
+    campaignId:
+      type: string
+      example: "cm123abc456"
+    campaignName:
+      type: string
+      example: "2024 봄 신상품 프로모션"
+    impressions:
+      type: integer
+      example: 350000
+    clicks:
+      type: integer
+      example: 7500
+    conversions:
+      type: integer
+      example: 255
+    spend:
+      type: number
+      example: 450000
+    revenue:
+      type: number
+      example: 2550000
+    roas:
+      type: number
+      example: 5.67
+    ctr:
+      type: number
+      example: 2.14
+    cpa:
+      type: number
+      example: 1764.71
+
+ChartDataPoint:
+  type: object
+  description: 일별 차트 데이터 포인트
+  required:
+    - date
+    - spend
+    - revenue
+    - roas
+    - impressions
+    - clicks
+    - conversions
+  properties:
+    date:
+      type: string
+      format: date
+      description: 날짜 (YYYY-MM-DD)
+      example: "2024-02-15"
+    spend:
+      type: number
+      example: 50000
+    revenue:
+      type: number
+      example: 283500
+    roas:
+      type: number
+      example: 5.67
+    impressions:
+      type: integer
+      example: 41667
+    clicks:
+      type: integer
+      example: 892
+    conversions:
+      type: integer
+      example: 30

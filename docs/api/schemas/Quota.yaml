@@ -1,0 +1,121 @@
+QuotaStatus:
+  type: object
+  description: 사용량 할당량 상태
+  required:
+    - usage
+    - plan
+    - trial
+    - resetDates
+    - limits
+  properties:
+    usage:
+      type: object
+      required:
+        - campaigns
+        - aiCopyGen
+        - aiAnalysis
+      properties:
+        campaigns:
+          $ref: '#/QuotaItem'
+        aiCopyGen:
+          $ref: '#/QuotaItem'
+        aiAnalysis:
+          $ref: '#/QuotaItem'
+    plan:
+      type: string
+      enum: [FREE, BASIC, PREMIUM, ENTERPRISE]
+      description: 현재 요금제
+      example: FREE
+    trial:
+      $ref: '#/TrialStatus'
+    resetDates:
+      type: object
+      description: 할당량 리셋 날짜
+      properties:
+        weekly:
+          type: string
+          format: date
+          description: 주간 리셋 날짜
+          example: "2024-02-12"
+        daily:
+          type: string
+          format: date
+          description: 일일 리셋 날짜
+          example: "2024-02-06"
+    limits:
+      type: object
+      description: 요금제별 제한
+      additionalProperties:
+        $ref: '#/QuotaLimitConfig'
+      example:
+        CAMPAIGN_CREATE:
+          count: 5
+          period: week
+        AI_COPY_GEN:
+          count: 20
+          period: day
+        AI_ANALYSIS:
+          count: 5
+          period: week
+
+QuotaItem:
+  type: object
+  required:
+    - used
+    - limit
+    - remaining
+    - period
+  properties:
+    used:
+      type: integer
+      description: 사용량
+      example: 3
+    limit:
+      type: integer
+      description: 제한량
+      example: 5
+    remaining:
+      type: integer
+      description: 잔여량
+      example: 2
+    period:
+      type: string
+      enum: [day, week]
+      description: 리셋 주기
+      example: week
+
+QuotaLimitConfig:
+  type: object
+  required:
+    - count
+    - period
+  properties:
+    count:
+      type: integer
+      description: 제한 수량
+      example: 5
+    period:
+      type: string
+      enum: [day, week]
+      description: 리셋 주기
+      example: week
+
+TrialStatus:
+  type: object
+  required:
+    - isInTrial
+    - daysRemaining
+  properties:
+    isInTrial:
+      type: boolean
+      description: 무료 체험 중 여부
+      example: true
+    daysRemaining:
+      type: integer
+      description: 남은 체험 기간 (일)
+      example: 7
+    trialEndDate:
+      type: string
+      format: date
+      description: 체험 종료일
+      example: "2024-02-13"

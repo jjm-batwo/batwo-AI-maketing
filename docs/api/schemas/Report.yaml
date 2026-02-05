@@ -1,0 +1,223 @@
+Report:
+  type: object
+  required:
+    - id
+    - type
+    - userId
+    - campaignIds
+    - dateRange
+    - sections
+    - aiInsights
+    - summaryMetrics
+    - status
+    - createdAt
+    - updatedAt
+  properties:
+    id:
+      type: string
+      description: 보고서 ID
+      example: "rpt_123abc"
+    type:
+      type: string
+      enum: [WEEKLY, MONTHLY]
+      description: 보고서 유형
+      example: WEEKLY
+    userId:
+      type: string
+      description: 사용자 ID
+      example: "usr_123"
+    campaignIds:
+      type: array
+      items:
+        type: string
+      description: 포함된 캠페인 ID 목록
+      example: ["cm123abc456", "cm789def012"]
+    dateRange:
+      type: object
+      required:
+        - startDate
+        - endDate
+      properties:
+        startDate:
+          type: string
+          format: date
+          example: "2024-02-01"
+        endDate:
+          type: string
+          format: date
+          example: "2024-02-07"
+    sections:
+      type: array
+      items:
+        $ref: '#/ReportSection'
+    aiInsights:
+      type: array
+      items:
+        $ref: '#/AIInsight'
+    summaryMetrics:
+      $ref: '#/ReportSummaryMetrics'
+    status:
+      type: string
+      enum: [PENDING, GENERATING, COMPLETED, FAILED, SENT]
+      description: 보고서 상태
+      example: COMPLETED
+    generatedAt:
+      type: string
+      format: date-time
+      nullable: true
+      description: 생성 완료 시간
+      example: "2024-02-08T10:30:00.000Z"
+    sentAt:
+      type: string
+      format: date-time
+      nullable: true
+      description: 발송 시간
+      example: "2024-02-08T11:00:00.000Z"
+    createdAt:
+      type: string
+      format: date-time
+      example: "2024-02-08T10:00:00.000Z"
+    updatedAt:
+      type: string
+      format: date-time
+      example: "2024-02-08T10:30:00.000Z"
+
+ReportSummary:
+  type: object
+  description: 보고서 목록용 요약 정보
+  required:
+    - id
+    - type
+    - status
+    - dateRange
+    - campaignCount
+  properties:
+    id:
+      type: string
+      example: "rpt_123abc"
+    type:
+      type: string
+      enum: [WEEKLY, MONTHLY]
+      example: WEEKLY
+    status:
+      type: string
+      enum: [PENDING, GENERATING, COMPLETED, FAILED, SENT]
+      example: COMPLETED
+    dateRange:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date
+          example: "2024-02-01"
+        endDate:
+          type: string
+          format: date
+          example: "2024-02-07"
+    generatedAt:
+      type: string
+      format: date-time
+      nullable: true
+      example: "2024-02-08T10:30:00.000Z"
+    campaignCount:
+      type: integer
+      description: 포함된 캠페인 수
+      example: 2
+
+ReportSection:
+  type: object
+  required:
+    - title
+    - type
+    - content
+  properties:
+    title:
+      type: string
+      description: 섹션 제목
+      example: "주요 성과 지표"
+    type:
+      type: string
+      enum: [SUMMARY, CAMPAIGN_PERFORMANCE, INSIGHTS, RECOMMENDATIONS]
+      description: 섹션 유형
+      example: SUMMARY
+    content:
+      type: object
+      description: 섹션 내용 (JSON 형식)
+      additionalProperties: true
+      example:
+        totalSpend: 1500000
+        totalRevenue: 8500000
+        roas: 5.67
+
+AIInsight:
+  type: object
+  required:
+    - category
+    - insight
+    - impact
+    - recommendation
+  properties:
+    category:
+      type: string
+      enum: [PERFORMANCE, BUDGET, AUDIENCE, CREATIVE, TIMING]
+      description: 인사이트 카테고리
+      example: PERFORMANCE
+    insight:
+      type: string
+      description: AI가 발견한 인사이트
+      example: "지난주 대비 전환율이 8.2% 상승했습니다."
+    impact:
+      type: string
+      enum: [HIGH, MEDIUM, LOW]
+      description: 영향도
+      example: HIGH
+    recommendation:
+      type: string
+      description: AI 추천 사항
+      example: "현재 전략을 유지하되, 예산을 20% 증액하면 더 높은 성과를 기대할 수 있습니다."
+    confidence:
+      type: number
+      minimum: 0
+      maximum: 1
+      description: 신뢰도 (0-1)
+      example: 0.85
+
+ReportSummaryMetrics:
+  type: object
+  required:
+    - totalSpend
+    - totalRevenue
+    - totalConversions
+    - averageROAS
+    - topPerformingCampaign
+  properties:
+    totalSpend:
+      type: number
+      description: 총 광고비
+      example: 1500000
+    totalRevenue:
+      type: number
+      description: 총 매출
+      example: 8500000
+    totalConversions:
+      type: integer
+      description: 총 전환 수
+      example: 850
+    averageROAS:
+      type: number
+      description: 평균 ROAS
+      example: 5.67
+    topPerformingCampaign:
+      type: object
+      nullable: true
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        roas:
+          type: number
+      example:
+        id: "cm123abc456"
+        name: "2024 봄 신상품 프로모션"
+        roas: 6.82

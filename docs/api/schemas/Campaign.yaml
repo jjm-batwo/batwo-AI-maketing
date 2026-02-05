@@ -1,0 +1,240 @@
+Campaign:
+  type: object
+  required:
+    - id
+    - userId
+    - name
+    - objective
+    - status
+    - dailyBudget
+    - currency
+    - startDate
+    - createdAt
+    - updatedAt
+  properties:
+    id:
+      type: string
+      description: 캠페인 고유 ID
+      example: "cm123abc456"
+    userId:
+      type: string
+      description: 사용자 ID
+      example: "usr_123"
+    name:
+      type: string
+      description: 캠페인 이름
+      example: "2024 봄 신상품 프로모션"
+      minLength: 1
+      maxLength: 200
+    objective:
+      $ref: '#/CampaignObjective'
+    status:
+      $ref: '#/CampaignStatus'
+    dailyBudget:
+      type: number
+      description: 일일 예산
+      minimum: 0
+      example: 50000
+    currency:
+      type: string
+      description: 통화 코드
+      enum: [KRW, USD]
+      default: KRW
+      example: "KRW"
+    startDate:
+      type: string
+      format: date-time
+      description: 캠페인 시작일
+      example: "2024-03-01T00:00:00.000Z"
+    endDate:
+      type: string
+      format: date-time
+      nullable: true
+      description: 캠페인 종료일 (null이면 무기한)
+      example: "2024-03-31T23:59:59.999Z"
+    targetAudience:
+      type: object
+      nullable: true
+      description: 타겟 오디언스
+      properties:
+        ageMin:
+          type: integer
+          minimum: 13
+          maximum: 65
+          example: 25
+        ageMax:
+          type: integer
+          minimum: 13
+          maximum: 65
+          example: 45
+        genders:
+          type: array
+          items:
+            type: string
+            enum: [MALE, FEMALE, ALL]
+          example: ["ALL"]
+        locations:
+          type: array
+          items:
+            type: string
+          example: ["KR"]
+        interests:
+          type: array
+          items:
+            type: string
+          example: ["패션", "뷰티"]
+    metaCampaignId:
+      type: string
+      nullable: true
+      description: Meta Ads 캠페인 ID (동기화된 경우)
+      example: "23850123456789"
+    createdAt:
+      type: string
+      format: date-time
+      description: 생성일시
+      example: "2024-02-01T09:00:00.000Z"
+    updatedAt:
+      type: string
+      format: date-time
+      description: 수정일시
+      example: "2024-02-01T09:00:00.000Z"
+
+CampaignStatus:
+  type: string
+  description: 캠페인 상태
+  enum:
+    - DRAFT
+    - PENDING_REVIEW
+    - ACTIVE
+    - PAUSED
+    - COMPLETED
+    - REJECTED
+  example: ACTIVE
+
+CampaignObjective:
+  type: string
+  description: 캠페인 목표
+  enum:
+    - AWARENESS
+    - TRAFFIC
+    - ENGAGEMENT
+    - LEADS
+    - APP_PROMOTION
+    - SALES
+    - CONVERSIONS
+  example: SALES
+
+CreateCampaignRequest:
+  type: object
+  required:
+    - name
+    - objective
+    - dailyBudget
+    - currency
+    - startDate
+  properties:
+    name:
+      type: string
+      minLength: 1
+      maxLength: 200
+      example: "2024 봄 신상품 프로모션"
+    objective:
+      $ref: '#/CampaignObjective'
+    dailyBudget:
+      type: number
+      minimum: 1000
+      example: 50000
+      description: 일일 예산 (최소 1,000원)
+    currency:
+      type: string
+      enum: [KRW, USD]
+      default: KRW
+      example: "KRW"
+    startDate:
+      type: string
+      format: date
+      example: "2024-03-01"
+    endDate:
+      type: string
+      format: date
+      nullable: true
+      example: "2024-03-31"
+    targetAudience:
+      type: object
+      nullable: true
+      properties:
+        ageMin:
+          type: integer
+          minimum: 13
+          maximum: 65
+        ageMax:
+          type: integer
+          minimum: 13
+          maximum: 65
+        genders:
+          type: array
+          items:
+            type: string
+            enum: [MALE, FEMALE, ALL]
+        locations:
+          type: array
+          items:
+            type: string
+        interests:
+          type: array
+          items:
+            type: string
+    syncToMeta:
+      type: boolean
+      default: false
+      description: Meta Ads에 자동 동기화 여부
+    accessToken:
+      type: string
+      nullable: true
+      description: Meta access token (syncToMeta가 true인 경우 필수)
+    adAccountId:
+      type: string
+      nullable: true
+      description: Meta Ad Account ID (syncToMeta가 true인 경우 필수)
+
+UpdateCampaignRequest:
+  type: object
+  properties:
+    name:
+      type: string
+      minLength: 1
+      maxLength: 200
+    status:
+      $ref: '#/CampaignStatus'
+    dailyBudget:
+      type: number
+      minimum: 1000
+    endDate:
+      type: string
+      format: date
+      nullable: true
+    targetAudience:
+      type: object
+      nullable: true
+      properties:
+        ageMin:
+          type: integer
+          minimum: 13
+          maximum: 65
+        ageMax:
+          type: integer
+          minimum: 13
+          maximum: 65
+        genders:
+          type: array
+          items:
+            type: string
+            enum: [MALE, FEMALE, ALL]
+        locations:
+          type: array
+          items:
+            type: string
+        interests:
+          type: array
+          items:
+            type: string
