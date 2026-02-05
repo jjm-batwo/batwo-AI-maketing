@@ -29,6 +29,7 @@ export default function DashboardPage() {
   const { data, isLoading, error } = useDashboardKPI({
     period: dashboardPeriod,
     includeBreakdown: true, // 캠페인별 KPI 데이터 포함
+    includeComparison: true, // 지난 기간 대비 변화율 포함
     enabled: isConnected, // Meta 연결 시에만 데이터 fetch
   })
   const { data: campaignsData } = useCampaigns({
@@ -96,7 +97,7 @@ export default function DashboardPage() {
   const chartData = data?.chartData ?? []
 
   // CampaignSummaryTable용 캠페인 데이터 변환
-  // 캠페인 목록에서 실제 status를 가져와 병합
+  // 대시보드에는 ACTIVE 캠페인만 표시
   const campaignSummaries = useMemo(() => {
     const campaigns = campaignsData?.campaigns ?? []
     if (campaigns.length === 0) return []
@@ -106,7 +107,12 @@ export default function DashboardPage() {
       (data?.campaignBreakdown ?? []).map((b: { campaignId: string; spend: number; roas: number; ctr: number }) => [b.campaignId, b])
     )
 
-    return campaigns.map((campaign: { id: string; name: string; status: string; spend?: number; roas?: number }) => {
+    // ACTIVE 캠페인만 필터링
+    const activeCampaigns = campaigns.filter(
+      (campaign: { status: string }) => campaign.status === 'ACTIVE'
+    )
+
+    return activeCampaigns.map((campaign: { id: string; name: string; status: string; spend?: number; roas?: number }) => {
       const breakdown = breakdownMap.get(campaign.id)
       return {
         id: campaign.id,
