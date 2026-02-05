@@ -23,6 +23,7 @@ export default function CampaignsPage() {
   const { isConnected, isLoading: isCheckingConnection } = useMetaConnection()
   const { data, isLoading, error } = useCampaigns({
     status: filters.status === 'ALL' ? undefined : filters.status,
+    pageSize: 100, // 충분한 캠페인을 가져오기 위해 pageSize 증가
     enabled: isConnected, // Meta 연결 시에만 데이터 fetch
   })
 
