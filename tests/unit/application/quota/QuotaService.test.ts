@@ -96,16 +96,20 @@ describe('QuotaService', () => {
       const result = await quotaService.getRemainingQuota('user-123')
 
       expect(result.CAMPAIGN_CREATE.used).toBe(2)
-      expect(result.CAMPAIGN_CREATE.limit).toBe(5)
-      expect(result.CAMPAIGN_CREATE.remaining).toBe(3)
+      expect(result.CAMPAIGN_CREATE.limit).toBe(3)
+      expect(result.CAMPAIGN_CREATE.remaining).toBe(1)
 
       expect(result.AI_COPY_GEN.used).toBe(1)
-      expect(result.AI_COPY_GEN.limit).toBe(20)
-      expect(result.AI_COPY_GEN.remaining).toBe(19)
+      expect(result.AI_COPY_GEN.limit).toBe(5)
+      expect(result.AI_COPY_GEN.remaining).toBe(4)
 
       expect(result.AI_ANALYSIS.used).toBe(0)
-      expect(result.AI_ANALYSIS.limit).toBe(5)
-      expect(result.AI_ANALYSIS.remaining).toBe(5)
+      expect(result.AI_ANALYSIS.limit).toBe(3)
+      expect(result.AI_ANALYSIS.remaining).toBe(3)
+
+      expect(result.AI_SCIENCE.used).toBe(0)
+      expect(result.AI_SCIENCE.limit).toBe(0)
+      expect(result.AI_SCIENCE.remaining).toBe(0)
     })
 
     it('should not return negative remaining quota', async () => {
@@ -142,9 +146,10 @@ describe('QuotaService', () => {
     it('should return correct quota limits', () => {
       const limits = quotaService.getQuotaLimits()
 
-      expect(limits.CAMPAIGN_CREATE).toEqual({ count: 5, period: 'week' })
-      expect(limits.AI_COPY_GEN).toEqual({ count: 20, period: 'day' })
-      expect(limits.AI_ANALYSIS).toEqual({ count: 5, period: 'week' })
+      expect(limits.CAMPAIGN_CREATE).toEqual({ count: 3, period: 'week' })
+      expect(limits.AI_COPY_GEN).toEqual({ count: 5, period: 'day' })
+      expect(limits.AI_ANALYSIS).toEqual({ count: 3, period: 'week' })
+      expect(limits.AI_SCIENCE).toEqual({ count: 0, period: 'week' })
     })
   })
 })

@@ -1,37 +1,36 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import type { SubscriptionPlan } from '@domain/value-objects/SubscriptionPlan'
+import type { QuotaLimits } from '@application/dto/quota/QuotaStatusDTO'
+
+interface QuotaItem {
+  used: number
+  limit: number
+  remaining: number
+  period: 'day' | 'week'
+}
 
 interface QuotaUsage {
-  campaigns: {
-    used: number
-    limit: number
-    period: 'monthly'
-  }
-  aiReports: {
-    used: number
-    limit: number
-    period: 'monthly'
-  }
-  apiCalls: {
-    used: number
-    limit: number
-    period: 'daily'
-  }
-  adSpend: {
-    used: number
-    limit: number
-    period: 'monthly'
-  }
+  campaigns: QuotaItem
+  aiCopyGen: QuotaItem
+  aiAnalysis: QuotaItem
+}
+
+interface TrialStatus {
+  isInTrial: boolean
+  daysRemaining: number
 }
 
 interface QuotaResponse {
   usage: QuotaUsage
-  plan: 'FREE' | 'BASIC' | 'PRO' | 'ENTERPRISE'
+  plan: SubscriptionPlan
+  trial: TrialStatus
   resetDates: {
-    monthly: string
+    weekly: string
     daily: string
   }
+  limits: QuotaLimits
 }
 
 const QUOTA_QUERY_KEY = ['quota'] as const
@@ -58,7 +57,7 @@ export function useQuotaCheck(type: keyof QuotaUsage) {
 
   const quota = data?.usage[type]
   const isExceeded = quota ? quota.used >= quota.limit : false
-  const remaining = quota ? quota.limit - quota.used : 0
+  const remaining = quota ? quota.remaining : 0
   const percentage = quota ? Math.round((quota.used / quota.limit) * 100) : 0
 
   return {
@@ -67,6 +66,7 @@ export function useQuotaCheck(type: keyof QuotaUsage) {
     remaining,
     percentage,
     plan: data?.plan,
+    trial: data?.trial,
     ...rest,
   }
 }
@@ -75,14 +75,10 @@ export function useCampaignQuota() {
   return useQuotaCheck('campaigns')
 }
 
-export function useAiReportQuota() {
-  return useQuotaCheck('aiReports')
+export function useAiCopyGenQuota() {
+  return useQuotaCheck('aiCopyGen')
 }
 
-export function useApiCallQuota() {
-  return useQuotaCheck('apiCalls')
-}
-
-export function useAdSpendQuota() {
-  return useQuotaCheck('adSpend')
+export function useAiAnalysisQuota() {
+  return useQuotaCheck('aiAnalysis')
 }

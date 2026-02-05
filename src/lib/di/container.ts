@@ -33,6 +33,7 @@ import type { IAIService } from '@application/ports/IAIService'
 import type { IStreamingAIService } from '@application/ports/IStreamingAIService'
 import type { IKnowledgeBaseService } from '@application/ports/IKnowledgeBaseService'
 import type { IResearchService } from '@application/ports/IResearchService'
+import type { ICacheService } from '@application/ports/ICacheService'
 
 // Infrastructure implementations
 import { PrismaCampaignRepository } from '@infrastructure/database/repositories/PrismaCampaignRepository'
@@ -57,6 +58,8 @@ import { KnowledgeBaseService } from '@infrastructure/knowledge'
 import { MarketingIntelligenceService } from '@application/services/MarketingIntelligenceService'
 import { ScienceAIService } from '@infrastructure/external/openai/ScienceAIService'
 import { PerplexityResearchService } from '@infrastructure/external/research'
+import { RedisCacheService } from '@infrastructure/cache/RedisCacheService'
+import { MemoryCacheService } from '@infrastructure/cache/MemoryCacheService'
 
 // Application services and use cases
 import { QuotaService } from '@application/services/QuotaService'
@@ -68,6 +71,8 @@ import { CopyLearningService } from '@application/services/CopyLearningService'
 import { CampaignAnalyzer } from '@application/services/CampaignAnalyzer'
 import { CompetitorBenchmarkService } from '@application/services/CompetitorBenchmarkService'
 import { TargetingRecommendationService } from '@application/services/TargetingRecommendationService'
+import { PermissionService } from '@application/services/PermissionService'
+import { ABTestAnalysisService } from '@application/services/ABTestAnalysisService'
 import { ReportPDFGenerator, type IReportPDFGenerator } from '@infrastructure/pdf/ReportPDFGenerator'
 import { EmailService } from '@infrastructure/email/EmailService'
 import type { IEmailService } from '@application/ports/IEmailService'
@@ -81,6 +86,7 @@ import { SyncCampaignsUseCase } from '@application/use-cases/campaign/SyncCampai
 import { GenerateWeeklyReportUseCase } from '@application/use-cases/report/GenerateWeeklyReportUseCase'
 import { GetDashboardKPIUseCase } from '@application/use-cases/kpi/GetDashboardKPIUseCase'
 import { SyncMetaInsightsUseCase } from '@application/use-cases/kpi/SyncMetaInsightsUseCase'
+import { SyncAllInsightsUseCase } from '@application/use-cases/kpi/SyncAllInsightsUseCase'
 import { ListUserPixelsUseCase } from '@application/use-cases/pixel/ListUserPixelsUseCase'
 import { SelectPixelUseCase } from '@application/use-cases/pixel/SelectPixelUseCase'
 import { IssueBillingKeyUseCase } from '@application/use-cases/payment/IssueBillingKeyUseCase'
@@ -219,6 +225,23 @@ container.registerSingleton<IPaymentGateway>(
   () => new TossPaymentsClient()
 )
 
+// Register Cache Service (Singleton)
+container.registerSingleton<ICacheService>(
+  DI_TOKENS.CacheService,
+  () => {
+    const cacheEnabled = process.env.CACHE_ENABLED !== 'false'
+    const redisUrl = process.env.REDIS_URL
+
+    if (cacheEnabled && redisUrl) {
+      console.log('[DI] Using Redis cache service')
+      return new RedisCacheService(redisUrl)
+    } else {
+      console.log('[DI] Using in-memory cache service (development only)')
+      return new MemoryCacheService()
+    }
+  }
+)
+
 // Register Application Services (Singletons)
 container.registerSingleton(
   DI_TOKENS.QuotaService,
@@ -275,6 +298,16 @@ container.registerSingleton(
 container.registerSingleton(
   DI_TOKENS.TargetingRecommendationService,
   () => new TargetingRecommendationService()
+)
+
+container.registerSingleton(
+  DI_TOKENS.PermissionService,
+  () => new PermissionService(prisma)
+)
+
+container.registerSingleton(
+  DI_TOKENS.ABTestAnalysisService,
+  () => new ABTestAnalysisService(container.resolve(DI_TOKENS.ABTestRepository))
 )
 
 // Register Infrastructure Services (Singletons)
@@ -401,6 +434,16 @@ container.register(
   DI_TOKENS.SyncMetaInsightsUseCase,
   () =>
     new SyncMetaInsightsUseCase(
+      container.resolve(DI_TOKENS.CampaignRepository),
+      container.resolve(DI_TOKENS.KPIRepository),
+      container.resolve(DI_TOKENS.MetaAdsService)
+    )
+)
+
+container.register(
+  DI_TOKENS.SyncAllInsightsUseCase,
+  () =>
+    new SyncAllInsightsUseCase(
       container.resolve(DI_TOKENS.CampaignRepository),
       container.resolve(DI_TOKENS.KPIRepository),
       container.resolve(DI_TOKENS.MetaAdsService)
@@ -647,6 +690,14 @@ export function getAIFeedbackRepository(): IAIFeedbackRepository {
   return container.resolve(DI_TOKENS.AIFeedbackRepository)
 }
 
+export function getPermissionService(): PermissionService {
+  return container.resolve(DI_TOKENS.PermissionService)
+}
+
+export function getABTestAnalysisService(): ABTestAnalysisService {
+  return container.resolve(DI_TOKENS.ABTestAnalysisService)
+}
+
 /**
  * Get AIService configured for a specific subscription plan's copy model
  */
@@ -662,4 +713,11 @@ export function getPremiumAIService(plan: SubscriptionPlan): IAIService | null {
   const modelConfig = getAIModelConfig(plan)
   if (!modelConfig.premiumCopyModel) return null
   return new AIService(process.env.OPENAI_API_KEY || '', modelConfig.premiumCopyModel)
+}
+
+/**
+ * Get the cache service instance
+ */
+export function getCacheService(): ICacheService {
+  return container.resolve(DI_TOKENS.CacheService)
 }

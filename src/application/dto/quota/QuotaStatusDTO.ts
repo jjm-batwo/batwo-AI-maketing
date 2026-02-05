@@ -1,4 +1,5 @@
 import { UsageType } from '@domain/repositories/IUsageLogRepository'
+import { SubscriptionPlan } from '@domain/value-objects/SubscriptionPlan'
 
 export interface QuotaItemDTO {
   used: number
@@ -22,6 +23,7 @@ export interface TrialStatusDTO {
 }
 
 export interface FullQuotaStatusDTO {
+  plan: SubscriptionPlan
   quotas: QuotaStatusDTO
   trial: TrialStatusDTO
 }

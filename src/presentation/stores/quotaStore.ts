@@ -3,8 +3,8 @@ import { create } from 'zustand'
 interface QuotaState {
   // Dialog visibility
   isQuotaExceededDialogOpen: boolean
-  exceededQuotaType: 'campaigns' | 'aiReports' | 'apiCalls' | 'adSpend' | null
-  openQuotaExceededDialog: (type: 'campaigns' | 'aiReports' | 'apiCalls' | 'adSpend') => void
+  exceededQuotaType: 'campaigns' | 'aiCopyGen' | 'aiAnalysis' | null
+  openQuotaExceededDialog: (type: 'campaigns' | 'aiCopyGen' | 'aiAnalysis') => void
   closeQuotaExceededDialog: () => void
 
   // Upgrade modal

@@ -15,6 +15,7 @@ export const DI_TOKENS = {
   BudgetAlertRepository: Symbol.for('BudgetAlertRepository'),
   ABTestRepository: Symbol.for('ABTestRepository'),
   TeamRepository: Symbol.for('TeamRepository'),
+  TeamRoleRepository: Symbol.for('TeamRoleRepository'),
   SubscriptionRepository: Symbol.for('SubscriptionRepository'),
   InvoiceRepository: Symbol.for('InvoiceRepository'),
   MetaPixelRepository: Symbol.for('MetaPixelRepository'),
@@ -35,6 +36,8 @@ export const DI_TOKENS = {
   CampaignAnalyzer: Symbol.for('CampaignAnalyzer'),
   CompetitorBenchmarkService: Symbol.for('CompetitorBenchmarkService'),
   TargetingRecommendationService: Symbol.for('TargetingRecommendationService'),
+  PermissionService: Symbol.for('PermissionService'),
+  ABTestAnalysisService: Symbol.for('ABTestAnalysisService'),
 
   // Infrastructure Services
   ReportPDFGenerator: Symbol.for('ReportPDFGenerator'),
@@ -57,6 +60,7 @@ export const DI_TOKENS = {
   GenerateWeeklyReportUseCase: Symbol.for('GenerateWeeklyReportUseCase'),
   GetDashboardKPIUseCase: Symbol.for('GetDashboardKPIUseCase'),
   SyncMetaInsightsUseCase: Symbol.for('SyncMetaInsightsUseCase'),
+  SyncAllInsightsUseCase: Symbol.for('SyncAllInsightsUseCase'),
 
   // Pixel Use Cases
   ListUserPixelsUseCase: Symbol.for('ListUserPixelsUseCase'),
@@ -73,6 +77,9 @@ export const DI_TOKENS = {
   CancelSubscriptionUseCase: Symbol.for('CancelSubscriptionUseCase'),
   ChangePlanUseCase: Symbol.for('ChangePlanUseCase'),
   GetPaymentHistoryUseCase: Symbol.for('GetPaymentHistoryUseCase'),
+
+  // Cache Service
+  CacheService: Symbol.for('CacheService'),
 } as const
 
 export type DIToken = (typeof DI_TOKENS)[keyof typeof DI_TOKENS]
