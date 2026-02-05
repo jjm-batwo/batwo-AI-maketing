@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChevronRight, Radio } from 'lucide-react'
+import { ChevronRight, Radio, CreditCard } from 'lucide-react'
 
 const settingsItems = [
   {
@@ -20,6 +20,12 @@ const settingsItems = [
     description: 'Meta 픽셀을 설치하여 웹사이트 전환을 추적하세요',
     href: '/settings/pixel',
     icon: <Radio className="h-6 w-6 text-purple-500" />,
+  },
+  {
+    title: '결제 관리',
+    description: '구독 플랜, 결제 수단, 결제 내역을 관리하세요',
+    href: '/settings/billing',
+    icon: <CreditCard className="h-6 w-6 text-green-500" />,
   },
 ]
 

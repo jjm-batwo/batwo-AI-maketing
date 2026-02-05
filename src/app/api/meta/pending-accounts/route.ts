@@ -21,8 +21,8 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // 캐시에서 OAuth 데이터 조회
-    const oauthData = oauthCache.get(sessionId, user.id)
+    // 캐시에서 OAuth 데이터 조회 (DB 기반)
+    const oauthData = await oauthCache.get(sessionId, user.id)
 
     if (!oauthData) {
       return NextResponse.json(

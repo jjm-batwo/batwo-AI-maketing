@@ -3,39 +3,21 @@
 import { useState, Suspense } from 'react'
 import { signIn } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { AlertCircle, Loader2 } from 'lucide-react'
 import { useFacebookLoginStatus } from '@/presentation/hooks/useFacebookLoginStatus'
 
-const ERROR_MESSAGES: Record<string, string> = {
-  Configuration: '서버 설정 오류입니다. 관리자에게 문의하세요.',
-  AccessDenied: '접근이 거부되었습니다. 권한을 확인해주세요.',
-  Verification: '인증 링크가 만료되었거나 이미 사용되었습니다.',
-  OAuthSignin: 'OAuth 로그인 시작 중 오류가 발생했습니다.',
-  OAuthCallback: 'OAuth 인증 처리 중 오류가 발생했습니다.',
-  OAuthCreateAccount: '계정 생성 중 오류가 발생했습니다.',
-  EmailCreateAccount: '이메일 계정 생성 중 오류가 발생했습니다.',
-  Callback: '인증 콜백 처리 중 오류가 발생했습니다.',
-  OAuthAccountNotLinked: '이미 다른 방법으로 가입된 이메일입니다. 기존 로그인 방법을 사용해주세요.',
-  EmailSignin: '이메일 전송 중 오류가 발생했습니다.',
-  CredentialsSignin: '이메일 또는 비밀번호가 올바르지 않습니다.',
-  SessionRequired: '로그인이 필요합니다.',
-  // Meta-specific errors
-  invalid_scope: 'Meta 앱 권한 설정이 필요합니다. 관리자에게 문의하세요.',
-  invalid_redirect_uri: 'OAuth 리다이렉트 URL이 등록되지 않았습니다.',
-  access_denied: 'Meta 로그인이 거부되었습니다. 다시 시도해주세요.',
-  Default: '로그인 중 오류가 발생했습니다. 다시 시도해주세요.',
-}
-
 function LoginForm() {
+  const t = useTranslations()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/'
   const urlError = searchParams.get('error')
   const [isLoading, setIsLoading] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(() => {
     if (urlError) {
-      const message = ERROR_MESSAGES[urlError] || ERROR_MESSAGES.Default
+      const message = t(`login.errors.${urlError}`) || t('login.errors.Default')
       console.error('[LOGIN] OAuth error from URL:', urlError)
       return message
     }
@@ -55,7 +37,7 @@ function LoginForm() {
         redirect: true,
       })
     } catch {
-      setError('로그인 중 오류가 발생했습니다')
+      setError(t('login.errors.Default'))
       setIsLoading(null)
     }
   }
@@ -63,9 +45,9 @@ function LoginForm() {
   return (
     <Card className="w-full max-w-md shadow-lg">
       <CardHeader className="text-center space-y-2">
-        <CardTitle className="text-2xl font-bold">바투에 로그인하기</CardTitle>
+        <h1 className="text-2xl font-bold">{t('login.title')}</h1>
         <CardDescription className="text-base">
-          AI 마케팅 솔루션의 모든 기능을 이용해보세요
+          {t('login.subtitle')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -106,7 +88,7 @@ function LoginForm() {
                 />
               </svg>
             )}
-            Google로 계속하기
+            {t('login.continueWith.google')}
           </Button>
 
           {/* 카카오 로그인 - 카카오 노란색 */}
@@ -123,13 +105,13 @@ function LoginForm() {
                 <path d="M12 3C6.477 3 2 6.463 2 10.71c0 2.746 1.829 5.158 4.582 6.528l-.916 3.407c-.082.307.257.554.52.381l4.059-2.67c.558.073 1.127.114 1.755.114 5.523 0 10-3.463 10-7.76S17.523 3 12 3z" />
               </svg>
             )}
-            카카오로 계속하기
+            {t('login.continueWith.kakao')}
           </Button>
 
           {/* Meta 로그인 - Meta 파란색 */}
           {isFacebookConnected && (
             <p className="text-xs text-green-600 text-center">
-              Facebook에 이미 로그인되어 있습니다
+              {t('login.facebookConnected')}
             </p>
           )}
           <Button
@@ -145,25 +127,25 @@ function LoginForm() {
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
               </svg>
             )}
-            {isFacebookConnected ? 'Meta로 계속하기 (연결됨)' : 'Meta로 계속하기'}
+            {isFacebookConnected ? t('login.continueWith.metaConnected') : t('login.continueWith.meta')}
           </Button>
           {process.env.NODE_ENV === 'development' && (
             <p className="text-xs text-amber-600 text-center">
-              개발 모드: Meta 로그인은 테스트 사용자로 제한됩니다
+              {t('login.devMode')}
             </p>
           )}
         </div>
 
         <p className="text-center text-xs text-muted-foreground pt-4">
-          로그인 시 바투의{' '}
+          {t('login.termsPrefix')}{' '}
           <a href="/terms" className="underline hover:text-foreground">
-            이용약관
+            {t('login.terms')}
           </a>
-          {' '}및{' '}
+          {' '}{t('login.termsAnd')}{' '}
           <a href="/privacy" className="underline hover:text-foreground">
-            개인정보처리방침
+            {t('login.privacy')}
           </a>
-          에 동의하게 됩니다.
+          {t('login.termsSuffix')}
         </p>
       </CardContent>
     </Card>

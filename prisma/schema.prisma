@@ -564,6 +564,23 @@ model PaymentLog {
 }
 
 // ========================================
+// OAuth Temporary Session (Meta Account Selection)
+// ========================================
+
+model OAuthSession {
+  id          String   @id // sessionId
+  userId      String
+  accessToken String   @db.Text
+  tokenExpiry Int      // seconds
+  accounts    Json     // Array of ad accounts
+  expiresAt   DateTime // TTL
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// ========================================
 // AI Feedback Tracking
 // ========================================
 

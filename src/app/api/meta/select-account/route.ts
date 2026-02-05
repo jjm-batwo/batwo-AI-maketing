@@ -22,8 +22,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 캐시에서 OAuth 데이터 조회
-    const oauthData = oauthCache.get(sessionId, user.id)
+    // 캐시에서 OAuth 데이터 조회 (DB 기반)
+    const oauthData = await oauthCache.get(sessionId, user.id)
 
     if (!oauthData) {
       return NextResponse.json(
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 캐시에서 OAuth 데이터 삭제 (보안)
-    oauthCache.delete(sessionId)
+    await oauthCache.delete(sessionId)
 
     if (!dbSuccess) {
       return NextResponse.json(

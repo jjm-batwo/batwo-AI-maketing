@@ -36,6 +36,7 @@ export const authConfig = {
       const isLoggedIn = !!auth?.user
       const isLandingPage = nextUrl.pathname === '/'
       const isOnDashboard =
+        nextUrl.pathname.startsWith('/dashboard') ||
         nextUrl.pathname.startsWith('/campaigns') ||
         nextUrl.pathname.startsWith('/reports') ||
         nextUrl.pathname.startsWith('/settings')

@@ -105,6 +105,8 @@ export async function GET(request: NextRequest) {
     if (accounts.length === 1) {
       const primaryAdAccount = accounts[0]
       let dbSuccess = false
+      // expires_in이 없는 경우 기본값 60일(5184000초) 사용
+      const singleAccountTokenExpiry = longLivedTokenResponse.expires_in || 5184000
 
       try {
         // Check if account already exists
@@ -122,7 +124,7 @@ export async function GET(request: NextRequest) {
             data: {
               accessToken: longLivedTokenResponse.access_token,
               tokenExpiry: new Date(
-                Date.now() + longLivedTokenResponse.expires_in * 1000
+                Date.now() + singleAccountTokenExpiry * 1000
               ),
             },
           })
@@ -135,7 +137,7 @@ export async function GET(request: NextRequest) {
               businessName: primaryAdAccount.name,
               accessToken: longLivedTokenResponse.access_token,
               tokenExpiry: new Date(
-                Date.now() + longLivedTokenResponse.expires_in * 1000
+                Date.now() + singleAccountTokenExpiry * 1000
               ),
             },
           })
@@ -156,12 +158,29 @@ export async function GET(request: NextRequest) {
     }
 
     // 계정이 여러 개인 경우: 선택 페이지로 리다이렉트
-    // accessToken을 임시 캐시에 저장 (5분 TTL)
-    const sessionId = oauthCache.set(user.id, {
-      accessToken: longLivedTokenResponse.access_token,
-      tokenExpiry: longLivedTokenResponse.expires_in,
-      accounts: accounts,
-    })
+    // accessToken을 임시 캐시에 저장 (10분 TTL, DB 기반)
+    // expires_in이 없는 경우 기본값 60일(5184000초) 사용
+    const tokenExpirySeconds = longLivedTokenResponse.expires_in || 5184000
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[META CALLBACK] Saving to OAuth cache:', {
+        userId: user.id.substring(0, 10) + '...',
+        tokenExpirySeconds,
+        accountCount: accounts.length,
+      })
+    }
+
+    let sessionId: string
+    try {
+      sessionId = await oauthCache.set(user.id, {
+        accessToken: longLivedTokenResponse.access_token,
+        tokenExpiry: tokenExpirySeconds,
+        accounts: accounts,
+      })
+    } catch (cacheError) {
+      console.error('[META CALLBACK] OAuth cache set failed:', cacheError)
+      throw new Error(`OAuth 세션 저장 실패: ${cacheError instanceof Error ? cacheError.message : 'Unknown'}`)
+    }
 
     const selectUrl = new URL('/settings/meta-connect', request.url)
     selectUrl.searchParams.set('mode', 'select')
@@ -169,9 +188,20 @@ export async function GET(request: NextRequest) {
     selectUrl.searchParams.set('count', accounts.length.toString())
     return NextResponse.redirect(selectUrl)
   } catch (error) {
-    console.error('Meta OAuth callback error:', error)
+    // 상세 에러 로깅
+    console.error('Meta OAuth callback error:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      name: error instanceof Error ? error.name : undefined,
+    })
+
+    // 에러 메시지를 URL에 포함 (디버깅용)
+    const errorMessage = error instanceof Error
+      ? encodeURIComponent(error.message)
+      : encodeURIComponent('연결 중 오류가 발생했습니다')
+
     return NextResponse.redirect(
-      new URL('/settings/meta-connect?error=연결 중 오류가 발생했습니다', request.url)
+      new URL(`/settings/meta-connect?error=${errorMessage}`, request.url)
     )
   }
 }
