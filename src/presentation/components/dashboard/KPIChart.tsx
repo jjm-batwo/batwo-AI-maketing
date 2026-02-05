@@ -93,10 +93,19 @@ export function KPIChart({
     )
   }
 
+  const renderEmptyState = () => (
+    <div className="flex h-32 items-center justify-center text-muted-foreground text-sm">
+      데이터가 없습니다
+    </div>
+  )
+
   // Without title - render just the chart content
   if (!title) {
     if (isLoading) {
       return <div className={className}>{renderSkeleton()}</div>
+    }
+    if (data.length === 0) {
+      return <div className={className}>{renderEmptyState()}</div>
     }
     return <div className={className}>{renderChart()}</div>
   }
@@ -108,7 +117,7 @@ export function KPIChart({
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
       </CardHeader>
       <CardContent className="pt-6">
-        {isLoading ? renderSkeleton() : renderChart()}
+        {isLoading ? renderSkeleton() : data.length === 0 ? renderEmptyState() : renderChart()}
       </CardContent>
     </Card>
   )
