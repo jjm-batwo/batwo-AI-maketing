@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { useOnboardingStore } from '@presentation/stores/onboardingStore'
+import { useTranslations } from 'next-intl'
 import { WelcomeStep } from './steps/WelcomeStep'
 import { MetaConnectStep } from './steps/MetaConnectStep'
 import { PixelSetupStep } from './steps/PixelSetupStep'
@@ -17,9 +18,8 @@ interface OnboardingWizardProps {
   onComplete?: () => void
 }
 
-const stepTitles = ['시작하기', 'Meta 연결', '픽셀 설치', '완료']
-
 export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
+  const t = useTranslations('onboarding')
   const {
     currentStep,
     totalSteps,
@@ -30,6 +30,13 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     skipOnboarding,
     _hasHydrated,
   } = useOnboardingStore()
+
+  const stepTitles = [
+    t('steps.start'),
+    t('steps.metaConnect'),
+    t('steps.pixelSetup'),
+    t('steps.complete'),
+  ]
 
   // Wait for Zustand hydration before rendering
   // This prevents the dialog from flashing open before localStorage is read
@@ -72,9 +79,9 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
 
   const getNextButtonText = () => {
     if (currentStep === totalSteps) {
-      return '시작하기'
+      return t('buttons.start')
     }
-    return '다음'
+    return t('buttons.next')
   }
 
   return (
@@ -83,14 +90,14 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         className="sm:max-w-lg"
         aria-describedby="onboarding-description"
         role="dialog"
-        aria-label="온보딩 위저드"
+        aria-label={t('aria.wizard')}
       >
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle>{stepTitles[currentStep - 1]}</DialogTitle>
             <span
               className="text-sm text-muted-foreground"
-              aria-label="온보딩 진행률"
+              aria-label={t('aria.progress')}
             >
               {currentStep}/{totalSteps}
             </span>
@@ -103,7 +110,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
             aria-valuenow={currentStep}
             aria-valuemin={1}
             aria-valuemax={totalSteps}
-            aria-label="온보딩 진행률"
+            aria-label={t('aria.progress')}
           >
             <div
               className="h-full bg-primary transition-all duration-300"
@@ -123,13 +130,13 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
             onClick={handleSkip}
             className="text-gray-500"
           >
-            건너뛰기
+            {t('buttons.skip')}
           </Button>
 
           <div className="flex gap-2">
             {currentStep > 1 && (
               <Button type="button" variant="outline" onClick={prevStep}>
-                이전
+                {t('buttons.previous')}
               </Button>
             )}
             <Button type="button" onClick={handleNext}>

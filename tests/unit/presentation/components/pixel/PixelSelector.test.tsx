@@ -2,6 +2,32 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { PixelSelector } from '@presentation/components/pixel/PixelSelector'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { NextIntlClientProvider } from 'next-intl'
+
+// Mock next-intl with Korean translations
+const mockTranslations: Record<string, Record<string, string>> = {
+  'pixel': {
+    'loading': '픽셀을 불러오는 중',
+    'loadError': '픽셀을 불러오는데 실패했습니다',
+    'unknownError': '알 수 없는 오류가 발생했습니다',
+    'noPixels': '등록된 픽셀이 없습니다',
+    'newPixel': '새 픽셀 등록',
+    'setupMethod.manual': '수동 설치',
+    'setupMethod.platformApi': '플랫폼 연동',
+    'list': '픽셀 목록',
+  },
+}
+
+vi.mock('next-intl', async () => {
+  const actual = await vi.importActual('next-intl')
+  return {
+    ...actual,
+    useTranslations: vi.fn((namespace: string) => {
+      const messages = mockTranslations[namespace] || {}
+      return (key: string) => messages[key] || key
+    }),
+  }
+})
 
 // Mock fetch
 global.fetch = vi.fn()
@@ -36,7 +62,11 @@ function createQueryClientWrapper() {
     },
   })
   return function QueryClientWrapper({ children }: { children: React.ReactNode }) {
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    return (
+      <NextIntlClientProvider locale="ko" messages={{}}>
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      </NextIntlClientProvider>
+    )
   }
 }
 

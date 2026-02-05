@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Plus, Radio } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface Pixel {
   id: string
@@ -37,6 +38,7 @@ export function PixelSelector({
   showCreateButton = false,
   onCreate,
 }: PixelSelectorProps) {
+  const t = useTranslations('pixel')
   const { data: pixels, isLoading, error } = useQuery({
     queryKey: ['pixels'],
     queryFn: fetchPixels,
@@ -46,7 +48,7 @@ export function PixelSelector({
     return (
       <div className="flex items-center justify-center py-8">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-        <span className="ml-2 text-sm text-muted-foreground">픽셀을 불러오는 중...</span>
+        <span className="ml-2 text-sm text-muted-foreground">{t('loading')}</span>
       </div>
     )
   }
@@ -54,8 +56,8 @@ export function PixelSelector({
   if (error) {
     return (
       <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center">
-        <p className="text-sm text-red-600">픽셀을 불러오는데 실패했습니다</p>
-        <p className="mt-1 text-xs text-red-500">{error instanceof Error ? error.message : '알 수 없는 오류'}</p>
+        <p className="text-sm text-red-600">{t('loadError')}</p>
+        <p className="mt-1 text-xs text-red-500">{error instanceof Error ? error.message : t('unknownError')}</p>
       </div>
     )
   }
@@ -64,11 +66,11 @@ export function PixelSelector({
     return (
       <div className="rounded-lg border border-dashed p-8 text-center">
         <Radio className="mx-auto h-12 w-12 text-muted-foreground" />
-        <p className="mt-4 text-sm text-muted-foreground">등록된 픽셀이 없습니다</p>
+        <p className="mt-4 text-sm text-muted-foreground">{t('noPixels')}</p>
         {showCreateButton && (
           <Button onClick={onCreate} className="mt-4" variant="outline">
             <Plus className="mr-2 h-4 w-4" />
-            새 픽셀 등록
+            {t('newPixel')}
           </Button>
         )}
       </div>
@@ -78,9 +80,9 @@ export function PixelSelector({
   const setupMethodLabel = (method: string) => {
     switch (method) {
       case 'MANUAL':
-        return '수동 설치'
+        return t('setupMethod.manual')
       case 'PLATFORM_API':
-        return '플랫폼 연동'
+        return t('setupMethod.platformApi')
       default:
         return method
     }
@@ -90,7 +92,7 @@ export function PixelSelector({
     <div>
       <ul
         role="list"
-        aria-label="픽셀 목록"
+        aria-label={t('list')}
         className="space-y-2"
       >
         {pixels.map((pixel) => {
@@ -155,7 +157,7 @@ export function PixelSelector({
           className="mt-4 w-full"
         >
           <Plus className="mr-2 h-4 w-4" />
-          새 픽셀 등록
+          {t('newPixel')}
         </Button>
       )}
     </div>

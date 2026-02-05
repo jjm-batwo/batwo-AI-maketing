@@ -4,6 +4,7 @@ import { PixelSetupStep } from '@presentation/components/onboarding/steps/PixelS
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
 import { GlobalRole } from '@domain/value-objects/GlobalRole'
+import { NextIntlClientProvider } from 'next-intl'
 
 // Mock next-auth
 vi.mock('next-auth/react', () => ({
@@ -19,6 +20,42 @@ vi.mock('next-auth/react', () => ({
   })),
 }))
 
+// Mock next-intl with Korean translations
+const mockTranslations: Record<string, Record<string, string>> = {
+  'onboarding.pixelSetup': {
+    'title': '픽셀 설치',
+    'description': 'Meta 픽셀을 설치하여 광고 성과를 추적하세요',
+    'connectFirst': '먼저 Meta 계정을 연결해주세요',
+    'selected': '선택됨',
+    'selectOther': '다른 픽셀 선택',
+    'copyCode': '코드 복사',
+    'installation.title': '설치 방법',
+    'installation.description': '아래 코드를 웹사이트 <head> 태그에 붙여넣기하세요',
+    'installation.skipMessage': '나중에 설정에서도 가능합니다',
+    'benefits.title': '픽셀 설치 효과',
+    'benefits.item1': '웹사이트 방문자 행동 추적',
+    'benefits.item2': '광고 성과 측정',
+    'benefits.item3': '고객 재방문 추적',
+    'benefits.item4': '더 정확한 타겟팅',
+  },
+  'pixel': {
+    'loading': '픽셀을 불러오는 중',
+    'loadError': '픽셀 로드 실패',
+    'unknownError': '알 수 없는 오류가 발생했습니다',
+  },
+}
+
+vi.mock('next-intl', async () => {
+  const actual = await vi.importActual('next-intl')
+  return {
+    ...actual,
+    useTranslations: vi.fn((namespace: string) => {
+      const messages = mockTranslations[namespace] || {}
+      return (key: string) => messages[key] || key
+    }),
+  }
+})
+
 // Mock fetch for pixel API
 global.fetch = vi.fn()
 
@@ -31,7 +68,11 @@ function createQueryClientWrapper() {
     },
   })
   return function QueryClientWrapper({ children }: { children: React.ReactNode }) {
-    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    return (
+      <NextIntlClientProvider locale="ko" messages={{}}>
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      </NextIntlClientProvider>
+    )
   }
 }
 
@@ -69,8 +110,8 @@ describe('PixelSetupStep', () => {
       vi.mocked(fetch).mockResolvedValue({
         ok: true,
         json: async () => ({
-          pixels: [
-            { id: 'pixel-1', metaPixelId: '123', name: 'Test Pixel 1' },
+          data: [
+            { id: 'pixel-1', metaPixelId: '123', name: 'Test Pixel 1', isActive: true, setupMethod: 'MANUAL', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
           ],
         }),
       } as Response)
@@ -174,7 +215,7 @@ describe('PixelSetupStep', () => {
         ok: true,
         json: async () => ({
           data: [
-            { id: 'pixel-1', metaPixelId: '123456789', name: 'Test Pixel' },
+            { id: 'pixel-1', metaPixelId: '123456789', name: 'Test Pixel', isActive: true, setupMethod: 'MANUAL', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
           ],
         }),
       } as Response)
@@ -206,7 +247,7 @@ describe('PixelSetupStep', () => {
         ok: true,
         json: async () => ({
           data: [
-            { id: 'pixel-1', metaPixelId: '123456789', name: 'Test Pixel' },
+            { id: 'pixel-1', metaPixelId: '123456789', name: 'Test Pixel', isActive: true, setupMethod: 'MANUAL', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
           ],
         }),
       } as Response)
@@ -239,7 +280,7 @@ describe('PixelSetupStep', () => {
         ok: true,
         json: async () => ({
           data: [
-            { id: 'pixel-1', metaPixelId: '123456789', name: 'Test Pixel' },
+            { id: 'pixel-1', metaPixelId: '123456789', name: 'Test Pixel', isActive: true, setupMethod: 'MANUAL', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
           ],
         }),
       } as Response)
