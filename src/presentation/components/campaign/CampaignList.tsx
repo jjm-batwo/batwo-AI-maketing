@@ -1,8 +1,15 @@
 'use client'
 
-import { memo, useCallback } from 'react'
+import { memo, useCallback, useState } from 'react'
 import { CampaignCard } from './CampaignCard'
 import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Plus, Filter } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
@@ -31,10 +38,17 @@ export const CampaignList = memo(function CampaignList({
   quotaRemaining,
 }: CampaignListProps) {
   const t = useTranslations()
+  const [showFilter, setShowFilter] = useState(false)
+  const [statusFilter, setStatusFilter] = useState<string>('ALL')
 
   const handleStatusChange = useCallback((id: string, status: string) => {
     onStatusChange?.(id, status)
   }, [onStatusChange])
+
+  const filteredCampaigns = campaigns.filter((campaign) => {
+    if (statusFilter === 'ALL') return true
+    return campaign.status === statusFilter
+  })
 
   if (isLoading) {
     return (
@@ -53,10 +67,29 @@ export const CampaignList = memo(function CampaignList({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowFilter(!showFilter)}
+          >
             <Filter className="mr-1 h-4 w-4" />
             {t('campaigns.filter')}
           </Button>
+          {showFilter && (
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger size="sm" className="w-[180px]">
+                <SelectValue placeholder="상태 선택" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">전체</SelectItem>
+                <SelectItem value="DRAFT">초안</SelectItem>
+                <SelectItem value="ACTIVE">진행 중</SelectItem>
+                <SelectItem value="PAUSED">일시정지</SelectItem>
+                <SelectItem value="COMPLETED">완료</SelectItem>
+                <SelectItem value="PENDING_REVIEW">검토 중</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
         </div>
         <Button asChild disabled={quotaRemaining === 0}>
           <Link href="/campaigns/new">
@@ -71,7 +104,7 @@ export const CampaignList = memo(function CampaignList({
         </Button>
       </div>
 
-      {campaigns.length === 0 ? (
+      {filteredCampaigns.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
           <h3 className="text-lg font-semibold">{t('campaigns.empty.title')}</h3>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -86,7 +119,7 @@ export const CampaignList = memo(function CampaignList({
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {campaigns.map((campaign) => (
+          {filteredCampaigns.map((campaign) => (
             <CampaignCard
               key={campaign.id}
               {...campaign}
