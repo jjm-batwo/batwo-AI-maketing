@@ -115,11 +115,14 @@ export function useCampaigns(params?: {
   page?: number
   pageSize?: number
   status?: string
+  enabled?: boolean
 }) {
+  const { enabled = true, ...queryParams } = params ?? {}
   return useQuery({
-    queryKey: [...CAMPAIGNS_QUERY_KEY, params],
-    queryFn: () => fetchCampaigns(params),
+    queryKey: [...CAMPAIGNS_QUERY_KEY, queryParams],
+    queryFn: () => fetchCampaigns(queryParams),
     staleTime: 30 * 1000, // 30 seconds
+    enabled,
   })
 }
 

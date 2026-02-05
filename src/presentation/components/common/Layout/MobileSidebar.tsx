@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import {
   Sheet,
@@ -18,16 +19,17 @@ import {
 } from 'lucide-react'
 import { useUIStore } from '@presentation/stores/uiStore'
 
-const navigation = [
-  { name: '대시보드', href: '/dashboard', icon: LayoutDashboard },
-  { name: '캠페인', href: '/campaigns', icon: Megaphone },
-  { name: '보고서', href: '/reports', icon: FileText },
-  { name: '설정', href: '/settings', icon: Settings },
-]
-
 export function MobileSidebar() {
   const pathname = usePathname()
   const { isMobileMenuOpen, closeMobileMenu } = useUIStore()
+  const t = useTranslations()
+
+  const navigation = [
+    { name: t('navigation.dashboard'), href: '/dashboard', icon: LayoutDashboard },
+    { name: t('navigation.campaigns'), href: '/campaigns', icon: Megaphone },
+    { name: t('navigation.reports'), href: '/reports', icon: FileText },
+    { name: t('navigation.settings'), href: '/settings', icon: Settings },
+  ]
 
   return (
     <Sheet open={isMobileMenuOpen} onOpenChange={closeMobileMenu}>
@@ -39,7 +41,7 @@ export function MobileSidebar() {
               className="flex items-center gap-2"
               onClick={closeMobileMenu}
             >
-              <span className="text-xl font-bold text-primary">바투</span>
+              <span className="text-xl font-bold text-primary">{t('brand.name')}</span>
               <span className="rounded bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                 Beta
               </span>
@@ -78,7 +80,7 @@ export function MobileSidebar() {
             className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
           >
             <HelpCircle className="h-5 w-5" />
-            도움말
+            {t('navigation.help')}
           </Link>
         </div>
       </SheetContent>

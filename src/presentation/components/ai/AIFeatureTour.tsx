@@ -58,7 +58,7 @@ export function AIFeatureTour({
 
       let top = 0
       let left = 0
-      let position = step.position || 'bottom'
+      const position = step.position || 'bottom'
 
       switch (position) {
         case 'top':

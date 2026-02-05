@@ -22,6 +22,12 @@ export function useFacebookLoginStatus() {
 
     if (checkSDK()) return
 
+    // In test environment, skip SDK loading to avoid timeouts
+    if (process.env.NODE_ENV === 'test' || (typeof navigator !== 'undefined' && navigator.webdriver)) {
+      setStatus('unknown')
+      return
+    }
+
     // Poll for SDK load (it loads async)
     const interval = setInterval(() => {
       if (checkSDK()) {

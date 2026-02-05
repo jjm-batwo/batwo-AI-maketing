@@ -46,7 +46,7 @@ export const FAQSection = memo(function FAQSection() {
         </div>
 
         {/* Contact CTA */}
-        <footer className="text-center mt-12">
+        <div className="text-center mt-12">
           <p className="text-muted-foreground">
             더 궁금한 점이 있으신가요?{' '}
             <a
@@ -58,7 +58,7 @@ export const FAQSection = memo(function FAQSection() {
             </a>
             로 문의해주세요
           </p>
-        </footer>
+        </div>
       </div>
 
       {/* JSON-LD Schema */}

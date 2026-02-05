@@ -63,12 +63,15 @@ export function useDashboardKPI(params?: {
   period?: '7d' | '30d' | '90d'
   startDate?: string
   endDate?: string
+  enabled?: boolean
 }) {
+  const { enabled = true, ...queryParams } = params ?? {}
   return useQuery({
-    queryKey: [...DASHBOARD_KPI_QUERY_KEY, params],
-    queryFn: () => fetchDashboardKPI(params),
+    queryKey: [...DASHBOARD_KPI_QUERY_KEY, queryParams],
+    queryFn: () => fetchDashboardKPI(queryParams),
     staleTime: 60 * 1000, // 1 minute
     refetchInterval: 5 * 60 * 1000, // 5 minutes
+    enabled,
   })
 }
 

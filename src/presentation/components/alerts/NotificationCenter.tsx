@@ -25,29 +25,27 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatDistanceToNow } from 'date-fns'
-import { ko } from 'date-fns/locale'
+import { ko, enUS } from 'date-fns/locale'
+import { useTranslations, useLocale } from 'next-intl'
 
-const severityConfig: Record<
+const severityStyles: Record<
   AnomalySeverity,
-  { icon: typeof AlertCircle; color: string; bgColor: string; label: string }
+  { icon: typeof AlertCircle; color: string; bgColor: string }
 > = {
   critical: {
     icon: AlertCircle,
     color: 'text-red-600',
     bgColor: 'bg-red-50',
-    label: '긴급',
   },
   warning: {
     icon: AlertTriangle,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-50',
-    label: '주의',
   },
   info: {
     icon: Info,
     color: 'text-blue-600',
     bgColor: 'bg-blue-50',
-    label: '정보',
   },
 }
 
@@ -65,6 +63,8 @@ interface NotificationCenterProps {
 export function NotificationCenter({ className }: NotificationCenterProps) {
   const [open, setOpen] = useState(false)
   const { data, isLoading } = useAlerts()
+  const t = useTranslations()
+  const locale = useLocale()
 
   const alerts = data?.alerts ?? []
   const criticalCount = alerts.filter((a) => a.severity === 'critical').length
@@ -78,7 +78,7 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
           variant="ghost"
           size="icon"
           className={cn('relative', className)}
-          aria-label="알림 센터 열기"
+          aria-label={t('notifications.open')}
         >
           <Bell className="h-5 w-5" />
           {totalCount > 0 && (
@@ -97,17 +97,17 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <Bell className="h-5 w-5" />
-            알림 센터
+            {t('notifications.title')}
             {totalCount > 0 && (
               <div className="flex gap-1">
                 {criticalCount > 0 && (
                   <Badge variant="destructive" className="text-xs">
-                    긴급 {criticalCount}
+                    {t('notifications.severity.critical')} {criticalCount}
                   </Badge>
                 )}
                 {warningCount > 0 && (
                   <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 text-xs">
-                    주의 {warningCount}
+                    {t('notifications.severity.warning')} {warningCount}
                   </Badge>
                 )}
               </div>
@@ -128,11 +128,9 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
           ) : alerts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Bell className="h-12 w-12 text-gray-300" />
-              <h3 className="mt-4 font-medium text-gray-900">알림이 없습니다</h3>
+              <h3 className="mt-4 font-medium text-gray-900">{t('notifications.empty.title')}</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                캠페인 성과에 이상이 감지되면
-                <br />
-                이곳에서 알려드립니다.
+                {t('notifications.empty.description')}
               </p>
             </div>
           ) : (
@@ -142,6 +140,7 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
                   key={alert.id}
                   alert={alert}
                   onNavigate={() => setOpen(false)}
+                  locale={locale}
                 />
               ))}
             </div>
@@ -155,22 +154,24 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
 interface AlertItemProps {
   alert: Alert
   onNavigate: () => void
+  locale: string
 }
 
-function AlertItem({ alert, onNavigate }: AlertItemProps) {
-  const severity = severityConfig[alert.severity]
-  const SeverityIcon = severity.icon
+function AlertItem({ alert, onNavigate, locale }: AlertItemProps) {
+  const t = useTranslations()
+  const severityStyle = severityStyles[alert.severity]
+  const SeverityIcon = severityStyle.icon
   const TypeIcon = typeIcons[alert.type]
 
   const timeAgo = formatDistanceToNow(new Date(alert.detectedAt), {
     addSuffix: true,
-    locale: ko,
+    locale: locale === 'ko' ? ko : enUS,
   })
 
   const formatValue = (value: number, metric: string) => {
     if (metric === 'ROAS') return value.toFixed(2)
-    if (metric === 'CTR' || metric === '전환율') return `${value.toFixed(2)}%`
-    if (metric === 'CPA' || metric === '지출') return `${value.toLocaleString()}원`
+    if (metric === 'CTR' || metric === t('notifications.metrics.conversionRate')) return `${value.toFixed(2)}%`
+    if (metric === 'CPA' || metric === t('notifications.metrics.spend')) return `${t('currency.krw')}${value.toLocaleString()}${t('currency.suffix')}`
     return value.toLocaleString()
   }
 
@@ -180,14 +181,14 @@ function AlertItem({ alert, onNavigate }: AlertItemProps) {
       onClick={onNavigate}
       className={cn(
         'block rounded-lg border p-4 transition-colors hover:bg-gray-50',
-        severity.bgColor
+        severityStyle.bgColor
       )}
     >
       <div className="flex items-start gap-3">
         <div
           className={cn(
             'flex h-10 w-10 items-center justify-center rounded-full bg-white',
-            severity.color
+            severityStyle.color
           )}
         >
           <TypeIcon className="h-5 w-5" />
@@ -204,7 +205,7 @@ function AlertItem({ alert, onNavigate }: AlertItemProps) {
               )}
             >
               <SeverityIcon className="mr-1 h-3 w-3" />
-              {severity.label}
+              {t(`notifications.severity.${alert.severity}`)}
             </Badge>
             <span className="text-xs text-muted-foreground">{timeAgo}</span>
           </div>
@@ -216,7 +217,7 @@ function AlertItem({ alert, onNavigate }: AlertItemProps) {
           </p>
           <div className="mt-2 flex items-center gap-4 text-xs">
             <span className="text-muted-foreground">
-              이전: {formatValue(alert.previousValue, alert.metric)}
+              {t('notifications.metrics.previous')}: {formatValue(alert.previousValue, alert.metric)}
             </span>
             <ArrowRight className="h-3 w-3 text-muted-foreground" />
             <span className={cn(
@@ -225,7 +226,7 @@ function AlertItem({ alert, onNavigate }: AlertItemProps) {
               alert.changePercent > 0 && alert.metric !== 'ROAS' && alert.type !== 'drop' && 'text-red-600',
               alert.changePercent < 0 && alert.metric !== 'ROAS' && alert.type === 'drop' && 'text-red-600',
             )}>
-              현재: {formatValue(alert.currentValue, alert.metric)}
+              {t('notifications.metrics.current')}: {formatValue(alert.currentValue, alert.metric)}
             </span>
             <span className={cn(
               'font-medium',
