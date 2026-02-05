@@ -1,5 +1,6 @@
 'use client'
 
+import { memo, useMemo } from 'react'
 import Link from 'next/link'
 import {
   Table,
@@ -11,6 +12,7 @@ import {
 } from '@/components/ui/table'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 interface CampaignSummary {
   id: string
@@ -27,23 +29,31 @@ interface CampaignSummaryTableProps {
   className?: string
 }
 
-const statusConfig = {
-  ACTIVE: { label: '진행 중', className: 'bg-green-100 text-green-700' },
-  PAUSED: { label: '일시정지', className: 'bg-yellow-100 text-yellow-700' },
-  COMPLETED: { label: '완료', className: 'bg-gray-100 text-gray-700' },
-  DRAFT: { label: '초안', className: 'bg-blue-100 text-blue-700' },
+const statusStyles = {
+  ACTIVE: 'bg-green-100 text-green-700',
+  PAUSED: 'bg-yellow-100 text-yellow-700',
+  COMPLETED: 'bg-gray-100 text-gray-700',
+  DRAFT: 'bg-blue-100 text-blue-700',
 }
 
-export function CampaignSummaryTable({
+export const CampaignSummaryTable = memo(function CampaignSummaryTable({
   campaigns = [],
   isLoading = false,
   className,
 }: CampaignSummaryTableProps) {
+  const t = useTranslations()
+
+  const statusConfig = useMemo(() => ({
+    ACTIVE: { label: t('campaigns.status.active'), className: statusStyles.ACTIVE },
+    PAUSED: { label: t('campaigns.status.paused'), className: statusStyles.PAUSED },
+    COMPLETED: { label: t('campaigns.status.completed'), className: statusStyles.COMPLETED },
+    DRAFT: { label: t('campaigns.status.draft'), className: statusStyles.DRAFT },
+  }), [t])
   if (isLoading) {
     return (
       <Card className={className}>
         <CardHeader>
-          <CardTitle className="text-sm font-medium">캠페인 현황</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('campaignSummary.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -65,12 +75,12 @@ export function CampaignSummaryTable({
     <Card className={className}>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium">캠페인 현황</CardTitle>
+          <CardTitle className="text-sm font-medium">{t('campaignSummary.title')}</CardTitle>
           <Link
             href="/campaigns"
             className="text-sm text-primary hover:underline"
           >
-            전체 보기
+            {t('campaignSummary.viewAll')}
           </Link>
         </div>
       </CardHeader>
@@ -79,11 +89,11 @@ export function CampaignSummaryTable({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="whitespace-nowrap">캠페인명</TableHead>
-                <TableHead className="whitespace-nowrap">상태</TableHead>
-                <TableHead className="whitespace-nowrap text-right">지출</TableHead>
-                <TableHead className="whitespace-nowrap text-right">ROAS</TableHead>
-                <TableHead className="whitespace-nowrap text-right">CTR</TableHead>
+                <TableHead className="whitespace-nowrap">{t('campaignSummary.columns.name')}</TableHead>
+                <TableHead className="whitespace-nowrap">{t('campaignSummary.columns.status')}</TableHead>
+                <TableHead className="whitespace-nowrap text-right">{t('campaignSummary.columns.spend')}</TableHead>
+                <TableHead className="whitespace-nowrap text-right">{t('campaignSummary.columns.roas')}</TableHead>
+                <TableHead className="whitespace-nowrap text-right">{t('campaignSummary.columns.ctr')}</TableHead>
               </TableRow>
             </TableHeader>
           <TableBody>
@@ -110,7 +120,7 @@ export function CampaignSummaryTable({
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
-                    {campaign.spend.toLocaleString()}원
+                    {t('currency.krw')}{campaign.spend.toLocaleString()}{t('currency.suffix')}
                   </TableCell>
                   <TableCell className="text-right">
                     {campaign.roas.toFixed(2)}x
@@ -127,4 +137,4 @@ export function CampaignSummaryTable({
       </CardContent>
     </Card>
   )
-}
+})

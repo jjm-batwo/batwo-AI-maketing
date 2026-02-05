@@ -1,5 +1,14 @@
 import type { NextConfig } from 'next'
 import { withSentryConfig } from '@sentry/nextjs'
+import createNextIntlPlugin from 'next-intl/plugin'
+
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
+
+// Bundle Analyzer 설정 (환경 변수로 활성화)
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
 
 /**
  * 보안 헤더 설정
@@ -201,6 +210,10 @@ const nextConfig: NextConfig = {
         hostname: 'ui-avatars.com',
       },
     ],
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60,
   },
 
   // 실험적 기능
@@ -209,6 +222,30 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '2mb',
     },
+    // React 컴파일러는 별도 설정 필요 (babel-plugin-react-compiler)
+    // ppr: true,  // Partial Prerendering (Next.js 14+)
+  },
+
+  // 프로덕션 빌드 최적화
+  compiler: {
+    // 프로덕션에서 console.log 제거
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
+  },
+
+  // Webpack 최적화
+  webpack: (config, { isServer }) => {
+    // 서버 빌드가 아닐 때만 적용
+    if (!isServer) {
+      // Tree shaking 향상
+      config.optimization = {
+        ...config.optimization,
+        usedExports: true,
+        sideEffects: false,
+      }
+    }
+    return config
   },
 }
 
@@ -252,6 +289,9 @@ const sentryWebpackPluginOptions = {
 }
 
 // Sentry DSN이 있을 때만 Sentry 설정 적용
+let config = withNextIntl(nextConfig)
+config = withBundleAnalyzer(config)
+
 export default process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN
-  ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
-  : nextConfig
+  ? withSentryConfig(config, sentryWebpackPluginOptions)
+  : config

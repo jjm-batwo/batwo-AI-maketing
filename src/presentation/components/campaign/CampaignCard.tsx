@@ -1,5 +1,6 @@
 'use client'
 
+import { memo, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -34,7 +35,7 @@ const objectiveLabels: Record<string, string> = {
   ENGAGEMENT: '참여',
 }
 
-export function CampaignCard({
+export const CampaignCard = memo(function CampaignCard({
   id,
   name,
   status,
@@ -45,7 +46,20 @@ export function CampaignCard({
   onStatusChange,
   className,
 }: CampaignCardProps) {
-  const statusInfo = statusConfig[status]
+  const statusInfo = useMemo(() => statusConfig[status], [status])
+  const objectiveLabel = useMemo(() => objectiveLabels[objective] || objective, [objective])
+
+  const handlePause = useCallback(() => {
+    onStatusChange?.(id, 'PAUSED')
+  }, [id, onStatusChange])
+
+  const handleResume = useCallback(() => {
+    onStatusChange?.(id, 'ACTIVE')
+  }, [id, onStatusChange])
+
+  const formattedBudget = useMemo(() => dailyBudget.toLocaleString(), [dailyBudget])
+  const formattedSpend = useMemo(() => spend.toLocaleString(), [spend])
+  const formattedRoas = useMemo(() => roas.toFixed(2), [roas])
 
   return (
     <Card className={cn('transition-shadow hover:shadow-md', className)}>
@@ -57,7 +71,7 @@ export function CampaignCard({
             </Link>
           </CardTitle>
           <span className="text-sm text-muted-foreground">
-            {objectiveLabels[objective] || objective}
+            {objectiveLabel}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -78,15 +92,15 @@ export function CampaignCard({
         <div className="grid grid-cols-3 gap-4 text-sm">
           <div>
             <p className="text-muted-foreground">일일 예산</p>
-            <p className="font-medium">{dailyBudget.toLocaleString()}원</p>
+            <p className="font-medium">{formattedBudget}원</p>
           </div>
           <div>
             <p className="text-muted-foreground">지출</p>
-            <p className="font-medium">{spend.toLocaleString()}원</p>
+            <p className="font-medium">{formattedSpend}원</p>
           </div>
           <div>
             <p className="text-muted-foreground">ROAS</p>
-            <p className="font-medium">{roas.toFixed(2)}x</p>
+            <p className="font-medium">{formattedRoas}x</p>
           </div>
         </div>
 
@@ -95,7 +109,7 @@ export function CampaignCard({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onStatusChange(id, 'PAUSED')}
+              onClick={handlePause}
             >
               <Pause className="mr-1 h-4 w-4" />
               일시정지
@@ -105,7 +119,7 @@ export function CampaignCard({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => onStatusChange(id, 'ACTIVE')}
+              onClick={handleResume}
             >
               <Play className="mr-1 h-4 w-4" />
               재개
@@ -129,4 +143,4 @@ export function CampaignCard({
       </CardContent>
     </Card>
   )
-}
+})

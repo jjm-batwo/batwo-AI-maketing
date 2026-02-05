@@ -1,9 +1,11 @@
 'use client'
 
+import { memo, useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Sparkles, TrendingUp, AlertTriangle, Lightbulb, RefreshCw } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 type InsightType = 'opportunity' | 'warning' | 'tip' | 'success'
 
@@ -44,55 +46,23 @@ const typeConfig: Record<InsightType, { icon: React.ComponentType<{ className?: 
   },
 }
 
-// Mock insights for demonstration
-const mockInsights: Insight[] = [
-  {
-    id: '1',
-    type: 'opportunity',
-    title: 'ROAS 개선 기회 발견',
-    description: '캠페인 A의 주말 성과가 평일 대비 32% 높습니다. 주말 예산을 15% 증가시키면 전체 ROAS가 약 0.3x 상승할 것으로 예상됩니다.',
-    action: {
-      label: '예산 조정하기',
-      href: '/campaigns',
-    },
-  },
-  {
-    id: '2',
-    type: 'warning',
-    title: '예산 소진 예상',
-    description: '현재 지출 속도로는 캠페인 B의 일일 예산이 오후 3시경 소진될 예정입니다. 예산 증액을 고려해주세요.',
-    action: {
-      label: '예산 확인',
-      href: '/campaigns',
-    },
-  },
-  {
-    id: '3',
-    type: 'tip',
-    title: '타겟팅 최적화 제안',
-    description: '25-34세 여성 타겟의 전환율이 다른 그룹 대비 2.1배 높습니다. 이 타겟에 대한 입찰가 상향을 권장합니다.',
-  },
-  {
-    id: '4',
-    type: 'success',
-    title: '이번 주 성과 우수',
-    description: '지난주 대비 CTR이 18% 상승했습니다. 새로운 크리에이티브 전략이 효과를 보이고 있습니다.',
-  },
-]
 
-export function AIInsights({
-  insights = mockInsights,
+export const AIInsights = memo(function AIInsights({
+  insights: providedInsights,
   isLoading = false,
   onRefresh,
   className,
 }: AIInsightsProps) {
+  const t = useTranslations('aiInsights')
+  const insights = useMemo(() => providedInsights ?? [], [providedInsights])
+
   if (isLoading) {
     return (
       <Card className={className}>
         <CardHeader>
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            <CardTitle>AI 인사이트</CardTitle>
+            <CardTitle>{t('title')}</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
@@ -110,13 +80,35 @@ export function AIInsights({
     )
   }
 
+  // 인사이트가 없을 때 빈 상태 표시
+  if (insights.length === 0) {
+    return (
+      <Card className={className}>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <CardTitle>{t('title')}</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <Sparkles className="h-12 w-12 text-muted-foreground/30 mb-4" />
+            <p className="text-sm text-muted-foreground">
+              {t('empty')}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Card className={className}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            <CardTitle>AI 인사이트</CardTitle>
+            <CardTitle>{t('title')}</CardTitle>
           </div>
           {onRefresh && (
             <Button variant="ghost" size="sm" onClick={onRefresh}>
@@ -162,4 +154,4 @@ export function AIInsights({
       </CardContent>
     </Card>
   )
-}
+})
