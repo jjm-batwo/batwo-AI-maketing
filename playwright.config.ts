@@ -21,15 +21,11 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'chromium-authenticated',
       use: {
         ...devices['Desktop Chrome'],
+        // 기본적으로 storage state 사용 - 인증 테스트를 위해
         storageState: './tests/e2e/storage-state.json',
       },
-      dependencies: ['chromium'],
     },
   ],
   webServer: {
