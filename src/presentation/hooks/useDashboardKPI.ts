@@ -18,6 +18,8 @@ interface KPIData {
     roas: number
     ctr: number
     conversions: number
+    impressions: number
+    clicks: number
   }
 }
 
@@ -54,10 +56,14 @@ interface DashboardKPIResponse {
   }
 }
 
+type DashboardPeriod = 'today' | 'yesterday' | '7d' | '30d' | '90d' | 'this_month' | 'last_month'
+type CampaignObjective = 'ALL' | 'AWARENESS' | 'TRAFFIC' | 'ENGAGEMENT' | 'LEADS' | 'APP_PROMOTION' | 'SALES' | 'CONVERSIONS'
+
 const DASHBOARD_KPI_QUERY_KEY = ['dashboard', 'kpi'] as const
 
 async function fetchDashboardKPI(params?: {
-  period?: '7d' | '30d' | '90d'
+  period?: DashboardPeriod
+  objective?: CampaignObjective
   startDate?: string
   endDate?: string
   includeBreakdown?: boolean
@@ -65,6 +71,7 @@ async function fetchDashboardKPI(params?: {
 }): Promise<DashboardKPIResponse> {
   const searchParams = new URLSearchParams()
   if (params?.period) searchParams.set('period', params.period)
+  if (params?.objective && params.objective !== 'ALL') searchParams.set('objective', params.objective)
   if (params?.startDate) searchParams.set('startDate', params.startDate)
   if (params?.endDate) searchParams.set('endDate', params.endDate)
   if (params?.includeBreakdown) searchParams.set('breakdown', 'true')
@@ -78,7 +85,8 @@ async function fetchDashboardKPI(params?: {
 }
 
 export function useDashboardKPI(params?: {
-  period?: '7d' | '30d' | '90d'
+  period?: DashboardPeriod
+  objective?: CampaignObjective
   startDate?: string
   endDate?: string
   includeBreakdown?: boolean
@@ -95,16 +103,23 @@ export function useDashboardKPI(params?: {
   })
 }
 
-export function useDashboardSummary() {
-  const { data, ...rest } = useDashboardKPI()
+export function useDashboardSummary(params?: {
+  period?: DashboardPeriod
+  objective?: CampaignObjective
+}) {
+  const { data, ...rest } = useDashboardKPI(params)
   return {
     data: data?.summary,
     ...rest,
   }
 }
 
-export function useDashboardChartData(period: '7d' | '30d' | '90d' = '7d') {
-  const { data, ...rest } = useDashboardKPI({ period })
+export function useDashboardChartData(params?: {
+  period?: DashboardPeriod
+  objective?: CampaignObjective
+}) {
+  const { period = '7d', objective } = params ?? {}
+  const { data, ...rest } = useDashboardKPI({ period, objective })
   return {
     data: data?.chartData,
     period: data?.period,

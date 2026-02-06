@@ -134,7 +134,7 @@ export function KPICard({
             )}
             {formatChange(change)}
           </div>
-          <span className="text-xs text-muted-foreground">지난달 대비</span>
+          <span className="text-xs text-muted-foreground">이전 기간 대비</span>
         </div>
       </div>
     </Card>

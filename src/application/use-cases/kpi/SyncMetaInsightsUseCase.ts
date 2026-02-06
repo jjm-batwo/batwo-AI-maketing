@@ -60,6 +60,7 @@ export class SyncMetaInsightsUseCase {
         campaignId: campaign.id,
         impressions: insights.impressions,
         clicks: insights.clicks,
+        linkClicks: insights.linkClicks,
         conversions: insights.conversions,
         spend: Money.create(Math.round(insights.spend * 100), 'KRW'), // Convert to cents
         revenue: Money.create(Math.round(insights.revenue * 100), 'KRW'),

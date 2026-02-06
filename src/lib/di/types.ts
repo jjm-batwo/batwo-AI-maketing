@@ -20,6 +20,9 @@ export const DI_TOKENS = {
   InvoiceRepository: Symbol.for('InvoiceRepository'),
   MetaPixelRepository: Symbol.for('MetaPixelRepository'),
   AIFeedbackRepository: Symbol.for('AIFeedbackRepository'),
+  ConversationRepository: Symbol.for('ConversationRepository'),
+  PendingActionRepository: Symbol.for('PendingActionRepository'),
+  AlertRepository: Symbol.for('AlertRepository'),
 
   // External Services
   MetaAdsService: Symbol.for('MetaAdsService'),
@@ -38,6 +41,10 @@ export const DI_TOKENS = {
   TargetingRecommendationService: Symbol.for('TargetingRecommendationService'),
   PermissionService: Symbol.for('PermissionService'),
   ABTestAnalysisService: Symbol.for('ABTestAnalysisService'),
+  ToolRegistry: Symbol.for('ToolRegistry'),
+  ConversationalAgentService: Symbol.for('ConversationalAgentService'),
+  ActionConfirmationService: Symbol.for('ActionConfirmationService'),
+  ProactiveAlertService: Symbol.for('ProactiveAlertService'),
 
   // Infrastructure Services
   ReportPDFGenerator: Symbol.for('ReportPDFGenerator'),
@@ -54,6 +61,7 @@ export const DI_TOKENS = {
   UpdateCampaignUseCase: Symbol.for('UpdateCampaignUseCase'),
   PauseCampaignUseCase: Symbol.for('PauseCampaignUseCase'),
   ResumeCampaignUseCase: Symbol.for('ResumeCampaignUseCase'),
+  DeleteCampaignUseCase: Symbol.for('DeleteCampaignUseCase'),
   GetCampaignUseCase: Symbol.for('GetCampaignUseCase'),
   ListCampaignsUseCase: Symbol.for('ListCampaignsUseCase'),
   SyncCampaignsUseCase: Symbol.for('SyncCampaignsUseCase'),

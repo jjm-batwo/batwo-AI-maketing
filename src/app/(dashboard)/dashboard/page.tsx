@@ -3,11 +3,12 @@
 import { Suspense, lazy, useMemo } from 'react'
 import Link from 'next/link'
 import { KPICard, KPIChart } from '@/presentation/components/dashboard'
-import { useDashboardKPI, useMetaConnection, useSync, useCampaigns } from '@/presentation/hooks'
+import { useDashboardKPI, useMetaConnection, useSync, useCampaigns, useKPIInsights } from '@/presentation/hooks'
 import { useUIStore } from '@/presentation/stores'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useTranslations } from 'next-intl'
 import { Link2, RefreshCw } from 'lucide-react'
 
@@ -24,10 +25,11 @@ const AIInsights = lazy(() =>
 
 export default function DashboardPage() {
   const t = useTranslations()
-  const { dashboardPeriod, setDashboardPeriod } = useUIStore()
+  const { dashboardPeriod, setDashboardPeriod, dashboardObjective, setDashboardObjective } = useUIStore()
   const { isConnected, isLoading: isCheckingConnection } = useMetaConnection()
   const { data, isLoading, error } = useDashboardKPI({
     period: dashboardPeriod,
+    objective: dashboardObjective,
     includeBreakdown: true, // 캠페인별 KPI 데이터 포함
     includeComparison: true, // 지난 기간 대비 변화율 포함
     enabled: isConnected, // Meta 연결 시에만 데이터 fetch
@@ -38,59 +40,14 @@ export default function DashboardPage() {
   })
   const sync = useSync()
 
-  if (error) {
-    return (
-      <div className="flex h-[50vh] items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-lg font-semibold text-red-600">{t('dashboard.errorTitle')}</h2>
-          <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
-          <Button className="mt-4" onClick={() => window.location.reload()}>
-            {t('common.retry')}
-          </Button>
-        </div>
-      </div>
-    )
-  }
-
-  // Meta 미연결 시 안내 UI
-  if (!isCheckingConnection && !isConnected) {
-    return (
-      <div className="space-y-8 animate-fade-in">
-        <Suspense fallback={<div className="h-20" />}>
-          <OnboardingWizard />
-        </Suspense>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between pb-2 border-b border-border/10">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{t('dashboard.title')}</h1>
-            <p className="text-muted-foreground mt-2">
-              {t('dashboard.subtitle').split('{realtime}')[0]}
-              <span className="text-primary font-medium">{t('dashboard.realtime')}</span>
-              {t('dashboard.subtitle').split('{realtime}')[1]}
-            </p>
-          </div>
-        </div>
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="mx-auto w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-              <Link2 className="h-8 w-8 text-blue-600" />
-            </div>
-            <h2 className="text-xl font-semibold mb-2">{t('metaConnect.notConnected.title')}</h2>
-            <p className="text-muted-foreground mb-6 max-w-md">
-              {t('metaConnect.notConnected.dashboardDescription')}
-            </p>
-            <Button asChild className="bg-[#1877F2] hover:bg-[#1877F2]/90">
-              <Link href="/settings/meta-connect">
-                <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                </svg>
-                {t('metaConnect.notConnected.button')}
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
+  // KPI 기반 AI Insights 데이터 가져오기
+  const {
+    insights: kpiInsights,
+    isLoading: isInsightsLoading,
+    refetch: refetchInsights,
+  } = useKPIInsights({
+    enabled: isConnected,
+  })
 
   const summary = data?.summary
   const changes = summary?.changes
@@ -125,6 +82,60 @@ export default function DashboardPage() {
     })
   }, [campaignsData?.campaigns, data?.campaignBreakdown])
 
+  if (error) {
+    return (
+      <div className="flex h-[50vh] items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-lg font-semibold text-red-600">{t('dashboard.errorTitle')}</h2>
+          <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
+          <Button className="mt-4" onClick={() => window.location.reload()}>
+            {t('common.retry')}
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  // Meta 미연결 시 안내 UI
+  if (!isCheckingConnection && !isConnected) {
+    return (
+      <div className="space-y-8 animate-fade-in">
+        <Suspense fallback={<div className="h-20" />}>
+          <OnboardingWizard />
+        </Suspense>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between pb-2 border-b border-border/10">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{t('dashboard.title')}</h1>
+            <p className="text-muted-foreground mt-2">
+              {t('dashboard.subtitlePrefix')}
+              <span className="text-primary font-medium">{t('dashboard.realtime')}</span>
+              {t('dashboard.subtitleSuffix')}
+            </p>
+          </div>
+        </div>
+        <Card className="border-dashed">
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="mx-auto w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+              <Link2 className="h-8 w-8 text-blue-600" />
+            </div>
+            <h2 className="text-xl font-semibold mb-2">{t('metaConnect.notConnected.title')}</h2>
+            <p className="text-muted-foreground mb-6 max-w-md">
+              {t('metaConnect.notConnected.dashboardDescription')}
+            </p>
+            <Button asChild className="bg-[#1877F2] hover:bg-[#1877F2]/90">
+              <Link href="/settings/meta-connect">
+                <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+                {t('metaConnect.notConnected.button')}
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   // Helper to determine change type
   const getChangeType = (value: number | undefined): 'positive' | 'negative' | 'neutral' => {
     const v = value ?? 0
@@ -132,6 +143,86 @@ export default function DashboardPage() {
     if (v < 0) return 'negative'
     return 'neutral'
   }
+
+  // Helper to safely get KPI values from summary
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const getKPIValue = (summaryData: any, key: string): number => {
+    if (!summaryData) return 0
+    return Number(summaryData[key]) || 0
+  }
+
+  // Helper to safely get change values
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const getChangeValue = (changesData: any, key: string): number => {
+    if (!changesData) return 0
+    return Number(changesData[key]) || 0
+  }
+
+  // KPI Configuration interface
+  interface KPIConfigItem {
+    key: string
+    title: string
+    valueKey: string
+    changeKey?: string
+    format: 'number' | 'currency' | 'percentage' | 'multiplier'
+    unit?: string
+    icon: 'chart' | 'dollar' | 'click' | 'target' | 'eye'
+  }
+
+  // Objective-specific KPI configurations
+  const objectiveKPIConfig: Record<string, KPIConfigItem[]> = {
+    ALL: [
+      { key: 'roas', title: 'ROAS', valueKey: 'averageRoas', changeKey: 'roas', format: 'multiplier', unit: 'x', icon: 'chart' },
+      { key: 'spend', title: t('dashboard.kpi.totalSpend'), valueKey: 'totalSpend', changeKey: 'spend', format: 'currency', unit: '원', icon: 'dollar' },
+      { key: 'conversions', title: t('dashboard.kpi.conversions'), valueKey: 'totalConversions', changeKey: 'conversions', format: 'number', icon: 'target' },
+      { key: 'ctr', title: 'CTR', valueKey: 'averageCtr', changeKey: 'ctr', format: 'percentage', unit: '%', icon: 'click' },
+    ],
+    TRAFFIC: [
+      { key: 'clicks', title: '클릭수', valueKey: 'totalClicks', changeKey: 'clicks', format: 'number', icon: 'click' },
+      { key: 'ctr', title: 'CTR', valueKey: 'averageCtr', changeKey: 'ctr', format: 'percentage', unit: '%', icon: 'click' },
+      { key: 'spend', title: '지출', valueKey: 'totalSpend', changeKey: 'spend', format: 'currency', unit: '원', icon: 'dollar' },
+      { key: 'impressions', title: '노출수', valueKey: 'totalImpressions', format: 'number', icon: 'eye' },
+    ],
+    SALES: [
+      { key: 'roas', title: 'ROAS', valueKey: 'averageRoas', changeKey: 'roas', format: 'multiplier', unit: 'x', icon: 'chart' },
+      { key: 'revenue', title: '매출', valueKey: 'totalRevenue', changeKey: 'revenue', format: 'currency', unit: '원', icon: 'dollar' },
+      { key: 'conversions', title: '전환수', valueKey: 'totalConversions', changeKey: 'conversions', format: 'number', icon: 'target' },
+      { key: 'spend', title: '지출', valueKey: 'totalSpend', changeKey: 'spend', format: 'currency', unit: '원', icon: 'dollar' },
+    ],
+    CONVERSIONS: [
+      { key: 'conversions', title: '전환수', valueKey: 'totalConversions', changeKey: 'conversions', format: 'number', icon: 'target' },
+      { key: 'cpa', title: 'CPA', valueKey: 'averageCpa', format: 'currency', unit: '원', icon: 'dollar' },
+      { key: 'cvr', title: 'CVR', valueKey: 'cvr', format: 'percentage', unit: '%', icon: 'target' },
+      { key: 'spend', title: '지출', valueKey: 'totalSpend', changeKey: 'spend', format: 'currency', unit: '원', icon: 'dollar' },
+    ],
+    AWARENESS: [
+      { key: 'impressions', title: '노출수', valueKey: 'totalImpressions', format: 'number', icon: 'eye' },
+      { key: 'reach', title: '도달', valueKey: 'totalImpressions', format: 'number', icon: 'eye' }, // Using impressions as proxy
+      { key: 'spend', title: '지출', valueKey: 'totalSpend', changeKey: 'spend', format: 'currency', unit: '원', icon: 'dollar' },
+      { key: 'ctr', title: 'CTR', valueKey: 'averageCtr', changeKey: 'ctr', format: 'percentage', unit: '%', icon: 'click' },
+    ],
+    ENGAGEMENT: [
+      { key: 'clicks', title: '참여수', valueKey: 'totalClicks', format: 'number', icon: 'click' },
+      { key: 'ctr', title: '참여율', valueKey: 'averageCtr', changeKey: 'ctr', format: 'percentage', unit: '%', icon: 'click' },
+      { key: 'impressions', title: '노출수', valueKey: 'totalImpressions', format: 'number', icon: 'eye' },
+      { key: 'spend', title: '지출', valueKey: 'totalSpend', changeKey: 'spend', format: 'currency', unit: '원', icon: 'dollar' },
+    ],
+    LEADS: [
+      { key: 'conversions', title: '리드수', valueKey: 'totalConversions', changeKey: 'conversions', format: 'number', icon: 'target' },
+      { key: 'cpa', title: 'CPL', valueKey: 'averageCpa', format: 'currency', unit: '원', icon: 'dollar' },
+      { key: 'spend', title: '지출', valueKey: 'totalSpend', changeKey: 'spend', format: 'currency', unit: '원', icon: 'dollar' },
+      { key: 'ctr', title: 'CTR', valueKey: 'averageCtr', changeKey: 'ctr', format: 'percentage', unit: '%', icon: 'click' },
+    ],
+    APP_PROMOTION: [
+      { key: 'conversions', title: '설치수', valueKey: 'totalConversions', changeKey: 'conversions', format: 'number', icon: 'target' },
+      { key: 'cpa', title: 'CPI', valueKey: 'averageCpa', format: 'currency', unit: '원', icon: 'dollar' },
+      { key: 'clicks', title: '클릭수', valueKey: 'totalClicks', format: 'number', icon: 'click' },
+      { key: 'spend', title: '지출', valueKey: 'totalSpend', changeKey: 'spend', format: 'currency', unit: '원', icon: 'dollar' },
+    ],
+  }
+
+  // Get the KPI config for the current objective
+  const currentKPIConfig = objectiveKPIConfig[dashboardObjective] || objectiveKPIConfig.ALL
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -145,9 +236,9 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{t('dashboard.title')}</h1>
           <p className="text-muted-foreground mt-2">
-            {t('dashboard.subtitle').split('{realtime}')[0]}
+            {t('dashboard.subtitlePrefix')}
             <span className="text-primary font-medium">{t('dashboard.realtime')}</span>
-            {t('dashboard.subtitle').split('{realtime}')[1]}
+            {t('dashboard.subtitleSuffix')}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -161,11 +252,30 @@ export default function DashboardPage() {
             <RefreshCw className={`h-4 w-4 ${sync.isPending ? 'animate-spin' : ''}`} />
             {sync.isPending ? t('dashboard.syncing') : t('dashboard.sync')}
           </Button>
-          <Tabs value={dashboardPeriod} onValueChange={(v) => setDashboardPeriod(v as '7d' | '30d' | '90d')} className="w-full sm:w-auto">
-            <TabsList className="grid w-full grid-cols-3 sm:w-auto bg-muted/50 dark:bg-muted/20">
-              <TabsTrigger value="7d">{t('dashboard.period.7d')}</TabsTrigger>
-              <TabsTrigger value="30d">{t('dashboard.period.30d')}</TabsTrigger>
-              <TabsTrigger value="90d">{t('dashboard.period.90d')}</TabsTrigger>
+
+          {/* Campaign Objective Filter */}
+          <Select value={dashboardObjective} onValueChange={setDashboardObjective}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="캠페인 유형" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">전체</SelectItem>
+              <SelectItem value="TRAFFIC">트래픽</SelectItem>
+              <SelectItem value="SALES">판매</SelectItem>
+              <SelectItem value="CONVERSIONS">전환</SelectItem>
+              <SelectItem value="AWARENESS">인지도</SelectItem>
+              <SelectItem value="ENGAGEMENT">참여</SelectItem>
+              <SelectItem value="LEADS">리드</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Period Tabs */}
+          <Tabs value={dashboardPeriod} onValueChange={(v) => setDashboardPeriod(v as typeof dashboardPeriod)} className="w-full sm:w-auto">
+            <TabsList className="grid w-full grid-cols-4 sm:w-auto bg-muted/50 dark:bg-muted/20">
+              <TabsTrigger value="today">오늘</TabsTrigger>
+              <TabsTrigger value="yesterday">어제</TabsTrigger>
+              <TabsTrigger value="7d">7일</TabsTrigger>
+              <TabsTrigger value="30d">30일</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -173,45 +283,19 @@ export default function DashboardPage() {
 
       {/* KPI Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <KPICard
-          title="ROAS"
-          value={summary?.averageRoas ?? 0}
-          unit="x"
-          format="multiplier"
-          change={changes?.roas ?? 0}
-          changeType={getChangeType(changes?.roas)}
-          icon="chart"
-          isLoading={isLoading}
-        />
-        <KPICard
-          title={t('dashboard.kpi.totalSpend')}
-          value={summary?.totalSpend ?? 0}
-          unit="원"
-          format="currency"
-          change={changes?.spend ?? 0}
-          changeType="neutral"
-          icon="dollar"
-          isLoading={isLoading}
-        />
-        <KPICard
-          title={t('dashboard.kpi.conversions')}
-          value={summary?.totalConversions ?? 0}
-          format="number"
-          change={changes?.conversions ?? 0}
-          changeType={getChangeType(changes?.conversions)}
-          icon="target"
-          isLoading={isLoading}
-        />
-        <KPICard
-          title="CTR"
-          value={summary?.averageCtr ?? 0}
-          unit="%"
-          format="percentage"
-          change={changes?.ctr ?? 0}
-          changeType={getChangeType(changes?.ctr)}
-          icon="click"
-          isLoading={isLoading}
-        />
+        {currentKPIConfig.map((kpi) => (
+          <KPICard
+            key={kpi.key}
+            title={kpi.title}
+            value={getKPIValue(summary, kpi.valueKey)}
+            unit={kpi.unit}
+            format={kpi.format}
+            change={kpi.changeKey ? getChangeValue(changes, kpi.changeKey) : 0}
+            changeType={kpi.changeKey ? getChangeType(getChangeValue(changes, kpi.changeKey)) : 'neutral'}
+            icon={kpi.icon}
+            isLoading={isLoading}
+          />
+        ))}
       </div>
 
       {/* Charts */}
@@ -235,6 +319,7 @@ export default function DashboardPage() {
             <KPIChart
               data={chartData.map((d) => ({ label: d.date, value: d.roas }))}
               color="green"
+              yAxisFormat="multiplier"
               isLoading={isLoading}
             />
           </CardContent>
@@ -249,7 +334,11 @@ export default function DashboardPage() {
             <CardContent><div className="h-48 animate-pulse bg-gray-100 rounded" /></CardContent>
           </Card>
         }>
-          <AIInsights isLoading={isLoading} />
+          <AIInsights
+              insights={kpiInsights}
+              isLoading={isLoading || isInsightsLoading}
+              onRefresh={refetchInsights}
+            />
         </Suspense>
         <Card>
           <CardHeader>

@@ -38,6 +38,15 @@ export interface ICacheService {
   invalidateUserCache(userId: string): Promise<void>
 
   /**
+   * Get value from cache or set it using the fetcher function
+   * @param key Cache key
+   * @param fetcher Function to fetch the value if not cached
+   * @param ttlSeconds Time to live in seconds (optional)
+   * @returns The cached or fetched value
+   */
+  getOrSet<T>(key: string, fetcher: () => Promise<T>, ttlSeconds?: number): Promise<T>
+
+  /**
    * Check if cache service is connected and operational
    */
   isHealthy(): Promise<boolean>

@@ -48,6 +48,13 @@ interface MetaApiInsightsResponse {
     date_start: string
     date_stop: string
   }[]
+  paging?: {
+    cursors?: {
+      before?: string
+      after?: string
+    }
+    next?: string
+  }
 }
 
 interface MetaApiCampaignListResponse {
@@ -245,7 +252,7 @@ export class MetaAdsClient implements IMetaAdsService {
   async getCampaignInsights(
     accessToken: string,
     campaignId: string,
-    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' = 'last_7d'
+    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d'
   ): Promise<MetaInsightsData> {
     return withSpan(
       'meta.getCampaignInsights',
@@ -271,7 +278,7 @@ export class MetaAdsClient implements IMetaAdsService {
   async getCampaignDailyInsights(
     accessToken: string,
     campaignId: string,
-    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' = 'last_7d'
+    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d'
   ): Promise<MetaDailyInsightsData[]> {
     return withSpan(
       'meta.getCampaignDailyInsights',
@@ -314,11 +321,15 @@ export class MetaAdsClient implements IMetaAdsService {
           (a) => a.action_type === 'purchase' || a.action_type === 'omni_purchase'
         )?.value ?? '0'
 
+      const linkClicks =
+        item.actions?.find((a) => a.action_type === 'link_click')?.value ?? '0'
+
       return {
         campaignId,
         date: item.date_start,
         impressions: parseInt(item.impressions ?? '0', 10),
         clicks: parseInt(item.clicks ?? '0', 10),
+        linkClicks: parseInt(linkClicks, 10),
         spend: parseFloat(item.spend ?? '0'),
         conversions: parseInt(conversions, 10),
         revenue: parseFloat(revenue),
@@ -471,6 +482,7 @@ export class MetaAdsClient implements IMetaAdsService {
         campaignId,
         impressions: 0,
         clicks: 0,
+        linkClicks: 0,
         spend: 0,
         conversions: 0,
         revenue: 0,
@@ -483,11 +495,14 @@ export class MetaAdsClient implements IMetaAdsService {
       data.actions?.find((a) => a.action_type === 'purchase')?.value || '0'
     const revenue =
       data.action_values?.find((a) => a.action_type === 'purchase')?.value || '0'
+    const linkClicks =
+      data.actions?.find((a) => a.action_type === 'link_click')?.value || '0'
 
     return {
       campaignId: data.campaign_id,
       impressions: parseInt(data.impressions || '0', 10),
       clicks: parseInt(data.clicks || '0', 10),
+      linkClicks: parseInt(linkClicks, 10),
       spend: parseFloat(data.spend || '0'),
       conversions: parseInt(conversions, 10),
       revenue: parseFloat(revenue),

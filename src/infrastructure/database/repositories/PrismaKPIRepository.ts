@@ -9,11 +9,28 @@ export class PrismaKPIRepository implements IKPIRepository {
   async save(kpi: KPI): Promise<KPI> {
     const data = KPIMapper.toCreateInput(kpi)
 
-    const created = await this.prisma.kPISnapshot.create({
-      data: {
+    // Use upsert to handle re-sync (update existing record for same campaign+date)
+    const saved = await this.prisma.kPISnapshot.upsert({
+      where: {
+        campaignId_date: {
+          campaignId: data.campaignId,
+          date: data.date,
+        },
+      },
+      update: {
+        impressions: data.impressions,
+        clicks: data.clicks,
+        linkClicks: data.linkClicks,
+        conversions: data.conversions,
+        spend: data.spend,
+        currency: data.currency,
+        revenue: data.revenue,
+      },
+      create: {
         id: data.id,
         impressions: data.impressions,
         clicks: data.clicks,
+        linkClicks: data.linkClicks,
         conversions: data.conversions,
         spend: data.spend,
         currency: data.currency,
@@ -26,7 +43,7 @@ export class PrismaKPIRepository implements IKPIRepository {
       },
     })
 
-    return KPIMapper.toDomain(created)
+    return KPIMapper.toDomain(saved)
   }
 
   async saveMany(kpis: KPI[]): Promise<KPI[]> {
@@ -111,10 +128,17 @@ export class PrismaKPIRepository implements IKPIRepository {
   ): Promise<{
     totalImpressions: number
     totalClicks: number
+    totalLinkClicks: number
     totalConversions: number
     totalSpend: number
     totalRevenue: number
   }> {
+    console.log('[aggregateByCampaignId] Input params:', {
+      campaignId,
+      startDate,
+      endDate,
+    })
+
     const result = await this.prisma.kPISnapshot.aggregate({
       where: {
         campaignId,
@@ -126,19 +150,27 @@ export class PrismaKPIRepository implements IKPIRepository {
       _sum: {
         impressions: true,
         clicks: true,
+        linkClicks: true,
         conversions: true,
         spend: true,
         revenue: true,
       },
     })
 
-    return {
+    console.log('[aggregateByCampaignId] Raw result from aggregate:', result)
+
+    const output = {
       totalImpressions: result._sum.impressions ?? 0,
       totalClicks: result._sum.clicks ?? 0,
+      totalLinkClicks: result._sum.linkClicks ?? 0,
       totalConversions: result._sum.conversions ?? 0,
       totalSpend: Number(result._sum.spend ?? 0),
       totalRevenue: Number(result._sum.revenue ?? 0),
     }
+
+    console.log('[aggregateByCampaignId] Mapped output:', output)
+
+    return output
   }
 
   async getDailyAggregates(
@@ -146,6 +178,12 @@ export class PrismaKPIRepository implements IKPIRepository {
     startDate: Date,
     endDate: Date
   ): Promise<DailyKPIAggregate[]> {
+    console.log('[getDailyAggregates] Input params:', {
+      campaignIds,
+      startDate,
+      endDate,
+    })
+
     if (campaignIds.length === 0) {
       return []
     }
@@ -162,6 +200,7 @@ export class PrismaKPIRepository implements IKPIRepository {
       _sum: {
         impressions: true,
         clicks: true,
+        linkClicks: true,
         conversions: true,
         spend: true,
         revenue: true,
@@ -169,14 +208,21 @@ export class PrismaKPIRepository implements IKPIRepository {
       orderBy: { date: 'asc' },
     })
 
-    return results.map((r) => ({
+    console.log('[getDailyAggregates] Raw results from groupBy:', results)
+
+    const mapped = results.map((r) => ({
       date: r.date,
       totalImpressions: r._sum.impressions ?? 0,
       totalClicks: r._sum.clicks ?? 0,
+      totalLinkClicks: r._sum.linkClicks ?? 0,
       totalConversions: r._sum.conversions ?? 0,
       totalSpend: Number(r._sum.spend ?? 0),
       totalRevenue: Number(r._sum.revenue ?? 0),
     }))
+
+    console.log('[getDailyAggregates] Mapped output:', mapped)
+
+    return mapped
   }
 
   async getCumulativeSpend(campaignId: string, date: Date): Promise<number> {

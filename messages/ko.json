@@ -67,7 +67,8 @@
   },
   "dashboard": {
     "title": "대시보드",
-    "subtitle": "오늘의 광고 성과를 {realtime}으로 확인하세요",
+    "subtitlePrefix": "오늘의 광고 성과를 ",
+    "subtitleSuffix": "으로 확인하세요",
     "realtime": "실시간",
     "errorTitle": "데이터를 불러오는데 실패했습니다",
     "sync": "동기화",

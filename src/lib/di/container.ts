@@ -25,6 +25,9 @@ import type { IMetaPixelRepository } from '@domain/repositories/IMetaPixelReposi
 import type { IBillingKeyRepository } from '@domain/repositories/IBillingKeyRepository'
 import type { IPaymentLogRepository } from '@domain/repositories/IPaymentLogRepository'
 import type { IAIFeedbackRepository } from '@domain/repositories/IAIFeedbackRepository'
+import type { IConversationRepository } from '@domain/repositories/IConversationRepository'
+import type { IPendingActionRepository } from '@domain/repositories/IPendingActionRepository'
+import type { IAlertRepository } from '@domain/repositories/IAlertRepository'
 import type { IPaymentGateway } from '@application/ports/IPaymentGateway'
 
 // Port interfaces
@@ -50,6 +53,9 @@ import { PrismaMetaPixelRepository } from '@infrastructure/database/repositories
 import { PrismaBillingKeyRepository } from '@infrastructure/database/repositories/PrismaBillingKeyRepository'
 import { PrismaPaymentLogRepository } from '@infrastructure/database/repositories/PrismaPaymentLogRepository'
 import { PrismaAIFeedbackRepository } from '@infrastructure/database/repositories/PrismaAIFeedbackRepository'
+import { PrismaConversationRepository } from '@infrastructure/database/repositories/PrismaConversationRepository'
+import { PrismaPendingActionRepository } from '@infrastructure/database/repositories/PrismaPendingActionRepository'
+import { PrismaAlertRepository } from '@infrastructure/database/repositories/PrismaAlertRepository'
 import { TossPaymentsClient } from '@infrastructure/payment/TossPaymentsClient'
 import { MetaAdsClient } from '@infrastructure/external/meta-ads/MetaAdsClient'
 import { AIService } from '@infrastructure/external/openai/AIService'
@@ -60,6 +66,11 @@ import { ScienceAIService } from '@infrastructure/external/openai/ScienceAIServi
 import { PerplexityResearchService } from '@infrastructure/external/research'
 import { RedisCacheService } from '@infrastructure/cache/RedisCacheService'
 import { MemoryCacheService } from '@infrastructure/cache/MemoryCacheService'
+import type { IToolRegistry } from '@application/ports/IConversationalAgent'
+import { registerAllTools } from '@application/tools/registerAllTools'
+import { ConversationalAgentService } from '@application/services/ConversationalAgentService'
+import { ActionConfirmationService } from '@application/services/ActionConfirmationService'
+import { ProactiveAlertService } from '@application/services/ProactiveAlertService'
 
 // Application services and use cases
 import { QuotaService } from '@application/services/QuotaService'
@@ -80,6 +91,7 @@ import { CreateCampaignUseCase } from '@application/use-cases/campaign/CreateCam
 import { UpdateCampaignUseCase } from '@application/use-cases/campaign/UpdateCampaignUseCase'
 import { PauseCampaignUseCase } from '@application/use-cases/campaign/PauseCampaignUseCase'
 import { ResumeCampaignUseCase } from '@application/use-cases/campaign/ResumeCampaignUseCase'
+import { DeleteCampaignUseCase } from '@application/use-cases/campaign/DeleteCampaignUseCase'
 import { GetCampaignUseCase } from '@application/use-cases/campaign/GetCampaignUseCase'
 import { ListCampaignsUseCase } from '@application/use-cases/campaign/ListCampaignsUseCase'
 import { SyncCampaignsUseCase } from '@application/use-cases/campaign/SyncCampaignsUseCase'
@@ -204,6 +216,22 @@ container.registerSingleton<IAIFeedbackRepository>(
   () => new PrismaAIFeedbackRepository(prisma)
 )
 
+// Conversational Agent Repositories (Singletons)
+container.registerSingleton<IConversationRepository>(
+  DI_TOKENS.ConversationRepository,
+  () => new PrismaConversationRepository(prisma)
+)
+
+container.registerSingleton<IPendingActionRepository>(
+  DI_TOKENS.PendingActionRepository,
+  () => new PrismaPendingActionRepository(prisma)
+)
+
+container.registerSingleton<IAlertRepository>(
+  DI_TOKENS.AlertRepository,
+  () => new PrismaAlertRepository(prisma)
+)
+
 // Register External Services (Singletons)
 container.registerSingleton<IMetaAdsService>(
   DI_TOKENS.MetaAdsService,
@@ -310,6 +338,63 @@ container.registerSingleton(
   () => new ABTestAnalysisService(container.resolve(DI_TOKENS.ABTestRepository))
 )
 
+// Conversational Agent Services
+container.registerSingleton<IToolRegistry>(
+  DI_TOKENS.ToolRegistry,
+  () => registerAllTools({
+    campaignRepository: container.resolve(DI_TOKENS.CampaignRepository),
+    kpiRepository: container.resolve(DI_TOKENS.KPIRepository),
+    getDashboardKPIUseCase: container.resolve(DI_TOKENS.GetDashboardKPIUseCase),
+    listCampaignsUseCase: container.resolve(DI_TOKENS.ListCampaignsUseCase),
+    getCampaignUseCase: container.resolve(DI_TOKENS.GetCampaignUseCase),
+    generateWeeklyReportUseCase: container.resolve(DI_TOKENS.GenerateWeeklyReportUseCase),
+    createCampaignUseCase: container.resolve(DI_TOKENS.CreateCampaignUseCase),
+    updateCampaignUseCase: container.resolve(DI_TOKENS.UpdateCampaignUseCase),
+    pauseCampaignUseCase: container.resolve(DI_TOKENS.PauseCampaignUseCase),
+    resumeCampaignUseCase: container.resolve(DI_TOKENS.ResumeCampaignUseCase),
+    deleteCampaignUseCase: container.resolve(DI_TOKENS.DeleteCampaignUseCase),
+  })
+)
+
+container.registerSingleton(
+  DI_TOKENS.ConversationalAgentService,
+  () => new ConversationalAgentService(
+    container.resolve<IToolRegistry>(DI_TOKENS.ToolRegistry),
+    container.resolve<IConversationRepository>(DI_TOKENS.ConversationRepository),
+    container.resolve<IPendingActionRepository>(DI_TOKENS.PendingActionRepository),
+    async (userId: string) => ({
+      userId,
+      accessToken: null, // API route에서 실제 값으로 대체됨
+      adAccountId: null,
+      conversationId: '',
+    })
+  )
+)
+
+container.registerSingleton(
+  DI_TOKENS.ActionConfirmationService,
+  () => new ActionConfirmationService(
+    container.resolve<IPendingActionRepository>(DI_TOKENS.PendingActionRepository),
+    container.resolve<IConversationRepository>(DI_TOKENS.ConversationRepository),
+    container.resolve<IToolRegistry>(DI_TOKENS.ToolRegistry),
+    async (userId: string) => ({
+      userId,
+      accessToken: null,
+      adAccountId: null,
+      conversationId: '',
+    })
+  )
+)
+
+container.registerSingleton(
+  DI_TOKENS.ProactiveAlertService,
+  () => new ProactiveAlertService(
+    container.resolve(DI_TOKENS.CampaignRepository),
+    container.resolve(DI_TOKENS.KPIRepository),
+    container.resolve(DI_TOKENS.AlertRepository),
+  )
+)
+
 // Register Infrastructure Services (Singletons)
 container.registerSingleton<IReportPDFGenerator>(
   DI_TOKENS.ReportPDFGenerator,
@@ -388,6 +473,11 @@ container.register(
       container.resolve(DI_TOKENS.CampaignRepository),
       container.resolve(DI_TOKENS.MetaAdsService)
     )
+)
+
+container.register(
+  DI_TOKENS.DeleteCampaignUseCase,
+  () => new DeleteCampaignUseCase(container.resolve(DI_TOKENS.CampaignRepository))
 )
 
 container.register(
@@ -696,6 +786,38 @@ export function getPermissionService(): PermissionService {
 
 export function getABTestAnalysisService(): ABTestAnalysisService {
   return container.resolve(DI_TOKENS.ABTestAnalysisService)
+}
+
+export function getConversationRepository(): IConversationRepository {
+  return container.resolve(DI_TOKENS.ConversationRepository)
+}
+
+export function getPendingActionRepository(): IPendingActionRepository {
+  return container.resolve(DI_TOKENS.PendingActionRepository)
+}
+
+export function getAlertRepository(): IAlertRepository {
+  return container.resolve(DI_TOKENS.AlertRepository)
+}
+
+export function getToolRegistry(): IToolRegistry {
+  return container.resolve(DI_TOKENS.ToolRegistry)
+}
+
+export function getConversationalAgentService(): ConversationalAgentService {
+  return container.resolve(DI_TOKENS.ConversationalAgentService)
+}
+
+export function getActionConfirmationService(): ActionConfirmationService {
+  return container.resolve(DI_TOKENS.ActionConfirmationService)
+}
+
+export function getProactiveAlertService(): ProactiveAlertService {
+  return container.resolve(DI_TOKENS.ProactiveAlertService)
+}
+
+export function getDeleteCampaignUseCase(): DeleteCampaignUseCase {
+  return container.resolve(DI_TOKENS.DeleteCampaignUseCase)
 }
 
 /**

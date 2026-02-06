@@ -2,13 +2,16 @@ import {
   IMetaAdsService,
   MetaCampaignData,
   MetaInsightsData,
+  MetaDailyInsightsData,
   CreateMetaCampaignInput,
   UpdateMetaCampaignInput,
+  ListCampaignsResponse,
 } from '@application/ports/IMetaAdsService'
 
 export class MockMetaAdsService implements IMetaAdsService {
   private campaigns: Map<string, MetaCampaignData> = new Map()
   private insights: Map<string, MetaInsightsData> = new Map()
+  private dailyInsights: Map<string, MetaDailyInsightsData[]> = new Map()
   private shouldFail = false
   private failureError: Error | null = null
 
@@ -49,7 +52,7 @@ export class MockMetaAdsService implements IMetaAdsService {
   async getCampaignInsights(
     accessToken: string,
     campaignId: string,
-    _datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d'
+    _datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d'
   ): Promise<MetaInsightsData> {
     if (this.shouldFail && this.failureError) {
       throw this.failureError
@@ -64,6 +67,7 @@ export class MockMetaAdsService implements IMetaAdsService {
       campaignId,
       impressions: 0,
       clicks: 0,
+      linkClicks: 0,
       spend: 0,
       conversions: 0,
       revenue: 0,
@@ -121,16 +125,58 @@ export class MockMetaAdsService implements IMetaAdsService {
     this.campaigns.delete(campaignId)
   }
 
+  async getCampaignDailyInsights(
+    _accessToken: string,
+    campaignId: string,
+    _datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d'
+  ): Promise<MetaDailyInsightsData[]> {
+    if (this.shouldFail && this.failureError) {
+      throw this.failureError
+    }
+
+    // Return empty array by default - tests can use setDailyInsights to populate
+    return this.dailyInsights.get(campaignId) || []
+  }
+
+  async listCampaigns(
+    _accessToken: string,
+    _adAccountId: string,
+    _options?: { limit?: number; after?: string }
+  ): Promise<ListCampaignsResponse> {
+    if (this.shouldFail && this.failureError) {
+      throw this.failureError
+    }
+
+    const campaigns = Array.from(this.campaigns.values()).map(c => ({
+      id: c.id,
+      name: c.name,
+      status: c.status,
+      objective: c.objective,
+      dailyBudget: c.dailyBudget,
+      startTime: c.startTime,
+      endTime: c.endTime,
+      createdTime: new Date().toISOString(),
+      updatedTime: new Date().toISOString(),
+    }))
+
+    return { campaigns }
+  }
+
   // Test helpers
   clear(): void {
     this.campaigns.clear()
     this.insights.clear()
+    this.dailyInsights.clear()
     this.shouldFail = false
     this.failureError = null
   }
 
   setInsights(campaignId: string, insights: MetaInsightsData): void {
     this.insights.set(campaignId, insights)
+  }
+
+  setDailyInsights(campaignId: string, dailyInsights: MetaDailyInsightsData[]): void {
+    this.dailyInsights.set(campaignId, dailyInsights)
   }
 
   setCampaign(campaign: MetaCampaignData): void {

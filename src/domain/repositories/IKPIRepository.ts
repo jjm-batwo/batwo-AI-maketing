@@ -10,6 +10,7 @@ export interface DailyKPIAggregate {
   date: Date
   totalImpressions: number
   totalClicks: number
+  totalLinkClicks: number
   totalConversions: number
   totalSpend: number
   totalRevenue: number
@@ -34,6 +35,7 @@ export interface IKPIRepository {
   ): Promise<{
     totalImpressions: number
     totalClicks: number
+    totalLinkClicks: number
     totalConversions: number
     totalSpend: number
     totalRevenue: number

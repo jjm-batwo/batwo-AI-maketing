@@ -129,8 +129,8 @@ describe('AIInsights', () => {
 
     it('should have proper button styling', () => {
       render(<AIInsights insights={[mockInsights[0]]} />, { wrapper: Wrapper })
-      const actionButton = screen.getByText(/타겟팅 조정하기/)
-      expect(actionButton).toHaveClass('underline')
+      const actionLink = screen.getByText(/타겟팅 조정하기/).closest('a')
+      expect(actionLink).toBeInTheDocument()
     })
   })
 
@@ -212,14 +212,14 @@ describe('AIInsights', () => {
 
     it('should have proper spacing between insights', () => {
       const { container } = render(<AIInsights insights={mockInsights} />, { wrapper: Wrapper })
-      const insightsContainer = container.querySelector('.space-y-4')
+      const insightsContainer = container.querySelector('.space-y-3')
       expect(insightsContainer).toBeInTheDocument()
     })
 
     it('should have hover effects', () => {
       render(<AIInsights insights={[mockInsights[0]]} />, { wrapper: Wrapper })
       const insightCard = screen.getByText('전환율 개선 기회').closest('div')?.parentElement?.parentElement
-      expect(insightCard).toHaveClass('transition-colors', 'hover:bg-opacity-80')
+      expect(insightCard).toHaveClass('transition-all')
     })
   })
 

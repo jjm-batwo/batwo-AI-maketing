@@ -13,27 +13,46 @@ function getDateRangeFromPreset(
   preset: DateRangePreset
 ): { startDate: Date; endDate: Date } {
   const now = new Date()
-  const endDate = new Date(now)
-  endDate.setHours(23, 59, 59, 999)
 
-  const startDate = new Date(now)
+  // Use UTC to match how dates are stored in database
+  const endDate = new Date(Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate(),
+    23, 59, 59, 999
+  ))
+
+  const startDate = new Date(Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate(),
+    0, 0, 0, 0
+  ))
 
   switch (preset) {
     case 'today':
-      startDate.setHours(0, 0, 0, 0)
+      // startDate and endDate already set to today UTC
       break
     case 'yesterday':
-      startDate.setDate(startDate.getDate() - 1)
-      startDate.setHours(0, 0, 0, 0)
-      endDate.setDate(endDate.getDate() - 1)
+      startDate.setUTCDate(startDate.getUTCDate() - 1)
+      endDate.setUTCDate(endDate.getUTCDate() - 1)
       break
     case 'last_7d':
-      startDate.setDate(startDate.getDate() - 7)
-      startDate.setHours(0, 0, 0, 0)
+      startDate.setUTCDate(startDate.getUTCDate() - 6)
       break
     case 'last_30d':
-      startDate.setDate(startDate.getDate() - 30)
-      startDate.setHours(0, 0, 0, 0)
+      startDate.setUTCDate(startDate.getUTCDate() - 29)
+      break
+    case 'last_90d':
+      startDate.setUTCDate(startDate.getUTCDate() - 89)
+      break
+    case 'this_month':
+      startDate.setUTCDate(1)
+      break
+    case 'last_month':
+      startDate.setUTCMonth(startDate.getUTCMonth() - 1)
+      startDate.setUTCDate(1)
+      endDate.setUTCDate(0) // Last day of previous month
       break
   }
 
@@ -69,6 +88,11 @@ export class GetDashboardKPIUseCase {
       campaigns = campaigns.filter((c) => dto.campaignIds!.includes(c.id))
     }
 
+    // Filter by objective if provided
+    if (dto.objective) {
+      campaigns = campaigns.filter((c) => c.objective === dto.objective)
+    }
+
     if (campaigns.length === 0) {
       return this.createEmptyResult(dto.includeChartData)
     }
@@ -76,6 +100,7 @@ export class GetDashboardKPIUseCase {
     // Aggregate KPIs across all campaigns
     let totalImpressions = 0
     let totalClicks = 0
+    let totalLinkClicks = 0
     let totalConversions = 0
     let totalSpend = 0
     let totalRevenue = 0
@@ -91,6 +116,7 @@ export class GetDashboardKPIUseCase {
 
       totalImpressions += aggregated.totalImpressions
       totalClicks += aggregated.totalClicks
+      totalLinkClicks += aggregated.totalLinkClicks
       totalConversions += aggregated.totalConversions
       totalSpend += aggregated.totalSpend
       totalRevenue += aggregated.totalRevenue
@@ -101,6 +127,7 @@ export class GetDashboardKPIUseCase {
           campaignName: campaign.name,
           impressions: aggregated.totalImpressions,
           clicks: aggregated.totalClicks,
+          linkClicks: aggregated.totalLinkClicks,
           conversions: aggregated.totalConversions,
           spend: aggregated.totalSpend,
           revenue: aggregated.totalRevenue,
@@ -129,6 +156,7 @@ export class GetDashboardKPIUseCase {
     const result: DashboardKPIDTO = {
       totalImpressions,
       totalClicks,
+      totalLinkClicks,
       totalConversions,
       totalSpend,
       totalRevenue,
@@ -168,10 +196,19 @@ export class GetDashboardKPIUseCase {
           roas: agg.totalSpend > 0 ? agg.totalRevenue / agg.totalSpend : 0,
           impressions: agg.totalImpressions,
           clicks: agg.totalClicks,
+          linkClicks: agg.totalLinkClicks,
           conversions: agg.totalConversions,
         })
       )
     }
+
+    console.log('[GetDashboardKPI] Final result:', {
+      totalSpend: result.totalSpend,
+      totalRevenue: result.totalRevenue,
+      chartDataLength: result.chartData?.length ?? 0,
+      chartDataSample: result.chartData?.slice(0, 2),
+      chartDataSpendSum: result.chartData?.reduce((sum, d) => sum + d.spend, 0) ?? 0,
+    })
 
     return result
   }
@@ -182,6 +219,9 @@ export class GetDashboardKPIUseCase {
   ): Promise<KPIComparisonDTO> {
     const current = getDateRangeFromPreset(preset)
     const previous = getPreviousPeriodRange(preset)
+
+    console.log('[Comparison] Current period:', current.startDate, '-', current.endDate)
+    console.log('[Comparison] Previous period:', previous.startDate, '-', previous.endDate)
 
     const currentMetrics = {
       impressions: 0,
@@ -223,6 +263,9 @@ export class GetDashboardKPIUseCase {
       previousMetrics.spend += previousAgg.totalSpend
       previousMetrics.revenue += previousAgg.totalRevenue
     }
+
+    console.log('[Comparison] Current metrics:', currentMetrics)
+    console.log('[Comparison] Previous metrics:', previousMetrics)
 
     const calcChange = (current: number, previous: number): number => {
       if (previous === 0) return current > 0 ? 100 : 0
@@ -268,6 +311,7 @@ export class GetDashboardKPIUseCase {
     const result: DashboardKPIDTO = {
       totalImpressions: 0,
       totalClicks: 0,
+      totalLinkClicks: 0,
       totalConversions: 0,
       totalSpend: 0,
       totalRevenue: 0,

@@ -13,6 +13,7 @@ export interface MetaInsightsData {
   campaignId: string
   impressions: number
   clicks: number
+  linkClicks: number
   spend: number
   conversions: number
   revenue: number
@@ -25,6 +26,7 @@ export interface MetaDailyInsightsData {
   date: string
   impressions: number
   clicks: number
+  linkClicks: number
   spend: number
   conversions: number
   revenue: number
@@ -93,13 +95,13 @@ export interface IMetaAdsService {
   getCampaignInsights(
     accessToken: string,
     campaignId: string,
-    datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d'
+    datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d'
   ): Promise<MetaInsightsData>
 
   getCampaignDailyInsights(
     accessToken: string,
     campaignId: string,
-    datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d'
+    datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d'
   ): Promise<MetaDailyInsightsData[]>
 
   updateCampaignStatus(

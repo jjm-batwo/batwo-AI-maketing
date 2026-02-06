@@ -5,6 +5,7 @@ export interface CreateKPIProps {
   campaignId: string
   impressions: number
   clicks: number
+  linkClicks: number
   conversions: number
   spend: Money
   revenue: Money
@@ -32,6 +33,7 @@ export class KPI {
     private readonly _campaignId: string,
     private readonly _impressions: number,
     private readonly _clicks: number,
+    private readonly _linkClicks: number,
     private readonly _conversions: number,
     private readonly _spend: Money,
     private readonly _revenue: Money,
@@ -47,6 +49,7 @@ export class KPI {
       props.campaignId,
       props.impressions,
       props.clicks,
+      props.linkClicks,
       props.conversions,
       props.spend,
       props.revenue,
@@ -61,6 +64,7 @@ export class KPI {
       props.campaignId,
       props.impressions,
       props.clicks,
+      props.linkClicks,
       props.conversions,
       props.spend,
       props.revenue,
@@ -75,6 +79,9 @@ export class KPI {
     }
     if (props.clicks < 0) {
       throw new Error('Clicks cannot be negative')
+    }
+    if (props.linkClicks < 0) {
+      throw new Error('Link clicks cannot be negative')
     }
     if (props.conversions < 0) {
       throw new Error('Conversions cannot be negative')
@@ -93,6 +100,9 @@ export class KPI {
   }
   get clicks(): number {
     return this._clicks
+  }
+  get linkClicks(): number {
+    return this._linkClicks
   }
   get conversions(): number {
     return this._conversions
@@ -164,6 +174,7 @@ export class KPI {
       campaignId: this._campaignId,
       impressions: this._impressions,
       clicks: this._clicks,
+      linkClicks: this._linkClicks,
       conversions: this._conversions,
       spend: this._spend,
       revenue: this._revenue,
@@ -180,6 +191,7 @@ export class KPISnapshot {
         campaignId: '',
         impressions: 0,
         clicks: 0,
+        linkClicks: 0,
         conversions: 0,
         spend: Money.create(0, 'KRW'),
         revenue: Money.create(0, 'KRW'),
@@ -190,6 +202,7 @@ export class KPISnapshot {
     const firstKPI = kpis[0]
     let totalImpressions = 0
     let totalClicks = 0
+    let totalLinkClicks = 0
     let totalConversions = 0
     let totalSpend = Money.create(0, firstKPI.spend.currency)
     let totalRevenue = Money.create(0, firstKPI.revenue.currency)
@@ -197,6 +210,7 @@ export class KPISnapshot {
     for (const kpi of kpis) {
       totalImpressions += kpi.impressions
       totalClicks += kpi.clicks
+      totalLinkClicks += kpi.linkClicks
       totalConversions += kpi.conversions
       totalSpend = totalSpend.add(kpi.spend)
       totalRevenue = totalRevenue.add(kpi.revenue)
@@ -206,6 +220,7 @@ export class KPISnapshot {
       campaignId: firstKPI.campaignId,
       impressions: totalImpressions,
       clicks: totalClicks,
+      linkClicks: totalLinkClicks,
       conversions: totalConversions,
       spend: totalSpend,
       revenue: totalRevenue,

@@ -7,8 +7,11 @@
 
 export const CacheKeys = {
   // KPI 관련 (TTL: 5분)
-  kpiDashboard: (userId: string) => `kpi:dashboard:${userId}`,
+  kpiDashboard: (userId: string, date: string) => `kpi:dashboard:${userId}:${date}`,
   kpiSummary: (userId: string, dateRange: string) => `kpi:summary:${userId}:${dateRange}`,
+
+  // AI 인사이트 (TTL: 10분)
+  aiInsights: (userId: string) => `insights:${userId}`,
 
   // 캠페인 관련 (TTL: 1분)
   campaignList: (userId: string) => `campaigns:list:${userId}`,
@@ -27,6 +30,7 @@ export const CacheKeys = {
 
 export const CacheTTL = {
   KPI: 300, // 5분
+  AI_INSIGHTS: 600, // 10분
   CAMPAIGN: 60, // 1분
   QUOTA: 30, // 30초
   TEAM: 300, // 5분

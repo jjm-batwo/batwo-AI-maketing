@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { CampaignList } from '@/presentation/components/campaign'
-import { useCampaigns, useMetaConnection } from '@/presentation/hooks'
+import { useCampaigns, useMetaConnection, useDashboardKPI } from '@/presentation/hooks'
 import { useCampaignStore } from '@/presentation/stores'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -37,7 +37,33 @@ export default function CampaignsPage() {
     enabled: isConnected, // Meta 연결 시에만 데이터 fetch
   })
 
-  const rawCampaigns = isConnected ? (data?.campaigns || []) : []
+  // KPI 데이터 가져오기 (캠페인별 오늘 지출/ROAS 표시용)
+  const { data: kpiData } = useDashboardKPI({
+    period: 'today', // 오늘 기준 KPI (일일 예산과 비교용)
+    includeBreakdown: true,
+    enabled: isConnected,
+  })
+
+  // 캠페인 데이터에 KPI 지출/ROAS 병합
+  const rawCampaigns = useMemo(() => {
+    const campaignList = isConnected ? (data?.campaigns || []) : []
+    if (campaignList.length === 0) return []
+
+    // KPI breakdown 맵 생성
+    const breakdownMap = new Map(
+      (kpiData?.campaignBreakdown ?? []).map((b: { campaignId: string; spend: number; roas: number }) => [b.campaignId, b])
+    )
+
+    // 캠페인에 KPI 데이터 병합
+    return campaignList.map((campaign) => {
+      const breakdown = breakdownMap.get(campaign.id)
+      return {
+        ...campaign,
+        spend: breakdown?.spend ?? 0,
+        roas: breakdown?.roas ?? 0,
+      }
+    })
+  }, [isConnected, data?.campaigns, kpiData?.campaignBreakdown])
 
   // 활성 캠페인을 상단에 배치하는 정렬 로직
   const campaigns = useMemo(() => {

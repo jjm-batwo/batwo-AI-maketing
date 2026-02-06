@@ -6,6 +6,13 @@
 
 import type { Anomaly } from '@application/services/AnomalyDetectionService'
 
+/**
+ * API 응답에서의 Anomaly 타입 (Date가 string으로 직렬화됨)
+ */
+type AnomalyFromAPI = Omit<Anomaly, 'detectedAt'> & {
+  detectedAt: Date | string
+}
+
 // ============================================================================
 // Anomaly Insight Types
 // ============================================================================
@@ -41,7 +48,7 @@ export interface TrendInsightDTO {
 // ============================================================================
 
 export interface AnomalyAPIResponse {
-  anomalies: Anomaly[]
+  anomalies: AnomalyFromAPI[]
   detectedAt: string
   count: number
   summary: {
@@ -123,7 +130,9 @@ export function mapAnomalyResponse(data: AnomalyAPIResponse): AnomalyInsightDTO[
       message: anomaly.message,
       recommendation,
       confidence,
-      detectedAt: anomaly.detectedAt.toISOString(),
+      detectedAt: typeof anomaly.detectedAt === 'string'
+        ? anomaly.detectedAt
+        : anomaly.detectedAt.toISOString(),
     }
   })
 }
@@ -189,7 +198,7 @@ export function mapTrendResponse(data: TrendAPIResponse): TrendInsightDTO[] {
 /**
  * Calculate confidence score based on anomaly characteristics
  */
-function calculateConfidence(anomaly: Anomaly): number {
+function calculateConfidence(anomaly: AnomalyFromAPI): number {
   let confidence = 0.5 // Base confidence
 
   // Increase confidence based on detection method

@@ -67,7 +67,8 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "subtitle": "Check your ad performance in {realtime}",
+    "subtitlePrefix": "Check your ad performance in ",
+    "subtitleSuffix": "",
     "realtime": "real-time",
     "errorTitle": "Failed to load data",
     "sync": "Sync",

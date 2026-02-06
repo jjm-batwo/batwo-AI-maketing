@@ -1,9 +1,10 @@
-export type DateRangePreset = 'today' | 'yesterday' | 'last_7d' | 'last_30d'
+export type DateRangePreset = 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' | 'this_month' | 'last_month'
 
 export interface GetDashboardKPIDTO {
   userId: string
   dateRange: DateRangePreset
   campaignIds?: string[]
+  objective?: 'AWARENESS' | 'TRAFFIC' | 'ENGAGEMENT' | 'LEADS' | 'APP_PROMOTION' | 'SALES' | 'CONVERSIONS'
   includeComparison?: boolean
   includeBreakdown?: boolean
   includeChartData?: boolean
@@ -16,6 +17,7 @@ export interface ChartDataPointDTO {
   roas: number
   impressions: number
   clicks: number
+  linkClicks: number
   conversions: number
 }
 
@@ -34,6 +36,7 @@ export interface CampaignKPIBreakdownDTO {
   campaignName: string
   impressions: number
   clicks: number
+  linkClicks: number
   conversions: number
   spend: number
   revenue: number
@@ -45,6 +48,7 @@ export interface CampaignKPIBreakdownDTO {
 export interface DashboardKPIDTO {
   totalImpressions: number
   totalClicks: number
+  totalLinkClicks: number
   totalConversions: number
   totalSpend: number
   totalRevenue: number

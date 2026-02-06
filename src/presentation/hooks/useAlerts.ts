@@ -1,6 +1,37 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useState, useEffect, useCallback } from 'react'
+import { useUIStore } from '@/presentation/stores/uiStore'
+
+// ============================================================================
+// Agent Alert Types (새 API - Proactive Alerts)
+// ============================================================================
+
+interface AlertItem {
+  id: string
+  type: string
+  severity: 'INFO' | 'WARNING' | 'CRITICAL'
+  title: string
+  message: string
+  status: string
+  data: Record<string, unknown> | null
+  createdAt: string
+}
+
+interface UseAlertsReturn {
+  alerts: AlertItem[]
+  unreadCount: number
+  isLoading: boolean
+  dismissAlert: (id: string) => Promise<void>
+  markAsRead: (id: string) => Promise<void>
+  refresh: () => Promise<void>
+  // Legacy API compatibility
+  data?: AlertsResponse
+}
+
+// ============================================================================
+// Legacy Alert Types (기존 API - NotificationCenter 호환성)
+// ============================================================================
 
 export type AnomalyType = 'spike' | 'drop' | 'trend_change' | 'budget_anomaly'
 export type AnomalySeverity = 'critical' | 'warning' | 'info'
@@ -24,40 +55,66 @@ export interface AlertsResponse {
   count: number
 }
 
-const ALERTS_QUERY_KEY = ['alerts'] as const
+export function useAlerts(pollingInterval = 60000): UseAlertsReturn {
+  const [alerts, setAlerts] = useState<AlertItem[]>([])
+  const [unreadCount, setUnreadCount] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+  const setUnreadAlertCount = useUIStore((s) => s.setUnreadAlertCount)
 
-async function fetchAlerts(): Promise<AlertsResponse> {
-  const response = await fetch('/api/alerts')
-  if (!response.ok) {
-    throw new Error('알림을 불러오는데 실패했습니다')
+  const fetchAlerts = useCallback(async () => {
+    try {
+      setIsLoading(true)
+      const response = await fetch('/api/agent/alerts?status=UNREAD&limit=10')
+      if (!response.ok) return
+
+      const data = await response.json()
+      setAlerts(data.alerts ?? [])
+      setUnreadCount(data.unreadCount ?? 0)
+      setUnreadAlertCount(data.unreadCount ?? 0)
+    } catch {
+      // 폴링 실패는 조용히 무시
+    } finally {
+      setIsLoading(false)
+    }
+  }, [setUnreadAlertCount])
+
+  // 초기 로드 + 폴링
+  useEffect(() => {
+    fetchAlerts()
+    const interval = setInterval(fetchAlerts, pollingInterval)
+    return () => clearInterval(interval)
+  }, [fetchAlerts, pollingInterval])
+
+  const dismissAlert = useCallback(async (id: string) => {
+    await fetch(`/api/agent/alerts/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'DISMISSED' }),
+    })
+    setAlerts((prev) => prev.filter((a) => a.id !== id))
+    setUnreadCount((prev) => Math.max(0, prev - 1))
+    setUnreadAlertCount(Math.max(0, unreadCount - 1))
+  }, [unreadCount, setUnreadAlertCount])
+
+  const markAsRead = useCallback(async (id: string) => {
+    await fetch(`/api/agent/alerts/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'READ' }),
+    })
+    setAlerts((prev) => prev.filter((a) => a.id !== id))
+    setUnreadCount((prev) => Math.max(0, prev - 1))
+    setUnreadAlertCount(Math.max(0, unreadCount - 1))
+  }, [unreadCount, setUnreadAlertCount])
+
+  return {
+    alerts,
+    unreadCount,
+    isLoading,
+    dismissAlert,
+    markAsRead,
+    refresh: fetchAlerts,
+    // Legacy API 호환성 (NotificationCenter)
+    data: { alerts: [], count: 0 } as AlertsResponse,
   }
-  return response.json()
-}
-
-/**
- * 사용자의 모든 알림 조회 훅
- */
-export function useAlerts() {
-  return useQuery({
-    queryKey: ALERTS_QUERY_KEY,
-    queryFn: fetchAlerts,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchInterval: 5 * 60 * 1000, // Auto-refresh every 5 minutes
-  })
-}
-
-/**
- * 심각도별 알림 수 계산
- */
-export function useAlertCounts() {
-  const { data, ...rest } = useAlerts()
-
-  const counts = {
-    critical: data?.alerts.filter((a) => a.severity === 'critical').length ?? 0,
-    warning: data?.alerts.filter((a) => a.severity === 'warning').length ?? 0,
-    info: data?.alerts.filter((a) => a.severity === 'info').length ?? 0,
-    total: data?.count ?? 0,
-  }
-
-  return { counts, ...rest }
 }

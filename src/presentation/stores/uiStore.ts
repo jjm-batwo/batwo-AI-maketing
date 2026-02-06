@@ -47,8 +47,22 @@ interface UIState {
   setTheme: (theme: 'light' | 'dark' | 'system') => void
 
   // Dashboard period
-  dashboardPeriod: '7d' | '30d' | '90d'
-  setDashboardPeriod: (period: '7d' | '30d' | '90d') => void
+  dashboardPeriod: 'today' | 'yesterday' | '7d' | '30d' | 'this_month' | 'last_month'
+  setDashboardPeriod: (period: 'today' | 'yesterday' | '7d' | '30d' | 'this_month' | 'last_month') => void
+
+  // Campaign objective filter
+  dashboardObjective: 'ALL' | 'AWARENESS' | 'TRAFFIC' | 'ENGAGEMENT' | 'LEADS' | 'APP_PROMOTION' | 'SALES' | 'CONVERSIONS'
+  setDashboardObjective: (objective: 'ALL' | 'AWARENESS' | 'TRAFFIC' | 'ENGAGEMENT' | 'LEADS' | 'APP_PROMOTION' | 'SALES' | 'CONVERSIONS') => void
+
+  // Chat Panel
+  isChatPanelOpen: boolean
+  activeConversationId: string | null
+  unreadAlertCount: number
+  toggleChatPanel: () => void
+  openChatPanel: () => void
+  closeChatPanel: () => void
+  setActiveConversation: (id: string | null) => void
+  setUnreadAlertCount: (count: number) => void
 }
 
 let toastId = 0
@@ -117,4 +131,17 @@ export const useUIStore = create<UIState>((set) => ({
   // Dashboard
   dashboardPeriod: '7d',
   setDashboardPeriod: (period) => set({ dashboardPeriod: period }),
+
+  dashboardObjective: 'ALL',
+  setDashboardObjective: (objective) => set({ dashboardObjective: objective }),
+
+  // Chat Panel
+  isChatPanelOpen: false,
+  activeConversationId: null,
+  unreadAlertCount: 0,
+  toggleChatPanel: () => set((state) => ({ isChatPanelOpen: !state.isChatPanelOpen })),
+  openChatPanel: () => set({ isChatPanelOpen: true }),
+  closeChatPanel: () => set({ isChatPanelOpen: false }),
+  setActiveConversation: (id) => set({ activeConversationId: id }),
+  setUnreadAlertCount: (count) => set({ unreadAlertCount: count }),
 }))

@@ -76,6 +76,15 @@ export class MemoryCacheService implements ICacheService {
     await this.deletePattern(pattern)
   }
 
+  async getOrSet<T>(key: string, fetcher: () => Promise<T>, ttlSeconds?: number): Promise<T> {
+    const cached = await this.get<T>(key)
+    if (cached !== null) return cached
+
+    const value = await fetcher()
+    await this.set(key, value, ttlSeconds)
+    return value
+  }
+
   async isHealthy(): Promise<boolean> {
     return true
   }

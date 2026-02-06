@@ -45,6 +45,8 @@ model User {
   billingKeys   BillingKey[]
   paymentLogs   PaymentLog[]
   aiFeedback    AIFeedback[]
+  conversations Conversation[]
+  alerts        Alert[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
@@ -227,6 +229,7 @@ model KPISnapshot {
   campaign    Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   impressions Int      @default(0)
   clicks      Int      @default(0)
+  linkClicks  Int      @default(0)
   conversions Int      @default(0)
   spend       Decimal  @db.Decimal(15, 2)
   currency    String   @default("KRW")
@@ -234,9 +237,9 @@ model KPISnapshot {
   date        DateTime @db.Date
   createdAt   DateTime @default(now())
 
+  @@unique([campaignId, date])
   @@index([campaignId])
   @@index([date])
-  @@index([campaignId, date])
 }
 
 // ========================================
@@ -472,9 +475,9 @@ enum InvoiceStatus {
 model BillingKey {
   id              String   @id @default(cuid())
   userId          String
-  billingKey      String   // AES-256-GCM encrypted
+  billingKey      String // AES-256-GCM encrypted
   cardCompany     String?
-  cardNumber      String?  // masked card number
+  cardNumber      String? // masked card number
   method          String   @default("CARD")
   isActive        Boolean  @default(true)
   authenticatedAt DateTime
@@ -500,7 +503,7 @@ model Subscription {
   invoices           Invoice[]
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
-  billingPeriod      String?            // MONTHLY | ANNUAL
+  billingPeriod      String? // MONTHLY | ANNUAL
   billingKeyId       String?
   nextBillingDate    DateTime?
   tossCustomerKey    String?
@@ -517,19 +520,19 @@ model Invoice {
   id             String        @id @default(cuid())
   subscriptionId String
   subscription   Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
-  amount         Int           // 금액 (원 단위)
+  amount         Int // 금액 (원 단위)
   currency       String        @default("KRW")
   status         InvoiceStatus @default(PENDING)
-  paymentMethod  String?       // card, bank_transfer 등
+  paymentMethod  String? // card, bank_transfer 등
   paidAt         DateTime?
   refundedAt     DateTime?
-  refundAmount   Int?          // 환불 금액
-  refundReason   String?       // 환불 사유
-  receiptUrl     String?       // 영수증 URL
+  refundAmount   Int? // 환불 금액
+  refundReason   String? // 환불 사유
+  receiptUrl     String? // 영수증 URL
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
-  paymentKey     String?       // Toss paymentKey
-  tossOrderId    String?       // Toss order ID
+  paymentKey     String? // Toss paymentKey
+  tossOrderId    String? // Toss order ID
 
   paymentLogs PaymentLog[]
 
@@ -546,8 +549,8 @@ model PaymentLog {
   paymentKey     String?  @unique // Toss paymentKey
   orderId        String   @unique // order ID
   amount         Int
-  status         String   // READY, IN_PROGRESS, DONE, CANCELED, FAILED
-  method         String?  // CARD, BILLING
+  status         String // READY, IN_PROGRESS, DONE, CANCELED, FAILED
+  method         String? // CARD, BILLING
   failReason     String?
   receiptUrl     String?
   rawResponse    Json?
@@ -571,8 +574,8 @@ model OAuthSession {
   id          String   @id // sessionId
   userId      String
   accessToken String   @db.Text
-  tokenExpiry Int      // seconds
-  accounts    Json     // Array of ad accounts
+  tokenExpiry Int // seconds
+  accounts    Json // Array of ad accounts
   expiresAt   DateTime // TTL
   createdAt   DateTime @default(now())
 
@@ -581,29 +584,130 @@ model OAuthSession {
 }
 
 // ========================================
+// Conversational AI Agent
+// ========================================
+
+enum PendingActionStatus {
+  PENDING
+  CONFIRMED
+  EXECUTING
+  COMPLETED
+  FAILED
+  CANCELLED
+  EXPIRED
+}
+
+enum AlertSeverity {
+  INFO
+  WARNING
+  CRITICAL
+}
+
+enum AlertStatus {
+  UNREAD
+  READ
+  DISMISSED
+  ACTED_ON
+}
+
+model Conversation {
+  id             String                @id @default(cuid())
+  userId         String
+  user           User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title          String?
+  messages       ConversationMessage[]
+  pendingActions PendingAction[]
+  isArchived     Boolean               @default(false)
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  @@index([userId, updatedAt])
+  @@index([userId, isArchived])
+}
+
+model ConversationMessage {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String
+  content        String?      @db.Text
+  toolCalls      Json?
+  toolName       String?
+  toolResult     Json?
+  metadata       Json?
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId, createdAt])
+}
+
+model PendingAction {
+  id             String              @id @default(cuid())
+  conversationId String
+  conversation   Conversation        @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  messageId      String?
+  toolName       String
+  toolArgs       Json
+  displaySummary String              @db.Text
+  details        Json?
+  warnings       Json?
+  status         PendingActionStatus @default(PENDING)
+  result         Json?
+  errorMessage   String?
+  expiresAt      DateTime
+  confirmedAt    DateTime?
+  executedAt     DateTime?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  @@index([conversationId, status])
+  @@index([status, expiresAt])
+}
+
+model Alert {
+  id           String        @id @default(cuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type         String
+  severity     AlertSeverity
+  status       AlertStatus   @default(UNREAD)
+  title        String
+  message      String        @db.Text
+  data         Json?
+  campaignId   String?
+  pushedToChat Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  readAt       DateTime?
+  expiresAt    DateTime?
+
+  @@index([userId, status])
+  @@index([userId, createdAt])
+  @@index([severity, status])
+}
+
+// ========================================
 // AI Feedback Tracking
 // ========================================
 
 model AIFeedback {
-  id           String   @id @default(cuid())
-  responseId   String   // AI response identifier
-  userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String @id @default(cuid())
+  responseId String // AI response identifier
+  userId     String
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Feedback data
-  rating       Int      // 1-5 stars
-  isHelpful    Boolean?
-  comment      String?  @db.Text
+  rating    Int // 1-5 stars
+  isHelpful Boolean?
+  comment   String?  @db.Text
 
   // Context
-  feature      String   // e.g., 'copy_generation', 'analysis', 'chat'
-  context      Json?    // Additional context data
+  feature String // e.g., 'copy_generation', 'analysis', 'chat'
+  context Json? // Additional context data
 
   // Response metadata
-  responseType String   // 'streaming' | 'standard'
+  responseType String // 'streaming' | 'standard'
   modelUsed    String?
 
-  createdAt    DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@index([userId])
   @@index([feature])

@@ -72,6 +72,7 @@ export class MockKPIRepository implements IKPIRepository {
   ): Promise<{
     totalImpressions: number
     totalClicks: number
+    totalLinkClicks: number
     totalConversions: number
     totalSpend: number
     totalRevenue: number
@@ -86,6 +87,7 @@ export class MockKPIRepository implements IKPIRepository {
       (acc, kpi) => ({
         totalImpressions: acc.totalImpressions + kpi.impressions,
         totalClicks: acc.totalClicks + kpi.clicks,
+        totalLinkClicks: acc.totalLinkClicks + kpi.linkClicks,
         totalConversions: acc.totalConversions + kpi.conversions,
         totalSpend: acc.totalSpend + kpi.spend.amount,
         totalRevenue: acc.totalRevenue + kpi.revenue.amount,
@@ -93,6 +95,7 @@ export class MockKPIRepository implements IKPIRepository {
       {
         totalImpressions: 0,
         totalClicks: 0,
+        totalLinkClicks: 0,
         totalConversions: 0,
         totalSpend: 0,
         totalRevenue: 0,
@@ -126,6 +129,7 @@ export class MockKPIRepository implements IKPIRepository {
       if (existing) {
         existing.totalImpressions += kpi.impressions
         existing.totalClicks += kpi.clicks
+        existing.totalLinkClicks += kpi.linkClicks
         existing.totalConversions += kpi.conversions
         existing.totalSpend += kpi.spend.amount
         existing.totalRevenue += kpi.revenue.amount
@@ -134,6 +138,7 @@ export class MockKPIRepository implements IKPIRepository {
           date: new Date(dateKey),
           totalImpressions: kpi.impressions,
           totalClicks: kpi.clicks,
+          totalLinkClicks: kpi.linkClicks,
           totalConversions: kpi.conversions,
           totalSpend: kpi.spend.amount,
           totalRevenue: kpi.revenue.amount,

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
-import { container, DI_TOKENS } from '@/lib/di/container'
+import { container, DI_TOKENS, getCacheService } from '@/lib/di/container'
 import { GetDashboardKPIUseCase } from '@application/use-cases/kpi/GetDashboardKPIUseCase'
 import type { DateRangePreset } from '@application/dto/kpi/DashboardKPIDTO'
-import { getCached, setCache, generateKPIKey } from '@/lib/cache/kpiCache'
+import { CacheKeys, CacheTTL } from '@/infrastructure/cache/CacheKeys'
 
 // Map API period format to Use Case DateRangePreset
 function mapPeriodToPreset(period: string): DateRangePreset {
@@ -12,13 +12,32 @@ function mapPeriodToPreset(period: string): DateRangePreset {
       return 'last_7d'
     case '30d':
       return 'last_30d'
+    case '90d':
+      return 'last_90d'
     case 'today':
       return 'today'
     case 'yesterday':
       return 'yesterday'
+    case 'this_month':
+      return 'this_month'
+    case 'last_month':
+      return 'last_month'
     default:
       return 'last_7d'
   }
+}
+
+// Valid campaign objective types
+const validObjectives = ['AWARENESS', 'TRAFFIC', 'ENGAGEMENT', 'LEADS', 'APP_PROMOTION', 'SALES', 'CONVERSIONS'] as const
+type CampaignObjective = typeof validObjectives[number]
+
+// Validate and cast objective parameter
+function validateObjective(objective: string | null): CampaignObjective | undefined {
+  if (!objective) return undefined
+  if (validObjectives.includes(objective as CampaignObjective)) {
+    return objective as CampaignObjective
+  }
+  return undefined
 }
 
 export async function GET(request: NextRequest) {
@@ -28,14 +47,20 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const period = searchParams.get('period') || '7d'
+    const objectiveParam = searchParams.get('objective')
+    const objective = validateObjective(objectiveParam)
     const includeComparison = searchParams.get('comparison') === 'true'
     const includeBreakdown = searchParams.get('breakdown') === 'true'
 
-    // Generate cache key
-    const cacheKey = generateKPIKey(user.id, period, includeComparison, includeBreakdown)
+    // Get cache service from DI container
+    const cacheService = getCacheService()
+
+    // Generate cache key with date parameter
+    const dateKey = objective ? `${period}_${objective}` : period
+    const cacheKey = CacheKeys.kpiDashboard(user.id, dateKey)
 
     // Check cache first
-    const cachedResponse = getCached<unknown>(cacheKey)
+    const cachedResponse = await cacheService.get<unknown>(cacheKey)
     if (cachedResponse) {
       return NextResponse.json(cachedResponse, {
         headers: {
@@ -52,6 +77,7 @@ export async function GET(request: NextRequest) {
     const result = await getDashboardKPI.execute({
       userId: user.id,
       dateRange: mapPeriodToPreset(period),
+      objective,
       includeComparison,
       includeBreakdown,
       includeChartData: true,
@@ -77,6 +103,8 @@ export async function GET(request: NextRequest) {
               roas: result.comparison.roasChange,
               ctr: result.comparison.ctrChange,
               conversions: result.comparison.conversionsChange,
+              impressions: result.comparison.impressionsChange,
+              clicks: result.comparison.clicksChange,
             }
           : undefined,
       },
@@ -85,7 +113,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Store in cache with 5 minute TTL
-    setCache(cacheKey, response, 300)
+    await cacheService.set(cacheKey, response, CacheTTL.KPI)
 
     return NextResponse.json(response, {
       headers: {
