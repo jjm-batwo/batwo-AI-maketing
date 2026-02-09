@@ -55,7 +55,7 @@ export function ConfirmationCard({
   }
 
   return (
-    <div className="mx-4 my-2 rounded-xl border border-primary/20 bg-primary/5 overflow-hidden">
+    <div data-testid="confirmation-card" className="mx-4 my-2 rounded-xl border border-primary/20 bg-primary/5 overflow-hidden">
       {/* Header */}
       <div className="flex items-center gap-2 px-4 py-3 bg-primary/10 border-b border-primary/10">
         <Shield className="h-4 w-4 text-primary" />
@@ -113,6 +113,7 @@ export function ConfirmationCard({
       {/* Actions */}
       <div className="flex gap-2 px-4 py-3 border-t border-primary/10">
         <button
+          data-testid="confirm-action-button"
           onClick={handleConfirm}
           disabled={isProcessing || isExpired}
           className={cn(
@@ -126,6 +127,7 @@ export function ConfirmationCard({
           확인
         </button>
         <button
+          data-testid="cancel-action-button"
           onClick={handleCancel}
           disabled={isProcessing}
           className={cn(

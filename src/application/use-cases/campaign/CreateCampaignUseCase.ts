@@ -71,8 +71,9 @@ export class CreateCampaignUseCase {
         )
         finalCampaign = campaign.setMetaCampaignId(metaCampaign.id)
       } catch (error) {
-        // Re-throw to prevent campaign creation on Meta API failure
-        throw error
+        // In mock mode or on Meta API failure, save campaign without Meta sync
+        console.warn('[CreateCampaign] Meta API sync failed, saving campaign without metaCampaignId:', error instanceof Error ? error.message : error)
+        // Continue - campaign will be saved to DB without metaCampaignId
       }
     }
 

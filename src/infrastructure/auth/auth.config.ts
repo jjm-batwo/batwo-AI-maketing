@@ -156,8 +156,38 @@ export const authConfig = {
           return null
         }
 
-        // Note: Password verification is handled in auth.ts with bcrypt
-        // This config is edge-compatible and doesn't include bcrypt
+        // Development mode: allow test user login
+        if (process.env.NODE_ENV === 'development') {
+          // Import prisma dynamically to avoid edge runtime issues
+          const { prisma } = await import('@/lib/prisma')
+          const user = await prisma.user.findUnique({
+            where: { email: parsed.data.email },
+          })
+          if (user) {
+            return {
+              id: user.id,
+              email: user.email,
+              name: user.name,
+              globalRole: user.globalRole as GlobalRole,
+            }
+          }
+          // Auto-create user in dev mode
+          const newUser = await prisma.user.create({
+            data: {
+              email: parsed.data.email,
+              name: parsed.data.email.split('@')[0],
+              globalRole: 'USER',
+            },
+          })
+          return {
+            id: newUser.id,
+            email: newUser.email,
+            name: newUser.name,
+            globalRole: newUser.globalRole as GlobalRole,
+          }
+        }
+
+        // Production: password verification handled in auth.ts with bcrypt
         return null
       },
     }),

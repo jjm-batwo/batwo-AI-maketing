@@ -14,7 +14,7 @@ export function ChatMessage({ role, content, isStreaming, timestamp }: ChatMessa
   const isUser = role === 'user'
 
   return (
-    <div className={cn('flex gap-3 px-4 py-3', isUser ? 'flex-row-reverse' : 'flex-row')}>
+    <div data-testid="chat-message" className={cn('flex gap-3 px-4 py-3', isUser ? 'flex-row-reverse' : 'flex-row')}>
       {/* Avatar */}
       <div
         className={cn(
@@ -29,6 +29,7 @@ export function ChatMessage({ role, content, isStreaming, timestamp }: ChatMessa
 
       {/* Message Bubble */}
       <div
+        data-testid="chat-message-bubble"
         className={cn(
           'max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed',
           isUser

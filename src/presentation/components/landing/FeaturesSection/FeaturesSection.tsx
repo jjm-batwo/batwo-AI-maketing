@@ -25,7 +25,7 @@ export const FeaturesSection = memo(function FeaturesSection() {
         </header>
 
         {/* Features Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4" role="list">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" role="list">
           {FEATURES.map((feature) => (
             <FeatureCard key={feature.title} feature={feature} />
           ))}

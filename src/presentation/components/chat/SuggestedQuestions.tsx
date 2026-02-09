@@ -13,7 +13,7 @@ export function SuggestedQuestions({ questions, onSelect, className }: Suggested
   if (!questions.length) return null
 
   return (
-    <div className={cn('px-4 py-3', className)}>
+    <div data-testid="suggested-questions" className={cn('px-4 py-3', className)}>
       <div className="flex items-center gap-1.5 mb-2">
         <Sparkles className="h-3.5 w-3.5 text-primary" />
         <span className="text-xs font-medium text-muted-foreground">추천 질문</span>
@@ -21,6 +21,7 @@ export function SuggestedQuestions({ questions, onSelect, className }: Suggested
       <div className="flex flex-wrap gap-2">
         {questions.map((question, index) => (
           <button
+            data-testid="suggested-question-button"
             key={index}
             onClick={() => onSelect(question)}
             className={cn(

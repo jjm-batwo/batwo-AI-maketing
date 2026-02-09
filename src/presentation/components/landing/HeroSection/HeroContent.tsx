@@ -37,9 +37,9 @@ export const HeroContent = memo(function HeroContent({ isVisible }: HeroContentP
 
       {/* Subheadline */}
       <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-        복잡한 메타, 구글 광고 설정을 AI가 1분 만에 완료합니다.
+        복잡한 메타 광고 설정을 AI가 1분 만에 완료합니다.
         <br className="hidden md:block" />
-        데이터 분석부터 소재 최적화까지, 바투가 알아서 해드립니다.
+        대화형 AI 어시스턴트와 함께 성과 분석부터 캠페인 최적화까지, 바투가 알아서 해드립니다.
       </p>
 
       {/* CTA Buttons */}

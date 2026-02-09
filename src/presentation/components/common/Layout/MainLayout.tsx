@@ -40,6 +40,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       {/* Floating Chat Button */}
       {!isChatPanelOpen && (
         <button
+          data-testid="chat-trigger-button"
           onClick={toggleChatPanel}
           className={cn(
             'fixed bottom-6 right-6 z-40',

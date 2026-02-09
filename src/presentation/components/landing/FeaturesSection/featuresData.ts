@@ -1,4 +1,4 @@
-import { Zap, BarChart3, FileText, Shield, type LucideIcon } from 'lucide-react'
+import { Zap, BarChart3, FileText, Shield, MessageCircle, type LucideIcon } from 'lucide-react'
 
 export interface Feature {
   icon: LucideIcon
@@ -7,6 +7,12 @@ export interface Feature {
 }
 
 export const FEATURES: Feature[] = [
+  {
+    icon: MessageCircle,
+    title: 'AI 마케팅 어시스턴트',
+    description:
+      '대화형 AI와 실시간으로 캠페인 성과를 분석하고, 광고를 생성하고, 최적화 제안을 받으세요.',
+  },
   {
     icon: Zap,
     title: 'AI 캠페인 자동 세팅',

@@ -57,6 +57,7 @@ export function ChatPanel() {
 
       {/* Chat Panel */}
       <aside
+        data-testid="chat-panel"
         className={cn(
           'fixed right-0 top-0 h-full z-50 flex flex-col',
           'w-full sm:w-[400px] md:w-[420px]',
@@ -78,7 +79,7 @@ export function ChatPanel() {
         )}
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto">
+        <div data-testid="chat-messages-container" className="flex-1 overflow-y-auto">
           {messages.length === 0 ? (
             <EmptyState onSuggestion={handleSendMessage} />
           ) : (

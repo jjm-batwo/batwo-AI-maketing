@@ -83,6 +83,7 @@ interface MetaApiCampaignListResponse {
 export class MetaAdsClient implements IMetaAdsService {
   private logger?: MetaApiLogRepository
   private accountId?: string
+  private readonly mockMode = process.env.META_MOCK_MODE === 'true'
 
   /**
    * 로거 설정 (옵션)
@@ -184,6 +185,20 @@ export class MetaAdsClient implements IMetaAdsService {
     adAccountId: string,
     input: CreateMetaCampaignInput
   ): Promise<MetaCampaignData> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] createCampaign called with mock mode')
+      return {
+        id: `mock_campaign_${Date.now()}`,
+        name: input.name,
+        status: 'PAUSED',
+        objective: input.objective,
+        dailyBudget: input.dailyBudget,
+        currency: 'KRW',
+        startTime: input.startTime.toISOString(),
+        endTime: input.endTime?.toISOString(),
+      }
+    }
+
     return withSpan(
       'meta.createCampaign',
       async () => {
@@ -221,6 +236,19 @@ export class MetaAdsClient implements IMetaAdsService {
     accessToken: string,
     campaignId: string
   ): Promise<MetaCampaignData | null> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] getCampaign called with mock mode')
+      return {
+        id: campaignId,
+        name: 'Mock Campaign',
+        status: 'PAUSED',
+        objective: 'OUTCOME_SALES',
+        dailyBudget: 50000,
+        currency: 'KRW',
+        startTime: new Date().toISOString(),
+      }
+    }
+
     return withSpan(
       'meta.getCampaign',
       async () => {
@@ -254,6 +282,22 @@ export class MetaAdsClient implements IMetaAdsService {
     campaignId: string,
     datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d'
   ): Promise<MetaInsightsData> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] getCampaignInsights called with mock mode')
+      const today = new Date().toISOString().split('T')[0]
+      return {
+        campaignId,
+        impressions: 15000,
+        clicks: 450,
+        linkClicks: 380,
+        spend: 125000,
+        conversions: 12,
+        revenue: 480000,
+        dateStart: today,
+        dateStop: today,
+      }
+    }
+
     return withSpan(
       'meta.getCampaignInsights',
       async () => {
@@ -280,6 +324,29 @@ export class MetaAdsClient implements IMetaAdsService {
     campaignId: string,
     datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d'
   ): Promise<MetaDailyInsightsData[]> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] getCampaignDailyInsights called with mock mode')
+      const days = datePreset === 'today' ? 1 : datePreset === 'yesterday' ? 1 : parseInt(datePreset.match(/\d+/)?.[0] || '7', 10)
+      const mockData: MetaDailyInsightsData[] = []
+
+      for (let i = 0; i < days; i++) {
+        const date = new Date()
+        date.setDate(date.getDate() - i)
+        mockData.push({
+          campaignId,
+          date: date.toISOString().split('T')[0],
+          impressions: Math.floor(2000 + Math.random() * 500),
+          clicks: Math.floor(60 + Math.random() * 20),
+          linkClicks: Math.floor(50 + Math.random() * 15),
+          spend: Math.floor(15000 + Math.random() * 5000),
+          conversions: Math.floor(1 + Math.random() * 3),
+          revenue: Math.floor(50000 + Math.random() * 30000),
+        })
+      }
+
+      return mockData
+    }
+
     return withSpan(
       'meta.getCampaignDailyInsights',
       async () => {
@@ -342,6 +409,19 @@ export class MetaAdsClient implements IMetaAdsService {
     campaignId: string,
     status: 'ACTIVE' | 'PAUSED'
   ): Promise<MetaCampaignData> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] updateCampaignStatus called with mock mode')
+      return {
+        id: campaignId,
+        name: 'Mock Campaign',
+        status,
+        objective: 'OUTCOME_SALES',
+        dailyBudget: 50000,
+        currency: 'KRW',
+        startTime: new Date().toISOString(),
+      }
+    }
+
     const response = await this.requestWithRetry<MetaApiCampaignResponse>(
       accessToken,
       `/${campaignId}`,
@@ -359,6 +439,20 @@ export class MetaAdsClient implements IMetaAdsService {
     campaignId: string,
     input: UpdateMetaCampaignInput
   ): Promise<MetaCampaignData> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] updateCampaign called with mock mode')
+      return {
+        id: campaignId,
+        name: input.name || 'Mock Campaign',
+        status: input.status || 'PAUSED',
+        objective: 'OUTCOME_SALES',
+        dailyBudget: input.dailyBudget || 50000,
+        currency: 'KRW',
+        startTime: new Date().toISOString(),
+        endTime: input.endTime?.toISOString(),
+      }
+    }
+
     const body: Record<string, unknown> = {}
 
     if (input.name !== undefined) body.name = input.name
@@ -381,6 +475,11 @@ export class MetaAdsClient implements IMetaAdsService {
   }
 
   async deleteCampaign(accessToken: string, campaignId: string): Promise<void> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] deleteCampaign called with mock mode')
+      return
+    }
+
     await this.requestWithRetry<{ success: boolean }>(
       accessToken,
       `/${campaignId}`,
@@ -393,6 +492,14 @@ export class MetaAdsClient implements IMetaAdsService {
     adAccountId: string,
     options?: { limit?: number; after?: string }
   ): Promise<ListCampaignsResponse> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] listCampaigns called with mock mode')
+      return {
+        campaigns: [],
+        paging: undefined,
+      }
+    }
+
     return withSpan(
       'meta.listCampaigns',
       async () => {

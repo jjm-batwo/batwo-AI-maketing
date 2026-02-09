@@ -12,6 +12,7 @@ import {
   DollarSign,
   ArrowUpRight,
   ArrowDownRight,
+  MessageCircle,
 } from 'lucide-react'
 
 // Mock Dashboard Preview Component
@@ -194,6 +195,75 @@ function ReportPreview() {
   )
 }
 
+// Mock Chat Preview Component
+function ChatPreview() {
+  return (
+    <div className="bg-background rounded-lg border p-6 space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold">AI 마케팅 어시스턴트</h3>
+        <span className="text-sm text-muted-foreground">실시간 대화</span>
+      </div>
+
+      <div className="space-y-3">
+        {/* User Message */}
+        <div className="flex justify-end">
+          <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[80%]">
+            <p className="text-sm">이번 주 캠페인 성과 어때?</p>
+          </div>
+        </div>
+
+        {/* AI Response */}
+        <div className="flex justify-start">
+          <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[80%] space-y-2">
+            <p className="text-sm">이번 주 캠페인 성과를 분석했습니다.</p>
+            {/* Mini KPI Card */}
+            <div className="grid grid-cols-2 gap-2 p-3 bg-background rounded-lg border">
+              <div>
+                <div className="text-[10px] text-muted-foreground">ROAS</div>
+                <div className="text-sm font-semibold">4.52x</div>
+                <div className="text-[10px] text-emerald-600 flex items-center gap-0.5">
+                  <ArrowUpRight className="h-3 w-3" />+12.3%
+                </div>
+              </div>
+              <div>
+                <div className="text-[10px] text-muted-foreground">전환수</div>
+                <div className="text-sm font-semibold">123건</div>
+                <div className="text-[10px] text-emerald-600 flex items-center gap-0.5">
+                  <ArrowUpRight className="h-3 w-3" />+8.1%
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* User Message */}
+        <div className="flex justify-end">
+          <div className="bg-primary text-primary-foreground rounded-2xl rounded-tr-sm px-4 py-2.5 max-w-[80%]">
+            <p className="text-sm">신규 캠페인 만들어줘</p>
+          </div>
+        </div>
+
+        {/* AI Confirmation Card */}
+        <div className="flex justify-start">
+          <div className="bg-muted rounded-2xl rounded-tl-sm px-4 py-2.5 max-w-[85%] space-y-2">
+            <p className="text-sm">새 캠페인을 생성하겠습니다.</p>
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-2">
+              <div className="flex items-center gap-1.5 text-xs font-medium text-primary">
+                <Target className="h-3.5 w-3.5" />
+                캠페인 생성 확인
+              </div>
+              <div className="space-y-1 text-xs">
+                <div className="flex justify-between"><span className="text-muted-foreground">목표</span><span>전환</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">예산</span><span>₩50,000/일</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function ProductShowcaseSection() {
   const { ref, isIntersecting } = useIntersectionObserver()
 
@@ -218,7 +288,7 @@ export function ProductShowcaseSection() {
         <Card className="max-w-4xl mx-auto">
           <CardContent className="p-6">
             <Tabs defaultValue="dashboard" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 mb-6">
+              <TabsList className="grid w-full grid-cols-4 mb-6">
                 <TabsTrigger value="dashboard" className="gap-2">
                   <BarChart3 className="h-4 w-4" />
                   <span className="hidden sm:inline">대시보드</span>
@@ -230,6 +300,10 @@ export function ProductShowcaseSection() {
                 <TabsTrigger value="reports" className="gap-2">
                   <FileText className="h-4 w-4" />
                   <span className="hidden sm:inline">AI 보고서</span>
+                </TabsTrigger>
+                <TabsTrigger value="ai-assistant" className="gap-2">
+                  <MessageCircle className="h-4 w-4" />
+                  <span className="hidden sm:inline">AI 어시스턴트</span>
                 </TabsTrigger>
               </TabsList>
 
@@ -243,6 +317,10 @@ export function ProductShowcaseSection() {
 
               <TabsContent value="reports">
                 <ReportPreview />
+              </TabsContent>
+
+              <TabsContent value="ai-assistant">
+                <ChatPreview />
               </TabsContent>
             </Tabs>
           </CardContent>

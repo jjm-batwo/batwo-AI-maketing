@@ -13,7 +13,8 @@ import {
   TrendingUp,
   Target,
   Zap,
-  ExternalLink
+  ExternalLink,
+  MessageSquare
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -337,6 +338,28 @@ export default function AppReviewDemoPage() {
                 </Link>
               </Button>
             </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-indigo-500" />
+              AI 채팅 어시스턴트
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">
+              대화형 AI를 통한 캠페인 분석 및 관리. Uses <code className="text-xs bg-muted px-1 rounded">ads_read + ads_management</code>.
+            </p>
+            <div className="flex items-center gap-2 mb-4">
+              <Badge variant="default" className="bg-green-500">사용 가능</Badge>
+            </div>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/dashboard">
+                View Demo <ExternalLink className="ml-2 h-3 w-3" />
+              </Link>
+            </Button>
           </CardContent>
         </Card>
       </div>

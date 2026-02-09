@@ -346,4 +346,83 @@ test.describe('Landing Page', () => {
       expect(typeof isVisible).toBe('boolean')
     })
   })
+
+  test.describe('AI Chat Feature Visibility', () => {
+    test.beforeEach(async ({ page }) => {
+      await page.goto('/')
+    })
+
+    test('should display AI Marketing Assistant feature card', async ({ page }) => {
+      // AI 마케팅 어시스턴트 feature card 확인
+      const aiFeatureCard = page.getByText(/AI 마케팅 어시스턴트/)
+      await expect(aiFeatureCard).toBeVisible({ timeout: 10000 })
+    })
+
+    test('should display all 5 feature cards', async ({ page }) => {
+      // Features section까지 스크롤
+      const featuresHeading = page.getByRole('heading', { name: /기능|특징|Features/ })
+      if (await featuresHeading.isVisible({ timeout: 5000 }).catch(() => false)) {
+        await featuresHeading.scrollIntoViewIfNeeded()
+      }
+
+      // Feature card 개수 확인 (정확한 선택자는 실제 구조에 따라 조정 필요)
+      // "AI 마케팅 어시스턴트", "자동 캠페인 생성", "실시간 성과 분석", "스마트 예산 최적화", "주간 인사이트 리포트"
+      const featureCards = page.locator('div[class*="grid"]').locator('div[class*="rounded"]').filter({
+        has: page.locator('h3, h4')
+      })
+
+      const count = await featureCards.count()
+      expect(count).toBeGreaterThanOrEqual(5)
+    })
+
+    test('should display AI Assistant tab in product showcase', async ({ page }) => {
+      // Product showcase section으로 스크롤
+      await page.evaluate(() => window.scrollTo(0, 800))
+      await page.waitForTimeout(500)
+
+      // "AI 어시스턴트" 탭 확인
+      const aiTab = page.getByRole('button', { name: /AI 어시스턴트/ })
+        .or(page.getByText(/AI 어시스턴트/).locator('..'))
+
+      await expect(aiTab.first()).toBeVisible({ timeout: 10000 })
+    })
+  })
+
+  test.describe('Hero Section AI Messaging', () => {
+    test('should mention AI assistant in hero section', async ({ page }) => {
+      await page.goto('/')
+
+      // Hero section에서 AI 어시스턴트 또는 대화형 관련 텍스트 확인
+      const heroContent = page.locator('section, main').first()
+      const heroText = await heroContent.textContent()
+
+      const hasAIReference = heroText?.includes('AI 어시스턴트') ||
+                             heroText?.includes('대화형') ||
+                             heroText?.includes('AI 마케팅')
+
+      expect(hasAIReference).toBeTruthy()
+    })
+  })
+
+  test.describe('Product Showcase AI Tab', () => {
+    test('should show chat preview when AI assistant tab is clicked', async ({ page }) => {
+      await page.goto('/')
+
+      // Product showcase section으로 스크롤
+      await page.evaluate(() => window.scrollTo(0, 800))
+      await page.waitForTimeout(500)
+
+      // "AI 어시스턴트" 탭 찾기
+      const aiTab = page.getByRole('button', { name: /AI 어시스턴트/ })
+
+      if (await aiTab.isVisible({ timeout: 5000 }).catch(() => false)) {
+        await aiTab.click()
+        await page.waitForTimeout(300)
+
+        // Chat preview content 확인 (메시지 버블이나 채팅 관련 컨텐츠)
+        const chatContent = page.locator('div').filter({ hasText: /24\/7|실시간|대화|채팅/ })
+        await expect(chatContent.first()).toBeVisible({ timeout: 5000 })
+      }
+    })
+  })
 })

@@ -38,6 +38,7 @@ export function ChatInput({
     <div className="border-t bg-background/95 backdrop-blur-sm p-4">
       <div className="flex items-end gap-2">
         <textarea
+          data-testid="chat-input"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -59,6 +60,7 @@ export function ChatInput({
           }}
         />
         <button
+          data-testid="chat-send-button"
           onClick={handleSend}
           disabled={!input.trim() || isLoading}
           className={cn(

@@ -1,4 +1,4 @@
-import { streamText, type UserModelMessage, type AssistantModelMessage } from 'ai'
+import { streamText, stepCountIs, type UserModelMessage, type AssistantModelMessage } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import type { IToolRegistry, AgentContext } from '@application/ports/IConversationalAgent'
 import type {
@@ -97,41 +97,38 @@ export class ConversationalAgentService {
         system: systemPrompt,
         messages,
         tools: this.toolRegistry.toVercelAITools() as Parameters<typeof streamText>[0]['tools'],
+        stopWhen: stepCountIs(5),
         temperature: 0.7,
+        onError: ({ error }) => {
+          console.error('[ConversationalAgentService] streamText error:', error)
+        },
       })
 
-      // 7. 텍스트 스트림 처리
+      // 7. fullStream으로 텍스트 + 도구 호출 통합 처리
       let fullText = ''
-      for await (const chunk of result.textStream) {
-        fullText += chunk
-        yield { type: 'text', content: chunk }
-      }
 
-      // 8. 도구 호출 결과 처리
-      const finalResult = await result
-      const steps = await finalResult.steps
-
-      for (const step of steps) {
-        if (!step.toolCalls || step.toolCalls.length === 0) continue
-
-        for (const toolCall of step.toolCalls) {
-          const agentTool = this.toolRegistry.get(toolCall.toolName)
+      for await (const part of result.fullStream) {
+        if (part.type === 'text-delta') {
+          fullText += part.text
+          yield { type: 'text', content: part.text }
+        } else if (part.type === 'tool-call') {
+          const agentTool = this.toolRegistry.get(part.toolName)
           if (!agentTool) continue
 
           yield {
             type: 'tool_call',
-            toolName: toolCall.toolName,
-            args: ('input' in toolCall ? toolCall.input : {}) as Record<string, unknown>,
+            toolName: part.toolName,
+            args: part.input as Record<string, unknown>,
           }
 
           if (agentTool.requiresConfirmation) {
             // Mutation 도구: 확인 카드 생성
             if (agentTool.buildConfirmation) {
-              const toolArgs = ('input' in toolCall ? toolCall.input : {}) as Record<string, unknown>
+              const toolArgs = part.input as Record<string, unknown>
               const confirmation = await agentTool.buildConfirmation(toolArgs, agentContext)
               const pendingAction = PendingAction.create({
                 conversationId,
-                toolName: toolCall.toolName,
+                toolName: part.toolName,
                 toolArgs,
                 displaySummary: confirmation.summary,
                 details: confirmation.details,
@@ -142,7 +139,7 @@ export class ConversationalAgentService {
               yield {
                 type: 'action_confirmation',
                 actionId: saved.id,
-                toolName: toolCall.toolName,
+                toolName: part.toolName,
                 summary: confirmation.summary,
                 details: confirmation.details,
                 warnings: confirmation.warnings,
@@ -152,20 +149,26 @@ export class ConversationalAgentService {
           } else {
             // Query 도구: 즉시 실행
             try {
-              const toolArgs = ('input' in toolCall ? toolCall.input : {}) as Record<string, unknown>
+              const toolArgs = part.input as Record<string, unknown>
               const execResult = await agentTool.execute(toolArgs, agentContext)
               yield {
                 type: 'tool_result',
-                toolName: toolCall.toolName,
+                toolName: part.toolName,
                 formattedMessage: execResult.formattedMessage,
                 data: execResult.data,
               }
             } catch (error) {
               yield {
                 type: 'error',
-                error: `도구 실행 실패 (${toolCall.toolName}): ${error instanceof Error ? error.message : 'Unknown error'}`,
+                error: `도구 실행 실패 (${part.toolName}): ${error instanceof Error ? error.message : 'Unknown error'}`,
               }
             }
+          }
+        } else if (part.type === 'error') {
+          console.error('[ConversationalAgentService] Stream error:', part.error)
+          yield {
+            type: 'error',
+            error: part.error instanceof Error ? part.error.message : String(part.error),
           }
         }
       }
