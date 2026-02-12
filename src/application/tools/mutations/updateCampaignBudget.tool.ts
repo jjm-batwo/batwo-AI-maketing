@@ -40,7 +40,7 @@ export function createUpdateCampaignBudgetTool(
       }
     },
 
-    async buildConfirmation(params: Params, context: AgentContext) {
+    async buildConfirmation(params: Params, _context: AgentContext) {
       const campaign = await campaignRepository.findById(params.campaignId)
       const currentBudget = campaign?.dailyBudget.amount ?? 0
 

@@ -98,7 +98,7 @@ describe('HeroSection 전환율 개선', () => {
     it('서브 헤드라인이 표시된다', () => {
       render(<HeroSection />)
 
-      expect(screen.getByText(/복잡한 메타, 구글 광고 설정을 AI가/i)).toBeInTheDocument()
+      expect(screen.getByText(/복잡한 메타 광고 설정을 AI가/i)).toBeInTheDocument()
     })
   })
 })

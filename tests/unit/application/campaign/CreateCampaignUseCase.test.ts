@@ -120,11 +120,16 @@ describe('CreateCampaignUseCase', () => {
       metaAdsService.setShouldFail(true, new Error('Meta API error'))
       const dto = { ...createValidDTO(), syncToMeta: true }
 
-      await expect(useCase.execute(dto)).rejects.toThrow('Meta API error')
+      // Meta API 실패 시 throw 대신 DRAFT 상태로 저장
+      const result = await useCase.execute(dto)
 
-      // Campaign should not be saved on failure
+      expect(result).toBeDefined()
+      expect(result.status).toBe(CampaignStatus.DRAFT)
+      expect(result.metaCampaignId).toBeUndefined()
+
+      // 캠페인이 DB에 저장되어야 함
       const campaigns = campaignRepository.getAll()
-      expect(campaigns.length).toBe(0)
+      expect(campaigns.length).toBe(1)
     })
 
     it('should create campaign with target audience', async () => {

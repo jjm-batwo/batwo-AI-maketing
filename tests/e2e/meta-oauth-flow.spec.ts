@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test'
-import { authFixture } from './fixtures/auth'
+// import { authFixture } from './fixtures/auth'
 import { MockHelper } from './helpers/mock.helper'
 import { ApiHelper } from './helpers/api.helper'
 
-const apiHelper = new ApiHelper()
+const _apiHelper = new ApiHelper()
 
 test.describe('Meta OAuth Connection Flow', () => {
   test.beforeEach(async ({ page }) => {

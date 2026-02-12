@@ -149,7 +149,7 @@ async function handleStreamingResponse(
   userId: string,
   message: string,
   conversationId: string | undefined,
-  rateLimitResult: any
+  rateLimitResult: { limit: number; remaining: number; reset: number }
 ) {
   const encoder = new TextEncoder()
 

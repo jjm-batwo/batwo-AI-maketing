@@ -74,6 +74,8 @@ function generateCSP(): string {
       // Sentry
       'https://browser.sentry-cdn.com',
       'https://*.sentry.io',
+      // Facebook SDK
+      'https://connect.facebook.net',
     ],
 
     'style-src': [

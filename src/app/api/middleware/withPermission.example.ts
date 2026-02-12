@@ -1,3 +1,4 @@
+ 
 /**
  * Example Usage: Permission Middleware
  *
@@ -142,7 +143,7 @@ export const GET_ViewCampaigns = withAnyPermission(
 
 export const DELETE_RemoveTeamMember = withAnyPermission(
   async (request: NextRequest, { params }) => {
-    const { teamId, memberId } = await params
+    const { teamId: _teamId, memberId: _memberId } = await params
 
     // Remove team member logic here
     return new NextResponse(null, { status: 204 })
@@ -230,7 +231,7 @@ export const GET_Dashboard = withAnyPermission(
 
 export const DELETE_Team = withPermission(
   async (request: NextRequest, { params }) => {
-    const { teamId } = await params
+    const { teamId: _teamId } = await params
 
     // Team deletion logic here
     // Only owners can perform this action
@@ -248,15 +249,16 @@ export const DELETE_Team = withPermission(
 /*
 Available Permissions:
 - team:read, team:update, team:delete, team:manage
-- member:read, member:create, member:update, member:delete, member:manage
-- campaign:read, campaign:create, campaign:update, campaign:delete, campaign:manage
-- report:read, report:create, report:update, report:delete, report:manage
-- settings:read, settings:update, settings:manage
+- campaign:create, campaign:read, campaign:update, campaign:delete, campaign:manage
+- member:invite, member:update, member:delete, member:manage
+- settings:read, settings:update
+- report:read, report:generate
 - dashboard:read, dashboard:manage
 
-Role Capabilities:
+Permission Hierarchy:
 - Owner: All permissions
-- Admin: All except team:delete and team:manage
-- Editor: campaign:*, report:*, dashboard:read
-- Viewer: *:read permissions only
+- Admin: All except team:delete
+- Manager: campaign:*, member:*, settings:read, report:*, dashboard:read
+- Editor: campaign:create, campaign:read, campaign:update, report:read, dashboard:read
+- Viewer: campaign:read, report:read, dashboard:read
 */

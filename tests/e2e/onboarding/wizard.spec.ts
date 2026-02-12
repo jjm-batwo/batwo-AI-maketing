@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { test, expect } from '@playwright/test'
 import * as path from 'path'
-import { MockHelper } from '../helpers/mock.helper'
+// import { MockHelper } from '../helpers/mock.helper'
 
 /**
  * Onboarding Wizard E2E Tests
@@ -409,7 +410,7 @@ test.describe('Onboarding Wizard', () => {
 
     test('should allow skipping from any step', async ({ page }) => {
       // Test skipping from step 1
-      let skipButton = page.getByRole('button', { name: /건너뛰기/i })
+      const skipButton = page.getByRole('button', { name: /건너뛰기/i })
       await expect(skipButton).toBeVisible()
 
       // Navigate to step 2

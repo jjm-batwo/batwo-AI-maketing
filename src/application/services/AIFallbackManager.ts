@@ -120,7 +120,7 @@ export class AIFallbackManager {
           wasDowngraded: true,
           originalError: lastError?.message,
         }
-      } catch (error) {
+      } catch (_error) {
         // Even template failed - this should never happen
         throw new Error(
           `All fallback tiers failed. Last error: ${lastError?.message || 'Unknown'}`

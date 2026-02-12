@@ -48,6 +48,7 @@ function validateOpenAPIFile(filePath: string) {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function validateMainSpec(spec: any) {
   console.log('\n🔍 Validating main OpenAPI spec...')
 
@@ -129,29 +130,32 @@ function validateSchemaFiles() {
   })
 }
 
-function validateReferences(spec: any) {
+function validateReferences(spec: unknown) {
   console.log('\n🔍 Validating schema references...')
 
   const refs = new Set<string>()
   const definedSchemas = new Set<string>()
 
   // Collect defined schemas
-  if (spec.components?.schemas) {
-    Object.keys(spec.components.schemas).forEach(schema => {
-      definedSchemas.add(`#/components/schemas/${schema}`)
-    })
+  if (spec && typeof spec === 'object' && 'components' in spec) {
+    const components = spec.components as Record<string, unknown>
+    if (components?.schemas && typeof components.schemas === 'object') {
+      Object.keys(components.schemas).forEach(schema => {
+        definedSchemas.add(`#/components/schemas/${schema}`)
+      })
+    }
   }
 
   // Find all $ref usages
-  function findRefs(obj: any, path = '') {
+  function findRefs(obj: unknown, path = '') {
     if (typeof obj !== 'object' || obj === null) return
 
-    if (obj.$ref) {
+    if (typeof obj === 'object' && '$ref' in obj && typeof obj.$ref === 'string') {
       refs.add(obj.$ref)
     }
 
-    for (const key in obj) {
-      findRefs(obj[key], `${path}.${key}`)
+    for (const key in obj as Record<string, unknown>) {
+      findRefs((obj as Record<string, unknown>)[key], `${path}.${key}`)
     }
   }
 
@@ -164,7 +168,7 @@ function validateReferences(spec: any) {
     console.log(`   Found ${externalRefs.length} external schema references`)
 
     externalRefs.forEach(ref => {
-      const [filePath, schemaPath] = ref.split('#')
+      const [filePath] = ref.split('#')
       const fullPath = path.join(process.cwd(), 'docs/api', filePath)
 
       if (!fs.existsSync(fullPath)) {

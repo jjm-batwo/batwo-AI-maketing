@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { StreamingAIService } from '@infrastructure/external/openai/streaming/StreamingAIService'
 import type { GenerateAdCopyInput } from '@application/ports/IAIService'

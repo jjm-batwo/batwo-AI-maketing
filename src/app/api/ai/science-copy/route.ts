@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
 async function handleStreamingResponse(
   userId: string,
   body: ScienceCopyRequestBody,
-  rateLimitResult: any
+  rateLimitResult: { limit: number; remaining: number; reset: number }
 ) {
   const encoder = new TextEncoder()
 

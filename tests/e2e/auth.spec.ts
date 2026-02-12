@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { authFixture } from './fixtures/auth'
-import { MockHelper } from './helpers/mock.helper'
+// import { MockHelper } from './helpers/mock.helper'
 
 // auth 테스트는 모두 비인증 상태에서 실행되어야 함
 test.use({ storageState: { cookies: [], origins: [] } })

@@ -9,20 +9,25 @@ import type {
  * 도구 레지스트리 - 모든 에이전트 도구를 관리
  */
 export class ToolRegistry implements IToolRegistry {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private tools = new Map<string, AgentTool<any, any>>()
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register(agentTool: AgentTool<any, any>): void {
     this.tools.set(agentTool.name, agentTool)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get(name: string): AgentTool<any, any> | undefined {
     return this.tools.get(name)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getAll(): AgentTool<any, any>[] {
     return Array.from(this.tools.values())
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getByCategory(category: ToolCategory): AgentTool<any, any>[] {
     const META_TOOLS = ['askClarification', 'freeformResponse']
 

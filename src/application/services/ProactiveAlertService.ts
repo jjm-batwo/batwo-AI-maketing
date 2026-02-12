@@ -2,7 +2,6 @@ import type { ICampaignRepository } from '@domain/repositories/ICampaignReposito
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
 import type { IAlertRepository } from '@domain/repositories/IAlertRepository'
 import { Alert } from '@domain/entities/Alert'
-import type { AlertType, AlertSeverity } from '@domain/entities/Alert'
 import { CampaignStatus } from '@domain/value-objects/CampaignStatus'
 
 interface AlertCheckResult {
@@ -37,7 +36,6 @@ export class ProactiveAlertService {
       if (activeCampaigns.length === 0) return result
 
       const now = new Date()
-      const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000)
       const twoDaysAgo = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000)
 
       for (const campaign of activeCampaigns) {

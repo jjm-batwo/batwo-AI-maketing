@@ -3,7 +3,7 @@ import { CampaignStatus } from '@domain/value-objects/CampaignStatus'
 import { CampaignObjective } from '@domain/value-objects/CampaignObjective'
 import { Money } from '@domain/value-objects/Money'
 import { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
-import { IMetaAdsService } from '@application/ports/IMetaAdsService'
+import { IMetaAdsService, MetaCampaignListItem } from '@application/ports/IMetaAdsService'
 import { prisma } from '@/lib/prisma'
 
 export interface SyncCampaignsInput {
@@ -54,7 +54,7 @@ export class SyncCampaignsUseCase {
 
     try {
       // 2. Fetch all campaigns from Meta (with pagination)
-      const metaCampaignsMap = new Map<string, any>()
+      const metaCampaignsMap = new Map<string, MetaCampaignListItem>()
       let hasNext = true
       let after: string | undefined
 
@@ -117,7 +117,7 @@ export class SyncCampaignsUseCase {
       }
 
       // 4b. Archive campaigns that exist locally but not in Meta (deleted on Meta side)
-      for (const [metaId, localCampaign] of localCampaignsMap) {
+      for (const [_metaId, localCampaign] of localCampaignsMap) {
         if (!localCampaign.isCompleted()) {
           const archivedCampaign = localCampaign.changeStatus(CampaignStatus.COMPLETED)
           await this.campaignRepository.update(archivedCampaign)
@@ -136,7 +136,7 @@ export class SyncCampaignsUseCase {
 
   private async createLocalCampaign(
     userId: string,
-    metaCampaign: any,
+    metaCampaign: MetaCampaignListItem,
     metaCampaignId: string
   ): Promise<void> {
     // Meta campaigns can have dailyBudget or lifetimeBudget
@@ -188,7 +188,7 @@ export class SyncCampaignsUseCase {
 
   private async updateLocalCampaign(
     localCampaign: Campaign,
-    metaCampaign: any
+    metaCampaign: MetaCampaignListItem
   ): Promise<boolean> {
     let updated = false
     let updatedCampaign = localCampaign

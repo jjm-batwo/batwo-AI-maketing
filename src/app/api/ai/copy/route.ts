@@ -236,7 +236,7 @@ export async function POST(request: NextRequest) {
 async function handleStreamingCopyResponse(
   userId: string,
   input: GenerateAdCopyInput,
-  rateLimitResult: any,
+  rateLimitResult: { limit: number; remaining: number; reset: number },
   quotaService: ReturnType<typeof getQuotaService>
 ) {
   const encoder = new TextEncoder()

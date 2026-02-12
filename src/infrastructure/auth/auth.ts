@@ -96,17 +96,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
+      // NOTE: allowDangerousEmailAccountLinking은 동일 이메일 기반 계정 자동 연결 허용
+      // 사업자가 Google/Kakao/Meta 중 어떤 것으로든 로그인 가능하게 하기 위해 의도적 설정
+      // 위험: 이메일을 제어하는 공격자가 계정 탈취 가능 → 프로덕션에서 이메일 검증 필수
       allowDangerousEmailAccountLinking: true,
     }),
     Kakao({
       clientId: process.env.KAKAO_CLIENT_ID ?? '',
       clientSecret: process.env.KAKAO_CLIENT_SECRET ?? '',
+      // NOTE: allowDangerousEmailAccountLinking은 동일 이메일 기반 계정 자동 연결 허용
+      // 사업자가 Google/Kakao/Meta 중 어떤 것으로든 로그인 가능하게 하기 위해 의도적 설정
+      // 위험: 이메일을 제어하는 공격자가 계정 탈취 가능 → 프로덕션에서 이메일 검증 필수
       allowDangerousEmailAccountLinking: true,
     }),
     FacebookLoginForBusiness({
       clientId: process.env.META_APP_ID ?? '',
       clientSecret: process.env.META_APP_SECRET ?? '',
       configId: '952879907276831',
+      // NOTE: allowDangerousEmailAccountLinking은 동일 이메일 기반 계정 자동 연결 허용
+      // 사업자가 Google/Kakao/Meta 중 어떤 것으로든 로그인 가능하게 하기 위해 의도적 설정
+      // 위험: 이메일을 제어하는 공격자가 계정 탈취 가능 → 프로덕션에서 이메일 검증 필수
       allowDangerousEmailAccountLinking: true,
       authorization: {
         params: {
@@ -119,7 +128,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ user, account, isNewUser }) {
       if (process.env.NODE_ENV === 'development') {
         console.log('[AUTH EVENT] signIn:', {
-          email: user?.email,
+          userId: user?.id,
           provider: account?.provider,
           isNewUser,
         })
@@ -127,13 +136,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async createUser({ user }) {
       if (process.env.NODE_ENV === 'development') {
-        console.log('[AUTH EVENT] createUser:', user?.email)
+        console.log('[AUTH EVENT] createUser:', user?.id)
       }
     },
     async linkAccount({ user, account }) {
       if (process.env.NODE_ENV === 'development') {
         console.log('[AUTH EVENT] linkAccount:', {
-          email: user?.email,
+          userId: user?.id,
           provider: account?.provider,
         })
       }

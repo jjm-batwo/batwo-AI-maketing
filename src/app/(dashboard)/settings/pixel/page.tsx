@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { ApiSourceBadge } from '@/presentation/components/common/ApiSourceBadge'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -40,7 +42,9 @@ interface Pixel {
 }
 
 async function fetchPixels(): Promise<Pixel[]> {
-  const response = await fetch('/api/pixel')
+  const response = await fetch('/api/pixel', {
+    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+  })
   if (!response.ok) {
     throw new Error('Failed to fetch pixels')
   }
@@ -51,7 +55,10 @@ async function fetchPixels(): Promise<Pixel[]> {
 async function createPixel(data: { metaPixelId: string; name: string }): Promise<Pixel> {
   const response = await fetch('/api/pixel', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+    },
     body: JSON.stringify(data),
   })
   if (!response.ok) {
@@ -62,6 +69,8 @@ async function createPixel(data: { metaPixelId: string; name: string }): Promise
 }
 
 export default function PixelSettingsPage() {
+  const searchParams = useSearchParams()
+  const showApiSource = searchParams.get('showApiSource') === 'true'
   const queryClient = useQueryClient()
   const [selectedPixel, setSelectedPixel] = useState<Pixel | null>(null)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
@@ -118,6 +127,7 @@ export default function PixelSettingsPage() {
         <p className="text-muted-foreground mt-1">
           Meta 픽셀을 설치하여 웹사이트 전환을 추적하세요
         </p>
+        {showApiSource && <ApiSourceBadge endpoint="GET /{business-id}/pixels" permission="business_management" className="mt-2" />}
       </div>
 
       {error && (

@@ -7,7 +7,7 @@ import { createCipheriv, createDecipheriv, randomBytes } from 'crypto'
 
 const ALGORITHM = 'aes-256-gcm'
 const IV_LENGTH = 12  // GCM recommended IV length
-const TAG_LENGTH = 16 // GCM auth tag length
+const _TAG_LENGTH = 16 // GCM auth tag length
 const SEPARATOR = ':'
 
 /**

@@ -362,7 +362,7 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
     ]
   }
 
-  private generateRecommendations(factors: ScoringFactor[], fullText: string): DomainRecommendation[] {
+  private generateRecommendations(factors: ScoringFactor[], _fullText: string): DomainRecommendation[] {
     const recommendations: DomainRecommendation[] = []
 
     // Social Proof

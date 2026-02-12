@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
 interface Caption {
@@ -52,6 +53,9 @@ const captionSequence: Caption[] = [
 ]
 
 export function CaptionOverlay() {
+  const searchParams = useSearchParams()
+  const hideCaption = searchParams.get('hideCaption') === 'true'
+
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isVisible, setIsVisible] = useState(true)
   const [isMinimized, setIsMinimized] = useState(false)
@@ -94,6 +98,10 @@ export function CaptionOverlay() {
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [nextCaption, prevCaption, toggleVisibility])
+
+  if (hideCaption) {
+    return null
+  }
 
   if (!isVisible) {
     return (

@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import {
   Sparkles,
   TrendingUp,
-  TrendingDown,
+  // TrendingDown,
   AlertTriangle,
   Lightbulb,
   RefreshCw,

@@ -326,7 +326,10 @@ export class MetaAdsClient implements IMetaAdsService {
   ): Promise<MetaDailyInsightsData[]> {
     if (this.mockMode) {
       console.log('[MetaAdsClient:MOCK] getCampaignDailyInsights called with mock mode')
-      const days = datePreset === 'today' ? 1 : datePreset === 'yesterday' ? 1 : parseInt(datePreset.match(/\d+/)?.[0] || '7', 10)
+      const parsedDays = parseInt(datePreset.match(/\d+/)?.[0] || '7', 10)
+      const days = datePreset === 'today' ? 1
+        : datePreset === 'yesterday' ? 1
+        : (Number.isNaN(parsedDays) ? 7 : parsedDays)
       const mockData: MetaDailyInsightsData[] = []
 
       for (let i = 0; i < days; i++) {
@@ -495,7 +498,11 @@ export class MetaAdsClient implements IMetaAdsService {
     if (this.mockMode) {
       console.log('[MetaAdsClient:MOCK] listCampaigns called with mock mode')
       return {
-        campaigns: [],
+        campaigns: [
+          { id: '120210000000001', name: '신규 고객 확보 캠페인', status: 'ACTIVE', objective: 'OUTCOME_SALES', dailyBudget: 50000, startTime: new Date(Date.now() - 7*86400000).toISOString(), endTime: undefined, createdTime: new Date(Date.now() - 7*86400000).toISOString(), updatedTime: new Date().toISOString() },
+          { id: '120210000000002', name: '브랜드 인지도 캠페인', status: 'ACTIVE', objective: 'OUTCOME_AWARENESS', dailyBudget: 30000, startTime: new Date(Date.now() - 14*86400000).toISOString(), endTime: undefined, createdTime: new Date(Date.now() - 14*86400000).toISOString(), updatedTime: new Date().toISOString() },
+          { id: '120210000000003', name: '리타겟팅 캠페인', status: 'PAUSED', objective: 'OUTCOME_SALES', dailyBudget: 20000, startTime: new Date(Date.now() - 30*86400000).toISOString(), endTime: new Date(Date.now() - 2*86400000).toISOString(), createdTime: new Date(Date.now() - 30*86400000).toISOString(), updatedTime: new Date().toISOString() },
+        ],
         paging: undefined,
       }
     }

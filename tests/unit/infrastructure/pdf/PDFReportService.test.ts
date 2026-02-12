@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach } from 'vitest'
 import { PDFReportService } from '@infrastructure/pdf/PDFReportService'
 import type { ReportDTO } from '@application/dto/report/ReportDTO'

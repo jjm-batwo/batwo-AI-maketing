@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { AgentTool, AgentContext, ToolExecutionResult } from '@application/ports/IConversationalAgent'
+import type { AgentTool, ToolExecutionResult } from '@application/ports/IConversationalAgent'
 
 const paramsSchema = z.object({
   product: z.string().describe('광고할 상품/서비스 이름'),

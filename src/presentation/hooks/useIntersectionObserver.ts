@@ -15,20 +15,25 @@ export function useIntersectionObserver<T extends HTMLElement = HTMLDivElement>(
   const { threshold = 0.1, root = null, rootMargin = '0px', freezeOnceVisible = true } = options
   const [isIntersecting, setIsIntersecting] = useState(false)
   const ref = useRef<T | null>(null)
+  const frozen = useRef(false)
 
   useEffect(() => {
+    if (frozen.current) return
+
     const element = ref.current
     if (!element) return
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        const isElementIntersecting = entry.isIntersecting
-
-        if (freezeOnceVisible && isIntersecting) {
-          return
+        if (entry.isIntersecting) {
+          setIsIntersecting(true)
+          if (freezeOnceVisible) {
+            frozen.current = true
+            observer.disconnect()
+          }
+        } else if (!freezeOnceVisible) {
+          setIsIntersecting(false)
         }
-
-        setIsIntersecting(isElementIntersecting)
       },
       { threshold, root, rootMargin }
     )
@@ -38,7 +43,7 @@ export function useIntersectionObserver<T extends HTMLElement = HTMLDivElement>(
     return () => {
       observer.disconnect()
     }
-  }, [threshold, root, rootMargin, freezeOnceVisible, isIntersecting])
+  }, [threshold, root, rootMargin, freezeOnceVisible])
 
   return { ref, isIntersecting }
 }

@@ -4,6 +4,7 @@ import { container, DI_TOKENS } from '@/lib/di/container'
 import { ListUserPixelsUseCase } from '@application/use-cases/pixel/ListUserPixelsUseCase'
 import { SelectPixelUseCase } from '@application/use-cases/pixel/SelectPixelUseCase'
 import { pixelQuerySchema, createPixelSchema, validateQuery, validateBody } from '@/lib/validations'
+import { validateCSRF } from '@/lib/csrf'
 
 // GET /api/pixel - List user's pixels
 export async function GET(request: NextRequest) {
@@ -50,6 +51,11 @@ export async function GET(request: NextRequest) {
 // POST /api/pixel - Create a new pixel
 export async function POST(request: NextRequest) {
   try {
+    // CSRF 보호 검증
+    if (!validateCSRF(request)) {
+      return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 })
+    }
+
     const session = await auth()
 
     if (!session?.user?.id) {

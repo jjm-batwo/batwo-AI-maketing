@@ -1,6 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { ApiSourceBadge } from '@/presentation/components/common/ApiSourceBadge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -57,6 +59,8 @@ interface PageInsights {
 }
 
 export default function MetaPagesPage() {
+  const searchParams = useSearchParams()
+  const showApiSource = searchParams.get('showApiSource') === 'true'
   const [pages, setPages] = useState<MetaPage[]>([])
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null)
   const [insights, setInsights] = useState<PageInsights | null>(null)
@@ -70,7 +74,9 @@ export default function MetaPagesPage() {
 
   const fetchPages = async () => {
     try {
-      const response = await fetch('/api/meta/pages')
+      const response = await fetch('/api/meta/pages', {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      })
       const data = await response.json()
 
       if (response.ok) {
@@ -92,7 +98,9 @@ export default function MetaPagesPage() {
     setInsights(null)
 
     try {
-      const response = await fetch(`/api/meta/pages/${pageId}/insights`)
+      const response = await fetch(`/api/meta/pages/${pageId}/insights`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      })
       const data = await response.json()
 
       if (response.ok) {
@@ -130,6 +138,7 @@ export default function MetaPagesPage() {
         <p className="text-muted-foreground mt-1">
           연결된 Facebook 페이지의 참여 지표를 확인하세요
         </p>
+        {showApiSource && <ApiSourceBadge endpoint="GET /me/accounts" permission="pages_show_list" className="mt-2" />}
       </div>
 
       {error && (

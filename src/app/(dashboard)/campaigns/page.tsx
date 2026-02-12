@@ -1,6 +1,8 @@
 'use client'
 
 import { useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { ApiSourceBadge } from '@/presentation/components/common/ApiSourceBadge'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { CampaignList } from '@/presentation/components/campaign'
@@ -29,6 +31,8 @@ const STATUS_PRIORITY: Record<string, number> = {
 
 export default function CampaignsPage() {
   const t = useTranslations()
+  const searchParams = useSearchParams()
+  const showApiSource = searchParams.get('showApiSource') === 'true'
   const { filters, setFilters } = useCampaignStore()
   const { isConnected, isLoading: isCheckingConnection } = useMetaConnection()
   const { data, isLoading, error } = useCampaigns({
@@ -126,6 +130,7 @@ export default function CampaignsPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">{t('campaigns.title')}</h1>
           <p className="text-muted-foreground mt-2">{t('campaigns.subtitle')}</p>
+          {showApiSource && <ApiSourceBadge endpoint="POST /act_{id}/campaigns" permission="ads_management" className="mt-2" />}
         </div>
         <Button asChild size="lg" className="shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all">
           <Link href="/campaigns/new">

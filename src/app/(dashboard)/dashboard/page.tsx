@@ -1,6 +1,8 @@
 'use client'
 
 import { Suspense, lazy, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { ApiSourceBadge } from '@/presentation/components/common/ApiSourceBadge'
 import Link from 'next/link'
 import { KPICard, KPIChart } from '@/presentation/components/dashboard'
 import { useDashboardKPI, useMetaConnection, useSync, useCampaigns, useKPIInsights } from '@/presentation/hooks'
@@ -25,6 +27,8 @@ const AIInsights = lazy(() =>
 
 export default function DashboardPage() {
   const t = useTranslations()
+  const searchParams = useSearchParams()
+  const showApiSource = searchParams.get('showApiSource') === 'true'
   const { dashboardPeriod, setDashboardPeriod, dashboardObjective, setDashboardObjective } = useUIStore()
   const { isConnected, isLoading: isCheckingConnection } = useMetaConnection()
   const { data, isLoading, error } = useDashboardKPI({
@@ -145,17 +149,17 @@ export default function DashboardPage() {
   }
 
   // Helper to safely get KPI values from summary
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getKPIValue = (summaryData: any, key: string): number => {
-    if (!summaryData) return 0
-    return Number(summaryData[key]) || 0
+  const getKPIValue = (summaryData: unknown, key: string): number => {
+    if (!summaryData || typeof summaryData !== 'object') return 0
+    const value = (summaryData as Record<string, unknown>)[key]
+    return typeof value === 'number' ? value : 0
   }
 
   // Helper to safely get change values
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getChangeValue = (changesData: any, key: string): number => {
-    if (!changesData) return 0
-    return Number(changesData[key]) || 0
+  const getChangeValue = (changesData: unknown, key: string): number => {
+    if (!changesData || typeof changesData !== 'object') return 0
+    const value = (changesData as Record<string, unknown>)[key]
+    return typeof value === 'number' ? value : 0
   }
 
   // KPI Configuration interface
@@ -240,6 +244,7 @@ export default function DashboardPage() {
             <span className="text-primary font-medium">{t('dashboard.realtime')}</span>
             {t('dashboard.subtitleSuffix')}
           </p>
+          {showApiSource && <ApiSourceBadge endpoint="GET /act_{id}/insights" permission="ads_read" className="mt-2" />}
         </div>
         <div className="flex items-center gap-2">
           <Button

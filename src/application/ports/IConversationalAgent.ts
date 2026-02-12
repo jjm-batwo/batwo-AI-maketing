@@ -44,9 +44,13 @@ export type ToolCategory = 'query' | 'mutation' | 'meta'
  * 도구 레지스트리 인터페이스
  */
 export interface IToolRegistry {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register(tool: AgentTool<any, any>): void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get(name: string): AgentTool<any, any> | undefined
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getAll(): AgentTool<any, any>[]
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getByCategory(category: ToolCategory): AgentTool<any, any>[]
   toVercelAITools(): Record<string, unknown>
 }

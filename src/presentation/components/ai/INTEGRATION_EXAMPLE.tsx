@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Integration Examples for Contextual AI Suggestion System
  *
@@ -77,7 +78,7 @@ export function CampaignFormExample() {
     trackAction('input_budget', { valueChanged: true })
   }
 
-  const handleSubmitError = (error: Error) => {
+  const _handleSubmitError = (error: Error) => {
     trackAction('campaign_creation_error', { errorOccurred: true })
   }
 
@@ -105,7 +106,7 @@ export function MetricsDashboardExample() {
   const { trackAction } = useContextTracking()
   let viewCount = 0
 
-  const handleViewMetric = (metricId: string) => {
+  const _handleViewMetric = (metricId: string) => {
     viewCount++
     trackAction('view_metric', {
       repeatCount: viewCount,

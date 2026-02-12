@@ -7,7 +7,7 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { RedisCacheService } from '@infrastructure/cache/RedisCacheService'
-import Redis from 'ioredis-mock'
+// import Redis from 'ioredis-mock'
 
 // Mock ioredis to use ioredis-mock
 vi.mock('ioredis', () => {

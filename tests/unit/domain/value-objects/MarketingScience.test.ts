@@ -224,7 +224,7 @@ describe('MarketingScience', () => {
         },
       ]
 
-      const original = [...recommendations]
+      const _original = [...recommendations]
       const ranked = rankRecommendations(recommendations)
 
       // 원본 배열은 변경되지 않음
