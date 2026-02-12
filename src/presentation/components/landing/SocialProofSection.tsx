@@ -1,4 +1,4 @@
-import { Users, TrendingUp, Clock, Award, Shield, Zap } from 'lucide-react'
+import { Sparkles, Activity, Clock, Zap, Shield, Globe } from 'lucide-react'
 
 interface StatCardProps {
   icon: React.ReactNode
@@ -22,39 +22,39 @@ function StatCard({ icon, value, label }: StatCardProps) {
 
 const stats = [
   {
-    icon: <Users className="h-6 w-6" />,
-    value: '1,000+',
-    label: '활성 사용자',
+    icon: <Sparkles className="h-6 w-6" />,
+    value: 'AI 자동화',
+    label: '캠페인 생성부터 최적화까지',
   },
   {
-    icon: <TrendingUp className="h-6 w-6" />,
-    value: '35%',
-    label: '평균 ROAS 향상',
+    icon: <Activity className="h-6 w-6" />,
+    value: '실시간',
+    label: '성과 모니터링 & 리포트',
   },
   {
     icon: <Clock className="h-6 w-6" />,
-    value: '10시간',
-    label: '주간 시간 절약',
+    value: '5분',
+    label: '간편한 초기 설정',
   },
   {
-    icon: <Award className="h-6 w-6" />,
-    value: '98%',
-    label: '고객 만족도',
+    icon: <Zap className="h-6 w-6" />,
+    value: '24/7',
+    label: 'AI가 항상 광고 최적화',
   },
 ]
 
 const trustBadges = [
   {
     icon: <Shield className="h-5 w-5" />,
-    label: 'Meta 공식 파트너',
+    label: 'Meta Marketing API 연동',
   },
   {
     icon: <Zap className="h-5 w-5" />,
-    label: 'ISO 27001 인증',
+    label: '데이터 암호화 적용',
   },
   {
-    icon: <Award className="h-5 w-5" />,
-    label: '2024 마케팅 어워드',
+    icon: <Globe className="h-5 w-5" />,
+    label: '한국어 최적화',
   },
 ]
 
@@ -65,7 +65,7 @@ export function SocialProofSection() {
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            이미 많은 사업자가 바투와 함께하고 있습니다
+            바투 AI가 제공하는 가치
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             AI 기반 마케팅 자동화로 광고 성과를 높이고 시간을 절약하세요

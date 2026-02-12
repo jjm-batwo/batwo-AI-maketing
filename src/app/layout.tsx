@@ -66,12 +66,18 @@ export default async function RootLayout({
         <Suspense fallback={null}>
           <DemoModeProvider />
         </Suspense>
-        {/* Facebook SDK - Meta 통합 */}
-        <FacebookSDK />
-        {/* Vercel Analytics - 사용자 분석 */}
-        <Analytics />
-        {/* Vercel Speed Insights - 성능 모니터링 */}
-        <SpeedInsights />
+        {/* Facebook SDK - Meta 통합 (lazy loaded) */}
+        <Suspense fallback={null}>
+          <FacebookSDK />
+        </Suspense>
+        {/* Vercel Analytics - 사용자 분석 (deferred) */}
+        <Suspense fallback={null}>
+          <Analytics />
+        </Suspense>
+        {/* Vercel Speed Insights - 성능 모니터링 (deferred) */}
+        <Suspense fallback={null}>
+          <SpeedInsights />
+        </Suspense>
       </body>
     </html>
   )

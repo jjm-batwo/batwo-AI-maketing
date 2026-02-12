@@ -28,7 +28,7 @@ export const HeroContent = memo(function HeroContent({ isVisible }: HeroContentP
       {/* Headline */}
       <h1
         id="hero-heading"
-        className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.1]"
+        className="text-[2.5rem] md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight mb-8 leading-[1.1]"
       >
         마케팅 지식 없이도
         <br />
@@ -56,34 +56,40 @@ export const HeroContent = memo(function HeroContent({ isVisible }: HeroContentP
 
 const CTAButtons = memo(function CTAButtons() {
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-      <Button
-        size="lg"
-        asChild
-        className="h-14 px-8 text-base shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all w-full sm:w-auto"
-      >
-        <Link
-          href="/register"
-          className="gap-2 font-semibold"
-          aria-label="14일 무료 체험 시작하기 - 회원가입 페이지로 이동"
+    <div className="flex flex-col items-center lg:items-start gap-4">
+      <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 w-full">
+        <Button
+          size="lg"
+          asChild
+          className="group relative h-16 px-10 text-base bg-gradient-to-r from-primary via-purple-600 to-pink-600 shadow-2xl shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-0.5 transition-all w-full sm:w-auto overflow-hidden"
         >
-          14일 무료로 시작하기
-          <ArrowRight className="h-4 w-4" aria-hidden="true" />
-        </Link>
-      </Button>
-      <Button
-        size="lg"
-        variant="outline"
-        asChild
-        className="h-14 px-8 text-base bg-background/50 backdrop-blur-sm border-2 hover:bg-muted/50 transition-all w-full sm:w-auto"
-      >
-        <Link
-          href="#how-it-works"
-          aria-label="서비스 소개 영상 보기 - 하단 섹션으로 이동"
+          <Link
+            href="/register"
+            className="gap-2 font-semibold"
+            aria-label="14일 무료 체험 시작하기 - 회원가입 페이지로 이동"
+          >
+            <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" aria-hidden="true" />
+            14일 무료로 시작하기
+            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+          </Link>
+        </Button>
+        <Button
+          size="lg"
+          variant="outline"
+          asChild
+          className="h-16 px-10 text-base bg-background/80 backdrop-blur-md border-2 hover:bg-muted/50 transition-all w-full sm:w-auto"
         >
-          서비스 소개 영상
-        </Link>
-      </Button>
+          <Link
+            href="#how-it-works"
+            aria-label="서비스 소개 영상 보기 - 하단 섹션으로 이동"
+          >
+            서비스 소개 영상
+          </Link>
+        </Button>
+      </div>
+      <p className="text-xs text-muted-foreground text-center lg:text-left">
+        신용카드 불필요 · 1분 안에 시작
+      </p>
     </div>
   )
 })

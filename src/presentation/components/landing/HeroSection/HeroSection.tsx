@@ -4,7 +4,7 @@ import { memo } from 'react'
 import { useIntersectionObserver } from '@/presentation/hooks'
 import { GradientBackground } from './GradientBackground'
 import { HeroContent } from './HeroContent'
-import { DashboardPreview } from './DashboardPreview'
+import { AIChatDemo } from './AIChatDemo'
 
 export const HeroSection = memo(function HeroSection() {
   const { ref: textRef, isIntersecting: textVisible } = useIntersectionObserver()
@@ -24,18 +24,18 @@ export const HeroSection = memo(function HeroSection() {
             <HeroContent isVisible={textVisible} />
           </div>
 
-          {/* Dashboard Preview - Right */}
+          {/* AI Chat Demo - Right */}
           <div
             ref={previewRef}
             className={`relative perspective-1000 ${
               previewVisible ? 'animate-slide-in-right' : 'opacity-0'
             }`}
             role="img"
-            aria-label="바투 대시보드 미리보기 - 실시간 캠페인 성과 데이터와 AI 인사이트"
+            aria-label="AI 채팅으로 캠페인 생성 데모"
           >
             <DecorativeElements />
             <div className="relative">
-              <DashboardPreview />
+              <AIChatDemo />
             </div>
           </div>
         </div>

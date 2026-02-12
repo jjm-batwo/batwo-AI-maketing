@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { Menu, X, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -18,6 +18,8 @@ export function LandingHeader() {
   const { data: session, status } = useSession()
   const isLoggedIn = !!session?.user
   const isLoading = status === 'loading'
+  const menuRef = useRef<HTMLDivElement>(null)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
 
   // Handle scroll effect
   useEffect(() => {
@@ -27,6 +29,48 @@ export function LandingHeader() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  // Focus trap for mobile menu
+  useEffect(() => {
+    if (!isMenuOpen || !menuRef.current) return
+
+    const menu = menuRef.current
+    const focusableElements = menu.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )
+    const firstElement = focusableElements[0]
+    const lastElement = focusableElements[focusableElements.length - 1]
+
+    // Focus first element when menu opens
+    firstElement?.focus()
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMenuOpen(false)
+        menuButtonRef.current?.focus()
+        return
+      }
+
+      if (e.key === 'Tab') {
+        if (e.shiftKey) {
+          // Shift + Tab
+          if (document.activeElement === firstElement) {
+            e.preventDefault()
+            lastElement?.focus()
+          }
+        } else {
+          // Tab
+          if (document.activeElement === lastElement) {
+            e.preventDefault()
+            firstElement?.focus()
+          }
+        }
+      }
+    }
+
+    menu.addEventListener('keydown', handleKeyDown)
+    return () => menu.removeEventListener('keydown', handleKeyDown)
+  }, [isMenuOpen])
 
   return (
     <>
@@ -96,6 +140,7 @@ export function LandingHeader() {
 
             {/* Mobile Menu Button */}
             <button
+              ref={menuButtonRef}
               className="md:hidden p-2 -mr-2 text-muted-foreground hover:text-foreground transition-colors rounded-md"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label={isMenuOpen ? '메뉴 닫기' : '메뉴 열기'}
@@ -108,10 +153,13 @@ export function LandingHeader() {
 
           {/* Mobile Menu */}
           <div
+            ref={menuRef}
             id="mobile-menu"
             className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-96 opacity-100 pb-6' : 'max-h-0 opacity-0'
               }`}
             aria-hidden={!isMenuOpen}
+            role="navigation"
+            aria-label="Mobile navigation menu"
           >
             <div className="pt-2 pb-4 space-y-1">
               {navLinks.map((link) => (

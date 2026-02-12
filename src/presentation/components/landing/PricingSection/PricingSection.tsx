@@ -10,7 +10,11 @@ import { useIntersectionObserver } from '@/presentation/hooks'
 import { SubscriptionPlan } from '@domain/value-objects/SubscriptionPlan'
 import { PRICING_TIERS, formatPrice } from './pricingData'
 
-export const PricingSection = memo(function PricingSection() {
+interface PricingSectionProps {
+  id?: string
+}
+
+export const PricingSection = memo(function PricingSection({ id = 'pricing' }: PricingSectionProps) {
   const { ref, isIntersecting } = useIntersectionObserver()
 
   const getCTALink = (plan: SubscriptionPlan): string => {
@@ -22,7 +26,7 @@ export const PricingSection = memo(function PricingSection() {
       case SubscriptionPlan.PRO:
         return '/checkout?plan=pro&period=monthly'
       case SubscriptionPlan.ENTERPRISE:
-        return '/contact'
+        return 'mailto:contact@batwo.ai'
       default:
         return '/register'
     }
@@ -54,7 +58,7 @@ export const PricingSection = memo(function PricingSection() {
   }
 
   return (
-    <section id="pricing" className="py-16 md:py-24 bg-muted/30 overflow-hidden">
+    <section id={id} className="py-16 md:py-24 bg-muted/30 overflow-hidden">
       <div
         ref={ref}
         className={`container mx-auto px-4 transition-all duration-1000 ${
@@ -80,7 +84,7 @@ export const PricingSection = memo(function PricingSection() {
                 key={plan}
                 className={`relative overflow-hidden transition-all duration-300 hover:shadow-xl ${
                   isPopular
-                    ? 'border-2 border-primary shadow-lg lg:scale-105'
+                    ? 'border-2 border-amber-500/50 shadow-2xl shadow-amber-500/20 lg:scale-105 bg-gradient-to-b from-amber-500/5 to-transparent'
                     : 'border hover:border-primary/50'
                 }`}
               >
@@ -89,9 +93,13 @@ export const PricingSection = memo(function PricingSection() {
                   <div className="absolute top-0 right-0 left-0">
                     <Badge
                       variant="default"
-                      className="w-full rounded-none rounded-t-lg justify-center py-1"
+                      className="w-full rounded-none rounded-t-lg justify-center py-1.5 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white border-0 font-semibold flex items-center gap-2"
                     >
-                      인기
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                      </span>
+                      가장 인기 있는 플랜
                     </Badge>
                   </div>
                 )}
@@ -135,9 +143,15 @@ export const PricingSection = memo(function PricingSection() {
                     variant={isPro ? 'default' : 'outline'}
                     asChild
                   >
-                    <Link href={getCTALink(plan)} aria-label={`${config.label} 플랜 선택`}>
-                      {getCTAText(plan)}
-                    </Link>
+                    {plan === SubscriptionPlan.ENTERPRISE ? (
+                      <a href={getCTALink(plan)} aria-label={`${config.label} 플랜 선택`}>
+                        {getCTAText(plan)}
+                      </a>
+                    ) : (
+                      <Link href={getCTALink(plan)} aria-label={`${config.label} 플랜 선택`}>
+                        {getCTAText(plan)}
+                      </Link>
+                    )}
                   </Button>
                 </CardContent>
               </Card>

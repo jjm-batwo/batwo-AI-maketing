@@ -24,11 +24,15 @@ const steps = [
   },
 ]
 
-export function HowItWorksSection() {
+interface HowItWorksSectionProps {
+  id?: string
+}
+
+export function HowItWorksSection({ id = 'how-it-works' }: HowItWorksSectionProps) {
   const { ref, isIntersecting } = useIntersectionObserver()
 
   return (
-    <section id="how-it-works" className="py-16 md:py-24 overflow-hidden">
+    <section id={id} className="py-16 md:py-24 overflow-hidden">
       <div
         ref={ref}
         className={`container mx-auto px-4 transition-all duration-1000 ${isIntersecting ? 'animate-slide-up opacity-100' : 'opacity-0 translate-y-10'

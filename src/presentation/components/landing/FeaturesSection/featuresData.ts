@@ -1,4 +1,4 @@
-import { Zap, BarChart3, FileText, Shield, MessageCircle, type LucideIcon } from 'lucide-react'
+import { Zap, BarChart3, FileText, Shield, MessageCircle, MousePointerClick, type LucideIcon } from 'lucide-react'
 
 export interface Feature {
   icon: LucideIcon
@@ -36,5 +36,11 @@ export const FEATURES: Feature[] = [
     title: 'Meta 공식 연동',
     description:
       'Meta Business API와 안전하게 연동하여 광고 계정을 직접 관리합니다.',
+  },
+  {
+    icon: MousePointerClick,
+    title: '원클릭 픽셀 설치',
+    description:
+      '버튼 하나로 Meta 픽셀을 설치하고 전환 추적을 바로 시작하세요.',
   },
 ]

@@ -5,11 +5,15 @@ import { useIntersectionObserver } from '@/presentation/hooks'
 import { FeatureCard } from './FeatureCard'
 import { FEATURES } from './featuresData'
 
-export const FeaturesSection = memo(function FeaturesSection() {
+interface FeaturesSectionProps {
+  id?: string
+}
+
+export const FeaturesSection = memo(function FeaturesSection({ id = 'features' }: FeaturesSectionProps) {
   const { ref, isIntersecting } = useIntersectionObserver()
 
   return (
-    <section id="features" className="py-16 md:py-24 bg-muted/30 overflow-hidden">
+    <section id={id} className="py-16 md:py-24 bg-muted/30 overflow-hidden">
       <div
         ref={ref}
         className={`container mx-auto px-4 transition-all duration-1000 ${
@@ -26,8 +30,8 @@ export const FeaturesSection = memo(function FeaturesSection() {
 
         {/* Features Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" role="list">
-          {FEATURES.map((feature) => (
-            <FeatureCard key={feature.title} feature={feature} />
+          {FEATURES.map((feature, index) => (
+            <FeatureCard key={feature.title} feature={feature} index={index} isIntersecting={isIntersecting} />
           ))}
         </div>
       </div>
