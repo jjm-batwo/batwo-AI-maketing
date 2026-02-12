@@ -155,7 +155,16 @@ This script addresses Meta's specific rejection reason by:
 3. **Meta OAuth Consent Screen** (0:50 - 1:35) [45s] **⭐ CRITICAL SECTION**
    - **PAUSE RECORDING HERE** if needed to let consent screen load
    - Once loaded, let camera focus on the permission list
-   - Meta will show the 5 permissions with checkboxes
+   - Meta will show something like:
+     ```
+     Batwo wants to access:
+     ☑ pages_show_list - View your Facebook Pages
+     ☑ pages_read_engagement - Read page engagement data
+     ☑ business_management - Manage Meta Pixels
+     ☑ ads_read - Read ad performance data
+     ☑ ads_management - Create and manage ads
+     [Continue] [Cancel]
+     ```
    - **DO NOT SKIP THIS** - let it display for 30+ seconds
    - Pan slowly across all 5 permissions if possible (or zoom in on permission list)
    - Read permission descriptions aloud
@@ -168,7 +177,7 @@ This script addresses Meta's specific rejection reason by:
 
 **Narration (English)**:
 
-> "To connect a Meta account, Batwo initiates the standard Meta OAuth flow. The user sees a consent screen listing all five permissions we request. Each permission has a specific purpose in our application. First, pages_show_list allows us to retrieve the user's managed Facebook Pages. Second, pages_read_engagement gives us access to page engagement metrics. Third, business_management allows us to access Meta Pixels configured in the user's business account. Fourth, ads_read enables our dashboard to fetch campaign performance data. And fifth, ads_management lets users create and manage campaigns directly from Batwo. After approving all permissions, the user is returned to the app with full access."
+> "To connect a Meta account, Batwo initiates the standard Meta OAuth flow. The user sees a consent screen listing all five permissions we request. [Pause while showing consent screen - let it sit on screen for 15+ seconds] Each permission has a specific purpose in our application. First, pages_show_list allows us to retrieve the user's managed Facebook Pages. Second, pages_read_engagement gives us access to page engagement metrics. Third, business_management allows us to access Meta Pixels configured in the user's business account. Fourth, ads_read enables our dashboard to fetch campaign performance data. And fifth, ads_management lets users create and manage campaigns directly from Batwo. After approving all permissions, the user is returned to the app with full access."
 
 **Camera Positioning**:
 - **FULL SCREEN**: Show entire permission list
@@ -230,7 +239,7 @@ This script addresses Meta's specific rejection reason by:
 
 **Narration (English)**:
 
-> "The pages_show_list permission allows Batwo to retrieve the user's managed Facebook Pages from their Meta account. When the user navigates to the Pages management section, we query the Meta Graph API to list all pages they have access to. Each page is displayed with its name, ID, and profile picture. Users can select which page they want to use for their advertising campaigns. This foundational permission enables all downstream campaign features."
+> "The pages_show_list permission allows Batwo to retrieve the user's managed Facebook Pages from their Meta account. When the user navigates to the Pages management section, we query the Meta Graph API to list all pages they have access to. Each page is displayed with its name, ID, and profile picture. Here you can see we've retrieved two pages. Users can select which page they want to use for their advertising campaigns. This foundational permission enables all downstream campaign features."
 
 **API Indicators** (if using `?showApiSource=true`):
 - Look for badge/indicator showing: "Data Source: Meta API - GET /me/accounts"
@@ -291,6 +300,7 @@ This script addresses Meta's specific rejection reason by:
 
 4. **Highlight Insights** (3:50 - 4:00) [10s]
    - If the app has engagement insights or recommendations, show them
+   - Example: "Your posts get highest engagement on Wednesdays" (if shown)
    - Or simply point out a high/low metric and pause there
    - Conclude that this data helps inform campaign decisions
 
@@ -433,7 +443,7 @@ This script addresses Meta's specific rejection reason by:
 5. **Highlight AI Insights** (6:40 - 6:45) [5s]
    - If dashboard has "Insights" section, show it briefly
    - Or show AI-generated recommendations
-   - Conclude that this data helps inform campaign decisions
+   - Example: "Your Monday campaigns have highest CTR"
 
 **Narration (English)**:
 
@@ -780,13 +790,154 @@ If you recorded multiple takes or need to edit:
 ### Meta Submission Preparation
 
 - [ ] **Video Title**: "Batwo App Demo - Full Feature Walkthrough"
-- [ ] **Description**: Prepare text explaining each scene
+- [ ] **Description**: Prepare text explaining each scene (see below)
 - [ ] **Test Credentials**: Prepare test account info to provide to Meta (separate from video)
 - [ ] **Screenshot Thumbnails**: Optional - 1-2 screenshots of key screens
 
-**Video Description Template**:
+**Video Description Template** (provide to Meta):
 
-This screencast demonstrates the complete Batwo application workflow with all five Meta permissions.
+```
+This screencast demonstrates the complete Batwo application workflow,
+including all five requested Meta permissions:
+
+1. pages_show_list - View managed Facebook Pages (Scene 3)
+2. pages_read_engagement - Access page engagement analytics (Scene 4)
+3. business_management - Manage Meta Pixels (Scene 5)
+4. ads_read - Access campaign performance dashboards (Scene 6)
+5. ads_management - Create and manage advertising campaigns (Scene 7)
+
+The application demonstrates:
+- OAuth integration with full permission consent screen
+- Real-time data fetching from Meta Graph API
+- Complete campaign creation and management workflow
+- AI-powered insights and analytics
+- Multi-language support (Korean UI with English narration)
+
+Test credentials available upon request.
+```
+
+---
+
+## Troubleshooting Guide
+
+### Issue: OAuth Consent Screen Doesn't Show
+
+**Solution:**
+- Check that your app is properly registered with Meta
+- Ensure app ID is correct in environment variables
+- Check that redirect URI exactly matches app configuration
+- Try in a fresh browser window/private mode
+
+### Issue: API Data Doesn't Load
+
+**Solution:**
+- Check that Meta API tokens are valid
+- If using mock mode, verify `META_MOCK_MODE=true` in `.env`
+- Check browser console for API errors (F12)
+- Verify test account has data (pages, pixels, campaigns)
+- Try refreshing page (F5) to re-fetch data
+
+### Issue: Recording is Too Long
+
+**Solution:**
+- Skip Scene 8 (AI Chat bonus) - saves 50 seconds
+- Reduce time in Scene 6 (dashboard) - you can focus on fewer KPI cards
+- Use faster pacing (but keep it natural)
+- Trim any long pauses between actions
+
+### Issue: Recording is Too Short
+
+**Solution:**
+- Include Scene 8 (AI Chat bonus) - adds 50 seconds
+- Slow down your pacing naturally
+- Add more interaction in each scene (hover, scroll, expand)
+- Extend narration pauses to match screen time
+
+### Issue: Permission List Unclear in Scene 2
+
+**Solution:**
+- Ensure browser zoom is 100% (Cmd+0 on Mac)
+- Increase resolution to 1920x1080 if not already
+- Pan slowly across permission list if it's long
+- Consider screenshotting permission screen separately (higher quality)
+- Point with cursor to each permission as you read them
+
+### Issue: Campaign Creation Fails
+
+**Solution:**
+- Verify test account is properly authenticated
+- Check that required fields are filled (name, objective, budget)
+- Ensure budget amount is valid for currency
+- Check browser console for validation errors
+- Try creating campaign via UI directly to test form
+
+---
+
+## Key Success Metrics (for Meta Reviewers)
+
+By following this script, your resubmission will demonstrate:
+
+| Metric | Evidence |
+|--------|----------|
+| **End-to-End Experience** | Complete workflows in each scene (not just UI screenshots) |
+| **Clear Permission Usage** | 60-90 seconds per permission with specific actions |
+| **API Integration** | API source badges visible, real data fetching demonstrated |
+| **OAuth Consent** | All 5 permissions explicitly shown in consent dialog |
+| **Functional App** | Live interactions showing app responds to user actions |
+| **Professional Quality** | 1920x1080 resolution, clear audio, natural pacing |
+| **Complete Feature Set** | All major app features demonstrated (pages, pixels, campaigns, insights) |
+
+---
+
+## Related Documentation
+
+- **RECORDING_INSTRUCTIONS.md** - General setup (camera, audio, software)
+- **GUARANTEED_APPROVAL_GUIDE.md** - Approval criteria and success factors
+- **REVIEW_PLAN.md** - Detailed Meta review guidelines
+- **subtitles/** - Pre-written English subtitles for each scene
+
+---
+
+## Version History
+
+| Version | Date | Status | Notes |
+|---------|------|--------|-------|
+| 1.0 | 2026-02-09 | Production Ready | Complete resubmission script addressing "end-to-end experience" feedback |
+
+---
+
+## Recording Day Timeline
+
+**Recommended Execution Order:**
+
+```
+Before Recording (30 minutes):
+├─ Run through pre-recording checklist
+├─ Test environment variables and Meta API connection
+├─ Create test data (pages, pixels, campaigns)
+├─ Clear browser cache and test login flow
+└─ Do full dry run (read narration, no recording)
+
+Recording (20-30 minutes):
+├─ Scene 1-2: Introduction & OAuth (3 min)
+├─ Scene 3-5: Permission demos (6 min)
+├─ Scene 6-7: Dashboard & Campaign Management (7 min)
+├─ Scene 8 (optional): AI Chat (1 min)
+├─ Scene 9: Summary (0.5 min)
+└─ Buffer for retakes/fixes (5-10 min)
+
+Post-Recording (15 minutes):
+├─ Review video playback for quality
+├─ Check audio levels and syncing
+├─ Export to MP4 if recording in different format
+└─ Verify final file meets specs (1920x1080, <100MB)
+
+Subtitles & Preparation (30 minutes):
+├─ Add English subtitles from subtitles/ directory
+├─ Do final watch-through with subs
+├─ Prepare submission description
+└─ Package test credentials file
+```
 
 ---
 
@@ -798,10 +949,12 @@ This screencast demonstrates the complete Batwo application workflow with all fi
 
 3. **OAuth is Critical**: Scene 2 (OAuth consent) is the most important. Allocate 45 seconds just for that screen. This single scene directly addresses the previous rejection.
 
-4. **Complete Workflows**: Every scene should show a complete user action (start → action → result). Never show incomplete tasks.
+4. **API Indicators Matter**: The `?showApiSource=true` parameter adds badges showing data sources. Make sure these are visible and you point them out.
 
-5. **Test Before Recording**: Run through the entire app workflow manually before hitting record. Fix any bugs.
+5. **Complete Workflows**: Every scene should show a complete user action (start → action → result). Never show incomplete tasks.
 
-6. **Save Multiple Versions**: Record in 2-3 takes if possible. Keep all versions so you can edit the best scenes together if needed.
+6. **Test Before Recording**: Run through the entire app workflow manually before hitting record. Fix any bugs.
 
-Good luck with your resubmission!
+7. **Save Multiple Versions**: Record in 2-3 takes if possible. Keep all versions so you can edit the best scenes together if needed.
+
+Good luck with your resubmission! This script addresses Meta's specific feedback and demonstrates all permissions clearly and completely.

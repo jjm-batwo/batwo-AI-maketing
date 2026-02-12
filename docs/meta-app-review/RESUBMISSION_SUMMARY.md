@@ -45,7 +45,7 @@ For each of the 5 requested permissions:
 ### Complete Package Contents
 
 #### **Screencast Specifications**
-- Total duration: 4:30-5:30 minutes
+- Total duration: 7:00-9:40 minutes (AI Chat scene included)
 - Resolution: 1920×1080 (1080p)
 - Format: MP4 (H.264 codec)
 - Audio: English narration + subtitles
@@ -80,6 +80,7 @@ For each of the 5 requested permissions:
 | **Permission Purpose Unclear** | Listed permissions without context | Detailed use case, business impact, and why each is essential | Section 2.1-2.5 in both documents |
 | **No Alternative Comparison** | Didn't explain why permission needed | Show manual process (10+ minutes) vs. Batwo solution (2 minutes) | Detailed comparisons in each section |
 | **Rushed Demonstration** | 30-second snippets per feature | Full 90-second walkthrough per permission with clear narration | Complete screencast flows included |
+| **No AI Feature Demo** | AI chat not shown | AI Chat Assistant demo: natural language campaign creation with campaign card | Scene 8 in RECORDING_SCRIPT.md |
 
 ---
 
@@ -194,6 +195,7 @@ FINAL CHECKLIST:
 - Data visibly flowing from Meta APIs
 - Business value clearly articulated
 - No artificial or forced use cases
+- AI Chat Assistant demonstrates `ads_management` + `ads_read` in conversational UX
 
 ### **3. Submission Documentation**
 - Technical accuracy (API endpoints, parameters)

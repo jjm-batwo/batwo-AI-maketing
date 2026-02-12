@@ -33,10 +33,12 @@ Batwo AI Marketing Solution is a comprehensive SaaS platform that enables e-comm
 - Receive AI-powered optimization recommendations
 - Track and analyze page engagement metrics
 - Manage Meta Pixels for conversion tracking
+- Create and manage campaigns through a conversational AI chat assistant
 
 **Key Differentiators:**
 - **End-to-end automation** from campaign creation to performance analysis
 - **Real-time KPI dashboard** with AI-generated insights
+- **AI Chat Assistant** for natural language campaign creation and performance analysis
 - **One-click pixel installation** for e-commerce platforms
 - **Multi-language support** (Korean primary, English for international)
 - **SOC 2 compliance** and data security
@@ -611,7 +613,7 @@ Response:
 | **Frame Rate** | 30 fps | Standard for screen recording |
 | **Format** | MP4 (H.264 codec) | Meta recommended format |
 | **File Size** | < 100 MB | Keep under Meta limits |
-| **Total Duration** | 4:30-5:30 minutes | Within Meta guidelines |
+| **Total Duration** | 7:00-8:00 minutes | Within Meta guidelines (includes AI Chat demo) |
 | **Audio** | English narration + subtitles | Clear, professional quality |
 | **Subtitles** | English burned-in captions | Display permission purposes |
 
@@ -638,7 +640,8 @@ Response:
 Visual: Batwo logo + app name fade in
 Text: "Batwo AI Marketing Solution"
 Narration: "Introducing Batwo, a comprehensive platform for managing
-           Meta advertising campaigns and analyzing page engagement."
+           Meta advertising campaigns, analyzing page engagement, and
+           creating campaigns through an AI chat assistant."
 
 [00:05-00:15]
 Visual: Static shot of login page
@@ -871,17 +874,63 @@ Narration: "Users can easily copy the pixel code to their clipboard for
           installation on their website. Installation is one-click."
 ```
 
-#### **SEGMENT 6: Closing & Summary (6:15 - 6:30)**
+#### **SEGMENT 6: AI Chat Assistant - Campaign Creation via Chat (6:15 - 7:15)**
 
 ```
 [06:15-06:25]
+Visual: Dashboard with AI Chat button visible
+Text: "AI-Powered Campaign Management"
+Narration: "Batwo includes an AI Chat Assistant that allows users to
+          create and manage campaigns through natural language conversation."
+
+[06:25-06:35]
+Visual: Click on AI Chat button to open chat interface
+Show: Chat interface opens with input field ready
+Narration: "Users can open the AI assistant and simply describe what
+          campaign they need in natural language."
+
+[06:35-06:50]
+Visual: Type message in Korean: "20대 여성 타겟 봄 신상품 캠페인 만들어줘"
+Show: AI typing indicator appears, then streams response
+Text: "Natural Language Campaign Creation"
+Narration: "For example, the user types 'Create a spring new product
+          campaign targeting women in their 20s.' The AI assistant
+          understands the intent and begins creating the campaign."
+
+[06:50-07:05]
+Visual: AI responds with campaign card showing:
+  - Campaign Name: 봄 신상품 런칭 캠페인
+  - Target: 20-29세 여성 (Women aged 20-29)
+  - Daily Budget: ₩500,000
+  - Status: 승인 대기 (Pending Approval)
+Show: Campaign data card renders with all details
+Text: "AI-Generated Campaign Configuration"
+Narration: "The AI generates a complete campaign configuration including
+          target audience, budget, and campaign name. The campaign card
+          shows all details for user review before submission."
+
+[07:05-07:15]
+Visual: AI final message: "봄 신상품 캠페인이 생성되었습니다! 예상 ROAS 3.2x"
+Show: Success message with predicted ROAS
+Text: "Intelligent Campaign Optimization"
+Narration: "The AI confirms campaign creation and provides a predicted
+          ROAS of 3.2x based on historical performance data. This
+          conversational interface makes campaign management accessible
+          to all business owners, regardless of technical expertise."
+```
+
+#### **SEGMENT 7: Closing & Summary (7:15 - 7:30)**
+
+```
+[07:15-07:25]
 Visual: Dashboard shown again
 Text: "Complete Campaign Lifecycle Management"
 Narration: "Batwo provides a complete solution for Meta advertising - from
-          creation through performance analysis. Users never need to log
+          creation through performance analysis, including an AI assistant
+          for natural language campaign management. Users never need to log
           into Meta Ads Manager."
 
-[06:25-06:30]
+[07:25-07:30]
 Visual: Batwo logo
 Text: "Learn more at batwo.ai"
 Narration: "Experience the future of marketing automation with Batwo."
