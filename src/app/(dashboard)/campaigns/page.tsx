@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getAuthenticatedUser } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
@@ -6,6 +7,11 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Link2 } from 'lucide-react'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: '캠페인 관리 | 바투',
+  description: 'Meta 광고 캠페인을 관리하고 성과를 확인하세요',
+}
 
 export default async function CampaignsPage() {
   const user = await getAuthenticatedUser()
@@ -41,8 +47,8 @@ export default async function CampaignsPage() {
         </div>
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="mx-auto w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-              <Link2 className="h-8 w-8 text-blue-600" />
+            <div className="mx-auto w-16 h-16 rounded-full bg-primary/15 flex items-center justify-center mb-4">
+              <Link2 className="h-8 w-8 text-primary" />
             </div>
             <h2 className="text-xl font-semibold mb-2">Meta 계정을 연결하세요</h2>
             <p className="text-muted-foreground mb-6 max-w-md">
@@ -62,33 +68,22 @@ export default async function CampaignsPage() {
     )
   }
 
-  // 캠페인 목록 및 KPI 데이터 fetch
+  // 캠페인 목록 fetch (KPI는 CampaignsClient에서 기간별 클라이언트 사이드 fetch)
   let campaigns: any[] = []
-  let kpiData = null
 
   try {
-    const [campaignsRes, kpiRes] = await Promise.all([
-      fetch(`${baseUrl}/api/campaigns?pageSize=100`, {
-        headers: { Cookie: cookieStore.toString() },
-        next: { revalidate: 60, tags: ['campaigns'] }
-      }),
-      fetch(`${baseUrl}/api/dashboard/kpi?period=today&includeBreakdown=true`, {
-        headers: { Cookie: cookieStore.toString() },
-        next: { revalidate: 60, tags: ['kpi'] }
-      })
-    ])
+    const campaignsRes = await fetch(`${baseUrl}/api/campaigns?pageSize=100`, {
+      headers: { Cookie: cookieStore.toString() },
+      next: { revalidate: 60, tags: ['campaigns'] }
+    })
 
     if (campaignsRes.ok) {
       const data = await campaignsRes.json()
       campaigns = data.campaigns || []
     }
-
-    if (kpiRes.ok) {
-      kpiData = await kpiRes.json()
-    }
   } catch (error) {
     console.error('Failed to fetch campaigns:', error)
   }
 
-  return <CampaignsClient initialCampaigns={campaigns} initialKpiData={kpiData} />
+  return <CampaignsClient initialCampaigns={campaigns} />
 }

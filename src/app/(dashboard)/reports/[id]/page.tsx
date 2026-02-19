@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { auth } from '@/infrastructure/auth/auth'
 import { redirect, notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
@@ -5,6 +6,11 @@ import { ReportDetailClient } from './ReportDetailClient'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: '보고서 상세 | 바투',
+  description: '보고서 상세 내용을 확인하세요',
+}
 
 interface ReportDetailPageProps {
   params: Promise<{ id: string }>

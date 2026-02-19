@@ -1,7 +1,13 @@
+import type { Metadata } from 'next'
 import { auth } from '@/infrastructure/auth/auth'
 import { redirect, notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { CampaignEditClient } from './CampaignEditClient'
+
+export const metadata: Metadata = {
+  title: '캠페인 수정 | 바투',
+  description: '캠페인 설정을 수정하세요',
+}
 
 interface CampaignEditPageProps {
   params: Promise<{ id: string }>
@@ -25,7 +31,7 @@ export default async function CampaignEditPage({ params }: CampaignEditPageProps
   try {
     const res = await fetch(`${baseUrl}/api/campaigns/${campaignId}`, {
       headers: { Cookie: cookieStore.toString() },
-      next: { revalidate: 0 }
+      next: { revalidate: 60, tags: ['campaigns'] }
     })
 
     if (!res.ok) {

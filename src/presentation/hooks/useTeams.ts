@@ -178,6 +178,7 @@ export function useTeams() {
   return useQuery({
     queryKey: ['teams'],
     queryFn: fetchTeams,
+    staleTime: 2 * 60 * 1000,
   })
 }
 
@@ -186,6 +187,7 @@ export function useTeam(teamId: string | null) {
     queryKey: ['team', teamId],
     queryFn: () => fetchTeamDetails(teamId!),
     enabled: !!teamId,
+    staleTime: 60 * 1000,
   })
 }
 
@@ -194,6 +196,7 @@ export function useTeamMembers(teamId: string | null) {
     queryKey: ['team-members', teamId],
     queryFn: () => fetchTeamMembers(teamId!),
     enabled: !!teamId,
+    staleTime: 60 * 1000,
   })
 }
 

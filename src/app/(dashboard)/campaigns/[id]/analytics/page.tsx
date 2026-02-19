@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { auth } from '@/infrastructure/auth/auth'
 import { redirect, notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
@@ -5,6 +6,11 @@ import { AnalyticsClient } from './AnalyticsClient'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: '캠페인 분석 | 바투',
+  description: '캠페인 성과 데이터를 분석하세요',
+}
 
 interface CampaignAnalyticsPageProps {
   params: Promise<{ id: string }>
@@ -28,7 +34,7 @@ export default async function CampaignAnalyticsPage({ params }: CampaignAnalytic
   try {
     const res = await fetch(`${baseUrl}/api/campaigns/${id}`, {
       headers: { Cookie: cookieStore.toString() },
-      next: { revalidate: 0 }
+      next: { revalidate: 60, tags: ['campaigns'] }
     })
 
     if (!res.ok) {

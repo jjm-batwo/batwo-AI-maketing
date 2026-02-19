@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
-import { container, DI_TOKENS } from '@/lib/di/container'
+import { container, DI_TOKENS, getCacheService } from '@/lib/di/container'
 import { SyncCampaignsUseCase, MetaConnectionError } from '@application/use-cases/campaign/SyncCampaignsUseCase'
 import { SyncAllInsightsUseCase } from '@application/use-cases/kpi/SyncAllInsightsUseCase'
 import { invalidateCache, getUserPattern } from '@/lib/cache/kpiCache'
+import { CacheKeys } from '@/infrastructure/cache/CacheKeys'
 
 type DatePreset = 'today' | 'yesterday' | 'last_7d' | 'last_30d'
 
@@ -47,8 +48,12 @@ export async function POST(request: NextRequest) {
       includeTodayData: true, // Always include today's data for real-time dashboard
     })
 
-    // Invalidate KPI cache
+    // Invalidate both cache layers
+    // 1. Legacy in-memory kpiCache
     invalidateCache(getUserPattern(user.id))
+    // 2. DI CacheService (MemoryCacheService / Redis) — 대시보드 API가 실제 사용하는 캐시
+    const cacheService = getCacheService()
+    await cacheService.deletePattern(CacheKeys.userPattern(user.id))
 
     return NextResponse.json({
       success: true,

@@ -1,7 +1,13 @@
+import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import { UserRoleDialog } from './UserRoleDialog'
+
+export const metadata: Metadata = {
+  title: '회원 상세 | 바투',
+  description: '회원 상세 정보를 확인하세요',
+}
 import {
   Card,
   CardContent,
@@ -166,6 +172,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                 alt={user.name || ''}
                 width={64}
                 height={64}
+                sizes="64px"
                 className="rounded-full object-cover"
               />
             ) : (

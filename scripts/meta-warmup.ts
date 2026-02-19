@@ -14,6 +14,7 @@ import { PrismaClient } from '../src/generated/prisma'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 import { MetaAdsWarmupClient, WarmupSummary } from '../src/infrastructure/external/meta-ads/MetaAdsWarmupClient'
+import { safeDecryptToken } from '../src/application/utils/TokenEncryption'
 
 // ANSI 색상 코드
 const colors = {
@@ -106,7 +107,7 @@ async function runWarmup(prisma: PrismaClient): Promise<AccountResult[]> {
 
     try {
       const summary = await warmupClient.runWarmupSequence(
-        account.accessToken,
+        safeDecryptToken(account.accessToken),
         account.metaAccountId,
         {
           maxCampaigns: 5,

@@ -10,6 +10,7 @@
  */
 
 import 'dotenv/config'
+import { encryptToken } from '../src/application/utils/TokenEncryption'
 
 const colors = {
   reset: '\x1b[0m',
@@ -124,7 +125,7 @@ async function updateDatabase(accessToken: string, expiresIn: number) {
   const result = await prisma.metaAdAccount.updateMany({
     where: targetAccountId ? { metaAccountId: targetAccountId } : {},
     data: {
-      accessToken,
+      accessToken: encryptToken(accessToken),
       tokenExpiry,
     },
   })

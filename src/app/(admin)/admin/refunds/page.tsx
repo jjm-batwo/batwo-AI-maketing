@@ -1,5 +1,11 @@
+import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { RefundActions } from './RefundActions'
+
+export const metadata: Metadata = {
+  title: '환불 관리 | 바투',
+  description: '환불 요청을 처리하세요',
+}
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Clock, AlertCircle } from 'lucide-react'

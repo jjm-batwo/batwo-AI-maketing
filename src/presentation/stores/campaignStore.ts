@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 
 interface CampaignFilters {
   status: 'ALL' | 'ACTIVE' | 'PAUSED' | 'DRAFT' | 'COMPLETED'
-  sortBy: 'createdAt' | 'name' | 'spend' | 'roas'
+  sortBy: 'createdAt' | 'name' | 'spend' | 'roas' | 'ctr'
   sortOrder: 'asc' | 'desc'
   searchQuery: string
 }

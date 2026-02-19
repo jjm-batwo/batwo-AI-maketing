@@ -16,6 +16,13 @@ import { getSampleReportForWebViewer, getSampleReportDTO } from '@/lib/sample-re
 import { SampleReportActions } from './SampleReportActions'
 import Link from 'next/link'
 
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: '샘플 보고서 | 바투',
+  description: '바투 마케팅 보고서 샘플을 확인하세요',
+}
+
 export const dynamic = 'force-static'
 
 export default function SampleReportPage() {

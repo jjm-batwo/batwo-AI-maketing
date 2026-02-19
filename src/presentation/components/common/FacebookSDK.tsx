@@ -24,7 +24,7 @@ export function FacebookSDK() {
               appId: appId,
               cookie: true,
               xfbml: true,
-              version: 'v21.0',
+              version: 'v25.0',
             })
             window.FB.AppEvents.logPageView()
           }

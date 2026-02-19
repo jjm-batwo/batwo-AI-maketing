@@ -1,7 +1,13 @@
+import type { Metadata } from 'next'
 import { getAuthenticatedUser } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { ReportsClient } from './ReportsClient'
+
+export const metadata: Metadata = {
+  title: '보고서 | 바투',
+  description: '마케팅 성과 보고서를 확인하고 관리하세요',
+}
 
 export default async function ReportsPage() {
   const user = await getAuthenticatedUser()
@@ -40,8 +46,8 @@ export default async function ReportsPage() {
             AI가 분석한 주간 성과 보고서를 확인하세요
           </p>
         </div>
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4">
-          <p className="text-sm text-red-800">{error}</p>
+        <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-4">
+          <p className="text-sm text-destructive">{error}</p>
         </div>
       </div>
     )

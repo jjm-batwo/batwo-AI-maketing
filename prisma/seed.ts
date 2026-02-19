@@ -2,6 +2,7 @@ import { PrismaClient, CampaignObjective, CampaignStatus, ReportType, ReportStat
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import 'dotenv/config';
+import { encryptToken } from '../src/application/utils/TokenEncryption';
 
 // Prisma 7.x: pg adapter 사용
 const connectionString = process.env.DATABASE_URL;
@@ -187,7 +188,7 @@ async function seedDemoData() {
     create: {
       userId: adminUser.id,
       metaAccountId: 'act_admin_987654321',
-      accessToken: 'admin_demo_access_token_for_review',
+      accessToken: encryptToken('admin_demo_access_token_for_review'),
       businessName: '바투 관리자 계정',
       currency: 'KRW',
       timezone: 'Asia/Seoul',
@@ -216,7 +217,7 @@ async function seedDemoData() {
     create: {
       userId: demoUser.id,
       metaAccountId: 'act_123456789012345',
-      accessToken: 'demo_access_token_for_review',
+      accessToken: encryptToken('demo_access_token_for_review'),
       businessName: '바투컴퍼니',
       currency: 'KRW',
       timezone: 'Asia/Seoul',

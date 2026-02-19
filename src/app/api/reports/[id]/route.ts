@@ -80,6 +80,7 @@ export async function DELETE(
     await reportRepository.delete(id)
 
     revalidateTag('reports', 'default')
+    revalidateTag('admin-dashboard', 'default')
 
     return new NextResponse(null, { status: 204 })
   } catch (error) {

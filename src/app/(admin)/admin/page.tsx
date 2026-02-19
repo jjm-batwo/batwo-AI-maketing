@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { AdminStatsCard } from '@/presentation/components/admin/common'
@@ -13,6 +14,11 @@ import {
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import { cookies } from 'next/headers'
+
+export const metadata: Metadata = {
+  title: '관리자 대시보드 | 바투',
+  description: '서비스 전체 현황을 확인하세요',
+}
 
 interface DashboardData {
   users: {

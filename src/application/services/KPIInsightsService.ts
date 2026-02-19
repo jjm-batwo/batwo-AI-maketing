@@ -74,6 +74,24 @@ interface CampaignKPIData {
 }
 
 // ============================================================================
+// Types for live data override
+// ============================================================================
+
+export type CampaignAggregate = {
+  totalImpressions: number
+  totalClicks: number
+  totalLinkClicks: number
+  totalConversions: number
+  totalSpend: number
+  totalRevenue: number
+}
+
+export interface LiveDataOverrides {
+  todayMap?: Map<string, CampaignAggregate>
+  yesterdayMap?: Map<string, CampaignAggregate>
+}
+
+// ============================================================================
 // Service
 // ============================================================================
 
@@ -85,8 +103,9 @@ export class KPIInsightsService {
 
   /**
    * 사용자의 모든 캠페인에 대한 KPI 인사이트 생성
+   * @param liveOverrides Meta API에서 가져온 실시간 데이터 (DB 대신 사용)
    */
-  async generateInsights(userId: string): Promise<KPIInsightsResult> {
+  async generateInsights(userId: string, liveOverrides?: LiveDataOverrides): Promise<KPIInsightsResult> {
     const insights: KPIInsight[] = []
     const now = new Date()
     const currentHour = now.getHours()
@@ -110,10 +129,11 @@ export class KPIInsightsService {
     last7DaysStart.setUTCDate(last7DaysStart.getUTCDate() - 7)
 
     // 배치 쿼리로 모든 캠페인의 KPI 데이터 한 번에 조회 (N+1 방지)
+    // liveOverrides가 있으면 Meta API 실시간 데이터 우선 사용
     const campaignIds = activeCampaigns.map(c => c.id)
     const [todayMap, yesterdayMap, last7DaysMap] = await Promise.all([
-      this.kpiRepository.aggregateByCampaignIds(campaignIds, todayStart, todayEnd),
-      this.kpiRepository.aggregateByCampaignIds(campaignIds, yesterdayStart, yesterdayEnd),
+      liveOverrides?.todayMap ?? this.kpiRepository.aggregateByCampaignIds(campaignIds, todayStart, todayEnd),
+      liveOverrides?.yesterdayMap ?? this.kpiRepository.aggregateByCampaignIds(campaignIds, yesterdayStart, yesterdayEnd),
       this.kpiRepository.aggregateByCampaignIds(campaignIds, last7DaysStart, yesterdayEnd),
     ])
 

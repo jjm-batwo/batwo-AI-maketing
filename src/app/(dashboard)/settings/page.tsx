@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ChevronRight, Radio, CreditCard } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: '설정 | 바투',
+  description: '계정 및 서비스 설정을 관리하세요',
+}
 
 const settingsItems = [
   {

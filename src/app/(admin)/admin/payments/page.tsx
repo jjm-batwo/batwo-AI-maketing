@@ -1,5 +1,11 @@
+import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { PaymentsFilterBar } from './PaymentsFilterBar'
+
+export const metadata: Metadata = {
+  title: '결제 관리 | 바투',
+  description: '결제 내역을 확인하고 관리하세요',
+}
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

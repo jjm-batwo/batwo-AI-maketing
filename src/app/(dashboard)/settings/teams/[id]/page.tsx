@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import { auth } from '@/infrastructure/auth/auth'
 import { redirect } from 'next/navigation'
 import { TeamSettings } from '@/presentation/components/team'
+
+export const metadata: Metadata = {
+  title: '팀 상세 | 바투',
+  description: '팀 설정과 멤버를 관리하세요',
+}
 
 interface TeamSettingsPageProps {
   params: Promise<{ id: string }>

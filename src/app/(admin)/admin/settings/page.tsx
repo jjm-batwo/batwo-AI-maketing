@@ -1,5 +1,11 @@
+import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { AdminRoleManagement } from './AdminRoleManagement'
+
+export const metadata: Metadata = {
+  title: '관리자 설정 | 바투',
+  description: '서비스 설정을 관리하세요',
+}
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'

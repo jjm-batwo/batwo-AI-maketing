@@ -58,19 +58,23 @@ export default function DashboardPage() {
   const changes = summary?.changes
   const chartData = data?.chartData ?? []
 
-  // KPI별 스파크라인 mock 데이터 (상승/하락/보합 패턴)
-  const sparklinePatterns = {
-    roas:        [3.2, 3.5, 3.1, 3.8, 3.6, 4.0, 4.2],
-    spend:       [120, 135, 118, 142, 138, 155, 149],
-    conversions: [42, 38, 45, 50, 48, 52, 55],
-    ctr:         [2.1, 2.3, 2.0, 2.4, 2.2, 2.6, 2.5],
-    clicks:      [310, 290, 340, 380, 360, 400, 420],
-    impressions: [8200, 7900, 8600, 9100, 8800, 9500, 9300],
-    revenue:     [580, 620, 545, 670, 640, 710, 690],
-    cpa:         [2800, 2600, 2950, 2500, 2700, 2400, 2450],
-    cvr:         [3.5, 3.2, 3.8, 4.0, 3.7, 4.2, 4.1],
-    reach:       [5400, 5100, 5700, 6000, 5800, 6300, 6100],
-  }
+  // chartData에서 KPI별 스파크라인 데이터 추출 (실데이터)
+  const sparklinePatterns = useMemo(() => {
+    if (chartData.length === 0) return {} as Record<string, number[]>
+
+    return {
+      roas:        chartData.map(d => d.roas),
+      spend:       chartData.map(d => d.spend),
+      conversions: chartData.map(d => d.conversions),
+      ctr:         chartData.map(d => d.impressions > 0 ? (d.clicks / d.impressions) * 100 : 0),
+      clicks:      chartData.map(d => d.clicks),
+      impressions: chartData.map(d => d.impressions),
+      revenue:     chartData.map(d => d.revenue),
+      cpa:         chartData.map(d => d.conversions > 0 ? d.spend / d.conversions : 0),
+      cvr:         chartData.map(d => d.clicks > 0 ? (d.conversions / d.clicks) * 100 : 0),
+      reach:       chartData.map(d => d.impressions),
+    }
+  }, [chartData])
 
   // 캠페인 상태별 분포 계산 (실데이터 우선, 없으면 mock)
   const campaignStatusSegments = useMemo(() => {
@@ -163,7 +167,7 @@ export default function DashboardPage() {
         </div>
         <Card className="border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="mx-auto w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+            <div className="mx-auto w-16 h-16 rounded-full bg-primary/15 flex items-center justify-center mb-4">
               <Link2 className="h-8 w-8 text-blue-600" />
             </div>
             <h2 className="text-xl font-semibold mb-2">{t('metaConnect.notConnected.title')}</h2>
@@ -291,6 +295,17 @@ export default function DashboardPage() {
           {showApiSource && <ApiSourceBadge endpoint="GET /act_{id}/insights" permission="ads_read" className="mt-2" />}
         </div>
         <div className="flex items-center gap-2">
+          {/* 동기화 결과 피드백 */}
+          {sync.isSuccess && sync.data && (
+            <span className="text-xs text-green-500">
+              KPI {sync.data.insights.synced}건 동기화
+            </span>
+          )}
+          {sync.isError && (
+            <span className="text-xs text-destructive">
+              동기화 실패
+            </span>
+          )}
           <Button
             variant="outline"
             size="sm"
@@ -400,7 +415,7 @@ export default function DashboardPage() {
         <Suspense fallback={
           <Card>
             <CardHeader><CardTitle>AI 인사이트</CardTitle></CardHeader>
-            <CardContent><div className="h-48 animate-pulse bg-gray-100 rounded" /></CardContent>
+            <CardContent><div className="h-48 animate-pulse bg-muted rounded" /></CardContent>
           </Card>
         }>
           <AIInsights
@@ -414,7 +429,7 @@ export default function DashboardPage() {
             <CardTitle>{t('dashboard.activeCampaigns')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <Suspense fallback={<div className="h-48 animate-pulse bg-gray-100 rounded" />}>
+            <Suspense fallback={<div className="h-48 animate-pulse bg-muted rounded" />}>
               <CampaignSummaryTable campaigns={campaignSummaries} isLoading={isLoading} />
             </Suspense>
           </CardContent>

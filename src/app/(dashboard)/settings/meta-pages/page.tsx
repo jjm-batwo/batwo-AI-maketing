@@ -142,7 +142,7 @@ export default function MetaPagesPage() {
       </div>
 
       {error && (
-        <div className="mb-6 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+        <div className="mb-6 flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 p-4 text-destructive">
           <AlertCircle className="h-5 w-5" />
           <span>{error}</span>
         </div>
@@ -190,6 +190,7 @@ export default function MetaPagesPage() {
                         alt={page.name}
                         width={48}
                         height={48}
+                        sizes="48px"
                         className="rounded-full"
                       />
                     ) : (

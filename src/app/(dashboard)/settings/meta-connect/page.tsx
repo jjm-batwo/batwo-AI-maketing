@@ -104,7 +104,7 @@ function MetaConnectContent() {
     const redirectUri = encodeURIComponent(`${window.location.origin}/api/meta/callback`)
     const scope = encodeURIComponent('ads_management,ads_read,business_management,pages_show_list,pages_read_engagement')
 
-    window.location.href = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code`
+    window.location.href = `https://www.facebook.com/v25.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code`
   }
 
   const handleDisconnect = async () => {
@@ -201,14 +201,14 @@ function MetaConnectContent() {
       </h1>
 
       {success && (
-        <div className="mb-6 flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-4 text-green-700">
+        <div className="mb-6 flex items-center gap-2 rounded-lg border border-green-500/20 bg-green-500/10 p-4 text-green-700 dark:text-green-400">
           <CheckCircle className="h-5 w-5" />
           <span>{t('metaConnect.successMessage')}</span>
         </div>
       )}
 
       {error && (
-        <div className="mb-6 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+        <div className="mb-6 flex items-center gap-2 rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-red-700 dark:text-red-400">
           <AlertCircle className="h-5 w-5" />
           <span>{error}</span>
         </div>
@@ -217,8 +217,8 @@ function MetaConnectContent() {
       {syncMessage && (
         <div className={`mb-6 flex items-center gap-2 rounded-lg border p-4 ${
           syncMessage.type === 'success'
-            ? 'border-green-200 bg-green-50 text-green-700'
-            : 'border-red-200 bg-red-50 text-red-700'
+            ? 'border-green-500/20 bg-green-500/10 text-green-700 dark:text-green-400'
+            : 'border-red-500/20 bg-red-500/10 text-red-700 dark:text-red-400'
         }`}>
           {syncMessage.type === 'success' ? (
             <CheckCircle className="h-5 w-5" />
@@ -250,11 +250,11 @@ function MetaConnectContent() {
               </div>
             ) : sessionExpired ? (
               <div className="space-y-4 text-center py-4">
-                <div className="mx-auto w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center">
+                <div className="mx-auto w-12 h-12 rounded-full bg-orange-500/15 flex items-center justify-center">
                   <AlertCircle className="h-6 w-6 text-orange-600" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">{t('metaConnect.sessionExpired.title')}</p>
+                  <p className="font-medium text-foreground">{t('metaConnect.sessionExpired.title')}</p>
                   <p className="text-sm text-muted-foreground mt-1">{t('metaConnect.sessionExpired.description')}</p>
                 </div>
                 <Button
@@ -283,8 +283,8 @@ function MetaConnectContent() {
                       key={account.id}
                       className={`flex cursor-pointer items-center justify-between rounded-lg border p-4 transition-colors ${
                         selectedAccountId === account.id
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 hover:bg-gray-50'
+                          ? 'border-primary bg-primary/10 dark:bg-primary/20'
+                          : 'border-border hover:bg-muted'
                       }`}
                     >
                       <div className="flex items-center gap-3">
@@ -416,44 +416,44 @@ function MetaConnectContent() {
               </div>
 
               {/* Why Connect Section - Permission Explanations */}
-              <div className="rounded-lg border bg-gradient-to-br from-blue-50 to-purple-50 p-4">
-                <h3 className="mb-3 font-semibold text-gray-900">{t('metaConnect.whyConnect.title')}</h3>
-                <p className="mb-4 text-sm text-gray-600">{t('metaConnect.whyConnect.description')}</p>
+              <div className="rounded-lg border bg-gradient-to-br from-primary/5 to-primary/10 p-4">
+                <h3 className="mb-3 font-semibold text-foreground">{t('metaConnect.whyConnect.title')}</h3>
+                <p className="mb-4 text-sm text-muted-foreground">{t('metaConnect.whyConnect.description')}</p>
                 <div className="grid gap-3">
                   <div className="flex items-start gap-3">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-100">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/15">
                       <BarChart3 className="h-4 w-4 text-blue-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900 text-sm">{t('metaConnect.whyConnect.permissions.adsRead.title')}</p>
-                      <p className="text-xs text-gray-600">{t('metaConnect.whyConnect.permissions.adsRead.description')}</p>
+                      <p className="font-medium text-foreground text-sm">{t('metaConnect.whyConnect.permissions.adsRead.title')}</p>
+                      <p className="text-xs text-muted-foreground">{t('metaConnect.whyConnect.permissions.adsRead.description')}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-100">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-500/15">
                       <Zap className="h-4 w-4 text-purple-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900 text-sm">{t('metaConnect.whyConnect.permissions.adsManagement.title')}</p>
-                      <p className="text-xs text-gray-600">{t('metaConnect.whyConnect.permissions.adsManagement.description')}</p>
+                      <p className="font-medium text-foreground text-sm">{t('metaConnect.whyConnect.permissions.adsManagement.title')}</p>
+                      <p className="text-xs text-muted-foreground">{t('metaConnect.whyConnect.permissions.adsManagement.description')}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-500/15">
                       <Building2 className="h-4 w-4 text-green-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900 text-sm">{t('metaConnect.whyConnect.permissions.businessManagement.title')}</p>
-                      <p className="text-xs text-gray-600">{t('metaConnect.whyConnect.permissions.businessManagement.description')}</p>
+                      <p className="font-medium text-foreground text-sm">{t('metaConnect.whyConnect.permissions.businessManagement.title')}</p>
+                      <p className="text-xs text-muted-foreground">{t('metaConnect.whyConnect.permissions.businessManagement.description')}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-500/15">
                       <Users className="h-4 w-4 text-orange-600" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900 text-sm">{t('metaConnect.whyConnect.permissions.pagesAccess.title')}</p>
-                      <p className="text-xs text-gray-600">{t('metaConnect.whyConnect.permissions.pagesAccess.description')}</p>
+                      <p className="font-medium text-foreground text-sm">{t('metaConnect.whyConnect.permissions.pagesAccess.title')}</p>
+                      <p className="text-xs text-muted-foreground">{t('metaConnect.whyConnect.permissions.pagesAccess.description')}</p>
                     </div>
                   </div>
                 </div>

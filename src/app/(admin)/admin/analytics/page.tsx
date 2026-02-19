@@ -1,5 +1,11 @@
+import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { AnalyticsPeriodSelector } from './AnalyticsPeriodSelector'
+
+export const metadata: Metadata = {
+  title: '서비스 분석 | 바투',
+  description: '서비스 전체 성과를 분석하세요',
+}
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Users, CreditCard, TrendingUp, TrendingDown, Target, ArrowUpRight, ArrowDownRight, Minus, BarChart3 } from 'lucide-react'
 
@@ -59,7 +65,7 @@ async function fetchAnalytics(period: string): Promise<AnalyticsData | null> {
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
     const res = await fetch(`${baseUrl}/api/admin/analytics?period=${period}`, {
       headers: { Cookie: cookieStore.toString() },
-      cache: 'no-store',
+      next: { revalidate: 300, tags: ['admin-analytics'] },
     })
     if (!res.ok) return null
     return res.json()

@@ -1,5 +1,11 @@
+import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
 import { UsersFilterBar } from './UsersFilterBar'
+
+export const metadata: Metadata = {
+  title: '회원 관리 | 바투',
+  description: '서비스 사용자를 관리하세요',
+}
 import {
   Card,
   CardContent,

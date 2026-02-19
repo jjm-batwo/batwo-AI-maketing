@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getAuthenticatedUser } from '@/lib/auth'
 import { redirect, notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
@@ -5,6 +6,11 @@ import { CampaignDetailClient } from './CampaignDetailClient'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: '캠페인 상세 | 바투',
+  description: '캠페인 상세 정보와 KPI를 확인하세요',
+}
 
 interface CampaignDetailPageProps {
   params: Promise<{ id: string }>

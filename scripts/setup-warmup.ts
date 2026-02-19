@@ -3,6 +3,7 @@ import { PrismaClient } from '../src/generated/prisma'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 import { MetaAdsWarmupClient } from '../src/infrastructure/external/meta-ads/MetaAdsWarmupClient'
+import { encryptToken } from '../src/application/utils/TokenEncryption'
 
 const token = 'EAASoIP0CqaABQYYaZCdx2HIOWOg6faMu06eTov6FcQiwj66sdZBDpafA4C9zWB55rUfPyVU88iKeCfsZCHvjA8ZCGDVUfMPnBylUQjUruqHt9UoFOGD0YZBS0TA80R43ZAxORLaG4bPrND5HT3fZCGpzz69yBFtv8WZBKILpbjtDE9J8h2GPCytbMC0PZBrzUaEBtZClGzxxCTbXJNROC81umKeg0SNNrKX4LV3gZDZD'
 const accountId = 'act_517762859391394'
@@ -39,7 +40,7 @@ async function main() {
         userId: user.id,
         metaAccountId: accountId,
         businessName: 'Batwocompany',
-        accessToken: token,
+        accessToken: encryptToken(token),
         tokenExpiry: new Date(Date.now() + 2 * 60 * 60 * 1000),
       }
     })

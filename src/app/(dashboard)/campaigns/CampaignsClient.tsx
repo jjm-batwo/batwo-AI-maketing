@@ -1,15 +1,17 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ApiSourceBadge } from '@/presentation/components/common/ApiSourceBadge'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
-import { CampaignList } from '@/presentation/components/campaign'
+import { CampaignTable } from '@/presentation/components/campaign'
 import { useCampaignStore } from '@/presentation/stores'
+import { useDashboardKPI } from '@/presentation/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Plus, Search } from 'lucide-react'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Plus, Search, Pause, Play, Trash2 } from 'lucide-react'
 import {
   Select,
   SelectContent,
@@ -26,6 +28,15 @@ const STATUS_PRIORITY: Record<string, number> = {
   COMPLETED: 4,
 }
 
+type KPIPeriod = 'today' | 'yesterday' | '7d' | '30d'
+
+const PERIOD_LABELS: Record<KPIPeriod, string> = {
+  today: '오늘',
+  yesterday: '어제',
+  '7d': '최근 7일',
+  '30d': '최근 30일',
+}
+
 interface CampaignWithKPI {
   id: string
   status: string
@@ -35,27 +46,27 @@ interface CampaignWithKPI {
 
 interface CampaignsClientProps {
   initialCampaigns: CampaignWithKPI[]
-  initialKpiData?: {
-    campaignBreakdown?: Array<{
-      campaignId: string
-      spend: number
-      roas: number
-    }>
-  }
 }
 
-export function CampaignsClient({ initialCampaigns, initialKpiData }: CampaignsClientProps) {
+export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
   const t = useTranslations()
   const searchParams = useSearchParams()
   const showApiSource = searchParams.get('showApiSource') === 'true'
-  const { filters, setFilters } = useCampaignStore()
+  const { filters, setFilters, selectedCampaignIds } = useCampaignStore()
+  const [period, setPeriod] = useState<KPIPeriod>('7d')
 
-  // 캠페인 데이터에 KPI 지출/ROAS 병합
+  // 기간별 KPI 데이터 (클라이언트 사이드 fetch)
+  const { data: kpiData, isLoading: isKpiLoading } = useDashboardKPI({
+    period,
+    includeBreakdown: true,
+  })
+
+  // 캠페인 데이터에 KPI 지출/ROAS/CTR 병합
   const rawCampaigns = useMemo((): CampaignWithKPI[] => {
     if (initialCampaigns.length === 0) return []
 
     const breakdownMap = new Map(
-      (initialKpiData?.campaignBreakdown ?? []).map((b: { campaignId: string; spend: number; roas: number }) => [b.campaignId, b])
+      (kpiData?.campaignBreakdown ?? []).map((b: { campaignId: string; spend: number; roas: number; ctr: number }) => [b.campaignId, b])
     )
 
     return initialCampaigns.map((campaign): CampaignWithKPI => {
@@ -64,9 +75,10 @@ export function CampaignsClient({ initialCampaigns, initialKpiData }: CampaignsC
         ...campaign,
         spend: breakdown?.spend ?? 0,
         roas: breakdown?.roas ?? 0,
+        ctr: breakdown?.ctr ?? 0,
       }
     })
-  }, [initialCampaigns, initialKpiData?.campaignBreakdown])
+  }, [initialCampaigns, kpiData?.campaignBreakdown])
 
   // 활성 캠페인을 상단에 배치하는 정렬 로직
   const campaigns = useMemo(() => {
@@ -105,54 +117,93 @@ export function CampaignsClient({ initialCampaigns, initialKpiData }: CampaignsC
 
       {/* Filters and List Container */}
       <div className="bg-card border border-border/50 rounded-2xl p-6 space-y-6">
-        {/* Filters */}
-        <div className="flex flex-col gap-4 sm:flex-row">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder={t('campaigns.searchPlaceholder')}
-              value={filters.searchQuery}
-              onChange={(e) => setFilters({ searchQuery: e.target.value })}
-              className="pl-9 bg-white/50 dark:bg-black/10 border-border/50 focus:bg-white dark:focus:bg-black/30 transition-colors"
-            />
+        {/* Period Tabs + Filters */}
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <Tabs value={period} onValueChange={(v) => setPeriod(v as KPIPeriod)} className="w-full sm:w-auto">
+              <TabsList className="grid w-full grid-cols-4 sm:w-auto bg-muted/50 dark:bg-muted/20">
+                <TabsTrigger value="today">오늘</TabsTrigger>
+                <TabsTrigger value="yesterday">어제</TabsTrigger>
+                <TabsTrigger value="7d">7일</TabsTrigger>
+                <TabsTrigger value="30d">30일</TabsTrigger>
+              </TabsList>
+            </Tabs>
+            <span className="text-xs text-muted-foreground">
+              {isKpiLoading ? '데이터 로딩 중...' : `${PERIOD_LABELS[period]} 기준 성과 데이터`}
+            </span>
           </div>
-          <Select
-            value={filters.status}
-            onValueChange={(value) =>
-              setFilters({ status: value as typeof filters.status })
-            }
-          >
-            <SelectTrigger className="w-[160px] bg-white/50 dark:bg-black/10 border-border/50">
-              <SelectValue placeholder={t('campaigns.status.label')} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">{t('campaigns.status.all')}</SelectItem>
-              <SelectItem value="ACTIVE">{t('campaigns.status.active')}</SelectItem>
-              <SelectItem value="PAUSED">{t('campaigns.status.paused')}</SelectItem>
-              <SelectItem value="DRAFT">{t('campaigns.status.draft')}</SelectItem>
-              <SelectItem value="COMPLETED">{t('campaigns.status.completed')}</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select
-            value={filters.sortBy}
-            onValueChange={(value) =>
-              setFilters({ sortBy: value as typeof filters.sortBy })
-            }
-          >
-            <SelectTrigger className="w-[160px] bg-white/50 dark:bg-black/10 border-border/50">
-              <SelectValue placeholder={t('campaigns.sort.label')} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="createdAt">{t('campaigns.sort.createdAt')}</SelectItem>
-              <SelectItem value="name">{t('campaigns.sort.name')}</SelectItem>
-              <SelectItem value="spend">{t('campaigns.sort.spend')}</SelectItem>
-              <SelectItem value="roas">{t('campaigns.sort.roas')}</SelectItem>
-            </SelectContent>
-          </Select>
+
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder={t('campaigns.searchPlaceholder')}
+                value={filters.searchQuery}
+                onChange={(e) => setFilters({ searchQuery: e.target.value })}
+                className="pl-9 bg-white/50 dark:bg-black/10 border-border/50 focus:bg-white dark:focus:bg-black/30 transition-colors"
+              />
+            </div>
+            <Select
+              value={filters.status}
+              onValueChange={(value) =>
+                setFilters({ status: value as typeof filters.status })
+              }
+            >
+              <SelectTrigger className="w-[160px] bg-white/50 dark:bg-black/10 border-border/50">
+                <SelectValue placeholder={t('campaigns.status.label')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">{t('campaigns.status.all')}</SelectItem>
+                <SelectItem value="ACTIVE">{t('campaigns.status.active')}</SelectItem>
+                <SelectItem value="PAUSED">{t('campaigns.status.paused')}</SelectItem>
+                <SelectItem value="DRAFT">{t('campaigns.status.draft')}</SelectItem>
+                <SelectItem value="COMPLETED">{t('campaigns.status.completed')}</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select
+              value={filters.sortBy}
+              onValueChange={(value) =>
+                setFilters({ sortBy: value as typeof filters.sortBy })
+              }
+            >
+              <SelectTrigger className="w-[160px] bg-white/50 dark:bg-black/10 border-border/50">
+                <SelectValue placeholder={t('campaigns.sort.label')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="createdAt">{t('campaigns.sort.createdAt')}</SelectItem>
+                <SelectItem value="name">{t('campaigns.sort.name')}</SelectItem>
+                <SelectItem value="spend">{t('campaigns.sort.spend')}</SelectItem>
+                <SelectItem value="roas">{t('campaigns.sort.roas')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        {/* Campaign List */}
-        <CampaignList campaigns={campaigns as any} isLoading={false} />
+        {/* Bulk Action Bar */}
+        {selectedCampaignIds.length > 0 && (
+          <div className="flex items-center gap-3 rounded-lg border border-primary/20 bg-primary/5 p-3">
+            <span className="text-sm font-medium">
+              {selectedCampaignIds.length}개 선택됨
+            </span>
+            <div className="flex gap-2 ml-auto">
+              <Button variant="outline" size="sm">
+                <Pause className="mr-1 h-3 w-3" />
+                일시정지
+              </Button>
+              <Button variant="outline" size="sm">
+                <Play className="mr-1 h-3 w-3" />
+                재개
+              </Button>
+              <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
+                <Trash2 className="mr-1 h-3 w-3" />
+                삭제
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Campaign Table */}
+        <CampaignTable campaigns={campaigns as any} isLoading={isKpiLoading} />
       </div>
     </div>
   )

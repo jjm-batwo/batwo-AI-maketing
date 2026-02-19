@@ -58,10 +58,16 @@ export function useSync() {
 
   return useMutation({
     mutationFn: () => campaignSyncService.syncWithMeta(),
-    onSuccess: () => {
-      // Invalidate all related queries
+    onSuccess: (data) => {
+      // Invalidate all related queries to force refetch with fresh data
       queryClient.invalidateQueries({ queryKey: ['campaigns'] })
       queryClient.invalidateQueries({ queryKey: ['dashboard', 'kpi'] })
+      queryClient.invalidateQueries({ queryKey: ['kpi-insights'] })
+
+      console.log('[useSync] 동기화 완료:', data.message)
+    },
+    onError: (error) => {
+      console.error('[useSync] 동기화 실패:', error.message)
     },
   })
 }
