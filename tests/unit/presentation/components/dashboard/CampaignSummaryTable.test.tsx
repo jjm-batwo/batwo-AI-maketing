@@ -127,7 +127,7 @@ describe('CampaignSummaryTable', () => {
 
       const completedText = screen.getByText('완료')
       const dotSpan = completedText.previousSibling as HTMLElement
-      expect(dotSpan).toHaveClass('bg-gray-400')
+      expect(dotSpan).toHaveClass('bg-muted-foreground')
     })
 
     it('should format spend with currency', () => {

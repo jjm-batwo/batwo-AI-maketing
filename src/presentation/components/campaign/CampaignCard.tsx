@@ -27,11 +27,11 @@ interface CampaignCardProps {
 }
 
 const statusConfig = {
-  ACTIVE: { label: '진행 중', className: 'bg-green-100 text-green-700' },
-  PAUSED: { label: '일시정지', className: 'bg-yellow-100 text-yellow-700' },
-  COMPLETED: { label: '완료', className: 'bg-gray-100 text-gray-700' },
-  DRAFT: { label: '초안', className: 'bg-blue-100 text-blue-700' },
-  PENDING_REVIEW: { label: '검토 중', className: 'bg-purple-100 text-purple-700' },
+  ACTIVE: { label: '진행 중', className: 'bg-green-500/15 text-green-500' },
+  PAUSED: { label: '일시정지', className: 'bg-yellow-500/15 text-yellow-500' },
+  COMPLETED: { label: '완료', className: 'bg-muted text-muted-foreground' },
+  DRAFT: { label: '초안', className: 'bg-primary/15 text-primary' },
+  PENDING_REVIEW: { label: '검토 중', className: 'bg-purple-500/15 text-purple-500' },
 }
 
 const objectiveLabels: Record<string, string> = {

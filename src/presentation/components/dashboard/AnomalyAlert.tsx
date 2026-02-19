@@ -144,20 +144,20 @@ interface AnomalyResponse {
 const SEVERITY_CONFIG = {
   critical: {
     icon: AlertCircle,
-    color: 'text-red-600 bg-red-50 border-red-200',
-    badgeColor: 'bg-red-100 text-red-700 border-red-200',
+    color: 'text-red-600 bg-red-500/10 border-red-500/20 dark:text-red-400',
+    badgeColor: 'bg-red-500/15 text-red-700 border-red-500/20 dark:text-red-400',
     label: '긴급',
   },
   warning: {
     icon: AlertTriangle,
-    color: 'text-amber-600 bg-amber-50 border-amber-200',
-    badgeColor: 'bg-amber-100 text-amber-700 border-amber-200',
+    color: 'text-amber-600 bg-amber-500/10 border-amber-500/20 dark:text-amber-400',
+    badgeColor: 'bg-amber-500/15 text-amber-700 border-amber-500/20 dark:text-amber-400',
     label: '주의',
   },
   info: {
     icon: Info,
-    color: 'text-blue-600 bg-blue-50 border-blue-200',
-    badgeColor: 'bg-blue-100 text-blue-700 border-blue-200',
+    color: 'text-blue-600 bg-blue-500/10 border-blue-500/20 dark:text-blue-400',
+    badgeColor: 'bg-blue-500/15 text-blue-700 border-blue-500/20 dark:text-blue-400',
     label: '정보',
   },
 }
@@ -188,9 +188,9 @@ const CAUSE_CATEGORY_LABELS: Record<CauseCategory, string> = {
 }
 
 const PRIORITY_COLORS = {
-  high: 'bg-red-100 text-red-700',
-  medium: 'bg-amber-100 text-amber-700',
-  low: 'bg-gray-100 text-gray-700',
+  high: 'bg-red-500/15 text-red-700 dark:text-red-400',
+  medium: 'bg-amber-500/15 text-amber-700 dark:text-amber-400',
+  low: 'bg-muted text-muted-foreground',
 }
 
 // ============================================
@@ -463,8 +463,8 @@ export function AnomalyAlert({ className, maxItems = 5, showRootCause = true }: 
           <div className="space-y-2">
             {Array.from({ length: 2 }).map((_, i) => (
               <div key={i} className="animate-pulse rounded-lg border p-4">
-                <div className="mb-2 h-4 w-24 rounded bg-gray-200" />
-                <div className="h-3 w-full rounded bg-gray-200" />
+                <div className="mb-2 h-4 w-24 rounded bg-muted" />
+                <div className="h-3 w-full rounded bg-muted" />
               </div>
             ))}
           </div>

@@ -79,9 +79,9 @@ export function KPICard({
       <Card className={cn('relative overflow-hidden', className)}>
         <CardContent className="p-4 md:p-6">
           <div data-testid="kpi-skeleton" className="animate-pulse space-y-3">
-            <div className="h-4 w-24 rounded bg-gray-200" />
-            <div className="h-8 w-32 rounded bg-gray-200" />
-            <div className="h-4 w-16 rounded bg-gray-200" />
+            <div className="h-4 w-24 rounded bg-muted" />
+            <div className="h-8 w-32 rounded bg-muted" />
+            <div className="h-4 w-16 rounded bg-muted" />
           </div>
         </CardContent>
       </Card>
@@ -122,7 +122,7 @@ export function KPICard({
           {sparklineData && sparklineData.length >= 2 && (
             <SparklineChart
               data={sparklineData}
-              color="hsl(var(--primary))"
+              color="var(--primary)"
               height={32}
               width={80}
             />

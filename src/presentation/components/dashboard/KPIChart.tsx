@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
@@ -27,7 +28,7 @@ const colorMap = {
 }
 
 const svgColorMap = {
-  primary: 'hsl(var(--primary))',
+  primary: 'var(--primary)',
   green: '#22c55e',
   blue: '#3b82f6',
   purple: '#a855f7',
@@ -50,12 +51,14 @@ export function KPIChart({
       {skeletonHeights.map((height, i) => (
         <div
           key={i}
-          className="flex-1 animate-pulse rounded-t bg-gray-200"
+          className="flex-1 animate-pulse rounded-t bg-muted"
           style={{ height: `${height}%` }}
         />
       ))}
     </div>
   )
+
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   const formatChartValue = (value: number): string => {
     // 값이 100 미만이면 소수점 3자리까지 (ROAS 등), 그 외에는 일반 포맷
@@ -63,6 +66,16 @@ export function KPIChart({
       return Number(value).toFixed(3)
     }
     return value.toLocaleString()
+  }
+
+  const formatTooltipValue = (value: number): string => {
+    if (yAxisFormat === 'multiplier') {
+      return `${value.toFixed(2)}x`
+    }
+    if (yAxisFormat === 'number') {
+      return value.toLocaleString()
+    }
+    return `${value.toLocaleString()}원`
   }
 
   const formatYAxisLabel = (value: number): string => {
@@ -146,7 +159,7 @@ export function KPIChart({
                 </span>
               ))}
             </div>
-            <div className="flex-1 h-32 border-l border-b border-border/30 pl-2 pb-0.5">
+            <div className="relative flex-1 h-32 border-l border-b border-border/30 pl-2 pb-0.5" onMouseLeave={() => setHoveredIndex(null)}>
               <svg width="100%" height="100%" viewBox={`0 0 ${svgWidth} ${svgHeight}`} preserveAspectRatio="none">
                 <defs>
                   <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
@@ -166,19 +179,65 @@ export function KPIChart({
                   strokeLinejoin="round"
                   vectorEffect="non-scaling-stroke"
                 />
-                {/* Data points */}
-                {data.map((point, index) => {
+                {/* 수직 가이드라인 */}
+                {hoveredIndex !== null && (() => {
+                  const hx = data.length > 1
+                    ? (hoveredIndex / (data.length - 1)) * svgWidth
+                    : svgWidth / 2
+                  return (
+                    <line x1={hx} y1={0} x2={hx} y2={svgHeight} stroke="currentColor" strokeOpacity={0.2} strokeWidth={1} vectorEffect="non-scaling-stroke" strokeDasharray="3,3" />
+                  )
+                })()}
+                {/* 데이터 포인트 + 호버 영역 */}
+                {data.map((_, index) => {
                   const x = data.length > 1
                     ? (index / (data.length - 1)) * svgWidth
                     : svgWidth / 2
-                  const y = svgHeight - (point.value / maxValue) * (svgHeight - 8) - 4
+                  const y = svgHeight - (data[index].value / maxValue) * (svgHeight - 8) - 4
+                  const sliceWidth = data.length > 1 ? svgWidth / (data.length - 1) : svgWidth
                   return (
-                    <circle key={index} cx={x} cy={y} r={3} fill={strokeColor} className="opacity-0 hover:opacity-100 transition-opacity">
-                      <title>{`${point.date || point.label}: ${formatChartValue(point.value)}`}</title>
-                    </circle>
+                    <g key={index}>
+                      {/* 투명 호버 영역 */}
+                      <rect
+                        x={x - sliceWidth / 2}
+                        y={0}
+                        width={sliceWidth}
+                        height={svgHeight}
+                        fill="transparent"
+                        onMouseEnter={() => setHoveredIndex(index)}
+                      />
+                      {/* 활성 데이터 포인트는 HTML로 렌더링 (SVG non-uniform 스케일링 회피) */}
+                    </g>
                   )
                 })}
               </svg>
+              {/* 데이터 포인트 (HTML) + 툴팁 */}
+              {hoveredIndex !== null && (() => {
+                const point = data[hoveredIndex]
+                const xPercent = data.length > 1
+                  ? (hoveredIndex / (data.length - 1)) * 100
+                  : 50
+                const yPercent = 100 - (point.value / maxValue) * (100 - 6) - 3
+                const dateLabel = formatDateLabel(point.date || point.label || '')
+                return (
+                  <>
+                    {/* 작은 원형 점 */}
+                    <div
+                      className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-1/2 h-2 w-2 rounded-full shadow-sm"
+                      style={{ left: `${xPercent}%`, top: `${yPercent}%`, backgroundColor: svgColorMap[color] }}
+                    />
+                    {/* 툴팁 */}
+                    <div
+                      className="pointer-events-none absolute -top-10 z-20 -translate-x-1/2 rounded-md bg-popover border border-border px-2.5 py-1.5 text-xs text-popover-foreground shadow-md whitespace-nowrap"
+                      style={{ left: `${xPercent}%` }}
+                    >
+                      <span className="text-muted-foreground">{dateLabel}</span>
+                      <span className="mx-1.5 text-border">|</span>
+                      <span className="font-semibold">{formatTooltipValue(point.value)}</span>
+                    </div>
+                  </>
+                )
+              })()}
             </div>
           </div>
 
@@ -238,7 +297,7 @@ export function KPIChart({
                     )}
                     style={{ height: `${adjustedHeight}%` }}
                   />
-                  <div className="absolute -top-8 left-1/2 hidden -translate-x-1/2 rounded bg-gray-900 px-2 py-1 text-xs text-white whitespace-nowrap group-hover:block z-10">
+                  <div className="absolute -top-8 left-1/2 hidden -translate-x-1/2 rounded bg-popover border border-border px-2 py-1 text-xs text-popover-foreground shadow-md whitespace-nowrap group-hover:block z-10">
                     {formatChartValue(point.value)}
                   </div>
                 </div>

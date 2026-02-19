@@ -56,7 +56,7 @@ export const CampaignList = memo(function CampaignList({
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="h-48 animate-pulse rounded-lg bg-gray-100"
+            className="h-48 animate-pulse rounded-lg bg-muted"
           />
         ))}
       </div>

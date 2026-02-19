@@ -105,7 +105,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
 
           {/* Progress bar */}
           <div
-            className="mt-4 h-2 w-full overflow-hidden rounded-full bg-gray-100"
+            className="mt-4 h-2 w-full overflow-hidden rounded-full bg-muted"
             role="progressbar"
             aria-valuenow={currentStep}
             aria-valuemin={1}

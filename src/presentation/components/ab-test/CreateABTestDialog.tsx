@@ -199,7 +199,7 @@ export function CreateABTestDialog({
                         {variant.isControl ? '컨트롤 그룹' : `변형 그룹 ${index}`}
                       </span>
                       {variant.isControl && (
-                        <span className="text-xs px-2 py-0.5 bg-gray-200 rounded">
+                        <span className="text-xs px-2 py-0.5 bg-muted rounded">
                           기준
                         </span>
                       )}

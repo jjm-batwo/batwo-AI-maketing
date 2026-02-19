@@ -14,10 +14,10 @@ interface Ad {
 }
 
 const statusLabels: Record<string, { label: string; className: string }> = {
-  ACTIVE: { label: '진행 중', className: 'bg-green-100 text-green-700' },
-  PAUSED: { label: '일시정지', className: 'bg-yellow-100 text-yellow-700' },
-  DELETED: { label: '삭제됨', className: 'bg-red-100 text-red-700' },
-  ARCHIVED: { label: '보관됨', className: 'bg-gray-100 text-gray-700' },
+  ACTIVE: { label: '진행 중', className: 'bg-green-500/15 text-green-500' },
+  PAUSED: { label: '일시정지', className: 'bg-yellow-500/15 text-yellow-500' },
+  DELETED: { label: '삭제됨', className: 'bg-red-500/15 text-red-500' },
+  ARCHIVED: { label: '보관됨', className: 'bg-muted text-muted-foreground' },
 }
 
 async function fetchAds(adSetId: string): Promise<{ ads: Ad[] }> {

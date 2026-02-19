@@ -45,7 +45,7 @@ export function QuotaStatusBadge({
         data-testid="quota-badge"
         className={cn(
           'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium',
-          'bg-gray-100 text-gray-700 border-gray-200',
+          'bg-muted text-muted-foreground border-border',
           className
         )}
       >

@@ -49,31 +49,31 @@ describe('CampaignCard', () => {
     it('should render ACTIVE status with correct styling', () => {
       render(<CampaignCard {...defaultProps} status="ACTIVE" />, { wrapper: Wrapper })
       const badge = screen.getByText('진행 중')
-      expect(badge).toHaveClass('bg-green-100', 'text-green-700')
+      expect(badge).toHaveClass('bg-green-500/15', 'text-green-500')
     })
 
     it('should render PAUSED status with correct styling', () => {
       render(<CampaignCard {...defaultProps} status="PAUSED" />, { wrapper: Wrapper })
       const badge = screen.getByText('일시정지')
-      expect(badge).toHaveClass('bg-yellow-100', 'text-yellow-700')
+      expect(badge).toHaveClass('bg-yellow-500/15', 'text-yellow-500')
     })
 
     it('should render COMPLETED status with correct styling', () => {
       render(<CampaignCard {...defaultProps} status="COMPLETED" />, { wrapper: Wrapper })
       const badge = screen.getByText('완료')
-      expect(badge).toHaveClass('bg-gray-100', 'text-gray-700')
+      expect(badge).toHaveClass('bg-muted', 'text-muted-foreground')
     })
 
     it('should render DRAFT status with correct styling', () => {
       render(<CampaignCard {...defaultProps} status="DRAFT" />, { wrapper: Wrapper })
       const badge = screen.getByText('초안')
-      expect(badge).toHaveClass('bg-blue-100', 'text-blue-700')
+      expect(badge).toHaveClass('bg-primary/15', 'text-primary')
     })
 
     it('should render PENDING_REVIEW status with correct styling', () => {
       render(<CampaignCard {...defaultProps} status="PENDING_REVIEW" />, { wrapper: Wrapper })
       const badge = screen.getByText('검토 중')
-      expect(badge).toHaveClass('bg-purple-100', 'text-purple-700')
+      expect(badge).toHaveClass('bg-purple-500/15', 'text-purple-500')
     })
   })
 

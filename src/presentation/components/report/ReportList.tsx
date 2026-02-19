@@ -28,9 +28,9 @@ const typeLabels = {
 }
 
 const statusConfig = {
-  PENDING: { label: '생성 중', className: 'bg-yellow-100 text-yellow-700' },
-  GENERATED: { label: '생성 완료', className: 'bg-green-100 text-green-700' },
-  SENT: { label: '발송됨', className: 'bg-blue-100 text-blue-700' },
+  PENDING: { label: '생성 중', className: 'bg-yellow-500/15 text-yellow-500' },
+  GENERATED: { label: '생성 완료', className: 'bg-green-500/15 text-green-500' },
+  SENT: { label: '발송됨', className: 'bg-blue-500/15 text-blue-500' },
 }
 
 export function ReportList({ reports, isLoading = false, onDownload }: ReportListProps) {
@@ -38,7 +38,7 @@ export function ReportList({ reports, isLoading = false, onDownload }: ReportLis
     return (
       <div className="space-y-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-24 animate-pulse rounded-lg bg-gray-100" />
+          <div key={i} className="h-24 animate-pulse rounded-lg bg-muted" />
         ))}
       </div>
     )

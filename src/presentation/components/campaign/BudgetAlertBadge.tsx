@@ -132,7 +132,7 @@ export function BudgetProgressBar({
 
   return (
     <div className={cn('w-full', className)}>
-      <div className="relative h-2 w-full overflow-hidden rounded-full bg-gray-200">
+      <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted">
         {/* 진행 바 */}
         <div
           className={cn('h-full transition-all duration-300', barColor)}
@@ -141,7 +141,7 @@ export function BudgetProgressBar({
         {/* 임계값 마커 */}
         {thresholdPercent && thresholdPercent < 100 && (
           <div
-            className="absolute top-0 h-full w-0.5 bg-gray-600"
+            className="absolute top-0 h-full w-0.5 bg-muted-foreground"
             style={{ left: `${thresholdPercent}%` }}
           />
         )}

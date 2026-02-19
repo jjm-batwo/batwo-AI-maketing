@@ -162,7 +162,7 @@ export function CampaignCreateForm({
               </span>
             </div>
             {/* Progress bar */}
-            <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-gray-100">
+            <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full bg-primary transition-all duration-300"
                 style={{ width: `${(currentStep / totalSteps) * 100}%` }}

@@ -52,10 +52,10 @@ export const CampaignSummaryTable = memo(function CampaignSummaryTable({
           <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="flex animate-pulse gap-4">
-                <div className="h-4 w-32 rounded bg-gray-200" />
-                <div className="h-4 w-16 rounded bg-gray-200" />
-                <div className="h-4 w-20 rounded bg-gray-200" />
-                <div className="h-4 w-12 rounded bg-gray-200" />
+                <div className="h-4 w-32 rounded bg-muted" />
+                <div className="h-4 w-16 rounded bg-muted" />
+                <div className="h-4 w-20 rounded bg-muted" />
+                <div className="h-4 w-12 rounded bg-muted" />
               </div>
             ))}
           </div>
@@ -108,7 +108,7 @@ export const CampaignSummaryTable = memo(function CampaignSummaryTable({
                         'h-2 w-2 rounded-full',
                         campaign.status === 'ACTIVE' && 'bg-green-500',
                         campaign.status === 'PAUSED' && 'bg-yellow-500',
-                        campaign.status === 'COMPLETED' && 'bg-gray-400',
+                        campaign.status === 'COMPLETED' && 'bg-muted-foreground',
                         campaign.status === 'DRAFT' && 'bg-blue-500',
                       )} />
                       <span className="text-sm">{status.label}</span>
