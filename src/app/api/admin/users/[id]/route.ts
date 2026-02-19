@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import {
   requireAdmin,
   requireSuperAdmin,
@@ -97,6 +98,8 @@ export async function PATCH(
     if (globalRole !== undefined) updateData.globalRole = globalRole
 
     const updatedUser = await userRepository.update(id, updateData)
+
+    revalidateTag('admin-dashboard', 'default')
 
     return NextResponse.json(updatedUser)
   } catch (error) {

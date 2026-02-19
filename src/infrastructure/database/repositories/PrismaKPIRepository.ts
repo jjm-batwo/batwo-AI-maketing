@@ -173,6 +173,64 @@ export class PrismaKPIRepository implements IKPIRepository {
     return output
   }
 
+  async aggregateByCampaignIds(
+    campaignIds: string[],
+    startDate: Date,
+    endDate: Date
+  ): Promise<Map<string, {
+    totalImpressions: number
+    totalClicks: number
+    totalLinkClicks: number
+    totalConversions: number
+    totalSpend: number
+    totalRevenue: number
+  }>> {
+    if (campaignIds.length === 0) {
+      return new Map()
+    }
+
+    const results = await this.prisma.kPISnapshot.groupBy({
+      by: ['campaignId'],
+      where: {
+        campaignId: { in: campaignIds },
+        date: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+      _sum: {
+        impressions: true,
+        clicks: true,
+        linkClicks: true,
+        conversions: true,
+        spend: true,
+        revenue: true,
+      },
+    })
+
+    const map = new Map<string, {
+      totalImpressions: number
+      totalClicks: number
+      totalLinkClicks: number
+      totalConversions: number
+      totalSpend: number
+      totalRevenue: number
+    }>()
+
+    for (const r of results) {
+      map.set(r.campaignId, {
+        totalImpressions: r._sum.impressions ?? 0,
+        totalClicks: r._sum.clicks ?? 0,
+        totalLinkClicks: r._sum.linkClicks ?? 0,
+        totalConversions: r._sum.conversions ?? 0,
+        totalSpend: Number(r._sum.spend ?? 0),
+        totalRevenue: Number(r._sum.revenue ?? 0),
+      })
+    }
+
+    return map
+  }
+
   async getDailyAggregates(
     campaignIds: string[],
     startDate: Date,

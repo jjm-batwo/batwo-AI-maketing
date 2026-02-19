@@ -7,8 +7,8 @@ import {
   getUserRepository,
   getSubscriptionRepository,
   getInvoiceRepository,
-  getCampaignRepository,
 } from '@/lib/di/container'
+import { prisma } from '@/lib/prisma'
 import { UserWithSubscription } from '@domain/repositories/IUserRepository'
 import { Invoice } from '@domain/entities/Invoice'
 
@@ -21,8 +21,6 @@ export async function GET() {
     const userRepository = getUserRepository()
     const subscriptionRepository = getSubscriptionRepository()
     const invoiceRepository = getInvoiceRepository()
-    const campaignRepository = getCampaignRepository()
-
     // 날짜 기준
     const now = new Date()
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
@@ -49,11 +47,13 @@ export async function GET() {
       invoiceRepository.findPendingRefunds(),
     ])
 
-    // 캠페인 통계 (전체)
-    const allCampaigns = await campaignRepository.findByFilters({}, { page: 1, limit: 1000 })
-    const activeCampaigns = allCampaigns.data.filter(c => c.status === 'ACTIVE').length
-    const pausedCampaigns = allCampaigns.data.filter(c => c.status === 'PAUSED').length
-    const completedCampaigns = allCampaigns.data.filter(c => c.status === 'COMPLETED').length
+    // 캠페인 통계 (COUNT 쿼리로 최적화)
+    const [totalCampaigns, activeCampaigns, pausedCampaigns, completedCampaigns] = await Promise.all([
+      prisma.campaign.count(),
+      prisma.campaign.count({ where: { status: 'ACTIVE' } }),
+      prisma.campaign.count({ where: { status: 'PAUSED' } }),
+      prisma.campaign.count({ where: { status: 'COMPLETED' } }),
+    ])
 
     return NextResponse.json({
       users: {
@@ -64,7 +64,7 @@ export async function GET() {
       subscriptions: subscriptionStats,
       payments: invoiceStats,
       campaigns: {
-        total: allCampaigns.total,
+        total: totalCampaigns,
         active: activeCampaigns,
         paused: pausedCampaigns,
         completed: completedCampaigns,

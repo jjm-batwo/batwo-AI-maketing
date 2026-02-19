@@ -5,6 +5,7 @@ import type { IReportRepository } from '@domain/repositories/IReportRepository'
 import { GenerateWeeklyReportUseCase } from '@application/use-cases/report/GenerateWeeklyReportUseCase'
 import { UnauthorizedCampaignError } from '@domain/errors'
 import { reportQuerySchema, createReportSchema, validateQuery, validateBody } from '@/lib/validations'
+import { revalidateTag } from 'next/cache'
 
 export async function GET(request: NextRequest) {
   const user = await getAuthenticatedUser()
@@ -82,6 +83,8 @@ export async function POST(request: NextRequest) {
       startDate,
       endDate,
     })
+
+    revalidateTag('reports', 'default')
 
     return NextResponse.json(result, { status: 201 })
   } catch (error) {

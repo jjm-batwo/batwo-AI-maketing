@@ -3,9 +3,11 @@ import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS } from '@/lib/di/container'
 import { ListCampaignsUseCase } from '@application/use-cases/campaign/ListCampaignsUseCase'
 import { CreateCampaignUseCase, DuplicateCampaignNameError } from '@application/use-cases/campaign/CreateCampaignUseCase'
+import { CreateAdvantageCampaignUseCase, InvalidAdvantageConfigError } from '@application/use-cases/campaign/CreateAdvantageCampaignUseCase'
 import { CampaignObjective } from '@domain/value-objects/CampaignObjective'
 import { campaignQuerySchema, createCampaignSchema, validateQuery, validateBody } from '@/lib/validations'
 import { invalidateCache, getUserPattern } from '@/lib/cache/kpiCache'
+import { revalidateTag } from 'next/cache'
 import { checkRateLimit, getClientIp, addRateLimitHeaders, rateLimitExceededResponse } from '@/lib/middleware/rateLimit'
 
 export async function GET(request: NextRequest) {
@@ -67,11 +69,7 @@ export async function POST(request: NextRequest) {
 
     const body = validation.data
 
-    const createCampaign = container.resolve<CreateCampaignUseCase>(
-      DI_TOKENS.CreateCampaignUseCase
-    )
-
-    const result = await createCampaign.execute({
+    const dtoBase = {
       userId: user.id,
       name: body.name,
       objective: body.objective as CampaignObjective,
@@ -83,10 +81,28 @@ export async function POST(request: NextRequest) {
       syncToMeta: body.syncToMeta,
       accessToken: body.accessToken,
       adAccountId: body.adAccountId,
-    })
+      advantageConfig: body.advantageConfig,
+    }
+
+    // Advantage+ 분기: advantageConfig가 있으면 CreateAdvantageCampaignUseCase 사용
+    let result
+    if (body.advantageConfig) {
+      const createAdvantage = container.resolve<CreateAdvantageCampaignUseCase>(
+        DI_TOKENS.CreateAdvantageCampaignUseCase
+      )
+      result = await createAdvantage.execute(dtoBase)
+    } else {
+      const createCampaign = container.resolve<CreateCampaignUseCase>(
+        DI_TOKENS.CreateCampaignUseCase
+      )
+      result = await createCampaign.execute(dtoBase)
+    }
 
     // Invalidate KPI cache for this user
     invalidateCache(getUserPattern(user.id))
+    revalidateTag('campaigns', 'default')
+    revalidateTag('kpi', 'default')
+    revalidateTag('admin-dashboard', 'default')
 
     const response = NextResponse.json(result, { status: 201 })
     return addRateLimitHeaders(response, rateLimitResult)
@@ -97,6 +113,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { message: error.message },
         { status: 409 }
+      )
+    }
+
+    if (error instanceof InvalidAdvantageConfigError) {
+      return NextResponse.json(
+        { message: error.message },
+        { status: 400 }
       )
     }
 

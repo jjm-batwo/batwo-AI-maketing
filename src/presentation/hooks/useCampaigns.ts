@@ -121,7 +121,7 @@ export function useCampaigns(params?: {
   return useQuery({
     queryKey: [...CAMPAIGNS_QUERY_KEY, queryParams],
     queryFn: () => fetchCampaigns(queryParams),
-    staleTime: 30 * 1000, // 30 seconds
+    staleTime: 120 * 1000, // 2 minutes
     enabled,
   })
 }
@@ -131,7 +131,7 @@ export function useCampaign(id: string) {
     queryKey: [...CAMPAIGNS_QUERY_KEY, id],
     queryFn: () => fetchCampaign(id),
     enabled: !!id,
-    staleTime: 30 * 1000,
+    staleTime: 120 * 1000,
   })
 }
 

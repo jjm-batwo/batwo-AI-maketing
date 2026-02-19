@@ -97,7 +97,14 @@ export class GetDashboardKPIUseCase {
       return this.createEmptyResult(dto.includeChartData)
     }
 
-    // Aggregate KPIs across all campaigns
+    // Aggregate KPIs across all campaigns (배치 쿼리)
+    const campaignIds = campaigns.map((c) => c.id)
+    const aggregatedMap = await this.kpiRepository.aggregateByCampaignIds(
+      campaignIds,
+      startDate,
+      endDate
+    )
+
     let totalImpressions = 0
     let totalClicks = 0
     let totalLinkClicks = 0
@@ -105,14 +112,19 @@ export class GetDashboardKPIUseCase {
     let totalSpend = 0
     let totalRevenue = 0
 
+    const emptyAgg = {
+      totalImpressions: 0,
+      totalClicks: 0,
+      totalLinkClicks: 0,
+      totalConversions: 0,
+      totalSpend: 0,
+      totalRevenue: 0,
+    }
+
     const breakdowns: CampaignKPIBreakdownDTO[] = []
 
     for (const campaign of campaigns) {
-      const aggregated = await this.kpiRepository.aggregateByCampaignId(
-        campaign.id,
-        startDate,
-        endDate
-      )
+      const aggregated = aggregatedMap.get(campaign.id) ?? emptyAgg
 
       totalImpressions += aggregated.totalImpressions
       totalClicks += aggregated.totalClicks
@@ -223,6 +235,12 @@ export class GetDashboardKPIUseCase {
     console.log('[Comparison] Current period:', current.startDate, '-', current.endDate)
     console.log('[Comparison] Previous period:', previous.startDate, '-', previous.endDate)
 
+    // 배치 쿼리로 현재/이전 기간 동시 조회
+    const [currentMap, previousMap] = await Promise.all([
+      this.kpiRepository.aggregateByCampaignIds(campaignIds, current.startDate, current.endDate),
+      this.kpiRepository.aggregateByCampaignIds(campaignIds, previous.startDate, previous.endDate),
+    ])
+
     const currentMetrics = {
       impressions: 0,
       clicks: 0,
@@ -240,28 +258,24 @@ export class GetDashboardKPIUseCase {
     }
 
     for (const campaignId of campaignIds) {
-      const currentAgg = await this.kpiRepository.aggregateByCampaignId(
-        campaignId,
-        current.startDate,
-        current.endDate
-      )
-      const previousAgg = await this.kpiRepository.aggregateByCampaignId(
-        campaignId,
-        previous.startDate,
-        previous.endDate
-      )
+      const currentAgg = currentMap.get(campaignId)
+      const previousAgg = previousMap.get(campaignId)
 
-      currentMetrics.impressions += currentAgg.totalImpressions
-      currentMetrics.clicks += currentAgg.totalClicks
-      currentMetrics.conversions += currentAgg.totalConversions
-      currentMetrics.spend += currentAgg.totalSpend
-      currentMetrics.revenue += currentAgg.totalRevenue
+      if (currentAgg) {
+        currentMetrics.impressions += currentAgg.totalImpressions
+        currentMetrics.clicks += currentAgg.totalClicks
+        currentMetrics.conversions += currentAgg.totalConversions
+        currentMetrics.spend += currentAgg.totalSpend
+        currentMetrics.revenue += currentAgg.totalRevenue
+      }
 
-      previousMetrics.impressions += previousAgg.totalImpressions
-      previousMetrics.clicks += previousAgg.totalClicks
-      previousMetrics.conversions += previousAgg.totalConversions
-      previousMetrics.spend += previousAgg.totalSpend
-      previousMetrics.revenue += previousAgg.totalRevenue
+      if (previousAgg) {
+        previousMetrics.impressions += previousAgg.totalImpressions
+        previousMetrics.clicks += previousAgg.totalClicks
+        previousMetrics.conversions += previousAgg.totalConversions
+        previousMetrics.spend += previousAgg.totalSpend
+        previousMetrics.revenue += previousAgg.totalRevenue
+      }
     }
 
     console.log('[Comparison] Current metrics:', currentMetrics)

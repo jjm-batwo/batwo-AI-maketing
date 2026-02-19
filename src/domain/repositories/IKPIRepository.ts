@@ -40,6 +40,18 @@ export interface IKPIRepository {
     totalSpend: number
     totalRevenue: number
   }>
+  aggregateByCampaignIds(
+    campaignIds: string[],
+    startDate: Date,
+    endDate: Date
+  ): Promise<Map<string, {
+    totalImpressions: number
+    totalClicks: number
+    totalLinkClicks: number
+    totalConversions: number
+    totalSpend: number
+    totalRevenue: number
+  }>>
   getDailyAggregates(
     campaignIds: string[],
     startDate: Date,

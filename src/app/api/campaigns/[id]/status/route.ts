@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS } from '@/lib/di/container'
+import { invalidateCache, getUserPattern } from '@/lib/cache/kpiCache'
+import { revalidateTag } from 'next/cache'
 import {
   PauseCampaignUseCase,
   PauseCampaignError,
@@ -50,6 +52,11 @@ export async function POST(
         accessToken: body.accessToken,
       })
 
+      invalidateCache(getUserPattern(user.id))
+      revalidateTag('campaigns', 'default')
+      revalidateTag('kpi', 'default')
+      revalidateTag('admin-dashboard', 'default')
+
       return NextResponse.json(result)
     } else {
       const resumeCampaign = container.resolve<ResumeCampaignUseCase>(
@@ -62,6 +69,11 @@ export async function POST(
         syncToMeta: body.syncToMeta,
         accessToken: body.accessToken,
       })
+
+      invalidateCache(getUserPattern(user.id))
+      revalidateTag('campaigns', 'default')
+      revalidateTag('kpi', 'default')
+      revalidateTag('admin-dashboard', 'default')
 
       return NextResponse.json(result)
     }

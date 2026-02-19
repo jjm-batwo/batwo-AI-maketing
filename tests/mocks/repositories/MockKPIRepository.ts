@@ -103,6 +103,35 @@ export class MockKPIRepository implements IKPIRepository {
     )
   }
 
+  async aggregateByCampaignIds(
+    campaignIds: string[],
+    startDate: Date,
+    endDate: Date
+  ): Promise<Map<string, {
+    totalImpressions: number
+    totalClicks: number
+    totalLinkClicks: number
+    totalConversions: number
+    totalSpend: number
+    totalRevenue: number
+  }>> {
+    const map = new Map<string, {
+      totalImpressions: number
+      totalClicks: number
+      totalLinkClicks: number
+      totalConversions: number
+      totalSpend: number
+      totalRevenue: number
+    }>()
+
+    for (const campaignId of campaignIds) {
+      const agg = await this.aggregateByCampaignId(campaignId, startDate, endDate)
+      map.set(campaignId, agg)
+    }
+
+    return map
+  }
+
   async getDailyAggregates(
     campaignIds: string[],
     startDate: Date,

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import {
   requireAdmin,
   handleAdminAuth,
@@ -49,6 +50,8 @@ export async function POST(
 
     const updatedInvoice = await invoiceRepository.update(processedInvoice)
 
+    revalidateTag('admin-dashboard', 'default')
+
     return NextResponse.json({
       id: updatedInvoice.id,
       status: updatedInvoice.status,
@@ -98,6 +101,8 @@ export async function DELETE(
     const rejectedInvoice = invoice.rejectRefund(body.reason)
 
     const updatedInvoice = await invoiceRepository.update(rejectedInvoice)
+
+    revalidateTag('admin-dashboard', 'default')
 
     return NextResponse.json({
       id: updatedInvoice.id,

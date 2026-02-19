@@ -1,7 +1,8 @@
+import { cache } from 'react'
 import { auth } from '@/infrastructure/auth'
 import { NextResponse } from 'next/server'
 
-export async function getAuthenticatedUser() {
+export const getAuthenticatedUser = cache(async () => {
   const session = await auth()
 
   if (!session?.user?.id) {
@@ -9,7 +10,7 @@ export async function getAuthenticatedUser() {
   }
 
   return session.user
-}
+})
 
 export function unauthorizedResponse() {
   return NextResponse.json(

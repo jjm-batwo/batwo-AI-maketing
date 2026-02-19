@@ -3,6 +3,7 @@ import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS } from '@/lib/di/container'
 import type { IReportRepository } from '@domain/repositories/IReportRepository'
 import { toReportDTO } from '@application/dto/report/ReportDTO'
+import { revalidateTag } from 'next/cache'
 
 export async function GET(
   request: NextRequest,
@@ -77,6 +78,8 @@ export async function DELETE(
     }
 
     await reportRepository.delete(id)
+
+    revalidateTag('reports', 'default')
 
     return new NextResponse(null, { status: 204 })
   } catch (error) {

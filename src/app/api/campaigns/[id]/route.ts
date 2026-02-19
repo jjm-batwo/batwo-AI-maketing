@@ -10,6 +10,7 @@ import {
 import { DuplicateCampaignNameError } from '@application/use-cases/campaign/CreateCampaignUseCase'
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import { invalidateCache, getUserPattern } from '@/lib/cache/kpiCache'
+import { revalidateTag } from 'next/cache'
 import { updateCampaignSchema, validateBody } from '@/lib/validations'
 
 export async function GET(
@@ -84,6 +85,9 @@ export async function PATCH(
 
     // Invalidate KPI cache for this user
     invalidateCache(getUserPattern(user.id))
+    revalidateTag('campaigns', 'default')
+    revalidateTag('kpi', 'default')
+    revalidateTag('admin-dashboard', 'default')
 
     return NextResponse.json(result)
   } catch (error) {
@@ -161,6 +165,9 @@ export async function DELETE(
 
     // Invalidate KPI cache for this user
     invalidateCache(getUserPattern(user.id))
+    revalidateTag('campaigns', 'default')
+    revalidateTag('kpi', 'default')
+    revalidateTag('admin-dashboard', 'default')
 
     return new NextResponse(null, { status: 204 })
   } catch (error) {
