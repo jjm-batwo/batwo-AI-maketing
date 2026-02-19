@@ -17,6 +17,8 @@ import { createGenerateAdCopyTool } from './mutations/generateAdCopy.tool'
 // Meta tools
 import { createAskClarificationTool } from './meta/askClarification.tool'
 import { createFreeformResponseTool } from './meta/freeformResponse.tool'
+import { createAskGuideQuestionTool } from './meta/askGuideQuestion.tool'
+import { createRecommendCampaignSettingsTool } from './meta/recommendCampaignSettings.tool'
 // Types
 import type { IToolRegistry } from '@application/ports/IConversationalAgent'
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
@@ -67,9 +69,11 @@ export function registerAllTools(deps: RegisterAllToolsDeps): IToolRegistry {
   registry.register(createDeleteCampaignTool(deps.deleteCampaignUseCase, deps.campaignRepository))
   registry.register(createGenerateAdCopyTool())
 
-  // Meta tools (2)
+  // Meta tools (4)
   registry.register(createAskClarificationTool())
   registry.register(createFreeformResponseTool())
+  registry.register(createAskGuideQuestionTool())
+  registry.register(createRecommendCampaignSettingsTool())
 
   return registry
 }

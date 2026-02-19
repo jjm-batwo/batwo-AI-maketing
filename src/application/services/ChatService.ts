@@ -172,41 +172,43 @@ export class ChatService {
     // 캠페인 데이터
     const campaigns = await this.campaignRepo.findByUserId(userId)
 
-    // 각 캠페인의 최근 30일 KPI 집계
+    // 최근 30일 KPI 배치 조회 (N+1 방지)
     const now = new Date()
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
 
-    const campaignsContext = await Promise.all(
-      campaigns.map(async (c) => {
-        const kpiAgg = await this.kpiRepo.aggregateByCampaignId(
-          c.id,
-          thirtyDaysAgo,
-          now
-        )
+    const campaignIds = campaigns.map(c => c.id)
+    const kpiMap = await this.kpiRepo.aggregateByCampaignIds(campaignIds, thirtyDaysAgo, now)
 
-        const roas = kpiAgg.totalSpend > 0 ? kpiAgg.totalRevenue / kpiAgg.totalSpend : 0
-        const ctr = kpiAgg.totalImpressions > 0 ? (kpiAgg.totalClicks / kpiAgg.totalImpressions) * 100 : 0
-        const cvr = kpiAgg.totalClicks > 0 ? (kpiAgg.totalConversions / kpiAgg.totalClicks) * 100 : 0
-        const cpa = kpiAgg.totalConversions > 0 ? kpiAgg.totalSpend / kpiAgg.totalConversions : 0
+    const defaultKpi = {
+      totalImpressions: 0, totalClicks: 0, totalLinkClicks: 0,
+      totalConversions: 0, totalSpend: 0, totalRevenue: 0,
+    }
 
-        return {
-          id: c.id,
-          name: c.name,
-          status: c.status,
-          metrics: {
-            impressions: kpiAgg.totalImpressions,
-            clicks: kpiAgg.totalClicks,
-            conversions: kpiAgg.totalConversions,
-            spend: kpiAgg.totalSpend,
-            revenue: kpiAgg.totalRevenue,
-            roas,
-            ctr,
-            cvr,
-            cpa,
-          },
-        }
-      })
-    )
+    const campaignsContext = campaigns.map((c) => {
+      const kpiAgg = kpiMap.get(c.id) ?? defaultKpi
+
+      const roas = kpiAgg.totalSpend > 0 ? kpiAgg.totalRevenue / kpiAgg.totalSpend : 0
+      const ctr = kpiAgg.totalImpressions > 0 ? (kpiAgg.totalClicks / kpiAgg.totalImpressions) * 100 : 0
+      const cvr = kpiAgg.totalClicks > 0 ? (kpiAgg.totalConversions / kpiAgg.totalClicks) * 100 : 0
+      const cpa = kpiAgg.totalConversions > 0 ? kpiAgg.totalSpend / kpiAgg.totalConversions : 0
+
+      return {
+        id: c.id,
+        name: c.name,
+        status: c.status,
+        metrics: {
+          impressions: kpiAgg.totalImpressions,
+          clicks: kpiAgg.totalClicks,
+          conversions: kpiAgg.totalConversions,
+          spend: kpiAgg.totalSpend,
+          revenue: kpiAgg.totalRevenue,
+          roas,
+          ctr,
+          cvr,
+          cpa,
+        },
+      }
+    })
 
     // 최근 리포트 (최근 3개)
     const allReports = await this.reportRepo.findByUserId(userId)

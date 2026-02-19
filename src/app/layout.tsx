@@ -8,7 +8,6 @@ import { getLocale, getMessages } from 'next-intl/server'
 import './globals.css'
 import { Providers } from './providers'
 import { getMetadata, getJsonLdScript } from '@/lib/constants/seo'
-import { FacebookSDK } from '@/presentation/components/common/FacebookSDK'
 import { DemoModeProvider } from '@/presentation/components/demo/DemoModeProvider'
 
 const geistSans = Geist({
@@ -65,10 +64,6 @@ export default async function RootLayout({
         {/* Demo Mode Caption Overlay - Meta App Review 촬영용 */}
         <Suspense fallback={null}>
           <DemoModeProvider />
-        </Suspense>
-        {/* Facebook SDK - Meta 통합 (lazy loaded) */}
-        <Suspense fallback={null}>
-          <FacebookSDK />
         </Suspense>
         {/* Vercel Analytics - 사용자 분석 (deferred) */}
         <Suspense fallback={null}>

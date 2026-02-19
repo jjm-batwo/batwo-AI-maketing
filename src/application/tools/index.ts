@@ -29,7 +29,7 @@ export class ToolRegistry implements IToolRegistry {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getByCategory(category: ToolCategory): AgentTool<any, any>[] {
-    const META_TOOLS = ['askClarification', 'freeformResponse']
+    const META_TOOLS = ['askClarification', 'freeformResponse', 'askGuideQuestion', 'recommendCampaignSettings']
 
     return this.getAll().filter((t) => {
       if (category === 'mutation') return t.requiresConfirmation

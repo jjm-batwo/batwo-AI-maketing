@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Quote } from 'lucide-react'
 import { StarRating } from './StarRating'
 import type { Testimonial } from './testimonialData'
@@ -43,9 +43,8 @@ export const TestimonialCard = memo(function TestimonialCard({ testimonial }: Te
 
         {/* Author */}
         <div className="flex items-center gap-3 mt-4 pt-4 border-t">
-          <Avatar>
-            <AvatarImage src={testimonial.avatar} alt={`${testimonial.name} 프로필 사진`} />
-            <AvatarFallback aria-label={testimonial.name}>
+          <Avatar className={testimonial.avatarColor}>
+            <AvatarFallback className="text-white font-medium" aria-label={testimonial.name}>
               {testimonial.name.slice(0, 2)}
             </AvatarFallback>
           </Avatar>

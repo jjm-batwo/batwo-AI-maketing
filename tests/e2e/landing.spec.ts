@@ -51,8 +51,8 @@ test.describe('Landing Page', () => {
 
     test('should display hero description', async ({ page }) => {
       // Hero 섹션의 설명 텍스트 확인
-      const description = page.locator('p').first()
-      await expect(description).toBeVisible()
+      const description = page.getByText(/복잡한 메타 광고|AI가.*완료합니다/)
+      await expect(description.first()).toBeVisible({ timeout: 10000 })
     })
 
     test('should have visually distinct hero section', async ({ page }) => {
@@ -229,11 +229,11 @@ test.describe('Landing Page', () => {
     })
 
     test('should display footer', async ({ page }) => {
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // footer로 스크롤
       await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-      await page.waitForTimeout(500)
+      await page.waitForTimeout(1000)
 
       // LandingFooter는 role="contentinfo"를 가지는 유일한 footer
       const footer = page.getByRole('contentinfo')
@@ -318,13 +318,13 @@ test.describe('Landing Page', () => {
       await page.goto('/')
 
       // 페이지 로딩 완료 대기
-      await page.waitForLoadState('networkidle')
+      await page.waitForLoadState('domcontentloaded')
 
       // 페이지 하단으로 스크롤
       await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
 
       // 스크롤 애니메이션 대기
-      await page.waitForTimeout(500)
+      await page.waitForTimeout(1000)
 
       // 푸터가 보여야 함 (contentinfo role을 가진 메인 푸터)
       const footer = page.getByRole('contentinfo')
@@ -358,21 +358,18 @@ test.describe('Landing Page', () => {
       await expect(aiFeatureCard).toBeVisible({ timeout: 10000 })
     })
 
-    test('should display all 5 feature cards', async ({ page }) => {
-      // Features section까지 스크롤
-      const featuresHeading = page.getByRole('heading', { name: /기능|특징|Features/ })
+    test('should display all 6 feature cards', async ({ page }) => {
+      // Features section까지 스크롤 (제목: "왜 바투인가요?")
+      const featuresHeading = page.getByRole('heading', { name: /바투|기능|특징|Features/ })
       if (await featuresHeading.isVisible({ timeout: 5000 }).catch(() => false)) {
         await featuresHeading.scrollIntoViewIfNeeded()
       }
 
-      // Feature card 개수 확인 (정확한 선택자는 실제 구조에 따라 조정 필요)
-      // "AI 마케팅 어시스턴트", "자동 캠페인 생성", "실시간 성과 분석", "스마트 예산 최적화", "주간 인사이트 리포트"
-      const featureCards = page.locator('div[class*="grid"]').locator('div[class*="rounded"]').filter({
-        has: page.locator('h3, h4')
-      })
+      // Feature card 개수 확인 (role="listitem" 사용)
+      const featureCards = page.locator('[role="listitem"]')
 
       const count = await featureCards.count()
-      expect(count).toBeGreaterThanOrEqual(5)
+      expect(count).toBeGreaterThanOrEqual(6)
     })
 
     test('should display AI Assistant tab in product showcase', async ({ page }) => {

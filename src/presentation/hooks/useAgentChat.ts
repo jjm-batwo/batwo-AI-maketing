@@ -21,6 +21,24 @@ export interface ChatMessage {
   }
   dataCards?: { cardType: string; data: unknown }[]
   suggestedQuestions?: string[]
+  guideQuestion?: {
+    questionId: string
+    question: string
+    options: { value: string; label: string; description?: string }[]
+    progress: { current: number; total: number }
+    answered?: boolean
+    selectedValue?: string
+  }
+  guideRecommendation?: {
+    campaignMode: 'ADVANTAGE_PLUS' | 'MANUAL'
+    formData: {
+      objective: string
+      dailyBudget: number
+      campaignMode: 'ADVANTAGE_PLUS' | 'MANUAL'
+    }
+    reasoning: string
+    experienceLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
+  }
   isStreaming?: boolean
   timestamp: Date
 }
@@ -56,6 +74,26 @@ type AgentStreamChunk =
     }
   | { type: 'action_result'; actionId: string; success: boolean; message: string }
   | { type: 'data_card'; cardType: string; data: unknown }
+  | {
+      type: 'guide_question'
+      questionId: string
+      question: string
+      options: { value: string; label: string; description?: string }[]
+      progress: { current: number; total: number }
+    }
+  | {
+      type: 'guide_recommendation'
+      recommendation: {
+        campaignMode: 'ADVANTAGE_PLUS' | 'MANUAL'
+        formData: {
+          objective: string
+          dailyBudget: number
+          campaignMode: 'ADVANTAGE_PLUS' | 'MANUAL'
+        }
+        reasoning: string
+        experienceLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
+      }
+    }
   | { type: 'suggested_questions'; questions: string[] }
   | { type: 'error'; error: string }
   | { type: 'done' }
@@ -180,6 +218,37 @@ export function useAgentChat(initialConversationId?: string): UseAgentChatReturn
                               ...(m.toolResults ?? []),
                               { toolName: data.toolName, data: data.data },
                             ],
+                          }
+                        : m
+                    )
+                  )
+                  break
+
+                case 'guide_question':
+                  setMessages((prev) =>
+                    prev.map((m) =>
+                      m.id === assistantId
+                        ? {
+                            ...m,
+                            guideQuestion: {
+                              questionId: data.questionId,
+                              question: data.question,
+                              options: data.options,
+                              progress: data.progress,
+                            },
+                          }
+                        : m
+                    )
+                  )
+                  break
+
+                case 'guide_recommendation':
+                  setMessages((prev) =>
+                    prev.map((m) =>
+                      m.id === assistantId
+                        ? {
+                            ...m,
+                            guideRecommendation: data.recommendation,
                           }
                         : m
                     )

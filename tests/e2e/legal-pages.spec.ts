@@ -13,8 +13,12 @@ test.describe('Legal Pages', () => {
   test('should navigate to terms page from footer', async ({ page }) => {
     await page.goto('/')
 
+    // 푸터까지 스크롤
+    const footer = page.locator('footer')
+    await footer.scrollIntoViewIfNeeded()
+
     // Find and click the terms link in footer
-    const termsLink = page.getByRole('link', { name: /이용약관/i })
+    const termsLink = footer.getByRole('link', { name: /이용약관/i })
     await termsLink.click()
 
     // Should be on terms page

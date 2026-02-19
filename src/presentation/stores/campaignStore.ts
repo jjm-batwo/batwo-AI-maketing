@@ -23,6 +23,17 @@ interface CampaignFormDraft {
   endDate?: string
 }
 
+// AI 가이드 추천 데이터 인터페이스
+interface GuideRecommendation {
+  formData: {
+    objective?: string
+    dailyBudget?: number
+    campaignMode?: string
+  }
+  context?: string // AI 추천 이유
+  timestamp: number
+}
+
 interface CampaignState {
   // Filters
   filters: CampaignFilters
@@ -44,6 +55,11 @@ interface CampaignState {
   // Current step in create form
   currentStep: number
   setCurrentStep: (step: number) => void
+
+  // AI 가이드 추천 (비영속적)
+  guideRecommendation: GuideRecommendation | null
+  setGuideRecommendation: (recommendation: GuideRecommendation) => void
+  clearGuideRecommendation: () => void
 }
 
 const defaultFilters: CampaignFilters = {
@@ -90,6 +106,11 @@ export const useCampaignStore = create<CampaignState>()(
       // Current step
       currentStep: 1,
       setCurrentStep: (step) => set({ currentStep: step }),
+
+      // AI 가이드 추천 (비영속적 - persist에서 제외됨)
+      guideRecommendation: null,
+      setGuideRecommendation: (recommendation) => set({ guideRecommendation: recommendation }),
+      clearGuideRecommendation: () => set({ guideRecommendation: null }),
     }),
     {
       name: 'campaign-store',

@@ -5,7 +5,16 @@
  * API Routes, Server Actions, 클라이언트에서 일관된 에러 추적
  */
 
-import * as Sentry from '@sentry/nextjs'
+import {
+  withScope,
+  captureException,
+  captureMessage,
+  captureFeedback,
+  lastEventId,
+  setUser,
+  addBreadcrumb as sentryAddBreadcrumb,
+  type SeverityLevel,
+} from '@sentry/nextjs'
 
 /**
  * 에러 심각도 레벨
@@ -69,9 +78,9 @@ export function reportError(
     error instanceof Error ? error : new Error(String(error))
 
   // Sentry 스코프 설정
-  Sentry.withScope((scope) => {
+  withScope((scope) => {
     // 심각도 설정
-    scope.setLevel(severity as Sentry.SeverityLevel)
+    scope.setLevel(severity as SeverityLevel)
 
     // 사용자 설정
     if (userId) {
@@ -102,7 +111,7 @@ export function reportError(
     }
 
     // 에러 전송
-    Sentry.captureException(normalizedError)
+    captureException(normalizedError)
   })
 
   // 개발 모드에서는 콘솔에도 출력
@@ -116,7 +125,7 @@ export function reportError(
   }
 
   // 에러 ID 반환 (사용자 지원용)
-  return Sentry.lastEventId() || 'unknown'
+  return lastEventId() || 'unknown'
 }
 
 /**
@@ -162,7 +171,7 @@ export function reportErrorWithFeedback(
   const eventId = reportError(error, context)
 
   // 사용자 피드백 전송
-  Sentry.captureFeedback({
+  captureFeedback({
     associatedEventId: eventId,
     name: feedback.name || 'Anonymous',
     email: feedback.email || 'anonymous@example.com',
@@ -180,8 +189,8 @@ export function reportMessage(
   level: ErrorSeverity = 'info',
   context: Omit<ErrorContext, 'severity'> = {}
 ): string {
-  Sentry.withScope((scope) => {
-    scope.setLevel(level as Sentry.SeverityLevel)
+  withScope((scope) => {
+    scope.setLevel(level as SeverityLevel)
 
     if (context.component) {
       scope.setTag('component', context.component)
@@ -198,10 +207,10 @@ export function reportMessage(
       scope.setContext('messageContext', context.extra)
     }
 
-    Sentry.captureMessage(message)
+    captureMessage(message)
   })
 
-  return Sentry.lastEventId() || 'unknown'
+  return lastEventId() || 'unknown'
 }
 
 /**
@@ -212,7 +221,7 @@ export function setUserContext(user: {
   email?: string
   name?: string
 }): void {
-  Sentry.setUser({
+  setUser({
     id: user.id,
     email: user.email,
     username: user.name,
@@ -223,7 +232,7 @@ export function setUserContext(user: {
  * 사용자 컨텍스트 초기화 (로그아웃 시)
  */
 export function clearUserContext(): void {
-  Sentry.setUser(null)
+  setUser(null)
 }
 
 /**
@@ -234,7 +243,7 @@ export function addBreadcrumb(
   category: string,
   data?: Record<string, unknown>
 ): void {
-  Sentry.addBreadcrumb({
+  sentryAddBreadcrumb({
     message,
     category,
     data,

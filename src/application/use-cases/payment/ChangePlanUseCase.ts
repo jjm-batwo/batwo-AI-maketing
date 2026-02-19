@@ -8,7 +8,7 @@ import { Money } from '@domain/value-objects/Money'
 import { PaymentError } from '@domain/errors/PaymentError'
 import { PLAN_CONFIGS, isFreePlan } from '@domain/value-objects/SubscriptionPlan'
 import { getBillingAmount } from '@domain/value-objects/BillingPeriod'
-import { decryptBillingKey } from '@infrastructure/payment/BillingKeyEncryption'
+import { decryptBillingKey } from '@application/utils/BillingKeyEncryption'
 import type { ChangePlanRequestDTO, SubscriptionResultDTO } from '@application/dto/payment/PaymentDTOs'
 
 export class ChangePlanUseCase {

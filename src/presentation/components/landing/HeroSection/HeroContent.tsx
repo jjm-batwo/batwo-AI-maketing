@@ -28,7 +28,7 @@ export const HeroContent = memo(function HeroContent({ isVisible }: HeroContentP
       {/* Headline */}
       <h1
         id="hero-heading"
-        className="text-[2.5rem] md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight mb-8 leading-[1.1]"
+        className="text-[2.5rem] md:text-5xl lg:text-5xl xl:text-6xl 2xl:text-7xl font-bold tracking-tight mb-8 leading-[1.1]"
       >
         마케팅 지식 없이도
         <br />
@@ -61,7 +61,7 @@ const CTAButtons = memo(function CTAButtons() {
         <Button
           size="lg"
           asChild
-          className="group relative h-16 px-10 text-base bg-gradient-to-r from-primary via-purple-600 to-pink-600 shadow-2xl shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-0.5 transition-all w-full sm:w-auto overflow-hidden"
+          className="group relative h-12 px-6 lg:h-14 lg:px-8 xl:h-16 xl:px-10 text-sm lg:text-base bg-gradient-to-r from-primary via-purple-600 to-pink-600 shadow-2xl shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-0.5 transition-all w-full sm:w-auto overflow-hidden"
         >
           <Link
             href="/register"
@@ -77,7 +77,7 @@ const CTAButtons = memo(function CTAButtons() {
           size="lg"
           variant="outline"
           asChild
-          className="h-16 px-10 text-base bg-background/80 backdrop-blur-md border-2 hover:bg-muted/50 transition-all w-full sm:w-auto"
+          className="h-12 px-6 lg:h-14 lg:px-8 xl:h-16 xl:px-10 text-sm lg:text-base bg-background/80 backdrop-blur-md border-2 hover:bg-muted/50 transition-all w-full sm:w-auto"
         >
           <Link
             href="#how-it-works"

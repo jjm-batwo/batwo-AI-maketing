@@ -30,6 +30,26 @@ export type AgentStreamChunk =
   | { type: 'action_result'; actionId: string; success: boolean; message: string }
   | { type: 'data_card'; cardType: string; data: unknown }
   | { type: 'suggested_questions'; questions: string[] }
+  | {
+      type: 'guide_question'
+      questionId: string
+      question: string
+      options: { value: string; label: string; description?: string }[]
+      progress: { current: number; total: number }
+    }
+  | {
+      type: 'guide_recommendation'
+      recommendation: {
+        campaignMode: 'ADVANTAGE_PLUS' | 'MANUAL'
+        formData: {
+          objective: string
+          dailyBudget: number
+          campaignMode: 'ADVANTAGE_PLUS' | 'MANUAL'
+        }
+        reasoning: string
+        experienceLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
+      }
+    }
   | { type: 'error'; error: string }
   | { type: 'done' }
 
@@ -151,11 +171,43 @@ export class ConversationalAgentService {
             try {
               const toolArgs = part.input as Record<string, unknown>
               const execResult = await agentTool.execute(toolArgs, agentContext)
-              yield {
-                type: 'tool_result',
-                toolName: part.toolName,
-                formattedMessage: execResult.formattedMessage,
-                data: execResult.data,
+
+              // 가이드 도구는 전용 청크 타입으로 변환
+              if (part.toolName === 'askGuideQuestion') {
+                const data = execResult.data as {
+                  questionId: string
+                  question: string
+                  options: { value: string; label: string; description?: string }[]
+                  progress: { current: number; total: number }
+                }
+                yield {
+                  type: 'guide_question' as const,
+                  questionId: data.questionId,
+                  question: data.question,
+                  options: data.options,
+                  progress: data.progress,
+                }
+              } else if (part.toolName === 'recommendCampaignSettings') {
+                yield {
+                  type: 'guide_recommendation' as const,
+                  recommendation: execResult.data as {
+                    campaignMode: 'ADVANTAGE_PLUS' | 'MANUAL'
+                    formData: {
+                      objective: string
+                      dailyBudget: number
+                      campaignMode: 'ADVANTAGE_PLUS' | 'MANUAL'
+                    }
+                    reasoning: string
+                    experienceLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
+                  },
+                }
+              } else {
+                yield {
+                  type: 'tool_result',
+                  toolName: part.toolName,
+                  formattedMessage: execResult.formattedMessage,
+                  data: execResult.data,
+                }
               }
             } catch (error) {
               yield {
@@ -232,6 +284,31 @@ export class ConversationalAgentService {
 - 정보가 부족하면 사용자에게 명확히 질문합니다
 - 금액은 원(₩) 단위로, 비율은 소수점 2자리로 표시합니다
 - 간결하고 실행 가능한 답변을 제공합니다
+
+=== 캠페인 가이드 프로토콜 ===
+사용자가 캠페인 생성을 요청하면("캠페인 만들어줘", "새 캠페인", "광고 시작하고 싶어" 등) 다음 인터뷰 프로세스를 시작합니다.
+
+절대 규칙:
+- 질문은 한 번에 하나만. 반드시 askGuideQuestion 도구를 사용.
+- 사용자 답변 후 다음 질문으로 진행. 모든 질문 완료 후 recommendCampaignSettings 호출.
+- 일반 텍스트로 질문하지 말고, 반드시 askGuideQuestion 도구를 사용하세요.
+
+질문 순서 (4~5개):
+Q1 (experience_level): "Meta 광고 경험이 어느 정도이신가요?"
+  - BEGINNER: "처음이에요" / INTERMEDIATE: "몇 번 해봤어요" / ADVANCED: "전문가예요"
+Q2 (industry): "어떤 업종의 상품/서비스를 광고하시나요?"
+  - 패션/의류, 뷰티/화장품, 식품/건강, 가전/디지털, 기타
+Q3 (objective): "이번 캠페인의 주요 목표는?"
+  - 매출 늘리기(sales), 브랜드 알리기(awareness), 사이트 방문 유도(traffic), SNS 참여(engagement)
+Q4 (budget): "하루 광고 예산은 어느 정도?"
+  - 1만원 이하(1-10000), 1-5만원(10000-50000), 5-20만원(50000-200000), 20만원 이상(200000-999999)
+Q5 (target, 초보자만): "주요 타겟 고객은?"
+  - 넓은 타겟(AI 최적화), 특정 연령대/성별
+
+추천 로직:
+- BEGINNER → Advantage+ 강력 추천, 쉬운 용어 사용
+- INTERMEDIATE → Advantage+ 기본, 수동 옵션도 안내
+- ADVANCED → 수동 모드 기본, 세부 설정 값도 추천
 
 사용 가능한 도구:
 ${toolDescriptions}`

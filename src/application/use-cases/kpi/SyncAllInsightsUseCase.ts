@@ -4,6 +4,7 @@ import { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import { IKPIRepository } from '@domain/repositories/IKPIRepository'
 import { IMetaAdsService } from '@application/ports/IMetaAdsService'
 import { prisma } from '@/lib/prisma'
+import { safeDecryptToken } from '@application/utils/TokenEncryption'
 
 export interface SyncAllInsightsInput {
   userId: string
@@ -58,35 +59,29 @@ export class SyncAllInsightsUseCase {
       try {
         console.log(`[SyncInsights] Fetching insights for campaign: ${campaign.name} (${campaign.metaCampaignId})`)
 
-        // Fetch historical data
+        // date_preset 대신 명시적 since/until 사용 (Meta의 date_preset은 최근 데이터 누락 가능)
+        const until = new Date().toISOString().split('T')[0] // 오늘
+        const presetDays: Record<string, number> = {
+          'today': 0, 'yesterday': 1, 'last_7d': 7, 'last_30d': 30, 'last_90d': 90
+        }
+        const days = presetDays[input.datePreset || 'last_7d'] ?? 7
+        const sinceDate = new Date()
+        sinceDate.setDate(sinceDate.getDate() - days)
+        const since = sinceDate.toISOString().split('T')[0]
+
+        console.log(`[SyncInsights] Fetching with date range: ${since} ~ ${until}`)
+
         const dailyInsights = await this.metaAdsService.getCampaignDailyInsights(
-          metaAccount.accessToken,
+          safeDecryptToken(metaAccount.accessToken),
           campaign.metaCampaignId!,
-          input.datePreset || 'last_7d'
+          input.datePreset || 'last_7d',
+          { since, until }
         )
 
         console.log(`[SyncInsights] Received ${dailyInsights.length} daily insights`)
         if (dailyInsights.length > 0) {
           console.log('[SyncInsights] Sample data:', JSON.stringify(dailyInsights[0]))
-        }
-
-        // Also fetch today's data if requested (Meta's last_Xd presets exclude today)
-        if (input.includeTodayData && input.datePreset !== 'today') {
-          try {
-            const todayInsights = await this.metaAdsService.getCampaignDailyInsights(
-              metaAccount.accessToken,
-              campaign.metaCampaignId!,
-              'today'
-            )
-            console.log(`[SyncInsights] Received ${todayInsights.length} today insights`)
-            if (todayInsights.length > 0) {
-              // Add today's data (will be upserted, so duplicates are handled)
-              dailyInsights.push(...todayInsights)
-            }
-          } catch (todayError) {
-            // Today's data might not be available yet, continue without it
-            console.log('[SyncInsights] Today data not available:', todayError instanceof Error ? todayError.message : 'Unknown')
-          }
+          console.log('[SyncInsights] Last data:', JSON.stringify(dailyInsights[dailyInsights.length - 1]))
         }
 
         // Save each daily KPI record

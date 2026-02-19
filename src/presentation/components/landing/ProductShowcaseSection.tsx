@@ -32,7 +32,7 @@ function DashboardPreview() {
             <DollarSign className="h-4 w-4" />
             <span className="text-xs">광고비</span>
           </div>
-          <div className="text-xl font-bold">₩1,250,000</div>
+          <div className="text-base lg:text-xl font-bold">₩1,250,000</div>
           <div className="flex items-center text-xs text-green-600">
             <ArrowUpRight className="h-3 w-3" />
             <span>12%</span>
@@ -43,7 +43,7 @@ function DashboardPreview() {
             <TrendingUp className="h-4 w-4" />
             <span className="text-xs">매출</span>
           </div>
-          <div className="text-xl font-bold">₩4,375,000</div>
+          <div className="text-base lg:text-xl font-bold">₩4,375,000</div>
           <div className="flex items-center text-xs text-green-600">
             <ArrowUpRight className="h-3 w-3" />
             <span>28%</span>
@@ -54,7 +54,7 @@ function DashboardPreview() {
             <BarChart3 className="h-4 w-4" />
             <span className="text-xs">ROAS</span>
           </div>
-          <div className="text-xl font-bold">3.5x</div>
+          <div className="text-base lg:text-xl font-bold">3.5x</div>
           <div className="flex items-center text-xs text-green-600">
             <ArrowUpRight className="h-3 w-3" />
             <span>0.5x</span>
@@ -65,7 +65,7 @@ function DashboardPreview() {
             <Users className="h-4 w-4" />
             <span className="text-xs">전환</span>
           </div>
-          <div className="text-xl font-bold">127건</div>
+          <div className="text-base lg:text-xl font-bold">127건</div>
           <div className="flex items-center text-xs text-red-600">
             <ArrowDownRight className="h-3 w-3" />
             <span>3%</span>

@@ -99,9 +99,35 @@ export class KPIInsightsService {
       return this.createEmptyResult()
     }
 
-    // 각 캠페인별 KPI 데이터 수집 및 인사이트 생성
+    // 시간 범위 계산
+    const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0))
+    const todayEnd = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59))
+    const yesterdayStart = new Date(todayStart)
+    yesterdayStart.setUTCDate(yesterdayStart.getUTCDate() - 1)
+    const yesterdayEnd = new Date(todayEnd)
+    yesterdayEnd.setUTCDate(yesterdayEnd.getUTCDate() - 1)
+    const last7DaysStart = new Date(todayStart)
+    last7DaysStart.setUTCDate(last7DaysStart.getUTCDate() - 7)
+
+    // 배치 쿼리로 모든 캠페인의 KPI 데이터 한 번에 조회 (N+1 방지)
+    const campaignIds = activeCampaigns.map(c => c.id)
+    const [todayMap, yesterdayMap, last7DaysMap] = await Promise.all([
+      this.kpiRepository.aggregateByCampaignIds(campaignIds, todayStart, todayEnd),
+      this.kpiRepository.aggregateByCampaignIds(campaignIds, yesterdayStart, yesterdayEnd),
+      this.kpiRepository.aggregateByCampaignIds(campaignIds, last7DaysStart, yesterdayEnd),
+    ])
+
+    // 각 캠페인별 인사이트 생성
     for (const campaign of activeCampaigns) {
-      const kpiData = await this.collectCampaignKPIData(campaign.id, campaign.name, campaign.dailyBudget.amount, currentHour)
+      const kpiData = this.buildCampaignKPIData(
+        campaign.id,
+        campaign.name,
+        campaign.dailyBudget.amount,
+        currentHour,
+        todayMap.get(campaign.id),
+        yesterdayMap.get(campaign.id),
+        last7DaysMap.get(campaign.id)
+      )
 
       if (kpiData) {
         const campaignInsights = this.analyzeCampaignKPI(kpiData)
@@ -136,82 +162,108 @@ export class KPIInsightsService {
   }
 
   /**
-   * 캠페인 KPI 데이터 수집
+   * 캠페인 KPI 데이터 구성 (프리페치된 배치 데이터 사용)
    */
-  private async collectCampaignKPIData(
+  private buildCampaignKPIData(
     campaignId: string,
     campaignName: string,
     dailyBudget: number,
-    currentHour: number
-  ): Promise<CampaignKPIData | null> {
-    const now = new Date()
-    const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0))
-    const todayEnd = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59))
+    currentHour: number,
+    todayKPI?: {
+      totalImpressions: number
+      totalClicks: number
+      totalLinkClicks: number
+      totalConversions: number
+      totalSpend: number
+      totalRevenue: number
+    },
+    yesterdayKPI?: {
+      totalImpressions: number
+      totalClicks: number
+      totalLinkClicks: number
+      totalConversions: number
+      totalSpend: number
+      totalRevenue: number
+    },
+    last7DaysKPI?: {
+      totalImpressions: number
+      totalClicks: number
+      totalLinkClicks: number
+      totalConversions: number
+      totalSpend: number
+      totalRevenue: number
+    }
+  ): CampaignKPIData | null {
+    // 기본값 처리: Map에 해당 캠페인이 없으면 모든 필드 0
+    const today = todayKPI || {
+      totalImpressions: 0,
+      totalClicks: 0,
+      totalLinkClicks: 0,
+      totalConversions: 0,
+      totalSpend: 0,
+      totalRevenue: 0,
+    }
 
-    const yesterdayStart = new Date(todayStart)
-    yesterdayStart.setUTCDate(yesterdayStart.getUTCDate() - 1)
-    const yesterdayEnd = new Date(todayEnd)
-    yesterdayEnd.setUTCDate(yesterdayEnd.getUTCDate() - 1)
+    const yesterday = yesterdayKPI || {
+      totalImpressions: 0,
+      totalClicks: 0,
+      totalLinkClicks: 0,
+      totalConversions: 0,
+      totalSpend: 0,
+      totalRevenue: 0,
+    }
 
-    const last7DaysStart = new Date(todayStart)
-    last7DaysStart.setUTCDate(last7DaysStart.getUTCDate() - 7)
+    const last7Days = last7DaysKPI || {
+      totalImpressions: 0,
+      totalClicks: 0,
+      totalLinkClicks: 0,
+      totalConversions: 0,
+      totalSpend: 0,
+      totalRevenue: 0,
+    }
 
-    try {
-      // 오늘 데이터
-      const todayKPI = await this.kpiRepository.aggregateByCampaignId(campaignId, todayStart, todayEnd)
+    // 시간 비율 기반 어제 동시간 예상치 계산
+    const hourRatio = currentHour / 24
+    const yesterdaySameHourSpend = yesterday.totalSpend * hourRatio
+    const yesterdaySameHourImpressions = yesterday.totalImpressions * hourRatio
+    const yesterdaySameHourClicks = yesterday.totalClicks * hourRatio
 
-      // 어제 데이터
-      const yesterdayKPI = await this.kpiRepository.aggregateByCampaignId(campaignId, yesterdayStart, yesterdayEnd)
+    // CTR, ROAS 계산
+    const todayCTR = today.totalImpressions > 0
+      ? (today.totalClicks / today.totalImpressions) * 100
+      : 0
+    const todayROAS = today.totalSpend > 0
+      ? today.totalRevenue / today.totalSpend
+      : 0
+    const yesterdayCTR = yesterday.totalImpressions > 0
+      ? (yesterday.totalClicks / yesterday.totalImpressions) * 100
+      : 0
+    const yesterdayROAS = yesterday.totalSpend > 0
+      ? yesterday.totalRevenue / yesterday.totalSpend
+      : 0
 
-      // 지난 7일 데이터
-      const last7DaysKPI = await this.kpiRepository.aggregateByCampaignId(campaignId, last7DaysStart, yesterdayEnd)
-
-      // 시간 비율 기반 어제 동시간 예상치 계산
-      const hourRatio = currentHour / 24
-      const yesterdaySameHourSpend = yesterdayKPI.totalSpend * hourRatio
-      const yesterdaySameHourImpressions = yesterdayKPI.totalImpressions * hourRatio
-      const yesterdaySameHourClicks = yesterdayKPI.totalClicks * hourRatio
-
-      // CTR, ROAS 계산
-      const todayCTR = todayKPI.totalImpressions > 0
-        ? (todayKPI.totalClicks / todayKPI.totalImpressions) * 100
-        : 0
-      const todayROAS = todayKPI.totalSpend > 0
-        ? todayKPI.totalRevenue / todayKPI.totalSpend
-        : 0
-      const yesterdayCTR = yesterdayKPI.totalImpressions > 0
-        ? (yesterdayKPI.totalClicks / yesterdayKPI.totalImpressions) * 100
-        : 0
-      const yesterdayROAS = yesterdayKPI.totalSpend > 0
-        ? yesterdayKPI.totalRevenue / yesterdayKPI.totalSpend
-        : 0
-
-      return {
-        campaignId,
-        campaignName,
-        dailyBudget,
-        todaySpend: todayKPI.totalSpend,
-        todayImpressions: todayKPI.totalImpressions,
-        todayClicks: todayKPI.totalClicks,
-        todayConversions: todayKPI.totalConversions,
-        todayRevenue: todayKPI.totalRevenue,
-        yesterdaySameHourSpend,
-        yesterdaySameHourImpressions,
-        yesterdaySameHourClicks,
-        yesterdayTotalSpend: yesterdayKPI.totalSpend,
-        last7DaysAvgSpend: last7DaysKPI.totalSpend / 7,
-        last7DaysAvgClicks: last7DaysKPI.totalClicks / 7,
-        last7DaysAvgConversions: last7DaysKPI.totalConversions / 7,
-        last7DaysAvgRoas: last7DaysKPI.totalSpend > 0 ? last7DaysKPI.totalRevenue / last7DaysKPI.totalSpend : 0,
-        currentHour,
-        todayCTR,
-        todayROAS,
-        yesterdayCTR,
-        yesterdayROAS,
-      }
-    } catch (error) {
-      console.error(`[KPIInsights] Failed to collect KPI data for campaign ${campaignId}:`, error)
-      return null
+    return {
+      campaignId,
+      campaignName,
+      dailyBudget,
+      todaySpend: today.totalSpend,
+      todayImpressions: today.totalImpressions,
+      todayClicks: today.totalClicks,
+      todayConversions: today.totalConversions,
+      todayRevenue: today.totalRevenue,
+      yesterdaySameHourSpend,
+      yesterdaySameHourImpressions,
+      yesterdaySameHourClicks,
+      yesterdayTotalSpend: yesterday.totalSpend,
+      last7DaysAvgSpend: last7Days.totalSpend / 7,
+      last7DaysAvgClicks: last7Days.totalClicks / 7,
+      last7DaysAvgConversions: last7Days.totalConversions / 7,
+      last7DaysAvgRoas: last7Days.totalSpend > 0 ? last7Days.totalRevenue / last7Days.totalSpend : 0,
+      currentHour,
+      todayCTR,
+      todayROAS,
+      yesterdayCTR,
+      yesterdayROAS,
     }
   }
 

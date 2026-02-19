@@ -1,9 +1,8 @@
 import type { Metadata } from 'next'
-import { redirect } from 'next/navigation'
 import dynamic from 'next/dynamic'
-import { auth } from '@/infrastructure/auth'
 import { getMetadata } from '@/lib/constants/seo'
 import { ErrorBoundary } from '@/presentation/components/common/ErrorBoundary'
+import { AuthRedirect } from '@/presentation/components/common/AuthRedirect'
 import {
   LandingHeader,
   HeroSection,
@@ -45,17 +44,14 @@ const CTASection = dynamic(
 
 export const metadata: Metadata = getMetadata({ path: '/' })
 
-export default async function LandingPage() {
-  // 서버 컴포넌트에서 세션 확인
-  const session = await auth()
+// ISR: 랜딩 페이지는 1시간마다 재생성 (auth() 제거로 정적 캐싱 가능)
+export const revalidate = 3600
 
-  // 로그인한 사용자는 캠페인 페이지로 리다이렉트
-  if (session?.user) {
-    redirect('/campaigns')
-  }
-
+export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background scroll-smooth">
+      {/* 로그인된 사용자는 클라이언트에서 /campaigns로 리다이렉트 */}
+      <AuthRedirect />
       <ErrorBoundary>
         <LandingHeader />
       </ErrorBoundary>

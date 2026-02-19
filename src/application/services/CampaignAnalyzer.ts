@@ -5,8 +5,8 @@
  * 예상 영향도 및 신뢰도 계산을 포함합니다.
  */
 
-import type { Industry } from '@infrastructure/external/openai/prompts/adCopyGeneration'
-import { INDUSTRY_BENCHMARKS } from '@infrastructure/external/openai/prompts/adCopyGeneration'
+import type { Industry } from '@domain/value-objects/Industry'
+import { INDUSTRY_BENCHMARKS } from '@domain/value-objects/Industry'
 import { KoreanMarketCalendar } from '@domain/value-objects/KoreanMarketCalendar'
 
 /**

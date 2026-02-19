@@ -4,7 +4,7 @@
  * 업종별 평균 성과 지표 비교 및 개선 우선순위 도출
  */
 
-import type { Industry } from '@infrastructure/external/openai/prompts/adCopyGeneration'
+import type { Industry } from '@domain/value-objects/Industry'
 
 /**
  * 업종별 상세 벤치마크 데이터

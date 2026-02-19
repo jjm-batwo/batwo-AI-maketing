@@ -171,7 +171,7 @@ function AlertItem({ alert, onNavigate, locale }: AlertItemProps) {
   const formatValue = (value: number, metric: string) => {
     if (metric === 'ROAS') return value.toFixed(2)
     if (metric === 'CTR' || metric === t('notifications.metrics.conversionRate')) return `${value.toFixed(2)}%`
-    if (metric === 'CPA' || metric === t('notifications.metrics.spend')) return `${t('currency.krw')}${value.toLocaleString()}${t('currency.suffix')}`
+    if (metric === 'CPA' || metric === t('notifications.metrics.spend')) return `${value.toLocaleString()}${t('currency.suffix')}`
     return value.toLocaleString()
   }
 

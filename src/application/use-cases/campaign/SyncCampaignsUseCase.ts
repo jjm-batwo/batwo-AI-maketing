@@ -6,6 +6,7 @@ import { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import { IMetaAdsService, MetaCampaignListItem } from '@application/ports/IMetaAdsService'
 import { prisma } from '@/lib/prisma'
 import { isTokenExpired } from '@application/utils/metaTokenUtils'
+import { safeDecryptToken } from '@application/utils/TokenEncryption'
 
 export interface SyncCampaignsInput {
   userId: string
@@ -61,7 +62,7 @@ export class SyncCampaignsUseCase {
 
       while (hasNext) {
         const response = await this.metaAdsService.listCampaigns(
-          metaAdAccount.accessToken,
+          safeDecryptToken(metaAdAccount.accessToken),
           metaAdAccount.metaAccountId,
           { limit: 100, after }
         )

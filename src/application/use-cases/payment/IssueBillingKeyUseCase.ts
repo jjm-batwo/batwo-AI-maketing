@@ -2,7 +2,7 @@ import type { IBillingKeyRepository } from '@domain/repositories/IBillingKeyRepo
 import type { IPaymentGateway } from '@application/ports/IPaymentGateway'
 import { BillingKey } from '@domain/entities/BillingKey'
 import { PaymentError } from '@domain/errors/PaymentError'
-import { encryptBillingKey } from '@infrastructure/payment/BillingKeyEncryption'
+import { encryptBillingKey } from '@application/utils/BillingKeyEncryption'
 import type { BillingKeyInfoDTO } from '@application/dto/payment/PaymentDTOs'
 
 export class IssueBillingKeyUseCase {

@@ -5,8 +5,8 @@
  * 새로운 카피 생성 시 인사이트를 제공합니다.
  */
 
-import type { CopyHookType, Industry } from '@infrastructure/external/openai/prompts/adCopyGeneration'
-import { INDUSTRY_BENCHMARKS } from '@infrastructure/external/openai/prompts/adCopyGeneration'
+import type { CopyHookType, Industry } from '@domain/value-objects/Industry'
+import { INDUSTRY_BENCHMARKS } from '@domain/value-objects/Industry'
 import { KoreanMarketCalendar } from '@domain/value-objects/KoreanMarketCalendar'
 
 /**

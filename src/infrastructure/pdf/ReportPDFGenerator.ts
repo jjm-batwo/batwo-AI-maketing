@@ -1,17 +1,10 @@
 import React from 'react'
 import { renderToBuffer } from '@react-pdf/renderer'
 import type { ReportDTO } from '@application/dto/report/ReportDTO'
+import type { IReportPDFGenerator, PDFGeneratorResult } from '@application/ports/IReportPDFGenerator'
 import { WeeklyReportTemplate } from './templates/WeeklyReportTemplate'
 
-export interface PDFGeneratorResult {
-  buffer: Buffer
-  filename: string
-  contentType: string
-}
-
-export interface IReportPDFGenerator {
-  generateWeeklyReport(report: ReportDTO): Promise<PDFGeneratorResult>
-}
+export type { PDFGeneratorResult, IReportPDFGenerator }
 
 export class ReportPDFGenerator implements IReportPDFGenerator {
   async generateWeeklyReport(report: ReportDTO): Promise<PDFGeneratorResult> {
