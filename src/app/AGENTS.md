@@ -66,8 +66,6 @@ src/app/
 │   │   │   └── [id]/
 │   │   │       └── page.tsx
 │   │   └── loading.tsx
-│   ├── app-review-demo/      # App review demo page
-│   │   └── page.tsx
 │   └── loading.tsx
 │
 ├── (legal)/                    # Legal pages (public)
