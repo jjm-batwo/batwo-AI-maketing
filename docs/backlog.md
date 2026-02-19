@@ -22,3 +22,6 @@
 | 3 | 랜딩페이지 섹션별 성능 최적화 | `src/presentation/components/landing/` | intersection observer 애니메이션 지연 로딩 | 2026-02-12 |
 | 4 | 랜딩 섹션 'use client' 경계 세분화 | `src/presentation/components/landing/` | 애니메이션 부분만 클라이언트 격리 | 2026-02-12 |
 | 5 | PerplexityResearchService.test.ts 수정 | `tests/unit/infrastructure/external/` | 2개 테스트 실패 (사전 존재 이슈) | 2026-02-13 |
+| 6 | CSR 12페이지 metadata 추가 | `src/app/(dashboard)/dashboard/page.tsx` 외 11개 | layout.tsx 추가 또는 RSC 전환 필요 | 2026-02-19 |
+| 7 | RSC Suspense wrapping | `src/app/(dashboard)/*/page.tsx` | fetch 블로킹 해소, 스트리밍 SSR 활성화 | 2026-02-19 |
+| 8 | Dashboard/meta-connect CSR→RSC 전환 | `dashboard/page.tsx`, `meta-connect/page.tsx` | 대형 리팩토링, Zustand 의존성 분리 필요 | 2026-02-19 |
