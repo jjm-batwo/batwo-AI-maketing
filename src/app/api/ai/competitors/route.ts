@@ -15,6 +15,7 @@ import { AdLibraryClient } from '@infrastructure/external/meta-ads/AdLibraryClie
 import { AIService } from '@infrastructure/external/openai/AIService'
 import { competitorsQuerySchema, competitorsTrackingSchema, validateQuery, validateBody } from '@/lib/validations'
 import { checkRateLimit, getClientIp, addRateLimitHeaders, rateLimitExceededResponse } from '@/lib/middleware/rateLimit'
+import { getTrackCompetitorUseCase } from '@/lib/di/container'
 
 /**
  * GET /api/ai/competitors
@@ -123,11 +124,10 @@ export async function GET(request: NextRequest) {
  * POST /api/ai/competitors
  *
  * Body:
- * - pageIds: string[] (경쟁사 페이지 ID 추적 저장)
+ * - pages: Array<{ pageId: string, pageName: string }>
  * - industry: string (선택)
  *
- * 향후 확장: 사용자가 추적하고 싶은 경쟁사 페이지를 저장하고
- * 주기적으로 새 광고를 모니터링하는 기능
+ * 경쟁사 페이지를 추적 저장
  */
 export async function POST(request: NextRequest) {
   try {
@@ -141,16 +141,25 @@ export async function POST(request: NextRequest) {
     const validation = await validateBody(request, competitorsTrackingSchema)
     if (!validation.success) return validation.error
 
-    const { pageIds } = validation.data
+    const { pages, industry } = validation.data
 
-    // FUTURE: 경쟁사 추적 기능 구현 (CompetitorTracking 모델 추가 필요)
-    // - 사용자가 선택한 경쟁사 페이지를 DB에 저장
-    // - 주기적으로 새 광고를 크롤링하여 알림 발송
-    // - 경쟁사 트렌드 분석 대시보드 제공
+    // 3. 각 페이지를 추적 저장
+    const trackCompetitorUseCase = getTrackCompetitorUseCase()
+    const results = await Promise.all(
+      pages.map((page) =>
+        trackCompetitorUseCase.execute({
+          userId: user.id,
+          pageId: page.pageId,
+          pageName: page.pageName,
+          industry,
+        })
+      )
+    )
 
     return NextResponse.json({
       success: true,
-      message: `Tracking ${pageIds.length} competitor pages. (Feature coming soon)`,
+      data: results,
+      message: `${results.length}개의 경쟁사 페이지 추적이 시작되었습니다.`,
     })
   } catch (error) {
     console.error('[API] /api/ai/competitors POST error:', error)

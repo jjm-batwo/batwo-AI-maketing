@@ -2,7 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Clock, Megaphone } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Clock, Megaphone, Star, StarOff, Loader2 } from 'lucide-react'
 
 interface CompetitorCardProps {
   pageName: string
@@ -11,6 +12,10 @@ interface CompetitorCardProps {
   dominantFormats: string[]
   commonHooks: string[]
   averageAdLifespan: number
+  isTracked?: boolean
+  isTrackLoading?: boolean
+  onTrack?: () => void
+  onUntrack?: () => void
 }
 
 const formatLabels: Record<string, string> = {
@@ -28,6 +33,10 @@ export function CompetitorCard({
   dominantFormats,
   commonHooks,
   averageAdLifespan,
+  isTracked = false,
+  isTrackLoading = false,
+  onTrack,
+  onUntrack,
 }: CompetitorCardProps) {
   return (
     <Card className="h-full">
@@ -41,7 +50,27 @@ export function CompetitorCard({
             <span>{adCount}개 광고</span>
           </div>
         </div>
-        <p className="text-xs text-muted-foreground">ID: {pageId}</p>
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">ID: {pageId}</p>
+          {(onTrack || onUntrack) && (
+            <Button
+              variant={isTracked ? 'outline' : 'secondary'}
+              size="sm"
+              className="h-7 text-xs"
+              disabled={isTrackLoading}
+              onClick={isTracked ? onUntrack : onTrack}
+            >
+              {isTrackLoading ? (
+                <Loader2 className="h-3 w-3 animate-spin mr-1" />
+              ) : isTracked ? (
+                <StarOff className="h-3 w-3 mr-1" />
+              ) : (
+                <Star className="h-3 w-3 mr-1" />
+              )}
+              {isTracked ? '추적 해제' : '추적'}
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>

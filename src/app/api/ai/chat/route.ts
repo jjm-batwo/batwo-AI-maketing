@@ -16,7 +16,9 @@ import { PrismaReportRepository } from '@infrastructure/database/repositories/Pr
 import { PrismaKPIRepository } from '@infrastructure/database/repositories/PrismaKPIRepository'
 import { AIService } from '@infrastructure/external/openai/AIService'
 import { StreamingAIService } from '@infrastructure/external/openai/streaming/StreamingAIService'
+import { PortfolioOptimizationService } from '@application/services/PortfolioOptimizationService'
 import { prisma } from '@/lib/prisma'
+import { getCompetitorTrackingRepository } from '@/lib/di/container'
 import { chatSchema, validateBody } from '@/lib/validations'
 import { checkRateLimit, getClientIp, addRateLimitHeaders, rateLimitExceededResponse } from '@/lib/middleware/rateLimit'
 
@@ -28,7 +30,7 @@ interface ChatResponseData {
   message: string
   conversationId: string
   sources: Array<{
-    type: 'campaign' | 'report' | 'anomaly'
+    type: 'campaign' | 'report' | 'anomaly' | 'competitor' | 'portfolio'
     id: string
     relevance: number
   }>
@@ -56,8 +58,17 @@ function getChatService(): ChatService {
     const reportRepo = new PrismaReportRepository(prisma)
     const kpiRepo = new PrismaKPIRepository(prisma)
     const aiService = new AIService(apiKey)
+    const competitorTrackingRepo = getCompetitorTrackingRepository()
+    const portfolioService = new PortfolioOptimizationService(campaignRepo, kpiRepo)
 
-    chatService = new ChatService(campaignRepo, reportRepo, kpiRepo, aiService)
+    chatService = new ChatService(
+      campaignRepo,
+      reportRepo,
+      kpiRepo,
+      aiService,
+      competitorTrackingRepo,
+      portfolioService
+    )
   }
 
   return chatService
@@ -178,6 +189,18 @@ async function handleStreamingResponse(
           )
           .join('\n')
 
+        const competitorSummary = context.trackedCompetitors.length > 0
+          ? context.trackedCompetitors
+              .map((c) => `- ${c.pageName}${c.industry ? ` (${c.industry})` : ''}`)
+              .join('\n')
+          : '- 추적 중인 경쟁사 없음'
+
+        let portfolioInfo = '- 분석 데이터 없음'
+        if (context.portfolioSummary) {
+          const ps = context.portfolioSummary
+          portfolioInfo = `총 예산 ₩${ps.totalBudget.toLocaleString('ko-KR')}/일, 현재 ROAS ${ps.currentTotalROAS.toFixed(2)}x → 예상 ${ps.projectedTotalROAS.toFixed(2)}x, 효율성 ${ps.efficiencyScore}/100`
+        }
+
         const systemPrompt = `당신은 한국 디지털 마케팅 전문 AI 어시스턴트입니다. 사용자의 Meta 광고 캠페인 성과를 분석하고, 실행 가능한 조언을 제공합니다.
 
 **현재 사용자 캠페인 현황:**
@@ -186,12 +209,19 @@ ${campaignSummary || '- 활성 캠페인 없음'}
 **최근 이상 징후:**
 ${anomalySummary || '- 특이사항 없음'}
 
+**추적 중인 경쟁사:**
+${competitorSummary}
+
+**포트폴리오 분석:**
+${portfolioInfo}
+
 **역할 및 원칙:**
 1. 사용자 데이터를 기반으로 구체적이고 맞춤화된 답변 제공
 2. 실행 가능한 액션 아이템 제시 (예: "XX 캠페인 예산 30% 증액")
 3. 명확하고 간결한 한국어 사용
 4. 근거 있는 권장사항 제공 (ROAS, CPA 등 수치 기반)
 5. 불확실한 경우 "추가 데이터가 필요합니다" 명시
+6. 경쟁사 분석 및 포트폴리오 최적화 관련 질문에 컨텍스트 활용
 
 자연스러운 텍스트로 응답하세요.`
 

@@ -47,7 +47,10 @@ export const competitorsQuerySchema = z.object({
  * AI Competitors POST body validation
  */
 export const competitorsTrackingSchema = z.object({
-  pageIds: z.array(z.string()).min(1, '최소 1개의 페이지 ID가 필요합니다'),
+  pages: z.array(z.object({
+    pageId: z.string().min(1),
+    pageName: z.string().min(1),
+  })).min(1, '최소 1개의 페이지가 필요합니다'),
   industry: z.string().optional(),
 })
 

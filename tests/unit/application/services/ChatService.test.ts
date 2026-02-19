@@ -3,11 +3,14 @@ import { ChatService } from '@application/services/ChatService'
 import { MockCampaignRepository } from '@tests/mocks/repositories/MockCampaignRepository'
 import { MockReportRepository } from '@tests/mocks/repositories/MockReportRepository'
 import { MockKPIRepository } from '@tests/mocks/repositories/MockKPIRepository'
+import { MockCompetitorTrackingRepository } from '@tests/mocks/repositories/MockCompetitorTrackingRepository'
 import type { IAIService } from '@application/ports/IAIService'
 import { Campaign } from '@domain/entities/Campaign'
+import { CompetitorTracking } from '@domain/entities/CompetitorTracking'
 import { Money } from '@domain/value-objects/Money'
 import { CampaignObjective } from '@domain/value-objects/CampaignObjective'
 import { KPI } from '@domain/entities/KPI'
+import { PortfolioOptimizationService } from '@application/services/PortfolioOptimizationService'
 
 describe('ChatService - buildContext N+1 최적화', () => {
   let service: ChatService
@@ -292,6 +295,234 @@ describe('ChatService - buildContext N+1 최적화', () => {
       expect(context.campaigns[0].metrics.ctr).toBeCloseTo(5.0, 1) // 50/1000*100
       expect(context.campaigns[0].metrics.cvr).toBe(0) // conversions=0
       expect(context.campaigns[0].metrics.cpa).toBe(0) // conversions=0이므로 CPA도 0
+    })
+  })
+})
+
+describe('ChatService - 경쟁사/포트폴리오 컨텍스트 통합', () => {
+  let service: ChatService
+  let campaignRepo: MockCampaignRepository
+  let reportRepo: MockReportRepository
+  let kpiRepo: MockKPIRepository
+  let competitorTrackingRepo: MockCompetitorTrackingRepository
+  let portfolioService: PortfolioOptimizationService
+  let mockAIService: IAIService
+
+  beforeEach(() => {
+    campaignRepo = new MockCampaignRepository()
+    reportRepo = new MockReportRepository()
+    kpiRepo = new MockKPIRepository()
+    competitorTrackingRepo = new MockCompetitorTrackingRepository()
+    portfolioService = new PortfolioOptimizationService(campaignRepo, kpiRepo)
+    mockAIService = {
+      generateAdCopy: vi.fn(),
+      generateOptimization: vi.fn(),
+      generateCreativeVariants: vi.fn(),
+      generateReportInsights: vi.fn(),
+      generateChatCompletion: vi.fn(),
+    } as unknown as IAIService
+
+    service = new ChatService(
+      campaignRepo,
+      reportRepo,
+      kpiRepo,
+      mockAIService,
+      competitorTrackingRepo,
+      portfolioService
+    )
+  })
+
+  describe('buildContext - 경쟁사 추적 데이터 포함', () => {
+    it('should_include_tracked_competitors_in_context', async () => {
+      // Given: 추적 중인 경쟁사 2개
+      const userId = 'user-comp-1'
+
+      const tracking1 = CompetitorTracking.fromPersistence({
+        id: 'track-1',
+        userId,
+        pageId: 'page-123',
+        pageName: '경쟁사A',
+        industry: 'ecommerce',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      const tracking2 = CompetitorTracking.fromPersistence({
+        id: 'track-2',
+        userId,
+        pageId: 'page-456',
+        pageName: '경쟁사B',
+        industry: 'fashion',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+
+      await competitorTrackingRepo.save(tracking1)
+      await competitorTrackingRepo.save(tracking2)
+
+      // When: buildContext 호출
+      const context = await service.buildContext(userId)
+
+      // Then: 경쟁사 추적 데이터 포함
+      expect(context.trackedCompetitors).toBeDefined()
+      expect(context.trackedCompetitors).toHaveLength(2)
+      expect(context.trackedCompetitors![0].pageName).toBe('경쟁사A')
+      expect(context.trackedCompetitors![1].pageName).toBe('경쟁사B')
+    })
+
+    it('should_return_empty_tracked_competitors_when_none_exist', async () => {
+      // Given: 추적 중인 경쟁사 없음
+      const userId = 'user-no-comp'
+
+      // When
+      const context = await service.buildContext(userId)
+
+      // Then
+      expect(context.trackedCompetitors).toBeDefined()
+      expect(context.trackedCompetitors).toHaveLength(0)
+    })
+  })
+
+  describe('buildContext - 포트폴리오 분석 포함', () => {
+    it('should_include_portfolio_summary_when_active_campaigns_exist', async () => {
+      // Given: 활성 캠페인 2개 + KPI 데이터
+      const userId = 'user-portfolio-1'
+      const now = new Date()
+
+      const campaign1 = Campaign.restore({
+        id: 'camp-p1',
+        userId,
+        name: 'Portfolio Campaign 1',
+        objective: 'CONVERSIONS',
+        dailyBudget: Money.create(100000, 'KRW'),
+        startDate: now,
+        status: 'ACTIVE',
+        createdAt: now,
+        updatedAt: now,
+      })
+      const campaign2 = Campaign.restore({
+        id: 'camp-p2',
+        userId,
+        name: 'Portfolio Campaign 2',
+        objective: 'TRAFFIC',
+        dailyBudget: Money.create(50000, 'KRW'),
+        startDate: now,
+        status: 'ACTIVE',
+        createdAt: now,
+        updatedAt: now,
+      })
+
+      await campaignRepo.save(campaign1)
+      await campaignRepo.save(campaign2)
+
+      const kpi1 = KPI.create({
+        campaignId: 'camp-p1',
+        date: now,
+        impressions: 10000,
+        clicks: 500,
+        linkClicks: 450,
+        conversions: 50,
+        spend: Money.create(100000, 'KRW'),
+        revenue: Money.create(300000, 'KRW'),
+      })
+      const kpi2 = KPI.create({
+        campaignId: 'camp-p2',
+        date: now,
+        impressions: 8000,
+        clicks: 400,
+        linkClicks: 380,
+        conversions: 30,
+        spend: Money.create(50000, 'KRW'),
+        revenue: Money.create(100000, 'KRW'),
+      })
+
+      await kpiRepo.save(kpi1)
+      await kpiRepo.save(kpi2)
+
+      // When
+      const context = await service.buildContext(userId)
+
+      // Then: 포트폴리오 요약 포함
+      expect(context.portfolioSummary).toBeDefined()
+      expect(context.portfolioSummary!.totalBudget).toBeGreaterThan(0)
+      expect(context.portfolioSummary!.efficiencyScore).toBeGreaterThanOrEqual(0)
+      expect(context.portfolioSummary!.recommendations).toBeDefined()
+    })
+
+    it('should_handle_portfolio_analysis_failure_gracefully', async () => {
+      // Given: 활성 캠페인 없음 (PortfolioService가 에러 발생)
+      const userId = 'user-no-portfolio'
+
+      // When
+      const context = await service.buildContext(userId)
+
+      // Then: portfolioSummary는 null
+      expect(context.portfolioSummary).toBeNull()
+    })
+  })
+
+  describe('tryQuickResponse - 경쟁사 관련 질문', () => {
+    it('should_provide_quick_response_for_competitor_question', async () => {
+      // Given: 추적 중인 경쟁사 있음
+      const userId = 'user-comp-quick'
+
+      const tracking = CompetitorTracking.fromPersistence({
+        id: 'track-q1',
+        userId,
+        pageId: 'page-789',
+        pageName: '스킨케어브랜드',
+        industry: 'fashion',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      await competitorTrackingRepo.save(tracking)
+
+      // When: "경쟁사" 키워드 포함 질문
+      const response = await service.chat(userId, '경쟁사 현황 알려줘')
+
+      // Then: 경쟁사 추적 정보가 포함된 응답
+      expect(response.message).toContain('스킨케어브랜드')
+      expect(response.suggestedQuestions).toBeDefined()
+    })
+  })
+
+  describe('tryQuickResponse - 포트폴리오 최적화 질문', () => {
+    it('should_provide_quick_response_for_portfolio_optimization_question', async () => {
+      // Given: 활성 캠페인 + KPI
+      const userId = 'user-port-quick'
+      const now = new Date()
+
+      const campaign = Campaign.restore({
+        id: 'camp-pq1',
+        userId,
+        name: 'Portfolio Quick',
+        objective: 'CONVERSIONS',
+        dailyBudget: Money.create(100000, 'KRW'),
+        startDate: now,
+        status: 'ACTIVE',
+        createdAt: now,
+        updatedAt: now,
+      })
+      await campaignRepo.save(campaign)
+
+      const kpi = KPI.create({
+        campaignId: 'camp-pq1',
+        date: now,
+        impressions: 5000,
+        clicks: 250,
+        linkClicks: 230,
+        conversions: 25,
+        spend: Money.create(100000, 'KRW'),
+        revenue: Money.create(250000, 'KRW'),
+      })
+      await kpiRepo.save(kpi)
+
+      // When: "포트폴리오 최적화" 질문
+      const response = await service.chat(userId, '포트폴리오 최적화 방법 알려줘')
+
+      // Then: 포트폴리오 분석 기반 응답
+      expect(response.message).toBeDefined()
+      expect(response.message.length).toBeGreaterThan(0)
+      expect(response.suggestedQuestions).toBeDefined()
     })
   })
 })

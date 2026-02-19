@@ -135,6 +135,12 @@ import { BlobStorageService, type IBlobStorageService } from '@infrastructure/st
 import { CreateAdvantageCampaignUseCase } from '@application/use-cases/campaign/CreateAdvantageCampaignUseCase'
 import { RefreshMetaTokenUseCase } from '@application/use-cases/token/RefreshMetaTokenUseCase'
 
+import { PrismaCompetitorTrackingRepository } from '@infrastructure/database/repositories/PrismaCompetitorTrackingRepository'
+import type { ICompetitorTrackingRepository } from '@domain/repositories/ICompetitorTrackingRepository'
+import { TrackCompetitorUseCase } from '@application/use-cases/competitor/TrackCompetitorUseCase'
+import { UntrackCompetitorUseCase } from '@application/use-cases/competitor/UntrackCompetitorUseCase'
+import { GetTrackedCompetitorsUseCase } from '@application/use-cases/competitor/GetTrackedCompetitorsUseCase'
+
 import { prisma } from '@/lib/prisma'
 
 type Factory<T> = () => T
@@ -1007,6 +1013,34 @@ export function getCacheService(): ICacheService {
   return container.resolve(DI_TOKENS.CacheService)
 }
 
+// Competitor Tracking Repository (Singleton)
+container.registerSingleton<ICompetitorTrackingRepository>(
+  DI_TOKENS.CompetitorTrackingRepository,
+  () => new PrismaCompetitorTrackingRepository(prisma)
+)
+
+// Competitor Tracking Use Cases (Transient)
+container.register(
+  DI_TOKENS.TrackCompetitorUseCase,
+  () => new TrackCompetitorUseCase(
+    container.resolve(DI_TOKENS.CompetitorTrackingRepository)
+  )
+)
+
+container.register(
+  DI_TOKENS.UntrackCompetitorUseCase,
+  () => new UntrackCompetitorUseCase(
+    container.resolve(DI_TOKENS.CompetitorTrackingRepository)
+  )
+)
+
+container.register(
+  DI_TOKENS.GetTrackedCompetitorsUseCase,
+  () => new GetTrackedCompetitorsUseCase(
+    container.resolve(DI_TOKENS.CompetitorTrackingRepository)
+  )
+)
+
 // Token Management Use Cases (Transient)
 container.register(
   DI_TOKENS.RefreshMetaTokenUseCase,
@@ -1015,4 +1049,20 @@ container.register(
 
 export function getRefreshMetaTokenUseCase(): RefreshMetaTokenUseCase {
   return container.resolve(DI_TOKENS.RefreshMetaTokenUseCase)
+}
+
+export function getCompetitorTrackingRepository(): ICompetitorTrackingRepository {
+  return container.resolve(DI_TOKENS.CompetitorTrackingRepository)
+}
+
+export function getTrackCompetitorUseCase(): TrackCompetitorUseCase {
+  return container.resolve(DI_TOKENS.TrackCompetitorUseCase)
+}
+
+export function getUntrackCompetitorUseCase(): UntrackCompetitorUseCase {
+  return container.resolve(DI_TOKENS.UntrackCompetitorUseCase)
+}
+
+export function getGetTrackedCompetitorsUseCase(): GetTrackedCompetitorsUseCase {
+  return container.resolve(DI_TOKENS.GetTrackedCompetitorsUseCase)
 }

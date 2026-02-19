@@ -112,6 +112,12 @@ export const DI_TOKENS = {
   // Advantage+ Campaign
   CreateAdvantageCampaignUseCase: Symbol.for('CreateAdvantageCampaignUseCase'),
 
+  // Competitor Tracking
+  CompetitorTrackingRepository: Symbol.for('CompetitorTrackingRepository'),
+  TrackCompetitorUseCase: Symbol.for('TrackCompetitorUseCase'),
+  UntrackCompetitorUseCase: Symbol.for('UntrackCompetitorUseCase'),
+  GetTrackedCompetitorsUseCase: Symbol.for('GetTrackedCompetitorsUseCase'),
+
   // Cache Service
   CacheService: Symbol.for('CacheService'),
 

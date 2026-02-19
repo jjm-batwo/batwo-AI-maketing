@@ -3,6 +3,8 @@
  *
  * 주요 기능:
  * - 사용자 캠페인 데이터 기반 컨텍스트 생성
+ * - 경쟁사 추적 데이터 통합
+ * - 포트폴리오 최적화 분석 통합
  * - 대화 히스토리 관리
  * - 일반적인 마케팅 질문 패턴 감지 및 최적화
  * - 액션 제안 및 후속 질문 제시
@@ -11,7 +13,9 @@
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import type { IReportRepository } from '@domain/repositories/IReportRepository'
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
+import type { ICompetitorTrackingRepository } from '@domain/repositories/ICompetitorTrackingRepository'
 import type { IAIService } from '@application/ports/IAIService'
+import type { PortfolioOptimizationService, PortfolioAnalysis } from '@application/services/PortfolioOptimizationService'
 import { CampaignStatus } from '@domain/value-objects/CampaignStatus'
 
 // ============================================================================
@@ -22,6 +26,29 @@ export interface ChatMessage {
   role: 'user' | 'assistant' | 'system'
   content: string
   timestamp?: Date
+}
+
+export interface TrackedCompetitorContext {
+  pageId: string
+  pageName: string
+  industry: string | null
+}
+
+export interface PortfolioSummaryContext {
+  totalBudget: number
+  efficiencyScore: number
+  diversificationScore: number
+  currentTotalROAS: number
+  projectedTotalROAS: number
+  improvement: number
+  recommendations: string[]
+  topAllocations: {
+    campaignName: string
+    currentBudget: number
+    recommendedBudget: number
+    changePercent: number
+    roas: number
+  }[]
 }
 
 export interface ChatContext {
@@ -53,12 +80,14 @@ export interface ChatContext {
     change: number
     severity: string
   }[]
+  trackedCompetitors: TrackedCompetitorContext[]
+  portfolioSummary: PortfolioSummaryContext | null
 }
 
 export interface ChatResponse {
   message: string
   sources: {
-    type: 'campaign' | 'report' | 'anomaly'
+    type: 'campaign' | 'report' | 'anomaly' | 'competitor' | 'portfolio'
     id: string
     relevance: number
   }[]
@@ -96,7 +125,9 @@ export class ChatService {
     private readonly campaignRepo: ICampaignRepository,
     private readonly reportRepo: IReportRepository,
     private readonly kpiRepo: IKPIRepository,
-    private readonly aiService: IAIService
+    private readonly aiService: IAIService,
+    private readonly competitorTrackingRepo?: ICompetitorTrackingRepository,
+    private readonly portfolioService?: PortfolioOptimizationService
   ) {
     // 주기적으로 만료된 대화 정리 (5분마다)
     setInterval(() => this.cleanExpiredConversations(), 5 * 60 * 1000)
@@ -240,22 +271,78 @@ export class ChatService {
       }
     })
 
-    // 이상 징후 (실제로는 AnomalyDetectionService에서 가져와야 함)
-    // 여기서는 간단히 ROAS가 낮은 캠페인을 이상 징후로 간주
+    // 이상 징후
     const recentAnomalies = campaignsContext
       .filter((c) => c.metrics.roas < 1.5 && c.status === CampaignStatus.ACTIVE)
       .map((c) => ({
         campaignName: c.name,
         metric: 'ROAS',
-        change: c.metrics.roas - 2.5, // 목표 대비 변화
+        change: c.metrics.roas - 2.5,
         severity: c.metrics.roas < 1.0 ? 'critical' : 'warning',
       }))
       .slice(0, 5)
+
+    // 경쟁사 추적 데이터
+    const trackedCompetitors = await this.fetchTrackedCompetitors(userId)
+
+    // 포트폴리오 분석
+    const portfolioSummary = await this.fetchPortfolioSummary(userId)
 
     return {
       campaigns: campaignsContext,
       recentReports: reportsContext,
       recentAnomalies,
+      trackedCompetitors,
+      portfolioSummary,
+    }
+  }
+
+  /**
+   * 추적 중인 경쟁사 조회
+   */
+  private async fetchTrackedCompetitors(userId: string): Promise<TrackedCompetitorContext[]> {
+    if (!this.competitorTrackingRepo) return []
+
+    try {
+      const trackings = await this.competitorTrackingRepo.findByUserId(userId)
+      return trackings.map((t) => ({
+        pageId: t.pageId,
+        pageName: t.pageName,
+        industry: t.industry,
+      }))
+    } catch {
+      return []
+    }
+  }
+
+  /**
+   * 포트폴리오 분석 요약 조회
+   */
+  private async fetchPortfolioSummary(userId: string): Promise<PortfolioSummaryContext | null> {
+    if (!this.portfolioService) return null
+
+    try {
+      const analysis: PortfolioAnalysis = await this.portfolioService.analyzePortfolio(userId)
+
+      return {
+        totalBudget: analysis.totalBudget,
+        efficiencyScore: analysis.efficiencyScore,
+        diversificationScore: analysis.diversificationScore,
+        currentTotalROAS: analysis.expectedImpact.currentTotalROAS,
+        projectedTotalROAS: analysis.expectedImpact.projectedTotalROAS,
+        improvement: analysis.expectedImpact.improvement,
+        recommendations: analysis.recommendations,
+        topAllocations: analysis.allocations.slice(0, 5).map((a) => ({
+          campaignName: a.campaignName,
+          currentBudget: a.currentBudget,
+          recommendedBudget: a.recommendedBudget,
+          changePercent: a.changePercent,
+          roas: a.metrics.roas,
+        })),
+      }
+    } catch {
+      // 활성 캠페인 없으면 PortfolioService가 에러 발생
+      return null
     }
   }
 
@@ -410,7 +497,120 @@ export class ChatService {
       }
     }
 
+    // 패턴 4: 경쟁사 관련 질문
+    if (
+      lowerMessage.includes('경쟁사') ||
+      lowerMessage.includes('경쟁') ||
+      lowerMessage.includes('라이벌') ||
+      lowerMessage.includes('competitor')
+    ) {
+      return this.buildCompetitorQuickResponse(context)
+    }
+
+    // 패턴 5: 포트폴리오 최적화 질문
+    if (
+      lowerMessage.includes('포트폴리오') ||
+      (lowerMessage.includes('최적화') && !lowerMessage.includes('크리에이티브'))
+    ) {
+      return this.buildPortfolioQuickResponse(context)
+    }
+
     return null // AI 응답 필요
+  }
+
+  /**
+   * 경쟁사 관련 빠른 응답
+   */
+  private buildCompetitorQuickResponse(context: ChatContext): ChatResponse {
+    const { trackedCompetitors } = context
+
+    if (trackedCompetitors.length === 0) {
+      return {
+        message: '현재 추적 중인 경쟁사가 없습니다. 경쟁사 분석 페이지에서 키워드로 검색한 후 경쟁사를 추적해보세요.',
+        sources: [],
+        suggestedActions: [
+          { action: '경쟁사 분석 페이지에서 키워드 검색' },
+        ],
+        suggestedQuestions: [
+          '경쟁사를 어떻게 추적하나요?',
+          '어떤 키워드로 검색하면 좋을까요?',
+        ],
+      }
+    }
+
+    const competitorList = trackedCompetitors
+      .map((c) => `- **${c.pageName}**${c.industry ? ` (${c.industry})` : ''}`)
+      .join('\n')
+
+    return {
+      message: `현재 ${trackedCompetitors.length}개의 경쟁사를 추적 중입니다:\n\n${competitorList}\n\n경쟁사 분석 페이지에서 각 경쟁사의 광고 트렌드, 포맷, 훅을 상세히 확인할 수 있습니다.`,
+      sources: trackedCompetitors.map((c) => ({
+        type: 'competitor' as const,
+        id: c.pageId,
+        relevance: 1.0,
+      })),
+      suggestedActions: [
+        { action: '경쟁사 광고 트렌드 상세 분석 보기' },
+        { action: '새로운 경쟁사 키워드 검색 추가' },
+      ],
+      suggestedQuestions: [
+        '경쟁사 광고에서 어떤 전략이 효과적인가요?',
+        '경쟁사 대비 우리의 강점은 무엇인가요?',
+        '추적 경쟁사를 추가하려면 어떻게 하나요?',
+      ],
+    }
+  }
+
+  /**
+   * 포트폴리오 최적화 빠른 응답
+   */
+  private buildPortfolioQuickResponse(context: ChatContext): ChatResponse {
+    const { portfolioSummary } = context
+
+    if (!portfolioSummary) {
+      return {
+        message: '포트폴리오 분석을 위해서는 최소 1개의 활성 캠페인이 필요합니다. 캠페인을 생성하고 활성화한 후 다시 시도해주세요.',
+        sources: [],
+        suggestedActions: [
+          { action: '새 캠페인 생성하기' },
+        ],
+        suggestedQuestions: [
+          '캠페인을 어떻게 만드나요?',
+          '어떤 캠페인 목표가 좋을까요?',
+        ],
+      }
+    }
+
+    const allocationSummary = portfolioSummary.topAllocations
+      .map((a) => {
+        const arrow = a.changePercent > 0 ? '↑' : a.changePercent < 0 ? '↓' : '→'
+        return `- **${a.campaignName}**: ₩${a.currentBudget.toLocaleString('ko-KR')} → ₩${a.recommendedBudget.toLocaleString('ko-KR')} (${arrow}${Math.abs(a.changePercent)}%, ROAS ${a.roas.toFixed(2)}x)`
+      })
+      .join('\n')
+
+    const recommendationList = portfolioSummary.recommendations.length > 0
+      ? `\n\n**주요 권장사항:**\n${portfolioSummary.recommendations.map((r) => `- ${r}`).join('\n')}`
+      : ''
+
+    return {
+      message: `**포트폴리오 분석 요약**\n\n총 예산: ₩${portfolioSummary.totalBudget.toLocaleString('ko-KR')}/일\n현재 ROAS: ${portfolioSummary.currentTotalROAS.toFixed(2)}x → 예상 ROAS: ${portfolioSummary.projectedTotalROAS.toFixed(2)}x (+${portfolioSummary.improvement.toFixed(2)}x)\n효율성 점수: ${portfolioSummary.efficiencyScore}/100 | 다양성 점수: ${portfolioSummary.diversificationScore}/100\n\n**예산 배분 권장:**\n${allocationSummary}${recommendationList}`,
+      sources: [{
+        type: 'portfolio' as const,
+        id: 'portfolio-analysis',
+        relevance: 1.0,
+      }],
+      suggestedActions: portfolioSummary.topAllocations
+        .filter((a) => Math.abs(a.changePercent) > 10)
+        .slice(0, 3)
+        .map((a) => ({
+          action: `${a.campaignName} 예산을 ₩${a.recommendedBudget.toLocaleString('ko-KR')}/일로 ${a.changePercent > 0 ? '증액' : '감축'}`,
+        })),
+      suggestedQuestions: [
+        '예산 변경 시 주의할 점은?',
+        '효율성 점수를 높이려면 어떻게 해야 하나요?',
+        '캠페인 다양성을 개선하려면?',
+      ],
+    }
   }
 
   /**
@@ -480,6 +680,20 @@ export class ChatService {
       )
       .join('\n')
 
+    // 경쟁사 추적 정보
+    const competitorSummary = context.trackedCompetitors.length > 0
+      ? context.trackedCompetitors
+          .map((c) => `- ${c.pageName}${c.industry ? ` (${c.industry})` : ''}`)
+          .join('\n')
+      : '- 추적 중인 경쟁사 없음'
+
+    // 포트폴리오 분석 정보
+    let portfolioSummary = '- 분석 데이터 없음'
+    if (context.portfolioSummary) {
+      const ps = context.portfolioSummary
+      portfolioSummary = `총 예산 ₩${ps.totalBudget.toLocaleString('ko-KR')}/일, 현재 ROAS ${ps.currentTotalROAS.toFixed(2)}x → 예상 ${ps.projectedTotalROAS.toFixed(2)}x, 효율성 ${ps.efficiencyScore}/100, 다양성 ${ps.diversificationScore}/100`
+    }
+
     return `당신은 한국 디지털 마케팅 전문 AI 어시스턴트입니다. 사용자의 Meta 광고 캠페인 성과를 분석하고, 실행 가능한 조언을 제공합니다.
 
 **현재 사용자 캠페인 현황:**
@@ -488,12 +702,19 @@ ${campaignSummary || '- 활성 캠페인 없음'}
 **최근 이상 징후:**
 ${anomalySummary || '- 특이사항 없음'}
 
+**추적 중인 경쟁사:**
+${competitorSummary}
+
+**포트폴리오 분석:**
+${portfolioSummary}
+
 **역할 및 원칙:**
 1. 사용자 데이터를 기반으로 구체적이고 맞춤화된 답변 제공
 2. 실행 가능한 액션 아이템 제시 (예: "XX 캠페인 예산 30% 증액")
 3. 명확하고 간결한 한국어 사용
 4. 근거 있는 권장사항 제공 (ROAS, CPA 등 수치 기반)
 5. 불확실한 경우 "추가 데이터가 필요합니다" 명시
+6. 경쟁사 분석 및 포트폴리오 최적화 관련 질문에 컨텍스트 활용
 
 **응답 형식 (선택):**
 구조화된 응답이 적절한 경우 다음 JSON 형식 사용:

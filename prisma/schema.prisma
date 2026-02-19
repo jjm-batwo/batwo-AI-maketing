@@ -48,7 +48,8 @@ model User {
   conversations Conversation[]
   alerts        Alert[]
   creatives     Creative[]
-  creativeAssets CreativeAsset[]
+  creativeAssets        CreativeAsset[]
+  competitorTrackings   CompetitorTracking[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
@@ -857,5 +858,23 @@ model CreativeAsset {
   metaHash  String?
   createdAt DateTime  @default(now())
 
+  @@index([userId])
+}
+
+// ========================================
+// Competitor Tracking
+// ========================================
+
+model CompetitorTracking {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pageId    String
+  pageName  String
+  industry  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, pageId])
   @@index([userId])
 }

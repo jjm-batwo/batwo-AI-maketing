@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Loader2, Search } from 'lucide-react'
-import { useCompetitorSearch } from '@/presentation/hooks/useCompetitorAnalysis'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Loader2, Search, Star, X } from 'lucide-react'
+import { useCompetitorSearch, useTrackedCompetitors, useTrackCompetitor, useUntrackCompetitor } from '@/presentation/hooks/useCompetitorAnalysis'
 import { CompetitorCard } from '@/presentation/components/competitors/CompetitorCard'
 import { TrendChart } from '@/presentation/components/competitors/TrendChart'
 import { RecommendationList } from '@/presentation/components/competitors/RecommendationList'
@@ -33,6 +34,12 @@ export default function CompetitorsPage() {
     searchIndustry || undefined
   )
 
+  const { data: trackedList } = useTrackedCompetitors()
+  const trackMutation = useTrackCompetitor()
+  const untrackMutation = useUntrackCompetitor()
+
+  const trackedPageIds = new Set(trackedList?.map((t) => t.pageId) ?? [])
+
   function handleSearch() {
     setSearchKeywords(keywords)
     setSearchIndustry(industry)
@@ -40,6 +47,17 @@ export default function CompetitorsPage() {
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') handleSearch()
+  }
+
+  function handleTrack(pageId: string, pageName: string) {
+    trackMutation.mutate({
+      pages: [{ pageId, pageName }],
+      industry: searchIndustry || undefined,
+    })
+  }
+
+  function handleUntrack(pageId: string) {
+    untrackMutation.mutate(pageId)
   }
 
   return (
@@ -50,6 +68,37 @@ export default function CompetitorsPage() {
           키워드로 경쟁사 광고 트렌드를 분석하고 전략을 수립하세요.
         </p>
       </div>
+
+      {/* 추적 중인 경쟁사 */}
+      {trackedList && trackedList.length > 0 && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Star className="h-4 w-4" />
+              추적 중인 경쟁사 ({trackedList.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              {trackedList.map((tracked) => (
+                <div
+                  key={tracked.pageId}
+                  className="flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm"
+                >
+                  <span>{tracked.pageName}</span>
+                  <button
+                    onClick={() => handleUntrack(tracked.pageId)}
+                    className="text-muted-foreground hover:text-destructive transition-colors"
+                    disabled={untrackMutation.isPending}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* 검색 폼 */}
       <div className="flex flex-col sm:flex-row gap-3">
@@ -135,6 +184,10 @@ export default function CompetitorsPage() {
                     dominantFormats={competitor.dominantFormats}
                     commonHooks={competitor.commonHooks}
                     averageAdLifespan={competitor.averageAdLifespan}
+                    isTracked={trackedPageIds.has(competitor.pageId)}
+                    isTrackLoading={trackMutation.isPending || untrackMutation.isPending}
+                    onTrack={() => handleTrack(competitor.pageId, competitor.pageName)}
+                    onUntrack={() => handleUntrack(competitor.pageId)}
                   />
                 ))}
               </div>
