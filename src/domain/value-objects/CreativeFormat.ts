@@ -1,0 +1,5 @@
+export enum CreativeFormat {
+  SINGLE_IMAGE = 'SINGLE_IMAGE',
+  SINGLE_VIDEO = 'SINGLE_VIDEO',
+  CAROUSEL = 'CAROUSEL',
+}

@@ -7,6 +7,7 @@ import {
   isTerminalStatus,
 } from '../value-objects/CampaignStatus'
 import { CampaignObjective } from '../value-objects/CampaignObjective'
+import { AdvantageConfig } from '../value-objects/AdvantageConfig'
 import { InvalidCampaignError } from '../errors/InvalidCampaignError'
 import { AggregateRoot } from '../events/AggregateRoot'
 import {
@@ -32,12 +33,16 @@ export interface CreateCampaignProps {
   startDate: Date
   endDate?: Date
   targetAudience?: TargetAudience
+  buyingType?: string
+  advantageConfig?: AdvantageConfig
 }
 
 export interface CampaignProps extends CreateCampaignProps {
   id: string
   status: CampaignStatus
   metaCampaignId?: string
+  buyingType?: string
+  advantageConfig?: AdvantageConfig
   createdAt: Date
   updatedAt: Date
 }
@@ -55,7 +60,9 @@ export class Campaign extends AggregateRoot {
     private readonly _targetAudience: TargetAudience | undefined,
     private readonly _metaCampaignId: string | undefined,
     private readonly _createdAt: Date,
-    private readonly _updatedAt: Date
+    private readonly _updatedAt: Date,
+    private readonly _buyingType: string = 'AUCTION',
+    private readonly _advantageConfig: AdvantageConfig | undefined = undefined,
   ) {
     super()
   }
@@ -80,7 +87,9 @@ export class Campaign extends AggregateRoot {
       props.targetAudience,
       undefined,
       now,
-      now
+      now,
+      props.buyingType ?? 'AUCTION',
+      props.advantageConfig,
     )
 
     // Raise domain event
@@ -113,7 +122,9 @@ export class Campaign extends AggregateRoot {
       props.targetAudience,
       props.metaCampaignId,
       props.createdAt,
-      props.updatedAt
+      props.updatedAt,
+      props.buyingType ?? 'AUCTION',
+      props.advantageConfig,
     )
   }
 
@@ -177,6 +188,12 @@ export class Campaign extends AggregateRoot {
   get metaCampaignId(): string | undefined {
     return this._metaCampaignId
   }
+  get buyingType(): string {
+    return this._buyingType
+  }
+  get advantageConfig(): AdvantageConfig | undefined {
+    return this._advantageConfig
+  }
   get createdAt(): Date {
     return new Date(this._createdAt)
   }
@@ -221,7 +238,9 @@ export class Campaign extends AggregateRoot {
       this._targetAudience,
       this._metaCampaignId,
       this._createdAt,
-      new Date()
+      new Date(),
+      this._buyingType,
+      this._advantageConfig,
     )
 
     // Raise domain event
@@ -259,7 +278,9 @@ export class Campaign extends AggregateRoot {
       this._targetAudience,
       this._metaCampaignId,
       this._createdAt,
-      new Date()
+      new Date(),
+      this._buyingType,
+      this._advantageConfig,
     )
 
     // Raise domain event
@@ -340,7 +361,9 @@ export class Campaign extends AggregateRoot {
       newTargetAudience,
       this._metaCampaignId,
       this._createdAt,
-      new Date()
+      new Date(),
+      this._buyingType,
+      this._advantageConfig,
     )
   }
 
@@ -361,7 +384,9 @@ export class Campaign extends AggregateRoot {
       this._targetAudience,
       metaCampaignId,
       this._createdAt,
-      new Date()
+      new Date(),
+      this._buyingType,
+      this._advantageConfig,
     )
   }
 
@@ -389,6 +414,8 @@ export class Campaign extends AggregateRoot {
       endDate: this._endDate,
       targetAudience: this._targetAudience,
       metaCampaignId: this._metaCampaignId,
+      buyingType: this._buyingType,
+      advantageConfig: this._advantageConfig,
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
     }

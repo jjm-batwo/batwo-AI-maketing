@@ -37,6 +37,9 @@ import type { IStreamingAIService } from '@application/ports/IStreamingAIService
 import type { IKnowledgeBaseService } from '@application/ports/IKnowledgeBaseService'
 import type { IResearchService } from '@application/ports/IResearchService'
 import type { ICacheService } from '@application/ports/ICacheService'
+import type { IPlatformAdapter } from '@application/ports/IPlatformAdapter'
+import type { IMetaPixelService } from '@application/ports/IMetaPixelService'
+import type { ICAPIService } from '@application/ports/ICAPIService'
 
 // Infrastructure implementations
 import { PrismaCampaignRepository } from '@infrastructure/database/repositories/PrismaCampaignRepository'
@@ -58,6 +61,9 @@ import { PrismaPendingActionRepository } from '@infrastructure/database/reposito
 import { PrismaAlertRepository } from '@infrastructure/database/repositories/PrismaAlertRepository'
 import { TossPaymentsClient } from '@infrastructure/payment/TossPaymentsClient'
 import { MetaAdsClient } from '@infrastructure/external/meta-ads/MetaAdsClient'
+import { Cafe24Adapter } from '@infrastructure/external/platforms/cafe24/Cafe24Adapter'
+import { MetaPixelClient } from '@infrastructure/external/meta-pixel/MetaPixelClient'
+import { CAPIClient } from '@infrastructure/external/meta-pixel/CAPIClient'
 import { AIService } from '@infrastructure/external/openai/AIService'
 import { StreamingAIService } from '@infrastructure/external/openai/streaming/StreamingAIService'
 import { KnowledgeBaseService } from '@infrastructure/knowledge'
@@ -106,6 +112,28 @@ import { SubscribePlanUseCase } from '@application/use-cases/payment/SubscribePl
 import { CancelSubscriptionUseCase } from '@application/use-cases/payment/CancelSubscriptionUseCase'
 import { ChangePlanUseCase } from '@application/use-cases/payment/ChangePlanUseCase'
 import { GetPaymentHistoryUseCase } from '@application/use-cases/payment/GetPaymentHistoryUseCase'
+
+import { PrismaAdSetRepository } from '@infrastructure/database/repositories/PrismaAdSetRepository'
+import type { IAdSetRepository } from '@domain/repositories/IAdSetRepository'
+import { CreateAdSetUseCase } from '@application/use-cases/adset/CreateAdSetUseCase'
+import { UpdateAdSetUseCase } from '@application/use-cases/adset/UpdateAdSetUseCase'
+import { DeleteAdSetUseCase } from '@application/use-cases/adset/DeleteAdSetUseCase'
+import { ListAdSetsUseCase } from '@application/use-cases/adset/ListAdSetsUseCase'
+
+import { PrismaAdRepository } from '@infrastructure/database/repositories/PrismaAdRepository'
+import type { IAdRepository } from '@domain/repositories/IAdRepository'
+import { CreateAdUseCase } from '@application/use-cases/ad/CreateAdUseCase'
+
+import { PrismaCreativeRepository } from '@infrastructure/database/repositories/PrismaCreativeRepository'
+import type { ICreativeRepository } from '@domain/repositories/ICreativeRepository'
+import { PrismaCreativeAssetRepository } from '@infrastructure/database/repositories/PrismaCreativeAssetRepository'
+import type { ICreativeAssetRepository } from '@domain/repositories/ICreativeAssetRepository'
+import { CreateCreativeUseCase } from '@application/use-cases/creative/CreateCreativeUseCase'
+import { UploadAssetUseCase } from '@application/use-cases/creative/UploadAssetUseCase'
+
+import { BlobStorageService, type IBlobStorageService } from '@infrastructure/storage/BlobStorageService'
+import { CreateAdvantageCampaignUseCase } from '@application/use-cases/campaign/CreateAdvantageCampaignUseCase'
+import { RefreshMetaTokenUseCase } from '@application/use-cases/token/RefreshMetaTokenUseCase'
 
 import { prisma } from '@/lib/prisma'
 
@@ -251,6 +279,24 @@ container.registerSingleton<IStreamingAIService>(
 container.registerSingleton<IPaymentGateway>(
   DI_TOKENS.PaymentGateway,
   () => new TossPaymentsClient()
+)
+
+container.registerSingleton<IPlatformAdapter>(
+  DI_TOKENS.PlatformAdapter,
+  () => new Cafe24Adapter(
+    process.env.CAFE24_CLIENT_ID || '',
+    process.env.CAFE24_CLIENT_SECRET || ''
+  )
+)
+
+container.registerSingleton<IMetaPixelService>(
+  DI_TOKENS.MetaPixelService,
+  () => new MetaPixelClient()
+)
+
+container.registerSingleton<ICAPIService>(
+  DI_TOKENS.CAPIService,
+  () => new CAPIClient()
 )
 
 // Register Cache Service (Singleton)
@@ -540,6 +586,103 @@ container.register(
     )
 )
 
+// AdSet Repository (Singleton)
+container.registerSingleton<IAdSetRepository>(
+  DI_TOKENS.AdSetRepository,
+  () => new PrismaAdSetRepository(prisma)
+)
+
+// AdSet Use Cases (Transient)
+container.register(
+  DI_TOKENS.CreateAdSetUseCase,
+  () => new CreateAdSetUseCase(
+    container.resolve(DI_TOKENS.CampaignRepository),
+    container.resolve(DI_TOKENS.AdSetRepository)
+  )
+)
+
+container.register(
+  DI_TOKENS.UpdateAdSetUseCase,
+  () => new UpdateAdSetUseCase(
+    container.resolve(DI_TOKENS.AdSetRepository)
+  )
+)
+
+container.register(
+  DI_TOKENS.DeleteAdSetUseCase,
+  () => new DeleteAdSetUseCase(
+    container.resolve(DI_TOKENS.AdSetRepository)
+  )
+)
+
+container.register(
+  DI_TOKENS.ListAdSetsUseCase,
+  () => new ListAdSetsUseCase(
+    container.resolve(DI_TOKENS.AdSetRepository)
+  )
+)
+
+// Ad Repository (Singleton)
+container.registerSingleton<IAdRepository>(
+  DI_TOKENS.AdRepository,
+  () => new PrismaAdRepository(prisma)
+)
+
+// Creative Repository (Singleton)
+container.registerSingleton<ICreativeRepository>(
+  DI_TOKENS.CreativeRepository,
+  () => new PrismaCreativeRepository(prisma)
+)
+
+// CreativeAsset Repository (Singleton)
+container.registerSingleton<ICreativeAssetRepository>(
+  DI_TOKENS.CreativeAssetRepository,
+  () => new PrismaCreativeAssetRepository(prisma)
+)
+
+// Blob Storage Service (Singleton)
+container.registerSingleton<IBlobStorageService>(
+  DI_TOKENS.BlobStorageService,
+  () => new BlobStorageService()
+)
+
+// Ad Use Cases (Transient)
+container.register(
+  DI_TOKENS.CreateAdUseCase,
+  () => new CreateAdUseCase(
+    container.resolve(DI_TOKENS.AdRepository),
+    container.resolve(DI_TOKENS.AdSetRepository),
+    container.resolve(DI_TOKENS.CreativeRepository)
+  )
+)
+
+// Creative Use Cases (Transient)
+container.register(
+  DI_TOKENS.CreateCreativeUseCase,
+  () => new CreateCreativeUseCase(
+    container.resolve(DI_TOKENS.CreativeRepository)
+  )
+)
+
+container.register(
+  DI_TOKENS.UploadAssetUseCase,
+  () => new UploadAssetUseCase(
+    container.resolve(DI_TOKENS.CreativeAssetRepository),
+    container.resolve(DI_TOKENS.BlobStorageService)
+  )
+)
+
+// Advantage+ Campaign Use Case (Transient)
+container.register(
+  DI_TOKENS.CreateAdvantageCampaignUseCase,
+  () => new CreateAdvantageCampaignUseCase(
+    container.resolve(DI_TOKENS.CampaignRepository),
+    container.resolve(DI_TOKENS.AdSetRepository),
+    container.resolve(DI_TOKENS.MetaAdsService),
+    container.resolve(DI_TOKENS.UsageLogRepository)
+  )
+)
+
 // Pixel Use Cases
 container.register(
   DI_TOKENS.ListUserPixelsUseCase,
@@ -820,6 +963,26 @@ export function getDeleteCampaignUseCase(): DeleteCampaignUseCase {
   return container.resolve(DI_TOKENS.DeleteCampaignUseCase)
 }
 
+export function getAdSetRepository(): IAdSetRepository {
+  return container.resolve(DI_TOKENS.AdSetRepository)
+}
+
+export function getCreateAdSetUseCase(): CreateAdSetUseCase {
+  return container.resolve(DI_TOKENS.CreateAdSetUseCase)
+}
+
+export function getUpdateAdSetUseCase(): UpdateAdSetUseCase {
+  return container.resolve(DI_TOKENS.UpdateAdSetUseCase)
+}
+
+export function getDeleteAdSetUseCase(): DeleteAdSetUseCase {
+  return container.resolve(DI_TOKENS.DeleteAdSetUseCase)
+}
+
+export function getListAdSetsUseCase(): ListAdSetsUseCase {
+  return container.resolve(DI_TOKENS.ListAdSetsUseCase)
+}
+
 /**
  * Get AIService configured for a specific subscription plan's copy model
  */
@@ -842,4 +1005,14 @@ export function getPremiumAIService(plan: SubscriptionPlan): IAIService | null {
  */
 export function getCacheService(): ICacheService {
   return container.resolve(DI_TOKENS.CacheService)
+}
+
+// Token Management Use Cases (Transient)
+container.register(
+  DI_TOKENS.RefreshMetaTokenUseCase,
+  () => new RefreshMetaTokenUseCase()
+)
+
+export function getRefreshMetaTokenUseCase(): RefreshMetaTokenUseCase {
+  return container.resolve(DI_TOKENS.RefreshMetaTokenUseCase)
 }

@@ -21,66 +21,50 @@ describe('CampaignCreateForm', () => {
     vi.clearAllMocks()
   })
 
-  // Helper to skip template selection (step 0)
-  const skipTemplateSelection = async () => {
-    const user = userEvent.setup()
-    await user.click(screen.getByText('템플릿 없이 직접 설정하기'))
-    await waitFor(
-      () => {
-        expect(screen.getByPlaceholderText('예: 2024년 크리스마스 프로모션')).toBeInTheDocument()
-      },
-      { timeout: 5000 }
-    )
-    return user
+  // 크리에이티브 필수 필드 채우기 헬퍼
+  const fillCreativeFields = async (user: ReturnType<typeof userEvent.setup>) => {
+    await user.type(screen.getByPlaceholderText('예: 봄맞이 특별 할인 최대 50%'), '테스트 헤드라인')
+    await user.type(screen.getByPlaceholderText('광고에 표시될 메인 텍스트를 입력하세요'), '테스트 광고 본문')
   }
 
-  describe('Step 0: 템플릿 선택', () => {
-    it('should render template selection as first step', () => {
+  describe('Step 1: 캠페인 유형', () => {
+    it('should render campaign type selection as first step', () => {
       render(
         <CampaignCreateForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />,
         { wrapper: TestWrapper }
       )
-      expect(screen.getByText('빠른 시작')).toBeInTheDocument()
-      expect(screen.getByText('템플릿 없이 직접 설정하기')).toBeInTheDocument()
+      // CardTitle과 Label에 모두 "캠페인 유형"이 존재
+      const elements = screen.getAllByText('캠페인 유형')
+      expect(elements.length).toBeGreaterThanOrEqual(1)
+      expect(screen.getByText('Advantage+ 쇼핑')).toBeInTheDocument()
+      expect(screen.getByText('수동 설정')).toBeInTheDocument()
     })
 
-    it('should show template selector with tips', () => {
+    it('should default to Advantage+ mode', () => {
       render(
         <CampaignCreateForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />,
         { wrapper: TestWrapper }
       )
-      expect(screen.getByText('템플릿을 선택하면 목표, 예산, 타겟이 자동으로 설정됩니다')).toBeInTheDocument()
+      expect(screen.getByText('AI가 타겟팅, 배치, 예산을 자동으로 최적화합니다')).toBeInTheDocument()
     })
 
-    it('should not show step indicator on step 0', () => {
+    it('should render campaign name input', () => {
       render(
         <CampaignCreateForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />,
         { wrapper: TestWrapper }
       )
-      expect(screen.queryByText('0/4')).not.toBeInTheDocument()
-      expect(screen.queryByText('1/4')).not.toBeInTheDocument()
-    })
-  })
-
-  describe('Step 1: 비즈니스 정보', () => {
-    it('should render campaign name input after skipping template', async () => {
-      render(
-        <CampaignCreateForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />,
-        { wrapper: TestWrapper }
-      )
-      await skipTemplateSelection()
-      expect(screen.getByPlaceholderText('예: 2024년 크리스마스 프로모션')).toBeInTheDocument()
+      expect(screen.getByPlaceholderText('예: 2026년 봄 신상품 프로모션')).toBeInTheDocument()
     })
 
-    it('should render objective selection after skipping template', async () => {
+    it('should render objective selection', () => {
       render(
         <CampaignCreateForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />,
         { wrapper: TestWrapper }
       )
-      await skipTemplateSelection()
       expect(screen.getByText('캠페인 목표')).toBeInTheDocument()
       expect(screen.getByText('트래픽')).toBeInTheDocument()
-      expect(screen.getByText('전환')).toBeInTheDocument()
+      // '전환'은 기본 선택된 objective에도 있으므로 getAllByText 사용
+      expect(screen.getAllByText('전환').length).toBeGreaterThanOrEqual(1)
       expect(screen.getByText('브랜드 인지도')).toBeInTheDocument()
     })
 
@@ -89,152 +73,147 @@ describe('CampaignCreateForm', () => {
         <CampaignCreateForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />,
         { wrapper: TestWrapper }
       )
-      const user = await skipTemplateSelection()
+      const user = userEvent.setup()
 
-      const nextButton = screen.getByRole('button', { name: '다음 단계로 이동' })
-      await user.click(nextButton)
+      const nameInput = screen.getByPlaceholderText('예: 2026년 봄 신상품 프로모션')
+      await user.clear(nameInput)
+      await user.click(screen.getByText('다음'))
 
       await waitFor(() => {
         expect(screen.getByText('캠페인 이름을 입력해주세요')).toBeInTheDocument()
       })
     })
 
-    it('should proceed to step 2 with valid input', async () => {
+    it('should proceed to step 2 with valid input in Advantage+ mode', async () => {
       render(
         <CampaignCreateForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />,
         { wrapper: TestWrapper }
       )
-      const user = await skipTemplateSelection()
+      const user = userEvent.setup()
 
-      await user.type(screen.getByPlaceholderText('예: 2024년 크리스마스 프로모션'), '테스트 캠페인')
-      await user.click(screen.getByText('전환'))
-      await user.click(screen.getByRole('button', { name: '다음 단계로 이동' }))
+      await user.type(screen.getByPlaceholderText('예: 2026년 봄 신상품 프로모션'), '테스트 캠페인')
+      await user.click(screen.getByText('다음'))
 
       await waitFor(() => {
-        expect(screen.getByText('2단계: 타겟 오디언스')).toBeInTheDocument()
+        expect(screen.getByText('예산 & 일정')).toBeInTheDocument()
       })
     })
   })
 
-  describe('Step 2: 타겟 오디언스', () => {
-    const goToStep2 = async () => {
+  describe('Step 2: 예산 & 일정 (Advantage+ 모드)', () => {
+    const goToBudgetStep = async () => {
       const user = userEvent.setup()
       render(
         <CampaignCreateForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />,
         { wrapper: TestWrapper }
       )
-      // Skip template selection
-      await user.click(screen.getByText('템플릿 없이 직접 설정하기'))
-      await waitFor(() => screen.getByPlaceholderText('예: 2024년 크리스마스 프로모션'))
-      await user.type(screen.getByPlaceholderText('예: 2024년 크리스마스 프로모션'), '테스트 캠페인')
-      await user.click(screen.getByText('전환'))
-      await user.click(screen.getByRole('button', { name: '다음 단계로 이동' }))
-      await waitFor(() => {
-        expect(screen.getByText('2단계: 타겟 오디언스')).toBeInTheDocument()
-      })
-      return user
-    }
-
-    it('should render age range selector', async () => {
-      await goToStep2()
-      expect(screen.getByText('연령대')).toBeInTheDocument()
-    })
-
-    it('should render gender selector', async () => {
-      await goToStep2()
-      expect(screen.getByText('성별')).toBeInTheDocument()
-    })
-
-    it('should render location selector', async () => {
-      await goToStep2()
-      expect(screen.getByText('지역')).toBeInTheDocument()
-    })
-
-    it('should allow going back to step 1', async () => {
-      const user = await goToStep2()
-      await user.click(screen.getByRole('button', { name: '이전 단계로 이동' }))
-
-      await waitFor(() => {
-        expect(screen.getByPlaceholderText('예: 2024년 크리스마스 프로모션')).toBeInTheDocument()
-      })
-    })
-  })
-
-  describe('Step 3: 예산 설정', () => {
-    const goToStep3 = async () => {
-      const user = userEvent.setup()
-      render(
-        <CampaignCreateForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />,
-        { wrapper: TestWrapper }
-      )
-      // Skip template selection and navigate to step 3
-      await user.click(screen.getByText('템플릿 없이 직접 설정하기'))
-      await waitFor(() => screen.getByPlaceholderText('예: 2024년 크리스마스 프로모션'))
-      await user.type(screen.getByPlaceholderText('예: 2024년 크리스마스 프로모션'), '테스트 캠페인')
-      await user.click(screen.getByText('전환'))
-      await user.click(screen.getByRole('button', { name: '다음 단계로 이동' }))
-      await waitFor(() => screen.getByText('2단계: 타겟 오디언스'))
-      await user.click(screen.getByRole('button', { name: '다음 단계로 이동' }))
-      await waitFor(() => screen.getByRole('spinbutton', { name: /일일 예산/ }))
+      await user.type(screen.getByPlaceholderText('예: 2026년 봄 신상품 프로모션'), '테스트 캠페인')
+      await user.click(screen.getByText('다음'))
+      await waitFor(() => screen.getByText('예산 & 일정'))
       return user
     }
 
     it('should render daily budget input', async () => {
-      await goToStep3()
-      expect(screen.getByText('3단계: 예산 설정')).toBeInTheDocument()
+      await goToBudgetStep()
+      expect(screen.getByText('예산 & 일정')).toBeInTheDocument()
       expect(screen.getByRole('spinbutton', { name: /일일 예산/ })).toBeInTheDocument()
     })
 
     it('should validate minimum budget', async () => {
-      const user = await goToStep3()
+      const user = await goToBudgetStep()
 
       await user.clear(screen.getByRole('spinbutton', { name: /일일 예산/ }))
       await user.type(screen.getByRole('spinbutton', { name: /일일 예산/ }), '1000')
-      await user.click(screen.getByRole('button', { name: '다음 단계로 이동' }))
+      await user.click(screen.getByText('다음'))
 
       await waitFor(() => {
-        expect(
-          screen.getByText('최소 일일 예산은 10,000원입니다')
-        ).toBeInTheDocument()
+        // formatBudget은 Intl.NumberFormat으로 ₩10,000 형식 출력
+        expect(screen.getByText(/최소 일일 예산은/)).toBeInTheDocument()
+      })
+    })
+
+    it('should allow going back to step 1', async () => {
+      const user = await goToBudgetStep()
+      await user.click(screen.getByText('이전'))
+
+      await waitFor(() => {
+        expect(screen.getByPlaceholderText('예: 2026년 봄 신상품 프로모션')).toBeInTheDocument()
       })
     })
   })
 
-  describe('Step 4: 최종 확인', () => {
-    const goToStep4 = async () => {
+  describe('수동 모드 전환', () => {
+    it('should switch to 6-step flow when Manual mode is selected', async () => {
+      render(
+        <CampaignCreateForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />,
+        { wrapper: TestWrapper }
+      )
+      const user = userEvent.setup()
+
+      await user.click(screen.getByText('수동 설정'))
+
+      expect(screen.getByText('1/6')).toBeInTheDocument()
+    })
+
+    it('should show target audience as step 2 in Manual mode', async () => {
+      render(
+        <CampaignCreateForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />,
+        { wrapper: TestWrapper }
+      )
+      const user = userEvent.setup()
+
+      await user.click(screen.getByText('수동 설정'))
+      await user.type(screen.getByPlaceholderText('예: 2026년 봄 신상품 프로모션'), '수동 캠페인')
+      await user.click(screen.getByText('다음'))
+
+      await waitFor(() => {
+        expect(screen.getByText('타겟 오디언스')).toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('최종 검토 (Advantage+ 모드)', () => {
+    const goToReviewStep = async () => {
       const user = userEvent.setup()
       render(
         <CampaignCreateForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />,
         { wrapper: TestWrapper }
       )
-      // Skip template and navigate through all steps
-      await user.click(screen.getByText('템플릿 없이 직접 설정하기'))
-      await waitFor(() => screen.getByPlaceholderText('예: 2024년 크리스마스 프로모션'))
-      await user.type(screen.getByPlaceholderText('예: 2024년 크리스마스 프로모션'), '테스트 캠페인')
-      await user.click(screen.getByText('전환'))
-      await user.click(screen.getByRole('button', { name: '다음 단계로 이동' }))
-      await waitFor(() => screen.getByText('2단계: 타겟 오디언스'))
-      await user.click(screen.getByRole('button', { name: '다음 단계로 이동' }))
-      await waitFor(() => screen.getByRole('spinbutton', { name: /일일 예산/ }))
+      // Step 1: 캠페인 유형
+      await user.type(screen.getByPlaceholderText('예: 2026년 봄 신상품 프로모션'), '테스트 캠페인')
+      await user.click(screen.getByText('다음'))
+      await waitFor(() => screen.getByText('예산 & 일정'))
+
+      // Step 2: 예산
       await user.clear(screen.getByRole('spinbutton', { name: /일일 예산/ }))
       await user.type(screen.getByRole('spinbutton', { name: /일일 예산/ }), '50000')
-      await user.click(screen.getByRole('button', { name: '다음 단계로 이동' }))
-      await waitFor(() => screen.getByText('4단계: 최종 확인'))
+      await user.click(screen.getByText('다음'))
+      await waitFor(() => screen.getByText('크리에이티브'))
+
+      // Step 3: 크리에이티브 필수 필드 입력
+      await fillCreativeFields(user)
+      await user.click(screen.getByText('다음'))
+      await waitFor(() => screen.getByText('검토 & 제출'))
       return user
     }
 
-    it('should display summary of all inputs', async () => {
-      await goToStep4()
+    it('should display summary of campaign info', async () => {
+      await goToReviewStep()
 
-      expect(screen.getByText('4단계: 최종 확인')).toBeInTheDocument()
+      expect(screen.getByText('최종 확인')).toBeInTheDocument()
       expect(screen.getByText('테스트 캠페인')).toBeInTheDocument()
-      expect(screen.getByText('전환')).toBeInTheDocument()
       expect(screen.getByText('50,000원')).toBeInTheDocument()
     })
 
+    it('should show Advantage+ info banner', async () => {
+      await goToReviewStep()
+
+      expect(screen.getByText(/AI가 타겟팅, 배치, 예산을 자동으로 최적화합니다/)).toBeInTheDocument()
+    })
+
     it('should call onSubmit with correct data', async () => {
-      const user = await goToStep4()
-      await user.click(screen.getByRole('button', { name: '캠페인 생성하기' }))
+      const user = await goToReviewStep()
+      await user.click(screen.getByText('캠페인 생성'))
 
       await waitFor(() => {
         expect(mockOnSubmit).toHaveBeenCalledWith(
@@ -242,6 +221,7 @@ describe('CampaignCreateForm', () => {
             name: '테스트 캠페인',
             objective: 'CONVERSIONS',
             dailyBudget: 50000,
+            campaignMode: 'ADVANTAGE_PLUS',
           })
         )
       })
@@ -249,22 +229,21 @@ describe('CampaignCreateForm', () => {
   })
 
   describe('취소', () => {
-    it('should call onCancel when cancel button is clicked on step 0', async () => {
+    it('should call onCancel when cancel button is clicked', async () => {
       render(
         <CampaignCreateForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />,
         { wrapper: TestWrapper }
       )
 
-      // Cancel button not visible on step 0 (template selection has no cancel)
-      // Skip to step 1 first
-      const user = await skipTemplateSelection()
-      await user.click(screen.getByRole('button', { name: '캠페인 생성 취소' }))
+      const user = userEvent.setup()
+      await user.click(screen.getByText('취소'))
       expect(mockOnCancel).toHaveBeenCalled()
     })
   })
 
   describe('쿼터 체크', () => {
-    it('should show quota exceeded message when limit reached', async () => {
+    it('should show quota exceeded message on last step', async () => {
+      const user = userEvent.setup()
       render(
         <CampaignCreateForm
           onSubmit={mockOnSubmit}
@@ -274,7 +253,20 @@ describe('CampaignCreateForm', () => {
         { wrapper: TestWrapper }
       )
 
-      // Quota message is shown on any step
+      // 마지막 단계까지 이동
+      await user.type(screen.getByPlaceholderText('예: 2026년 봄 신상품 프로모션'), '테스트 캠페인')
+      await user.click(screen.getByText('다음'))
+      await waitFor(() => screen.getByText('예산 & 일정'))
+
+      await user.clear(screen.getByRole('spinbutton', { name: /일일 예산/ }))
+      await user.type(screen.getByRole('spinbutton', { name: /일일 예산/ }), '50000')
+      await user.click(screen.getByText('다음'))
+      await waitFor(() => screen.getByText('크리에이티브'))
+
+      await fillCreativeFields(user)
+      await user.click(screen.getByText('다음'))
+      await waitFor(() => screen.getByText('검토 & 제출'))
+
       expect(
         screen.getByText('이번 주 캠페인 생성 횟수를 모두 사용했어요')
       ).toBeInTheDocument()
@@ -291,33 +283,30 @@ describe('CampaignCreateForm', () => {
         { wrapper: TestWrapper }
       )
 
-      // Skip template and navigate to step 4 to see submit button
-      await user.click(screen.getByText('템플릿 없이 직접 설정하기'))
-      await waitFor(() => screen.getByPlaceholderText('예: 2024년 크리스마스 프로모션'))
-      await user.type(screen.getByPlaceholderText('예: 2024년 크리스마스 프로모션'), '테스트 캠페인')
-      await user.click(screen.getByText('전환'))
-      await user.click(screen.getByRole('button', { name: '다음 단계로 이동' }))
-      await waitFor(() => screen.getByText('2단계: 타겟 오디언스'))
-      await user.click(screen.getByRole('button', { name: '다음 단계로 이동' }))
-      await waitFor(() => screen.getByRole('spinbutton', { name: /일일 예산/ }))
+      // 마지막 단계까지 이동
+      await user.type(screen.getByPlaceholderText('예: 2026년 봄 신상품 프로모션'), '테스트 캠페인')
+      await user.click(screen.getByText('다음'))
+      await waitFor(() => screen.getByText('예산 & 일정'))
+
       await user.clear(screen.getByRole('spinbutton', { name: /일일 예산/ }))
       await user.type(screen.getByRole('spinbutton', { name: /일일 예산/ }), '50000')
-      await user.click(screen.getByRole('button', { name: '다음 단계로 이동' }))
+      await user.click(screen.getByText('다음'))
+      await waitFor(() => screen.getByText('크리에이티브'))
 
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: '캠페인 생성하기' })).toBeDisabled()
-      })
+      await fillCreativeFields(user)
+      await user.click(screen.getByText('다음'))
+      await waitFor(() => screen.getByText('검토 & 제출'))
+
+      expect(screen.getByText('캠페인 생성')).toBeDisabled()
     })
   })
 
   describe('진행 표시', () => {
-    it('should show step indicator after skipping template', async () => {
+    it('should show step indicator with Advantage+ total steps', () => {
       render(
         <CampaignCreateForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />,
         { wrapper: TestWrapper }
       )
-      await skipTemplateSelection()
-
       expect(screen.getByText('1/4')).toBeInTheDocument()
     })
 
@@ -326,11 +315,10 @@ describe('CampaignCreateForm', () => {
         <CampaignCreateForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />,
         { wrapper: TestWrapper }
       )
-      const user = await skipTemplateSelection()
+      const user = userEvent.setup()
 
-      await user.type(screen.getByPlaceholderText('예: 2024년 크리스마스 프로모션'), '테스트 캠페인')
-      await user.click(screen.getByText('전환'))
-      await user.click(screen.getByRole('button', { name: '다음 단계로 이동' }))
+      await user.type(screen.getByPlaceholderText('예: 2026년 봄 신상품 프로모션'), '테스트 캠페인')
+      await user.click(screen.getByText('다음'))
 
       await waitFor(() => {
         expect(screen.getByText('2/4')).toBeInTheDocument()

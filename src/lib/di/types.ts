@@ -28,6 +28,9 @@ export const DI_TOKENS = {
   MetaAdsService: Symbol.for('MetaAdsService'),
   AIService: Symbol.for('AIService'),
   StreamingAIService: Symbol.for('StreamingAIService'),
+  PlatformAdapter: Symbol.for('PlatformAdapter'),
+  MetaPixelService: Symbol.for('MetaPixelService'),
+  CAPIService: Symbol.for('CAPIService'),
 
   // Application Services
   QuotaService: Symbol.for('QuotaService'),
@@ -86,8 +89,34 @@ export const DI_TOKENS = {
   ChangePlanUseCase: Symbol.for('ChangePlanUseCase'),
   GetPaymentHistoryUseCase: Symbol.for('GetPaymentHistoryUseCase'),
 
+  // AdSet
+  AdSetRepository: Symbol.for('AdSetRepository'),
+  CreateAdSetUseCase: Symbol.for('CreateAdSetUseCase'),
+  UpdateAdSetUseCase: Symbol.for('UpdateAdSetUseCase'),
+  DeleteAdSetUseCase: Symbol.for('DeleteAdSetUseCase'),
+  ListAdSetsUseCase: Symbol.for('ListAdSetsUseCase'),
+
+  // Ad
+  AdRepository: Symbol.for('AdRepository'),
+  CreateAdUseCase: Symbol.for('CreateAdUseCase'),
+
+  // Creative
+  CreativeRepository: Symbol.for('CreativeRepository'),
+  CreativeAssetRepository: Symbol.for('CreativeAssetRepository'),
+  CreateCreativeUseCase: Symbol.for('CreateCreativeUseCase'),
+  UploadAssetUseCase: Symbol.for('UploadAssetUseCase'),
+
+  // Storage
+  BlobStorageService: Symbol.for('BlobStorageService'),
+
+  // Advantage+ Campaign
+  CreateAdvantageCampaignUseCase: Symbol.for('CreateAdvantageCampaignUseCase'),
+
   // Cache Service
   CacheService: Symbol.for('CacheService'),
+
+  // Token Management
+  RefreshMetaTokenUseCase: Symbol.for('RefreshMetaTokenUseCase'),
 } as const
 
 export type DIToken = (typeof DI_TOKENS)[keyof typeof DI_TOKENS]

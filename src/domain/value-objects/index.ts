@@ -135,3 +135,4 @@ export {
   buildCompositeScore,
 } from './MarketingScience'
 export { Permission, type Resource, type Action } from './Permission'
+export { AdvantageConfig, type AdvantageConfigProps } from './AdvantageConfig'

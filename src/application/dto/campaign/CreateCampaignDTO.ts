@@ -14,4 +14,9 @@ export interface CreateCampaignDTO {
   accessToken?: string
   adAccountId?: string
   syncToMeta?: boolean
+  advantageConfig?: {
+    advantageBudget: boolean
+    advantageAudience: boolean
+    advantagePlacement: boolean
+  }
 }

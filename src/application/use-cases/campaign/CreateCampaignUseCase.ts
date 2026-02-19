@@ -5,6 +5,7 @@ import { IMetaAdsService } from '@application/ports/IMetaAdsService'
 import { CreateCampaignDTO } from '@application/dto/campaign/CreateCampaignDTO'
 import { CampaignDTO, toCampaignDTO } from '@application/dto/campaign/CampaignDTO'
 import { Money } from '@domain/value-objects/Money'
+import { AdvantageConfig } from '@domain/value-objects/AdvantageConfig'
 
 export class DuplicateCampaignNameError extends Error {
   constructor(name: string) {
@@ -31,6 +32,10 @@ export class CreateCampaignUseCase {
     }
 
     // Create campaign entity
+    const advantageConfig = dto.advantageConfig
+      ? AdvantageConfig.create(dto.advantageConfig)
+      : undefined
+
     const campaign = Campaign.create({
       userId: dto.userId,
       name: dto.name,
@@ -39,6 +44,7 @@ export class CreateCampaignUseCase {
       startDate: new Date(dto.startDate),
       endDate: dto.endDate ? new Date(dto.endDate) : undefined,
       targetAudience: dto.targetAudience,
+      advantageConfig,
     })
 
     let finalCampaign = campaign

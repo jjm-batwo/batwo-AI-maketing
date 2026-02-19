@@ -1,0 +1,9 @@
+export enum CTAType {
+  LEARN_MORE = 'LEARN_MORE',
+  SHOP_NOW = 'SHOP_NOW',
+  SIGN_UP = 'SIGN_UP',
+  CONTACT_US = 'CONTACT_US',
+  GET_OFFER = 'GET_OFFER',
+  BOOK_NOW = 'BOOK_NOW',
+  APPLY_NOW = 'APPLY_NOW',
+}

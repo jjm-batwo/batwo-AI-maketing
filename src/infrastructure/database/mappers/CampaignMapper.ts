@@ -8,6 +8,7 @@ import { Campaign, TargetAudience } from '@domain/entities/Campaign'
 import { CampaignObjective } from '@domain/value-objects/CampaignObjective'
 import { CampaignStatus } from '@domain/value-objects/CampaignStatus'
 import { Money, Currency } from '@domain/value-objects/Money'
+import { AdvantageConfig, AdvantageConfigProps } from '@domain/value-objects/AdvantageConfig'
 
 const { Decimal } = Prisma
 
@@ -15,6 +16,7 @@ type JsonValue = Prisma.JsonValue
 
 export class CampaignMapper {
   static toDomain(prisma: PrismaCampaign): Campaign {
+    const advantageConfigJson = prisma.advantageConfig as AdvantageConfigProps | null
     return Campaign.restore({
       id: prisma.id,
       userId: prisma.userId,
@@ -29,6 +31,10 @@ export class CampaignMapper {
       endDate: prisma.endDate ?? undefined,
       targetAudience: prisma.targetAudience as TargetAudience | undefined,
       metaCampaignId: prisma.metaCampaignId ?? undefined,
+      buyingType: prisma.buyingType ?? 'AUCTION',
+      advantageConfig: advantageConfigJson
+        ? AdvantageConfig.create(advantageConfigJson)
+        : undefined,
       createdAt: prisma.createdAt,
       updatedAt: prisma.updatedAt,
     })
@@ -48,6 +54,8 @@ export class CampaignMapper {
       endDate: json.endDate ?? null,
       targetAudience: json.targetAudience as JsonValue ?? null,
       metaCampaignId: json.metaCampaignId ?? null,
+      buyingType: json.buyingType ?? 'AUCTION',
+      advantageConfig: (json.advantageConfig?.toJSON() ?? null) as unknown as JsonValue,
       createdAt: json.createdAt,
       updatedAt: json.updatedAt,
     }
@@ -67,6 +75,8 @@ export class CampaignMapper {
       endDate: json.endDate ?? null,
       targetAudience: json.targetAudience as JsonValue ?? Prisma.JsonNull,
       metaCampaignId: json.metaCampaignId ?? null,
+      buyingType: json.buyingType ?? 'AUCTION',
+      advantageConfig: json.advantageConfig?.toJSON() as unknown as JsonValue ?? Prisma.JsonNull,
       createdAt: json.createdAt,
       updatedAt: json.updatedAt,
     }
@@ -84,6 +94,8 @@ export class CampaignMapper {
       endDate: json.endDate ?? null,
       targetAudience: json.targetAudience as JsonValue ?? Prisma.JsonNull,
       metaCampaignId: json.metaCampaignId ?? null,
+      buyingType: json.buyingType ?? 'AUCTION',
+      advantageConfig: json.advantageConfig?.toJSON() as unknown as JsonValue ?? Prisma.JsonNull,
       updatedAt: new Date(),
     }
   }

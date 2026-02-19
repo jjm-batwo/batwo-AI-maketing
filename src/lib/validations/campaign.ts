@@ -25,6 +25,11 @@ export const createCampaignSchema = z.object({
   syncToMeta: z.boolean().optional(),
   accessToken: z.string().optional(),
   adAccountId: z.string().optional(),
+  advantageConfig: z.object({
+    advantageBudget: z.boolean(),
+    advantageAudience: z.boolean(),
+    advantagePlacement: z.boolean(),
+  }).optional(),
 })
 
 /**

@@ -1,0 +1,9 @@
+// Meta 광고 최적화 목표
+export enum OptimizationGoal {
+  CONVERSIONS = 'CONVERSIONS',
+  LINK_CLICKS = 'LINK_CLICKS',
+  IMPRESSIONS = 'IMPRESSIONS',
+  REACH = 'REACH',
+  LANDING_PAGE_VIEWS = 'LANDING_PAGE_VIEWS',
+  VALUE = 'VALUE',
+}

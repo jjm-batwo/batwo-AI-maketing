@@ -15,6 +15,12 @@ export interface CampaignDTO {
   endDate?: string
   targetAudience?: TargetAudience
   metaCampaignId?: string
+  buyingType?: string
+  advantageConfig?: {
+    advantageBudget: boolean
+    advantageAudience: boolean
+    advantagePlacement: boolean
+  }
   createdAt: string
   updatedAt: string
 }
@@ -40,6 +46,8 @@ export function toCampaignDTO(campaign: Campaign): CampaignDTO {
     endDate: campaign.endDate?.toISOString(),
     targetAudience: campaign.targetAudience,
     metaCampaignId: campaign.metaCampaignId,
+    buyingType: campaign.buyingType,
+    advantageConfig: campaign.advantageConfig?.toJSON(),
     createdAt: campaign.createdAt.toISOString(),
     updatedAt: campaign.updatedAt.toISOString(),
   }
