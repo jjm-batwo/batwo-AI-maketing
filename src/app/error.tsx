@@ -9,7 +9,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import * as Sentry from '@sentry/nextjs'
+import { captureException, captureFeedback } from '@sentry/nextjs'
 import { Button } from '@/components/ui/button'
 import { AlertTriangle, Home, RefreshCw, MessageCircle } from 'lucide-react'
 
@@ -20,7 +20,7 @@ interface ErrorPageProps {
 
 // Sentry에 에러 리포팅 (컴포넌트 외부에서 호출)
 function captureErrorToSentry(error: Error & { digest?: string }): string {
-  return Sentry.captureException(error, {
+  return captureException(error, {
     extra: {
       digest: error.digest,
       componentStack: error.stack,
@@ -122,7 +122,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
                   const form = e.target as HTMLFormElement
                   const formData = new FormData(form)
 
-                  Sentry.captureFeedback({
+                  captureFeedback({
                     associatedEventId: eventId,
                     name: (formData.get('name') as string) || 'Anonymous',
                     email: (formData.get('email') as string) || 'anonymous@example.com',

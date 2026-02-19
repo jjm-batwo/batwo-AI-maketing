@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import { getMetadata } from '@/lib/constants/seo'
 import { LandingHeader, PricingSection, LandingFooter } from '@/presentation/components/landing'
 
+// ISR: 가격 변경 반영을 위해 1시간마다 재생성
+export const revalidate = 3600
+
 export const metadata: Metadata = getMetadata({
   path: '/pricing',
   title: '요금제',

@@ -1,16 +1,15 @@
-'use client'
-
-import { Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { XCircle, ArrowLeft, Home } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
-function FailContent() {
-  const searchParams = useSearchParams()
-  const code = searchParams.get('code')
-  const message = searchParams.get('message')
+// 결제 실패 페이지: 순수 서버 컴포넌트 (JS 번들 불필요)
+export default async function CheckoutFailPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ code?: string; message?: string }>
+}) {
+  const { code, message } = await searchParams
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
@@ -88,19 +87,5 @@ function FailContent() {
         </Card>
       </div>
     </div>
-  )
-}
-
-export default function CheckoutFailPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-gray-600">로딩 중...</div>
-        </div>
-      }
-    >
-      <FailContent />
-    </Suspense>
   )
 }

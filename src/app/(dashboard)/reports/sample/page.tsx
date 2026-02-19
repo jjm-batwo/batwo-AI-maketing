@@ -1,14 +1,8 @@
-'use client'
-
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
   ArrowLeft,
-  Download,
-  Share2,
   Sparkles,
   TrendingUp,
   TrendingDown,
@@ -19,43 +13,14 @@ import {
 } from 'lucide-react'
 import { KPICard } from '@/presentation/components/dashboard/KPICard'
 import { getSampleReportForWebViewer, getSampleReportDTO } from '@/lib/sample-report-data'
+import { SampleReportActions } from './SampleReportActions'
+import Link from 'next/link'
+
+export const dynamic = 'force-static'
 
 export default function SampleReportPage() {
-  const router = useRouter()
-  const [isDownloading, setIsDownloading] = useState(false)
-
-  // 예시 보고서 데이터 로드
   const report = getSampleReportForWebViewer()
   const fullReport = getSampleReportDTO()
-
-  const handleDownload = async () => {
-    setIsDownloading(true)
-    try {
-      const response = await fetch('/api/reports/sample/download')
-      if (!response.ok) {
-        throw new Error('PDF 생성에 실패했습니다')
-      }
-
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `바투_예시_주간리포트_${report.dateRange.startDate}_${report.dateRange.endDate}.pdf`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      window.URL.revokeObjectURL(url)
-    } catch (error) {
-      console.error('Download error:', error)
-      alert('PDF 다운로드에 실패했습니다')
-    } finally {
-      setIsDownloading(false)
-    }
-  }
-
-  const handleShare = () => {
-    alert('예시 보고서는 공유할 수 없습니다.\n실제 보고서를 생성한 후 공유하세요.')
-  }
 
   const getInsightIcon = (type: 'POSITIVE' | 'NEGATIVE' | 'SUGGESTION') => {
     switch (type) {
@@ -84,9 +49,11 @@ export default function SampleReportPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => router.push('/reports')}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            뒤로가기
+          <Button variant="ghost" asChild>
+            <Link href="/reports">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              뒤로가기
+            </Link>
           </Button>
           <Badge variant="secondary" className="text-amber-700 bg-amber-100">
             <FileText className="mr-1 h-3 w-3" />
@@ -108,16 +75,10 @@ export default function SampleReportPage() {
             * 이 보고서는 예시 데이터로 생성되었습니다
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={handleShare}>
-            <Share2 className="mr-1 h-4 w-4" />
-            공유
-          </Button>
-          <Button onClick={handleDownload} disabled={isDownloading}>
-            <Download className="mr-1 h-4 w-4" />
-            {isDownloading ? 'PDF 생성 중...' : 'PDF 다운로드'}
-          </Button>
-        </div>
+        <SampleReportActions 
+          startDate={report.dateRange.startDate}
+          endDate={report.dateRange.endDate}
+        />
       </div>
 
       {/* KPI Summary */}

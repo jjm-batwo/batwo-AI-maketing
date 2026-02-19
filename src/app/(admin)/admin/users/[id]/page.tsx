@@ -1,7 +1,7 @@
-'use client'
-
-import { useEffect, useState, use } from 'react'
-import { useRouter } from 'next/navigation'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+import Image from 'next/image'
+import { UserRoleDialog } from './UserRoleDialog'
 import {
   Card,
   CardContent,
@@ -11,23 +11,7 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import {
   ArrowLeft,
   User,
@@ -35,13 +19,13 @@ import {
   Megaphone,
   Users,
   Activity,
-  Shield,
   Mail,
   Calendar,
   Clock,
 } from 'lucide-react'
 import { formatDistanceToNow, format } from 'date-fns'
 import { ko } from 'date-fns/locale'
+import Link from 'next/link'
 
 interface UserDetail {
   id: string
@@ -84,11 +68,9 @@ interface UserDetail {
   }>
 }
 
-const globalRoleOptions = [
-  { value: 'USER', label: '일반 사용자' },
-  { value: 'ADMIN', label: '관리자' },
-  { value: 'SUPER_ADMIN', label: '최고 관리자' },
-]
+interface PageProps {
+  params: Promise<{ id: string }>
+}
 
 function getRoleBadgeVariant(role: string): 'default' | 'secondary' | 'destructive' | 'outline' {
   switch (role) {
@@ -127,100 +109,40 @@ function formatCurrency(amount: number, currency: string = 'KRW') {
   }).format(amount)
 }
 
-export default function AdminUserDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
-  const { id } = use(params)
-  const router = useRouter()
-
-  const [user, setUser] = useState<UserDetail | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [saving, setSaving] = useState(false)
-  const [showRoleDialog, setShowRoleDialog] = useState(false)
-  const [selectedRole, setSelectedRole] = useState<string>('')
-
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        const res = await fetch(`/api/admin/users/${id}`)
-        if (!res.ok) {
-          if (res.status === 404) {
-            throw new Error('사용자를 찾을 수 없습니다.')
-          }
-          throw new Error('Failed to fetch user')
-        }
-        const data = await res.json()
-        setUser(data)
-        setSelectedRole(data.globalRole)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchUser()
-  }, [id])
-
-  const handleRoleChange = async () => {
-    if (!user || selectedRole === user.globalRole) {
-      setShowRoleDialog(false)
-      return
-    }
-
-    setSaving(true)
-    try {
-      const res = await fetch(`/api/admin/users/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ globalRole: selectedRole }),
-      })
-
-      if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || 'Failed to update role')
-      }
-
-      const updated = await res.json()
-      setUser(updated)
-      setShowRoleDialog(false)
-    } catch (err) {
-      alert(err instanceof Error ? err.message : '역할 변경에 실패했습니다.')
-    } finally {
-      setSaving(false)
-    }
+async function fetchUser(id: string): Promise<UserDetail | null> {
+  try {
+    const cookieStore = await cookies()
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+    const res = await fetch(`${baseUrl}/api/admin/users/${id}`, {
+      headers: { Cookie: cookieStore.toString() },
+      cache: 'no-store',
+    })
+    if (!res.ok) return null
+    return res.json()
+  } catch (error) {
+    console.error('User fetch error:', error)
+    return null
   }
+}
 
-  if (loading) {
+export default async function AdminUserDetailPage({ params }: PageProps) {
+  const { id } = await params
+  const user = await fetchUser(id)
+
+  if (!user) {
     return (
       <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Skeleton className="h-10 w-10" />
-          <div className="space-y-2">
-            <Skeleton className="h-6 w-48" />
-            <Skeleton className="h-4 w-32" />
-          </div>
-        </div>
-        <Skeleton className="h-96 w-full" />
-      </div>
-    )
-  }
-
-  if (error || !user) {
-    return (
-      <div className="space-y-6">
-        <Button variant="ghost" onClick={() => router.back()}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          뒤로
+        <Button variant="ghost" asChild>
+          <Link href="/admin/users">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            뒤로
+          </Link>
         </Button>
         <Card>
           <CardContent className="pt-6">
-            <p className="text-destructive">{error || '사용자를 찾을 수 없습니다.'}</p>
-            <Button onClick={() => router.push('/admin/users')} className="mt-4">
-              회원 목록으로
+            <p className="text-destructive">사용자를 찾을 수 없습니다.</p>
+            <Button asChild className="mt-4">
+              <Link href="/admin/users">회원 목록으로</Link>
             </Button>
           </CardContent>
         </Card>
@@ -230,19 +152,21 @@ export default function AdminUserDetailPage({
 
   return (
     <div className="space-y-6">
-      {/* 헤더 */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => router.back()}>
-            <ArrowLeft className="h-4 w-4" />
+          <Button variant="ghost" size="icon" asChild>
+            <Link href="/admin/users">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
           </Button>
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
             {user.image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={user.image}
                 alt={user.name || ''}
-                className="h-full w-full rounded-full object-cover"
+                width={64}
+                height={64}
+                className="rounded-full object-cover"
               />
             ) : (
               <User className="h-8 w-8 text-muted-foreground" />
@@ -257,13 +181,14 @@ export default function AdminUserDetailPage({
              user.globalRole === 'ADMIN' ? '관리자' : '사용자'}
           </Badge>
         </div>
-        <Button onClick={() => setShowRoleDialog(true)}>
-          <Shield className="mr-2 h-4 w-4" />
-          역할 변경
-        </Button>
+        <UserRoleDialog
+          userId={user.id}
+          userName={user.name}
+          userEmail={user.email}
+          currentRole={user.globalRole}
+        />
       </div>
 
-      {/* 탭 */}
       <Tabs defaultValue="overview">
         <TabsList>
           <TabsTrigger value="overview">
@@ -288,10 +213,8 @@ export default function AdminUserDetailPage({
           </TabsTrigger>
         </TabsList>
 
-        {/* 개요 탭 */}
         <TabsContent value="overview" className="space-y-6">
           <div className="grid gap-6 md:grid-cols-2">
-            {/* 기본 정보 */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-base">기본 정보</CardTitle>
@@ -335,7 +258,6 @@ export default function AdminUserDetailPage({
               </CardContent>
             </Card>
 
-            {/* 구독 정보 */}
             <Card>
               <CardHeader>
                 <CardTitle className="text-base">구독 정보</CardTitle>
@@ -381,7 +303,6 @@ export default function AdminUserDetailPage({
           </div>
         </TabsContent>
 
-        {/* 활동 탭 */}
         <TabsContent value="activity">
           <Card>
             <CardHeader>
@@ -394,7 +315,6 @@ export default function AdminUserDetailPage({
           </Card>
         </TabsContent>
 
-        {/* 결제 탭 */}
         <TabsContent value="payments">
           <Card>
             <CardHeader>
@@ -436,7 +356,6 @@ export default function AdminUserDetailPage({
           </Card>
         </TabsContent>
 
-        {/* 캠페인 탭 */}
         <TabsContent value="campaigns">
           <Card>
             <CardHeader>
@@ -473,7 +392,6 @@ export default function AdminUserDetailPage({
           </Card>
         </TabsContent>
 
-        {/* 팀 탭 */}
         <TabsContent value="teams">
           <Card>
             <CardHeader>
@@ -509,40 +427,6 @@ export default function AdminUserDetailPage({
           </Card>
         </TabsContent>
       </Tabs>
-
-      {/* 역할 변경 다이얼로그 */}
-      <Dialog open={showRoleDialog} onOpenChange={setShowRoleDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>역할 변경</DialogTitle>
-            <DialogDescription>
-              {user.name || user.email}님의 역할을 변경합니다.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <Select value={selectedRole} onValueChange={setSelectedRole}>
-              <SelectTrigger>
-                <SelectValue placeholder="역할 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                {globalRoleOptions.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowRoleDialog(false)}>
-              취소
-            </Button>
-            <Button onClick={handleRoleChange} disabled={saving}>
-              {saving ? '저장 중...' : '저장'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

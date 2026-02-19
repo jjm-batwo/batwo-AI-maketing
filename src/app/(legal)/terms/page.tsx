@@ -7,6 +7,9 @@
 import { Metadata } from 'next'
 import { getMetadata } from '@/lib/constants/seo'
 
+// 법적 문서는 하드코딩 콘텐츠이므로 빌드 타임에 완전 정적 생성
+export const dynamic = 'force-static'
+
 export const metadata: Metadata = getMetadata({
   path: '/terms',
   title: '이용약관',

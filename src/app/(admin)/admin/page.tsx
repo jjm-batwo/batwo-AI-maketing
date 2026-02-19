@@ -1,9 +1,5 @@
-'use client'
-
-import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
 import { AdminStatsCard } from '@/presentation/components/admin/common'
 import {
   Users,
@@ -16,6 +12,7 @@ import {
 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
+import { cookies } from 'next/headers'
 
 interface DashboardData {
   users: {
@@ -80,59 +77,36 @@ function formatCurrency(amount: number, currency: string = 'KRW') {
   }).format(amount)
 }
 
-export default function AdminDashboardPage() {
-  const [data, setData] = useState<DashboardData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+async function getDashboardData(): Promise<DashboardData | null> {
+  try {
+    const cookieStore = await cookies()
+    const res = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/admin/dashboard`, {
+      headers: { Cookie: cookieStore.toString() },
+      next: { revalidate: 300, tags: ['admin-dashboard'] },
+    })
 
-  useEffect(() => {
-    async function fetchDashboard() {
-      try {
-        const res = await fetch('/api/admin/dashboard')
-        if (!res.ok) {
-          throw new Error('Failed to fetch dashboard data')
-        }
-        const json = await res.json()
-        setData(json)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error')
-      } finally {
-        setLoading(false)
-      }
+    if (!res.ok) {
+      throw new Error('Failed to fetch dashboard data')
     }
 
-    fetchDashboard()
-  }, [])
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold">관리자 대시보드</h1>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {[...Array(4)].map((_, i) => (
-            <Card key={i}>
-              <CardHeader className="pb-2">
-                <Skeleton className="h-4 w-20" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-8 w-16" />
-                <Skeleton className="mt-2 h-3 w-24" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-    )
+    return await res.json()
+  } catch (error) {
+    console.error('Dashboard fetch error:', error)
+    return null
   }
+}
 
-  if (error || !data) {
+export default async function AdminDashboardPage() {
+  const data = await getDashboardData()
+
+  if (!data) {
     return (
       <div className="space-y-6">
         <h1 className="text-2xl font-bold">관리자 대시보드</h1>
         <Card>
           <CardContent className="pt-6">
             <p className="text-destructive">
-              {error || '데이터를 불러오는데 실패했습니다.'}
+              데이터를 불러오는데 실패했습니다.
             </p>
           </CardContent>
         </Card>
