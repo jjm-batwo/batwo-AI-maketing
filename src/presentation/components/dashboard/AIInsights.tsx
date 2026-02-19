@@ -108,12 +108,6 @@ const priorityConfig: Record<InsightPriority, {
   },
 }
 
-const actionVariantConfig: Record<ActionVariant, string> = {
-  primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
-  secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-  warning: 'bg-amber-500 text-white hover:bg-amber-600',
-}
-
 // ============================================================================
 // Helper Functions
 // ============================================================================
@@ -227,7 +221,7 @@ export const AIInsights = memo(function AIInsights({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
+        <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
           {insights.map((insight) => {
             const config = typeConfig[insight.type]
             const Icon = config.icon
@@ -299,18 +293,11 @@ export const AIInsights = memo(function AIInsights({
 
                     {/* Action Button */}
                     {insight.action && (
-                      <Button
-                        size="sm"
-                        className={cn(
-                          'mt-2 h-7 text-xs',
-                          insight.action.variant ? actionVariantConfig[insight.action.variant] : ''
-                        )}
-                        asChild
-                      >
-                        <Link href={insight.action.href}>
-                          {insight.action.label}
-                        </Link>
-                      </Button>
+                      <div className="mt-2">
+                        <Button variant="outline" size="sm" className="h-6 text-xs px-2" asChild>
+                          <Link href={insight.action.href}>{insight.action.label}</Link>
+                        </Button>
+                      </div>
                     )}
                   </div>
                 </div>

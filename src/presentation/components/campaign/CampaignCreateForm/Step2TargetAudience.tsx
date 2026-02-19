@@ -3,6 +3,7 @@
 import { useFormContext } from 'react-hook-form'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { Lightbulb } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { CampaignFormData } from './index'
 
@@ -113,7 +114,7 @@ export function Step2TargetAudience() {
 
       <div className="rounded-lg bg-blue-50 p-4">
         <p className="text-sm text-blue-800">
-          💡 <strong>AI 추천</strong>: 타겟 설정을 건너뛰시면 Meta의 Advantage+
+          <Lightbulb className="h-4 w-4 inline text-amber-500" /> <strong>AI 추천</strong>: 타겟 설정을 건너뛰시면 Meta의 Advantage+
           타겟팅이 자동으로 최적의 오디언스를 찾아드립니다.
         </p>
       </div>

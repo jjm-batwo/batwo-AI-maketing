@@ -1,6 +1,8 @@
 'use client'
 
 import { memo, useState, useEffect, useRef } from 'react'
+import type { ReactNode } from 'react'
+import { Target, Coins, BarChart3 } from 'lucide-react'
 import { BrowserChrome } from './BrowserChrome'
 
 interface Message {
@@ -86,15 +88,15 @@ export const AIChatDemo = memo(function AIChatDemo() {
   }, [])
 
   return (
-    <div className="relative glass-card rounded-2xl p-4 md:p-6 transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] group aspect-[4/3] md:aspect-auto">
+    <div className="relative glass-card rounded-2xl p-4 md:p-6 transition-all duration-500 hover:shadow-lg group aspect-[4/3] md:aspect-auto">
       {/* Glow Effect */}
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/30 to-purple-600/30 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500 pointer-events-none" aria-hidden="true" />
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/30 to-purple-600/30 rounded-2xl blur opacity-30 group-hover:opacity-40 transition duration-500 pointer-events-none" aria-hidden="true" />
 
       <div className="relative bg-card/80 backdrop-blur-sm rounded-xl overflow-hidden shadow-sm border border-border/50">
         <BrowserChrome url="app.batwo.io/chat" />
 
         {/* 채팅 영역 */}
-        <div className={`p-4 md:p-6 space-y-4 h-[400px] overflow-hidden transition-opacity duration-500 ${visible ? 'opacity-100' : 'opacity-0'}`}>
+        <div className={`p-4 md:p-6 space-y-4 h-[300px] lg:h-[320px] xl:h-[400px] overflow-hidden transition-opacity duration-500 ${visible ? 'opacity-100' : 'opacity-0'}`}>
           {messages.map((message, index) => (
             <div
               key={message.id}
@@ -178,9 +180,9 @@ const CampaignCard = memo(function CampaignCard() {
 
         {/* 카드 내용 */}
         <div className="p-4 space-y-3">
-          <InfoRow icon="🎯" label="타겟" value={campaignData.target} />
-          <InfoRow icon="💰" label="일일 예산" value={campaignData.budget} />
-          <InfoRow icon="📊" label="상태" value={campaignData.status} />
+          <InfoRow icon={<Target className="h-4 w-4 text-primary" />} label="타겟" value={campaignData.target} />
+          <InfoRow icon={<Coins className="h-4 w-4 text-primary" />} label="일일 예산" value={campaignData.budget} />
+          <InfoRow icon={<BarChart3 className="h-4 w-4 text-primary" />} label="상태" value={campaignData.status} />
         </div>
       </div>
     </div>
@@ -188,12 +190,12 @@ const CampaignCard = memo(function CampaignCard() {
 })
 
 // 정보 행 컴포넌트
-const InfoRow = memo(function InfoRow({ icon, label, value }: { icon: string; label: string; value: string }) {
+const InfoRow = memo(function InfoRow({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="text-lg" role="img" aria-label={label}>
+      <div className="flex items-center justify-center" aria-label={label}>
         {icon}
-      </span>
+      </div>
       <div className="flex-1">
         <p className="text-xs text-muted-foreground">{label}</p>
         <p className="text-sm font-medium">{value}</p>

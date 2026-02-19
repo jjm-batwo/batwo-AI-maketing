@@ -456,11 +456,11 @@ export function AnomalyAlert({ className, maxItems = 5, showRootCause = true }: 
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <Bell className="h-5 w-5 text-primary" />
-            <CardTitle className="text-lg">이상 탐지</CardTitle>
+            <CardTitle className="text-base">이상 탐지</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {Array.from({ length: 2 }).map((_, i) => (
               <div key={i} className="animate-pulse rounded-lg border p-4">
                 <div className="mb-2 h-4 w-24 rounded bg-gray-200" />
@@ -484,7 +484,7 @@ export function AnomalyAlert({ className, maxItems = 5, showRootCause = true }: 
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Bell className="h-5 w-5 text-primary" />
-            <CardTitle className="text-lg">이상 탐지</CardTitle>
+            <CardTitle className="text-base">이상 탐지</CardTitle>
             {summary && summary.critical > 0 && (
               <Badge variant="destructive" className="text-xs">
                 {summary.critical}개 긴급
@@ -524,7 +524,7 @@ export function AnomalyAlert({ className, maxItems = 5, showRootCause = true }: 
           </div>
         )}
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-2">
         {isError && (
           <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
             이상 탐지 중 오류가 발생했습니다.

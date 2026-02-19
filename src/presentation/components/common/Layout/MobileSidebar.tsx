@@ -14,10 +14,9 @@ import {
   LayoutDashboard,
   Megaphone,
   FileText,
-  Settings,
-  HelpCircle,
 } from 'lucide-react'
 import { useUIStore } from '@presentation/stores/uiStore'
+import { AccountPopover } from './AccountPopover'
 
 export function MobileSidebar() {
   const pathname = usePathname()
@@ -28,12 +27,11 @@ export function MobileSidebar() {
     { name: t('navigation.dashboard'), href: '/dashboard', icon: LayoutDashboard },
     { name: t('navigation.campaigns'), href: '/campaigns', icon: Megaphone },
     { name: t('navigation.reports'), href: '/reports', icon: FileText },
-    { name: t('navigation.settings'), href: '/settings', icon: Settings },
   ]
 
   return (
     <Sheet open={isMobileMenuOpen} onOpenChange={closeMobileMenu}>
-      <SheetContent side="left" className="w-72 p-0">
+      <SheetContent side="left" className="w-60 p-0">
         <SheetHeader className="border-b px-6 py-4">
           <SheetTitle asChild>
             <Link
@@ -73,15 +71,8 @@ export function MobileSidebar() {
           })}
         </nav>
 
-        <div className="border-t p-4">
-          <Link
-            href="/help"
-            onClick={closeMobileMenu}
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
-          >
-            <HelpCircle className="h-5 w-5" />
-            {t('navigation.help')}
-          </Link>
+        <div className="border-t p-3">
+          <AccountPopover />
         </div>
       </SheetContent>
     </Sheet>

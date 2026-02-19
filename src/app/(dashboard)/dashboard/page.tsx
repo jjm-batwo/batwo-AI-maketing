@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { ApiSourceBadge } from '@/presentation/components/common/ApiSourceBadge'
 import Link from 'next/link'
 import { KPICard, KPIChart } from '@/presentation/components/dashboard'
+import { DonutChart } from '@/presentation/components/dashboard/DonutChart'
 import { useDashboardKPI, useMetaConnection, useSync, useCampaigns, useKPIInsights } from '@/presentation/hooks'
 import { useUIStore } from '@/presentation/stores'
 import { Button } from '@/components/ui/button'
@@ -56,6 +57,49 @@ export default function DashboardPage() {
   const summary = data?.summary
   const changes = summary?.changes
   const chartData = data?.chartData ?? []
+
+  // KPI별 스파크라인 mock 데이터 (상승/하락/보합 패턴)
+  const sparklinePatterns = {
+    roas:        [3.2, 3.5, 3.1, 3.8, 3.6, 4.0, 4.2],
+    spend:       [120, 135, 118, 142, 138, 155, 149],
+    conversions: [42, 38, 45, 50, 48, 52, 55],
+    ctr:         [2.1, 2.3, 2.0, 2.4, 2.2, 2.6, 2.5],
+    clicks:      [310, 290, 340, 380, 360, 400, 420],
+    impressions: [8200, 7900, 8600, 9100, 8800, 9500, 9300],
+    revenue:     [580, 620, 545, 670, 640, 710, 690],
+    cpa:         [2800, 2600, 2950, 2500, 2700, 2400, 2450],
+    cvr:         [3.5, 3.2, 3.8, 4.0, 3.7, 4.2, 4.1],
+    reach:       [5400, 5100, 5700, 6000, 5800, 6300, 6100],
+  }
+
+  // 캠페인 상태별 분포 계산 (실데이터 우선, 없으면 mock)
+  const campaignStatusSegments = useMemo(() => {
+    const campaigns = campaignsData?.campaigns ?? []
+    if (campaigns.length === 0) {
+      return [
+        { label: '진행 중',  value: 5, color: '#22c55e' },
+        { label: '일시정지', value: 2, color: '#eab308' },
+        { label: '초안',     value: 3, color: '#3b82f6' },
+        { label: '완료',     value: 1, color: '#9ca3af' },
+      ]
+    }
+    const counts: Record<string, number> = { ACTIVE: 0, PAUSED: 0, DRAFT: 0, COMPLETED: 0 }
+    campaigns.forEach((c: { status: string }) => {
+      const key = c.status in counts ? c.status : 'DRAFT'
+      counts[key]++
+    })
+    return [
+      { label: '진행 중',  value: counts.ACTIVE,    color: '#22c55e' },
+      { label: '일시정지', value: counts.PAUSED,    color: '#eab308' },
+      { label: '초안',     value: counts.DRAFT,     color: '#3b82f6' },
+      { label: '완료',     value: counts.COMPLETED, color: '#9ca3af' },
+    ].filter(s => s.value > 0)
+  }, [campaignsData?.campaigns])
+
+  const totalCampaigns = useMemo(
+    () => campaignStatusSegments.reduce((sum, s) => sum + s.value, 0),
+    [campaignStatusSegments]
+  )
 
   // CampaignSummaryTable용 캠페인 데이터 변환
   // 대시보드에는 ACTIVE 캠페인만 표시
@@ -299,6 +343,7 @@ export default function DashboardPage() {
             changeType={kpi.changeKey ? getChangeType(getChangeValue(changes, kpi.changeKey)) : 'neutral'}
             icon={kpi.icon}
             isLoading={isLoading}
+            sparklineData={sparklinePatterns[kpi.key as keyof typeof sparklinePatterns] ?? sparklinePatterns.conversions}
           />
         ))}
       </div>
@@ -313,6 +358,7 @@ export default function DashboardPage() {
             <KPIChart
               data={chartData.map((d) => ({ label: d.date, value: d.spend }))}
               isLoading={isLoading}
+              chartType="area"
             />
           </CardContent>
         </Card>
@@ -326,6 +372,24 @@ export default function DashboardPage() {
               color="green"
               yAxisFormat="multiplier"
               isLoading={isLoading}
+              chartType="area"
+            />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* 캠페인 상태 분포 */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        <Card>
+          <CardHeader>
+            <CardTitle>캠페인 상태 분포</CardTitle>
+          </CardHeader>
+          <CardContent className="flex justify-center py-2">
+            <DonutChart
+              segments={campaignStatusSegments}
+              centerValue={totalCampaigns}
+              centerLabel="전체"
+              size={140}
             />
           </CardContent>
         </Card>

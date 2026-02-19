@@ -1,10 +1,10 @@
-import { memo, useMemo } from 'react'
+import { memo } from 'react'
+import { Star } from 'lucide-react'
 
 const USER_AVATARS = [1, 2, 3, 4] as const
+const STAR_INDICES = [0, 1, 2, 3, 4] as const
 
 export const SocialProofBadge = memo(function SocialProofBadge() {
-  const stars = useMemo(() => '★★★★★'.split(''), [])
-
   return (
     <div className="mt-10 flex items-center justify-center lg:justify-start gap-5">
       <div className="flex -space-x-3" role="group" aria-label="사용자 프로필">
@@ -21,10 +21,8 @@ export const SocialProofBadge = memo(function SocialProofBadge() {
       <div className="text-sm">
         <div className="flex items-center gap-1 mb-0.5">
           <div className="flex text-amber-400" role="img" aria-label="5점 만점에 4.9점">
-            {stars.map((star, i) => (
-              <span key={i} aria-hidden="true">
-                {star}
-              </span>
+            {STAR_INDICES.map((i) => (
+              <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" aria-hidden="true" />
             ))}
           </div>
           <span className="font-bold">4.9/5.0</span>

@@ -16,6 +16,7 @@ interface KPIChartProps {
   yAxisFormat?: 'currency' | 'multiplier' | 'number'
   isLoading?: boolean
   className?: string
+  chartType?: 'bar' | 'line' | 'area'
 }
 
 const colorMap = {
@@ -25,6 +26,13 @@ const colorMap = {
   purple: 'bg-purple-500',
 }
 
+const svgColorMap = {
+  primary: 'hsl(var(--primary))',
+  green: '#22c55e',
+  blue: '#3b82f6',
+  purple: '#a855f7',
+}
+
 export function KPIChart({
   title,
   data,
@@ -32,6 +40,7 @@ export function KPIChart({
   yAxisFormat = 'currency',
   isLoading = false,
   className,
+  chartType = 'bar',
 }: KPIChartProps) {
   // Pre-computed heights for loading skeleton
   const skeletonHeights = [75, 45, 60, 85, 50, 70, 55]
@@ -109,6 +118,94 @@ export function KPIChart({
 
     // X-axis labels with unique dates
     const xAxisLabels = getXAxisLabels()
+
+    if (chartType === 'line' || chartType === 'area') {
+      const svgWidth = 100
+      const svgHeight = 128
+      const strokeColor = svgColorMap[color]
+      const gradientId = `chart-gradient-${color}`
+
+      const linePoints = data.map((point, index) => {
+        const x = data.length > 1
+          ? (index / (data.length - 1)) * svgWidth
+          : svgWidth / 2
+        const y = svgHeight - (point.value / maxValue) * (svgHeight - 8) - 4
+        return `${x},${y}`
+      }).join(' ')
+
+      const areaPoints = `0,${svgHeight} ${linePoints} ${svgWidth},${svgHeight}`
+
+      return (
+        <>
+          <div className="flex gap-2">
+            {/* Y-axis labels */}
+            <div className="flex flex-col justify-between h-32 py-0.5 text-[10px] text-muted-foreground w-11 text-right">
+              {yAxisLabels.map((label, i) => (
+                <span key={i} className="leading-none">
+                  {label.label}
+                </span>
+              ))}
+            </div>
+            <div className="flex-1 h-32 border-l border-b border-border/30 pl-2 pb-0.5">
+              <svg width="100%" height="100%" viewBox={`0 0 ${svgWidth} ${svgHeight}`} preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor={strokeColor} stopOpacity={0.3} />
+                    <stop offset="100%" stopColor={strokeColor} stopOpacity={0.05} />
+                  </linearGradient>
+                </defs>
+                {chartType === 'area' && (
+                  <polygon points={areaPoints} fill={`url(#${gradientId})`} />
+                )}
+                <polyline
+                  points={linePoints}
+                  fill="none"
+                  stroke={strokeColor}
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  vectorEffect="non-scaling-stroke"
+                />
+                {/* Data points */}
+                {data.map((point, index) => {
+                  const x = data.length > 1
+                    ? (index / (data.length - 1)) * svgWidth
+                    : svgWidth / 2
+                  const y = svgHeight - (point.value / maxValue) * (svgHeight - 8) - 4
+                  return (
+                    <circle key={index} cx={x} cy={y} r={3} fill={strokeColor} className="opacity-0 hover:opacity-100 transition-opacity">
+                      <title>{`${point.date || point.label}: ${formatChartValue(point.value)}`}</title>
+                    </circle>
+                  )
+                })}
+              </svg>
+            </div>
+          </div>
+
+          {/* X-axis labels */}
+          <div className="mt-2 flex justify-between text-xs text-muted-foreground pl-12">
+            {xAxisLabels.map((label) => {
+              const point = data[label.index]
+              const dateLabel = formatDateLabel(point.date || point.label || '')
+
+              return (
+                <span
+                  key={label.index}
+                  className={cn(
+                    'flex-1',
+                    label.position === 'left' && 'text-left',
+                    label.position === 'center' && 'text-center',
+                    label.position === 'right' && 'text-right'
+                  )}
+                >
+                  {dateLabel}
+                </span>
+              )
+            })}
+          </div>
+        </>
+      )
+    }
 
     return (
       <>

@@ -127,7 +127,7 @@ describe('AIInsights', () => {
       expect(screen.queryByRole('link')).not.toBeInTheDocument()
     })
 
-    it('should have proper button styling', () => {
+    it('should render action button as link', () => {
       render(<AIInsights insights={[mockInsights[0]]} />, { wrapper: Wrapper })
       const actionLink = screen.getByText(/타겟팅 조정하기/).closest('a')
       expect(actionLink).toBeInTheDocument()
@@ -210,9 +210,9 @@ describe('AIInsights', () => {
       expect(card).toBeInTheDocument()
     })
 
-    it('should have proper spacing between insights', () => {
+    it('should have proper spacing between insights (space-y-2)', () => {
       const { container } = render(<AIInsights insights={mockInsights} />, { wrapper: Wrapper })
-      const insightsContainer = container.querySelector('.space-y-3')
+      const insightsContainer = container.querySelector('.space-y-2')
       expect(insightsContainer).toBeInTheDocument()
     })
 

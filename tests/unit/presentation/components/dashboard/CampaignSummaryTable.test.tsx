@@ -17,7 +17,7 @@ const mockTranslations = {
   'campaigns.status.completed': '완료',
   'campaigns.status.draft': '초안',
   'currency.krw': '₩',
-  'currency.suffix': '',
+  'currency.suffix': '원',
 }
 
 vi.mock('next-intl', () => ({
@@ -98,23 +98,42 @@ describe('CampaignSummaryTable', () => {
       expect(nameLink).toHaveAttribute('href', '/campaigns/campaign-1')
     })
 
-    it('should display status badge with correct styling', () => {
+    it('should display status text correctly', () => {
       render(<CampaignSummaryTable campaigns={mockCampaigns} />, { wrapper: Wrapper })
 
-      const activeStatus = screen.getByText('진행 중')
-      expect(activeStatus).toHaveClass('bg-green-100', 'text-green-700')
+      expect(screen.getByText('진행 중')).toBeInTheDocument()
+      expect(screen.getByText('일시정지')).toBeInTheDocument()
+      expect(screen.getByText('완료')).toBeInTheDocument()
+    })
 
-      const pausedStatus = screen.getByText('일시정지')
-      expect(pausedStatus).toHaveClass('bg-yellow-100', 'text-yellow-700')
+    it('should display ACTIVE status with green dot', () => {
+      render(<CampaignSummaryTable campaigns={mockCampaigns} />, { wrapper: Wrapper })
 
-      const completedStatus = screen.getByText('완료')
-      expect(completedStatus).toHaveClass('bg-gray-100', 'text-gray-700')
+      const activeText = screen.getByText('진행 중')
+      const dotSpan = activeText.previousSibling as HTMLElement
+      expect(dotSpan).toHaveClass('bg-green-500')
+    })
+
+    it('should display PAUSED status with yellow dot', () => {
+      render(<CampaignSummaryTable campaigns={mockCampaigns} />, { wrapper: Wrapper })
+
+      const pausedText = screen.getByText('일시정지')
+      const dotSpan = pausedText.previousSibling as HTMLElement
+      expect(dotSpan).toHaveClass('bg-yellow-500')
+    })
+
+    it('should display COMPLETED status with gray dot', () => {
+      render(<CampaignSummaryTable campaigns={mockCampaigns} />, { wrapper: Wrapper })
+
+      const completedText = screen.getByText('완료')
+      const dotSpan = completedText.previousSibling as HTMLElement
+      expect(dotSpan).toHaveClass('bg-gray-400')
     })
 
     it('should format spend with currency', () => {
       render(<CampaignSummaryTable campaigns={mockCampaigns} />, { wrapper: Wrapper })
-      expect(screen.getByText(/₩1,500,000/)).toBeInTheDocument()
-      expect(screen.getByText(/₩800,000/)).toBeInTheDocument()
+      expect(screen.getByText(/1,500,000원/)).toBeInTheDocument()
+      expect(screen.getByText(/800,000원/)).toBeInTheDocument()
     })
 
     it('should display ROAS with two decimal places', () => {
@@ -187,15 +206,17 @@ describe('CampaignSummaryTable', () => {
   })
 
   describe('status configurations', () => {
-    it('should handle DRAFT status', () => {
+    it('should handle DRAFT status with blue dot', () => {
       const draftCampaign = [{
         ...mockCampaigns[0],
         id: 'draft-1',
         status: 'DRAFT' as const,
       }]
       render(<CampaignSummaryTable campaigns={draftCampaign} />, { wrapper: Wrapper })
-      const draftStatus = screen.getByText('초안')
-      expect(draftStatus).toHaveClass('bg-blue-100', 'text-blue-700')
+      const draftText = screen.getByText('초안')
+      expect(draftText).toBeInTheDocument()
+      const dotSpan = draftText.previousSibling as HTMLElement
+      expect(dotSpan).toHaveClass('bg-blue-500')
     })
   })
 })

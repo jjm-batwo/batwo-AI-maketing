@@ -2,24 +2,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { Header } from '@/presentation/components/common/Layout/Header'
-import { useSession, signOut } from 'next-auth/react'
 import { NextIntlClientProvider } from 'next-intl'
-
-// Mock next-auth
-vi.mock('next-auth/react', () => ({
-  useSession: vi.fn(),
-  signOut: vi.fn(),
-}))
 
 // Mock next-intl translations
 const mockTranslations = {
   'common.openMenu': '메뉴 열기',
-  'common.user': '사용자',
   'header.campaign': '캠페인',
   'header.aiCopy': 'AI 카피',
   'header.today': '오늘',
-  'header.userMenu': '사용자 메뉴',
-  'navigation.logout': '로그아웃',
 }
 
 vi.mock('next-intl', () => ({
@@ -33,15 +23,6 @@ vi.mock('@presentation/stores/uiStore', () => ({
   useUIStore: () => ({
     toggleMobileMenu: mockToggleMobileMenu,
   }),
-}))
-
-// Mock shadcn DropdownMenu
-vi.mock('@/components/ui/dropdown-menu', () => ({
-  DropdownMenu: ({ children }: any) => <div>{children}</div>,
-  DropdownMenuTrigger: ({ children, ...props }: any) => <button {...props}>{children}</button>,
-  DropdownMenuContent: ({ children }: any) => <div data-testid="dropdown-content">{children}</div>,
-  DropdownMenuItem: ({ children, onClick, className }: any) => <div onClick={onClick} className={className} data-testid="dropdown-item">{children}</div>,
-  DropdownMenuSeparator: () => <hr />,
 }))
 
 // Mock child components
@@ -78,18 +59,6 @@ describe('Header', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(useSession).mockReturnValue({
-      data: {
-        user: {
-          id: 'user-123',
-          name: '홍길동',
-          email: 'hong@example.com',
-        },
-        expires: new Date(Date.now() + 86400000).toISOString(),
-      },
-      status: 'authenticated',
-      update: vi.fn(),
-    })
   })
 
   describe('rendering', () => {
@@ -113,12 +82,6 @@ describe('Header', () => {
     it('should render language toggle', () => {
       render(<Header />, { wrapper: Wrapper })
       expect(screen.getByTestId('language-toggle')).toBeInTheDocument()
-    })
-
-    it('should render user menu button', () => {
-      render(<Header />, { wrapper: Wrapper })
-      const userMenuButton = screen.getByLabelText('사용자 메뉴')
-      expect(userMenuButton).toBeInTheDocument()
     })
   })
 
@@ -159,78 +122,6 @@ describe('Header', () => {
       render(<Header />, { wrapper: Wrapper })
       const menuButton = screen.getByLabelText('메뉴 열기')
       expect(menuButton).toHaveClass('md:hidden')
-    })
-  })
-
-  describe('user menu', () => {
-    it('should display user name in dropdown', () => {
-      render(<Header />, { wrapper: Wrapper })
-
-      const userMenuButton = screen.getByLabelText('사용자 메뉴')
-      fireEvent.click(userMenuButton)
-
-      expect(screen.getByText('홍길동')).toBeInTheDocument()
-    })
-
-    it('should display user email in dropdown', () => {
-      render(<Header />, { wrapper: Wrapper })
-
-      const userMenuButton = screen.getByLabelText('사용자 메뉴')
-      fireEvent.click(userMenuButton)
-
-      expect(screen.getByText('hong@example.com')).toBeInTheDocument()
-    })
-
-    it('should display fallback when user name is not available', () => {
-      vi.mocked(useSession).mockReturnValue({
-        data: {
-          user: {
-            id: 'user-123',
-            email: 'user@example.com',
-          },
-          expires: new Date(Date.now() + 86400000).toISOString(),
-        },
-        status: 'authenticated',
-        update: vi.fn(),
-      })
-
-      render(<Header />, { wrapper: Wrapper })
-
-      const userMenuButton = screen.getByLabelText('사용자 메뉴')
-      fireEvent.click(userMenuButton)
-
-      expect(screen.getByText('사용자')).toBeInTheDocument()
-    })
-
-    it('should render logout button', () => {
-      render(<Header />, { wrapper: Wrapper })
-
-      const userMenuButton = screen.getByLabelText('사용자 메뉴')
-      fireEvent.click(userMenuButton)
-
-      expect(screen.getByText('로그아웃')).toBeInTheDocument()
-    })
-
-    it('should call signOut when logout is clicked', () => {
-      render(<Header />, { wrapper: Wrapper })
-
-      const userMenuButton = screen.getByLabelText('사용자 메뉴')
-      fireEvent.click(userMenuButton)
-
-      const logoutButton = screen.getByText('로그아웃')
-      fireEvent.click(logoutButton)
-
-      expect(signOut).toHaveBeenCalledWith({ callbackUrl: '/' })
-    })
-
-    it('should have red styling for logout button', () => {
-      render(<Header />, { wrapper: Wrapper })
-
-      const userMenuButton = screen.getByLabelText('사용자 메뉴')
-      fireEvent.click(userMenuButton)
-
-      const logoutButton = screen.getByTestId('dropdown-item')
-      expect(logoutButton).toHaveClass('text-red-600')
     })
   })
 
@@ -275,53 +166,12 @@ describe('Header', () => {
   })
 
   describe('accessibility', () => {
-    it('should have proper ARIA labels on buttons', () => {
+    it('should have proper ARIA label on mobile menu button', () => {
       render(<Header />, { wrapper: Wrapper })
-
       expect(screen.getByLabelText('메뉴 열기')).toBeInTheDocument()
-      expect(screen.getByLabelText('사용자 메뉴')).toBeInTheDocument()
     })
 
     it('should use semantic header element', () => {
-      render(<Header />, { wrapper: Wrapper })
-      expect(screen.getByRole('banner')).toBeInTheDocument()
-    })
-
-    it('should have accessible dropdown menu', () => {
-      render(<Header />, { wrapper: Wrapper })
-
-      const userMenuButton = screen.getByLabelText('사용자 메뉴')
-      fireEvent.click(userMenuButton)
-
-      // Dropdown content should be visible
-      expect(screen.getByText('로그아웃')).toBeInTheDocument()
-    })
-  })
-
-  describe('session handling', () => {
-    it('should handle unauthenticated session', () => {
-      vi.mocked(useSession).mockReturnValue({
-        data: null,
-        status: 'unauthenticated',
-        update: vi.fn(),
-      })
-
-      render(<Header />, { wrapper: Wrapper })
-
-      const userMenuButton = screen.getByLabelText('사용자 메뉴')
-      fireEvent.click(userMenuButton)
-
-      // Should show fallback user name
-      expect(screen.getByText('사용자')).toBeInTheDocument()
-    })
-
-    it('should handle loading session', () => {
-      vi.mocked(useSession).mockReturnValue({
-        data: null,
-        status: 'loading',
-        update: vi.fn(),
-      })
-
       render(<Header />, { wrapper: Wrapper })
       expect(screen.getByRole('banner')).toBeInTheDocument()
     })
@@ -336,7 +186,7 @@ describe('Header', () => {
       expect(screen.getByTestId('language-toggle')).toBeInTheDocument()
     })
 
-    it('should have proper component ordering', () => {
+    it('should have proper component ordering (left and right sections)', () => {
       const { container } = render(<Header quotaStatus={mockQuotaStatus} />, { wrapper: Wrapper })
 
       const header = container.querySelector('header')
@@ -354,28 +204,6 @@ describe('Header', () => {
 
       render(<Header quotaStatus={emptyQuota} />, { wrapper: Wrapper })
       expect(screen.getByText(/캠페인: 0\/0/)).toBeInTheDocument()
-    })
-
-    it('should handle very long user name', () => {
-      vi.mocked(useSession).mockReturnValue({
-        data: {
-          user: {
-            id: 'user-123',
-            name: '매우매우매우매우매우긴사용자이름입니다',
-            email: 'long@example.com',
-          },
-          expires: new Date(Date.now() + 86400000).toISOString(),
-        },
-        status: 'authenticated',
-        update: vi.fn(),
-      })
-
-      render(<Header />, { wrapper: Wrapper })
-
-      const userMenuButton = screen.getByLabelText('사용자 메뉴')
-      fireEvent.click(userMenuButton)
-
-      expect(screen.getByText('매우매우매우매우매우긴사용자이름입니다')).toBeInTheDocument()
     })
   })
 })

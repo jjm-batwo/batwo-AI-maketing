@@ -9,20 +9,22 @@ vi.mock('next/navigation', () => ({
   usePathname: vi.fn(),
 }))
 
+// Mock AccountPopover (replaces Help link)
+vi.mock('@/presentation/components/common/Layout/AccountPopover', () => ({
+  AccountPopover: () => <div data-testid="account-popover">Account</div>,
+}))
+
 // Mock next-intl translations
 const mockTranslations = {
   'navigation.dashboard': '대시보드',
   'navigation.campaigns': '캠페인',
   'navigation.reports': '보고서',
-  'navigation.settings': '설정',
-  'navigation.help': '도움말',
   'navigation.mainNav': '주 내비게이션',
   'navigation.mainMenu': '메인 메뉴',
   'navigation.goToHome': '홈으로 이동',
   'navigation.betaVersion': '베타 버전',
   'navigation.goToPage': '{page} 페이지로 이동',
   'navigation.currentPage': '현재 페이지',
-  'navigation.goToHelp': '도움말로 이동',
   'brand.name': '바투',
 }
 
@@ -69,21 +71,34 @@ describe('Sidebar', () => {
       expect(screen.getByText('Beta')).toBeInTheDocument()
     })
 
-    it('should render all navigation items', () => {
+    it('should render 3 main navigation items', () => {
       vi.mocked(usePathname).mockReturnValue('/dashboard')
 
       render(<Sidebar />, { wrapper: Wrapper })
       expect(screen.getByText('대시보드')).toBeInTheDocument()
       expect(screen.getByText('캠페인')).toBeInTheDocument()
       expect(screen.getByText('보고서')).toBeInTheDocument()
-      expect(screen.getByText('설정')).toBeInTheDocument()
     })
 
-    it('should render help link', () => {
+    it('should not render Settings menu item', () => {
       vi.mocked(usePathname).mockReturnValue('/dashboard')
 
       render(<Sidebar />, { wrapper: Wrapper })
-      expect(screen.getByText('도움말')).toBeInTheDocument()
+      expect(screen.queryByText('설정')).not.toBeInTheDocument()
+    })
+
+    it('should not render Help link', () => {
+      vi.mocked(usePathname).mockReturnValue('/dashboard')
+
+      render(<Sidebar />, { wrapper: Wrapper })
+      expect(screen.queryByText('도움말')).not.toBeInTheDocument()
+    })
+
+    it('should render AccountPopover instead of Help', () => {
+      vi.mocked(usePathname).mockReturnValue('/dashboard')
+
+      render(<Sidebar />, { wrapper: Wrapper })
+      expect(screen.getByTestId('account-popover')).toBeInTheDocument()
     })
   })
 
@@ -101,12 +116,6 @@ describe('Sidebar', () => {
 
       const reportsLink = screen.getByText('보고서').closest('a')
       expect(reportsLink).toHaveAttribute('href', '/reports')
-
-      const settingsLink = screen.getByText('설정').closest('a')
-      expect(settingsLink).toHaveAttribute('href', '/settings')
-
-      const helpLink = screen.getByText('도움말').closest('a')
-      expect(helpLink).toHaveAttribute('href', '/help')
     })
 
     it('should link home from brand logo', () => {
@@ -150,16 +159,6 @@ describe('Sidebar', () => {
       expect(reportsLink).toHaveAttribute('aria-current', 'page')
     })
 
-    it('should highlight active settings link', () => {
-      vi.mocked(usePathname).mockReturnValue('/settings')
-
-      render(<Sidebar />, { wrapper: Wrapper })
-
-      const settingsLink = screen.getByText('설정').closest('a')
-      expect(settingsLink).toHaveClass('bg-primary/10', 'text-primary')
-      expect(settingsLink).toHaveAttribute('aria-current', 'page')
-    })
-
     it('should highlight link for nested routes', () => {
       vi.mocked(usePathname).mockReturnValue('/campaigns/123/edit')
 
@@ -188,18 +187,7 @@ describe('Sidebar', () => {
 
       // Each nav item should have an icon (svg)
       const navIcons = container.querySelectorAll('nav svg')
-      expect(navIcons.length).toBe(4) // 4 main nav items
-    })
-
-    it('should render help icon', () => {
-      vi.mocked(usePathname).mockReturnValue('/dashboard')
-
-      const { container } = render(<Sidebar />, { wrapper: Wrapper })
-
-      // Help section should have icon
-      const helpSection = screen.getByText('도움말').closest('a')
-      const helpIcon = helpSection?.querySelector('svg')
-      expect(helpIcon).toBeInTheDocument()
+      expect(navIcons.length).toBe(3) // 3 main nav items
     })
 
     it('should have proper icon styling', () => {
@@ -222,13 +210,13 @@ describe('Sidebar', () => {
       expect(sidebar).toHaveClass('hidden', 'md:flex')
     })
 
-    it('should have proper width', () => {
+    it('should have proper width (w-60)', () => {
       vi.mocked(usePathname).mockReturnValue('/dashboard')
 
       render(<Sidebar />, { wrapper: Wrapper })
 
       const sidebar = screen.getByRole('complementary')
-      expect(sidebar).toHaveClass('w-72')
+      expect(sidebar).toHaveClass('w-60')
     })
 
     it('should have backdrop blur effect', () => {
@@ -269,12 +257,13 @@ describe('Sidebar', () => {
       expect(logoSection).toBeInTheDocument()
     })
 
-    it('should have gradient logo icon', () => {
+    it('should have logo icon with B text', () => {
       vi.mocked(usePathname).mockReturnValue('/dashboard')
 
       const { container } = render(<Sidebar />, { wrapper: Wrapper })
 
-      const logoIcon = container.querySelector('.bg-gradient-to-br')
+      // bg-primary 로고 아이콘
+      const logoIcon = container.querySelector('.bg-primary')
       expect(logoIcon).toBeInTheDocument()
       expect(logoIcon).toHaveTextContent('B')
     })
@@ -308,7 +297,7 @@ describe('Sidebar', () => {
       const { container } = render(<Sidebar />, { wrapper: Wrapper })
 
       const nav = container.querySelector('nav')
-      expect(nav).toHaveClass('space-y-1.5')
+      expect(nav).toHaveClass('space-y-1')
     })
 
     it('should have hover effects on nav items', () => {
@@ -321,35 +310,27 @@ describe('Sidebar', () => {
       expect(dashboardLink).toHaveClass('hover:text-foreground', 'hover:bg-white/50')
     })
 
-    it('should show active indicator dot', () => {
+    it('should show active indicator dot (not animate-pulse)', () => {
       vi.mocked(usePathname).mockReturnValue('/dashboard')
 
       const { container } = render(<Sidebar />, { wrapper: Wrapper })
 
-      const activeDot = container.querySelector('.animate-pulse')
+      // animate-pulse dot은 제거됨. 대신 active 아이템에 오른쪽 dot이 있음
+      const activeDot = container.querySelector('.bg-primary.rounded-full')
       expect(activeDot).toBeInTheDocument()
     })
   })
 
-  describe('help section', () => {
-    it('should be in separate section with border', () => {
+  describe('bottom section', () => {
+    it('should have AccountPopover in bottom section with border-t', () => {
       vi.mocked(usePathname).mockReturnValue('/dashboard')
 
       const { container } = render(<Sidebar />, { wrapper: Wrapper })
 
-      // Help link is in a section with border-t class
-      const helpLink = screen.getByText('도움말').closest('a')
-      const helpSection = helpLink?.parentElement
-      expect(helpSection).toHaveClass('border-t', 'p-4')
-    })
-
-    it('should have proper styling', () => {
-      vi.mocked(usePathname).mockReturnValue('/dashboard')
-
-      render(<Sidebar />, { wrapper: Wrapper })
-
-      const helpLink = screen.getByText('도움말').closest('a')
-      expect(helpLink).toHaveClass('rounded-lg')
+      const accountPopover = screen.getByTestId('account-popover')
+      // AccountPopover의 부모 div (wrapper div)가 border-t를 가짐
+      const bottomSection = accountPopover.parentElement
+      expect(bottomSection).toHaveClass('border-t')
     })
   })
 
@@ -466,7 +447,7 @@ describe('Sidebar', () => {
       render(<Sidebar />, { wrapper: Wrapper })
 
       // No nav item should be highlighted
-      const navLinks = screen.getAllByRole('link').slice(1, 5) // Skip home link
+      const navLinks = screen.getAllByRole('link').slice(1, 4) // Skip home link, 3 nav items
       navLinks.forEach(link => {
         expect(link).not.toHaveClass('bg-primary/10')
       })

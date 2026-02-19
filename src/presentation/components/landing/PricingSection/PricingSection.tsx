@@ -1,14 +1,15 @@
 'use client'
 
-import { memo } from 'react'
+import { memo, useState } from 'react'
 import Link from 'next/link'
-import { Check } from 'lucide-react'
+import { Check, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 import { useIntersectionObserver } from '@/presentation/hooks'
 import { SubscriptionPlan } from '@domain/value-objects/SubscriptionPlan'
-import { PRICING_TIERS, formatPrice } from './pricingData'
+import { PRICING_TIERS, formatPrice, FEATURE_COMPARISON } from './pricingData'
 
 interface PricingSectionProps {
   id?: string
@@ -16,15 +17,16 @@ interface PricingSectionProps {
 
 export const PricingSection = memo(function PricingSection({ id = 'pricing' }: PricingSectionProps) {
   const { ref, isIntersecting } = useIntersectionObserver()
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly')
 
   const getCTALink = (plan: SubscriptionPlan): string => {
     switch (plan) {
       case SubscriptionPlan.FREE:
         return '/register'
       case SubscriptionPlan.STARTER:
-        return '/checkout?plan=starter&period=monthly'
+        return `/checkout?plan=starter&period=${billingPeriod}`
       case SubscriptionPlan.PRO:
-        return '/checkout?plan=pro&period=monthly'
+        return `/checkout?plan=pro&period=${billingPeriod}`
       case SubscriptionPlan.ENTERPRISE:
         return 'mailto:contact@batwo.ai'
       default:
@@ -47,16 +49,6 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
     }
   }
 
-  const getAnnualPrice = (monthlyPrice: number): string => {
-    if (monthlyPrice <= 0 || monthlyPrice === -1) return ''
-    const annualPrice = Math.floor(monthlyPrice * 12 * 0.8) // 20% discount
-    return `₩${annualPrice.toLocaleString('ko-KR')}/년`
-  }
-
-  const hasAnnualPrice = (plan: SubscriptionPlan): boolean => {
-    return plan === SubscriptionPlan.STARTER || plan === SubscriptionPlan.PRO
-  }
-
   return (
     <section id={id} className="py-16 md:py-24 bg-muted/30 overflow-hidden">
       <div
@@ -73,8 +65,32 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
           </p>
         </header>
 
+        {/* Billing Period Toggle */}
+        <div className="flex items-center justify-center gap-3 mb-8">
+          <span className={cn('text-sm', billingPeriod === 'monthly' ? 'font-semibold' : 'text-muted-foreground')}>
+            월간
+          </span>
+          <button
+            onClick={() => setBillingPeriod(prev => prev === 'monthly' ? 'annual' : 'monthly')}
+            className={cn(
+              'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
+              billingPeriod === 'annual' ? 'bg-primary' : 'bg-muted'
+            )}
+            aria-label="결제 주기 전환"
+          >
+            <span className={cn(
+              'inline-block h-4 w-4 rounded-full bg-white transition-transform',
+              billingPeriod === 'annual' ? 'translate-x-6' : 'translate-x-1'
+            )} />
+          </button>
+          <span className={cn('text-sm', billingPeriod === 'annual' ? 'font-semibold' : 'text-muted-foreground')}>
+            연간
+            <span className="ml-1 text-xs text-primary font-medium">-20%</span>
+          </span>
+        </div>
+
         {/* Pricing Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {PRICING_TIERS.map(({ plan, config }) => {
             const isPopular = plan === SubscriptionPlan.PRO
             const isPro = plan === SubscriptionPlan.PRO
@@ -84,7 +100,7 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
                 key={plan}
                 className={`relative overflow-hidden transition-all duration-300 hover:shadow-xl ${
                   isPopular
-                    ? 'border-2 border-amber-500/50 shadow-2xl shadow-amber-500/20 lg:scale-105 bg-gradient-to-b from-amber-500/5 to-transparent'
+                    ? 'border-2 border-primary ring-2 ring-primary shadow-lg'
                     : 'border hover:border-primary/50'
                 }`}
               >
@@ -93,47 +109,58 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
                   <div className="absolute top-0 right-0 left-0">
                     <Badge
                       variant="default"
-                      className="w-full rounded-none rounded-t-lg justify-center py-1.5 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white border-0 font-semibold flex items-center gap-2"
+                      className="w-full rounded-none rounded-t-lg justify-center py-1.5 bg-primary text-primary-foreground border-0 font-semibold"
                     >
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-                      </span>
                       가장 인기 있는 플랜
                     </Badge>
                   </div>
                 )}
 
                 <CardHeader className={`pb-4 ${isPopular ? 'pt-8' : 'pt-6'}`}>
-                  <CardTitle className="text-xl">{config.label}</CardTitle>
+                  <CardTitle className="text-sm font-medium text-muted-foreground">{config.label}</CardTitle>
                   <div className="mt-4">
-                    <span className="text-3xl font-bold">{formatPrice(config.price)}</span>
-                    {config.price > 0 && (
-                      <span className="text-muted-foreground text-sm">/월</span>
+                    {billingPeriod === 'annual' && config.price > 0 && config.price !== -1 ? (
+                      <>
+                        <span className="text-lg text-muted-foreground line-through mr-2">
+                          {formatPrice(config.price)}
+                        </span>
+                        <span className="text-4xl font-bold">
+                          {formatPrice(Math.floor(config.price * 0.8))}
+                        </span>
+                        <span className="text-muted-foreground text-sm">/월</span>
+                        <Badge variant="secondary" className="ml-2 text-xs text-primary">-20%</Badge>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-4xl font-bold">{formatPrice(config.price)}</span>
+                        {config.price > 0 && (
+                          <span className="text-muted-foreground text-sm">/월</span>
+                        )}
+                      </>
                     )}
                   </div>
-                  {hasAnnualPrice(plan) && (
-                    <div className="mt-2">
-                      <Badge variant="secondary" className="text-xs">
-                        연간 결제 시 {getAnnualPrice(config.price)}
-                      </Badge>
-                    </div>
-                  )}
                   <p className="text-sm text-muted-foreground mt-3">{config.description}</p>
                 </CardHeader>
 
                 <CardContent className="space-y-6">
                   {/* Features List */}
-                  <ul className="space-y-3" role="list">
-                    {config.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <Check
-                          className="w-5 h-5 text-primary flex-shrink-0 mt-0.5"
-                          aria-hidden="true"
-                        />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
+                  <ul className="space-y-2" role="list">
+                    {FEATURE_COMPARISON.map((feature, index) => {
+                      const included = feature.plans[plan]
+                      return (
+                        <li
+                          key={index}
+                          className={cn('flex items-center gap-2 text-sm', !included && 'text-muted-foreground')}
+                        >
+                          {included ? (
+                            <Check className="w-4 h-4 text-primary flex-shrink-0" aria-hidden="true" />
+                          ) : (
+                            <X className="w-4 h-4 text-muted-foreground/50 flex-shrink-0" aria-hidden="true" />
+                          )}
+                          <span className={cn(!included && 'line-through')}>{feature.text}</span>
+                        </li>
+                      )
+                    })}
                   </ul>
 
                   {/* CTA Button */}

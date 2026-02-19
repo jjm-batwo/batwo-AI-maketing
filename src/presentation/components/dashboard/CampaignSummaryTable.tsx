@@ -29,13 +29,6 @@ interface CampaignSummaryTableProps {
   className?: string
 }
 
-const statusStyles = {
-  ACTIVE: 'bg-green-100 text-green-700',
-  PAUSED: 'bg-yellow-100 text-yellow-700',
-  COMPLETED: 'bg-gray-100 text-gray-700',
-  DRAFT: 'bg-blue-100 text-blue-700',
-}
-
 export const CampaignSummaryTable = memo(function CampaignSummaryTable({
   campaigns = [],
   isLoading = false,
@@ -44,10 +37,10 @@ export const CampaignSummaryTable = memo(function CampaignSummaryTable({
   const t = useTranslations()
 
   const statusConfig = useMemo(() => ({
-    ACTIVE: { label: t('campaigns.status.active'), className: statusStyles.ACTIVE },
-    PAUSED: { label: t('campaigns.status.paused'), className: statusStyles.PAUSED },
-    COMPLETED: { label: t('campaigns.status.completed'), className: statusStyles.COMPLETED },
-    DRAFT: { label: t('campaigns.status.draft'), className: statusStyles.DRAFT },
+    ACTIVE: { label: t('campaigns.status.active') },
+    PAUSED: { label: t('campaigns.status.paused') },
+    COMPLETED: { label: t('campaigns.status.completed') },
+    DRAFT: { label: t('campaigns.status.draft') },
   }), [t])
   if (isLoading) {
     return (
@@ -110,17 +103,19 @@ export const CampaignSummaryTable = memo(function CampaignSummaryTable({
                     </Link>
                   </TableCell>
                   <TableCell>
-                    <span
-                      className={cn(
-                        'inline-flex rounded-full px-2 py-1 text-xs font-medium',
-                        status.className
-                      )}
-                    >
-                      {status.label}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className={cn(
+                        'h-2 w-2 rounded-full',
+                        campaign.status === 'ACTIVE' && 'bg-green-500',
+                        campaign.status === 'PAUSED' && 'bg-yellow-500',
+                        campaign.status === 'COMPLETED' && 'bg-gray-400',
+                        campaign.status === 'DRAFT' && 'bg-blue-500',
+                      )} />
+                      <span className="text-sm">{status.label}</span>
+                    </div>
                   </TableCell>
                   <TableCell className="text-right">
-                    {t('currency.krw')}{campaign.spend.toLocaleString()}{t('currency.suffix')}
+                    {campaign.spend.toLocaleString()}{t('currency.suffix')}
                   </TableCell>
                   <TableCell className="text-right">
                     {campaign.roas.toFixed(2)}x

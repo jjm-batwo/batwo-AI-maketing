@@ -34,7 +34,7 @@ import {
   getAllBusinessScales,
 } from '@domain/value-objects/BudgetRecommendation'
 import { BudgetRecommendationService } from '@application/services/BudgetRecommendationService'
-import { Info, TrendingUp, AlertCircle, CheckCircle, Sparkles } from 'lucide-react'
+import { Info, TrendingUp, AlertCircle, CheckCircle, Sparkles, Pin, Coins, Lightbulb } from 'lucide-react'
 
 interface BudgetRecommenderProps {
   onBudgetSelect: (budget: number) => void
@@ -257,7 +257,7 @@ export function BudgetRecommender({
             {/* 목표 ROAS */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium">📌 목표 ROAS</span>
+                <span className="text-sm font-medium"><Pin className="h-4 w-4 inline" /> 목표 ROAS</span>
                 <Badge variant="secondary">
                   {formatROAS(recommendation.targetROAS)}
                 </Badge>
@@ -270,7 +270,7 @@ export function BudgetRecommender({
             {/* 예산 추천 */}
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-sm font-medium">💰 추천 일일 예산</span>
+                <span className="text-sm font-medium"><Coins className="h-4 w-4 inline" /> 추천 일일 예산</span>
                 <Badge
                   variant={
                     recommendation.source === 'existing_data'
@@ -351,7 +351,7 @@ export function BudgetRecommender({
             <div className="space-y-1">
               {recommendation.tips.slice(0, 2).map((tip, index) => (
                 <p key={index} className="text-xs text-muted-foreground flex items-start gap-1">
-                  <span>💡</span>
+                  <Lightbulb className="h-3 w-3 inline" />
                   {tip}
                 </p>
               ))}

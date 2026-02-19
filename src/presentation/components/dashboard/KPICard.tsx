@@ -1,6 +1,7 @@
 'use client'
 
 import { Card, CardContent } from '@/components/ui/card'
+import { SparklineChart } from './SparklineChart'
 import { cn } from '@/lib/utils'
 import {
   TrendingUp,
@@ -27,6 +28,7 @@ interface KPICardProps {
   isLoading?: boolean
   icon?: KPIIconType
   className?: string
+  sparklineData?: number[]
 }
 
 const iconMap: Record<KPIIconType, React.ComponentType<{ className?: string }>> = {
@@ -67,6 +69,7 @@ export function KPICard({
   isLoading = false,
   icon,
   className,
+  sparklineData,
 }: KPICardProps) {
   const Icon = icon ? iconMap[icon] : null
   const formattedValue = formatValue(value, format, unit)
@@ -88,7 +91,7 @@ export function KPICard({
   return (
     <Card
       className={cn(
-        'relative overflow-hidden rounded-2xl border border-white/20 dark:border-white/5 bg-white/40 dark:bg-black/20 backdrop-blur-md p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:scale-[1.02] group',
+        'relative overflow-hidden rounded-2xl border border-white/20 dark:border-white/5 bg-white/40 dark:bg-black/20 backdrop-blur-md p-6 shadow-sm transition-all duration-300 hover:shadow-xl group',
         isLoading && 'animate-pulse',
         className
       )}
@@ -111,9 +114,19 @@ export function KPICard({
       </div>
 
       <div className="relative z-10 space-y-2">
-        <div className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/70">
-          {formattedValue}
-          {unit && <span className="ml-1 text-base font-medium text-muted-foreground align-baseline">{unit}</span>}
+        <div className="flex items-end justify-between gap-2">
+          <div className="text-2xl font-bold tracking-tight text-foreground">
+            {formattedValue}
+            {unit && <span className="ml-1 text-base font-medium text-muted-foreground align-baseline">{unit}</span>}
+          </div>
+          {sparklineData && sparklineData.length >= 2 && (
+            <SparklineChart
+              data={sparklineData}
+              color="hsl(var(--primary))"
+              height={32}
+              width={80}
+            />
+          )}
         </div>
 
         <div className="flex items-center gap-2">

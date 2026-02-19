@@ -20,8 +20,8 @@ export function MainLayout({ children }: MainLayoutProps) {
     <div className="flex h-screen bg-background overflow-hidden relative selection:bg-primary/20">
       {/* Premium Gradient Background */}
       <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[80px] opacity-20 mix-blend-multiply dark:mix-blend-screen animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[80px] opacity-20 mix-blend-multiply dark:mix-blend-screen animate-pulse delay-1000" />
+        <div className="absolute top-0 left-1/4 w-[360px] h-[360px] bg-primary/10 rounded-full blur-[80px] opacity-10 mix-blend-multiply dark:mix-blend-screen" />
+        <div className="absolute bottom-0 right-1/4 w-[360px] h-[360px] bg-purple-500/10 rounded-full blur-[80px] opacity-10 mix-blend-multiply dark:mix-blend-screen" />
         <div className="absolute inset-0 bg-grid-slate-900/[0.02] dark:bg-grid-slate-400/[0.02] [mask-image:linear-gradient(to_bottom_right,white,transparent,transparent)]" />
       </div>
 

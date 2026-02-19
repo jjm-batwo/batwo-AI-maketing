@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useEffect } from 'react'
+import { Bot } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUIStore } from '@/presentation/stores/uiStore'
 import { useAgentChat } from '@/presentation/hooks/useAgentChat'
@@ -12,6 +13,10 @@ import { SuggestedQuestions } from './SuggestedQuestions'
 import { ConfirmationCard } from './ConfirmationCard'
 import { DataCard } from './DataCard'
 import { AlertBanner } from './AlertBanner'
+import { GuideQuestionCard } from './GuideQuestionCard'
+import { GuideRecommendationCard } from './GuideRecommendationCard'
+import { useRouter } from 'next/navigation'
+import { useCampaignStore } from '@/presentation/stores/campaignStore'
 
 export function ChatPanel() {
   const { isChatPanelOpen, closeChatPanel, activeConversationId } = useUIStore()
@@ -25,6 +30,34 @@ export function ChatPanel() {
     clearMessages,
   } = useAgentChat(activeConversationId ?? undefined)
   const { alerts, dismissAlert } = useAlerts()
+  const router = useRouter()
+  const { setGuideRecommendation } = useCampaignStore()
+
+  // AI 가이드 질문 응답 처리
+  const handleGuideAnswer = (option: { value: string; label: string }) => {
+    sendMessage(option.label)
+  }
+
+  // AI 가이드 추천 수락
+  const handleAcceptRecommendation = (recommendation: {
+    formData: { objective: string; dailyBudget: number; campaignMode: 'ADVANTAGE_PLUS' | 'MANUAL' }
+    reasoning: string
+    experienceLevel: string
+  }) => {
+    setGuideRecommendation({
+      formData: recommendation.formData,
+      context: recommendation.reasoning,
+      timestamp: Date.now(),
+    })
+    closeChatPanel()
+    router.push('/campaigns/new')
+  }
+
+  // 직접 설정 선택
+  const handleManualCreate = () => {
+    closeChatPanel()
+    router.push('/campaigns/new')
+  }
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -112,6 +145,28 @@ export function ChatPanel() {
                       onCancel={cancelAction}
                     />
                   )}
+
+                  {/* Guide Question Card */}
+                  {msg.guideQuestion && (
+                    <GuideQuestionCard
+                      questionId={msg.guideQuestion.questionId}
+                      question={msg.guideQuestion.question}
+                      options={msg.guideQuestion.options}
+                      progress={msg.guideQuestion.progress}
+                      onAnswer={handleGuideAnswer}
+                      isAnswered={msg.guideQuestion.answered}
+                      selectedValue={msg.guideQuestion.selectedValue}
+                    />
+                  )}
+
+                  {/* Guide Recommendation Card */}
+                  {msg.guideRecommendation && (
+                    <GuideRecommendationCard
+                      recommendation={msg.guideRecommendation}
+                      onAccept={() => handleAcceptRecommendation(msg.guideRecommendation!)}
+                      onManual={handleManualCreate}
+                    />
+                  )}
                 </div>
               ))}
               <div ref={messagesEndRef} />
@@ -156,7 +211,7 @@ function EmptyState({ onSuggestion }: { onSuggestion: (msg: string) => void }) {
   return (
     <div className="flex flex-col items-center justify-center h-full px-8 text-center">
       <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-        <span className="text-2xl">🤖</span>
+        <Bot className="h-6 w-6 text-primary" />
       </div>
       <h3 className="text-sm font-semibold text-foreground mb-1">
         바투 AI 어시스턴트

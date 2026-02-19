@@ -8,9 +8,8 @@ import {
   LayoutDashboard,
   Megaphone,
   FileText,
-  Settings,
-  HelpCircle,
 } from 'lucide-react'
+import { AccountPopover } from './AccountPopover'
 
 export function Sidebar() {
   const pathname = usePathname()
@@ -20,22 +19,21 @@ export function Sidebar() {
     { name: t('navigation.dashboard'), href: '/dashboard', icon: LayoutDashboard },
     { name: t('navigation.campaigns'), href: '/campaigns', icon: Megaphone },
     { name: t('navigation.reports'), href: '/reports', icon: FileText },
-    { name: t('navigation.settings'), href: '/settings', icon: Settings },
   ]
 
   return (
     <aside
-      className="hidden w-72 flex-col border-r border-white/20 dark:border-white/5 bg-white/50 dark:bg-black/20 backdrop-blur-xl md:flex shadow-sm z-50"
+      className="hidden w-60 flex-col border-r border-white/20 dark:border-white/5 bg-white/50 dark:bg-black/20 backdrop-blur-xl md:flex shadow-sm z-50"
       aria-label={t('navigation.mainNav')}
     >
-      <div className="flex h-20 items-center px-8">
+      <div className="flex h-20 items-center px-6">
         <Link
           href="/"
           className="flex items-center gap-2.5 group"
           aria-label={t('navigation.goToHome')}
         >
           <div
-            className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white font-bold shadow-lg shadow-primary/25 group-hover:scale-110 transition-transform duration-300"
+            className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold shadow-sm group-hover:scale-110 transition-transform duration-300"
             aria-hidden="true"
           >
             B
@@ -52,7 +50,7 @@ export function Sidebar() {
         </Link>
       </div>
 
-      <nav className="flex-1 space-y-1.5 p-4" aria-label={t('navigation.mainMenu')}>
+      <nav className="flex-1 space-y-1 p-3" aria-label={t('navigation.mainMenu')}>
         {navigation.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
 
@@ -81,22 +79,15 @@ export function Sidebar() {
               />
               <span className="relative">{item.name}</span>
               {isActive && (
-                <div className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary animate-pulse" aria-hidden="true" />
+                <div className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
               )}
             </Link>
           )
         })}
       </nav>
 
-      <div className="border-t p-4">
-        <Link
-          href="/help"
-          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-          aria-label={t('navigation.goToHelp')}
-        >
-          <HelpCircle className="h-5 w-5" aria-hidden="true" />
-          {t('navigation.help')}
-        </Link>
+      <div className="border-t p-3">
+        <AccountPopover />
       </div>
     </aside>
   )

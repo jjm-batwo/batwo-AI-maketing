@@ -1,6 +1,7 @@
 'use client'
 
 import { useFormContext } from 'react-hook-form'
+import { Rocket } from 'lucide-react'
 import type { CampaignFormData } from './index'
 
 const objectiveLabels: Record<string, string> = {
@@ -77,7 +78,7 @@ export function Step4Review() {
 
       <div className="rounded-lg bg-blue-50 p-4">
         <p className="text-sm text-blue-800">
-          🚀 캠페인 생성 후 Meta 광고 계정에 연결하면 바로 광고가 시작됩니다.
+          <Rocket className="h-4 w-4 inline" /> 캠페인 생성 후 Meta 광고 계정에 연결하면 바로 광고가 시작됩니다.
         </p>
       </div>
     </div>

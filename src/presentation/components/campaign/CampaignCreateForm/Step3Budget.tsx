@@ -3,6 +3,7 @@
 import { useFormContext } from 'react-hook-form'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { AlertTriangle } from 'lucide-react'
 import { MINIMUM_DAILY_BUDGET, formatBudget } from '@domain/value-objects/BudgetRecommendation'
 import { BudgetRecommender } from '../BudgetRecommender'
 import type { CampaignFormData } from './index'
@@ -113,7 +114,7 @@ export function Step3Budget() {
       {/* 참고 사항 */}
       <div className="rounded-lg bg-yellow-50 p-4">
         <p className="text-sm text-yellow-800">
-          ⚠️ <strong>참고</strong>: 실제 지출은 Meta의 입찰 시스템에 따라
+          <AlertTriangle className="h-4 w-4 inline text-amber-500" /> <strong>참고</strong>: 실제 지출은 Meta의 입찰 시스템에 따라
           일일 예산과 약간 다를 수 있습니다.
         </p>
       </div>

@@ -4,8 +4,15 @@ import { memo, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
-import { MoreVertical, Play, Pause, BarChart3, Pencil } from 'lucide-react'
+import { MoreVertical, Play, Pause, BarChart3, Pencil, Trash2, Coins, TrendingUp } from 'lucide-react'
 
 interface CampaignCardProps {
   id: string
@@ -83,62 +90,58 @@ export const CampaignCard = memo(function CampaignCard({
           >
             {statusInfo.label}
           </span>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <MoreVertical className="h-4 w-4" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link href={`/campaigns/${id}/analytics`}>
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  분석 보기
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href={`/campaigns/${id}/edit`}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  수정
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              {status === 'ACTIVE' && onStatusChange && (
+                <DropdownMenuItem onClick={handlePause}>
+                  <Pause className="mr-2 h-4 w-4" />
+                  일시정지
+                </DropdownMenuItem>
+              )}
+              {status === 'PAUSED' && onStatusChange && (
+                <DropdownMenuItem onClick={handleResume}>
+                  <Play className="mr-2 h-4 w-4" />
+                  재개
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-red-600">
+                <Trash2 className="mr-2 h-4 w-4" />
+                삭제
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-4 text-sm">
-          <div>
-            <p className="text-muted-foreground">일일 예산</p>
-            <p className="font-medium">{formattedBudget}원</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">지출</p>
-            <p className="font-medium">{formattedSpend}원</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">ROAS</p>
-            <p className="font-medium">{formattedRoas}x</p>
-          </div>
-        </div>
-
-        <div className="mt-4 flex gap-2">
-          {status === 'ACTIVE' && onStatusChange && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handlePause}
-            >
-              <Pause className="mr-1 h-4 w-4" />
-              일시정지
-            </Button>
-          )}
-          {status === 'PAUSED' && onStatusChange && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleResume}
-            >
-              <Play className="mr-1 h-4 w-4" />
-              재개
-            </Button>
-          )}
-          {status !== 'COMPLETED' && (
-            <Button variant="outline" size="sm" asChild>
-              <Link href={`/campaigns/${id}/edit`}>
-                <Pencil className="mr-1 h-4 w-4" />
-                수정
-              </Link>
-            </Button>
-          )}
-          <Button variant="outline" size="sm" asChild>
-            <Link href={`/campaigns/${id}/analytics`}>
-              <BarChart3 className="mr-1 h-4 w-4" />
-              분석
-            </Link>
-          </Button>
+        <div className="flex flex-wrap gap-2">
+          <span className="inline-flex items-center gap-1 bg-muted px-2 py-0.5 rounded-md text-xs">
+            <Coins className="h-3 w-3" /> {formattedBudget}원
+          </span>
+          <span className="inline-flex items-center gap-1 bg-muted px-2 py-0.5 rounded-md text-xs">
+            <TrendingUp className="h-3 w-3" /> {formattedSpend}원
+          </span>
+          <span className="inline-flex items-center gap-1 bg-muted px-2 py-0.5 rounded-md text-xs">
+            <BarChart3 className="h-3 w-3" /> {formattedRoas}x
+          </span>
         </div>
       </CardContent>
     </Card>
