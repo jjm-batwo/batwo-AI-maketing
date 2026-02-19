@@ -23,7 +23,9 @@
     "goToPage": "Go to {page}",
     "goToHelp": "Go to Help",
     "currentPage": "(current page)",
-    "betaVersion": "Beta version"
+    "betaVersion": "Beta version",
+    "competitors": "Competitors",
+    "portfolio": "Portfolio"
   },
   "brand": {
     "name": "Batwo",

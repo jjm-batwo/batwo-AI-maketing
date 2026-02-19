@@ -23,7 +23,9 @@
     "goToPage": "{page} 페이지로 이동",
     "goToHelp": "도움말 페이지로 이동",
     "currentPage": "(현재 페이지)",
-    "betaVersion": "베타 버전"
+    "betaVersion": "베타 버전",
+    "competitors": "경쟁사 분석",
+    "portfolio": "포트폴리오"
   },
   "brand": {
     "name": "바투",

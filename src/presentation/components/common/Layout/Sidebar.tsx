@@ -8,6 +8,8 @@ import {
   LayoutDashboard,
   Megaphone,
   FileText,
+  Users,
+  PieChart,
 } from 'lucide-react'
 import { AccountPopover } from './AccountPopover'
 
@@ -19,6 +21,8 @@ export function Sidebar() {
     { name: t('navigation.dashboard'), href: '/dashboard', icon: LayoutDashboard },
     { name: t('navigation.campaigns'), href: '/campaigns', icon: Megaphone },
     { name: t('navigation.reports'), href: '/reports', icon: FileText },
+    { name: t('navigation.competitors'), href: '/competitors', icon: Users },
+    { name: t('navigation.portfolio'), href: '/portfolio', icon: PieChart },
   ]
 
   return (

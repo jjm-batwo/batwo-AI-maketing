@@ -19,6 +19,8 @@ const mockTranslations = {
   'navigation.dashboard': '대시보드',
   'navigation.campaigns': '캠페인',
   'navigation.reports': '보고서',
+  'navigation.competitors': '경쟁사 분석',
+  'navigation.portfolio': '포트폴리오',
   'navigation.mainNav': '주 내비게이션',
   'navigation.mainMenu': '메인 메뉴',
   'navigation.goToHome': '홈으로 이동',
@@ -71,7 +73,7 @@ describe('Sidebar', () => {
       expect(screen.getByText('Beta')).toBeInTheDocument()
     })
 
-    it('should render 3 main navigation items', () => {
+    it('should render 5 main navigation items', () => {
       vi.mocked(usePathname).mockReturnValue('/dashboard')
 
       render(<Sidebar />, { wrapper: Wrapper })
@@ -187,7 +189,7 @@ describe('Sidebar', () => {
 
       // Each nav item should have an icon (svg)
       const navIcons = container.querySelectorAll('nav svg')
-      expect(navIcons.length).toBe(3) // 3 main nav items
+      expect(navIcons.length).toBe(5) // 5 main nav items
     })
 
     it('should have proper icon styling', () => {
