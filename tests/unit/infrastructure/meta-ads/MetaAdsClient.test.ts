@@ -4,7 +4,7 @@ import { setupServer } from 'msw/node'
 import { MetaAdsClient } from '@infrastructure/external/meta-ads/MetaAdsClient'
 import { MetaAdsApiError } from '@infrastructure/external/errors'
 
-const META_API_BASE = 'https://graph.facebook.com/v18.0'
+const META_API_BASE = 'https://graph.facebook.com/v21.0'
 
 const mockCampaign = {
   id: '123456789',
@@ -64,6 +64,42 @@ const handlers = [
   // Delete campaign
   http.delete(`${META_API_BASE}/:campaignId`, () => {
     return HttpResponse.json({ success: true })
+  }),
+
+  // Create AdSet
+  http.post(`${META_API_BASE}/act_:adAccountId/adsets`, () => {
+    return HttpResponse.json({ id: 'adset_123456' })
+  }),
+
+  // List AdSets
+  http.get(`${META_API_BASE}/:campaignId/adsets`, () => {
+    return HttpResponse.json({
+      data: [{
+        id: 'adset_123456',
+        name: 'Test AdSet',
+        status: 'ACTIVE',
+        daily_budget: '30000',
+        billing_event: 'IMPRESSIONS',
+        optimization_goal: 'CONVERSIONS',
+      }]
+    })
+  }),
+
+  // Create Ad
+  http.post(`${META_API_BASE}/act_:adAccountId/ads`, () => {
+    return HttpResponse.json({ id: 'ad_123456' })
+  }),
+
+  // Create Ad Creative
+  http.post(`${META_API_BASE}/act_:adAccountId/adcreatives`, () => {
+    return HttpResponse.json({ id: 'creative_123456' })
+  }),
+
+  // Upload Image
+  http.post(`${META_API_BASE}/act_:adAccountId/adimages`, () => {
+    return HttpResponse.json({
+      images: { bytes: { hash: 'abc123hash' } }
+    })
   }),
 ]
 
@@ -209,6 +245,108 @@ describe('MetaAdsClient', () => {
       await expect(
         client.deleteCampaign(accessToken, '123456789')
       ).resolves.not.toThrow()
+    })
+  })
+
+  describe('createAdSet', () => {
+    it('should create adset on Meta Ads', async () => {
+      const result = await client.createAdSet(accessToken, adAccountId, {
+        campaignId: '123456789',
+        name: 'Test AdSet',
+        billingEvent: 'IMPRESSIONS',
+        optimizationGoal: 'CONVERSIONS',
+        startTime: new Date('2025-01-01'),
+      })
+
+      expect(result).toBeDefined()
+      expect(result.id).toBe('adset_123456')
+      expect(result.name).toBe('Test AdSet')
+      expect(result.status).toBe('PAUSED')
+    })
+
+    it('should throw MetaAdsApiError on API error', async () => {
+      server.use(
+        http.post(`${META_API_BASE}/act_:adAccountId/adsets`, () => {
+          return HttpResponse.json(
+            {
+              error: {
+                message: 'Invalid parameter',
+                type: 'OAuthException',
+                code: 100,
+              },
+            },
+            { status: 400 }
+          )
+        })
+      )
+
+      await expect(
+        client.createAdSet(accessToken, adAccountId, {
+          campaignId: '123456789',
+          name: 'Test AdSet',
+          billingEvent: 'IMPRESSIONS',
+          optimizationGoal: 'CONVERSIONS',
+          startTime: new Date('2025-01-01'),
+        })
+      ).rejects.toThrow(MetaAdsApiError)
+    })
+  })
+
+  describe('listAdSets', () => {
+    it('should return list of adsets for a campaign', async () => {
+      const result = await client.listAdSets(accessToken, '123456789')
+
+      expect(result).toBeDefined()
+      expect(Array.isArray(result)).toBe(true)
+      expect(result.length).toBe(1)
+      expect(result[0].id).toBe('adset_123456')
+      expect(result[0].name).toBe('Test AdSet')
+      expect(result[0].status).toBe('ACTIVE')
+      expect(result[0].dailyBudget).toBe(30000)
+      expect(result[0].billingEvent).toBe('IMPRESSIONS')
+      expect(result[0].optimizationGoal).toBe('CONVERSIONS')
+    })
+  })
+
+  describe('createAd', () => {
+    it('should create ad on Meta Ads', async () => {
+      const result = await client.createAd(accessToken, adAccountId, {
+        name: 'Test Ad',
+        adSetId: 'adset_123456',
+        creativeId: 'creative_123456',
+      })
+
+      expect(result).toBeDefined()
+      expect(result.id).toBe('ad_123456')
+      expect(result.name).toBe('Test Ad')
+    })
+  })
+
+  describe('createAdCreative', () => {
+    it('should create ad creative on Meta Ads', async () => {
+      const result = await client.createAdCreative(accessToken, adAccountId, {
+        name: 'Test Creative',
+        pageId: 'page_123456',
+        link: 'https://example.com',
+        message: 'Test message',
+      })
+
+      expect(result).toBeDefined()
+      expect(result.id).toBe('creative_123456')
+      expect(result.name).toBe('Test Creative')
+    })
+  })
+
+  describe('uploadImage', () => {
+    it('should upload image and return image hash', async () => {
+      const result = await client.uploadImage(
+        accessToken,
+        adAccountId,
+        Buffer.from('fake-image-data')
+      )
+
+      expect(result).toBeDefined()
+      expect(result.imageHash).toBe('abc123hash')
     })
   })
 

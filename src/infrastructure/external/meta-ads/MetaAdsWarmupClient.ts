@@ -8,7 +8,7 @@
 import { MetaAdsApiError } from '../errors'
 import { fetchWithTimeout } from '@lib/utils/timeout'
 
-const META_API_VERSION = 'v18.0'
+const META_API_VERSION = 'v21.0'
 const META_API_BASE = `https://graph.facebook.com/${META_API_VERSION}`
 const META_API_TIMEOUT_MS = 30000 // 30 seconds for Meta API calls
 

@@ -5,6 +5,7 @@ import { Money } from '@domain/value-objects/Money'
 import { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import { IMetaAdsService, MetaCampaignListItem } from '@application/ports/IMetaAdsService'
 import { prisma } from '@/lib/prisma'
+import { isTokenExpired } from '@application/utils/metaTokenUtils'
 
 export interface SyncCampaignsInput {
   userId: string
@@ -41,7 +42,7 @@ export class SyncCampaignsUseCase {
     }
 
     // Check token expiry
-    if (metaAdAccount.tokenExpiry && metaAdAccount.tokenExpiry < new Date()) {
+    if (isTokenExpired(metaAdAccount.tokenExpiry)) {
       throw new MetaConnectionError('Meta access token expired')
     }
 
@@ -73,12 +74,13 @@ export class SyncCampaignsUseCase {
         after = response.paging?.after
       }
 
-      // DEBUG: Log Meta campaigns fetched
-      console.log('[SyncCampaignsUseCase] Meta campaigns fetched:')
-      metaCampaignsMap.forEach((campaign) => {
-        console.log(`  - ${campaign.name} (ID: ${campaign.id}, Status: ${campaign.status})`)
-      })
-      console.log(`[SyncCampaignsUseCase] metaCampaignsMap.size = ${metaCampaignsMap.size}`)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[SyncCampaignsUseCase] Meta campaigns fetched:')
+        metaCampaignsMap.forEach((campaign) => {
+          console.log(`  - ${campaign.name} (ID: ${campaign.id}, Status: ${campaign.status})`)
+        })
+        console.log(`[SyncCampaignsUseCase] metaCampaignsMap.size = ${metaCampaignsMap.size}`)
+      }
 
       stats.total = metaCampaignsMap.size
 
@@ -92,8 +94,9 @@ export class SyncCampaignsUseCase {
         }
       })
 
-      // DEBUG: Log local campaigns
-      console.log(`[SyncCampaignsUseCase] localCampaignsMap.size = ${localCampaignsMap.size}`)
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[SyncCampaignsUseCase] localCampaignsMap.size = ${localCampaignsMap.size}`)
+      }
 
       // 4. Sync logic
       // 4a. Create or update campaigns from Meta
@@ -196,14 +199,33 @@ export class SyncCampaignsUseCase {
     // Update status if different
     const metaStatus = this.getMetaStatusAsCampaignStatus(metaCampaign.status)
     if (localCampaign.status !== metaStatus && metaStatus) {
-      updatedCampaign = updatedCampaign.changeStatus(metaStatus)
+      // 완료 상태 캠페인은 changeStatus가 차단하므로 restore로 강제 업데이트
+      if (localCampaign.isCompleted()) {
+        updatedCampaign = Campaign.restore({
+          id: localCampaign.id,
+          userId: localCampaign.userId,
+          name: localCampaign.name,
+          objective: localCampaign.objective,
+          status: metaStatus,
+          dailyBudget: localCampaign.dailyBudget,
+          startDate: localCampaign.startDate,
+          endDate: localCampaign.endDate,
+          targetAudience: localCampaign.targetAudience,
+          metaCampaignId: localCampaign.metaCampaignId,
+          createdAt: localCampaign.createdAt,
+          updatedAt: new Date(),
+        })
+      } else {
+        updatedCampaign = updatedCampaign.changeStatus(metaStatus)
+      }
       updated = true
     }
 
-    // Update budget if different (only if campaign is editable)
-    if (metaCampaign.dailyBudget && updatedCampaign.isEditable()) {
+    // Update budget if different
+    const newBudgetAmount = metaCampaign.dailyBudget
+    if (newBudgetAmount) {
       const newBudget = Money.create(
-        metaCampaign.dailyBudget,
+        newBudgetAmount,
         updatedCampaign.dailyBudget.currency
       )
 
@@ -211,7 +233,21 @@ export class SyncCampaignsUseCase {
         newBudget.amount !== updatedCampaign.dailyBudget.amount ||
         newBudget.currency !== updatedCampaign.dailyBudget.currency
       ) {
-        updatedCampaign = updatedCampaign.updateBudget(newBudget)
+        // 완료 상태에서 복원된 캠페인도 예산 업데이트 가능하도록 restore 사용
+        updatedCampaign = Campaign.restore({
+          id: updatedCampaign.id,
+          userId: updatedCampaign.userId,
+          name: updatedCampaign.name,
+          objective: updatedCampaign.objective,
+          status: updatedCampaign.status,
+          dailyBudget: newBudget,
+          startDate: updatedCampaign.startDate,
+          endDate: updatedCampaign.endDate,
+          targetAudience: updatedCampaign.targetAudience,
+          metaCampaignId: updatedCampaign.metaCampaignId,
+          createdAt: updatedCampaign.createdAt,
+          updatedAt: new Date(),
+        })
         updated = true
       }
     }

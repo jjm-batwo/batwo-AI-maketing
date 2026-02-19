@@ -7,6 +7,13 @@ import {
   UpdateMetaCampaignInput,
   ListCampaignsResponse,
   MetaCampaignListItem,
+  CreateMetaAdSetInput,
+  MetaAdSetData,
+  UpdateMetaAdSetInput,
+  CreateMetaAdInput,
+  MetaAdData,
+  CreateMetaCreativeInput,
+  MetaCreativeData,
 } from '@application/ports/IMetaAdsService'
 import { MetaAdsApiError } from '../errors'
 import { withRetry } from '@lib/utils/retry'
@@ -14,7 +21,7 @@ import { fetchWithTimeout } from '@lib/utils/timeout'
 import { MetaApiLogRepository, MetaApiLogEntry } from './MetaApiLogRepository'
 import { withSpan } from '@infrastructure/telemetry'
 
-const META_API_VERSION = 'v18.0'
+const META_API_VERSION = 'v21.0'
 const META_API_BASE = `https://graph.facebook.com/${META_API_VERSION}`
 const META_API_TIMEOUT_MS = 30000 // 30 seconds for Meta API calls
 
@@ -169,7 +176,7 @@ export class MetaAdsClient implements IMetaAdsService {
       () => this.request<T>(accessToken, endpoint, options),
       {
         maxAttempts: 3,
-        initialDelayMs: 100, // Reduced for tests
+        initialDelayMs: process.env.NODE_ENV === 'test' ? 100 : 1000,
         shouldRetry: (error) => {
           if (error instanceof MetaAdsApiError) {
             return MetaAdsApiError.isTransientError(error)
@@ -207,7 +214,7 @@ export class MetaAdsClient implements IMetaAdsService {
           objective: input.objective,
           status: 'PAUSED',
           special_ad_categories: [],
-          daily_budget: input.dailyBudget,
+          daily_budget: String(input.dailyBudget),
           start_time: input.startTime.toISOString(),
           ...(input.endTime && { end_time: input.endTime.toISOString() }),
           ...(input.targeting && { targeting: this.formatTargeting(input.targeting) }),
@@ -322,7 +329,8 @@ export class MetaAdsClient implements IMetaAdsService {
   async getCampaignDailyInsights(
     accessToken: string,
     campaignId: string,
-    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d'
+    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d',
+    options?: { since?: string; until?: string }
   ): Promise<MetaDailyInsightsData[]> {
     if (this.mockMode) {
       console.log('[MetaAdsClient:MOCK] getCampaignDailyInsights called with mock mode')
@@ -357,9 +365,13 @@ export class MetaAdsClient implements IMetaAdsService {
           'campaign_id,impressions,clicks,spend,actions,action_values,date_start,date_stop'
 
         // time_increment=1 returns daily breakdown
+        // since/until을 사용하면 date_preset보다 정확한 날짜 범위 조회 가능
+        const dateParams = options?.since && options?.until
+          ? `time_range=${encodeURIComponent(JSON.stringify({ since: options.since, until: options.until }))}`
+          : `date_preset=${datePreset}`
         const response = await this.requestWithRetry<MetaApiInsightsResponse>(
           accessToken,
-          `/${campaignId}/insights?fields=${fields}&date_preset=${datePreset}&time_increment=1`,
+          `/${campaignId}/insights?fields=${fields}&${dateParams}&time_increment=1`,
           { method: 'GET' }
         )
 
@@ -459,7 +471,7 @@ export class MetaAdsClient implements IMetaAdsService {
     const body: Record<string, unknown> = {}
 
     if (input.name !== undefined) body.name = input.name
-    if (input.dailyBudget !== undefined) body.daily_budget = input.dailyBudget
+    if (input.dailyBudget !== undefined) body.daily_budget = String(input.dailyBudget)
     if (input.status !== undefined) body.status = input.status
     if (input.endTime !== undefined) {
       body.end_time = input.endTime ? input.endTime.toISOString() : null
@@ -569,6 +581,324 @@ export class MetaAdsClient implements IMetaAdsService {
         'meta.limit': options?.limit ?? 50,
         'meta.after': options?.after ?? '',
       }
+    )
+  }
+
+  // --- AdSet CRUD ---
+
+  async createAdSet(
+    accessToken: string,
+    adAccountId: string,
+    input: CreateMetaAdSetInput
+  ): Promise<MetaAdSetData> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] createAdSet called with mock mode')
+      return {
+        id: `mock_adset_${Date.now()}`,
+        name: input.name,
+        status: input.status || 'PAUSED',
+        dailyBudget: input.dailyBudget,
+        lifetimeBudget: input.lifetimeBudget,
+        billingEvent: input.billingEvent,
+        optimizationGoal: input.optimizationGoal,
+      }
+    }
+
+    return withSpan(
+      'meta.createAdSet',
+      async () => {
+        const body: Record<string, unknown> = {
+          campaign_id: input.campaignId,
+          name: input.name,
+          billing_event: input.billingEvent,
+          optimization_goal: input.optimizationGoal,
+          status: input.status || 'PAUSED',
+          start_time: input.startTime.toISOString(),
+        }
+
+        if (input.dailyBudget !== undefined) body.daily_budget = String(input.dailyBudget)
+        if (input.lifetimeBudget !== undefined) body.lifetime_budget = String(input.lifetimeBudget)
+        if (input.bidStrategy) body.bid_strategy = input.bidStrategy
+        if (input.targeting) body.targeting = input.targeting
+        if (input.endTime) body.end_time = input.endTime.toISOString()
+
+        const response = await this.requestWithRetry<{ id: string }>(
+          accessToken,
+          `/${adAccountId}/adsets`,
+          { method: 'POST', body: JSON.stringify(body) }
+        )
+
+        return {
+          id: response.id,
+          name: input.name,
+          status: input.status || 'PAUSED',
+          dailyBudget: input.dailyBudget,
+          lifetimeBudget: input.lifetimeBudget,
+          billingEvent: input.billingEvent,
+          optimizationGoal: input.optimizationGoal,
+        }
+      },
+      { 'meta.adAccountId': adAccountId, 'meta.adSet.name': input.name }
+    )
+  }
+
+  async updateAdSet(
+    accessToken: string,
+    adSetId: string,
+    input: UpdateMetaAdSetInput
+  ): Promise<void> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] updateAdSet called with mock mode')
+      return
+    }
+
+    await withSpan(
+      'meta.updateAdSet',
+      async () => {
+        const body: Record<string, unknown> = {}
+        if (input.name !== undefined) body.name = input.name
+        if (input.dailyBudget !== undefined) body.daily_budget = String(input.dailyBudget)
+        if (input.lifetimeBudget !== undefined) body.lifetime_budget = String(input.lifetimeBudget)
+        if (input.status !== undefined) body.status = input.status
+        if (input.targeting !== undefined) body.targeting = input.targeting
+        if (input.endTime !== undefined) {
+          body.end_time = input.endTime ? input.endTime.toISOString() : null
+        }
+
+        await this.requestWithRetry<{ success: boolean }>(
+          accessToken,
+          `/${adSetId}`,
+          { method: 'POST', body: JSON.stringify(body) }
+        )
+      },
+      { 'meta.adSetId': adSetId }
+    )
+  }
+
+  async deleteAdSet(accessToken: string, adSetId: string): Promise<void> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] deleteAdSet called with mock mode')
+      return
+    }
+
+    await this.requestWithRetry<{ success: boolean }>(
+      accessToken,
+      `/${adSetId}`,
+      { method: 'DELETE' }
+    )
+  }
+
+  async listAdSets(
+    accessToken: string,
+    campaignId: string
+  ): Promise<MetaAdSetData[]> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] listAdSets called with mock mode')
+      return [
+        {
+          id: `mock_adset_1`,
+          name: 'Mock AdSet',
+          status: 'ACTIVE',
+          dailyBudget: 30000,
+          billingEvent: 'IMPRESSIONS',
+          optimizationGoal: 'CONVERSIONS',
+        },
+      ]
+    }
+
+    return withSpan(
+      'meta.listAdSets',
+      async () => {
+        const fields = 'id,name,status,daily_budget,lifetime_budget,billing_event,optimization_goal'
+        const response = await this.requestWithRetry<{
+          data: {
+            id: string
+            name: string
+            status: string
+            daily_budget?: string
+            lifetime_budget?: string
+            billing_event: string
+            optimization_goal: string
+          }[]
+        }>(
+          accessToken,
+          `/${campaignId}/adsets?fields=${fields}`,
+          { method: 'GET' }
+        )
+
+        return response.data.map((item) => ({
+          id: item.id,
+          name: item.name,
+          status: item.status,
+          dailyBudget: item.daily_budget ? parseInt(item.daily_budget, 10) : undefined,
+          lifetimeBudget: item.lifetime_budget ? parseInt(item.lifetime_budget, 10) : undefined,
+          billingEvent: item.billing_event,
+          optimizationGoal: item.optimization_goal,
+        }))
+      },
+      { 'meta.campaignId': campaignId }
+    )
+  }
+
+  // --- Ad ---
+
+  async createAd(
+    accessToken: string,
+    adAccountId: string,
+    input: CreateMetaAdInput
+  ): Promise<MetaAdData> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] createAd called with mock mode')
+      return {
+        id: `mock_ad_${Date.now()}`,
+        name: input.name,
+        status: input.status || 'PAUSED',
+      }
+    }
+
+    return withSpan(
+      'meta.createAd',
+      async () => {
+        const body = {
+          name: input.name,
+          adset_id: input.adSetId,
+          creative: { creative_id: input.creativeId },
+          status: input.status || 'PAUSED',
+        }
+
+        const response = await this.requestWithRetry<{ id: string }>(
+          accessToken,
+          `/${adAccountId}/ads`,
+          { method: 'POST', body: JSON.stringify(body) }
+        )
+
+        return {
+          id: response.id,
+          name: input.name,
+          status: input.status || 'PAUSED',
+        }
+      },
+      { 'meta.adAccountId': adAccountId, 'meta.ad.name': input.name }
+    )
+  }
+
+  // --- Creative ---
+
+  async createAdCreative(
+    accessToken: string,
+    adAccountId: string,
+    input: CreateMetaCreativeInput
+  ): Promise<MetaCreativeData> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] createAdCreative called with mock mode')
+      return {
+        id: `mock_creative_${Date.now()}`,
+        name: input.name,
+      }
+    }
+
+    return withSpan(
+      'meta.createAdCreative',
+      async () => {
+        const objectStorySpec: Record<string, unknown> = {
+          page_id: input.pageId,
+        }
+
+        // 링크 광고
+        if (input.link) {
+          const linkData: Record<string, unknown> = {
+            link: input.link,
+            message: input.message || '',
+          }
+          if (input.imageHash) linkData.image_hash = input.imageHash
+          if (input.videoId) linkData.video_id = input.videoId
+          if (input.callToAction) {
+            linkData.call_to_action = { type: input.callToAction }
+          }
+          objectStorySpec.link_data = linkData
+        }
+
+        const body = {
+          name: input.name,
+          object_story_spec: objectStorySpec,
+        }
+
+        const response = await this.requestWithRetry<{ id: string }>(
+          accessToken,
+          `/${adAccountId}/adcreatives`,
+          { method: 'POST', body: JSON.stringify(body) }
+        )
+
+        return {
+          id: response.id,
+          name: input.name,
+        }
+      },
+      { 'meta.adAccountId': adAccountId, 'meta.creative.name': input.name }
+    )
+  }
+
+  // --- Asset 업로드 ---
+
+  async uploadImage(
+    accessToken: string,
+    adAccountId: string,
+    imageData: Buffer
+  ): Promise<{ imageHash: string }> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] uploadImage called with mock mode')
+      return { imageHash: `mock_hash_${Date.now()}` }
+    }
+
+    return withSpan(
+      'meta.uploadImage',
+      async () => {
+        const base64 = imageData.toString('base64')
+        const body = { bytes: base64 }
+
+        const response = await this.requestWithRetry<{
+          images: { bytes: { hash: string } }
+        }>(
+          accessToken,
+          `/${adAccountId}/adimages`,
+          { method: 'POST', body: JSON.stringify(body) }
+        )
+
+        return { imageHash: response.images.bytes.hash }
+      },
+      { 'meta.adAccountId': adAccountId }
+    )
+  }
+
+  async uploadVideo(
+    accessToken: string,
+    adAccountId: string,
+    videoData: Buffer,
+    name: string
+  ): Promise<{ videoId: string }> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] uploadVideo called with mock mode')
+      return { videoId: `mock_video_${Date.now()}` }
+    }
+
+    return withSpan(
+      'meta.uploadVideo',
+      async () => {
+        const base64 = videoData.toString('base64')
+        const body = {
+          source: base64,
+          title: name,
+        }
+
+        const response = await this.requestWithRetry<{ id: string }>(
+          accessToken,
+          `/${adAccountId}/advideos`,
+          { method: 'POST', body: JSON.stringify(body) }
+        )
+
+        return { videoId: response.id }
+      },
+      { 'meta.adAccountId': adAccountId, 'meta.video.name': name }
     )
   }
 
