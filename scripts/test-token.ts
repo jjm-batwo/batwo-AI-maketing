@@ -45,7 +45,7 @@ const token = 'EAASoIP0CqaABQYYaZCdx2HIOWOg6faMu06eTov6FcQiwj66sdZBDpafA4C9zWB55
 
 async function main() {
   // 1. 토큰 검증
-  const debugUrl = `https://graph.facebook.com/v18.0/debug_token?input_token=${token}&access_token=${process.env.META_APP_ID}|${process.env.META_APP_SECRET}`
+  const debugUrl = `https://graph.facebook.com/v25.0/debug_token?input_token=${token}&access_token=${process.env.META_APP_ID}|${process.env.META_APP_SECRET}`
   const debugRes = await fetch(debugUrl)
   const debugData = await debugRes.json() as TokenDebugResponse
 
@@ -63,7 +63,7 @@ async function main() {
 
   // 2. 광고 계정 조회
   console.log('\n=== 광고 계정 조회 ===')
-  const accountsRes = await fetch(`https://graph.facebook.com/v18.0/me/adaccounts?fields=id,name,account_status&access_token=${token}`)
+  const accountsRes = await fetch(`https://graph.facebook.com/v25.0/me/adaccounts?fields=id,name,account_status&access_token=${token}`)
   const accountsData = await accountsRes.json() as AdAccountsResponse
 
   if (accountsData.error) {
@@ -81,7 +81,7 @@ async function main() {
   if (accounts.length > 0) {
     const accountId = accounts[0].id
     console.log(`\n=== ${accountId} 캠페인 조회 ===`)
-    const campaignsRes = await fetch(`https://graph.facebook.com/v18.0/${accountId}/campaigns?fields=id,name,status&limit=10&access_token=${token}`)
+    const campaignsRes = await fetch(`https://graph.facebook.com/v25.0/${accountId}/campaigns?fields=id,name,status&limit=10&access_token=${token}`)
     const campaignsData = await campaignsRes.json() as CampaignsResponse
 
     if (campaignsData.error) {

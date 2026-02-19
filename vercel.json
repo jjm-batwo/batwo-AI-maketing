@@ -44,6 +44,14 @@
     {
       "path": "/api/cron/check-anomalies",
       "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/cron/sync",
+      "schedule": "0 */6 * * *"
+    },
+    {
+      "path": "/api/cron/refresh-tokens",
+      "schedule": "0 2 * * *"
     }
   ]
 }

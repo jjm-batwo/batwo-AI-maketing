@@ -22,6 +22,9 @@ const directUrl = isTestEnv
   ? (process.env["DIRECT_URL_TEST"] || process.env["DIRECT_URL"])
   : process.env["DIRECT_URL"];
 
+// Shadow Database URL (prisma migrate dev에서 사용)
+const shadowDatabaseUrl = process.env["SHADOW_DATABASE_URL"];
+
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
@@ -33,5 +36,7 @@ export default defineConfig({
     // Direct URL for migrations (Supabase: port 5432)
     // Note: directUrl is supported by Prisma 7.x runtime but types may lag behind
     directUrl: directUrl,
-  } as { url?: string; directUrl?: string },
+    // Shadow DB for prisma migrate dev (스키마 diff 계산용)
+    shadowDatabaseUrl: shadowDatabaseUrl,
+  } as { url?: string; directUrl?: string; shadowDatabaseUrl?: string },
 });

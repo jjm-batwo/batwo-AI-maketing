@@ -54,7 +54,7 @@ async function debugToken(accessToken: string): Promise<TokenDebugResponse | nul
     return null
   }
 
-  const url = `https://graph.facebook.com/v18.0/debug_token?input_token=${accessToken}&access_token=${appId}|${appSecret}`
+  const url = `https://graph.facebook.com/v25.0/debug_token?input_token=${accessToken}&access_token=${appId}|${appSecret}`
 
   try {
     const response = await fetch(url)
@@ -81,7 +81,7 @@ async function exchangeToken(shortLivedToken: string): Promise<TokenExchangeResp
     return null
   }
 
-  const url = new URL('https://graph.facebook.com/v18.0/oauth/access_token')
+  const url = new URL('https://graph.facebook.com/v25.0/oauth/access_token')
   url.searchParams.set('grant_type', 'fb_exchange_token')
   url.searchParams.set('client_id', appId)
   url.searchParams.set('client_secret', appSecret)

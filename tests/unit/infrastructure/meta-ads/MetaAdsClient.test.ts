@@ -4,7 +4,7 @@ import { setupServer } from 'msw/node'
 import { MetaAdsClient } from '@infrastructure/external/meta-ads/MetaAdsClient'
 import { MetaAdsApiError } from '@infrastructure/external/errors'
 
-const META_API_BASE = 'https://graph.facebook.com/v21.0'
+const META_API_BASE = 'https://graph.facebook.com/v25.0'
 
 const mockCampaign = {
   id: '123456789',

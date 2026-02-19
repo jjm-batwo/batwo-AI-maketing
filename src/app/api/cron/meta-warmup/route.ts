@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { MetaAdsWarmupClient, WarmupSummary } from '@infrastructure/external/meta-ads/MetaAdsWarmupClient'
 import { validateCronAuth } from '@/lib/middleware/cronAuth'
+import { safeDecryptToken } from '@application/utils/TokenEncryption'
 
 interface AccountResult {
   accountId: string
@@ -37,7 +38,7 @@ async function tryGetAccountsFromDB(targetAccountId: string | undefined): Promis
     })
     return {
       accounts: accounts.map(a => ({
-        accessToken: a.accessToken,
+        accessToken: safeDecryptToken(a.accessToken),
         metaAccountId: a.metaAccountId,
         businessName: a.businessName,
       })),

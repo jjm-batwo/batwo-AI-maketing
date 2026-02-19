@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { MetaPagesClient } from '@/infrastructure/external/meta-pages'
+import { safeDecryptToken } from '@application/utils/TokenEncryption'
 
 /**
  * GET /api/meta/pages/[pageId]/insights
@@ -31,7 +32,7 @@ export async function GET(
       )
     }
 
-    const client = new MetaPagesClient(metaAccount.accessToken)
+    const client = new MetaPagesClient(safeDecryptToken(metaAccount.accessToken))
 
     // 페이지 정보 조회하여 page access token 획득
     const page = await client.getPage(pageId)

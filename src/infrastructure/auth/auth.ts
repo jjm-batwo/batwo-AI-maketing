@@ -44,20 +44,20 @@ function FacebookLoginForBusiness<P extends FacebookBusinessProfile>(
     type: 'oauth',
     checks: ['state'], // Only use state, no PKCE
     authorization: {
-      url: 'https://www.facebook.com/v19.0/dialog/oauth',
+      url: 'https://www.facebook.com/v25.0/dialog/oauth',
       params: {
         scope: options.authorization?.params?.scope || 'public_profile',
         config_id: options.configId,
       },
     },
     token: {
-      url: 'https://graph.facebook.com/v19.0/oauth/access_token',
+      url: 'https://graph.facebook.com/v25.0/oauth/access_token',
       params: {
         config_id: options.configId,
       },
     },
     userinfo: {
-      url: 'https://graph.facebook.com/v19.0/me',
+      url: 'https://graph.facebook.com/v25.0/me',
       params: {
         fields: 'id,name,email,picture',
       },

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { oauthCache } from '@/lib/cache/oauthCache'
+import { encryptToken } from '@application/utils/TokenEncryption'
 
 /**
  * POST /api/meta/select-account
@@ -52,12 +53,14 @@ export async function POST(request: NextRequest) {
         },
       })
 
+      const encryptedToken = encryptToken(oauthData.accessToken)
+
       if (existingAccount) {
         // Update existing account
         await prisma.metaAdAccount.update({
           where: { id: existingAccount.id },
           data: {
-            accessToken: oauthData.accessToken,
+            accessToken: encryptedToken,
             tokenExpiry: new Date(
               Date.now() + oauthData.tokenExpiry * 1000
             ),
@@ -70,7 +73,7 @@ export async function POST(request: NextRequest) {
             userId: user.id,
             metaAccountId: selectedAccount.id,
             businessName: selectedAccount.name,
-            accessToken: oauthData.accessToken,
+            accessToken: encryptedToken,
             tokenExpiry: new Date(
               Date.now() + oauthData.tokenExpiry * 1000
             ),

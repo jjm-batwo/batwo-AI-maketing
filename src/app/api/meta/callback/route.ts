@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { oauthCache } from '@/lib/cache/oauthCache'
+import { encryptToken } from '@application/utils/TokenEncryption'
 
-const META_API_URL = 'https://graph.facebook.com/v18.0'
+const META_API_URL = 'https://graph.facebook.com/v25.0'
 
 interface MetaTokenResponse {
   access_token: string
@@ -117,12 +118,14 @@ export async function GET(request: NextRequest) {
           },
         })
 
+        const encryptedToken = encryptToken(longLivedTokenResponse.access_token)
+
         if (existingAccount) {
           // Update existing account
           await prisma.metaAdAccount.update({
             where: { id: existingAccount.id },
             data: {
-              accessToken: longLivedTokenResponse.access_token,
+              accessToken: encryptedToken,
               tokenExpiry: new Date(
                 Date.now() + singleAccountTokenExpiry * 1000
               ),
@@ -135,7 +138,7 @@ export async function GET(request: NextRequest) {
               userId: user.id,
               metaAccountId: primaryAdAccount.id,
               businessName: primaryAdAccount.name,
-              accessToken: longLivedTokenResponse.access_token,
+              accessToken: encryptedToken,
               tokenExpiry: new Date(
                 Date.now() + singleAccountTokenExpiry * 1000
               ),

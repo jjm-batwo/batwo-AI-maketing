@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { MetaPagesClient } from '@/infrastructure/external/meta-pages'
+import { safeDecryptToken } from '@application/utils/TokenEncryption'
 
 /**
  * GET /api/meta/pages
@@ -26,7 +27,7 @@ export async function GET() {
       )
     }
 
-    const client = new MetaPagesClient(metaAccount.accessToken)
+    const client = new MetaPagesClient(safeDecryptToken(metaAccount.accessToken))
     const pages = await client.listPages()
 
     return NextResponse.json({ pages })

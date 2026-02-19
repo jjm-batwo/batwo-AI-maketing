@@ -5,7 +5,7 @@
 
 import { fetchWithTimeout } from '@lib/utils/timeout'
 
-const META_API_BASE = 'https://graph.facebook.com/v18.0'
+const META_API_BASE = 'https://graph.facebook.com/v25.0'
 const META_API_TIMEOUT_MS = 30000 // 30 seconds for Meta API calls
 
 export interface MetaPage {

@@ -30,6 +30,8 @@ interface MetaApiCAPIResponse {
 }
 
 export class CAPIClient implements ICAPIService {
+  private readonly mockMode = process.env.META_MOCK_MODE === 'true'
+
   private hashSHA256(value: string): string {
     return createHash('sha256')
       .update(value.toLowerCase().trim())
@@ -133,6 +135,13 @@ export class CAPIClient implements ICAPIService {
     pixelId: string,
     event: CAPIEventInput
   ): Promise<CAPIResponse> {
+    if (this.mockMode) {
+      console.log('[CAPIClient:MOCK] sendEvent called with mock mode')
+      return {
+        eventsReceived: 1,
+        fbTraceId: `mock_trace_${Date.now()}`,
+      }
+    }
     return this.sendEvents(accessToken, pixelId, [event])
   }
 
@@ -141,6 +150,13 @@ export class CAPIClient implements ICAPIService {
     pixelId: string,
     events: CAPIEventInput[]
   ): Promise<CAPIResponse> {
+    if (this.mockMode) {
+      console.log(`[CAPIClient:MOCK] sendEvents called with ${events.length} events`)
+      return {
+        eventsReceived: events.length,
+        fbTraceId: `mock_trace_${Date.now()}`,
+      }
+    }
     // Split into batches if exceeding max size
     if (events.length > MAX_BATCH_SIZE) {
       let totalEventsReceived = 0
@@ -207,6 +223,11 @@ export class CAPIClient implements ICAPIService {
     testEventCode: string,
     event: CAPIEventInput
   ): Promise<CAPITestEventResponse> {
+    if (this.mockMode) {
+      console.log('[CAPIClient:MOCK] sendTestEvent called with mock mode')
+      return { success: true }
+    }
+
     try {
       const response = await this.sendBatch(
         accessToken,

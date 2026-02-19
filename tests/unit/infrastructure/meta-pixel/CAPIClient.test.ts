@@ -278,6 +278,64 @@ describe('CAPIClient', () => {
     })
   })
 
+  describe('mockMode', () => {
+    let mockClient: ICAPIService
+
+    beforeEach(() => {
+      vi.stubEnv('META_MOCK_MODE', 'true')
+      mockClient = new CAPIClient()
+    })
+
+    afterEach(() => {
+      vi.unstubAllEnvs()
+    })
+
+    it('should_return_mock_response_for_sendEvent_when_mock_mode_enabled', async () => {
+      const response = await mockClient.sendEvent(mockAccessToken, mockPixelId, mockEvent)
+
+      expect(response.eventsReceived).toBe(1)
+      expect(response.fbTraceId).toContain('mock_trace_')
+      // 실제 API 호출하지 않아야 함
+      expect(mockFetch).not.toHaveBeenCalled()
+    })
+
+    it('should_return_mock_response_for_sendEvents_when_mock_mode_enabled', async () => {
+      const events = [mockEvent, mockPurchaseEvent]
+      const response = await mockClient.sendEvents(mockAccessToken, mockPixelId, events)
+
+      expect(response.eventsReceived).toBe(2)
+      expect(mockFetch).not.toHaveBeenCalled()
+    })
+
+    it('should_return_mock_success_for_sendTestEvent_when_mock_mode_enabled', async () => {
+      const response = await mockClient.sendTestEvent(
+        mockAccessToken,
+        mockPixelId,
+        'TEST12345',
+        mockEvent
+      )
+
+      expect(response.success).toBe(true)
+      expect(mockFetch).not.toHaveBeenCalled()
+    })
+
+    it('should_not_activate_mock_mode_when_env_is_false', async () => {
+      vi.stubEnv('META_MOCK_MODE', 'false')
+      const normalClient = new CAPIClient()
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          events_received: 1,
+          fbtrace_id: 'real-trace',
+        }),
+      })
+
+      await normalClient.sendEvent(mockAccessToken, mockPixelId, mockEvent)
+      expect(mockFetch).toHaveBeenCalled()
+    })
+  })
+
   describe('error handling', () => {
     it('should handle network errors gracefully', async () => {
       mockFetch.mockRejectedValueOnce(new Error('Network error'))
