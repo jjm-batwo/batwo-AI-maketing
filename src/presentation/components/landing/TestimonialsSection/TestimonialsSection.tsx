@@ -9,7 +9,7 @@ export const TestimonialsSection = memo(function TestimonialsSection() {
   const { ref, isIntersecting } = useIntersectionObserver()
 
   return (
-    <section id="testimonials" className="py-16 md:py-24 bg-muted/30 overflow-hidden">
+    <section id="testimonials" className="py-20 md:py-32 overflow-hidden">
       <div
         ref={ref}
         className={`container mx-auto px-4 transition-all duration-1000 ${

@@ -32,7 +32,7 @@ export function HowItWorksSection({ id = 'how-it-works' }: HowItWorksSectionProp
   const { ref, isIntersecting } = useIntersectionObserver()
 
   return (
-    <section id={id} className="py-16 md:py-24 overflow-hidden">
+    <section id={id} className="py-20 md:py-32 overflow-hidden">
       <div
         ref={ref}
         className={`container mx-auto px-4 transition-all duration-1000 ${isIntersecting ? 'animate-slide-up opacity-100' : 'opacity-0 translate-y-10'
@@ -59,8 +59,8 @@ export function HowItWorksSection({ id = 'how-it-works' }: HowItWorksSectionProp
                 )}
 
                 {/* Step Number */}
-                <div className="relative z-10 w-16 h-16 mx-auto rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/30">
-                  <step.icon className="h-7 w-7 transition-transform duration-300 group-hover:scale-110" />
+                <div className="relative z-10 w-16 h-16 mx-auto rounded-full border-2 border-primary text-primary bg-transparent flex items-center justify-center mb-4 transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
+                  <step.icon className="h-7 w-7" />
                 </div>
 
                 {/* Step Badge */}

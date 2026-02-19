@@ -7,7 +7,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { HelpCircle } from 'lucide-react'
 import { FAQ_ITEMS } from './faqData'
 import { FAQSchema } from './FAQSchema'
 
@@ -17,12 +16,6 @@ export const FAQSection = memo(function FAQSection() {
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <header className="text-center mb-12">
-          <div
-            className="inline-flex items-center justify-center p-3 mb-4 bg-primary/10 rounded-full"
-            aria-hidden="true"
-          >
-            <HelpCircle className="h-6 w-6 text-primary" aria-hidden="true" />
-          </div>
           <h2 className="text-2xl md:text-3xl font-bold mb-4">자주 묻는 질문</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             바투 서비스에 대해 궁금하신 점을 확인해보세요

@@ -50,7 +50,7 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
   }
 
   return (
-    <section id={id} className="py-16 md:py-24 bg-muted/30 overflow-hidden">
+    <section id={id} className="py-20 md:py-32 overflow-hidden">
       <div
         ref={ref}
         className={`container mx-auto px-4 transition-all duration-1000 ${
@@ -59,7 +59,7 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
       >
         {/* Section Header */}
         <header className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">모든 비즈니스에 맞는 요금제</h2>
+          <h2 className="text-3xl md:text-5xl font-bold mb-4">모든 비즈니스에 맞는 요금제</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             무료로 시작하고, 성장에 맞춰 업그레이드하세요.
           </p>
@@ -98,9 +98,9 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
             return (
               <Card
                 key={plan}
-                className={`relative overflow-hidden transition-all duration-300 hover:shadow-xl ${
+                className={`relative overflow-hidden transition-colors duration-300 ${
                   isPopular
-                    ? 'border-2 border-primary ring-2 ring-primary shadow-lg'
+                    ? 'border border-primary'
                     : 'border hover:border-primary/50'
                 }`}
               >
@@ -124,7 +124,7 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
                         <span className="text-lg text-muted-foreground line-through mr-2">
                           {formatPrice(config.price)}
                         </span>
-                        <span className="text-4xl font-bold">
+                        <span className="text-5xl font-bold">
                           {formatPrice(Math.floor(config.price * 0.8))}
                         </span>
                         <span className="text-muted-foreground text-sm">/월</span>
@@ -132,7 +132,7 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
                       </>
                     ) : (
                       <>
-                        <span className="text-4xl font-bold">{formatPrice(config.price)}</span>
+                        <span className="text-5xl font-bold">{formatPrice(config.price)}</span>
                         {config.price > 0 && (
                           <span className="text-muted-foreground text-sm">/월</span>
                         )}

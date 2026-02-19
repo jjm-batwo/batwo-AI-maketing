@@ -38,7 +38,7 @@ export function ReportsClient({ initialReports }: ReportsClientProps) {
       </div>
 
       {/* Report List */}
-      <div className="glass-card rounded-2xl p-6">
+      <div className="bg-card border border-border/50 rounded-2xl p-6">
         <ReportList
           reports={initialReports}
           isLoading={false}

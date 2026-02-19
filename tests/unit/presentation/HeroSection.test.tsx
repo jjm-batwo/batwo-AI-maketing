@@ -37,17 +37,17 @@ describe('HeroSection 전환율 개선', () => {
   })
 
   describe('사용자 수 Badge (사회적 증거)', () => {
-    it('"1,200+ 마케터가 선택한 솔루션" 텍스트가 표시된다', () => {
+    it('"1,200+ 사업자가 사용 중" 텍스트가 표시된다', () => {
       render(<HeroSection />)
 
       expect(screen.getByText(/1,200\+/i)).toBeInTheDocument()
-      expect(screen.getByText(/마케터가 선택한 솔루션/i)).toBeInTheDocument()
+      expect(screen.getByText(/사업자가 사용 중/i)).toBeInTheDocument()
     })
 
-    it('별점 4.9/5.0이 표시된다', () => {
+    it('별점 4.9가 표시된다', () => {
       render(<HeroSection />)
 
-      expect(screen.getByText(/4\.9\/5\.0/i)).toBeInTheDocument()
+      expect(screen.getByText(/4\.9/)).toBeInTheDocument()
     })
   })
 

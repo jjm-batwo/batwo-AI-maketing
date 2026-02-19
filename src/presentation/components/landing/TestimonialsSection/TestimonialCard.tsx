@@ -11,11 +11,11 @@ interface TestimonialCardProps {
 
 export const TestimonialCard = memo(function TestimonialCard({ testimonial }: TestimonialCardProps) {
   return (
-    <Card className="group h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-primary/30 cursor-default">
+    <Card className="group h-full transition-colors duration-300 hover:border-primary/30 cursor-default">
       <CardContent className="p-6 flex flex-col h-full">
         {/* Quote Icon */}
         <Quote
-          className="h-8 w-8 text-primary/20 mb-4 transition-all duration-300 group-hover:text-primary/40 group-hover:scale-110"
+          className="h-8 w-8 text-primary/20 mb-4"
           aria-hidden="true"
         />
 
@@ -30,7 +30,7 @@ export const TestimonialCard = memo(function TestimonialCard({ testimonial }: Te
         {/* Metrics Badge */}
         {testimonial.metrics && (
           <div
-            className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm w-fit transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-105"
+            className="mt-4 inline-flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm w-fit"
             role="status"
             aria-label={`${testimonial.metrics.label} ${testimonial.metrics.value}`}
           >

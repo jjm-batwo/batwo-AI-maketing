@@ -1,6 +1,7 @@
 'use client'
 
 import { SessionProvider } from 'next-auth/react'
+import { ThemeProvider } from 'next-themes'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, type ReactNode, lazy, Suspense } from 'react'
 
@@ -25,16 +26,18 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <ErrorBoundary>
-      <SessionProvider>
-        <QueryClientProvider client={queryClient}>
-          {children}
-          {process.env.NODE_ENV === 'development' && (
-            <Suspense fallback={null}>
-              <ReactQueryDevtools initialIsOpen={false} />
-            </Suspense>
-          )}
-        </QueryClientProvider>
-      </SessionProvider>
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <SessionProvider>
+          <QueryClientProvider client={queryClient}>
+            {children}
+            {process.env.NODE_ENV === 'development' && (
+              <Suspense fallback={null}>
+                <ReactQueryDevtools initialIsOpen={false} />
+              </Suspense>
+            )}
+          </QueryClientProvider>
+        </SessionProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   )
 }

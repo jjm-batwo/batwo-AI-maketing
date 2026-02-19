@@ -88,9 +88,9 @@ export const AIChatDemo = memo(function AIChatDemo() {
   }, [])
 
   return (
-    <div className="relative glass-card rounded-2xl p-4 md:p-6 transition-all duration-500 hover:shadow-lg group aspect-[4/3] md:aspect-auto">
-      {/* Glow Effect */}
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/30 to-purple-600/30 rounded-2xl blur opacity-30 group-hover:opacity-40 transition duration-500 pointer-events-none" aria-hidden="true" />
+    <div className="relative bg-card border border-border/50 rounded-2xl p-4 md:p-6 transition-all duration-500 hover:shadow-lg group aspect-[4/3] md:aspect-auto">
+      {/* 배경 글로우 효과 */}
+      <div className="absolute -inset-0.5 bg-primary/10 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-500 pointer-events-none" aria-hidden="true" />
 
       <div className="relative bg-card/80 backdrop-blur-sm rounded-xl overflow-hidden shadow-sm border border-border/50">
         <BrowserChrome url="app.batwo.io/chat" />

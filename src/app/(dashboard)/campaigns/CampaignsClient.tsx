@@ -95,7 +95,7 @@ export function CampaignsClient({ initialCampaigns, initialKpiData }: CampaignsC
           <p className="text-muted-foreground mt-2">{t('campaigns.subtitle')}</p>
           {showApiSource && <ApiSourceBadge endpoint="POST /act_{id}/campaigns" permission="ads_management" className="mt-2" />}
         </div>
-        <Button asChild size="lg" className="shadow-sm hover:shadow-primary/30 transition-all">
+        <Button asChild size="lg" className="shadow-sm transition-all">
           <Link href="/campaigns/new">
             <Plus className="mr-2 h-4 w-4" />
             {t('campaigns.newCampaign')}
@@ -104,7 +104,7 @@ export function CampaignsClient({ initialCampaigns, initialKpiData }: CampaignsC
       </div>
 
       {/* Filters and List Container */}
-      <div className="glass-card rounded-2xl p-6 space-y-6">
+      <div className="bg-card border border-border/50 rounded-2xl p-6 space-y-6">
         {/* Filters */}
         <div className="flex flex-col gap-4 sm:flex-row">
           <div className="relative flex-1">

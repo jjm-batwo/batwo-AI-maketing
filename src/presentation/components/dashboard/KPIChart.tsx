@@ -291,7 +291,7 @@ export function KPIChart({
 
   // With title - wrap in Card
   return (
-    <Card className={cn("glass-card overflow-hidden", className)}>
+    <Card className={cn("bg-card border border-border/50 overflow-hidden", className)}>
       <CardHeader className="border-b border-border/50 bg-muted/20 pb-4">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
       </CardHeader>

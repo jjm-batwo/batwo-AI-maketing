@@ -4,51 +4,40 @@ import { memo } from 'react'
 import { useIntersectionObserver } from '@/presentation/hooks'
 import { GradientBackground } from './GradientBackground'
 import { HeroContent } from './HeroContent'
-import { AIChatDemo } from './AIChatDemo'
+// AIChatDemo → DashboardPreview로 교체
+import { DashboardPreview } from './DashboardPreview'
 
 export const HeroSection = memo(function HeroSection() {
   const { ref: textRef, isIntersecting: textVisible } = useIntersectionObserver()
   const { ref: previewRef, isIntersecting: previewVisible } = useIntersectionObserver()
 
   return (
+    // 레이아웃: 고정 패딩 → min-h-[100dvh] + flex center로 풀스크린 정렬
     <section
-      className="relative pt-24 pb-20 md:pt-36 md:pb-32 overflow-hidden"
+      className="relative min-h-[100dvh] flex items-center overflow-hidden"
       aria-labelledby="hero-heading"
     >
       <GradientBackground />
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Text Content - Left */}
+          {/* 텍스트 콘텐츠 - 왼쪽 */}
           <div ref={textRef}>
             <HeroContent isVisible={textVisible} />
           </div>
 
-          {/* AI Chat Demo - Right */}
+          {/* 대시보드 미리보기 - 오른쪽. DecorativeElements(pulse 무한 애니메이션) 제거. perspective 3D 틸트 적용 */}
           <div
             ref={previewRef}
-            className={`relative perspective-1000 ${
-              previewVisible ? 'animate-slide-in-right' : 'opacity-0'
-            }`}
+            className={`relative ${previewVisible ? 'animate-slide-in-right' : 'opacity-0'}`}
             role="img"
-            aria-label="AI 채팅으로 캠페인 생성 데모"
+            aria-label="대시보드 미리보기"
+            style={{ transform: 'perspective(1200px) rotateY(-5deg)' }}
           >
-            <DecorativeElements />
-            <div className="relative">
-              <AIChatDemo />
-            </div>
+            <DashboardPreview />
           </div>
         </div>
       </div>
     </section>
-  )
-})
-
-const DecorativeElements = memo(function DecorativeElements() {
-  return (
-    <>
-      <div className="absolute -top-12 -right-12 w-24 h-24 bg-yellow-400/20 rounded-full blur-2xl animate-pulse pointer-events-none" aria-hidden="true" />
-      <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-primary/20 rounded-full blur-2xl animate-pulse delay-700 pointer-events-none" aria-hidden="true" />
-    </>
   )
 })

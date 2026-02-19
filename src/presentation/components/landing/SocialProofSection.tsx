@@ -8,11 +8,11 @@ interface StatCardProps {
 
 function StatCard({ icon, value, label }: StatCardProps) {
   return (
-    <div className="group flex flex-col items-center p-6 bg-card rounded-lg border transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-primary/30 cursor-default">
-      <div className="p-3 mb-4 bg-primary/10 rounded-full text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110">
+    <div className="group flex flex-col items-center p-6 bg-card rounded-lg border border-border/50 transition-colors hover:border-primary/30 cursor-default">
+      <div className="p-3 mb-4 bg-primary/10 rounded-full text-primary transition-colors group-hover:bg-primary/20">
         {icon}
       </div>
-      <span className="text-3xl md:text-4xl font-bold text-foreground mb-2 transition-colors duration-300 group-hover:text-primary">
+      <span className="text-3xl md:text-4xl font-bold text-foreground mb-2">
         {value}
       </span>
       <span className="text-sm text-muted-foreground text-center">{label}</span>
@@ -60,7 +60,7 @@ const trustBadges = [
 
 export function SocialProofSection() {
   return (
-    <section id="social-proof" className="py-16 md:py-24 bg-muted/30">
+    <section id="social-proof" className="py-10 md:py-16">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -89,14 +89,25 @@ export function SocialProofSection() {
           {trustBadges.map((badge, index) => (
             <div
               key={index}
-              className="group flex items-center gap-2 text-muted-foreground transition-all duration-300 hover:text-primary cursor-default"
+              className="group flex items-center gap-2 text-muted-foreground transition-colors hover:text-primary cursor-default"
             >
-              <div className="p-2 bg-background rounded-full border transition-all duration-300 group-hover:bg-primary/10 group-hover:border-primary/30 group-hover:scale-110">
+              <div className="p-2 bg-background rounded-full border transition-colors group-hover:bg-primary/10 group-hover:border-primary/30">
                 {badge.icon}
               </div>
               <span className="text-sm font-medium">{badge.label}</span>
             </div>
           ))}
+        </div>
+
+        {/* 연동 플랫폼 로고 바 */}
+        <div className="mt-12 pt-8 border-t border-border/30">
+          <p className="text-xs text-muted-foreground text-center mb-6 uppercase tracking-widest">연동 플랫폼</p>
+          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12 opacity-50">
+            <span className="text-lg font-bold tracking-tight">Meta</span>
+            <span className="text-lg font-bold tracking-tight">카페24</span>
+            <span className="text-lg font-bold tracking-tight">스마트스토어</span>
+            <span className="text-lg font-bold tracking-tight">Shopify</span>
+          </div>
         </div>
       </div>
     </section>

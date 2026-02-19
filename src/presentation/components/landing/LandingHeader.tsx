@@ -81,7 +81,7 @@ export function LandingHeader() {
 
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || isMenuOpen
-          ? 'bg-background/70 backdrop-blur-md border-b border-white/20 dark:border-white/10 shadow-sm'
+          ? 'bg-background/95 backdrop-blur-xl border-b border-border/50'
           : 'bg-transparent border-transparent'
           }`}
       >
@@ -89,7 +89,7 @@ export function LandingHeader() {
           <div className="flex h-16 md:h-20 items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-purple-600 text-white shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-shadow">
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-white shadow-sm transition-shadow">
                 <Sparkles className="w-5 h-5 fill-current" />
               </div>
               <span className="text-xl font-bold tracking-tight">바투</span>
@@ -104,11 +104,11 @@ export function LandingHeader() {
                 <a
                   key={link.href}
                   href={link.href}
-                  className="text-sm font-medium text-muted-foreground/80 hover:text-primary transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary relative group py-2"
+                  className="text-sm font-medium text-muted-foreground/80 hover:text-foreground transition-colors focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary relative group py-2"
                   aria-label={`Navigate to ${link.label}`}
                 >
                   {link.label}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full group-focus-visible:w-full opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100" />
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover:w-full group-focus-visible:w-full opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100" />
                 </a>
               ))}
             </nav>
@@ -131,7 +131,7 @@ export function LandingHeader() {
                   <Button variant="ghost" asChild className="hover:bg-primary/5 text-muted-foreground hover:text-primary">
                     <Link href="/login">로그인</Link>
                   </Button>
-                  <Button asChild className="shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all hover:-translate-y-0.5">
+                  <Button asChild className="shadow-sm transition-all hover:-translate-y-0.5">
                     <Link href="/register">무료로 시작하기</Link>
                   </Button>
                 </>
@@ -189,7 +189,7 @@ export function LandingHeader() {
                   <Button variant="outline" className="w-full justify-center border-primary/20" asChild>
                     <Link href="/login">로그인</Link>
                   </Button>
-                  <Button className="w-full justify-center shadow-md bg-gradient-to-r from-primary to-purple-600 border-0" asChild>
+                  <Button className="w-full justify-center shadow-sm bg-primary border-0" asChild>
                     <Link href="/register">무료로 시작하기</Link>
                   </Button>
                 </>

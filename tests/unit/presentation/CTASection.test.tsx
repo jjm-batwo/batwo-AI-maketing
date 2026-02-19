@@ -19,12 +19,12 @@ describe('CTASection 전환율 개선', () => {
       expect(ctaButton).toHaveAttribute('href', '/register')
     })
 
-    it('Secondary CTA "로그인"이 유지된다', () => {
+    it('로그인 버튼 대신 단일 CTA로 통합되었다', () => {
       render(<CTASection />)
 
-      const loginButton = screen.getByRole('link', { name: /로그인/i })
-      expect(loginButton).toBeInTheDocument()
-      expect(loginButton).toHaveAttribute('href', '/login')
+      const links = screen.getAllByRole('link')
+      expect(links).toHaveLength(1)
+      expect(links[0]).toHaveAttribute('href', '/register')
     })
   })
 

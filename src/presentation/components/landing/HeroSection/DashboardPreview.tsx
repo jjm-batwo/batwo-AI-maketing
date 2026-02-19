@@ -19,11 +19,9 @@ export const DashboardPreview = memo(function DashboardPreview() {
   const data = useMemo(() => DASHBOARD_DATA[activeTab], [activeTab])
 
   return (
-    <div className="relative glass-card rounded-2xl p-4 md:p-6 transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] group aspect-[4/3] md:aspect-auto">
-      {/* Glow Effect */}
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/30 to-purple-600/30 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500 pointer-events-none" aria-hidden="true" />
-
-      <div className="relative bg-card/80 backdrop-blur-sm rounded-xl overflow-hidden shadow-sm border border-border/50">
+    // glass-card → bg-card + 명시적 border/shadow. glow 레이어 제거. 과도한 hover 축소
+    <div className="relative bg-card border border-border/50 shadow-2xl rounded-2xl p-4 md:p-6 transition-all duration-500 hover:shadow-xl aspect-[4/3] md:aspect-auto">
+      <div className="relative bg-card rounded-xl overflow-hidden shadow-sm border border-border/50">
         <BrowserChrome />
         <TabSwitcher activeTab={activeTab} onTabChange={handleTabChange} />
 

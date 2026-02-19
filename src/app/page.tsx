@@ -11,12 +11,7 @@ import {
   LandingFooter,
 } from '@/presentation/components/landing'
 
-// Lazy load below-fold sections for better initial page performance
-const ProductShowcaseSection = dynamic(
-  () => import('@/presentation/components/landing').then(mod => ({ default: mod.ProductShowcaseSection })),
-  { ssr: true }
-)
-
+// 스크롤 아래 섹션은 lazy load로 초기 성능 최적화
 const HowItWorksSection = dynamic(
   () => import('@/presentation/components/landing').then(mod => ({ default: mod.HowItWorksSection })),
   { ssr: true }
@@ -64,9 +59,6 @@ export default function LandingPage() {
         </ErrorBoundary>
         <ErrorBoundary>
           <FeaturesSection id="features" />
-        </ErrorBoundary>
-        <ErrorBoundary>
-          <ProductShowcaseSection />
         </ErrorBoundary>
         <ErrorBoundary>
           <HowItWorksSection id="how-it-works" />
