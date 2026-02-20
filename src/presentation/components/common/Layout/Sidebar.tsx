@@ -27,7 +27,7 @@ export function Sidebar() {
 
   return (
     <aside
-      className="hidden w-60 flex-col border-r border-white/20 dark:border-white/5 bg-white/50 dark:bg-black/20 backdrop-blur-xl md:flex shadow-sm z-50"
+      className="hidden w-60 flex-col border-r border-gray-200 bg-white md:flex shadow-sm z-50"
       aria-label={t('navigation.mainNav')}
     >
       <div className="flex h-20 items-center px-6">
@@ -65,15 +65,12 @@ export function Sidebar() {
               aria-current={isActive ? 'page' : undefined}
               aria-label={`${t('navigation.goToPage', { page: item.name })}${isActive ? ' ' + t('navigation.currentPage') : ''}`}
               className={cn(
-                'flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 group relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
+                'flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 group relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
                 isActive
-                  ? 'bg-primary/10 text-primary shadow-sm ring-1 ring-primary/20'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-white/50 dark:hover:bg-white/5'
+                  ? 'bg-gray-100 text-slate-900 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-gray-50'
               )}
             >
-              {isActive && (
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-50" aria-hidden="true" />
-              )}
               <item.icon
                 className={cn(
                   "h-5 w-5 transition-transform duration-300 group-hover:scale-110",

@@ -17,13 +17,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   const { isChatPanelOpen, toggleChatPanel, unreadAlertCount } = useUIStore()
 
   return (
-    <div className="flex h-screen bg-background overflow-hidden relative selection:bg-primary/20">
-      {/* Premium Gradient Background */}
-      <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[360px] h-[360px] bg-primary/10 rounded-full blur-[80px] opacity-10 mix-blend-multiply dark:mix-blend-screen" />
-        <div className="absolute bottom-0 right-1/4 w-[360px] h-[360px] bg-purple-500/10 rounded-full blur-[80px] opacity-10 mix-blend-multiply dark:mix-blend-screen" />
-        <div className="absolute inset-0 bg-grid-slate-900/[0.02] dark:bg-grid-slate-400/[0.02] [mask-image:linear-gradient(to_bottom_right,white,transparent,transparent)]" />
-      </div>
+    <div className="flex h-screen bg-slate-50 overflow-hidden relative selection:bg-primary/20">
 
       {/* Desktop sidebar - hidden on mobile */}
       <Sidebar />

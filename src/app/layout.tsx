@@ -49,7 +49,7 @@ export default async function RootLayout({
   const messages = await getMessages()
 
   return (
-    <html lang={locale} className="dark" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         {/* JSON-LD 구조화 데이터 - SEO를 위해 head에 포함 */}
         <script

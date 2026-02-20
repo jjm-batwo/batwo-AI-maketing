@@ -11,7 +11,7 @@ interface TestimonialCardProps {
 
 export const TestimonialCard = memo(function TestimonialCard({ testimonial }: TestimonialCardProps) {
   return (
-    <Card className="group h-full transition-colors duration-300 hover:border-primary/30 cursor-default">
+    <Card className="group h-full bg-white border-gray-100 shadow-sm transition-all duration-300 hover:shadow-md hover:border-gray-200 cursor-default">
       <CardContent className="p-6 flex flex-col h-full">
         {/* Quote Icon */}
         <Quote
@@ -20,7 +20,7 @@ export const TestimonialCard = memo(function TestimonialCard({ testimonial }: Te
         />
 
         {/* Content */}
-        <blockquote className="text-muted-foreground flex-1 mb-4">
+        <blockquote className="text-slate-600 flex-1 mb-4 leading-relaxed font-medium">
           &ldquo;{testimonial.content}&rdquo;
         </blockquote>
 

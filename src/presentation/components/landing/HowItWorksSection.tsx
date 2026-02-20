@@ -59,18 +59,18 @@ export function HowItWorksSection({ id = 'how-it-works' }: HowItWorksSectionProp
                 )}
 
                 {/* Step Number */}
-                <div className="relative z-10 w-16 h-16 mx-auto rounded-full border-2 border-primary text-primary bg-transparent flex items-center justify-center mb-4 transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
+                <div className="relative z-10 w-16 h-16 mx-auto rounded-full bg-slate-50 border border-gray-100 text-slate-700 flex items-center justify-center mb-4 transition-all duration-300 group-hover:bg-white group-hover:shadow-md group-hover:border-gray-200 group-hover:text-primary">
                   <step.icon className="h-7 w-7" />
                 </div>
 
                 {/* Step Badge */}
-                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-muted text-xs font-bold mb-3 transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
+                <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 text-slate-600 text-xs font-bold mb-3 transition-all duration-300 group-hover:bg-primary/10 group-hover:text-primary">
                   {step.step}
                 </div>
 
                 {/* Content */}
-                <h3 className="text-lg font-semibold mb-2 transition-colors duration-300 group-hover:text-primary">{step.title}</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="text-lg font-semibold mb-2 text-slate-900 transition-colors duration-300 group-hover:text-primary">{step.title}</h3>
+                <p className="text-sm text-slate-500">
                   {step.description}
                 </p>
               </div>

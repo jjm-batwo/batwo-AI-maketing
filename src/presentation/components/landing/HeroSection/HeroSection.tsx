@@ -14,28 +14,25 @@ export const HeroSection = memo(function HeroSection() {
   return (
     // 레이아웃: 고정 패딩 → min-h-[100dvh] + flex center로 풀스크린 정렬
     <section
-      className="relative min-h-[100dvh] flex items-center overflow-hidden"
+      className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden pt-20"
       aria-labelledby="hero-heading"
     >
       <GradientBackground />
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* 텍스트 콘텐츠 - 왼쪽 */}
-          <div ref={textRef}>
-            <HeroContent isVisible={textVisible} />
-          </div>
+      <div className="container mx-auto px-4 relative z-10 flex flex-col items-center max-w-5xl">
+        {/* Centered Text Content */}
+        <div ref={textRef} className="w-full">
+          <HeroContent isVisible={textVisible} />
+        </div>
 
-          {/* 대시보드 미리보기 - 오른쪽. DecorativeElements(pulse 무한 애니메이션) 제거. perspective 3D 틸트 적용 */}
-          <div
-            ref={previewRef}
-            className={`relative ${previewVisible ? 'animate-slide-in-right' : 'opacity-0'}`}
-            role="img"
-            aria-label="대시보드 미리보기"
-            style={{ transform: 'perspective(1200px) rotateY(-5deg)' }}
-          >
-            <DashboardPreview />
-          </div>
+        {/* Centered Dashboard Preview */}
+        <div
+          ref={previewRef}
+          className={`relative mt-16 w-full max-w-4xl mx-auto rounded-xl shadow-2xl overflow-hidden border border-gray-200 ${previewVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
+          role="img"
+          aria-label="대시보드 미리보기"
+        >
+          <DashboardPreview />
         </div>
       </div>
     </section>

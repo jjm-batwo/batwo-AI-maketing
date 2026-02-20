@@ -8,14 +8,14 @@ interface StatCardProps {
 
 function StatCard({ icon, value, label }: StatCardProps) {
   return (
-    <div className="group flex flex-col items-center p-6 bg-card rounded-lg border border-border/50 transition-colors hover:border-primary/30 cursor-default">
-      <div className="p-3 mb-4 bg-primary/10 rounded-full text-primary transition-colors group-hover:bg-primary/20">
+    <div className="group flex flex-col items-center p-6 bg-white rounded-xl shadow-sm border border-gray-100 transition-all hover:shadow-md hover:border-gray-200">
+      <div className="p-3 mb-4 bg-gray-50 rounded-full text-slate-700 transition-colors group-hover:bg-primary/10 group-hover:text-primary">
         {icon}
       </div>
-      <span className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+      <span className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
         {value}
       </span>
-      <span className="text-sm text-muted-foreground text-center">{label}</span>
+      <span className="text-sm text-slate-500 text-center">{label}</span>
     </div>
   )
 }

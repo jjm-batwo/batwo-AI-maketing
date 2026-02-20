@@ -21,7 +21,7 @@ export function Header({ quotaStatus }: HeaderProps) {
   const t = useTranslations()
 
   return (
-    <header className="flex h-20 items-center justify-between px-6 md:px-8 border-b border-white/20 dark:border-white/5 bg-white/30 dark:bg-black/10 backdrop-blur-md sticky top-0 z-40">
+    <header className="flex h-20 items-center justify-between px-6 md:px-8 border-b border-gray-200 bg-white sticky top-0 z-40">
       <div className="flex items-center gap-4">
         {/* Mobile menu button */}
         <Button

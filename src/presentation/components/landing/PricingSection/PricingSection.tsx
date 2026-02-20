@@ -53,9 +53,8 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
     <section id={id} className="py-20 md:py-32 overflow-hidden">
       <div
         ref={ref}
-        className={`container mx-auto px-4 transition-all duration-1000 ${
-          isIntersecting ? 'animate-slide-up opacity-100' : 'opacity-0 translate-y-10'
-        }`}
+        className={`container mx-auto px-4 transition-all duration-1000 ${isIntersecting ? 'animate-slide-up opacity-100' : 'opacity-0 translate-y-10'
+          }`}
       >
         {/* Section Header */}
         <header className="text-center mb-12">
@@ -98,11 +97,10 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
             return (
               <Card
                 key={plan}
-                className={`relative overflow-hidden transition-colors duration-300 ${
-                  isPopular
-                    ? 'border border-primary'
-                    : 'border hover:border-primary/50'
-                }`}
+                className={`flex flex-col h-full relative overflow-hidden transition-all duration-300 bg-white shadow-sm ${isPopular
+                    ? 'border-primary ring-1 ring-primary shadow-md transform lg:-translate-y-2 lg:scale-105 z-10'
+                    : 'border-gray-100 hover:border-gray-200 hover:shadow-md'
+                  }`}
               >
                 {/* Popular Badge */}
                 {isPopular && (
@@ -142,7 +140,7 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
                   <p className="text-sm text-muted-foreground mt-3">{config.description}</p>
                 </CardHeader>
 
-                <CardContent className="space-y-6">
+                <CardContent className="flex flex-col flex-1 p-6 pt-0 space-y-6">
                   {/* Features List */}
                   <ul className="space-y-2" role="list">
                     {FEATURE_COMPARISON.map((feature, index) => {
@@ -164,22 +162,24 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
                   </ul>
 
                   {/* CTA Button */}
-                  <Button
-                    className="w-full"
-                    size="lg"
-                    variant={isPro ? 'default' : 'outline'}
-                    asChild
-                  >
-                    {plan === SubscriptionPlan.ENTERPRISE ? (
-                      <a href={getCTALink(plan)} aria-label={`${config.label} 플랜 선택`}>
-                        {getCTAText(plan)}
-                      </a>
-                    ) : (
-                      <Link href={getCTALink(plan)} aria-label={`${config.label} 플랜 선택`}>
-                        {getCTAText(plan)}
-                      </Link>
-                    )}
-                  </Button>
+                  <div className="mt-auto pt-6">
+                    <Button
+                      className="w-full"
+                      size="lg"
+                      variant={isPro ? 'default' : 'outline'}
+                      asChild
+                    >
+                      {plan === SubscriptionPlan.ENTERPRISE ? (
+                        <a href={getCTALink(plan)} aria-label={`${config.label} 플랜 선택`}>
+                          {getCTAText(plan)}
+                        </a>
+                      ) : (
+                        <Link href={getCTALink(plan)} aria-label={`${config.label} 플랜 선택`}>
+                          {getCTAText(plan)}
+                        </Link>
+                      )}
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             )

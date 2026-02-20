@@ -12,9 +12,8 @@ interface HeroContentProps {
 export const HeroContent = memo(function HeroContent({ isVisible }: HeroContentProps) {
   return (
     <div
-      className={`text-center lg:text-left ${
-        isVisible ? 'animate-slide-in-left' : 'opacity-0'
-      }`}
+      className={`text-center flex flex-col items-center ${isVisible ? 'animate-slide-in-left' : 'opacity-0'
+        }`}
     >
       {/* Badge */}
       <div
@@ -36,9 +35,8 @@ export const HeroContent = memo(function HeroContent({ isVisible }: HeroContentP
         <span className="text-glow">전문가처럼 광고하기</span>
       </h1>
 
-      {/* Subheadline — 2줄을 1줄로 압축, br 태그 제거 */}
-      <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-        복잡한 메타 광고 설정을 AI가 1분 만에 완료합니다. 대화형 AI로 캠페인 생성부터 성과 분석까지.
+      <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed">
+        복잡한 메타 광고 설정을 AI가 1분 만에 완료합니다. <br />대화형 AI로 캠페인 생성부터 성과 분석까지.
       </p>
 
       {/* CTA Buttons */}
@@ -55,8 +53,8 @@ export const HeroContent = memo(function HeroContent({ isVisible }: HeroContentP
 
 const CTAButtons = memo(function CTAButtons() {
   return (
-    <div className="flex flex-col items-center lg:items-start gap-4">
-      <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 w-full">
+    <div className="flex flex-col items-center gap-4 w-full">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mx-auto">
         {/* 메인 CTA: 그라디언트 → 단색 primary, shimmer 제거, hover 축소 */}
         <Button
           size="lg"
@@ -87,7 +85,7 @@ const CTAButtons = memo(function CTAButtons() {
           </Link>
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground text-center lg:text-left">
+      <p className="text-xs text-muted-foreground text-center">
         신용카드 불필요 · 1분 안에 시작
       </p>
     </div>

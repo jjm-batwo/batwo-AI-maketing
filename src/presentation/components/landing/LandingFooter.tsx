@@ -4,15 +4,15 @@ export function LandingFooter() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="py-12 md:py-16 border-t border-border/30">
+    <footer className="py-12 md:py-16 bg-white border-t border-gray-200">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Logo & Copyright */}
           <div className="flex items-center gap-4">
-            <Link href="/" className="text-lg font-bold text-primary">
+            <Link href="/" className="text-lg font-bold text-slate-900">
               바투
             </Link>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-slate-500">
               &copy; {currentYear} 바투. All rights reserved.
             </span>
           </div>
