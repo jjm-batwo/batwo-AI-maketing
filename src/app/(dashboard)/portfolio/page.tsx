@@ -2,12 +2,14 @@
 
 import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
-import { Loader2, PieChart } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Loader2, PieChart, Sparkles } from 'lucide-react'
 import { usePortfolioAnalysis, usePortfolioSimulation } from '@/presentation/hooks/usePortfolio'
 import type { SimulationResult } from '@/presentation/hooks/usePortfolio'
 import { AllocationTable } from '@/presentation/components/portfolio/AllocationTable'
 import { ImpactCard } from '@/presentation/components/portfolio/ImpactCard'
 import { BudgetSimulator } from '@/presentation/components/portfolio/BudgetSimulator'
+import { useUIStore } from '@/presentation/stores'
 
 function scoreBadgeClass(score: number): string {
   if (score >= 80) return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
@@ -18,6 +20,7 @@ function scoreBadgeClass(score: number): string {
 export default function PortfolioPage() {
   const { data, isLoading, isError } = usePortfolioAnalysis()
   const simulation = usePortfolioSimulation()
+  const { openChatPanel } = useUIStore()
   const [simulationResult, setSimulationResult] = useState<SimulationResult | null>(null)
 
   function handleSimulate(totalBudget: number) {
@@ -67,7 +70,15 @@ export default function PortfolioPage() {
             AI가 분석한 캠페인 예산 배분 최적화 전략입니다
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            className="gap-2 border-primary/20 hover:bg-primary/5 hover:border-primary/40 transition-all"
+            onClick={openChatPanel}
+          >
+            <Sparkles className="h-4 w-4 text-primary" />
+            AI 배분 전략
+          </Button>
           <Badge className={scoreBadgeClass(data.efficiencyScore)}>
             효율성 {data.efficiencyScore}점
           </Badge>

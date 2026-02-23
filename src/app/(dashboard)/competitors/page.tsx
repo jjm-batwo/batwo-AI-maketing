@@ -3,10 +3,22 @@
 import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Loader2, Search, Star, X } from 'lucide-react'
-import { useCompetitorSearch, useTrackedCompetitors, useTrackCompetitor, useUntrackCompetitor } from '@/presentation/hooks/useCompetitorAnalysis'
+import { Loader2, Search, Sparkles, Star, X } from 'lucide-react'
+import { useUIStore } from '@/presentation/stores'
+import {
+  useCompetitorSearch,
+  useTrackedCompetitors,
+  useTrackCompetitor,
+  useUntrackCompetitor,
+} from '@/presentation/hooks/useCompetitorAnalysis'
 import { CompetitorCard } from '@/presentation/components/competitors/CompetitorCard'
 import { TrendChart } from '@/presentation/components/competitors/TrendChart'
 import { RecommendationList } from '@/presentation/components/competitors/RecommendationList'
@@ -35,6 +47,7 @@ export default function CompetitorsPage() {
   )
 
   const { data: trackedList } = useTrackedCompetitors()
+  const { openChatPanel } = useUIStore()
   const trackMutation = useTrackCompetitor()
   const untrackMutation = useUntrackCompetitor()
 
@@ -62,11 +75,21 @@ export default function CompetitorsPage() {
 
   return (
     <div className="container mx-auto py-8 space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold mb-1">경쟁사 광고 분석</h1>
-        <p className="text-muted-foreground text-sm">
-          키워드로 경쟁사 광고 트렌드를 분석하고 전략을 수립하세요.
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold mb-1">경쟁사 광고 분석</h1>
+          <p className="text-muted-foreground text-sm">
+            키워드로 경쟁사 광고 트렌드를 분석하고 전략을 수립하세요.
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          className="gap-2 border-primary/20 hover:bg-primary/5 hover:border-primary/40 transition-all"
+          onClick={openChatPanel}
+        >
+          <Sparkles className="h-4 w-4 text-primary" />
+          AI 전략 도움
+        </Button>
       </div>
 
       {/* 추적 중인 경쟁사 */}
@@ -157,7 +180,9 @@ export default function CompetitorsPage() {
       {data && !isLoading && (
         <div className="space-y-8">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>총 <strong className="text-foreground">{data.totalAds}개</strong> 광고 분석 완료</span>
+            <span>
+              총 <strong className="text-foreground">{data.totalAds}개</strong> 광고 분석 완료
+            </span>
           </div>
 
           {/* 트렌드 + 추천 */}

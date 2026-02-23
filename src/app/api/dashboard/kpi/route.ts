@@ -69,6 +69,7 @@ function daysAgoStr(n: number): string {
 type DailyData = {
   date: string
   impressions: number
+  reach: number
   clicks: number
   conversions: number
   spend: number
@@ -88,6 +89,7 @@ type KPIApiResponse = {
     totalSpend: number
     totalRevenue: number
     totalImpressions: number
+    totalReach: number
     totalClicks: number
     totalLinkClicks: number
     totalConversions: number
@@ -103,6 +105,7 @@ type KPIApiResponse = {
       ctr: number
       conversions: number
       impressions: number
+      reach: number
       clicks: number
     }
   }
@@ -110,13 +113,19 @@ type KPIApiResponse = {
     campaignId: string
     campaignName: string
     impressions: number
+    reach: number
     clicks: number
+    linkClicks: number
     conversions: number
     spend: number
     revenue: number
     roas: number
     ctr: number
     cpa: number
+    cpc: number
+    cvr: number
+    cpm: number
+    reachRate: number
   }>
   chartData: Array<{
     date: string
@@ -124,6 +133,7 @@ type KPIApiResponse = {
     revenue: number
     roas: number
     impressions: number
+    reach: number
     clicks: number
     linkClicks: number
     conversions: number
@@ -150,6 +160,7 @@ function aggregateLiveResults(
   includeBreakdown?: boolean
 ) {
   let totalImpressions = 0
+  let totalReach = 0
   let totalClicks = 0
   let totalConversions = 0
   let totalSpend = 0
@@ -160,13 +171,19 @@ function aggregateLiveResults(
     campaignId: string
     campaignName: string
     impressions: number
+    reach: number
     clicks: number
+    linkClicks: number
     conversions: number
     spend: number
     revenue: number
     roas: number
     ctr: number
     cpa: number
+    cpc: number
+    cvr: number
+    cpm: number
+    reachRate: number
   }> = []
 
   for (const result of liveResults) {
@@ -181,11 +198,13 @@ function aggregateLiveResults(
     let cS = 0,
       cR = 0,
       cI = 0,
+      cRe = 0,
       cCl = 0,
       cCo = 0,
       cL = 0
     for (const d of data) {
       cI += d.impressions
+      cRe += d.reach || 0
       cCl += d.clicks
       cCo += d.conversions
       cS += d.spend
@@ -194,6 +213,7 @@ function aggregateLiveResults(
     }
 
     totalImpressions += cI
+    totalReach += cRe
     totalClicks += cCl
     totalConversions += cCo
     totalSpend += cS
@@ -205,19 +225,26 @@ function aggregateLiveResults(
         campaignId,
         campaignName: name,
         impressions: cI,
+        reach: cRe,
         clicks: cCl,
+        linkClicks: cL,
         conversions: cCo,
         spend: cS,
         revenue: cR,
         roas: cS > 0 ? cR / cS : 0,
         ctr: cI > 0 ? (cCl / cI) * 100 : 0,
         cpa: cCo > 0 ? cS / cCo : 0,
+        cpc: cL > 0 ? cS / cL : 0,
+        cvr: cL > 0 ? (cCo / cL) * 100 : 0,
+        cpm: cI > 0 ? (cS / cI) * 1000 : 0,
+        reachRate: cI > 0 ? (cRe / cI) * 100 : 0,
       })
     }
   }
 
   return {
     totalImpressions,
+    totalReach,
     totalClicks,
     totalConversions,
     totalSpend,
@@ -239,6 +266,7 @@ function buildDailyChartData(
       spend: number
       revenue: number
       impressions: number
+      reach: number
       clicks: number
       linkClicks: number
       conversions: number
@@ -256,6 +284,7 @@ function buildDailyChartData(
         spend: 0,
         revenue: 0,
         impressions: 0,
+        reach: 0,
         clicks: 0,
         linkClicks: 0,
         conversions: 0,
@@ -263,6 +292,7 @@ function buildDailyChartData(
       existing.spend += d.spend
       existing.revenue += d.revenue
       existing.impressions += d.impressions
+      existing.reach += d.reach || 0
       existing.clicks += d.clicks
       existing.linkClicks += d.linkClicks || 0
       existing.conversions += d.conversions
@@ -278,6 +308,7 @@ function buildDailyChartData(
       revenue: d.revenue,
       roas: d.spend > 0 ? d.revenue / d.spend : 0,
       impressions: d.impressions,
+      reach: d.reach,
       clicks: d.clicks,
       linkClicks: d.linkClicks,
       conversions: d.conversions,
@@ -355,7 +386,8 @@ async function fetchLiveKPI(
   const ctr =
     current.totalImpressions > 0 ? (current.totalClicks / current.totalImpressions) * 100 : 0
   const cpa = current.totalConversions > 0 ? current.totalSpend / current.totalConversions : 0
-  const cvr = current.totalClicks > 0 ? (current.totalConversions / current.totalClicks) * 100 : 0
+  const cvr =
+    current.totalLinkClicks > 0 ? (current.totalConversions / current.totalLinkClicks) * 100 : 0
 
   const prevRoas = prev.totalSpend > 0 ? prev.totalRevenue / prev.totalSpend : 0
   const prevCtr = prev.totalImpressions > 0 ? (prev.totalClicks / prev.totalImpressions) * 100 : 0
@@ -370,6 +402,7 @@ async function fetchLiveKPI(
     revenue: number
     roas: number
     impressions: number
+    reach: number
     clicks: number
     linkClicks: number
     conversions: number
@@ -390,6 +423,7 @@ async function fetchLiveKPI(
               revenue: current.totalRevenue,
               roas,
               impressions: current.totalImpressions,
+              reach: current.totalReach,
               clicks: current.totalClicks,
               linkClicks: current.totalLinkClicks,
               conversions: current.totalConversions,
@@ -403,6 +437,7 @@ async function fetchLiveKPI(
       totalSpend: current.totalSpend,
       totalRevenue: current.totalRevenue,
       totalImpressions: current.totalImpressions,
+      totalReach: current.totalReach,
       totalClicks: current.totalClicks,
       totalLinkClicks: current.totalLinkClicks,
       totalConversions: current.totalConversions,
@@ -418,6 +453,7 @@ async function fetchLiveKPI(
         ctr: ctr - prevCtr,
         conversions: calcChange(current.totalConversions, prev.totalConversions),
         impressions: calcChange(current.totalImpressions, prev.totalImpressions),
+        reach: calcChange(current.totalReach, prev.totalReach),
         clicks: calcChange(current.totalClicks, prev.totalClicks),
         linkClicks: calcChange(current.totalLinkClicks, prev.totalLinkClicks),
       },
@@ -528,11 +564,18 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform to API response format for backwards compatibility
+    const totalReach = 'totalReach' in result ? result.totalReach : result.totalImpressions
+    const reachChange =
+      result.comparison && 'reachChange' in result.comparison
+        ? result.comparison.reachChange
+        : result.comparison?.impressionsChange
+
     const response = {
       summary: {
         totalSpend: result.totalSpend,
         totalRevenue: result.totalRevenue,
         totalImpressions: result.totalImpressions,
+        totalReach,
         totalClicks: result.totalClicks,
         totalLinkClicks: result.totalLinkClicks,
         totalConversions: result.totalConversions,
@@ -549,12 +592,35 @@ export async function GET(request: NextRequest) {
               ctr: result.comparison.ctrChange,
               conversions: result.comparison.conversionsChange,
               impressions: result.comparison.impressionsChange,
+              reach: reachChange,
               clicks: result.comparison.clicksChange,
               linkClicks: result.comparison.linkClicksChange,
             }
           : undefined,
       },
-      campaignBreakdown: result.campaignBreakdown,
+      campaignBreakdown: result.campaignBreakdown?.map((item) => {
+        const reach =
+          'reach' in item && typeof item.reach === 'number' ? item.reach : item.impressions
+        const cpm =
+          'cpm' in item && typeof item.cpm === 'number'
+            ? item.cpm
+            : item.impressions > 0
+              ? (item.spend / item.impressions) * 1000
+              : 0
+        const reachRate =
+          'reachRate' in item && typeof item.reachRate === 'number'
+            ? item.reachRate
+            : item.impressions > 0
+              ? (reach / item.impressions) * 100
+              : 0
+
+        return {
+          ...item,
+          reach,
+          cpm,
+          reachRate,
+        }
+      }),
       chartData: result.chartData ?? [],
     }
 

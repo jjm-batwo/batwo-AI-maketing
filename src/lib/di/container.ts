@@ -134,6 +134,9 @@ import { UploadAssetUseCase } from '@application/use-cases/creative/UploadAssetU
 import { BlobStorageService, type IBlobStorageService } from '@infrastructure/storage/BlobStorageService'
 import { CreateAdvantageCampaignUseCase } from '@application/use-cases/campaign/CreateAdvantageCampaignUseCase'
 import { RefreshMetaTokenUseCase } from '@application/use-cases/token/RefreshMetaTokenUseCase'
+import { PrismaConversionEventRepository } from '@infrastructure/database/repositories/PrismaConversionEventRepository'
+import type { IConversionEventRepository } from '@domain/repositories/IConversionEventRepository'
+import { SendCAPIEventsUseCase } from '@application/use-cases/pixel/SendCAPIEventsUseCase'
 
 import { PrismaCompetitorTrackingRepository } from '@infrastructure/database/repositories/PrismaCompetitorTrackingRepository'
 import type { ICompetitorTrackingRepository } from '@domain/repositories/ICompetitorTrackingRepository'
@@ -1049,6 +1052,25 @@ container.register(
 
 export function getRefreshMetaTokenUseCase(): RefreshMetaTokenUseCase {
   return container.resolve(DI_TOKENS.RefreshMetaTokenUseCase)
+}
+
+// ConversionEvent Repository (Singleton)
+container.registerSingleton<IConversionEventRepository>(
+  DI_TOKENS.ConversionEventRepository,
+  () => new PrismaConversionEventRepository(prisma)
+)
+
+// SendCAPIEvents Use Case (Transient)
+container.register(
+  DI_TOKENS.SendCAPIEventsUseCase,
+  () => new SendCAPIEventsUseCase(
+    container.resolve(DI_TOKENS.ConversionEventRepository),
+    container.resolve(DI_TOKENS.CAPIService)
+  )
+)
+
+export function getSendCAPIEventsUseCase(): SendCAPIEventsUseCase {
+  return container.resolve(DI_TOKENS.SendCAPIEventsUseCase)
 }
 
 export function getCompetitorTrackingRepository(): ICompetitorTrackingRepository {

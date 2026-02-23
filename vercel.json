@@ -52,6 +52,10 @@
     {
       "path": "/api/cron/refresh-tokens",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/capi-batch",
+      "schedule": "*/5 * * * *"
     }
   ]
 }

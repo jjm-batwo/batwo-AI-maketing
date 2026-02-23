@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { TrackingScriptService } from '@infrastructure/external/tracking/TrackingScriptService'
 
-const APP_BASE_URL = process.env.NEXTAUTH_URL || 'https://batwo.ai'
+const APP_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'https://batwo.ai'
 
 /**
  * GET /api/pixel/[pixelId]/snippet

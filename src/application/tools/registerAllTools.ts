@@ -56,14 +56,18 @@ export function registerAllTools(deps: RegisterAllToolsDeps): IToolRegistry {
   registry.register(createGetPerformanceKPITool(deps.getDashboardKPIUseCase))
   registry.register(createListCampaignsTool(deps.listCampaignsUseCase))
   registry.register(createGetCampaignDetailTool(deps.getCampaignUseCase))
-  registry.register(createGenerateReportTool(deps.generateWeeklyReportUseCase))
+  registry.register(
+    createGenerateReportTool(deps.generateWeeklyReportUseCase, deps.listCampaignsUseCase)
+  )
   registry.register(createCheckAnomaliesTool(deps.campaignRepository, deps.kpiRepository))
   registry.register(createAnalyzeTrendsTool(deps.campaignRepository, deps.kpiRepository))
   registry.register(createGetBudgetRecommendationTool(deps.campaignRepository, deps.kpiRepository))
 
   // Mutation tools (6)
   registry.register(createCreateCampaignTool(deps.createCampaignUseCase))
-  registry.register(createUpdateCampaignBudgetTool(deps.updateCampaignUseCase, deps.campaignRepository))
+  registry.register(
+    createUpdateCampaignBudgetTool(deps.updateCampaignUseCase, deps.campaignRepository)
+  )
   registry.register(createPauseCampaignTool(deps.pauseCampaignUseCase, deps.campaignRepository))
   registry.register(createResumeCampaignTool(deps.resumeCampaignUseCase, deps.campaignRepository))
   registry.register(createDeleteCampaignTool(deps.deleteCampaignUseCase, deps.campaignRepository))

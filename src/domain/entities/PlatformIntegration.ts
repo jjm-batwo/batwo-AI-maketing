@@ -3,6 +3,7 @@ import { InvalidPlatformIntegrationError } from '../errors/InvalidPlatformIntegr
 export enum EcommercePlatform {
   CAFE24 = 'CAFE24',
   CUSTOM = 'CUSTOM',
+  NAVER_SMARTSTORE = 'NAVER_SMARTSTORE', // 네이버 스마트스토어 플랫폼
 }
 
 export enum IntegrationStatus {

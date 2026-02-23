@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useMemo } from 'react'
 import { Bot } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUIStore } from '@/presentation/stores/uiStore'
@@ -15,23 +15,65 @@ import { DataCard } from './DataCard'
 import { AlertBanner } from './AlertBanner'
 import { GuideQuestionCard } from './GuideQuestionCard'
 import { GuideRecommendationCard } from './GuideRecommendationCard'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useCampaignStore } from '@/presentation/stores/campaignStore'
 
 export function ChatPanel() {
   const { isChatPanelOpen, closeChatPanel, activeConversationId } = useUIStore()
-  const {
-    messages,
-    isLoading,
-    error,
-    sendMessage,
-    confirmAction,
-    cancelAction,
-    clearMessages,
-  } = useAgentChat(activeConversationId ?? undefined)
+  const { messages, isLoading, error, sendMessage, confirmAction, cancelAction, clearMessages } =
+    useAgentChat(activeConversationId ?? undefined)
   const { alerts, dismissAlert } = useAlerts()
   const router = useRouter()
+  const pathname = usePathname()
   const { setGuideRecommendation } = useCampaignStore()
+
+  const contextCopy = useMemo(() => {
+    if (pathname?.includes('/reports')) {
+      return {
+        title: '보고서 AI 어시스턴트',
+        description: '리포트 핵심 요약, 이상 징후 해석, 다음 액션 제안을 빠르게 받아보세요.',
+        suggestions: [
+          '이번 보고서 핵심 포인트 3가지만 요약해줘',
+          '성과가 급감한 지표 원인부터 알려줘',
+          '다음 주 개선 액션 플랜을 만들어줘',
+        ],
+      }
+    }
+
+    if (pathname?.includes('/dashboard')) {
+      return {
+        title: '대시보드 AI 어시스턴트',
+        description: '실시간 KPI를 바탕으로 성과 해석과 우선순위 액션을 제안해드려요.',
+        suggestions: [
+          '오늘 ROAS 변동 원인과 대응안을 알려줘',
+          '지출 대비 전환 효율이 낮은 캠페인 찾아줘',
+          '지금 바로 실행할 최우선 최적화 3개 추천해줘',
+        ],
+      }
+    }
+
+    if (pathname?.includes('/campaigns')) {
+      return {
+        title: '캠페인 AI 어시스턴트',
+        description: '캠페인 생성, 예산 배분, 타겟 전략까지 상황에 맞게 도와드려요.',
+        suggestions: [
+          '이번 주 캠페인 성과 분석해줘',
+          '예산을 어떻게 재분배하면 좋을까?',
+          '새 전환 캠페인을 만들어줘',
+        ],
+      }
+    }
+
+    return {
+      title: '바투 AI 어시스턴트',
+      description: '성과 분석, 예산 최적화, 새 캠페인 생성 등 무엇이든 물어보세요.',
+      suggestions: [
+        '현재 성과에서 가장 먼저 개선할 포인트 알려줘',
+        '효율이 낮은 캠페인 정리 기준을 제안해줘',
+        '이번 주 목표 대비 액션 플랜을 만들어줘',
+      ],
+    }
+  }, [pathname])
 
   // AI 가이드 질문 응답 처리
   const handleGuideAnswer = (option: { value: string; label: string }) => {
@@ -104,17 +146,18 @@ export function ChatPanel() {
 
         {/* Alerts */}
         {alerts.length > 0 && (
-          <AlertBanner
-            alerts={alerts}
-            onDismiss={dismissAlert}
-            onAnalyze={handleSendMessage}
-          />
+          <AlertBanner alerts={alerts} onDismiss={dismissAlert} onAnalyze={handleSendMessage} />
         )}
 
         {/* Messages */}
         <div data-testid="chat-messages-container" className="flex-1 overflow-y-auto">
           {messages.length === 0 ? (
-            <EmptyState onSuggestion={handleSendMessage} />
+            <EmptyState
+              title={contextCopy.title}
+              description={contextCopy.description}
+              suggestions={contextCopy.suggestions}
+              onSuggestion={handleSendMessage}
+            />
           ) : (
             <>
               {messages.map((msg) => (
@@ -129,7 +172,11 @@ export function ChatPanel() {
 
                   {/* Data Cards */}
                   {msg.dataCards?.map((card, i) => (
-                    <DataCard key={`${msg.id}-card-${i}`} cardType={card.cardType} data={card.data} />
+                    <DataCard
+                      key={`${msg.id}-card-${i}`}
+                      cardType={card.cardType}
+                      data={card.data}
+                    />
                   ))}
 
                   {/* Confirmation Card */}
@@ -201,24 +248,24 @@ export function ChatPanel() {
 // Empty State
 // ============================================================================
 
-function EmptyState({ onSuggestion }: { onSuggestion: (msg: string) => void }) {
-  const suggestions = [
-    '이번 주 캠페인 성과 분석해줘',
-    '예산을 어떻게 재분배하면 좋을까?',
-    '새 전환 캠페인을 만들어줘',
-  ]
-
+function EmptyState({
+  title,
+  description,
+  suggestions,
+  onSuggestion,
+}: {
+  title: string
+  description: string
+  suggestions: string[]
+  onSuggestion: (msg: string) => void
+}) {
   return (
     <div className="flex flex-col items-center justify-center h-full px-8 text-center">
       <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
         <Bot className="h-6 w-6 text-primary" />
       </div>
-      <h3 className="text-sm font-semibold text-foreground mb-1">
-        바투 AI 어시스턴트
-      </h3>
-      <p className="text-xs text-muted-foreground mb-6 max-w-[280px]">
-        캠페인 성과 분석, 예산 최적화, 새 캠페인 생성 등 무엇이든 물어보세요.
-      </p>
+      <h3 className="text-sm font-semibold text-foreground mb-1">{title}</h3>
+      <p className="text-xs text-muted-foreground mb-6 max-w-[280px]">{description}</p>
       <div className="w-full space-y-2">
         {suggestions.map((suggestion, index) => (
           <button

@@ -6,13 +6,14 @@ interface KPIData {
   totalSpend: number
   totalRevenue: number
   totalImpressions: number
+  totalReach: number
   totalClicks: number
-  totalLinkClicks?: number
+  totalLinkClicks: number
   totalConversions: number
   averageRoas: number
   averageCtr: number
   averageCpa: number
-  cvr?: number
+  cvr: number
   activeCampaigns: number
   changes: {
     spend: number
@@ -21,8 +22,9 @@ interface KPIData {
     ctr: number
     conversions: number
     impressions: number
+    reach: number
     clicks: number
-    linkClicks?: number
+    linkClicks: number
   }
 }
 
@@ -32,8 +34,9 @@ interface KPIChartData {
   revenue: number
   roas: number
   impressions: number
+  reach: number
   clicks: number
-  linkClicks?: number
+  linkClicks: number
   conversions: number
 }
 
@@ -41,14 +44,19 @@ interface CampaignBreakdown {
   campaignId: string
   campaignName: string
   impressions: number
+  reach: number
   clicks: number
-  linkClicks?: number
+  linkClicks: number
   conversions: number
   spend: number
   revenue: number
   roas: number
   ctr: number
   cpa: number
+  cpc: number
+  cvr: number
+  cpm: number
+  reachRate: number
 }
 
 interface DashboardKPIResponse {

@@ -27,6 +27,7 @@ description: DB accessToken 저장/조회 경로에서 암복호화 함수가 �
 | `src/app/api/meta/pages/[pageId]/insights/route.ts` | Page 인사이트 — 토큰 조회 (safeDecryptToken) |
 | `src/application/use-cases/campaign/SyncCampaignsUseCase.ts` | 캠페인 동기화 — 토큰 조회 (safeDecryptToken) |
 | `src/application/use-cases/token/RefreshMetaTokenUseCase.ts` | 토큰 갱신 — 복호화 후 교환, 재암호화 저장 |
+| `src/infrastructure/database/repositories/PrismaConversionEventRepository.ts` | CAPI 이벤트 저장소 — findPixelTokenMappings에서 safeDecryptToken 사용 |
 | `tests/unit/application/utils/TokenEncryption.test.ts` | TokenEncryption 단위 테스트 |
 
 ## Workflow
@@ -55,7 +56,7 @@ grep -rn 'metaAdAccount\.\(create\|update\|upsert\)' --include='*.ts' src/ | gre
 **검사:** MetaAdAccount에서 accessToken을 읽어 외부 서비스(MetaAdsClient, MetaPagesClient 등)에 전달하는 경로
 
 ```bash
-grep -rn 'metaAdAccount.*accessToken\|\.accessToken' --include='*.ts' src/app/api/ src/application/use-cases/ | grep -v 'encryptToken\|decryptToken\|TokenEncryption\|import'
+grep -rn 'metaAdAccount.*accessToken\|\.accessToken' --include='*.ts' src/app/api/ src/application/use-cases/ src/infrastructure/database/repositories/ | grep -v 'encryptToken\|decryptToken\|TokenEncryption\|import'
 ```
 
 **PASS:** 모든 조회 경로에서 `safeDecryptToken()` 사용
@@ -70,7 +71,7 @@ grep -rn 'metaAdAccount.*accessToken\|\.accessToken' --include='*.ts' src/app/ap
 **검사:** accessToken을 다루는 파일에서 TokenEncryption 유틸리티가 import되어 있는지
 
 ```bash
-grep -rln 'accessToken' --include='*.ts' src/app/api/meta/ src/application/use-cases/ | xargs grep -L 'TokenEncryption\|encryptToken\|decryptToken' 2>/dev/null
+grep -rln 'accessToken' --include='*.ts' src/app/api/meta/ src/application/use-cases/ src/infrastructure/database/repositories/ | xargs grep -L 'TokenEncryption\|encryptToken\|decryptToken' 2>/dev/null
 ```
 
 **PASS:** 결과 없음 (accessToken을 다루는 모든 파일이 암호화 유틸 사용)

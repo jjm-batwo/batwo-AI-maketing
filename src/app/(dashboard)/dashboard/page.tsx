@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useTranslations } from 'next-intl'
-import { Link2, RefreshCw } from 'lucide-react'
+import { Link2, RefreshCw, Sparkles } from 'lucide-react'
 
 // Dynamic imports for heavy components
 const OnboardingWizard = lazy(() =>
@@ -45,8 +45,13 @@ export default function DashboardPage() {
   const t = useTranslations()
   const searchParams = useSearchParams()
   const showApiSource = searchParams.get('showApiSource') === 'true'
-  const { dashboardPeriod, setDashboardPeriod, dashboardObjective, setDashboardObjective } =
-    useUIStore()
+  const {
+    dashboardPeriod,
+    setDashboardPeriod,
+    dashboardObjective,
+    setDashboardObjective,
+    openChatPanel,
+  } = useUIStore()
   const { isConnected, isLoading: isCheckingConnection } = useMetaConnection()
   const { data, isLoading, error } = useDashboardKPI({
     period: dashboardPeriod,
@@ -723,6 +728,15 @@ export default function DashboardPage() {
           >
             <RefreshCw className={`h-4 w-4 ${sync.isPending ? 'animate-spin' : ''}`} />
             {sync.isPending ? t('dashboard.syncing') : t('dashboard.sync')}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2 border-primary/20 hover:bg-primary/5 hover:border-primary/40 transition-all"
+            onClick={openChatPanel}
+          >
+            <Sparkles className="h-4 w-4 text-primary" />
+            AI 인사이트
           </Button>
 
           {/* Campaign Objective Filter */}

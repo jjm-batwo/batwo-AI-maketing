@@ -1,6 +1,10 @@
 'use client'
 
 import { useState, useCallback, useRef } from 'react'
+import { usePathname } from 'next/navigation'
+// Unique ID counter to prevent collisions when messages sent rapidly
+let messageIdCounter = 0
+const generateMessageId = (prefix: string) => `${prefix}-${Date.now()}-${++messageIdCounter}`
 
 // ============================================================================
 // Types
@@ -59,6 +63,7 @@ interface UseAgentChatReturn {
 // ============================================================================
 
 type AgentStreamChunk =
+  | { type: 'conversation'; conversationId: string }
   | { type: 'text'; content: string }
   | { type: 'progress'; stage: string; progress: number }
   | { type: 'tool_call'; toolName: string; args: Record<string, unknown> }
@@ -106,10 +111,22 @@ export function useAgentChat(initialConversationId?: string): UseAgentChatReturn
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [conversationId, setConversationId] = useState<string | null>(
-    initialConversationId ?? null
-  )
+  const [conversationId, setConversationId] = useState<string | null>(initialConversationId ?? null)
   const abortRef = useRef<AbortController | null>(null)
+  const pathname = usePathname()
+
+  const uiContext: 'dashboard' | 'campaigns' | 'reports' | 'competitors' | 'portfolio' | 'general' =
+    pathname?.includes('/reports')
+      ? 'reports'
+      : pathname?.includes('/competitors')
+        ? 'competitors'
+        : pathname?.includes('/portfolio')
+          ? 'portfolio'
+          : pathname?.includes('/dashboard')
+            ? 'dashboard'
+            : pathname?.includes('/campaigns')
+              ? 'campaigns'
+              : 'general'
 
   const sendMessage = useCallback(
     async (message: string) => {
@@ -118,7 +135,7 @@ export function useAgentChat(initialConversationId?: string): UseAgentChatReturn
 
       // 사용자 메시지 추가
       const userMsg: ChatMessage = {
-        id: `user-${Date.now()}`,
+        id: generateMessageId('user'),
         role: 'user',
         content: message,
         timestamp: new Date(),
@@ -126,7 +143,7 @@ export function useAgentChat(initialConversationId?: string): UseAgentChatReturn
       setMessages((prev) => [...prev, userMsg])
 
       // assistant placeholder
-      const assistantId = `assistant-${Date.now()}`
+      const assistantId = generateMessageId('assistant')
       const assistantMsg: ChatMessage = {
         id: assistantId,
         role: 'assistant',
@@ -142,7 +159,7 @@ export function useAgentChat(initialConversationId?: string): UseAgentChatReturn
         const response = await fetch('/api/agent/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message, conversationId }),
+          body: JSON.stringify({ message, conversationId, uiContext }),
           signal: abortRef.current.signal,
         })
 
@@ -164,6 +181,10 @@ export function useAgentChat(initialConversationId?: string): UseAgentChatReturn
               const data = JSON.parse(line.slice(6)) as AgentStreamChunk
 
               switch (data.type) {
+                case 'conversation':
+                  setConversationId(data.conversationId)
+                  break
+
                 case 'text':
                   setMessages((prev) =>
                     prev.map((m) =>
@@ -258,18 +279,14 @@ export function useAgentChat(initialConversationId?: string): UseAgentChatReturn
                 case 'suggested_questions':
                   setMessages((prev) =>
                     prev.map((m) =>
-                      m.id === assistantId
-                        ? { ...m, suggestedQuestions: data.questions }
-                        : m
+                      m.id === assistantId ? { ...m, suggestedQuestions: data.questions } : m
                     )
                   )
                   break
 
                 case 'done':
                   setMessages((prev) =>
-                    prev.map((m) =>
-                      m.id === assistantId ? { ...m, isStreaming: false } : m
-                    )
+                    prev.map((m) => (m.id === assistantId ? { ...m, isStreaming: false } : m))
                   )
                   break
 
@@ -290,7 +307,7 @@ export function useAgentChat(initialConversationId?: string): UseAgentChatReturn
         setIsLoading(false)
       }
     },
-    [conversationId]
+    [conversationId, uiContext]
   )
 
   const confirmAction = useCallback(async (actionId: string) => {

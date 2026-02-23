@@ -4,6 +4,25 @@
 
 # 바투 프로젝트 에이전트 설정
 
+## 의도 분류 프로토콜 (Intent Gate)
+
+모든 요청에 대해 작업 시작 전 분류하고 발화한다:
+
+| 카테고리 | 신호 | 행동 |
+|---------|------|------|
+| **Trivial** | 단일 파일, 명확한 위치 | 직접 실행, 위임 안 함 |
+| **Explicit** | 파일/함수 명시 | 레이어 확인 → 위임 |
+| **Exploratory** | "어떻게 동작?", "찾아줘" | explore 먼저 → 결과 기반 실행 |
+| **Open-ended** | "개선", "리팩토링", "기능 추가" | prometheus → architect → 실행 |
+| **Ambiguous** | 범위 불명확 | 명확화 질문 1개 |
+
+발화 형식: `[Intent: <카테고리>] <요약> → <레이어> | <에이전트> (<모델>)`
+
+예시:
+- `[Intent: Explicit] Campaign 엔티티 검증 추가 → Domain | executor (sonnet)`
+- `[Intent: Open-ended] 온보딩 플로우 리팩토링 → prometheus → architect (opus)`
+- `[Intent: Trivial] README 오타 수정 → 직접 실행`
+
 ## 에이전트 위임 규칙
 
 ### 레이어별 담당 에이전트
@@ -17,6 +36,30 @@
 | 아키텍처 결정 | architect | opus |
 | 테스트 전략 | test-engineer | sonnet |
 | 빌드/타입 오류 | build-fixer | sonnet |
+
+### 구조화된 위임 프로토콜 (6-Section Prompt)
+
+에이전트 위임 시 다음 6개 섹션을 프롬프트에 포함한다:
+
+```
+1. TASK: 구체적 목표 (한 문장)
+2. EXPECTED OUTCOME: 완료 기준 (파일, 테스트 수, 빌드 통과)
+3. REQUIRED TOOLS: 도구 화이트리스트 (Read, Edit, Bash 등)
+4. MUST DO: 필수사항 (TDD, 한국어, 패턴 준수)
+5. MUST NOT DO: 금지사항 (테스트 약화, export 제거, _접두사 남용)
+6. CONTEXT: 파일 경로, 참고 패턴, 제약조건
+```
+
+위임 전 **사전 선언** 필수:
+```
+[Delegation] <에이전트> (<모델>)
+- 레이어: <Domain|Application|Infrastructure|Presentation|API>
+- 이유: <위임 사유>
+- 보안 검토: 필요/불필요
+```
+
+보안 검토가 필요한 경로:
+- `src/app/api/**`, `src/infrastructure/auth/**`, `src/infrastructure/external/**`, `prisma/schema.prisma`
 
 ### TDD 에이전트 워크플로우
 기능 구현 요청 시 에이전트는 반드시 다음 순서를 따른다:
@@ -36,6 +79,83 @@ npx tsc --noEmit        # 타입 체크
 npx vitest run          # 단위 테스트
 npx next build          # 빌드 확인
 ```
+
+### 증거 기반 완료 검증
+
+작업 유형별 필수 증거:
+
+| 작업 유형 | 필수 증거 | 통과 기준 |
+|----------|---------|----------|
+| 코드 수정 | tsc + vitest + build | 모두 exit 0 |
+| 새 기능 | 위 + RED 실패 → GREEN 통과 로그 | 테스트 수 증가 |
+| 버그 수정 | 재현 테스트 → 수정 후 통과 로그 | 회귀 없음 |
+| UI 변경 | build + 반응형 확인 (md/lg/xl) | 깨짐 없음 |
+| 리팩토링 | tsc + vitest (기존 테스트 100% 통과) | 동작 변경 없음 |
+
+완료 시 반드시 증거를 첨부한다:
+```
+[Evidence]
+- tsc: PASS | vitest: N tests PASS | build: exit 0
+- 신규 테스트: +N개 | 변경 파일: N개
+- 검증 커맨드 출력 요약
+```
+
+증거 없이 "완료"를 선언하지 않는다.
+
+### 실패 복구 프로토콜 (3-Strike Rule)
+
+동일 작업에서 **3회 연속 실패** 시:
+
+1. **STOP** — 현재 접근 즉시 중단
+2. **REVERT** — `git stash` 또는 변경 되돌리기
+3. **DOCUMENT** — 실패 원인 기록 (에러 메시지, 시도한 접근)
+4. **CONSULT** — 전문 에이전트에게 위임:
+   - 타입 에러 → `build-fixer`
+   - 아키텍처 문제 → `architect`
+   - 테스트 설계 → `test-engineer`
+   - 런타임 오류 → `debugger`
+5. **ASK USER** — 4단계에서도 해결 불가 시 사용자에게 질문
+
+발화 형식:
+```
+[3-Strike] <작업명> 3회 실패
+- 시도 1: <접근> → <에러>
+- 시도 2: <접근> → <에러>
+- 시도 3: <접근> → <에러>
+- 조치: CONSULT → build-fixer (sonnet)
+```
+
+## Wisdom 전달 프로토콜
+
+서브에이전트 결과 수신 후:
+
+1. **추출** — 새로운 패턴, 주의사항, 실패 원인을 식별
+2. **대조** — MEMORY.md 기존 항목과 중복 여부 확인
+3. **기록** — 신규 발견 시 `<remember>` 태그로 기록
+4. **전달** — 후속 위임 시 CONTEXT 섹션에 이전 학습 포함
+
+예시:
+```
+[Wisdom] MetaAdsClient 위임 결과에서 발견:
+- MSW mock이 v18 경로 사용 중 → v25.0 통일 필요
+- MEMORY.md에 기록 완료 → 후속 Meta API 작업에 CONTEXT로 전달
+```
+
+## 코드베이스 상태 인식
+
+바투 프로젝트는 **Transitional** 상태이다:
+
+| 영역 | 상태 | 전략 |
+|------|------|------|
+| 클린 아키텍처 계층 | **Disciplined** | 기존 패턴 엄수, 의존성 규칙 준수 |
+| 캠페인/KPI/보고서 | **Disciplined** | 기존 코드와 일관성 유지 |
+| 픽셀 설치 기능 | **Greenfield** | 올바른 패턴으로 신규 구현 |
+| Advantage+ / AdSet / Ad | **Greenfield** | 도메인 모델 확장, 기존 패턴 참조 |
+| 랜딩 페이지 디자인 | **Evolving** | 디자인 리뉴얼 진행 중, 시각적 검증 우선 |
+
+**Disciplined 영역**: 변경 시 기존 테스트/패턴 깨지지 않도록 주의. explore로 기존 구현 확인 후 작업.
+**Greenfield 영역**: 자유도 높지만 클린 아키텍처 규칙(domain←application←infrastructure) 준수.
+**Evolving 영역**: CSS/Tailwind 변경은 브라우저 검증. 구조 변경 시 빌드 확인.
 
 ## 보안 자동 검토 대상
 다음 경로 변경 시 security-reviewer 에이전트 자동 실행:
@@ -58,6 +178,8 @@ npx next build          # 빌드 확인
 | `verify-bundle` | 번들 최적화 검증 (namespace import, dev-only 누출, ssr:false) |
 | `verify-meta-api-version` | Meta Graph API v25.0 버전 통일성 검증 |
 | `verify-token-encryption` | DB accessToken 암복호화 적용 일관성 검증 |
+| `verify-ui-components` | UI 컴포넌트 일관성, 접근성, 성능 패턴 검증 (랜딩/대시보드/픽셀/온보딩 변경 후 사용) |
+| `prometheus` | Prometheus 전략 계획 컨설턴트 — Pre-Interview Research, Intent-Specific Interview, Clearance Check, Verification Loop, QA Scenarios. 복잡한 기능 구현 전 `/prometheus`로 호출 |
 
 ## 린트 자동 수정 주의사항
 - `no-unused-vars` 수정 시 사용 중인 변수에 `_` 접두사를 붙이는 실수 주의

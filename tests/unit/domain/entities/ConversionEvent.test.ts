@@ -308,4 +308,119 @@ describe('ConversionEvent', () => {
       expect(StandardEventName.SEARCH).toBe('Search')
     })
   })
+
+  describe('CAPI customData 이벤트별 검증', () => {
+    // Purchase: value, currency 필수
+    describe('Purchase 이벤트', () => {
+      it('should_throw_error_when_purchase_event_missing_value', () => {
+        expect(() =>
+          ConversionEvent.create({
+            ...validCreateProps,
+            eventName: StandardEventName.PURCHASE,
+            customData: { currency: 'KRW' }, // value 누락
+          })
+        ).toThrow('Purchase 이벤트는 customData.value가 필수입니다')
+      })
+
+      it('should_throw_error_when_purchase_event_missing_currency', () => {
+        expect(() =>
+          ConversionEvent.create({
+            ...validCreateProps,
+            eventName: StandardEventName.PURCHASE,
+            customData: { value: 9900 }, // currency 누락
+          })
+        ).toThrow('Purchase 이벤트는 customData.currency가 필수입니다')
+      })
+
+      it('should_throw_error_when_purchase_event_has_no_custom_data', () => {
+        expect(() =>
+          ConversionEvent.create({
+            ...validCreateProps,
+            eventName: StandardEventName.PURCHASE,
+            // customData 없음
+          })
+        ).toThrow('Purchase 이벤트는 customData.value가 필수입니다')
+      })
+
+      it('should_create_purchase_event_when_value_and_currency_provided', () => {
+        const event = ConversionEvent.create({
+          ...validCreateProps,
+          eventName: StandardEventName.PURCHASE,
+          customData: { value: 9900, currency: 'KRW' },
+        })
+        expect(event.eventName).toBe(StandardEventName.PURCHASE)
+        expect(event.customData?.value).toBe(9900)
+        expect(event.customData?.currency).toBe('KRW')
+      })
+    })
+
+    // AddToCart: content_ids 또는 content_name 권장 (에러 아님, warn)
+    describe('AddToCart 이벤트', () => {
+      it('should_create_add_to_cart_event_without_content_ids_or_content_name', () => {
+        // 권장 필드 누락이지만 에러는 발생하지 않음
+        expect(() =>
+          ConversionEvent.create({
+            ...validCreateProps,
+            eventName: StandardEventName.ADD_TO_CART,
+            customData: { value: 5000, currency: 'KRW' }, // content_ids/content_name 없음
+          })
+        ).not.toThrow()
+      })
+
+      it('should_create_add_to_cart_event_when_content_ids_provided', () => {
+        const event = ConversionEvent.create({
+          ...validCreateProps,
+          eventName: StandardEventName.ADD_TO_CART,
+          customData: { content_ids: ['prod-001'], currency: 'KRW' },
+        })
+        expect(event.customData?.content_ids).toEqual(['prod-001'])
+      })
+    })
+
+    // InitiateCheckout: value, currency 권장 (에러 아님, warn)
+    describe('InitiateCheckout 이벤트', () => {
+      it('should_create_initiate_checkout_event_without_value_currency', () => {
+        // 권장 필드 누락이지만 에러는 발생하지 않음
+        expect(() =>
+          ConversionEvent.create({
+            ...validCreateProps,
+            eventName: StandardEventName.INITIATE_CHECKOUT,
+            customData: { num_items: 2 }, // value/currency 없음
+          })
+        ).not.toThrow()
+      })
+
+      it('should_create_initiate_checkout_event_when_value_and_currency_provided', () => {
+        const event = ConversionEvent.create({
+          ...validCreateProps,
+          eventName: StandardEventName.INITIATE_CHECKOUT,
+          customData: { value: 15000, currency: 'KRW' },
+        })
+        expect(event.customData?.value).toBe(15000)
+      })
+    })
+
+    // CompleteRegistration: status 권장 (에러 아님, warn)
+    describe('CompleteRegistration 이벤트', () => {
+      it('should_create_complete_registration_event_without_status', () => {
+        // 권장 필드 누락이지만 에러는 발생하지 않음
+        expect(() =>
+          ConversionEvent.create({
+            ...validCreateProps,
+            eventName: StandardEventName.COMPLETE_REGISTRATION,
+            // status 없음
+          })
+        ).not.toThrow()
+      })
+
+      it('should_create_complete_registration_event_when_status_provided', () => {
+        const event = ConversionEvent.create({
+          ...validCreateProps,
+          eventName: StandardEventName.COMPLETE_REGISTRATION,
+          customData: { status: 'completed' },
+        })
+        expect(event.customData?.status).toBe('completed')
+      })
+    })
+  })
 })

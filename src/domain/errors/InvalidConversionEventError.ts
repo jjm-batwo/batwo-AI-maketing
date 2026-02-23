@@ -26,4 +26,12 @@ export class InvalidConversionEventError extends DomainError {
   static alreadySentToMeta(): InvalidConversionEventError {
     return new InvalidConversionEventError('Event has already been sent to Meta')
   }
+
+  static missingPurchaseValue(): InvalidConversionEventError {
+    return new InvalidConversionEventError('Purchase 이벤트는 customData.value가 필수입니다')
+  }
+
+  static missingPurchaseCurrency(): InvalidConversionEventError {
+    return new InvalidConversionEventError('Purchase 이벤트는 customData.currency가 필수입니다')
+  }
 }

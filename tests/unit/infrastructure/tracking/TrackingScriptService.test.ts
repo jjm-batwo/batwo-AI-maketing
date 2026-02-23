@@ -66,9 +66,16 @@ describe('TrackingScriptService', () => {
     it('should include eventId generation for deduplication', () => {
       const script = service.generatePixelScript('123456789012345')
 
-      // Uses Date.now() + Math.random() for event ID generation
+      // crypto.randomUUID()로 UUID 기반 eventId 생성
       expect(script).toContain('eventId')
-      expect(script).toContain('Date.now()')
+      expect(script).toContain('crypto.randomUUID()')
+    })
+
+    it('should include trackCompleteRegistration helper', () => {
+      const script = service.generatePixelScript('123456789012345')
+
+      expect(script).toContain('trackCompleteRegistration')
+      expect(script).toContain("'CompleteRegistration'")
     })
 
     it('should embed pixel ID in script', () => {

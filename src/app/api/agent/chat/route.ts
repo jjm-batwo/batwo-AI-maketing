@@ -10,20 +10,24 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { message, conversationId } = body as { message?: string; conversationId?: string }
+    const { message, conversationId, uiContext } = body as {
+      message?: string
+      conversationId?: string
+      uiContext?: 'dashboard' | 'campaigns' | 'reports' | 'competitors' | 'portfolio' | 'general'
+    }
 
     if (!message || typeof message !== 'string' || message.trim().length === 0) {
-      return new Response(
-        JSON.stringify({ error: '메시지를 입력해주세요' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      )
+      return new Response(JSON.stringify({ error: '메시지를 입력해주세요' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
     }
 
     if (message.length > 2000) {
-      return new Response(
-        JSON.stringify({ error: '메시지는 2000자 이내로 입력해주세요' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      )
+      return new Response(JSON.stringify({ error: '메시지는 2000자 이내로 입력해주세요' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
     }
 
     const agentService = container.resolve<ConversationalAgentService>(
@@ -43,6 +47,7 @@ export async function POST(request: NextRequest) {
             userId: user.id!,
             message: message.trim(),
             conversationId,
+            uiContext,
           })) {
             sendEvent(chunk)
           }

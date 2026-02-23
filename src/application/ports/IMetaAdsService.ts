@@ -12,6 +12,7 @@ export interface MetaCampaignData {
 export interface MetaInsightsData {
   campaignId: string
   impressions: number
+  reach: number
   clicks: number
   linkClicks: number
   spend: number
@@ -25,6 +26,7 @@ export interface MetaDailyInsightsData {
   campaignId: string
   date: string
   impressions: number
+  reach: number
   clicks: number
   linkClicks: number
   spend: number
@@ -151,10 +153,7 @@ export interface IMetaAdsService {
     input: CreateMetaCampaignInput
   ): Promise<MetaCampaignData>
 
-  getCampaign(
-    accessToken: string,
-    campaignId: string
-  ): Promise<MetaCampaignData | null>
+  getCampaign(accessToken: string, campaignId: string): Promise<MetaCampaignData | null>
 
   getCampaignInsights(
     accessToken: string,
@@ -196,25 +195,14 @@ export interface IMetaAdsService {
     input: CreateMetaAdSetInput
   ): Promise<MetaAdSetData>
 
-  updateAdSet(
-    accessToken: string,
-    adSetId: string,
-    input: UpdateMetaAdSetInput
-  ): Promise<void>
+  updateAdSet(accessToken: string, adSetId: string, input: UpdateMetaAdSetInput): Promise<void>
 
   deleteAdSet(accessToken: string, adSetId: string): Promise<void>
 
-  listAdSets(
-    accessToken: string,
-    campaignId: string
-  ): Promise<MetaAdSetData[]>
+  listAdSets(accessToken: string, campaignId: string): Promise<MetaAdSetData[]>
 
   // Ad
-  createAd(
-    accessToken: string,
-    adAccountId: string,
-    input: CreateMetaAdInput
-  ): Promise<MetaAdData>
+  createAd(accessToken: string, adAccountId: string, input: CreateMetaAdInput): Promise<MetaAdData>
 
   // Creative
   createAdCreative(

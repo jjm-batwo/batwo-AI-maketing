@@ -35,8 +35,8 @@ argument-hint: "[선택사항: 특정 스킬 이름 또는 집중할 영역]"
 | `verify-cache-tags` | ISR 캐시 태그와 revalidateTag 매핑 일관성 검증 | `src/app/api/**`, `src/app/(dashboard)/**/page.tsx`, `src/app/(admin)/**/page.tsx` |
 | `verify-bundle` | 번들 최적화 검증 (namespace import, dev-only 누출, ssr:false) | `src/**/*.ts`, `src/**/*.tsx`, `package.json` |
 | `verify-meta-api-version` | Meta Graph API v25.0 버전 통일성 검증 | `src/infrastructure/external/meta-*/**`, `src/infrastructure/auth/**`, `src/app/api/meta/**`, `scripts/*` |
-| `verify-token-encryption` | DB accessToken 암복호화 적용 일관성 검증 | `src/app/api/meta/**`, `src/application/use-cases/**`, `src/application/utils/TokenEncryption.ts` |
-| `verify-ui-components` | UI 컴포넌트 일관성, 접근성, 성능 패턴 검증 | `src/presentation/components/landing/**`, `src/presentation/components/dashboard/**` |
+| `verify-token-encryption` | DB accessToken 암복호화 적용 일관성 검증 | `src/app/api/meta/**`, `src/application/use-cases/**`, `src/application/utils/TokenEncryption.ts`, `src/infrastructure/database/repositories/**` |
+| `verify-ui-components` | UI 컴포넌트 일관성, 접근성, 성능 패턴 검증 | `src/presentation/components/landing/**`, `src/presentation/components/dashboard/**`, `src/presentation/components/pixel/**`, `src/presentation/components/onboarding/**` |
 
 ## 워크플로우
 

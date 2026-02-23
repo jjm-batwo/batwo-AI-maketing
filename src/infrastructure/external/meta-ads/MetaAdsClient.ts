@@ -48,6 +48,7 @@ interface MetaApiInsightsResponse {
   data: {
     campaign_id: string
     impressions?: string
+    reach?: string
     clicks?: string
     spend?: string
     actions?: { action_type: string; value: string }[]
@@ -172,19 +173,16 @@ export class MetaAdsClient implements IMetaAdsService {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
-    return withRetry(
-      () => this.request<T>(accessToken, endpoint, options),
-      {
-        maxAttempts: 3,
-        initialDelayMs: process.env.NODE_ENV === 'test' ? 100 : 1000,
-        shouldRetry: (error) => {
-          if (error instanceof MetaAdsApiError) {
-            return MetaAdsApiError.isTransientError(error)
-          }
-          return false
-        },
-      }
-    )
+    return withRetry(() => this.request<T>(accessToken, endpoint, options), {
+      maxAttempts: 3,
+      initialDelayMs: process.env.NODE_ENV === 'test' ? 100 : 1000,
+      shouldRetry: (error) => {
+        if (error instanceof MetaAdsApiError) {
+          return MetaAdsApiError.isTransientError(error)
+        }
+        return false
+      },
+    })
   }
 
   async createCampaign(
@@ -239,10 +237,7 @@ export class MetaAdsClient implements IMetaAdsService {
     )
   }
 
-  async getCampaign(
-    accessToken: string,
-    campaignId: string
-  ): Promise<MetaCampaignData | null> {
+  async getCampaign(accessToken: string, campaignId: string): Promise<MetaCampaignData | null> {
     if (this.mockMode) {
       console.log('[MetaAdsClient:MOCK] getCampaign called with mock mode')
       return {
@@ -295,6 +290,7 @@ export class MetaAdsClient implements IMetaAdsService {
       return {
         campaignId,
         impressions: 15000,
+        reach: 12000,
         clicks: 450,
         linkClicks: 380,
         spend: 125000,
@@ -309,7 +305,7 @@ export class MetaAdsClient implements IMetaAdsService {
       'meta.getCampaignInsights',
       async () => {
         const fields =
-          'campaign_id,impressions,clicks,spend,actions,action_values,date_start,date_stop'
+          'campaign_id,impressions,reach,clicks,spend,actions,action_values,date_start,date_stop'
 
         const response = await this.requestWithRetry<MetaApiInsightsResponse>(
           accessToken,
@@ -335,9 +331,14 @@ export class MetaAdsClient implements IMetaAdsService {
     if (this.mockMode) {
       console.log('[MetaAdsClient:MOCK] getCampaignDailyInsights called with mock mode')
       const parsedDays = parseInt(datePreset.match(/\d+/)?.[0] || '7', 10)
-      const days = datePreset === 'today' ? 1
-        : datePreset === 'yesterday' ? 1
-        : (Number.isNaN(parsedDays) ? 7 : parsedDays)
+      const days =
+        datePreset === 'today'
+          ? 1
+          : datePreset === 'yesterday'
+            ? 1
+            : Number.isNaN(parsedDays)
+              ? 7
+              : parsedDays
       const mockData: MetaDailyInsightsData[] = []
 
       for (let i = 0; i < days; i++) {
@@ -347,6 +348,7 @@ export class MetaAdsClient implements IMetaAdsService {
           campaignId,
           date: date.toISOString().split('T')[0],
           impressions: Math.floor(2000 + Math.random() * 500),
+          reach: Math.floor(1600 + Math.random() * 400),
           clicks: Math.floor(60 + Math.random() * 20),
           linkClicks: Math.floor(50 + Math.random() * 15),
           spend: Math.floor(15000 + Math.random() * 5000),
@@ -362,13 +364,14 @@ export class MetaAdsClient implements IMetaAdsService {
       'meta.getCampaignDailyInsights',
       async () => {
         const fields =
-          'campaign_id,impressions,clicks,spend,actions,action_values,date_start,date_stop'
+          'campaign_id,impressions,reach,clicks,spend,actions,action_values,date_start,date_stop'
 
         // time_increment=1 returns daily breakdown
         // since/until을 사용하면 date_preset보다 정확한 날짜 범위 조회 가능
-        const dateParams = options?.since && options?.until
-          ? `time_range=${encodeURIComponent(JSON.stringify({ since: options.since, until: options.until }))}`
-          : `date_preset=${datePreset}`
+        const dateParams =
+          options?.since && options?.until
+            ? `time_range=${encodeURIComponent(JSON.stringify({ since: options.since, until: options.until }))}`
+            : `date_preset=${datePreset}`
         const response = await this.requestWithRetry<MetaApiInsightsResponse>(
           accessToken,
           `/${campaignId}/insights?fields=${fields}&${dateParams}&time_increment=1`,
@@ -394,22 +397,21 @@ export class MetaAdsClient implements IMetaAdsService {
 
     return response.data.map((item) => {
       const conversions =
-        item.actions?.find(
-          (a) => a.action_type === 'purchase' || a.action_type === 'omni_purchase'
-        )?.value ?? '0'
+        item.actions?.find((a) => a.action_type === 'purchase' || a.action_type === 'omni_purchase')
+          ?.value ?? '0'
 
       const revenue =
         item.action_values?.find(
           (a) => a.action_type === 'purchase' || a.action_type === 'omni_purchase'
         )?.value ?? '0'
 
-      const linkClicks =
-        item.actions?.find((a) => a.action_type === 'link_click')?.value ?? '0'
+      const linkClicks = item.actions?.find((a) => a.action_type === 'link_click')?.value ?? '0'
 
       return {
         campaignId,
         date: item.date_start,
         impressions: parseInt(item.impressions ?? '0', 10),
+        reach: parseInt(item.reach ?? '0', 10),
         clicks: parseInt(item.clicks ?? '0', 10),
         linkClicks: parseInt(linkClicks, 10),
         spend: parseFloat(item.spend ?? '0'),
@@ -495,11 +497,9 @@ export class MetaAdsClient implements IMetaAdsService {
       return
     }
 
-    await this.requestWithRetry<{ success: boolean }>(
-      accessToken,
-      `/${campaignId}`,
-      { method: 'DELETE' }
-    )
+    await this.requestWithRetry<{ success: boolean }>(accessToken, `/${campaignId}`, {
+      method: 'DELETE',
+    })
   }
 
   async listCampaigns(
@@ -511,9 +511,39 @@ export class MetaAdsClient implements IMetaAdsService {
       console.log('[MetaAdsClient:MOCK] listCampaigns called with mock mode')
       return {
         campaigns: [
-          { id: '120210000000001', name: '신규 고객 확보 캠페인', status: 'ACTIVE', objective: 'OUTCOME_SALES', dailyBudget: 50000, startTime: new Date(Date.now() - 7*86400000).toISOString(), endTime: undefined, createdTime: new Date(Date.now() - 7*86400000).toISOString(), updatedTime: new Date().toISOString() },
-          { id: '120210000000002', name: '브랜드 인지도 캠페인', status: 'ACTIVE', objective: 'OUTCOME_AWARENESS', dailyBudget: 30000, startTime: new Date(Date.now() - 14*86400000).toISOString(), endTime: undefined, createdTime: new Date(Date.now() - 14*86400000).toISOString(), updatedTime: new Date().toISOString() },
-          { id: '120210000000003', name: '리타겟팅 캠페인', status: 'PAUSED', objective: 'OUTCOME_SALES', dailyBudget: 20000, startTime: new Date(Date.now() - 30*86400000).toISOString(), endTime: new Date(Date.now() - 2*86400000).toISOString(), createdTime: new Date(Date.now() - 30*86400000).toISOString(), updatedTime: new Date().toISOString() },
+          {
+            id: '120210000000001',
+            name: '신규 고객 확보 캠페인',
+            status: 'ACTIVE',
+            objective: 'OUTCOME_SALES',
+            dailyBudget: 50000,
+            startTime: new Date(Date.now() - 7 * 86400000).toISOString(),
+            endTime: undefined,
+            createdTime: new Date(Date.now() - 7 * 86400000).toISOString(),
+            updatedTime: new Date().toISOString(),
+          },
+          {
+            id: '120210000000002',
+            name: '브랜드 인지도 캠페인',
+            status: 'ACTIVE',
+            objective: 'OUTCOME_AWARENESS',
+            dailyBudget: 30000,
+            startTime: new Date(Date.now() - 14 * 86400000).toISOString(),
+            endTime: undefined,
+            createdTime: new Date(Date.now() - 14 * 86400000).toISOString(),
+            updatedTime: new Date().toISOString(),
+          },
+          {
+            id: '120210000000003',
+            name: '리타겟팅 캠페인',
+            status: 'PAUSED',
+            objective: 'OUTCOME_SALES',
+            dailyBudget: 20000,
+            startTime: new Date(Date.now() - 30 * 86400000).toISOString(),
+            endTime: new Date(Date.now() - 2 * 86400000).toISOString(),
+            createdTime: new Date(Date.now() - 30 * 86400000).toISOString(),
+            updatedTime: new Date().toISOString(),
+          },
         ],
         paging: undefined,
       }
@@ -535,13 +565,28 @@ export class MetaAdsClient implements IMetaAdsService {
         }
 
         // Include all campaign statuses (default API may filter some out)
-        params.append('filtering', JSON.stringify([
-          {
-            field: 'effective_status',
-            operator: 'IN',
-            value: ['ACTIVE', 'PAUSED', 'DELETED', 'ARCHIVED', 'IN_PROCESS', 'WITH_ISSUES', 'CAMPAIGN_PAUSED', 'ADSET_PAUSED', 'PENDING_REVIEW', 'DISAPPROVED', 'PENDING_BILLING_INFO']
-          }
-        ]))
+        params.append(
+          'filtering',
+          JSON.stringify([
+            {
+              field: 'effective_status',
+              operator: 'IN',
+              value: [
+                'ACTIVE',
+                'PAUSED',
+                'DELETED',
+                'ARCHIVED',
+                'IN_PROCESS',
+                'WITH_ISSUES',
+                'CAMPAIGN_PAUSED',
+                'ADSET_PAUSED',
+                'PENDING_REVIEW',
+                'DISAPPROVED',
+                'PENDING_BILLING_INFO',
+              ],
+            },
+          ])
+        )
 
         const endpoint = `/${adAccountId}/campaigns?${params.toString()}`
 
@@ -665,11 +710,10 @@ export class MetaAdsClient implements IMetaAdsService {
           body.end_time = input.endTime ? input.endTime.toISOString() : null
         }
 
-        await this.requestWithRetry<{ success: boolean }>(
-          accessToken,
-          `/${adSetId}`,
-          { method: 'POST', body: JSON.stringify(body) }
-        )
+        await this.requestWithRetry<{ success: boolean }>(accessToken, `/${adSetId}`, {
+          method: 'POST',
+          body: JSON.stringify(body),
+        })
       },
       { 'meta.adSetId': adSetId }
     )
@@ -681,17 +725,12 @@ export class MetaAdsClient implements IMetaAdsService {
       return
     }
 
-    await this.requestWithRetry<{ success: boolean }>(
-      accessToken,
-      `/${adSetId}`,
-      { method: 'DELETE' }
-    )
+    await this.requestWithRetry<{ success: boolean }>(accessToken, `/${adSetId}`, {
+      method: 'DELETE',
+    })
   }
 
-  async listAdSets(
-    accessToken: string,
-    campaignId: string
-  ): Promise<MetaAdSetData[]> {
+  async listAdSets(accessToken: string, campaignId: string): Promise<MetaAdSetData[]> {
     if (this.mockMode) {
       console.log('[MetaAdsClient:MOCK] listAdSets called with mock mode')
       return [
@@ -720,11 +759,7 @@ export class MetaAdsClient implements IMetaAdsService {
             billing_event: string
             optimization_goal: string
           }[]
-        }>(
-          accessToken,
-          `/${campaignId}/adsets?fields=${fields}`,
-          { method: 'GET' }
-        )
+        }>(accessToken, `/${campaignId}/adsets?fields=${fields}`, { method: 'GET' })
 
         return response.data.map((item) => ({
           id: item.id,
@@ -858,11 +893,7 @@ export class MetaAdsClient implements IMetaAdsService {
 
         const response = await this.requestWithRetry<{
           images: { bytes: { hash: string } }
-        }>(
-          accessToken,
-          `/${adAccountId}/adimages`,
-          { method: 'POST', body: JSON.stringify(body) }
-        )
+        }>(accessToken, `/${adAccountId}/adimages`, { method: 'POST', body: JSON.stringify(body) })
 
         return { imageHash: response.images.bytes.hash }
       },
@@ -925,6 +956,7 @@ export class MetaAdsClient implements IMetaAdsService {
       return {
         campaignId,
         impressions: 0,
+        reach: 0,
         clicks: 0,
         linkClicks: 0,
         spend: 0,
@@ -935,16 +967,14 @@ export class MetaAdsClient implements IMetaAdsService {
       }
     }
 
-    const conversions =
-      data.actions?.find((a) => a.action_type === 'purchase')?.value || '0'
-    const revenue =
-      data.action_values?.find((a) => a.action_type === 'purchase')?.value || '0'
-    const linkClicks =
-      data.actions?.find((a) => a.action_type === 'link_click')?.value || '0'
+    const conversions = data.actions?.find((a) => a.action_type === 'purchase')?.value || '0'
+    const revenue = data.action_values?.find((a) => a.action_type === 'purchase')?.value || '0'
+    const linkClicks = data.actions?.find((a) => a.action_type === 'link_click')?.value || '0'
 
     return {
       campaignId: data.campaign_id,
       impressions: parseInt(data.impressions || '0', 10),
+      reach: parseInt(data.reach || '0', 10),
       clicks: parseInt(data.clicks || '0', 10),
       linkClicks: parseInt(linkClicks, 10),
       spend: parseFloat(data.spend || '0'),

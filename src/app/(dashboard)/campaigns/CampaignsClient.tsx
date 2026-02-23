@@ -6,12 +6,12 @@ import { ApiSourceBadge } from '@/presentation/components/common/ApiSourceBadge'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { CampaignTable } from '@/presentation/components/campaign'
-import { useCampaignStore } from '@/presentation/stores'
+import { useCampaignStore, useUIStore } from '@/presentation/stores'
 import { useDashboardKPI } from '@/presentation/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Plus, Search, Pause, Play, Trash2 } from 'lucide-react'
+import { Plus, Search, Pause, Play, Trash2, Sparkles } from 'lucide-react'
 import {
   Select,
   SelectContent,
@@ -53,6 +53,7 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
   const searchParams = useSearchParams()
   const showApiSource = searchParams.get('showApiSource') === 'true'
   const { filters, setFilters, selectedCampaignIds } = useCampaignStore()
+  const { openChatPanel } = useUIStore()
   const [period, setPeriod] = useState<KPIPeriod>('7d')
 
   // 기간별 KPI 데이터 (클라이언트 사이드 fetch)
@@ -66,7 +67,24 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
     if (initialCampaigns.length === 0) return []
 
     const breakdownMap = new Map(
-      (kpiData?.campaignBreakdown ?? []).map((b: { campaignId: string; spend: number; roas: number; ctr: number }) => [b.campaignId, b])
+      (kpiData?.campaignBreakdown ?? []).map(
+        (b: {
+          campaignId: string
+          spend: number
+          roas: number
+          ctr: number
+          impressions: number
+          reach: number
+          clicks: number
+          linkClicks: number
+          conversions: number
+          revenue: number
+          cpa: number
+          cpc: number
+          cvr: number
+          cpm: number
+        }) => [b.campaignId, b]
+      )
     )
 
     return initialCampaigns.map((campaign): CampaignWithKPI => {
@@ -76,6 +94,16 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
         spend: breakdown?.spend ?? 0,
         roas: breakdown?.roas ?? 0,
         ctr: breakdown?.ctr ?? 0,
+        impressions: breakdown?.impressions ?? 0,
+        reach: breakdown?.reach ?? 0,
+        clicks: breakdown?.clicks ?? 0,
+        conversions: breakdown?.conversions ?? 0,
+        revenue: breakdown?.revenue ?? 0,
+        cpa: breakdown?.cpa ?? 0,
+        cpc: breakdown?.cpc ?? 0,
+        cvr: breakdown?.cvr ?? 0,
+        cpm: breakdown?.cpm ?? 0,
+        linkClicks: breakdown?.linkClicks ?? 0,
       }
     })
   }, [initialCampaigns, kpiData?.campaignBreakdown])
@@ -83,7 +111,7 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
   // 활성 캠페인을 상단에 배치하는 정렬 로직
   const campaigns = useMemo(() => {
     if (filters.status !== 'ALL') {
-      return rawCampaigns.filter(c => c.status === filters.status)
+      return rawCampaigns.filter((c) => c.status === filters.status)
     }
 
     return [...rawCampaigns].sort((a, b) => {
@@ -105,14 +133,31 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">{t('campaigns.title')}</h1>
           <p className="text-muted-foreground mt-2">{t('campaigns.subtitle')}</p>
-          {showApiSource && <ApiSourceBadge endpoint="POST /act_{id}/campaigns" permission="ads_management" className="mt-2" />}
+          {showApiSource && (
+            <ApiSourceBadge
+              endpoint="POST /act_{id}/campaigns"
+              permission="ads_management"
+              className="mt-2"
+            />
+          )}
         </div>
-        <Button asChild size="lg" className="shadow-sm transition-all">
-          <Link href="/campaigns/new">
-            <Plus className="mr-2 h-4 w-4" />
-            {t('campaigns.newCampaign')}
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="lg"
+            className="gap-2 border-primary/20 hover:bg-primary/5 hover:border-primary/40 transition-all"
+            onClick={openChatPanel}
+          >
+            <Sparkles className="h-4 w-4 text-primary" />
+            AI 도움받기
+          </Button>
+          <Button asChild size="lg" className="shadow-sm transition-all">
+            <Link href="/campaigns/new">
+              <Plus className="mr-2 h-4 w-4" />
+              {t('campaigns.newCampaign')}
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Filters and List Container */}
@@ -120,7 +165,11 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
         {/* Period Tabs + Filters */}
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <Tabs value={period} onValueChange={(v) => setPeriod(v as KPIPeriod)} className="w-full sm:w-auto">
+            <Tabs
+              value={period}
+              onValueChange={(v) => setPeriod(v as KPIPeriod)}
+              className="w-full sm:w-auto"
+            >
               <TabsList className="grid w-full grid-cols-4 sm:w-auto bg-muted/50 dark:bg-muted/20">
                 <TabsTrigger value="today">오늘</TabsTrigger>
                 <TabsTrigger value="yesterday">어제</TabsTrigger>
@@ -145,9 +194,7 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
             </div>
             <Select
               value={filters.status}
-              onValueChange={(value) =>
-                setFilters({ status: value as typeof filters.status })
-              }
+              onValueChange={(value) => setFilters({ status: value as typeof filters.status })}
             >
               <SelectTrigger className="w-[160px] bg-white/50 dark:bg-black/10 border-border/50">
                 <SelectValue placeholder={t('campaigns.status.label')} />
@@ -162,9 +209,7 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
             </Select>
             <Select
               value={filters.sortBy}
-              onValueChange={(value) =>
-                setFilters({ sortBy: value as typeof filters.sortBy })
-              }
+              onValueChange={(value) => setFilters({ sortBy: value as typeof filters.sortBy })}
             >
               <SelectTrigger className="w-[160px] bg-white/50 dark:bg-black/10 border-border/50">
                 <SelectValue placeholder={t('campaigns.sort.label')} />
@@ -174,6 +219,15 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
                 <SelectItem value="name">{t('campaigns.sort.name')}</SelectItem>
                 <SelectItem value="spend">{t('campaigns.sort.spend')}</SelectItem>
                 <SelectItem value="roas">{t('campaigns.sort.roas')}</SelectItem>
+                <SelectItem value="ctr">CTR</SelectItem>
+                <SelectItem value="cpc">CPC</SelectItem>
+                <SelectItem value="cpa">CPA</SelectItem>
+                <SelectItem value="cvr">CVR</SelectItem>
+                <SelectItem value="cpm">CPM</SelectItem>
+                <SelectItem value="reach">도달</SelectItem>
+                <SelectItem value="impressions">노출</SelectItem>
+                <SelectItem value="clicks">클릭</SelectItem>
+                <SelectItem value="conversions">전환</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -182,9 +236,7 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
         {/* Bulk Action Bar */}
         {selectedCampaignIds.length > 0 && (
           <div className="flex items-center gap-3 rounded-lg border border-primary/20 bg-primary/5 p-3">
-            <span className="text-sm font-medium">
-              {selectedCampaignIds.length}개 선택됨
-            </span>
+            <span className="text-sm font-medium">{selectedCampaignIds.length}개 선택됨</span>
             <div className="flex gap-2 ml-auto">
               <Button variant="outline" size="sm">
                 <Pause className="mr-1 h-3 w-3" />
@@ -194,7 +246,11 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
                 <Play className="mr-1 h-3 w-3" />
                 재개
               </Button>
-              <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-destructive hover:text-destructive"
+              >
                 <Trash2 className="mr-1 h-3 w-3" />
                 삭제
               </Button>

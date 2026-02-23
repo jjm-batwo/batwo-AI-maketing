@@ -37,16 +37,19 @@ export function ChatMessage({ role, content, isStreaming, timestamp }: ChatMessa
             : 'bg-muted text-foreground rounded-tl-sm'
         )}
       >
-        {content || (isStreaming && (
+        {content ? (
+          <div className="whitespace-pre-wrap break-words">
+            {content}
+            {isStreaming && (
+              <span className="inline-block w-1.5 h-4 bg-current animate-pulse ml-0.5 -mb-0.5" />
+            )}
+          </div>
+        ) : isStreaming ? (
           <div className="flex items-center gap-2 text-muted-foreground">
             <Loader2 className="h-3 w-3 animate-spin" />
             <span className="text-xs">생각하는 중...</span>
           </div>
-        ))}
-        {content && <div className="whitespace-pre-wrap break-words">{content}</div>}
-        {isStreaming && content && (
-          <span className="inline-block w-1.5 h-4 bg-current animate-pulse ml-0.5 -mb-0.5" />
-        )}
+        ) : null}
       </div>
     </div>
   )

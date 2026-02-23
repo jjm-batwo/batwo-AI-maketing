@@ -114,7 +114,7 @@ window.batwoPixel = {
 
   trackEvent: function(eventName, params) {
     params = params || {};
-    var eventId = 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    var eventId = crypto.randomUUID();
 
     // 클라이언트 픽셀 이벤트
     fbq('track', eventName, params, {eventID: eventId});
@@ -168,6 +168,12 @@ window.batwoPixel = {
     this.trackEvent('Lead', {
       value: value || 0,
       currency: currency || 'KRW'
+    });
+  },
+
+  trackCompleteRegistration: function(status) {
+    this.trackEvent('CompleteRegistration', {
+      status: status || ''
     });
   }
 };

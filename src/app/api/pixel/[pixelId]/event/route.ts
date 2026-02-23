@@ -52,6 +52,16 @@ export async function POST(request: NextRequest, context: RouteContext) {
       )
     }
 
+    // eventId 중복 체크 — 멱등성 보장 (동일 pixelId+eventId 조합은 1회만 저장)
+    const existing = await prisma.conversionEvent.findFirst({
+      where: { pixelId: pixel.id, eventId: parsedEvent.eventId },
+    })
+
+    if (existing) {
+      // 이미 존재하는 이벤트 — 중복 저장 없이 204 반환
+      return new NextResponse(null, { status: 204 })
+    }
+
     // Store the event in the database for later CAPI processing
     await prisma.conversionEvent.create({
       data: {
@@ -71,9 +81,8 @@ export async function POST(request: NextRequest, context: RouteContext) {
   } catch (error) {
     console.error('Error processing event:', error)
 
-    // For Prisma unique constraint violations (duplicate eventId)
+    // Prisma unique constraint 위반(race condition) — 중복 이벤트이므로 무시
     if (error instanceof Error && error.message.includes('Unique constraint')) {
-      // Duplicate event is OK - just ignore
       return new NextResponse(null, { status: 204 })
     }
 

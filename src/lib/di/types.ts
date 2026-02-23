@@ -123,6 +123,10 @@ export const DI_TOKENS = {
 
   // Token Management
   RefreshMetaTokenUseCase: Symbol.for('RefreshMetaTokenUseCase'),
+
+  // CAPI Batch
+  ConversionEventRepository: Symbol.for('ConversionEventRepository'),
+  SendCAPIEventsUseCase: Symbol.for('SendCAPIEventsUseCase'),
 } as const
 
 export type DIToken = (typeof DI_TOKENS)[keyof typeof DI_TOKENS]

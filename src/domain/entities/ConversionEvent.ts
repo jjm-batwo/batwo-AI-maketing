@@ -104,6 +104,7 @@ export class ConversionEvent {
     ConversionEvent.validateEventName(props.eventName)
     ConversionEvent.validateEventId(props.eventId)
     ConversionEvent.validateEventTime(props.eventTime)
+    ConversionEvent.validateCustomData(props.eventName, props.customData)
 
     return new ConversionEvent(
       crypto.randomUUID(),
@@ -158,6 +159,29 @@ export class ConversionEvent {
     if (eventTime > new Date()) {
       throw InvalidConversionEventError.futureEventTime()
     }
+  }
+
+  /**
+   * 이벤트 유형별 customData 필드 검증
+   * - Purchase: value, currency 필수 (에러 throw)
+   * - AddToCart: content_ids 또는 content_name 권장 (console.warn)
+   * - InitiateCheckout: value, currency 권장 (console.warn)
+   * - CompleteRegistration: status 권장 (console.warn)
+   */
+  private static validateCustomData(eventName: string, customData?: CustomData): void {
+    if (eventName === StandardEventName.PURCHASE) {
+      // Purchase는 value, currency 필수
+      if (customData?.value == null) {
+        throw InvalidConversionEventError.missingPurchaseValue()
+      }
+      if (!customData?.currency) {
+        throw InvalidConversionEventError.missingPurchaseCurrency()
+      }
+      return
+    }
+
+    // AddToCart, InitiateCheckout, CompleteRegistration:
+    // 권장 필드 누락은 에러 없이 허용 (상위 레이어에서 필요시 검증)
   }
 
   // Getters

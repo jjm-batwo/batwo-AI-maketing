@@ -37,6 +37,7 @@ const mockTranslations: Record<string, Record<string, string>> = {
     'benefits.item2': '광고 성과 측정',
     'benefits.item3': '고객 재방문 추적',
     'benefits.item4': '더 정확한 타겟팅',
+    'selectPlatform': '쇼핑몰 플랫폼을 선택하세요',
   },
   'pixel': {
     'loading': '픽셀을 불러오는 중',
@@ -192,7 +193,7 @@ describe('PixelSetupStep', () => {
     })
   })
 
-  describe('pixel selection and script display', () => {
+  describe('pixel selection and platform flow', () => {
     beforeEach(() => {
       // Reset to authenticated with Meta token
       vi.mocked(useSession).mockReturnValue({
@@ -210,7 +211,7 @@ describe('PixelSetupStep', () => {
       })
     })
 
-    it('should show script code after pixel selection', async () => {
+    it('should_show_platform_selector_after_pixel_selection', async () => {
       vi.mocked(fetch).mockResolvedValue({
         ok: true,
         json: async () => ({
@@ -224,22 +225,148 @@ describe('PixelSetupStep', () => {
         wrapper: createQueryClientWrapper(),
       })
 
-      // Wait for pixels to load
+      // 픽셀 로드 대기
       await waitFor(() => {
         expect(screen.getByText('Test Pixel')).toBeInTheDocument()
       })
 
-      // Click on the pixel to select it
+      // 픽셀 선택
       fireEvent.click(screen.getByText('Test Pixel'))
 
-      // Should show selected state
+      // 픽셀 선택 후 PlatformSelector가 표시되어야 함
       await waitFor(() => {
         expect(screen.getByText(/선택됨/i)).toBeInTheDocument()
       })
 
-      // Should show script code
-      expect(screen.getByText(/<script/i)).toBeInTheDocument()
-      expect(screen.getByText(/설치 방법/i)).toBeInTheDocument()
+      // 플랫폼 목록이 표시되어야 함 (PlatformSelector의 카드들)
+      expect(screen.getByText('카페24')).toBeInTheDocument()
+      expect(screen.getByText('자체몰 (커스텀)')).toBeInTheDocument()
+      expect(screen.getByText('네이버 스마트스토어')).toBeInTheDocument()
+    })
+
+    it('should_show_custom_site_guide_when_custom_platform_selected', async () => {
+      vi.mocked(fetch).mockImplementation((url: string | URL | Request) => {
+        const urlStr = url.toString()
+        // 픽셀 목록 API
+        if (urlStr.includes('/api/pixel') && !urlStr.includes('/snippet')) {
+          return Promise.resolve({
+            ok: true,
+            json: async () => ({
+              data: [
+                { id: 'pixel-1', metaPixelId: '123456789', name: 'Test Pixel', isActive: true, setupMethod: 'MANUAL', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+              ],
+            }),
+          } as Response)
+        }
+        // 스니펫 API (CustomSiteGuide 내부 fetch)
+        return Promise.resolve({
+          ok: true,
+          text: async () => '<script src="..."></script>',
+        } as Response)
+      })
+
+      render(<PixelSetupStep />, {
+        wrapper: createQueryClientWrapper(),
+      })
+
+      // 픽셀 선택
+      await waitFor(() => {
+        expect(screen.getByText('Test Pixel')).toBeInTheDocument()
+      })
+      fireEvent.click(screen.getByText('Test Pixel'))
+
+      // 플랫폼 선택 대기
+      await waitFor(() => {
+        expect(screen.getByText('자체몰 (커스텀)')).toBeInTheDocument()
+      })
+
+      // 자체몰 선택
+      fireEvent.click(screen.getByText('자체몰 (커스텀)'))
+
+      // CustomSiteGuide가 렌더링되어야 함
+      await waitFor(() => {
+        expect(screen.getByText(/자체몰 픽셀 설치 가이드/i)).toBeInTheDocument()
+      })
+    })
+
+    it('should_show_naver_guide_when_naver_platform_selected', async () => {
+      vi.mocked(fetch).mockImplementation((url: string | URL | Request) => {
+        const urlStr = url.toString()
+        // 픽셀 목록 API
+        if (urlStr.includes('/api/pixel') && !urlStr.includes('/snippet')) {
+          return Promise.resolve({
+            ok: true,
+            json: async () => ({
+              data: [
+                { id: 'pixel-1', metaPixelId: '123456789', name: 'Test Pixel', isActive: true, setupMethod: 'MANUAL', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+              ],
+            }),
+          } as Response)
+        }
+        // 스니펫 API (NaverGuide 내부 fetch)
+        return Promise.resolve({
+          ok: true,
+          text: async () => '<script src="..."></script>',
+        } as Response)
+      })
+
+      render(<PixelSetupStep />, {
+        wrapper: createQueryClientWrapper(),
+      })
+
+      // 픽셀 선택
+      await waitFor(() => {
+        expect(screen.getByText('Test Pixel')).toBeInTheDocument()
+      })
+      fireEvent.click(screen.getByText('Test Pixel'))
+
+      // 플랫폼 선택 대기
+      await waitFor(() => {
+        expect(screen.getByText('네이버 스마트스토어')).toBeInTheDocument()
+      })
+
+      // 네이버 선택
+      fireEvent.click(screen.getByText('네이버 스마트스토어'))
+
+      // NaverGuide가 렌더링되어야 함
+      await waitFor(() => {
+        expect(screen.getByText(/네이버 스마트스토어 픽셀 설치 가이드/i)).toBeInTheDocument()
+      })
+    })
+
+    it('should_show_script_for_cafe24_platform', async () => {
+      vi.mocked(fetch).mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          data: [
+            { id: 'pixel-1', metaPixelId: '123456789', name: 'Test Pixel', isActive: true, setupMethod: 'MANUAL', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
+          ],
+        }),
+      } as Response)
+
+      render(<PixelSetupStep />, {
+        wrapper: createQueryClientWrapper(),
+      })
+
+      // 픽셀 선택
+      await waitFor(() => {
+        expect(screen.getByText('Test Pixel')).toBeInTheDocument()
+      })
+      fireEvent.click(screen.getByText('Test Pixel'))
+
+      // 플랫폼 선택 대기
+      await waitFor(() => {
+        expect(screen.getByText('카페24')).toBeInTheDocument()
+      })
+
+      // 카페24 선택
+      fireEvent.click(screen.getByText('카페24'))
+
+      // 스크립트 코드가 표시되어야 함
+      await waitFor(() => {
+        expect(screen.getByText(/설치 방법/i)).toBeInTheDocument()
+        expect(screen.getByText(/<script/i)).toBeInTheDocument()
+      })
     })
 
     it('should allow changing pixel selection', async () => {
@@ -256,26 +383,26 @@ describe('PixelSetupStep', () => {
         wrapper: createQueryClientWrapper(),
       })
 
-      // Wait for pixels to load and select one
+      // 픽셀 로드 대기 후 선택
       await waitFor(() => {
         expect(screen.getByText('Test Pixel')).toBeInTheDocument()
       })
 
       fireEvent.click(screen.getByText('Test Pixel'))
 
-      // Should show change button
+      // 다른 픽셀 선택 버튼이 표시되어야 함
       await waitFor(() => {
         expect(screen.getByText(/다른 픽셀 선택/i)).toBeInTheDocument()
       })
 
-      // Click change button
+      // 변경 버튼 클릭
       fireEvent.click(screen.getByText(/다른 픽셀 선택/i))
 
-      // Should show pixel selector again (script code should be hidden)
+      // 픽셀 선택 화면으로 돌아가야 함 (선택됨 텍스트 사라짐)
       expect(screen.queryByText(/선택됨/i)).not.toBeInTheDocument()
     })
 
-    it('should have copy button with accessible label', async () => {
+    it('should have copy button with accessible label after cafe24 selection', async () => {
       vi.mocked(fetch).mockResolvedValue({
         ok: true,
         json: async () => ({
@@ -289,14 +416,20 @@ describe('PixelSetupStep', () => {
         wrapper: createQueryClientWrapper(),
       })
 
-      // Wait for pixels to load and select one
+      // 픽셀 로드 대기 후 선택
       await waitFor(() => {
         expect(screen.getByText('Test Pixel')).toBeInTheDocument()
       })
 
       fireEvent.click(screen.getByText('Test Pixel'))
 
-      // Should have copy button with aria-label
+      // 카페24 선택
+      await waitFor(() => {
+        expect(screen.getByText('카페24')).toBeInTheDocument()
+      })
+      fireEvent.click(screen.getByText('카페24'))
+
+      // 복사 버튼에 aria-label이 있어야 함
       await waitFor(() => {
         expect(screen.getByRole('button', { name: /코드 복사/i })).toBeInTheDocument()
       })
