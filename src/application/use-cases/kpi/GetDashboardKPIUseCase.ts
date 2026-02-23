@@ -244,6 +244,7 @@ export class GetDashboardKPIUseCase {
     const currentMetrics = {
       impressions: 0,
       clicks: 0,
+      linkClicks: 0,
       conversions: 0,
       spend: 0,
       revenue: 0,
@@ -252,6 +253,7 @@ export class GetDashboardKPIUseCase {
     const previousMetrics = {
       impressions: 0,
       clicks: 0,
+      linkClicks: 0,
       conversions: 0,
       spend: 0,
       revenue: 0,
@@ -264,6 +266,7 @@ export class GetDashboardKPIUseCase {
       if (currentAgg) {
         currentMetrics.impressions += currentAgg.totalImpressions
         currentMetrics.clicks += currentAgg.totalClicks
+        currentMetrics.linkClicks += currentAgg.totalLinkClicks
         currentMetrics.conversions += currentAgg.totalConversions
         currentMetrics.spend += currentAgg.totalSpend
         currentMetrics.revenue += currentAgg.totalRevenue
@@ -272,6 +275,7 @@ export class GetDashboardKPIUseCase {
       if (previousAgg) {
         previousMetrics.impressions += previousAgg.totalImpressions
         previousMetrics.clicks += previousAgg.totalClicks
+        previousMetrics.linkClicks += previousAgg.totalLinkClicks
         previousMetrics.conversions += previousAgg.totalConversions
         previousMetrics.spend += previousAgg.totalSpend
         previousMetrics.revenue += previousAgg.totalRevenue
@@ -310,6 +314,7 @@ export class GetDashboardKPIUseCase {
         previousMetrics.impressions
       ),
       clicksChange: calcChange(currentMetrics.clicks, previousMetrics.clicks),
+      linkClicksChange: calcChange(currentMetrics.linkClicks, previousMetrics.linkClicks),
       conversionsChange: calcChange(
         currentMetrics.conversions,
         previousMetrics.conversions

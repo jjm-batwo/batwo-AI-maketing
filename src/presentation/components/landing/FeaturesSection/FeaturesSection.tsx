@@ -1,8 +1,8 @@
 'use client'
 
-import { memo } from 'react'
+import { memo, useRef } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useIntersectionObserver } from '@/presentation/hooks'
+import { useScrollAnimation, useIsMobile } from '@/presentation/hooks'
 import { FEATURES } from './featuresData'
 
 interface FeaturesSectionProps {
@@ -10,13 +10,15 @@ interface FeaturesSectionProps {
 }
 
 export const FeaturesSection = memo(function FeaturesSection({ id = 'features' }: FeaturesSectionProps) {
-  const { ref, isIntersecting } = useIntersectionObserver()
+  const sectionRef = useRef<HTMLDivElement>(null)
+  const { isVisible } = useScrollAnimation(sectionRef, { threshold: 0.1 })
+  const isMobile = useIsMobile()
 
   return (
     <section id={id} className="py-20 md:py-32 overflow-hidden">
       <div
-        ref={ref}
-        className={`container mx-auto px-4 transition-all duration-1000 ${isIntersecting ? 'animate-slide-up opacity-100' : 'opacity-0 translate-y-10'
+        ref={sectionRef}
+        className={`container mx-auto px-4 transition-all duration-1000 ${isVisible ? 'animate-slide-up opacity-100' : 'opacity-0 translate-y-10'
           }`}
       >
         <header className="text-center mb-16">
@@ -40,7 +42,7 @@ export const FeaturesSection = memo(function FeaturesSection({ id = 'features' }
                       value={feature.title}
                       className="flex items-center gap-3 px-4 py-3.5 justify-start text-left whitespace-nowrap lg:whitespace-normal w-full data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm data-[state=active]:border-gray-200 border border-transparent rounded-xl transition-all hover:bg-white/60 text-slate-600 font-medium"
                     >
-                      <Icon className="h-5 w-5 flex-shrink-0" />
+                      <Icon className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
                       <span className="text-sm">{feature.title}</span>
                     </TabsTrigger>
                   )
@@ -55,7 +57,7 @@ export const FeaturesSection = memo(function FeaturesSection({ id = 'features' }
                   <div className="mb-8">
                     <div className="flex items-center gap-4 mb-4">
                       <div className="w-12 h-12 rounded-xl bg-primary/5 flex items-center justify-center border border-primary/10">
-                        <feature.icon className="h-6 w-6 text-primary" />
+                        <feature.icon className="h-6 w-6 text-primary" aria-hidden="true" />
                       </div>
                       <h3 className="text-2xl font-bold text-slate-900">{feature.title}</h3>
                     </div>

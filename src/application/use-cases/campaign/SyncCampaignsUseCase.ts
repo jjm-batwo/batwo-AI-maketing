@@ -262,15 +262,36 @@ export class SyncCampaignsUseCase {
 
   private mapMetaObjective(metaObjective: string): CampaignObjective {
     // Map Meta objectives to our CampaignObjective
+    // Meta API reference: https://developers.facebook.com/docs/marketing-api/reference/ad-campaign-group
     const objectiveMap: Record<string, CampaignObjective> = {
+      // OUTCOME_ 접두사 (최신 API)
       OUTCOME_SALES: CampaignObjective.SALES,
       OUTCOME_LEADS: CampaignObjective.LEADS,
       OUTCOME_TRAFFIC: CampaignObjective.TRAFFIC,
       OUTCOME_AWARENESS: CampaignObjective.AWARENESS,
       OUTCOME_ENGAGEMENT: CampaignObjective.ENGAGEMENT,
+      OUTCOME_APP_PROMOTION: CampaignObjective.APP_PROMOTION,
+
+      // 레거시 objective 값들
+      LINK_CLICKS: CampaignObjective.TRAFFIC,
+      CONVERSIONS: CampaignObjective.CONVERSIONS,
+      LEAD_GENERATION: CampaignObjective.LEADS,
+      APP_INSTALLS: CampaignObjective.APP_PROMOTION,
+      BRAND_AWARENESS: CampaignObjective.AWARENESS,
+      REACH: CampaignObjective.AWARENESS,
+      VIDEO_VIEWS: CampaignObjective.ENGAGEMENT,
+      POST_ENGAGEMENT: CampaignObjective.ENGAGEMENT,
+      MESSAGES: CampaignObjective.ENGAGEMENT,
+      CATALOG_SALES: CampaignObjective.SALES,
+      STORE_TRAFFIC: CampaignObjective.TRAFFIC,
     }
 
-    return objectiveMap[metaObjective] || CampaignObjective.CONVERSIONS
+    const mapped = objectiveMap[metaObjective]
+    if (!mapped) {
+      console.warn(`[SyncCampaigns] Unknown Meta objective: "${metaObjective}", defaulting to CONVERSIONS`)
+      return CampaignObjective.CONVERSIONS
+    }
+    return mapped
   }
 
   private mapMetaStatus(campaign: Campaign, metaStatus: string): Campaign {

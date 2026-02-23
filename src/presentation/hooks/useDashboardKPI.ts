@@ -7,10 +7,12 @@ interface KPIData {
   totalRevenue: number
   totalImpressions: number
   totalClicks: number
+  totalLinkClicks?: number
   totalConversions: number
   averageRoas: number
   averageCtr: number
   averageCpa: number
+  cvr?: number
   activeCampaigns: number
   changes: {
     spend: number
@@ -20,6 +22,7 @@ interface KPIData {
     conversions: number
     impressions: number
     clicks: number
+    linkClicks?: number
   }
 }
 
@@ -30,6 +33,7 @@ interface KPIChartData {
   roas: number
   impressions: number
   clicks: number
+  linkClicks?: number
   conversions: number
 }
 
@@ -38,6 +42,7 @@ interface CampaignBreakdown {
   campaignName: string
   impressions: number
   clicks: number
+  linkClicks?: number
   conversions: number
   spend: number
   revenue: number
@@ -57,7 +62,15 @@ interface DashboardKPIResponse {
 }
 
 type DashboardPeriod = 'today' | 'yesterday' | '7d' | '30d' | '90d' | 'this_month' | 'last_month'
-type CampaignObjective = 'ALL' | 'AWARENESS' | 'TRAFFIC' | 'ENGAGEMENT' | 'LEADS' | 'APP_PROMOTION' | 'SALES' | 'CONVERSIONS'
+type CampaignObjective =
+  | 'ALL'
+  | 'AWARENESS'
+  | 'TRAFFIC'
+  | 'ENGAGEMENT'
+  | 'LEADS'
+  | 'APP_PROMOTION'
+  | 'SALES'
+  | 'CONVERSIONS'
 
 const DASHBOARD_KPI_QUERY_KEY = ['dashboard', 'kpi'] as const
 
@@ -71,7 +84,8 @@ async function fetchDashboardKPI(params?: {
 }): Promise<DashboardKPIResponse> {
   const searchParams = new URLSearchParams()
   if (params?.period) searchParams.set('period', params.period)
-  if (params?.objective && params.objective !== 'ALL') searchParams.set('objective', params.objective)
+  if (params?.objective && params.objective !== 'ALL')
+    searchParams.set('objective', params.objective)
   if (params?.startDate) searchParams.set('startDate', params.startDate)
   if (params?.endDate) searchParams.set('endDate', params.endDate)
   if (params?.includeBreakdown) searchParams.set('breakdown', 'true')

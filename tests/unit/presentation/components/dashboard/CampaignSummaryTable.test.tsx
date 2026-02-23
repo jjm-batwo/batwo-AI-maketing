@@ -22,7 +22,8 @@ const mockTranslations = {
 
 vi.mock('next-intl', () => ({
   NextIntlClientProvider: ({ children }: { children: React.ReactNode }) => children,
-  useTranslations: () => (key: string) => mockTranslations[key as keyof typeof mockTranslations] || key,
+  useTranslations: () => (key: string) =>
+    mockTranslations[key as keyof typeof mockTranslations] || key,
 }))
 
 function Wrapper({ children }: { children: React.ReactNode }) {
@@ -154,9 +155,9 @@ describe('CampaignSummaryTable', () => {
   describe('loading state', () => {
     it('should show skeleton when loading', () => {
       render(<CampaignSummaryTable isLoading />, { wrapper: Wrapper })
-      const skeletons = screen.getAllByRole('generic').filter(el =>
-        el.className.includes('animate-pulse')
-      )
+      const skeletons = screen
+        .getAllByRole('generic')
+        .filter((el) => el.className.includes('animate-pulse'))
       expect(skeletons.length).toBeGreaterThan(0)
     })
 
@@ -185,7 +186,7 @@ describe('CampaignSummaryTable', () => {
     it('should have whitespace-nowrap on table headers', () => {
       render(<CampaignSummaryTable campaigns={mockCampaigns} />, { wrapper: Wrapper })
       const headers = screen.getAllByRole('columnheader')
-      headers.forEach(header => {
+      headers.forEach((header) => {
         expect(header).toHaveClass('whitespace-nowrap')
       })
     })
@@ -207,11 +208,13 @@ describe('CampaignSummaryTable', () => {
 
   describe('status configurations', () => {
     it('should handle DRAFT status with blue dot', () => {
-      const draftCampaign = [{
-        ...mockCampaigns[0],
-        id: 'draft-1',
-        status: 'DRAFT' as const,
-      }]
+      const draftCampaign = [
+        {
+          ...mockCampaigns[0],
+          id: 'draft-1',
+          status: 'DRAFT' as const,
+        },
+      ]
       render(<CampaignSummaryTable campaigns={draftCampaign} />, { wrapper: Wrapper })
       const draftText = screen.getByText('초안')
       expect(draftText).toBeInTheDocument()

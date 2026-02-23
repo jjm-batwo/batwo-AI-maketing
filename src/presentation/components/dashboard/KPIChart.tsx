@@ -14,7 +14,7 @@ interface KPIChartProps {
   title?: string
   data: DataPoint[]
   color?: 'primary' | 'green' | 'blue' | 'purple'
-  yAxisFormat?: 'currency' | 'multiplier' | 'number'
+  yAxisFormat?: 'currency' | 'multiplier' | 'number' | 'percentage'
   isLoading?: boolean
   className?: string
   chartType?: 'bar' | 'line' | 'area'
@@ -72,6 +72,9 @@ export function KPIChart({
     if (yAxisFormat === 'multiplier') {
       return `${value.toFixed(2)}x`
     }
+    if (yAxisFormat === 'percentage') {
+      return `${value.toFixed(2)}%`
+    }
     if (yAxisFormat === 'number') {
       return value.toLocaleString()
     }
@@ -81,6 +84,9 @@ export function KPIChart({
   const formatYAxisLabel = (value: number): string => {
     if (yAxisFormat === 'multiplier') {
       return `${value.toFixed(1)}x`
+    }
+    if (yAxisFormat === 'percentage') {
+      return `${value.toFixed(1)}%`
     }
     if (yAxisFormat === 'number') {
       if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`
@@ -106,15 +112,16 @@ export function KPIChart({
   const getXAxisLabels = () => {
     if (data.length === 0) return []
     if (data.length === 1) return [{ index: 0, position: 'center' as const }]
-    if (data.length === 2) return [
-      { index: 0, position: 'left' as const },
-      { index: 1, position: 'right' as const }
-    ]
+    if (data.length === 2)
+      return [
+        { index: 0, position: 'left' as const },
+        { index: 1, position: 'right' as const },
+      ]
     // For 3+ items, show first, middle, last
     return [
       { index: 0, position: 'left' as const },
       { index: Math.floor(data.length / 2), position: 'center' as const },
-      { index: data.length - 1, position: 'right' as const }
+      { index: data.length - 1, position: 'right' as const },
     ]
   }
 
@@ -126,7 +133,10 @@ export function KPIChart({
     const yAxisLabels = [
       { value: maxValue, label: formatYAxisLabel(maxValue) },
       { value: maxValue / 2, label: formatYAxisLabel(maxValue / 2) },
-      { value: 0, label: yAxisFormat === 'currency' ? '0원' : '0' },
+      {
+        value: 0,
+        label: yAxisFormat === 'currency' ? '0원' : yAxisFormat === 'percentage' ? '0%' : '0',
+      },
     ]
 
     // X-axis labels with unique dates
@@ -138,13 +148,13 @@ export function KPIChart({
       const strokeColor = svgColorMap[color]
       const gradientId = `chart-gradient-${color}`
 
-      const linePoints = data.map((point, index) => {
-        const x = data.length > 1
-          ? (index / (data.length - 1)) * svgWidth
-          : svgWidth / 2
-        const y = svgHeight - (point.value / maxValue) * (svgHeight - 8) - 4
-        return `${x},${y}`
-      }).join(' ')
+      const linePoints = data
+        .map((point, index) => {
+          const x = data.length > 1 ? (index / (data.length - 1)) * svgWidth : svgWidth / 2
+          const y = svgHeight - (point.value / maxValue) * (svgHeight - 8) - 4
+          return `${x},${y}`
+        })
+        .join(' ')
 
       const areaPoints = `0,${svgHeight} ${linePoints} ${svgWidth},${svgHeight}`
 
@@ -159,8 +169,16 @@ export function KPIChart({
                 </span>
               ))}
             </div>
-            <div className="relative flex-1 h-32 border-l border-b border-border/30 pl-2 pb-0.5" onMouseLeave={() => setHoveredIndex(null)}>
-              <svg width="100%" height="100%" viewBox={`0 0 ${svgWidth} ${svgHeight}`} preserveAspectRatio="none">
+            <div
+              className="relative flex-1 h-32 border-l border-b border-border/30 pl-2 pb-0.5"
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
+              <svg
+                width="100%"
+                height="100%"
+                viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+                preserveAspectRatio="none"
+              >
                 <defs>
                   <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" stopColor={strokeColor} stopOpacity={0.3} />
@@ -180,19 +198,27 @@ export function KPIChart({
                   vectorEffect="non-scaling-stroke"
                 />
                 {/* 수직 가이드라인 */}
-                {hoveredIndex !== null && (() => {
-                  const hx = data.length > 1
-                    ? (hoveredIndex / (data.length - 1)) * svgWidth
-                    : svgWidth / 2
-                  return (
-                    <line x1={hx} y1={0} x2={hx} y2={svgHeight} stroke="currentColor" strokeOpacity={0.2} strokeWidth={1} vectorEffect="non-scaling-stroke" strokeDasharray="3,3" />
-                  )
-                })()}
+                {hoveredIndex !== null &&
+                  (() => {
+                    const hx =
+                      data.length > 1 ? (hoveredIndex / (data.length - 1)) * svgWidth : svgWidth / 2
+                    return (
+                      <line
+                        x1={hx}
+                        y1={0}
+                        x2={hx}
+                        y2={svgHeight}
+                        stroke="currentColor"
+                        strokeOpacity={0.2}
+                        strokeWidth={1}
+                        vectorEffect="non-scaling-stroke"
+                        strokeDasharray="3,3"
+                      />
+                    )
+                  })()}
                 {/* 데이터 포인트 + 호버 영역 */}
                 {data.map((_, index) => {
-                  const x = data.length > 1
-                    ? (index / (data.length - 1)) * svgWidth
-                    : svgWidth / 2
+                  const x = data.length > 1 ? (index / (data.length - 1)) * svgWidth : svgWidth / 2
                   const y = svgHeight - (data[index].value / maxValue) * (svgHeight - 8) - 4
                   const sliceWidth = data.length > 1 ? svgWidth / (data.length - 1) : svgWidth
                   return (
@@ -212,32 +238,35 @@ export function KPIChart({
                 })}
               </svg>
               {/* 데이터 포인트 (HTML) + 툴팁 */}
-              {hoveredIndex !== null && (() => {
-                const point = data[hoveredIndex]
-                const xPercent = data.length > 1
-                  ? (hoveredIndex / (data.length - 1)) * 100
-                  : 50
-                const yPercent = 100 - (point.value / maxValue) * (100 - 6) - 3
-                const dateLabel = formatDateLabel(point.date || point.label || '')
-                return (
-                  <>
-                    {/* 작은 원형 점 */}
-                    <div
-                      className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-1/2 h-2 w-2 rounded-full shadow-sm"
-                      style={{ left: `${xPercent}%`, top: `${yPercent}%`, backgroundColor: svgColorMap[color] }}
-                    />
-                    {/* 툴팁 */}
-                    <div
-                      className="pointer-events-none absolute -top-10 z-20 -translate-x-1/2 rounded-md bg-popover border border-border px-2.5 py-1.5 text-xs text-popover-foreground shadow-md whitespace-nowrap"
-                      style={{ left: `${xPercent}%` }}
-                    >
-                      <span className="text-muted-foreground">{dateLabel}</span>
-                      <span className="mx-1.5 text-border">|</span>
-                      <span className="font-semibold">{formatTooltipValue(point.value)}</span>
-                    </div>
-                  </>
-                )
-              })()}
+              {hoveredIndex !== null &&
+                (() => {
+                  const point = data[hoveredIndex]
+                  const xPercent = data.length > 1 ? (hoveredIndex / (data.length - 1)) * 100 : 50
+                  const yPercent = 100 - (point.value / maxValue) * (100 - 6) - 3
+                  const dateLabel = formatDateLabel(point.date || point.label || '')
+                  return (
+                    <>
+                      {/* 작은 원형 점 */}
+                      <div
+                        className="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-1/2 h-2 w-2 rounded-full shadow-sm"
+                        style={{
+                          left: `${xPercent}%`,
+                          top: `${yPercent}%`,
+                          backgroundColor: svgColorMap[color],
+                        }}
+                      />
+                      {/* 툴팁 */}
+                      <div
+                        className="pointer-events-none absolute -top-10 z-20 -translate-x-1/2 rounded-md bg-popover border border-border px-2.5 py-1.5 text-xs text-popover-foreground shadow-md whitespace-nowrap"
+                        style={{ left: `${xPercent}%` }}
+                      >
+                        <span className="text-muted-foreground">{dateLabel}</span>
+                        <span className="mx-1.5 text-border">|</span>
+                        <span className="font-semibold">{formatTooltipValue(point.value)}</span>
+                      </div>
+                    </>
+                  )
+                })()}
             </div>
           </div>
 
@@ -350,7 +379,7 @@ export function KPIChart({
 
   // With title - wrap in Card
   return (
-    <Card className={cn("bg-card border border-border/50 overflow-hidden", className)}>
+    <Card className={cn('bg-card border border-border/50 overflow-hidden', className)}>
       <CardHeader className="border-b border-border/50 bg-muted/20 pb-4">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
       </CardHeader>

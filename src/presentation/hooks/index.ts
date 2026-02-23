@@ -24,3 +24,6 @@ export * from './useAdSets'
 export * from './useCreateCampaignWizard'
 export * from './useCompetitorAnalysis'
 export * from './usePortfolio'
+
+
+export * from './useScrollAnimation'

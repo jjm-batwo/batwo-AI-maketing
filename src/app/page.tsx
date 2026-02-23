@@ -9,6 +9,7 @@ import {
   SocialProofSection,
   FeaturesSection,
   LandingFooter,
+  FloatingCTA,
 } from '@/presentation/components/landing'
 
 // 스크롤 아래 섹션은 lazy load로 초기 성능 최적화
@@ -79,6 +80,7 @@ export default function LandingPage() {
       <ErrorBoundary>
         <LandingFooter />
       </ErrorBoundary>
+      <FloatingCTA />
     </div>
   )
 }

@@ -32,8 +32,16 @@ function mapPeriodToPreset(period: string): DateRangePreset {
 }
 
 // Valid campaign objective types
-const validObjectives = ['AWARENESS', 'TRAFFIC', 'ENGAGEMENT', 'LEADS', 'APP_PROMOTION', 'SALES', 'CONVERSIONS'] as const
-type CampaignObjective = typeof validObjectives[number]
+const validObjectives = [
+  'AWARENESS',
+  'TRAFFIC',
+  'ENGAGEMENT',
+  'LEADS',
+  'APP_PROMOTION',
+  'SALES',
+  'CONVERSIONS',
+] as const
+type CampaignObjective = (typeof validObjectives)[number]
 
 // Validate and cast objective parameter
 function validateObjective(objective: string | null): CampaignObjective | undefined {
@@ -75,12 +83,71 @@ type CampaignLiveResult = {
   data: DailyData[]
 }
 
+type KPIApiResponse = {
+  summary: {
+    totalSpend: number
+    totalRevenue: number
+    totalImpressions: number
+    totalClicks: number
+    totalLinkClicks: number
+    totalConversions: number
+    averageRoas: number
+    averageCtr: number
+    averageCpa: number
+    cvr: number
+    activeCampaigns: number
+    changes?: {
+      spend: number
+      revenue: number
+      roas: number
+      ctr: number
+      conversions: number
+      impressions: number
+      clicks: number
+    }
+  }
+  campaignBreakdown?: Array<{
+    campaignId: string
+    campaignName: string
+    impressions: number
+    clicks: number
+    conversions: number
+    spend: number
+    revenue: number
+    roas: number
+    ctr: number
+    cpa: number
+  }>
+  chartData: Array<{
+    date: string
+    spend: number
+    revenue: number
+    roas: number
+    impressions: number
+    clicks: number
+    linkClicks: number
+    conversions: number
+  }>
+}
+
+function hasKPIData(data: KPIApiResponse): boolean {
+  const { summary, chartData } = data
+  return (
+    summary.totalSpend > 0 ||
+    summary.totalImpressions > 0 ||
+    summary.totalClicks > 0 ||
+    summary.totalLinkClicks > 0 ||
+    summary.totalConversions > 0 ||
+    chartData.length > 0
+  )
+}
+
 // 캠페인별 Meta API 인사이트를 집계 (전체 합계)
 function aggregateLiveResults(
   liveResults: PromiseSettledResult<CampaignLiveResult>[],
   campaigns: { id: string; objective: string }[],
   objective?: CampaignObjective,
-  includeBreakdown?: boolean,
+  includeBreakdown?: boolean
 ) {
   let totalImpressions = 0
   let totalClicks = 0
@@ -90,9 +157,16 @@ function aggregateLiveResults(
   let totalLinkClicks = 0
 
   const breakdowns: Array<{
-    campaignId: string; campaignName: string
-    impressions: number; clicks: number; conversions: number
-    spend: number; revenue: number; roas: number; ctr: number; cpa: number
+    campaignId: string
+    campaignName: string
+    impressions: number
+    clicks: number
+    conversions: number
+    spend: number
+    revenue: number
+    roas: number
+    ctr: number
+    cpa: number
   }> = []
 
   for (const result of liveResults) {
@@ -100,24 +174,41 @@ function aggregateLiveResults(
     const { campaignId, name, data } = result.value
 
     if (objective) {
-      const camp = campaigns.find(c => c.id === campaignId)
+      const camp = campaigns.find((c) => c.id === campaignId)
       if (!camp || camp.objective !== objective) continue
     }
 
-    let cS = 0, cR = 0, cI = 0, cCl = 0, cCo = 0, cL = 0
+    let cS = 0,
+      cR = 0,
+      cI = 0,
+      cCl = 0,
+      cCo = 0,
+      cL = 0
     for (const d of data) {
-      cI += d.impressions; cCl += d.clicks; cCo += d.conversions
-      cS += d.spend; cR += d.revenue; cL += d.linkClicks || 0
+      cI += d.impressions
+      cCl += d.clicks
+      cCo += d.conversions
+      cS += d.spend
+      cR += d.revenue
+      cL += d.linkClicks || 0
     }
 
-    totalImpressions += cI; totalClicks += cCl; totalConversions += cCo
-    totalSpend += cS; totalRevenue += cR; totalLinkClicks += cL
+    totalImpressions += cI
+    totalClicks += cCl
+    totalConversions += cCo
+    totalSpend += cS
+    totalRevenue += cR
+    totalLinkClicks += cL
 
     if (includeBreakdown) {
       breakdowns.push({
-        campaignId, campaignName: name,
-        impressions: cI, clicks: cCl, conversions: cCo,
-        spend: cS, revenue: cR,
+        campaignId,
+        campaignName: name,
+        impressions: cI,
+        clicks: cCl,
+        conversions: cCo,
+        spend: cS,
+        revenue: cR,
         roas: cS > 0 ? cR / cS : 0,
         ctr: cI > 0 ? (cCl / cI) * 100 : 0,
         cpa: cCo > 0 ? cS / cCo : 0,
@@ -125,25 +216,50 @@ function aggregateLiveResults(
     }
   }
 
-  return { totalImpressions, totalClicks, totalConversions, totalSpend, totalRevenue, totalLinkClicks, breakdowns }
+  return {
+    totalImpressions,
+    totalClicks,
+    totalConversions,
+    totalSpend,
+    totalRevenue,
+    totalLinkClicks,
+    breakdowns,
+  }
 }
 
 // 일별 차트 데이터 생성 (여러 캠페인의 daily data를 날짜별로 집계)
 function buildDailyChartData(
   liveResults: PromiseSettledResult<CampaignLiveResult>[],
   campaigns: { id: string; objective: string }[],
-  objective?: CampaignObjective,
+  objective?: CampaignObjective
 ) {
-  const dailyMap = new Map<string, { spend: number; revenue: number; impressions: number; clicks: number; linkClicks: number; conversions: number }>()
+  const dailyMap = new Map<
+    string,
+    {
+      spend: number
+      revenue: number
+      impressions: number
+      clicks: number
+      linkClicks: number
+      conversions: number
+    }
+  >()
 
   for (const result of liveResults) {
     if (result.status !== 'fulfilled') continue
     if (objective) {
-      const camp = campaigns.find(c => c.id === result.value.campaignId)
+      const camp = campaigns.find((c) => c.id === result.value.campaignId)
       if (!camp || camp.objective !== objective) continue
     }
     for (const d of result.value.data) {
-      const existing = dailyMap.get(d.date) || { spend: 0, revenue: 0, impressions: 0, clicks: 0, linkClicks: 0, conversions: 0 }
+      const existing = dailyMap.get(d.date) || {
+        spend: 0,
+        revenue: 0,
+        impressions: 0,
+        clicks: 0,
+        linkClicks: 0,
+        conversions: 0,
+      }
       existing.spend += d.spend
       existing.revenue += d.revenue
       existing.impressions += d.impressions
@@ -177,7 +293,7 @@ async function fetchLiveKPI(
   userId: string,
   period: LivePeriod,
   objective?: CampaignObjective,
-  includeBreakdown?: boolean,
+  includeBreakdown?: boolean
 ) {
   const metaAccount = await prisma.metaAdAccount.findUnique({
     where: { userId },
@@ -189,7 +305,7 @@ async function fetchLiveKPI(
   const token = safeDecryptToken(metaAccount.accessToken)
 
   const allCampaigns = await campaignRepo.findByUserId(userId)
-  const metaCampaigns = allCampaigns.filter(c => c.metaCampaignId)
+  const metaCampaigns = allCampaigns.filter((c) => c.metaCampaignId)
 
   if (metaCampaigns.length === 0) return null
 
@@ -220,7 +336,7 @@ async function fetchLiveKPI(
           token,
           campaign.metaCampaignId!,
           opts.preset as 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d',
-          opts.range,
+          opts.range
         )
         return { campaignId: campaign.id, name: campaign.name, objective: campaign.objective, data }
       })
@@ -236,19 +352,27 @@ async function fetchLiveKPI(
 
   // KPI 지표 계산
   const roas = current.totalSpend > 0 ? current.totalRevenue / current.totalSpend : 0
-  const ctr = current.totalImpressions > 0 ? (current.totalClicks / current.totalImpressions) * 100 : 0
+  const ctr =
+    current.totalImpressions > 0 ? (current.totalClicks / current.totalImpressions) * 100 : 0
   const cpa = current.totalConversions > 0 ? current.totalSpend / current.totalConversions : 0
   const cvr = current.totalClicks > 0 ? (current.totalConversions / current.totalClicks) * 100 : 0
 
   const prevRoas = prev.totalSpend > 0 ? prev.totalRevenue / prev.totalSpend : 0
   const prevCtr = prev.totalImpressions > 0 ? (prev.totalClicks / prev.totalImpressions) * 100 : 0
 
-  const calcChange = (cur: number, pre: number) => pre === 0 ? (cur > 0 ? 100 : 0) : ((cur - pre) / pre) * 100
+  const calcChange = (cur: number, pre: number) =>
+    pre === 0 ? (cur > 0 ? 100 : 0) : ((cur - pre) / pre) * 100
 
   // 차트 데이터 생성
   let chartData: Array<{
-    date: string; spend: number; revenue: number; roas: number
-    impressions: number; clicks: number; linkClicks: number; conversions: number
+    date: string
+    spend: number
+    revenue: number
+    roas: number
+    impressions: number
+    clicks: number
+    linkClicks: number
+    conversions: number
   }>
 
   if (period === '7d') {
@@ -257,13 +381,21 @@ async function fetchLiveKPI(
   } else {
     // 오늘/어제: 단일 포인트
     const dateStr = period === 'yesterday' ? daysAgoStr(1) : todayStr
-    chartData = (current.totalSpend > 0 || current.totalImpressions > 0)
-      ? [{
-        date: dateStr, spend: current.totalSpend, revenue: current.totalRevenue, roas,
-        impressions: current.totalImpressions, clicks: current.totalClicks,
-        linkClicks: current.totalLinkClicks, conversions: current.totalConversions,
-      }]
-      : []
+    chartData =
+      current.totalSpend > 0 || current.totalImpressions > 0
+        ? [
+            {
+              date: dateStr,
+              spend: current.totalSpend,
+              revenue: current.totalRevenue,
+              roas,
+              impressions: current.totalImpressions,
+              clicks: current.totalClicks,
+              linkClicks: current.totalLinkClicks,
+              conversions: current.totalConversions,
+            },
+          ]
+        : []
   }
 
   return {
@@ -272,6 +404,7 @@ async function fetchLiveKPI(
       totalRevenue: current.totalRevenue,
       totalImpressions: current.totalImpressions,
       totalClicks: current.totalClicks,
+      totalLinkClicks: current.totalLinkClicks,
       totalConversions: current.totalConversions,
       averageRoas: roas,
       averageCtr: ctr,
@@ -286,6 +419,7 @@ async function fetchLiveKPI(
         conversions: calcChange(current.totalConversions, prev.totalConversions),
         impressions: calcChange(current.totalImpressions, prev.totalImpressions),
         clicks: calcChange(current.totalClicks, prev.totalClicks),
+        linkClicks: calcChange(current.totalLinkClicks, prev.totalLinkClicks),
       },
     },
     campaignBreakdown: includeBreakdown ? current.breakdowns : undefined,
@@ -326,12 +460,25 @@ export async function GET(request: NextRequest) {
     // "오늘"/"어제"/"7일" — Meta API 실시간 조회 (DB 미경유)
     // 짧은 기간은 항상 최신 데이터를 보여주기 위해 Meta API에서 직접 조회
     if (period === 'today' || period === 'yesterday' || period === '7d') {
-      const liveResponse = await fetchLiveKPI(
+      let liveResponse = await fetchLiveKPI(
         user.id,
         period as LivePeriod,
         objective,
-        includeBreakdown,
+        includeBreakdown
       )
+
+      if (liveResponse && objective && !hasKPIData(liveResponse)) {
+        const fallbackResponse = await fetchLiveKPI(
+          user.id,
+          period as LivePeriod,
+          undefined,
+          includeBreakdown
+        )
+
+        if (fallbackResponse && hasKPIData(fallbackResponse)) {
+          liveResponse = fallbackResponse
+        }
+      }
 
       if (liveResponse) {
         await cacheService.set(cacheKey, liveResponse, LIVE_CACHE_TTL)
@@ -350,7 +497,7 @@ export async function GET(request: NextRequest) {
       DI_TOKENS.GetDashboardKPIUseCase
     )
 
-    const result = await getDashboardKPI.execute({
+    let result = await getDashboardKPI.execute({
       userId: user.id,
       dateRange: mapPeriodToPreset(period),
       objective,
@@ -359,6 +506,27 @@ export async function GET(request: NextRequest) {
       includeChartData: true,
     })
 
+    if (
+      objective &&
+      !(
+        result.totalSpend > 0 ||
+        result.totalImpressions > 0 ||
+        result.totalClicks > 0 ||
+        result.totalLinkClicks > 0 ||
+        result.totalConversions > 0 ||
+        (result.chartData?.length ?? 0) > 0
+      )
+    ) {
+      result = await getDashboardKPI.execute({
+        userId: user.id,
+        dateRange: mapPeriodToPreset(period),
+        objective: undefined,
+        includeComparison,
+        includeBreakdown,
+        includeChartData: true,
+      })
+    }
+
     // Transform to API response format for backwards compatibility
     const response = {
       summary: {
@@ -366,6 +534,7 @@ export async function GET(request: NextRequest) {
         totalRevenue: result.totalRevenue,
         totalImpressions: result.totalImpressions,
         totalClicks: result.totalClicks,
+        totalLinkClicks: result.totalLinkClicks,
         totalConversions: result.totalConversions,
         averageRoas: result.roas,
         averageCtr: result.ctr,
@@ -381,6 +550,7 @@ export async function GET(request: NextRequest) {
               conversions: result.comparison.conversionsChange,
               impressions: result.comparison.impressionsChange,
               clicks: result.comparison.clicksChange,
+              linkClicks: result.comparison.linkClicksChange,
             }
           : undefined,
       },
@@ -399,9 +569,6 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     console.error('Failed to fetch dashboard KPI:', error)
-    return NextResponse.json(
-      { message: 'Failed to fetch dashboard KPI' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to fetch dashboard KPI' }, { status: 500 })
   }
 }

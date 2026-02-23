@@ -1,7 +1,9 @@
 'use client'
 
+import Link from 'next/link'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { useIntersectionObserver } from '@/presentation/hooks'
 import {
   BarChart3,
@@ -12,6 +14,7 @@ import {
   DollarSign,
   ArrowUpRight,
   ArrowDownRight,
+  ArrowRight,
   MessageCircle,
 } from 'lucide-react'
 
@@ -279,9 +282,20 @@ export function ProductShowcaseSection() {
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
             직관적인 대시보드로 모든 것을 한눈에
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
             복잡한 광고 데이터를 쉽게 이해하고, AI 인사이트로 빠르게 의사결정하세요
           </p>
+          {/* 중간 CTA 버튼 - 이탈 위험 지점 개선 */}
+          <Button
+            size="lg"
+            className="gap-2 bg-primary hover:bg-primary/90 shadow-lg"
+            asChild
+          >
+            <Link href="/register" aria-label="14일 묶료 체험 시작하기">
+              14일 묶료 체험 시작하기
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </Button>
         </div>
 
         {/* Tabbed Product Showcase */}
@@ -290,19 +304,19 @@ export function ProductShowcaseSection() {
             <Tabs defaultValue="dashboard" className="w-full">
               <TabsList className="grid w-full grid-cols-4 mb-6">
                 <TabsTrigger value="dashboard" className="gap-2">
-                  <BarChart3 className="h-4 w-4" />
+                  <BarChart3 className="h-4 w-4" aria-hidden="true" />
                   <span className="hidden sm:inline">대시보드</span>
                 </TabsTrigger>
                 <TabsTrigger value="campaigns" className="gap-2">
-                  <Target className="h-4 w-4" />
+                  <Target className="h-4 w-4" aria-hidden="true" />
                   <span className="hidden sm:inline">캠페인 관리</span>
                 </TabsTrigger>
                 <TabsTrigger value="reports" className="gap-2">
-                  <FileText className="h-4 w-4" />
+                  <FileText className="h-4 w-4" aria-hidden="true" />
                   <span className="hidden sm:inline">AI 보고서</span>
                 </TabsTrigger>
                 <TabsTrigger value="ai-assistant" className="gap-2">
-                  <MessageCircle className="h-4 w-4" />
+                  <MessageCircle className="h-4 w-4" aria-hidden="true" />
                   <span className="hidden sm:inline">AI 어시스턴트</span>
                 </TabsTrigger>
               </TabsList>

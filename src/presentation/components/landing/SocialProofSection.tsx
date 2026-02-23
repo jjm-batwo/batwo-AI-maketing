@@ -22,22 +22,22 @@ function StatCard({ icon, value, label }: StatCardProps) {
 
 const stats = [
   {
-    icon: <Sparkles className="h-6 w-6" />,
+    icon: <Sparkles className="h-6 w-6" aria-hidden="true" />,
     value: 'AI 자동화',
     label: '캠페인 생성부터 최적화까지',
   },
   {
-    icon: <Activity className="h-6 w-6" />,
+    icon: <Activity className="h-6 w-6" aria-hidden="true" />,
     value: '실시간',
     label: '성과 모니터링 & 리포트',
   },
   {
-    icon: <Clock className="h-6 w-6" />,
+    icon: <Clock className="h-6 w-6" aria-hidden="true" />,
     value: '5분',
     label: '간편한 초기 설정',
   },
   {
-    icon: <Zap className="h-6 w-6" />,
+    icon: <Zap className="h-6 w-6" aria-hidden="true" />,
     value: '24/7',
     label: 'AI가 항상 광고 최적화',
   },
@@ -45,15 +45,15 @@ const stats = [
 
 const trustBadges = [
   {
-    icon: <Shield className="h-5 w-5" />,
+    icon: <Shield className="h-5 w-5" aria-hidden="true" />,
     label: 'Meta Marketing API 연동',
   },
   {
-    icon: <Zap className="h-5 w-5" />,
+    icon: <Zap className="h-5 w-5" aria-hidden="true" />,
     label: '데이터 암호화 적용',
   },
   {
-    icon: <Globe className="h-5 w-5" />,
+    icon: <Globe className="h-5 w-5" aria-hidden="true" />,
     label: '한국어 최적화',
   },
 ]

@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight, Sparkles, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { SocialProofBadge } from './SocialProofBadge'
 import { TrustIndicators } from './TrustIndicators'
@@ -41,6 +41,17 @@ export const HeroContent = memo(function HeroContent({ isVisible }: HeroContentP
 
       {/* CTA Buttons */}
       <CTAButtons />
+
+      {/* User Count Badge - 신규 추가 */}
+      <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium bg-white/80 backdrop-blur-sm text-slate-700 rounded-full border border-slate-200 shadow-sm">
+        <div className="flex -space-x-2">
+          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-white flex items-center justify-center">
+            <Users className="w-3 h-3 text-white" aria-hidden="true" />
+          </div>
+        </div>
+        <span className="font-semibold text-slate-900">1,000+</span>
+        <span className="text-slate-500">마케터가 사용 중</span>
+      </div>
 
       {/* Social Proof Badge */}
       <SocialProofBadge />

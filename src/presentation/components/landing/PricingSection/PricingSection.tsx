@@ -1,13 +1,13 @@
 'use client'
 
-import { memo, useState } from 'react'
+import { memo, useState, useRef } from 'react'
 import Link from 'next/link'
 import { Check, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import { useIntersectionObserver } from '@/presentation/hooks'
+import { useScrollAnimation } from '@/presentation/hooks'
 import { SubscriptionPlan } from '@domain/value-objects/SubscriptionPlan'
 import { PRICING_TIERS, formatPrice, FEATURE_COMPARISON } from './pricingData'
 
@@ -16,7 +16,8 @@ interface PricingSectionProps {
 }
 
 export const PricingSection = memo(function PricingSection({ id = 'pricing' }: PricingSectionProps) {
-  const { ref, isIntersecting } = useIntersectionObserver()
+  const sectionRef = useRef<HTMLDivElement>(null)
+  const { isVisible } = useScrollAnimation(sectionRef, { threshold: 0.1 })
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly')
 
   const getCTALink = (plan: SubscriptionPlan): string => {
@@ -52,8 +53,8 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
   return (
     <section id={id} className="py-20 md:py-32 overflow-hidden">
       <div
-        ref={ref}
-        className={`container mx-auto px-4 transition-all duration-1000 ${isIntersecting ? 'animate-slide-up opacity-100' : 'opacity-0 translate-y-10'
+        ref={sectionRef}
+        className={`container mx-auto px-4 transition-all duration-1000 ${isVisible ? 'animate-slide-up opacity-100' : 'opacity-0 translate-y-10'
           }`}
       >
         {/* Section Header */}
@@ -97,9 +98,9 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
             return (
               <Card
                 key={plan}
-                className={`flex flex-col h-full relative overflow-hidden transition-all duration-300 bg-white shadow-sm ${isPopular
-                    ? 'border-primary ring-1 ring-primary shadow-md transform lg:-translate-y-2 lg:scale-105 z-10'
-                    : 'border-gray-100 hover:border-gray-200 hover:shadow-md'
+                className={`flex flex-col h-full relative overflow-hidden transition-all duration-300 bg-white shadow-sm hover:shadow-lg hover:-translate-y-1 ${isPopular
+                    ? 'border-primary ring-1 ring-primary shadow-md transform lg:-translate-y-2 lg:scale-105 z-10 hover:shadow-primary/20'
+                    : 'border-gray-100 hover:border-gray-200'
                   }`}
               >
                 {/* Popular Badge */}
@@ -118,23 +119,23 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
                   <CardTitle className="text-sm font-medium text-muted-foreground">{config.label}</CardTitle>
                   <div className="mt-4">
                     {billingPeriod === 'annual' && config.price > 0 && config.price !== -1 ? (
-                      <>
-                        <span className="text-lg text-muted-foreground line-through mr-2">
+                      <div className="flex flex-wrap items-baseline gap-x-1 gap-y-1">
+                        <span className="text-sm md:text-base text-muted-foreground line-through">
                           {formatPrice(config.price)}
                         </span>
-                        <span className="text-5xl font-bold">
+                        <span className="text-3xl md:text-4xl font-bold">
                           {formatPrice(Math.floor(config.price * 0.8))}
                         </span>
                         <span className="text-muted-foreground text-sm">/월</span>
-                        <Badge variant="secondary" className="ml-2 text-xs text-primary">-20%</Badge>
-                      </>
+                        <Badge variant="secondary" className="text-xs text-primary">-20%</Badge>
+                      </div>
                     ) : (
-                      <>
-                        <span className="text-5xl font-bold">{formatPrice(config.price)}</span>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-3xl md:text-4xl font-bold">{formatPrice(config.price)}</span>
                         {config.price > 0 && (
                           <span className="text-muted-foreground text-sm">/월</span>
                         )}
-                      </>
+                      </div>
                     )}
                   </div>
                   <p className="text-sm text-muted-foreground mt-3">{config.description}</p>

@@ -24,6 +24,7 @@ export interface ChartDataPointDTO {
 export interface KPIComparisonDTO {
   impressionsChange: number
   clicksChange: number
+  linkClicksChange: number
   conversionsChange: number
   spendChange: number
   revenueChange: number
