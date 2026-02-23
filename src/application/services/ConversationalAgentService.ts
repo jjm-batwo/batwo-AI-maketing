@@ -131,6 +131,7 @@ export class ConversationalAgentService {
 
       // 7. fullStream으로 텍스트 + 도구 호출 통합 처리
       let fullText = ''
+      let streamedTextEmitted = false
       const toolMessages: string[] = []
       const toolResults: Array<{ toolName: string; data: unknown; formattedMessage: string }> = []
 
@@ -139,6 +140,7 @@ export class ConversationalAgentService {
           fullText += part.text
           if (!reportIntent) {
             yield { type: 'text', content: part.text }
+            streamedTextEmitted = true
           }
         } else if (part.type === 'tool-call') {
           const agentTool = this.toolRegistry.get(part.toolName)
@@ -251,7 +253,7 @@ export class ConversationalAgentService {
         fullText = this.rewriteReportIntentReply(input.message, fullText, toolResults)
       }
 
-      if (reportIntent && fullText.trim()) {
+      if (fullText.trim() && (reportIntent || !streamedTextEmitted)) {
         yield { type: 'text', content: fullText }
       }
 
