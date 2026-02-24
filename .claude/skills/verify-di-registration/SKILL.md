@@ -28,6 +28,7 @@ DI(Dependency Injection) 컨테이너의 일관성을 검증합니다:
 | `src/lib/di/container.ts` | DI 컨테이너 구현 (토큰별 팩토리 등록) |
 | `src/domain/repositories/I*.ts` | 리포지토리 인터페이스 |
 | `src/application/ports/I*.ts` | 외부 서비스 포트 인터페이스 |
+| `src/domain/repositories/IOptimizationRuleRepository.ts` | 최적화 규칙 리포지토리 인터페이스 |
 
 ## Workflow
 
@@ -97,6 +98,49 @@ grep -oP '(\w+Repository)' src/lib/di/types.ts | sort
 ls src/application/ports/I*.ts 2>/dev/null | sed 's|.*/I||;s|\.ts||' | sort
 ```
 
+### New Pattern: Optimization/Audit UseCase Registration Check
+
+**Context:** 최적화 규칙 엔진과 감사 시스템이 추가되면서 새로운 UseCase들이 DI에 등록됨.
+
+**검사:** 다음 UseCase들이 DI에 등록되었는지 확인합니다:
+- CreateOptimizationRuleUseCase
+- UpdateOptimizationRuleUseCase
+- DeleteOptimizationRuleUseCase
+- ListOptimizationRulesUseCase
+- EvaluateOptimizationRulesUseCase
+- AutoOptimizeCampaignUseCase
+- CalculateSavingsUseCase
+- AuditAdAccountUseCase
+
+```bash
+# optimization usecase 등록 확인
+grep -n "OptimizationRuleUseCase\|AuditAdAccountUseCase\|CalculateSavingsUseCase" src/lib/di/container.ts
+```
+
+**PASS 기준:** 모든 신규 UseCase가 container.register로 등록됨
+**FAIL 기준:** 누락된 등록이 있음
+
+---
+
+### New Pattern: Audit/Optimization Repository Token Check
+
+**검사:** IOptimizationRuleRepository 등 신규 리포지토리 인터페이스에 토큰이 정의되었는지 확인
+
+```bash
+# 리포지토리 인터페이스 파일 목록
+ls src/domain/repositories/I*.ts 2>/dev/null | sed 's|.*/I||;s|\.ts||' | sort
+
+# DI_TOKENS의 Repository 토큰 목록
+grep -oP '(\w+Repository)' src/lib/di/types.ts | sort
+```
+
+**FAIL 시 수정:**
+1. `src/lib/di/types.ts`에 OptimizationRuleRepository 토큰 추가 확인
+2. `src/lib/di/container.ts`에 PrismaOptimizationRuleRepository 등록 확인
+
+---
+
+
 ## Output Format
 
 ```markdown
@@ -105,6 +149,10 @@ ls src/application/ports/I*.ts 2>/dev/null | sed 's|.*/I||;s|\.ts||' | sort
 | # | 검사 | 상태 | 상세 |
 |---|------|------|------|
 | 1 | 토큰 정의 vs 등록 동기화 | PASS/FAIL | 미등록 토큰: X, Y |
+| 2 | 리포지토리 인터페이스 커버리지 | PASS/FAIL | 미등록: INewRepo |
+| 3 | 포트 인터페이스 커버리지 | PASS/FAIL | 미등록: INewService |
+| 4 | Optimization/Audit UseCase 등록 | PASS/FAIL | 미등록 UseCase 목록 |
+| 5 | OptimizationRuleRepository 토큰 | PASS/FAIL | 누락 여부 |
 | 2 | 리포지토리 인터페이스 커버리지 | PASS/FAIL | 미등록: INewRepo |
 | 3 | 포트 인터페이스 커버리지 | PASS/FAIL | 미등록: INewService |
 ```

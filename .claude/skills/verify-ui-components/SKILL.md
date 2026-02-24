@@ -36,6 +36,32 @@ React 컴포넌트 구현의 일관성과 품질을 검증합니다:
 | `src/presentation/components/dashboard/CampaignSummaryTable.tsx`          | 캠페인 요약 테이블 — 정렬, 필터링                        |
 | `src/presentation/components/dashboard/DonutChart.tsx`                    | 도넛 차트 — 캠페인 상태 분포                             |
 | `src/presentation/components/dashboard/AIInsights.tsx`                    | AI 인사이트 카드                                         |
+| `src/presentation/components/dashboard/OptimizationTimeline.tsx`          | 최적화 타임라인 — 규칙 적용 히스토리 표시               |
+| `src/presentation/components/dashboard/SavingsWidget.tsx`                 | 절감 위젯 — 예상 절감 금액 표시                         |
+| `src/presentation/components/audit/AuditReportCard.tsx`                   | 감사 리포트 카드 — 점수 및 개선사항 요약                |
+| `src/presentation/components/audit/AuditCategoryBreakdown.tsx`            | 감사 카테고리 분석 — 세부 카테고리별 점수               |
+| `src/presentation/components/audit/AuditConversionCTA.tsx`                | 감사 전환 CTA — 묶음 서비스 신청 유도                   |
+| `src/presentation/hooks/useScrollAnimation.ts`                            | 스크롤 애니메이션 훅                                     |
+| `src/presentation/hooks/useDashboardKPI.ts`                               | 대시보드 KPI 데이터 훅                                   |
+| `src/presentation/hooks/useSavings.ts`                                    | 절감 금액 계산 훅                                       |
+| `src/presentation/components/pixel/PlatformSelector.tsx`                  | 픽셀 설치 — 플랫폼 선택 카드 (카페24/자첼/네이버)     |
+| `src/presentation/components/pixel/guides/CustomSiteGuide.tsx`            | 픽셀 설치 — 자첼 설치 가이드                           |
+| `src/presentation/components/pixel/guides/NaverGuide.tsx`                 | 픽셀 설치 — 네이버 스마트스토어 설치 가이드              |
+| `src/presentation/components/onboarding/steps/PixelSetupStep.tsx`         | 온볼딩 — 픽셀 설치 단계 (플랫폼 선택 → 가이드 분기)     |
+| `src/components/ui/`                                                      | shadcn/ui 기본 컴포넌트들                                |
+
+| File                                                                      | Purpose                                                  |
+| ------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `src/presentation/components/landing/FeaturesSection/FeaturesSection.tsx` | 랜딩 페이지 기능 섹션 — Intersection Observer 애니메이션 |
+| `src/presentation/components/landing/HeroSection/HeroContent.tsx`         | 랜딩 페이지 히어로 — CTA 버튼, 소셜 프루프               |
+| `src/presentation/components/landing/PricingSection/PricingSection.tsx`   | 가격 섹션 — 토글, 카드 그리드                            |
+| `src/presentation/components/landing/ProductShowcaseSection.tsx`          | 제품 쇼케이스 — 탭 인터페이스                            |
+| `src/presentation/components/landing/SocialProofSection.tsx`              | 소셜 프루프 — 카드 그리드, 인용구                        |
+| `src/presentation/components/dashboard/KPICard.tsx`                       | KPI 카드 — 스파클차트, 변화율 표시                       |
+| `src/presentation/components/dashboard/KPIChart.tsx`                      | KPI 차트 — Recharts 기반                                 |
+| `src/presentation/components/dashboard/CampaignSummaryTable.tsx`          | 캠페인 요약 테이블 — 정렬, 필터링                        |
+| `src/presentation/components/dashboard/DonutChart.tsx`                    | 도넛 차트 — 캠페인 상태 분포                             |
+| `src/presentation/components/dashboard/AIInsights.tsx`                    | AI 인사이트 카드                                         |
 | `src/presentation/hooks/useScrollAnimation.ts`                            | 스크롤 애니메이션 훅                                     |
 | `src/presentation/hooks/useDashboardKPI.ts`                               | 대시보드 KPI 데이터 훅                                   |
 | `src/presentation/components/pixel/PlatformSelector.tsx`                  | 픽셀 설치 — 플랫폼 선택 카드 (카페24/자체몰/네이버)     |
@@ -51,6 +77,12 @@ React 컴포넌트 구현의 일관성과 품질을 검증합니다:
 **검사:** 모든 컴포넌트가 완전한 TypeScript Props 인터페이스를 정의하는지 확인합니다.
 
 ```bash
+grep -rn "interface.*Props" src/presentation/components/landing/ --include="*.tsx"
+grep -rn "interface.*Props" src/presentation/components/dashboard/ --include="*.tsx"
+grep -rn "interface.*Props" src/presentation/components/pixel/ --include="*.tsx"
+grep -rn "interface.*Props" src/presentation/components/onboarding/ --include="*.tsx"
+grep -rn "interface.*Props" src/presentation/components/audit/ --include="*.tsx"
+```
 grep -rn "interface.*Props" src/presentation/components/landing/ --include="*.tsx"
 grep -rn "interface.*Props" src/presentation/components/dashboard/ --include="*.tsx"
 grep -rn "interface.*Props" src/presentation/components/pixel/ --include="*.tsx"
@@ -86,6 +118,13 @@ grep -rn "@/components/ui/" src/presentation/components/landing/ --include="*.ts
 grep -rn "@/components/ui/" src/presentation/components/dashboard/ --include="*.tsx"
 grep -rn "@/components/ui/" src/presentation/components/pixel/ --include="*.tsx"
 grep -rn "@/components/ui/" src/presentation/components/onboarding/ --include="*.tsx"
+grep -rn "@/components/ui/" src/presentation/components/audit/ --include="*.tsx"
+```
+# shadcn/ui 컴포넌트 import 확인
+grep -rn "@/components/ui/" src/presentation/components/landing/ --include="*.tsx"
+grep -rn "@/components/ui/" src/presentation/components/dashboard/ --include="*.tsx"
+grep -rn "@/components/ui/" src/presentation/components/pixel/ --include="*.tsx"
+grep -rn "@/components/ui/" src/presentation/components/onboarding/ --include="*.tsx"
 ```
 
 **PASS 기준:** Card, Button, Input 등 기본 UI는 shadcn/ui 사용
@@ -96,6 +135,13 @@ grep -rn "@/components/ui/" src/presentation/components/onboarding/ --include="*
 **검사:** Tailwind CSS 클래스가 일관된 순서로 작성되었는지 확인합니다.
 
 ```bash
+# cn() 유틸리티 사용 확인
+grep -rn "cn(" src/presentation/components/landing/ --include="*.tsx"
+grep -rn "cn(" src/presentation/components/dashboard/ --include="*.tsx"
+grep -rn "cn(" src/presentation/components/pixel/ --include="*.tsx"
+grep -rn "cn(" src/presentation/components/onboarding/ --include="*.tsx"
+grep -rn "cn(" src/presentation/components/audit/ --include="*.tsx"
+```
 # cn() 유틸리티 사용 확인
 grep -rn "cn(" src/presentation/components/landing/ --include="*.tsx"
 grep -rn "cn(" src/presentation/components/dashboard/ --include="*.tsx"
@@ -121,6 +167,13 @@ grep -rn "cn(" src/presentation/components/onboarding/ --include="*.tsx"
 **검사:** 기본적인 접근성 속성이 포함되었는지 확인합니다.
 
 ```bash
+# 버튼에 aria-label 또는 명확한 텍스트 확인
+grep -rn "aria-label\|aria-describedby" src/presentation/components/landing/ --include="*.tsx"
+grep -rn "aria-label\|aria-describedby" src/presentation/components/dashboard/ --include="*.tsx"
+grep -rn "aria-label\|aria-describedby" src/presentation/components/pixel/ --include="*.tsx"
+grep -rn "aria-label\|aria-describedby" src/presentation/components/onboarding/ --include="*.tsx"
+grep -rn "aria-label\|aria-describedby" src/presentation/components/audit/ --include="*.tsx"
+```
 # 버튼에 aria-label 또는 명확한 텍스트 확인
 grep -rn "aria-label\|aria-describedby" src/presentation/components/landing/ --include="*.tsx"
 grep -rn "aria-label\|aria-describedby" src/presentation/components/dashboard/ --include="*.tsx"
@@ -157,6 +210,13 @@ grep -rn "React.memo\|memo(" src/presentation/components/ --include="*.tsx"
 **검사:** 모바일/태블릿/데스크톱 브레이크포인트가 적절히 적용되었는지 확인합니다.
 
 ```bash
+# 반응형 클래스 사용 확인 (md:, lg:)
+grep -rn "md:\|lg:\|sm:" src/presentation/components/landing/ --include="*.tsx" | head -20
+grep -rn "md:\|lg:\|sm:" src/presentation/components/dashboard/ --include="*.tsx" | head -20
+grep -rn "md:\|lg:\|sm:" src/presentation/components/pixel/ --include="*.tsx" | head -20
+grep -rn "md:\|lg:\|sm:" src/presentation/components/onboarding/ --include="*.tsx" | head -20
+grep -rn "md:\|lg:\|sm:" src/presentation/components/audit/ --include="*.tsx" | head -20
+```
 # 반응형 클래스 사용 확인 (md:, lg:)
 grep -rn "md:\|lg:\|sm:" src/presentation/components/landing/ --include="*.tsx" | head -20
 grep -rn "md:\|lg:\|sm:" src/presentation/components/dashboard/ --include="*.tsx" | head -20
