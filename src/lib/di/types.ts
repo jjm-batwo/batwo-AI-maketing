@@ -127,6 +127,19 @@ export const DI_TOKENS = {
   // CAPI Batch
   ConversionEventRepository: Symbol.for('ConversionEventRepository'),
   SendCAPIEventsUseCase: Symbol.for('SendCAPIEventsUseCase'),
+
+  // Optimization (자동 최적화)
+  OptimizationRuleRepository: Symbol.for('OptimizationRuleRepository'),
+  CreateOptimizationRuleUseCase: Symbol.for('CreateOptimizationRuleUseCase'),
+  UpdateOptimizationRuleUseCase: Symbol.for('UpdateOptimizationRuleUseCase'),
+  DeleteOptimizationRuleUseCase: Symbol.for('DeleteOptimizationRuleUseCase'),
+  ListOptimizationRulesUseCase: Symbol.for('ListOptimizationRulesUseCase'),
+  EvaluateOptimizationRulesUseCase: Symbol.for('EvaluateOptimizationRulesUseCase'),
+  AutoOptimizeCampaignUseCase: Symbol.for('AutoOptimizeCampaignUseCase'),
+  CalculateSavingsUseCase: Symbol.for('CalculateSavingsUseCase'),
+
+  // Audit Use Cases
+  AuditAdAccountUseCase: Symbol.for('AuditAdAccountUseCase'),
 } as const
 
 export type DIToken = (typeof DI_TOKENS)[keyof typeof DI_TOKENS]

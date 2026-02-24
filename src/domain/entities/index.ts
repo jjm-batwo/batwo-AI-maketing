@@ -67,5 +67,11 @@ export {
   type TeamRoleProps,
 } from './TeamRole'
 
+export {
+  OptimizationRule,
+  type OptimizationRuleProps,
+  type RuleType,
+} from './OptimizationRule'
+
 // Re-export domain events for convenience
 export * from '../events'

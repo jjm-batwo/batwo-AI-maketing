@@ -144,6 +144,16 @@ import { TrackCompetitorUseCase } from '@application/use-cases/competitor/TrackC
 import { UntrackCompetitorUseCase } from '@application/use-cases/competitor/UntrackCompetitorUseCase'
 import { GetTrackedCompetitorsUseCase } from '@application/use-cases/competitor/GetTrackedCompetitorsUseCase'
 
+import { PrismaOptimizationRuleRepository } from '@infrastructure/database/repositories/PrismaOptimizationRuleRepository'
+import type { IOptimizationRuleRepository } from '@domain/repositories/IOptimizationRuleRepository'
+import { CreateOptimizationRuleUseCase } from '@application/use-cases/optimization/CreateOptimizationRuleUseCase'
+import { UpdateOptimizationRuleUseCase } from '@application/use-cases/optimization/UpdateOptimizationRuleUseCase'
+import { DeleteOptimizationRuleUseCase } from '@application/use-cases/optimization/DeleteOptimizationRuleUseCase'
+import { ListOptimizationRulesUseCase } from '@application/use-cases/optimization/ListOptimizationRulesUseCase'
+import { EvaluateOptimizationRulesUseCase } from '@application/use-cases/optimization/EvaluateOptimizationRulesUseCase'
+import { AutoOptimizeCampaignUseCase } from '@application/use-cases/optimization/AutoOptimizeCampaignUseCase'
+import { AuditAdAccountUseCase } from '@application/use-cases/audit/AuditAdAccountUseCase'
+
 import { prisma } from '@/lib/prisma'
 
 type Factory<T> = () => T
@@ -749,6 +759,67 @@ container.register(
   )
 )
 
+// Optimization Repository (Singleton)
+container.registerSingleton<IOptimizationRuleRepository>(
+  DI_TOKENS.OptimizationRuleRepository,
+  () => new PrismaOptimizationRuleRepository(prisma)
+)
+
+// Optimization Use Cases (Transient)
+container.register(
+  DI_TOKENS.AutoOptimizeCampaignUseCase,
+  () => new AutoOptimizeCampaignUseCase(
+    container.resolve(DI_TOKENS.CampaignRepository),
+    container.resolve(DI_TOKENS.MetaAdsService)
+  )
+)
+
+container.register(
+  DI_TOKENS.CreateOptimizationRuleUseCase,
+  () => new CreateOptimizationRuleUseCase(
+    container.resolve(DI_TOKENS.OptimizationRuleRepository)
+  )
+)
+
+container.register(
+  DI_TOKENS.UpdateOptimizationRuleUseCase,
+  () => new UpdateOptimizationRuleUseCase(
+    container.resolve(DI_TOKENS.OptimizationRuleRepository)
+  )
+)
+
+container.register(
+  DI_TOKENS.DeleteOptimizationRuleUseCase,
+  () => new DeleteOptimizationRuleUseCase(
+    container.resolve(DI_TOKENS.OptimizationRuleRepository)
+  )
+)
+
+container.register(
+  DI_TOKENS.ListOptimizationRulesUseCase,
+  () => new ListOptimizationRulesUseCase(
+    container.resolve(DI_TOKENS.OptimizationRuleRepository)
+  )
+)
+
+container.register(
+  DI_TOKENS.EvaluateOptimizationRulesUseCase,
+  () => new EvaluateOptimizationRulesUseCase(
+    container.resolve(DI_TOKENS.OptimizationRuleRepository),
+    container.resolve(DI_TOKENS.CampaignRepository),
+    container.resolve(DI_TOKENS.KPIRepository),
+    container.resolve(DI_TOKENS.AutoOptimizeCampaignUseCase)
+  )
+)
+
+// Audit Use Cases
+container.register(
+  DI_TOKENS.AuditAdAccountUseCase,
+  () => new AuditAdAccountUseCase(
+    container.resolve(DI_TOKENS.MetaAdsService)
+  )
+)
+
 export { container, DI_TOKENS }
 
 // Convenience functions for resolving dependencies
@@ -932,6 +1003,10 @@ export function getAIFeedbackRepository(): IAIFeedbackRepository {
   return container.resolve(DI_TOKENS.AIFeedbackRepository)
 }
 
+export function getAuditAdAccountUseCase(): AuditAdAccountUseCase {
+  return container.resolve(DI_TOKENS.AuditAdAccountUseCase)
+}
+
 export function getPermissionService(): PermissionService {
   return container.resolve(DI_TOKENS.PermissionService)
 }
@@ -1087,4 +1162,32 @@ export function getUntrackCompetitorUseCase(): UntrackCompetitorUseCase {
 
 export function getGetTrackedCompetitorsUseCase(): GetTrackedCompetitorsUseCase {
   return container.resolve(DI_TOKENS.GetTrackedCompetitorsUseCase)
+}
+
+export function getOptimizationRuleRepository(): IOptimizationRuleRepository {
+  return container.resolve(DI_TOKENS.OptimizationRuleRepository)
+}
+
+export function getCreateOptimizationRuleUseCase(): CreateOptimizationRuleUseCase {
+  return container.resolve(DI_TOKENS.CreateOptimizationRuleUseCase)
+}
+
+export function getUpdateOptimizationRuleUseCase(): UpdateOptimizationRuleUseCase {
+  return container.resolve(DI_TOKENS.UpdateOptimizationRuleUseCase)
+}
+
+export function getDeleteOptimizationRuleUseCase(): DeleteOptimizationRuleUseCase {
+  return container.resolve(DI_TOKENS.DeleteOptimizationRuleUseCase)
+}
+
+export function getListOptimizationRulesUseCase(): ListOptimizationRulesUseCase {
+  return container.resolve(DI_TOKENS.ListOptimizationRulesUseCase)
+}
+
+export function getEvaluateOptimizationRulesUseCase(): EvaluateOptimizationRulesUseCase {
+  return container.resolve(DI_TOKENS.EvaluateOptimizationRulesUseCase)
+}
+
+export function getAutoOptimizeCampaignUseCase(): AutoOptimizeCampaignUseCase {
+  return container.resolve(DI_TOKENS.AutoOptimizeCampaignUseCase)
 }

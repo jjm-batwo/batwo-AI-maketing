@@ -4,7 +4,7 @@ import { Suspense, lazy, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ApiSourceBadge } from '@/presentation/components/common/ApiSourceBadge'
 import Link from 'next/link'
-import { KPICard, KPIChart } from '@/presentation/components/dashboard'
+import { KPICard, KPIChart, SavingsWidget, OptimizationTimeline } from '@/presentation/components/dashboard'
 import { DonutChart } from '@/presentation/components/dashboard/DonutChart'
 import type { CampaignMetricColumn } from '@/presentation/components/dashboard/CampaignSummaryTable'
 import {
@@ -13,6 +13,7 @@ import {
   useSync,
   useCampaigns,
   useKPIInsights,
+  useSavings,
 } from '@/presentation/hooks'
 import { useUIStore } from '@/presentation/stores'
 import { Button } from '@/components/ui/button'
@@ -65,6 +66,7 @@ export default function DashboardPage() {
     enabled: isConnected,
   })
   const sync = useSync()
+  const { data: savingsData, isLoading: isSavingsLoading } = useSavings({ enabled: isConnected })
 
   // KPI 기반 AI Insights 데이터 가져오기
   const {
@@ -818,7 +820,7 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* 캠페인 상태 분포 */}
+      {/* 캠페인 상태 분포 + AI 절감 효과 + 최적화 이력 */}
       <div className="grid gap-6 lg:grid-cols-3">
         <Card>
           <CardHeader>
@@ -833,6 +835,16 @@ export default function DashboardPage() {
             />
           </CardContent>
         </Card>
+        <SavingsWidget
+          totalSavings={savingsData?.totalSavings ?? { amount: 0, currency: 'KRW' }}
+          totalOptimizations={savingsData?.totalOptimizations ?? 0}
+          topSavingEvent={savingsData?.topSavingEvent ?? null}
+          isLoading={isSavingsLoading}
+        />
+        <OptimizationTimeline
+          events={savingsData?.recentOptimizations ?? []}
+          isLoading={isSavingsLoading}
+        />
       </div>
 
       {/* AI Insights & Campaign Summary */}

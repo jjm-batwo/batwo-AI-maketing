@@ -1,113 +1,49 @@
-import { Sparkles, Activity, Clock, Zap, Shield, Globe } from 'lucide-react'
+import { SectionLabel } from './SectionLabel'
 
-interface StatCardProps {
-  icon: React.ReactNode
-  value: string
-  label: string
-}
-
-function StatCard({ icon, value, label }: StatCardProps) {
-  return (
-    <div className="group flex flex-col items-center p-6 bg-white rounded-xl shadow-sm border border-gray-100 transition-all hover:shadow-md hover:border-gray-200">
-      <div className="p-3 mb-4 bg-gray-50 rounded-full text-slate-700 transition-colors group-hover:bg-primary/10 group-hover:text-primary">
-        {icon}
-      </div>
-      <span className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
-        {value}
-      </span>
-      <span className="text-sm text-slate-500 text-center">{label}</span>
-    </div>
-  )
-}
-
-const stats = [
-  {
-    icon: <Sparkles className="h-6 w-6" aria-hidden="true" />,
-    value: 'AI 자동화',
-    label: '캠페인 생성부터 최적화까지',
-  },
-  {
-    icon: <Activity className="h-6 w-6" aria-hidden="true" />,
-    value: '실시간',
-    label: '성과 모니터링 & 리포트',
-  },
-  {
-    icon: <Clock className="h-6 w-6" aria-hidden="true" />,
-    value: '5분',
-    label: '간편한 초기 설정',
-  },
-  {
-    icon: <Zap className="h-6 w-6" aria-hidden="true" />,
-    value: '24/7',
-    label: 'AI가 항상 광고 최적화',
-  },
+const PLATFORMS = [
+  { name: 'Meta Business' },
+  { name: 'Cafe24' },
+  { name: 'Shopify' },
+  { name: 'Naver' },
+  { name: 'Instagram' },
+  { name: 'Coupang' },
+  { name: 'YouTube' },
+  { name: 'Kakao' },
 ]
 
-const trustBadges = [
-  {
-    icon: <Shield className="h-5 w-5" aria-hidden="true" />,
-    label: 'Meta Marketing API 연동',
-  },
-  {
-    icon: <Zap className="h-5 w-5" aria-hidden="true" />,
-    label: '데이터 암호화 적용',
-  },
-  {
-    icon: <Globe className="h-5 w-5" aria-hidden="true" />,
-    label: '한국어 최적화',
-  },
-]
+// Triplicated for seamless infinite marquee
+const MARQUEE_ITEMS = [...PLATFORMS, ...PLATFORMS, ...PLATFORMS]
 
 export function SocialProofSection() {
   return (
-    <section id="social-proof" className="py-10 md:py-16">
-      <div className="container mx-auto px-4">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            바투 AI가 제공하는 가치
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            AI 기반 마케팅 자동화로 광고 성과를 높이고 시간을 절약하세요
-          </p>
-        </div>
+    <section
+      id="social-proof"
+      className="py-14 md:py-20 border-y border-gray-100 overflow-hidden"
+    >
+      <div className="container mx-auto px-4 mb-10 text-center">
+        <SectionLabel className="text-center">연동 플랫폼</SectionLabel>
+        <p className="text-sm text-muted-foreground">
+          국내외 주요 이커머스 및 마케팅 플랫폼과 연동됩니다
+        </p>
+      </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-12">
-          {stats.map((stat, index) => (
-            <StatCard
-              key={index}
-              icon={stat.icon}
-              value={stat.value}
-              label={stat.label}
-            />
-          ))}
-        </div>
+      {/* Marquee wrapper — centered track with edge fades */}
+      <div className="relative flex items-center overflow-hidden select-none">
+        {/* Left fade */}
+        <div className="absolute left-0 top-0 bottom-0 w-40 z-10 pointer-events-none bg-gradient-to-r from-background via-background/80 to-transparent" />
+        {/* Right fade */}
+        <div className="absolute right-0 top-0 bottom-0 w-40 z-10 pointer-events-none bg-gradient-to-l from-background via-background/80 to-transparent" />
 
-        {/* Trust Badges */}
-        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
-          {trustBadges.map((badge, index) => (
-            <div
-              key={index}
-              className="group flex items-center gap-2 text-muted-foreground transition-colors hover:text-primary cursor-default"
+        <div className="flex animate-marquee gap-20 items-center whitespace-nowrap">
+          {MARQUEE_ITEMS.map((platform, index) => (
+            <span
+              key={`${platform.name}-${index}`}
+              className="shrink-0 text-base md:text-lg font-semibold tracking-tight text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              aria-hidden={index >= PLATFORMS.length}
             >
-              <div className="p-2 bg-background rounded-full border transition-colors group-hover:bg-primary/10 group-hover:border-primary/30">
-                {badge.icon}
-              </div>
-              <span className="text-sm font-medium">{badge.label}</span>
-            </div>
+              {platform.name}
+            </span>
           ))}
-        </div>
-
-        {/* 연동 플랫폼 로고 바 */}
-        <div className="mt-12 pt-8 border-t border-border/30">
-          <p className="text-xs text-muted-foreground text-center mb-6 uppercase tracking-widest">연동 플랫폼</p>
-          <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12 opacity-50">
-            <span className="text-lg font-bold tracking-tight">Meta</span>
-            <span className="text-lg font-bold tracking-tight">카페24</span>
-            <span className="text-lg font-bold tracking-tight">스마트스토어</span>
-            <span className="text-lg font-bold tracking-tight">Shopify</span>
-          </div>
         </div>
       </div>
     </section>

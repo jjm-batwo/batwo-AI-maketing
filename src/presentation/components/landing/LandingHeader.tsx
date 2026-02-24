@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
-import { Menu, X, Sparkles } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 const navLinks = [
@@ -86,20 +86,22 @@ export function LandingHeader() {
           }`}
       >
         <div className="container mx-auto px-4">
-          <div className="flex h-16 md:h-20 items-center justify-between">
+          <div className="relative flex h-16 md:h-20 items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-white shadow-sm transition-shadow">
-                <Sparkles className="w-5 h-5 fill-current" />
-              </div>
-              <span className="text-xl font-bold tracking-tight">바투</span>
-              <span className="text-[10px] font-semibold px-1.5 py-0.5 bg-primary/10 text-primary uppercase tracking-wider rounded-sm border border-primary/20">
-                Beta
+              <span
+                className="font-bold tracking-tight"
+                style={{ fontSize: '25px', fontFamily: 'var(--font-noto-sans)' }}
+              >
+                BATWO
               </span>
             </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-8" aria-label="Main navigation">
+            {/* Desktop Navigation — absolutely centered */}
+            <nav
+              className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2"
+              aria-label="Main navigation"
+            >
               {navLinks.map((link) => (
                 <a
                   key={link.href}

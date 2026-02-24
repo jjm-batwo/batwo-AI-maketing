@@ -136,3 +136,14 @@ export {
 } from './MarketingScience'
 export { Permission, type Resource, type Action } from './Permission'
 export { AdvantageConfig, type AdvantageConfigProps } from './AdvantageConfig'
+export { RuleCondition, type ConditionMetric, type ConditionOperator } from './RuleCondition'
+export { RuleAction, type ActionType, type NotifyChannel, type ActionParams } from './RuleAction'
+export { SavingsCalculator } from './SavingsCalculator'
+export {
+  AuditScore,
+  type AuditGrade,
+  type AuditCategory,
+  type AuditFinding,
+  type AuditRecommendation,
+  type CampaignAuditData,
+} from './AuditScore'

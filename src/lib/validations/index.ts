@@ -10,6 +10,8 @@ export * from './team'
 export * from './abtest'
 export * from './budgetAlert'
 export * from './admin'
+export * from './optimization'
+export * from './audit'
 
 import { z } from 'zod'
 import { NextResponse } from 'next/server'

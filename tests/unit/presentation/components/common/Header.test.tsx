@@ -132,10 +132,10 @@ describe('Header', () => {
       expect(header).toHaveClass('sticky', 'top-0')
     })
 
-    it('should have backdrop blur effect', () => {
+    it('should have bg-white background', () => {
       render(<Header />, { wrapper: Wrapper })
       const header = screen.getByRole('banner')
-      expect(header).toHaveClass('backdrop-blur-md')
+      expect(header).toHaveClass('bg-white')
     })
 
     it('should have proper height', () => {

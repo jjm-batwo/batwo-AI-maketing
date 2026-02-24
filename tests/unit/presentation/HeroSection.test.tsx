@@ -40,8 +40,8 @@ describe('HeroSection 전환율 개선', () => {
     it('"1,200+ 사업자가 사용 중" 텍스트가 표시된다', () => {
       render(<HeroSection />)
 
-      expect(screen.getByText(/1,200\+/i)).toBeInTheDocument()
-      expect(screen.getByText(/사업자가 사용 중/i)).toBeInTheDocument()
+      expect(screen.getByText(/1,000\+/i)).toBeInTheDocument()
+      expect(screen.getByText(/마케터가 사용 중/i)).toBeInTheDocument()
     })
 
     it('별점 4.9가 표시된다', () => {
@@ -92,7 +92,7 @@ describe('HeroSection 전환율 개선', () => {
     it('Badge "AI 기반 마케팅 자동화"가 표시된다', () => {
       render(<HeroSection />)
 
-      expect(screen.getByText(/AI 기반 마케팅 자동화/i)).toBeInTheDocument()
+      expect(screen.getByText(/AI 메타 광고 자동화 솔루션 출시/i)).toBeInTheDocument()
     })
 
     it('서브 헤드라인이 표시된다', () => {

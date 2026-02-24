@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils'
 import { useScrollAnimation } from '@/presentation/hooks'
 import { SubscriptionPlan } from '@domain/value-objects/SubscriptionPlan'
 import { PRICING_TIERS, formatPrice, FEATURE_COMPARISON } from './pricingData'
+import { SectionLabel } from '../SectionLabel'
 
 interface PricingSectionProps {
   id?: string
@@ -59,7 +60,10 @@ export const PricingSection = memo(function PricingSection({ id = 'pricing' }: P
       >
         {/* Section Header */}
         <header className="text-center mb-12">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">모든 비즈니스에 맞는 요금제</h2>
+          <SectionLabel className="text-center">가격</SectionLabel>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
+            모든 비즈니스에 맞는 요금제
+          </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             무료로 시작하고, 성장에 맞춰 업그레이드하세요.
           </p>

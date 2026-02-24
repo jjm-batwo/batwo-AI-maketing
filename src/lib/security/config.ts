@@ -228,6 +228,11 @@ export const RATE_LIMIT_CONFIG = {
     tokens: 5,
     interval: 60 * 60 * 1000, // 1 hour
   },
+  // 무료 감사 (3 requests per day per IP)
+  audit: {
+    tokens: 3,
+    interval: 24 * 60 * 60 * 1000, // 24 hours
+  },
 }
 
 // =============================================================================

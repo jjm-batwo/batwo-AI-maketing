@@ -1,4 +1,5 @@
 export { LandingHeader } from './LandingHeader'
+export { SectionLabel } from './SectionLabel'
 export { HeroSection } from './HeroSection'
 export { SocialProofSection } from './SocialProofSection'
 export { FeaturesSection } from './FeaturesSection'

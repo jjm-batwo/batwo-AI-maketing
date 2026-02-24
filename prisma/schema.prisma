@@ -50,6 +50,7 @@ model User {
   creatives     Creative[]
   creativeAssets        CreativeAsset[]
   competitorTrackings   CompetitorTracking[]
+  optimizationRules     OptimizationRule[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
@@ -150,6 +151,8 @@ model Campaign {
   kpiSnapshots    KPISnapshot[]
   budgetAlert     BudgetAlert?
   adSets          AdSet[]
+  optimizationRules OptimizationRule[]
+  optimizationLogs  OptimizationLog[]
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 
@@ -878,4 +881,51 @@ model CompetitorTracking {
 
   @@unique([userId, pageId])
   @@index([userId])
+}
+
+// ========================================
+// Optimization Rules (자동 최적화)
+// ========================================
+
+model OptimizationRule {
+  id              String    @id @default(uuid())
+  campaignId      String    @map("campaign_id")
+  userId          String    @map("user_id")
+  name            String
+  ruleType        String    @map("rule_type")
+  conditions      Json
+  actions         Json
+  isEnabled       Boolean   @default(true) @map("is_enabled")
+  lastTriggeredAt DateTime? @map("last_triggered_at")
+  triggerCount    Int       @default(0) @map("trigger_count")
+  cooldownMinutes Int       @default(60) @map("cooldown_minutes")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  campaign Campaign          @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs     OptimizationLog[]
+
+  @@index([campaignId])
+  @@index([userId])
+  @@index([isEnabled])
+  @@map("optimization_rules")
+}
+
+model OptimizationLog {
+  id               String   @id @default(uuid())
+  ruleId           String   @map("rule_id")
+  campaignId       String   @map("campaign_id")
+  actionType       String   @map("action_type")
+  actionParams     Json?    @map("action_params")
+  beforeMetrics    Json?    @map("before_metrics")
+  estimatedSavings Float?   @map("estimated_savings")
+  executedAt       DateTime @default(now()) @map("executed_at")
+
+  rule     OptimizationRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  campaign Campaign         @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([ruleId])
+  @@index([campaignId])
+  @@map("optimization_logs")
 }

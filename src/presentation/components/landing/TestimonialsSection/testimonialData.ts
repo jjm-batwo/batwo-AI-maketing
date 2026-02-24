@@ -5,11 +5,8 @@ export interface Testimonial {
   company: string
   avatarColor: string
   content: string
+  highlight: string   // substring of content to be highlighted in primary color
   rating: number
-  metrics?: {
-    label: string
-    value: string
-  }
 }
 
 export const TESTIMONIALS: Testimonial[] = [
@@ -20,9 +17,9 @@ export const TESTIMONIALS: Testimonial[] = [
     company: '패션몰 A',
     avatarColor: 'bg-indigo-500',
     content:
-      '광고 관리에 들이던 시간이 70% 줄었어요. AI가 알아서 최적화해주니 다른 업무에 집중할 수 있습니다.',
+      '바투 도입 이후 광고 관리에 들이던 시간이 70% 줄었어요. AI가 알아서 최적화해주니 다른 업무에 집중할 수 있게 되었고 ROAS도 45% 향상됐습니다.',
+    highlight: 'AI가 알아서 최적화해주니 다른 업무에 집중할 수 있게 되었고 ROAS도 45% 향상됐습니다.',
     rating: 5,
-    metrics: { label: 'ROAS 향상', value: '+45%' },
   },
   {
     id: '2',
@@ -31,9 +28,9 @@ export const TESTIMONIALS: Testimonial[] = [
     company: '뷰티 스토어 B',
     avatarColor: 'bg-pink-500',
     content:
-      '마케팅 지식 없이도 쉽게 광고를 운영할 수 있어서 좋아요. 주간 보고서 덕분에 성과 파악도 간편합니다.',
+      '마케팅 지식이 없어도 쉽게 광고를 운영할 수 있어서 정말 좋아요. 주간 보고서 덕분에 성과 파악도 간편해졌습니다. 주간 업무 시간이 8시간이나 절약됐어요.',
+    highlight: '주간 보고서 덕분에 성과 파악도 간편해졌습니다.',
     rating: 5,
-    metrics: { label: '시간 절약', value: '주 8시간' },
   },
   {
     id: '3',
@@ -42,9 +39,9 @@ export const TESTIMONIALS: Testimonial[] = [
     company: '리빙 브랜드 C',
     avatarColor: 'bg-green-500',
     content:
-      '대행사에 맡기던 광고를 직접 운영하게 되면서 비용도 줄고 성과도 좋아졌습니다. 강력 추천합니다!',
+      '대행사에 맡기던 광고를 직접 운영하게 되었습니다. 비용도 월 200만원 절감되고 성과도 더 좋아졌어요. 강력 추천합니다!',
+    highlight: '비용도 월 200만원 절감되고 성과도 더 좋아졌어요.',
     rating: 5,
-    metrics: { label: '비용 절감', value: '월 200만원' },
   },
   {
     id: '4',
@@ -53,9 +50,9 @@ export const TESTIMONIALS: Testimonial[] = [
     company: '푸드 스타트업 D',
     avatarColor: 'bg-amber-500',
     content:
-      'AI 카피 생성 기능이 정말 유용해요. 매번 문구 고민하던 시간이 확 줄었습니다.',
+      'AI 카피 생성 기능이 정말 유용합니다. 매번 문구 고민하던 시간이 확 줄었고, 전환율도 32% 향상되는 놀라운 결과를 얻었습니다.',
+    highlight: '전환율도 32% 향상되는 놀라운 결과를 얻었습니다.',
     rating: 5,
-    metrics: { label: '전환율 향상', value: '+32%' },
   },
   {
     id: '5',
@@ -64,9 +61,9 @@ export const TESTIMONIALS: Testimonial[] = [
     company: '테크 커머스 E',
     avatarColor: 'bg-sky-500',
     content:
-      '데이터 기반 의사결정이 가능해졌어요. 대시보드가 직관적이라 팀원들도 쉽게 활용합니다.',
+      '바투 도입 후 데이터 기반 의사결정이 가능해졌어요. 대시보드가 직관적이라 팀원들도 쉽게 활용하고, 매출이 58% 증가했습니다.',
+    highlight: '대시보드가 직관적이라 팀원들도 쉽게 활용하고, 매출이 58% 증가했습니다.',
     rating: 5,
-    metrics: { label: '매출 증가', value: '+58%' },
   },
   {
     id: '6',
@@ -75,8 +72,8 @@ export const TESTIMONIALS: Testimonial[] = [
     company: '패션 브랜드 F',
     avatarColor: 'bg-violet-500',
     content:
-      '처음 Meta 광고를 시작하는 분들께 추천드려요. 설정부터 운영까지 정말 쉽습니다.',
+      '처음 Meta 광고를 시작하는 분들께 강력 추천드려요. 설정부터 운영까지 정말 쉽고, 신규 고객이 1,200명이나 늘었습니다.',
+    highlight: '신규 고객이 1,200명이나 늘었습니다.',
     rating: 5,
-    metrics: { label: '신규 고객', value: '+1,200명' },
   },
 ]

@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/accordion'
 import { FAQ_ITEMS } from './faqData'
 import { FAQSchema } from './FAQSchema'
+import { SectionLabel } from '../SectionLabel'
 
 export const FAQSection = memo(function FAQSection() {
   return (
@@ -16,7 +17,10 @@ export const FAQSection = memo(function FAQSection() {
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <header className="text-center mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">자주 묻는 질문</h2>
+          <SectionLabel className="text-center">자주 묻는 질문</SectionLabel>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+            궁금하신 점이 있으신가요?
+          </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             바투 서비스에 대해 궁금하신 점을 확인해보세요
           </p>

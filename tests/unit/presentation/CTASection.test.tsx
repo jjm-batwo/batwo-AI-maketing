@@ -32,7 +32,7 @@ describe('CTASection 전환율 개선', () => {
     it('신뢰 신호 컨테이너가 존재한다', () => {
       render(<CTASection />)
 
-      const trustContainer = screen.getByTestId('cta-trust-indicators')
+      const trustContainer = screen.getByRole('list', { name: '주요 혜택' })
       expect(trustContainer).toBeInTheDocument()
     })
 

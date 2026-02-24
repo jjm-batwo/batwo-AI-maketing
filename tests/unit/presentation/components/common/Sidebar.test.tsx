@@ -137,7 +137,7 @@ describe('Sidebar', () => {
       render(<Sidebar />, { wrapper: Wrapper })
 
       const dashboardLink = screen.getByText('대시보드').closest('a')
-      expect(dashboardLink).toHaveClass('bg-primary/10', 'text-primary')
+      expect(dashboardLink).toHaveClass('bg-gray-100', 'text-slate-900')
       expect(dashboardLink).toHaveAttribute('aria-current', 'page')
     })
 
@@ -147,7 +147,7 @@ describe('Sidebar', () => {
       render(<Sidebar />, { wrapper: Wrapper })
 
       const campaignsLink = screen.getByText('캠페인').closest('a')
-      expect(campaignsLink).toHaveClass('bg-primary/10', 'text-primary')
+      expect(campaignsLink).toHaveClass('bg-gray-100', 'text-slate-900')
       expect(campaignsLink).toHaveAttribute('aria-current', 'page')
     })
 
@@ -157,7 +157,7 @@ describe('Sidebar', () => {
       render(<Sidebar />, { wrapper: Wrapper })
 
       const reportsLink = screen.getByText('보고서').closest('a')
-      expect(reportsLink).toHaveClass('bg-primary/10', 'text-primary')
+      expect(reportsLink).toHaveClass('bg-gray-100', 'text-slate-900')
       expect(reportsLink).toHaveAttribute('aria-current', 'page')
     })
 
@@ -167,7 +167,7 @@ describe('Sidebar', () => {
       render(<Sidebar />, { wrapper: Wrapper })
 
       const campaignsLink = screen.getByText('캠페인').closest('a')
-      expect(campaignsLink).toHaveClass('bg-primary/10', 'text-primary')
+      expect(campaignsLink).toHaveClass('bg-gray-100', 'text-slate-900')
     })
 
     it('should not highlight inactive links', () => {
@@ -176,8 +176,8 @@ describe('Sidebar', () => {
       render(<Sidebar />, { wrapper: Wrapper })
 
       const campaignsLink = screen.getByText('캠페인').closest('a')
-      expect(campaignsLink).not.toHaveClass('bg-primary/10')
-      expect(campaignsLink).toHaveClass('text-muted-foreground')
+      expect(campaignsLink).not.toHaveClass('bg-gray-100')
+      expect(campaignsLink).toHaveClass('text-slate-500')
     })
   })
 
@@ -227,7 +227,7 @@ describe('Sidebar', () => {
       render(<Sidebar />, { wrapper: Wrapper })
 
       const sidebar = screen.getByRole('complementary')
-      expect(sidebar).toHaveClass('backdrop-blur-xl')
+      expect(sidebar).toHaveClass('bg-white', 'shadow-sm')
     })
 
     it('should have proper z-index', () => {
@@ -309,7 +309,7 @@ describe('Sidebar', () => {
 
       // Inactive link should have hover classes
       const dashboardLink = screen.getByText('대시보드').closest('a')
-      expect(dashboardLink).toHaveClass('hover:text-foreground', 'hover:bg-white/50')
+      expect(dashboardLink).toHaveClass('hover:text-slate-900', 'hover:bg-gray-50')
     })
 
     it('should show active indicator dot (not animate-pulse)', () => {
@@ -440,7 +440,7 @@ describe('Sidebar', () => {
       render(<Sidebar />, { wrapper: Wrapper })
 
       const campaignsLink = screen.getByText('캠페인').closest('a')
-      expect(campaignsLink).toHaveClass('bg-primary/10', 'text-primary')
+      expect(campaignsLink).toHaveClass('bg-gray-100', 'text-slate-900')
     })
 
     it('should handle unknown routes', () => {
@@ -451,7 +451,7 @@ describe('Sidebar', () => {
       // No nav item should be highlighted
       const navLinks = screen.getAllByRole('link').slice(1, 4) // Skip home link, 3 nav items
       navLinks.forEach(link => {
-        expect(link).not.toHaveClass('bg-primary/10')
+        expect(link).not.toHaveClass('bg-gray-100')
       })
     })
 

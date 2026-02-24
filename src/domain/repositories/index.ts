@@ -34,3 +34,4 @@ export type {
   FeedbackStats,
 } from './IAIFeedbackRepository'
 export type { ITeamRoleRepository } from './ITeamRoleRepository'
+export type { IOptimizationRuleRepository } from './IOptimizationRuleRepository'
