@@ -152,6 +152,7 @@ import { DeleteOptimizationRuleUseCase } from '@application/use-cases/optimizati
 import { ListOptimizationRulesUseCase } from '@application/use-cases/optimization/ListOptimizationRulesUseCase'
 import { EvaluateOptimizationRulesUseCase } from '@application/use-cases/optimization/EvaluateOptimizationRulesUseCase'
 import { AutoOptimizeCampaignUseCase } from '@application/use-cases/optimization/AutoOptimizeCampaignUseCase'
+import { CalculateSavingsUseCase } from '@application/use-cases/optimization/CalculateSavingsUseCase'
 import { AuditAdAccountUseCase } from '@application/use-cases/audit/AuditAdAccountUseCase'
 
 import { prisma } from '@/lib/prisma'
@@ -812,6 +813,16 @@ container.register(
   )
 )
 
+// 절감 금액 계산 UseCase
+container.register(
+  DI_TOKENS.CalculateSavingsUseCase,
+  () => new CalculateSavingsUseCase(
+    container.resolve(DI_TOKENS.OptimizationRuleRepository),
+    container.resolve(DI_TOKENS.CampaignRepository),
+    container.resolve(DI_TOKENS.KPIRepository),
+  )
+)
+
 // Audit Use Cases
 container.register(
   DI_TOKENS.AuditAdAccountUseCase,
@@ -1190,4 +1201,8 @@ export function getEvaluateOptimizationRulesUseCase(): EvaluateOptimizationRules
 
 export function getAutoOptimizeCampaignUseCase(): AutoOptimizeCampaignUseCase {
   return container.resolve(DI_TOKENS.AutoOptimizeCampaignUseCase)
+}
+
+export function getCalculateSavingsUseCase(): CalculateSavingsUseCase {
+  return container.resolve(DI_TOKENS.CalculateSavingsUseCase)
 }
