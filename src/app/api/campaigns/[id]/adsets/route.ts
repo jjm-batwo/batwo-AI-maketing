@@ -5,6 +5,7 @@ import { PrismaCampaignRepository } from '@infrastructure/database/repositories/
 import { CreateAdSetUseCase, CampaignNotFoundError } from '@application/use-cases/adset/CreateAdSetUseCase'
 import { ListAdSetsUseCase } from '@application/use-cases/adset/ListAdSetsUseCase'
 import { prisma } from '@/lib/prisma'
+import { revalidateTag } from 'next/cache'
 
 const campaignRepository = new PrismaCampaignRepository(prisma)
 const adSetRepository = new PrismaAdSetRepository(prisma)
@@ -78,6 +79,9 @@ export async function POST(
       startDate: body.startDate,
       endDate: body.endDate,
     })
+
+    revalidateTag('campaigns', 'default')
+    revalidateTag('kpi', 'default')
 
     return NextResponse.json(result, { status: 201 })
   } catch (error) {

@@ -6,6 +6,7 @@ import { toCreativeDTO } from '@application/dto/creative/CreativeDTO'
 import { CreativeFormat } from '@domain/value-objects/CreativeFormat'
 import { CTAType } from '@domain/value-objects/CTAType'
 import { prisma } from '@/lib/prisma'
+import { revalidateTag } from 'next/cache'
 
 export async function GET() {
   const user = await getAuthenticatedUser()
@@ -48,6 +49,8 @@ export async function POST(request: NextRequest) {
       linkUrl: body.linkUrl,
       assets: body.assets,
     })
+
+    revalidateTag('campaigns', 'default')
 
     return NextResponse.json(result, { status: 201 })
   } catch (error) {

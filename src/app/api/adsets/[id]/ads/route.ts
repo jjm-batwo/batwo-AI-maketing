@@ -6,6 +6,7 @@ import { CreateAdUseCase } from '@application/use-cases/ad/CreateAdUseCase'
 import { toAdDTO } from '@application/dto/ad/AdDTO'
 import { AdMapper } from '@/infrastructure/database/mappers/AdMapper'
 import { prisma } from '@/lib/prisma'
+import { revalidateTag } from 'next/cache'
 
 // AdSet 리포지토리는 동일 워커에서 생성될 수 있으므로 인라인으로 처리
 async function getAdSetById(id: string) {
@@ -78,6 +79,10 @@ export async function POST(
     })
 
     const savedAd = await adRepository.save(ad)
+
+    revalidateTag('campaigns', 'default')
+    revalidateTag('kpi', 'default')
+
     return NextResponse.json(toAdDTO(savedAd), { status: 201 })
   } catch (error) {
     console.error('Failed to create ad:', error)

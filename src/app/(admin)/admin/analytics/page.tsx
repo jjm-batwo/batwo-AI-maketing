@@ -65,7 +65,7 @@ async function fetchAnalytics(period: string): Promise<AnalyticsData | null> {
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
     const res = await fetch(`${baseUrl}/api/admin/analytics?period=${period}`, {
       headers: { Cookie: cookieStore.toString() },
-      next: { revalidate: 300, tags: ['admin-analytics'] },
+      next: { revalidate: 300, tags: ['admin-dashboard'] },
     })
     if (!res.ok) return null
     return res.json()

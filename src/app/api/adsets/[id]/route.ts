@@ -5,6 +5,7 @@ import { PrismaCampaignRepository } from '@infrastructure/database/repositories/
 import { UpdateAdSetUseCase, AdSetNotFoundError } from '@application/use-cases/adset/UpdateAdSetUseCase'
 import { DeleteAdSetUseCase, AdSetNotFoundError as DeleteNotFoundError } from '@application/use-cases/adset/DeleteAdSetUseCase'
 import { prisma } from '@/lib/prisma'
+import { revalidateTag } from 'next/cache'
 
 const campaignRepository = new PrismaCampaignRepository(prisma)
 const adSetRepository = new PrismaAdSetRepository(prisma)
@@ -81,6 +82,9 @@ export async function PATCH(
       targeting: body.targeting,
     })
 
+    revalidateTag('campaigns', 'default')
+    revalidateTag('kpi', 'default')
+
     return NextResponse.json(result)
   } catch (error) {
     if (error instanceof AdSetNotFoundError) {
@@ -126,6 +130,9 @@ export async function DELETE(
 
     const deleteAdSet = new DeleteAdSetUseCase(adSetRepository)
     await deleteAdSet.execute(id)
+
+    revalidateTag('campaigns', 'default')
+    revalidateTag('kpi', 'default')
 
     return new NextResponse(null, { status: 204 })
   } catch (error) {

@@ -3,6 +3,7 @@ import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { PrismaCreativeRepository } from '@/infrastructure/database/repositories/PrismaCreativeRepository'
 import { toCreativeDTO } from '@application/dto/creative/CreativeDTO'
 import { prisma } from '@/lib/prisma'
+import { revalidateTag } from 'next/cache'
 
 export async function GET(
   _request: NextRequest,
@@ -85,6 +86,9 @@ export async function PATCH(
     }
 
     const saved = await creativeRepository.update(updated)
+
+    revalidateTag('campaigns', 'default')
+
     return NextResponse.json(toCreativeDTO(saved))
   } catch (error) {
     console.error('Failed to update creative:', error)
@@ -122,6 +126,9 @@ export async function DELETE(
     }
 
     await creativeRepository.delete(id)
+
+    revalidateTag('campaigns', 'default')
+
     return NextResponse.json({ message: 'Creative deleted' })
   } catch (error) {
     console.error('Failed to delete creative:', error)
