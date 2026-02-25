@@ -255,8 +255,8 @@ description: <한 줄 설명>. <트리거 조건> 후 사용.
    - 첫 번째 스킬 추가 시 "(아직 등록된 검증 스킬이 없습니다)" 텍스트와 HTML 주석을 제거하고 테이블로 교체합니다
    - 형식: `| <번호> | verify-<name> | <설명> |`
 
-   **4c. `CLAUDE.md` 업데이트:**
-   - `## Skills` 테이블에 새 스킬 행을 추가합니다
+   **4c. `.claude/CLAUDE.md` 업데이트:**
+   - `## Skills` 테이블에 새 스킬 행을 추가합니다 (주의: Skills 테이블은 `.claude/CLAUDE.md`에 위치)
    - 형식: `| verify-<name> | <한 줄 설명> |`
 
 ### Step 7: 검증
@@ -293,7 +293,7 @@ ls <file-path> 2>/dev/null || echo "MISSING: <file-path>"
 ### 업데이트된 연관 파일:
 - `manage-skills/SKILL.md`: 등록된 검증 스킬 테이블 업데이트
 - `verify-implementation/SKILL.md`: 실행 대상 스킬 테이블 업데이트
-- `CLAUDE.md`: Skills 테이블 업데이트
+- `.claude/CLAUDE.md`: Skills 테이블 업데이트
 
 ### 영향없는 스킬: Z개
 - (관련 변경사항 없음)
@@ -322,7 +322,8 @@ ls <file-path> 2>/dev/null || echo "MISSING: <file-path>"
 |------|---------|
 | `.claude/skills/verify-implementation/SKILL.md` | 통합 검증 스킬 (이 스킬이 실행 대상 목록을 관리) |
 | `.claude/skills/manage-skills/SKILL.md` | 이 파일 자체 (등록된 검증 스킬 목록을 관리) |
-| `CLAUDE.md` | 프로젝트 지침 (이 스킬이 Skills 섹션을 관리) |
+| `.claude/CLAUDE.md` | 프로젝트 에이전트 설정 (이 스킬이 Skills 섹션을 관리) |
+| `.claude/rules/*.md` | 모듈화된 규칙 파일 (기능별 조건부 로딩) |
 
 ## 예외사항
 

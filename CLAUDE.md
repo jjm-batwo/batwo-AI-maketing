@@ -47,67 +47,6 @@ src/
 
 **의존성 규칙**: domain ← application ← infrastructure/presentation
 
-## TDD 개발 지침 (필수)
-
-### 핵심 원칙
-모든 기능 구현은 TDD 프로세스를 따른다. 테스트는 '살아있는 문서'로서 비즈니스 의도를 명확히 전달해야 한다.
-
-### RED → GREEN → REFACTOR
-
-**1단계: RED (테스트 먼저)**
-- 프로덕션 코드 작성 전, 반드시 실패하는 테스트를 먼저 작성
-- 테스트는 비즈니스 로직의 의도(Intent)를 담아야 함
-- 컴파일 에러 또는 테스트 실패를 확인한 후 다음 단계로 진행
-
-**2단계: GREEN (최소 구현)**
-- 테스트를 통과시키는 최소한의 코드만 작성
-- 테스트 미통과 상태에서 기능 확장 금지
-
-**3단계: REFACTOR (정리)**
-- 테스트 통과를 유지하면서 코드 정리
-- 중복 제거, 네이밍 개선, 구조 정리
-
-### Self-Healing 규칙
-- 기존 코드 수정 시 테스트 실패 → **테스트를 약화시키지 말고, 구현 코드를 수정**
-- 에러 메시지로 "어떤 비즈니스 로직이 깨졌는지" 추론하고 복구
-
-### 테스트 네이밍 컨벤션
-Given/When/Then이 자연어로 읽히도록 서술적 작성:
-```typescript
-// Good - 의도가 명확하게 읽힘
-it('should_create_campaign_when_valid_budget_provided')
-it('should_reject_campaign_when_weekly_limit_exceeded')
-it('should_calculate_roas_with_discount_applied')
-
-// Bad - 의도 불명확
-it('test campaign')
-it('works correctly')
-```
-
-### 테스트 구조 및 커버리지 목표
-```
-tests/
-├── unit/           # domain (≥95%), application (≥90%)
-├── integration/    # repositories (≥85%)
-└── e2e/            # Playwright (주요 시나리오 100%)
-```
-
-### 레이어별 테스트 전략
-| 레이어 | 도구 | 모킹 범위 | 예시 |
-|--------|------|----------|------|
-| Domain | Vitest | 없음 (순수 로직) | `Campaign.create()` 검증 |
-| Application | Vitest | Repository 인터페이스 | `CreateCampaignUseCase` |
-| Infrastructure | Vitest | DB (Prisma mock) | `PrismaCampaignRepo` |
-| Presentation | Vitest + RTL | API 호출 | `CampaignForm` 렌더링 |
-| E2E | Playwright | 없음 (실제 플로우) | 캠페인 생성 전체 흐름 |
-
-### 에이전트 출력 형식
-기능 구현 시 반드시 이 순서를 따를 것:
-1. **[Test Code]** — 실패하는 테스트 작성 + 실패 확인
-2. **[Reasoning]** — 이 테스트가 검증하는 비즈니스 요구사항 설명
-3. **[Implementation]** — 테스트를 통과시키는 최소 구현 코드
-4. **[Verify]** — 테스트 통과 확인 (`npx vitest run [파일]`)
-
 ## 주요 명령어
 
 ```bash
@@ -147,57 +86,19 @@ npx playwright test  # E2E 테스트
 
 상세 템플릿: `docs/ai-team/tcrei-templates.md`
 
-## 랜딩 페이지 구조
-```
-src/presentation/components/landing/
-├── LandingHeader.tsx      # 네비게이션
-├── HeroSection.tsx        # 메인 헤로우
-├── SocialProofSection.tsx # 신뢰 지표
-├── FeaturesSection.tsx    # 기능 소개
-├── ProductShowcaseSection.tsx
-├── HowItWorksSection.tsx  # 사용 방법
-├── TestimonialsSection.tsx # 후기
-├── PricingSection.tsx     # 가격
-├── FAQSection.tsx         # FAQ
-├── CTASection.tsx         # 최종 CTA
-└── LandingFooter.tsx      # 푸터
-```
+## 모듈화된 규칙 (.claude/rules/)
 
-## 픽셀 설치 기능
+기능별 상세 지침은 `.claude/rules/`에 분리되어 해당 파일 작업 시 자동 로드됩니다:
 
-### 개요
-Meta 픽셀 원클릭 설치 기능. 커머스 사업자가 버튼 한 번으로 픽셀 설치를 완료할 수 있음.
-
-### 도메인 엔티티
-```
-src/domain/entities/
-├── MetaPixel.ts              # 픽셀 설정 엔티티
-├── PlatformIntegration.ts    # 플랫폼 연동 엔티티 (카페24)
-└── ConversionEvent.ts        # CAPI 전환 이벤트 엔티티
-```
-
-### 주요 API
-| 엔드포인트 | 용도 |
-|-----------|------|
-| `GET /api/pixel` | 사용자 픽셀 목록 |
-| `POST /api/pixel` | 픽셀 선택/저장 |
-| `GET /api/pixel/[id]` | 픽셀 상세 |
-| `GET /api/pixel/[id]/tracker.js` | 동적 추적 스크립트 |
-| `POST /api/pixel/[id]/event` | 클라이언트 이벤트 수신 |
-| `GET /api/platform/cafe24/auth` | 카페24 OAuth URL |
-| `GET /api/platform/cafe24/callback` | OAuth 콜백 |
-| `POST /api/webhooks/cafe24` | 카페24 주문 웹훅 |
-
-### 온보딩 플로우
-1. Welcome (환영) → 2. Meta 연결 → 3. **픽셀 설치** → 4. 완료
-
-### 환경 변수
-```bash
-# 카페24 API (선택)
-CAFE24_CLIENT_ID=""
-CAFE24_CLIENT_SECRET=""
-CAFE24_REDIRECT_URI=""
-```
+| 규칙 파일 | 로딩 조건 | 내용 |
+|-----------|----------|------|
+| `tdd.md` | `src/**/*.{ts,tsx}`, `tests/**` | TDD 지침, 검증 체크리스트, 증거 기반 완료 |
+| `feature-pixel.md` | 픽셀 관련 파일 | 픽셀 설치, 온보딩, 카페24 연동 |
+| `feature-landing.md` | 랜딩 컴포넌트 | 랜딩 페이지 구조, Evolving 상태 |
+| `feature-optimization.md` | 최적화 관련 파일 | 규칙 엔진, 절감 금액, 크론 |
+| `feature-audit.md` | 감사 관련 파일 | 무료 감사, OAuth, Rate Limit |
+| `feature-chatbot.md` | 챗봇 관련 파일 | AI 어시스턴트, 인텐트, 레질리언스 |
+| `feature-ads.md` | AdSet/Ad/Creative 파일 | 광고 소재, Advantage+ |
 
 ## 참고 문서
 - 상세 구현 계획: `docs/plans/PLAN_batwo-ai-marketing.md`

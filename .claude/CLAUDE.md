@@ -94,47 +94,6 @@
 보안 검토가 필요한 경로:
 - `src/app/api/**`, `src/infrastructure/auth/**`, `src/infrastructure/external/**`, `prisma/schema.prisma`
 
-### TDD 에이전트 워크플로우
-기능 구현 요청 시 에이전트는 반드시 다음 순서를 따른다:
-
-```
-1. RED   → 실패하는 테스트 작성 → `npx vitest run [파일]`로 실패 확인
-2. GREEN → 최소 구현 작성 → `npx vitest run [파일]`로 통과 확인
-3. REFACTOR → 코드 정리 → 전체 테스트 통과 확인
-```
-
-**Self-Healing**: 테스트 실패 시 테스트를 약화시키지 말고 구현 코드를 수정할 것.
-
-### 검증 체크리스트
-코드 변경 완료 후 반드시 실행:
-```bash
-npx tsc --noEmit        # 타입 체크
-npx vitest run          # 단위 테스트
-npx next build          # 빌드 확인
-```
-
-### 증거 기반 완료 검증
-
-작업 유형별 필수 증거:
-
-| 작업 유형 | 필수 증거 | 통과 기준 |
-|----------|---------|----------|
-| 코드 수정 | tsc + vitest + build | 모두 exit 0 |
-| 새 기능 | 위 + RED 실패 → GREEN 통과 로그 | 테스트 수 증가 |
-| 버그 수정 | 재현 테스트 → 수정 후 통과 로그 | 회귀 없음 |
-| UI 변경 | build + 반응형 확인 (md/lg/xl) | 깨짐 없음 |
-| 리팩토링 | tsc + vitest (기존 테스트 100% 통과) | 동작 변경 없음 |
-
-완료 시 반드시 증거를 첨부한다:
-```
-[Evidence]
-- tsc: PASS | vitest: N tests PASS | build: exit 0
-- 신규 테스트: +N개 | 변경 파일: N개
-- 검증 커맨드 출력 요약
-```
-
-증거 없이 "완료"를 선언하지 않는다.
-
 ### 실패 복구 프로토콜 (3-Strike Rule)
 
 동일 작업에서 **3회 연속 실패** 시:
