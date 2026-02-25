@@ -33,10 +33,16 @@ Next.js ISR의 캐시 태그 시스템이 올바르게 구성되어 있는지 �
 | `src/app/api/admin/users/[id]/route.ts` | 사용자 관리 API — `admin-dashboard` 태그 무효화 |
 | `src/app/api/admin/settings/admins/route.ts` | 관리자 설정 API — `admin-dashboard` 태그 무효화 |
 | `src/app/api/dashboard/kpi/route.ts` | 대시보드 KPI API — 캐시 서비스 사용 (Redis), 짧은 기간(2분 TTL) |
+| `src/app/api/ai/feedback/route.ts` | AI 피드백 API — 읽기전용 GET + 생성 POST (ISR 태그 불필요, 예외 대상) |
+| `src/app/api/ai/feedback/analytics/route.ts` | 피드백 분석 API — 읽기전용 GET (ISR 태그 불필요, 예외 대상) |
+| `src/app/api/audit/pdf/route.ts` | 감사 PDF 생성 API — 읽기전용 POST (일회성 생성, ISR 캐시 불필요) |
+| `src/app/api/audit/share/route.ts` | 감사 결과 공유 링크 생성 API — 인메모리 캐시 사용 (`auditShareCache`) |
+| `src/app/api/audit/share/[token]/route.ts` | 공유 토큰 조회 API — 읽기전용 GET (ISR 태그 불필요) |
 | `src/app/(dashboard)/campaigns/page.tsx` | 캠페인 목록 페이지 — `campaigns`, `kpi` 태그 사용 |
 | `src/app/(dashboard)/campaigns/[id]/page.tsx` | 캠페인 상세 페이지 — `campaigns` 태그 사용 |
 | `src/app/(dashboard)/reports/page.tsx` | 보고서 목록 페이지 — `reports` 태그 사용 |
 | `src/app/(dashboard)/dashboard/page.tsx` | 대시보드 페이지 — Client Component, TanStack Query 사용 (ISR 미사용) |
+| `src/app/(dashboard)/optimization-rules/page.tsx` | 최적화 규칙 페이지 — `optimization-rules`, `campaigns` 태그 사용 (revalidate: 60) |
 | `src/app/(admin)/admin/page.tsx` | 관리자 대시보드 — `admin-dashboard` 태그 사용 |
 
 ## Workflow

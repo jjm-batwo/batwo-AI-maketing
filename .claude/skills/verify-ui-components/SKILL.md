@@ -60,6 +60,7 @@ React 컴포넌트 구현의 일관성과 품질을 검증합니다:
 | `src/presentation/hooks/useFeedback.ts`                                   | 채팅 메시지 피드백 훅                                    |
 | `src/presentation/hooks/useFeedbackAnalytics.ts`                          | 피드백 분석 데이터 훅                                    |
 | `src/presentation/hooks/useKeyboardNavigation.ts`                         | 채팅 키보드 네비게이션 훅                                |
+| `src/presentation/hooks/useOptimizationRules.ts`                          | 최적화 규칙 CRUD 훅                                      |
 | `src/components/ui/`                                                      | shadcn/ui 기본 컴포넌트들                                |
 
 ## Workflow

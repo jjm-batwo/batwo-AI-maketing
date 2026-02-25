@@ -29,6 +29,12 @@ DI(Dependency Injection) 컨테이너의 일관성을 검증합니다:
 | `src/domain/repositories/I*.ts` | 리포지토리 인터페이스 |
 | `src/application/ports/I*.ts` | 외부 서비스 포트 인터페이스 |
 | `src/domain/repositories/IOptimizationRuleRepository.ts` | 최적화 규칙 리포지토리 인터페이스 |
+| `src/application/ports/IFallbackResponseService.ts` | 폴백 응답 서비스 포트 — DI 등록 대상 |
+| `src/application/ports/IFewShotExampleRegistry.ts` | 퓨샷 예시 레지스트리 포트 — DI 등록 대상 |
+| `src/application/ports/IGuideQuestionService.ts` | 가이드 질문 서비스 포트 — DI 등록 대상 |
+| `src/application/ports/IPromptTemplateService.ts` | 프롬프트 템플릿 서비스 포트 — DI 등록 대상 |
+| `src/application/ports/IResilienceService.ts` | 복원력 서비스 포트 — DI 등록 대상 |
+| `src/application/use-cases/ai/GetFeedbackAnalyticsUseCase.ts` | 피드백 분석 유스케이스 — DI 등록 대상 |
 
 ## Workflow
 

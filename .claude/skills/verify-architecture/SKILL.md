@@ -29,13 +29,25 @@ description: 클린 아키텍처 레이어 의존성 규칙을 검증합니다. 
 | `src/domain/value-objects/*.ts` | 값 객체 (Money, DateRange, SubscriptionPlan 등) |
 | `src/domain/repositories/*.ts` | 리포지토리 인터페이스 (포트) |
 | `src/domain/errors/*.ts` | 도메인 에러 |
-| `src/domain/services/*.ts` | 도메인 서비스 (IntentClassifier 등) |
+| `src/domain/services/IntentClassifier.ts` | 도메인 서비스 — 채팅 인텐트 분류 (외부 의존 없이 순수 도메인 로직) |
+| `src/domain/services/index.ts` | 도메인 서비스 배럴 export |
 | `src/application/use-cases/**/*.ts` | 유스케이스 |
 | `src/application/dto/**/*.ts` | DTO |
-| `src/application/ports/*.ts` | 외부 서비스 인터페이스 |
-| `src/application/services/*.ts` | 애플리케이션 서비스 |
+| `src/application/ports/IFallbackResponseService.ts` | 폴백 응답 서비스 포트 인터페이스 |
+| `src/application/ports/IFewShotExampleRegistry.ts` | 퓨샷 예시 레지스트리 포트 인터페이스 |
+| `src/application/ports/IGuideQuestionService.ts` | 가이드 질문 서비스 포트 인터페이스 |
+| `src/application/ports/IPromptTemplateService.ts` | 프롬프트 템플릿 서비스 포트 인터페이스 |
+| `src/application/ports/IResilienceService.ts` | 복원력 서비스 포트 인터페이스 |
+| `src/application/services/ConversationSummarizerService.ts` | 대화 요약 서비스 (application 레이어) |
+| `src/application/services/FallbackResponseService.ts` | 폴백 응답 서비스 구현 (application 레이어) |
+| `src/application/services/FewShotExampleRegistry.ts` | 퓨샷 예시 레지스트리 구현 (application 레이어) |
+| `src/application/services/GuideQuestionService.ts` | 가이드 질문 서비스 구현 (application 레이어) |
+| `src/application/services/PromptTemplateService.ts` | 프롬프트 템플릿 서비스 구현 (application 레이어) |
 | `src/infrastructure/database/**/*.ts` | Prisma 리포지토리 구현 |
 | `src/infrastructure/external/**/*.ts` | 외부 API 클라이언트 |
+| `src/infrastructure/external/errors/CircuitBreaker.ts` | 서킷 브레이커 (infrastructure 레이어, domain import 금지) |
+| `src/infrastructure/external/errors/ResilienceService.ts` | 복원력 서비스 구현 (infrastructure 레이어) |
+| `src/infrastructure/external/errors/withRetry.ts` | 재시도 유틸리티 (infrastructure 레이어, domain import 금지) |
 
 ## Workflow
 

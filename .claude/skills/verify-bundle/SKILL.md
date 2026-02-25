@@ -31,6 +31,10 @@ description: 프로덕션 번들 크기에 영향을 주는 패턴을 검증합�
 | `src/app/docs/page.tsx` | swagger-ui-react 프로덕션 완전 제외 (`NODE_ENV` 가드) |
 | `src/app/layout.tsx` | 루트 레이아웃 (Server Component) |
 | `src/app/(dashboard)/layout.tsx` | 대시보드 레이아웃 (FacebookSDK Suspense 로딩) |
+| `src/infrastructure/external/errors/CircuitBreaker.ts` | 서킷 브레이커 — 서버 전용, namespace import 허용 대상 |
+| `src/infrastructure/external/errors/ResilienceService.ts` | 복원력 서비스 — 서버 전용, 클라이언트 번들 포함 여부 확인 |
+| `src/infrastructure/external/errors/withRetry.ts` | 재시도 유틸리티 — 서버 전용, 클라이언트 번들 포함 여부 확인 |
+| `src/infrastructure/pdf/AuditPDFGenerator.ts` | 감사 PDF 생성기 — 서버 전용 (`pdf-lib` 등 대형 라이브러리 사용 시 번들 확인) |
 | `package.json` | dependencies vs devDependencies |
 
 ## Workflow
