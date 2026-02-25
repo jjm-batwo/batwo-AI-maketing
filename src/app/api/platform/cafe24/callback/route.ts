@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { Cafe24Adapter } from '@infrastructure/external/platforms/cafe24/Cafe24Adapter'
 import { EcommercePlatform, IntegrationStatus } from '@domain/entities/PlatformIntegration'
 import { PixelSetupMethod } from '@domain/entities/MetaPixel'
+import { encryptToken } from '@application/utils/TokenEncryption'
 
 const CAFE24_CLIENT_ID = process.env.CAFE24_CLIENT_ID || ''
 const CAFE24_CLIENT_SECRET = process.env.CAFE24_CLIENT_SECRET || ''
@@ -92,7 +93,7 @@ export async function GET(request: NextRequest) {
       await prisma.platformIntegration.update({
         where: { id: pixel.platformIntegration.id },
         data: {
-          accessToken: tokens.accessToken,
+          accessToken: encryptToken(tokens.accessToken),
           refreshToken: tokens.refreshToken,
           tokenExpiry,
           platformStoreId: storeInfo.storeId,
@@ -108,7 +109,7 @@ export async function GET(request: NextRequest) {
           pixelId: pixel.id,
           platform: EcommercePlatform.CAFE24,
           platformStoreId: storeInfo.storeId,
-          accessToken: tokens.accessToken,
+          accessToken: encryptToken(tokens.accessToken),
           refreshToken: tokens.refreshToken,
           tokenExpiry,
           status: IntegrationStatus.CONNECTED,

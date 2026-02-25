@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { Cafe24Adapter } from '@infrastructure/external/platforms/cafe24/Cafe24Adapter'
 import { IntegrationStatus } from '@domain/entities/PlatformIntegration'
 import { PixelSetupMethod } from '@domain/entities/MetaPixel'
+import { safeDecryptToken } from '@application/utils/TokenEncryption'
 
 const CAFE24_CLIENT_ID = process.env.CAFE24_CLIENT_ID || ''
 const CAFE24_CLIENT_SECRET = process.env.CAFE24_CLIENT_SECRET || ''
@@ -60,7 +61,7 @@ export async function DELETE(request: NextRequest) {
       try {
         await adapter.removeTrackingScript(
           integration.platformStoreId,
-          integration.accessToken,
+          safeDecryptToken(integration.accessToken),
           integration.scriptTagId
         )
       } catch (error) {
@@ -74,7 +75,7 @@ export async function DELETE(request: NextRequest) {
       try {
         await adapter.unregisterWebhooks(
           integration.platformStoreId,
-          integration.accessToken,
+          safeDecryptToken(integration.accessToken),
           integration.webhookId
         )
       } catch (error) {

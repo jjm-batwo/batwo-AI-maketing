@@ -158,6 +158,9 @@ export const DI_TOKENS = {
 
   // Guide Question (new)
   GuideQuestionService: Symbol.for('GuideQuestionService'),
+
+  // Conversation Summarizer
+  ConversationSummarizerService: Symbol.for('ConversationSummarizerService'),
 } as const
 
 export type DIToken = (typeof DI_TOKENS)[keyof typeof DI_TOKENS]

@@ -3,6 +3,7 @@ import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { Cafe24Adapter } from '@infrastructure/external/platforms/cafe24/Cafe24Adapter'
 import { IntegrationStatus } from '@domain/entities/PlatformIntegration'
+import { safeDecryptToken } from '@application/utils/TokenEncryption'
 
 const CAFE24_CLIENT_ID = process.env.CAFE24_CLIENT_ID || ''
 const CAFE24_CLIENT_SECRET = process.env.CAFE24_CLIENT_SECRET || ''
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
     // Inject tracking script
     const scriptResult = await adapter.injectTrackingScript(
       integration.platformStoreId,
-      integration.accessToken,
+      safeDecryptToken(integration.accessToken),
       pixel.metaPixelId
     )
 
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
     try {
       const webhookResult = await adapter.registerWebhooks(
         integration.platformStoreId,
-        integration.accessToken,
+        safeDecryptToken(integration.accessToken),
         `${WEBHOOK_BASE_URL}/api/webhooks/cafe24`
       )
       webhookId = webhookResult.webhookId

@@ -86,6 +86,7 @@ import { PromptTemplateService } from '@application/services/PromptTemplateServi
 import { FallbackResponseService } from '@application/services/FallbackResponseService'
 import { FewShotExampleRegistry } from '@application/services/FewShotExampleRegistry'
 import { GuideQuestionService } from '@application/services/GuideQuestionService'
+import { ConversationSummarizerService } from '@application/services/ConversationSummarizerService'
 import type { IGuideQuestionService } from '@application/ports/IGuideQuestionService'
 
 // Application services and use cases
@@ -1226,4 +1227,14 @@ container.registerSingleton<IGuideQuestionService>(
 
 export function getGuideQuestionService(): IGuideQuestionService {
   return container.resolve(DI_TOKENS.GuideQuestionService)
+}
+
+// Conversation Summarizer Service
+container.register<ConversationSummarizerService>(
+  DI_TOKENS.ConversationSummarizerService,
+  () => new ConversationSummarizerService(container.resolve<IAIService>(DI_TOKENS.AIService))
+)
+
+export function getConversationSummarizerService(): ConversationSummarizerService {
+  return container.resolve(DI_TOKENS.ConversationSummarizerService)
 }

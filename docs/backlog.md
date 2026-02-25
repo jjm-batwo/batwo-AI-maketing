@@ -25,3 +25,4 @@
 | 6 | CSR 12페이지 metadata 추가 | `src/app/(dashboard)/dashboard/page.tsx` 외 11개 | layout.tsx 추가 또는 RSC 전환 필요 | 2026-02-19 |
 | 7 | RSC Suspense wrapping | `src/app/(dashboard)/*/page.tsx` | fetch 블로킹 해소, 스트리밍 SSR 활성화 | 2026-02-19 |
 | 8 | Dashboard/meta-connect CSR→RSC 전환 | `dashboard/page.tsx`, `meta-connect/page.tsx` | 대형 리팩토링, Zustand 의존성 분리 필요 | 2026-02-19 |
+| 9 | AdSet/Creative/Asset mutation API revalidateTag 추가 | `src/app/api/adsets/`, `src/app/api/creatives/`, `src/app/api/assets/` | 8개 API, ISR 페이지 연결 시 승격 | 2026-02-25 |

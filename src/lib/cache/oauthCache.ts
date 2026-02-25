@@ -7,6 +7,7 @@
  */
 
 import { prisma } from '@/lib/prisma'
+import { encryptToken, safeDecryptToken } from '@application/utils/TokenEncryption'
 
 interface OAuthData {
   accessToken: string
@@ -40,7 +41,7 @@ class OAuthCache {
         data: {
           id: sessionId,
           userId,
-          accessToken: data.accessToken,
+          accessToken: encryptToken(data.accessToken),
           tokenExpiry: data.tokenExpiry,
           accounts: data.accounts,
           expiresAt,
@@ -100,7 +101,7 @@ class OAuthCache {
       }
 
       return {
-        accessToken: session.accessToken,
+        accessToken: safeDecryptToken(session.accessToken),
         tokenExpiry: session.tokenExpiry,
         accounts: session.accounts as OAuthData['accounts'],
         userId: session.userId,
