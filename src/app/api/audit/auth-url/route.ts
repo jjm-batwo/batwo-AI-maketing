@@ -5,9 +5,11 @@
  * - 인증 불필요 (공개 API)
  * - IP Rate Limit: audit 타입 (3회/일)
  * - scope: ads_read 만 요청 (읽기 전용)
+ * - CSRF 방지: state 파라미터 생성 및 캐시 저장
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { checkRateLimit, getClientIp, rateLimitExceededResponse } from '@/lib/middleware/rateLimit'
+import { auditStateCache } from '@/lib/cache/auditStateCache'
 
 export async function GET(request: NextRequest) {
   // IP 기반 Rate Limit 체크
@@ -20,16 +22,21 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ message: 'Meta 앱 설정이 없습니다' }, { status: 503 })
   }
 
+  // CSRF 방지: 고유 state 토큰 생성 및 5분 TTL 캐시 저장
+  const csrfState = crypto.randomUUID()
+  auditStateCache.set(csrfState)
+
   // 감사 전용 콜백 URI
   const redirectUri = `${process.env.NEXTAUTH_URL}/api/audit/callback`
 
-  // ads_read 스코프만 요청 (수정 권한 없음)
+  // ads_read 스코프만 요청 (수정 권한 없음) + CSRF state 포함
   const authUrl =
     `https://www.facebook.com/v25.0/dialog/oauth` +
     `?client_id=${META_APP_ID}` +
     `&redirect_uri=${encodeURIComponent(redirectUri)}` +
     `&scope=ads_read` +
-    `&response_type=code`
+    `&response_type=code` +
+    `&state=${encodeURIComponent(csrfState)}`
 
   return NextResponse.json({ authUrl })
 }

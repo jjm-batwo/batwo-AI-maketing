@@ -12,9 +12,16 @@ interface ChatMessageProps {
 
 export function ChatMessage({ role, content, isStreaming, timestamp }: ChatMessageProps) {
   const isUser = role === 'user'
+  const roleLabel = isUser ? '사용자' : role === 'assistant' ? '어시스턴트' : '시스템'
 
   return (
-    <div data-testid="chat-message" className={cn('flex gap-3 px-4 py-3', isUser ? 'flex-row-reverse' : 'flex-row')}>
+    <div
+      data-testid="chat-message"
+      role="article"
+      aria-label={`${roleLabel} 메시지`}
+      tabIndex={0}
+      className={cn('flex gap-3 px-4 py-3', isUser ? 'flex-row-reverse' : 'flex-row')}
+    >
       {/* Avatar */}
       <div
         className={cn(

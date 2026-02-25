@@ -147,3 +147,6 @@ export {
   type AuditRecommendation,
   type CampaignAuditData,
 } from './AuditScore'
+export { ChatIntent } from './ChatIntent'
+export { IntentClassificationResult } from './IntentClassificationResult'
+export type { FewShotExample } from './FewShotExample'

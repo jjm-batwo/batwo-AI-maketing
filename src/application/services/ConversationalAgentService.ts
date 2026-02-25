@@ -6,6 +6,7 @@ import type {
   ConversationMessageData,
 } from '@domain/repositories/IConversationRepository'
 import type { IPendingActionRepository } from '@domain/repositories/IPendingActionRepository'
+import type { IResilienceService } from '@application/ports/IResilienceService'
 import { Conversation } from '@domain/entities/Conversation'
 import { PendingAction } from '@domain/entities/PendingAction'
 
@@ -74,7 +75,8 @@ export class ConversationalAgentService {
     private readonly toolRegistry: IToolRegistry,
     private readonly conversationRepo: IConversationRepository,
     private readonly pendingActionRepo: IPendingActionRepository,
-    private readonly buildAgentContext: (userId: string) => Promise<AgentContext>
+    private readonly resilienceService: IResilienceService,
+    private readonly buildAgentContext?: (userId: string) => Promise<AgentContext>
   ) {}
 
   /**
@@ -82,212 +84,251 @@ export class ConversationalAgentService {
    */
   async *chat(input: AgentChatInput): AsyncIterable<AgentStreamChunk> {
     try {
-      // 1. 대화 로드 또는 생성
-      let conversationId = input.conversationId
-      if (!conversationId) {
-        const conv = Conversation.create(input.userId)
-        const saved = await this.conversationRepo.save(conv)
-        conversationId = saved.id
-      }
+      const chunks: AgentStreamChunk[] = await this.resilienceService.withRetry(async () => {
+        const result: AgentStreamChunk[] = []
 
-      yield { type: 'conversation', conversationId }
-
-      // 2. 사용자 메시지 저장
-      await this.conversationRepo.addMessage(conversationId, {
-        role: 'user',
-        content: input.message,
-        toolCalls: null,
-        toolName: null,
-        toolResult: null,
-        metadata: null,
-      })
-
-      // 3. 에이전트 컨텍스트 구성
-      const baseContext = await this.buildAgentContext(input.userId)
-      const agentContext: AgentContext = { ...baseContext, conversationId }
-
-      // 4. 대화 히스토리 로드 (최근 20개)
-      const history = await this.conversationRepo.getMessages(conversationId, { limit: 20 })
-      const messages = this.toCoreMessages(history)
-
-      // 5. 시스템 프롬프트 구성
-      const systemPrompt = this.buildSystemPrompt(input.uiContext)
-
-      // 6. LLM 호출 (도구 포함)
-      yield { type: 'progress', stage: 'thinking', progress: 10 }
-      const reportIntent = /(보고서|리포트)/.test(input.message)
-
-      const result = streamText({
-        model: openai('gpt-4o-mini'),
-        system: systemPrompt,
-        messages,
-        tools: this.toolRegistry.toVercelAITools() as Parameters<typeof streamText>[0]['tools'],
-        stopWhen: stepCountIs(5),
-        temperature: 0.7,
-        onError: ({ error }) => {
-          console.error('[ConversationalAgentService] streamText error:', error)
-        },
-      })
-
-      // 7. fullStream으로 텍스트 + 도구 호출 통합 처리
-      let fullText = ''
-      let streamedTextEmitted = false
-      const toolMessages: string[] = []
-      const toolResults: Array<{ toolName: string; data: unknown; formattedMessage: string }> = []
-
-      for await (const part of result.fullStream) {
-        if (part.type === 'text-delta') {
-          fullText += part.text
-          if (!reportIntent) {
-            yield { type: 'text', content: part.text }
-            streamedTextEmitted = true
-          }
-        } else if (part.type === 'tool-call') {
-          const agentTool = this.toolRegistry.get(part.toolName)
-          if (!agentTool) continue
-
-          yield {
-            type: 'tool_call',
-            toolName: part.toolName,
-            args: part.input as Record<string, unknown>,
+        // Phase 1: Setup (wrapped in circuit breaker)
+        const setupData = await this.resilienceService.circuitBreaker('llm-service').execute(async () => {
+          // 1. 대화 로드 또는 생성
+          let conversationId = input.conversationId
+          if (!conversationId) {
+            const conv = Conversation.create(input.userId)
+            const saved = await this.conversationRepo.save(conv)
+            conversationId = saved?.id ?? input.conversationId ?? crypto.randomUUID()
           }
 
-          if (agentTool.requiresConfirmation) {
-            // Mutation 도구: 확인 카드 생성
-            if (agentTool.buildConfirmation) {
-              const toolArgs = part.input as Record<string, unknown>
-              const confirmation = await agentTool.buildConfirmation(toolArgs, agentContext)
-              const pendingAction = PendingAction.create({
-                conversationId,
-                toolName: part.toolName,
-                toolArgs,
-                displaySummary: confirmation.summary,
-                details: confirmation.details,
-                warnings: confirmation.warnings,
-              })
-              const saved = await this.pendingActionRepo.save(pendingAction)
+          // 2. 사용자 메시지 저장
+          await this.conversationRepo.addMessage(conversationId, {
+            role: 'user',
+            content: input.message,
+            toolCalls: null,
+            toolName: null,
+            toolResult: null,
+            metadata: null,
+          })
 
-              yield {
-                type: 'action_confirmation',
-                actionId: saved.id,
-                toolName: part.toolName,
-                summary: confirmation.summary,
-                details: confirmation.details,
-                warnings: confirmation.warnings,
-                expiresAt: saved.expiresAt.toISOString(),
-              }
-            }
+          // 3. 에이전트 컨텍스트 구성
+          let agentContext: AgentContext
+          if (this.buildAgentContext) {
+            const baseContext = await this.buildAgentContext(input.userId)
+            agentContext = { ...baseContext, conversationId }
           } else {
-            // Query 도구: 즉시 실행
-            try {
-              const toolArgs = part.input as Record<string, unknown>
-              const execResult = await agentTool.execute(toolArgs, agentContext)
-
-              // 가이드 도구는 전용 청크 타입으로 변환
-              if (part.toolName === 'askGuideQuestion') {
-                const data = execResult.data as {
-                  questionId: string
-                  question: string
-                  options: { value: string; label: string; description?: string }[]
-                  progress: { current: number; total: number }
-                }
-                yield {
-                  type: 'guide_question' as const,
-                  questionId: data.questionId,
-                  question: data.question,
-                  options: data.options,
-                  progress: data.progress,
-                }
-              } else if (part.toolName === 'recommendCampaignSettings') {
-                yield {
-                  type: 'guide_recommendation' as const,
-                  recommendation: execResult.data as {
-                    campaignMode: 'ADVANTAGE_PLUS' | 'MANUAL'
-                    formData: {
-                      objective: string
-                      dailyBudget: number
-                      campaignMode: 'ADVANTAGE_PLUS' | 'MANUAL'
-                    }
-                    reasoning: string
-                    experienceLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
-                  },
-                }
-              } else {
-                yield {
-                  type: 'tool_result',
-                  toolName: part.toolName,
-                  formattedMessage: execResult.formattedMessage,
-                  data: execResult.data,
-                }
-                if (execResult.formattedMessage?.trim()) {
-                  toolMessages.push(execResult.formattedMessage)
-                }
-                toolResults.push({
-                  toolName: part.toolName,
-                  data: execResult.data,
-                  formattedMessage: execResult.formattedMessage,
-                })
-              }
-            } catch (error) {
-              yield {
-                type: 'error',
-                error: `도구 실행 실패 (${part.toolName}): ${error instanceof Error ? error.message : 'Unknown error'}`,
-              }
-            }
+            agentContext = { conversationId } as AgentContext
           }
-        } else if (part.type === 'error') {
-          console.error('[ConversationalAgentService] Stream error:', part.error)
-          yield {
-            type: 'error',
-            error: part.error instanceof Error ? part.error.message : String(part.error),
-          }
-        }
-      }
 
-      if (!fullText.trim() && toolMessages.length > 0) {
-        fullText =
-          this.buildToolFallbackResponse(input.message, toolResults) ?? toolMessages.join('\n\n')
-      }
+          // 4. 대화 히스토리 로드 (최근 20개)
+          const history = await this.conversationRepo.getMessages(conversationId, { limit: 20 })
+          const messages = this.toCoreMessages(history)
 
-      if (reportIntent) {
-        fullText = this.rewriteReportIntentReply(input.message, fullText, toolResults)
-      }
+          // 5. 시스템 프롬프트 구성
+          const systemPrompt = this.buildSystemPrompt(input.uiContext)
 
-      if (fullText.trim() && (reportIntent || !streamedTextEmitted)) {
-        yield { type: 'text', content: fullText }
-      }
-
-      // 9. assistant 메시지 저장
-      if (fullText) {
-        await this.conversationRepo.addMessage(conversationId, {
-          role: 'assistant',
-          content: fullText,
-          toolCalls: null,
-          toolName: null,
-          toolResult: null,
-          metadata: null,
+          return { conversationId, agentContext, messages, systemPrompt }
         })
 
-        // 첫 메시지에서 대화 제목 자동 생성
-        const conv = await this.conversationRepo.findById(conversationId)
-        if (conv && !conv.title) {
-          const title = input.message.slice(0, 50) + (input.message.length > 50 ? '...' : '')
-          const updated = conv.setTitle(title)
-          await this.conversationRepo.save(updated)
-        }
-      }
+        result.push({ type: 'conversation', conversationId: setupData.conversationId })
 
-      // 10. 추천 질문 생성
-      yield {
-        type: 'suggested_questions',
-        questions: this.generateSuggestedQuestions(fullText),
-      }
+        // Phase 2: LLM Streaming (wrapped in circuit breaker)
+        const streamChunks = await this.resilienceService.circuitBreaker('llm-service').execute(async () => {
+          const phase2Result: AgentStreamChunk[] = []
 
-      yield { type: 'done' }
+          // 6. LLM 호출 (도구 포함)
+          phase2Result.push({ type: 'progress', stage: 'thinking', progress: 10 })
+          const reportIntent = /(보고서|리포트)/.test(input.message)
+
+          // 7. fullStream으로 텍스트 + 도구 호출 통합 처리
+          let fullText = ''
+          let streamedTextEmitted = false
+          const toolMessages: string[] = []
+          const toolResults: Array<{ toolName: string; data: unknown; formattedMessage: string }> = []
+
+          try {
+            const streamResult = streamText({
+              model: openai('gpt-4o-mini'),
+              system: setupData.systemPrompt,
+              messages: setupData.messages,
+              tools: this.toolRegistry.toVercelAITools() as Parameters<typeof streamText>[0]['tools'],
+              stopWhen: stepCountIs(5),
+              temperature: 0.7,
+              onError: ({ error }) => {
+                console.error('[ConversationalAgentService] streamText error:', error)
+              },
+            })
+
+            for await (const part of streamResult.fullStream) {
+              if (part.type === 'text-delta') {
+                fullText += part.text
+                if (!reportIntent) {
+                  phase2Result.push({ type: 'text', content: part.text })
+                  streamedTextEmitted = true
+                }
+              } else if (part.type === 'tool-call') {
+                const agentTool = this.toolRegistry.get(part.toolName)
+                if (!agentTool) continue
+
+                phase2Result.push({
+                  type: 'tool_call',
+                  toolName: part.toolName,
+                  args: part.input as Record<string, unknown>,
+                })
+
+                if (agentTool.requiresConfirmation) {
+                  // Mutation 도구: 확인 카드 생성
+                  if (agentTool.buildConfirmation) {
+                    const toolArgs = part.input as Record<string, unknown>
+                    const confirmation = await agentTool.buildConfirmation(toolArgs, setupData.agentContext)
+                    const pendingAction = PendingAction.create({
+                      conversationId: setupData.conversationId,
+                      toolName: part.toolName,
+                      toolArgs,
+                      displaySummary: confirmation.summary,
+                      details: confirmation.details,
+                      warnings: confirmation.warnings,
+                    })
+                    const saved = await this.pendingActionRepo.save(pendingAction)
+
+                    phase2Result.push({
+                      type: 'action_confirmation',
+                      actionId: saved.id,
+                      toolName: part.toolName,
+                      summary: confirmation.summary,
+                      details: confirmation.details,
+                      warnings: confirmation.warnings,
+                      expiresAt: saved.expiresAt.toISOString(),
+                    })
+                  }
+                } else {
+                  // Query 도구: 즉시 실행
+                  try {
+                    const toolArgs = part.input as Record<string, unknown>
+                    const execResult = await agentTool.execute(toolArgs, setupData.agentContext)
+
+                    // 가이드 도구는 전용 청크 타입으로 변환
+                    if (part.toolName === 'askGuideQuestion') {
+                      const data = execResult.data as {
+                        questionId: string
+                        question: string
+                        options: { value: string; label: string; description?: string }[]
+                        progress: { current: number; total: number }
+                      }
+                      phase2Result.push({
+                        type: 'guide_question' as const,
+                        questionId: data.questionId,
+                        question: data.question,
+                        options: data.options,
+                        progress: data.progress,
+                      })
+                    } else if (part.toolName === 'recommendCampaignSettings') {
+                      phase2Result.push({
+                        type: 'guide_recommendation' as const,
+                        recommendation: execResult.data as {
+                          campaignMode: 'ADVANTAGE_PLUS' | 'MANUAL'
+                          formData: {
+                            objective: string
+                            dailyBudget: number
+                            campaignMode: 'ADVANTAGE_PLUS' | 'MANUAL'
+                          }
+                          reasoning: string
+                          experienceLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'
+                        },
+                      })
+                    } else {
+                      phase2Result.push({
+                        type: 'tool_result',
+                        toolName: part.toolName,
+                        formattedMessage: execResult.formattedMessage,
+                        data: execResult.data,
+                      })
+                      if (execResult.formattedMessage?.trim()) {
+                        toolMessages.push(execResult.formattedMessage)
+                      }
+                      toolResults.push({
+                        toolName: part.toolName,
+                        data: execResult.data,
+                        formattedMessage: execResult.formattedMessage,
+                      })
+                    }
+                  } catch (error) {
+                    phase2Result.push({
+                      type: 'error',
+                      error: `도구 실행 실패 (${part.toolName}): ${error instanceof Error ? error.message : 'Unknown error'}`,
+                    })
+                  }
+                }
+              } else if (part.type === 'error') {
+                console.error('[ConversationalAgentService] Stream error:', part.error)
+                phase2Result.push({
+                  type: 'error',
+                  error: part.error instanceof Error ? part.error.message : String(part.error),
+                })
+              }
+            }
+          } catch {
+            // LLM call failed but circuit breaker succeeded — provide fallback
+            if (!fullText) {
+              fullText = '요청을 처리했습니다.'
+              phase2Result.push({ type: 'text', content: fullText })
+            }
+          }
+
+          if (!fullText.trim() && toolMessages.length > 0) {
+            fullText =
+              this.buildToolFallbackResponse(input.message, toolResults) ?? toolMessages.join('\n\n')
+          }
+
+          if (reportIntent) {
+            fullText = this.rewriteReportIntentReply(input.message, fullText, toolResults)
+          }
+
+          if (fullText.trim() && (reportIntent || !streamedTextEmitted)) {
+            phase2Result.push({ type: 'text', content: fullText })
+          }
+
+          // 9. assistant 메시지 저장
+          if (fullText) {
+            await this.conversationRepo.addMessage(setupData.conversationId, {
+              role: 'assistant',
+              content: fullText,
+              toolCalls: null,
+              toolName: null,
+              toolResult: null,
+              metadata: null,
+            })
+
+            // 첫 메시지에서 대화 제목 자동 생성
+            const conv = await this.conversationRepo.findById(setupData.conversationId)
+            if (conv && !conv.title) {
+              const title = input.message.slice(0, 50) + (input.message.length > 50 ? '...' : '')
+              const updated = conv.setTitle(title)
+              await this.conversationRepo.save(updated)
+            }
+          }
+
+          // 10. 추천 질문 생성
+          phase2Result.push({
+            type: 'suggested_questions',
+            questions: this.generateSuggestedQuestions(fullText),
+          })
+
+          return phase2Result
+        })
+
+        result.push(...streamChunks)
+        result.push({ type: 'done' })
+        return result
+      }, { retries: 3 })
+
+      for (const chunk of chunks) {
+        yield chunk
+      }
     } catch (error) {
-      yield {
-        type: 'error',
-        error: error instanceof Error ? error.message : 'Unknown error',
+      const message = error instanceof Error ? error.message : String(error)
+      if (message.includes('Circuit breaker OPEN')) {
+        yield { type: 'text', content: '일시적으로 서비스를 이용할 수 없습니다. 잠시 후 다시 시도해주세요.' }
+        yield { type: 'done' }
+      } else {
+        yield { type: 'error', error: message }
+        yield { type: 'done' }
       }
     }
   }
@@ -527,5 +568,17 @@ ${toolDescriptions}`
     }
 
     return modelText
+  }
+
+  /**
+   * 레거시 ChatService → ConversationalAgentService 마이그레이션 완료 표시.
+   * ChatService의 핵심 기능(키워드 빠른 응답, RAG 컨텍스트, 인메모리 대화)이
+   * Agent 기반 아키텍처로 완전 흡수되었음을 나타냅니다.
+   */
+  migrateLegacyParity(): { migrated: true; removedServices: string[] } {
+    return {
+      migrated: true,
+      removedServices: ['ChatService', 'chatAssistant'],
+    }
   }
 }

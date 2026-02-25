@@ -1,0 +1,1 @@
+export { IntentClassifier } from './IntentClassifier'

@@ -72,4 +72,24 @@ export interface IAIFeedbackRepository {
     limit: number
     totalPages: number
   }>
+
+  /**
+   * 긍정/부정 피드백 수를 집계한다 (rating >= 4: positive, rating <= 2: negative)
+   */
+  countByRating(filters?: {
+    startDate?: Date
+    endDate?: Date
+  }): Promise<{ positive: number; negative: number; total: number }>
+
+  /**
+   * 최근 부정 피드백 목록을 조회한다
+   */
+  findRecentNegative(limit: number): Promise<AIFeedback[]>
+
+  /**
+   * 기간별 평균 평점 트렌드를 반환한다
+   */
+  getAverageRatingByPeriod(
+    period: 'day' | 'week' | 'month'
+  ): Promise<Array<{ period: string; avgRating: number; count: number }>>
 }

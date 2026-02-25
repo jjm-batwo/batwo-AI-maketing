@@ -27,6 +27,9 @@ export interface AuditSession {
 /** 세션 TTL: 15분 */
 const SESSION_TTL_MS = 15 * 60 * 1000
 
+/** 최대 저장 항목 수 (메모리 보호) */
+const MAX_TOKEN_ENTRIES = 1_000
+
 /** 만료 항목 정리 주기: 1분 */
 const CLEANUP_INTERVAL_MS = 60 * 1000
 
@@ -42,15 +45,40 @@ class AuditTokenCache {
 
   /**
    * 세션 저장
+   * MAX_TOKEN_ENTRIES 초과 시 가장 오래된 항목을 삭제한다.
    * @returns 생성된 sessionId (UUID)
    */
   set(data: Omit<AuditSession, 'expiresAt'>): string {
+    // 최대 항목 수 초과 시 가장 오래된 항목 삭제
+    if (this.store.size >= MAX_TOKEN_ENTRIES) {
+      this.evictOldest()
+    }
+
     const sessionId = crypto.randomUUID()
     this.store.set(sessionId, {
       ...data,
       expiresAt: Date.now() + SESSION_TTL_MS,
     })
     return sessionId
+  }
+
+  /**
+   * 가장 오래된 항목 삭제 (expiresAt 기준 — 가장 먼저 만료될 항목)
+   */
+  private evictOldest(): void {
+    let oldestKey: string | null = null
+    let oldestTime = Infinity
+
+    for (const [key, session] of this.store.entries()) {
+      if (session.expiresAt < oldestTime) {
+        oldestTime = session.expiresAt
+        oldestKey = key
+      }
+    }
+
+    if (oldestKey !== null) {
+      this.store.delete(oldestKey)
+    }
   }
 
   /**

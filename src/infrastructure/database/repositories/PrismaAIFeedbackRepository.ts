@@ -6,6 +6,18 @@ import type {
   FeedbackStats,
 } from '@domain/repositories/IAIFeedbackRepository'
 
+// 기간별 날짜 그룹 포맷 헬퍼
+function getPeriodFormat(period: 'day' | 'week' | 'month'): string {
+  switch (period) {
+    case 'day':
+      return 'YYYY-MM-DD'
+    case 'week':
+      return 'IYYY-IW'
+    case 'month':
+      return 'YYYY-MM'
+  }
+}
+
 export class PrismaAIFeedbackRepository implements IAIFeedbackRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
@@ -117,6 +129,62 @@ export class PrismaAIFeedbackRepository implements IAIFeedbackRepository {
       limit,
       totalPages: Math.ceil(total / limit),
     }
+  }
+
+  async countByRating(filters?: {
+    startDate?: Date
+    endDate?: Date
+  }): Promise<{ positive: number; negative: number; total: number }> {
+    const where = filters
+      ? {
+          createdAt: {
+            ...(filters.startDate && { gte: filters.startDate }),
+            ...(filters.endDate && { lte: filters.endDate }),
+          },
+        }
+      : {}
+
+    const [positive, negative, total] = await Promise.all([
+      this.prisma.aIFeedback.count({ where: { ...where, rating: { gte: 4 } } }),
+      this.prisma.aIFeedback.count({ where: { ...where, rating: { lte: 2 } } }),
+      this.prisma.aIFeedback.count({ where }),
+    ])
+
+    return { positive, negative, total }
+  }
+
+  async findRecentNegative(limit: number): Promise<AIFeedback[]> {
+    const records = await this.prisma.aIFeedback.findMany({
+      where: { rating: { lte: 2 } },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    })
+    return records.map((r) => this.toFeedback(r))
+  }
+
+  async getAverageRatingByPeriod(
+    period: 'day' | 'week' | 'month'
+  ): Promise<Array<{ period: string; avgRating: number; count: number }>> {
+    const formatStr = getPeriodFormat(period)
+
+    // Prisma raw query로 기간별 집계
+    const rows = await this.prisma.$queryRawUnsafe<
+      Array<{ period_label: string; avg_rating: number; cnt: bigint }>
+    >(
+      `SELECT TO_CHAR("createdAt", '${formatStr}') AS period_label,
+              AVG("rating")::float8 AS avg_rating,
+              COUNT(*)::bigint AS cnt
+       FROM "AIFeedback"
+       GROUP BY period_label
+       ORDER BY period_label DESC
+       LIMIT 12`
+    )
+
+    return rows.map((row) => ({
+      period: row.period_label,
+      avgRating: Number(row.avg_rating.toFixed(2)),
+      count: Number(row.cnt),
+    }))
   }
 
   private toFeedback(record: {

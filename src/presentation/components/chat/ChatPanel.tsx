@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useEffect, useMemo } from 'react'
+import { useKeyboardNavigation } from '@/presentation/hooks/useKeyboardNavigation'
 import { Bot } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUIStore } from '@/presentation/stores/uiStore'
@@ -12,6 +13,7 @@ import { ChatInput } from './ChatInput'
 import { SuggestedQuestions } from './SuggestedQuestions'
 import { ConfirmationCard } from './ConfirmationCard'
 import { DataCard } from './DataCard'
+import { ChatMessageFeedback } from './ChatMessageFeedback'
 import { AlertBanner } from './AlertBanner'
 import { GuideQuestionCard } from './GuideQuestionCard'
 import { GuideRecommendationCard } from './GuideRecommendationCard'
@@ -102,6 +104,11 @@ export function ChatPanel() {
   }
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
+  const chatInputRef = useRef<HTMLElement>(null)
+
+  // 키보드 네비게이션 (ArrowUp/Down: 메시지 간 이동, Escape: 입력창으로)
+  useKeyboardNavigation(messagesContainerRef, chatInputRef)
 
   // 메시지가 추가되면 자동 스크롤
   useEffect(() => {
@@ -150,7 +157,14 @@ export function ChatPanel() {
         )}
 
         {/* Messages */}
-        <div data-testid="chat-messages-container" className="flex-1 overflow-y-auto">
+        <div
+          ref={messagesContainerRef}
+          data-testid="chat-messages-container"
+          role="log"
+          aria-live="polite"
+          aria-label="채팅 메시지 목록"
+          className="flex-1 overflow-y-auto"
+        >
           {messages.length === 0 ? (
             <EmptyState
               title={contextCopy.title}
@@ -169,6 +183,13 @@ export function ChatPanel() {
                     isStreaming={msg.isStreaming}
                     timestamp={msg.timestamp}
                   />
+
+                  {/* Feedback for assistant messages */}
+                  {msg.role === 'assistant' && !msg.isStreaming && msg.content && (
+                    <div className="pl-11 pr-4 -mt-1 mb-1">
+                      <ChatMessageFeedback messageId={msg.id} />
+                    </div>
+                  )}
 
                   {/* Data Cards */}
                   {msg.dataCards?.map((card, i) => (

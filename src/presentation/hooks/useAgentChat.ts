@@ -107,12 +107,17 @@ type AgentStreamChunk =
 // Hook
 // ============================================================================
 
+// 최대 재시도 횟수
+const MAX_RETRIES = 3
+
 export function useAgentChat(initialConversationId?: string): UseAgentChatReturn {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [conversationId, setConversationId] = useState<string | null>(initialConversationId ?? null)
   const abortRef = useRef<AbortController | null>(null)
+  // 동시성 보호: React 상태 업데이트는 비동기 batching이므로 ref로 동기적 가드
+  const isSendingRef = useRef(false)
   const pathname = usePathname()
 
   const uiContext: 'dashboard' | 'campaigns' | 'reports' | 'competitors' | 'portfolio' | 'general' =
@@ -130,6 +135,10 @@ export function useAgentChat(initialConversationId?: string): UseAgentChatReturn
 
   const sendMessage = useCallback(
     async (message: string) => {
+      // 동시성 가드: 이미 전송 중이면 무시 (ref로 동기적 체크)
+      if (isSendingRef.current) return
+      isSendingRef.current = true
+
       setIsLoading(true)
       setError(null)
 
@@ -156,154 +165,177 @@ export function useAgentChat(initialConversationId?: string): UseAgentChatReturn
       try {
         abortRef.current = new AbortController()
 
-        const response = await fetch('/api/agent/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message, conversationId, uiContext }),
-          signal: abortRef.current.signal,
-        })
+        // 재연결 로직: 최대 MAX_RETRIES 회 시도
+        let lastError: Error | null = null
+        for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+          try {
+            const response = await fetch('/api/agent/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ message, conversationId, uiContext }),
+              signal: abortRef.current.signal,
+            })
 
-        if (!response.ok) throw new Error('Chat request failed')
-        if (!response.body) throw new Error('No response body')
+            if (!response.ok) throw new Error('Chat request failed')
+            if (!response.body) throw new Error('No response body')
 
-        const reader = response.body.getReader()
-        const decoder = new TextDecoder()
+            // 성공 시 에러 초기화
+            lastError = null
 
-        while (true) {
-          const { done, value } = await reader.read()
-          if (done) break
+            const reader = response.body.getReader()
+            const decoder = new TextDecoder()
 
-          const text = decoder.decode(value, { stream: true })
-          const lines = text.split('\n').filter((l) => l.startsWith('data: '))
+            while (true) {
+              const { done, value } = await reader.read()
+              if (done) break
 
-          for (const line of lines) {
-            try {
-              const data = JSON.parse(line.slice(6)) as AgentStreamChunk
+              const text = decoder.decode(value, { stream: true })
+              const lines = text.split('\n').filter((l) => l.startsWith('data: '))
 
-              switch (data.type) {
-                case 'conversation':
-                  setConversationId(data.conversationId)
-                  break
+              for (const line of lines) {
+                try {
+                  const data = JSON.parse(line.slice(6)) as AgentStreamChunk
 
-                case 'text':
-                  setMessages((prev) =>
-                    prev.map((m) =>
-                      m.id === assistantId ? { ...m, content: m.content + data.content } : m
-                    )
-                  )
-                  break
+                  switch (data.type) {
+                    case 'conversation':
+                      setConversationId(data.conversationId)
+                      break
 
-                case 'action_confirmation':
-                  setMessages((prev) =>
-                    prev.map((m) =>
-                      m.id === assistantId
-                        ? {
-                            ...m,
-                            confirmationCard: {
-                              actionId: data.actionId,
-                              toolName: data.toolName,
-                              summary: data.summary,
-                              details: data.details,
-                              warnings: data.warnings,
-                              expiresAt: data.expiresAt,
-                            },
-                          }
-                        : m
-                    )
-                  )
-                  break
+                    case 'text':
+                      setMessages((prev) =>
+                        prev.map((m) =>
+                          m.id === assistantId ? { ...m, content: m.content + data.content } : m
+                        )
+                      )
+                      break
 
-                case 'data_card':
-                  setMessages((prev) =>
-                    prev.map((m) =>
-                      m.id === assistantId
-                        ? {
-                            ...m,
-                            dataCards: [
-                              ...(m.dataCards ?? []),
-                              { cardType: data.cardType, data: data.data },
-                            ],
-                          }
-                        : m
-                    )
-                  )
-                  break
+                    case 'action_confirmation':
+                      setMessages((prev) =>
+                        prev.map((m) =>
+                          m.id === assistantId
+                            ? {
+                                ...m,
+                                confirmationCard: {
+                                  actionId: data.actionId,
+                                  toolName: data.toolName,
+                                  summary: data.summary,
+                                  details: data.details,
+                                  warnings: data.warnings,
+                                  expiresAt: data.expiresAt,
+                                },
+                              }
+                            : m
+                        )
+                      )
+                      break
 
-                case 'tool_result':
-                  setMessages((prev) =>
-                    prev.map((m) =>
-                      m.id === assistantId
-                        ? {
-                            ...m,
-                            toolResults: [
-                              ...(m.toolResults ?? []),
-                              { toolName: data.toolName, data: data.data },
-                            ],
-                          }
-                        : m
-                    )
-                  )
-                  break
+                    case 'data_card':
+                      setMessages((prev) =>
+                        prev.map((m) =>
+                          m.id === assistantId
+                            ? {
+                                ...m,
+                                dataCards: [
+                                  ...(m.dataCards ?? []),
+                                  { cardType: data.cardType, data: data.data },
+                                ],
+                              }
+                            : m
+                        )
+                      )
+                      break
 
-                case 'guide_question':
-                  setMessages((prev) =>
-                    prev.map((m) =>
-                      m.id === assistantId
-                        ? {
-                            ...m,
-                            guideQuestion: {
-                              questionId: data.questionId,
-                              question: data.question,
-                              options: data.options,
-                              progress: data.progress,
-                            },
-                          }
-                        : m
-                    )
-                  )
-                  break
+                    case 'tool_result':
+                      setMessages((prev) =>
+                        prev.map((m) =>
+                          m.id === assistantId
+                            ? {
+                                ...m,
+                                toolResults: [
+                                  ...(m.toolResults ?? []),
+                                  { toolName: data.toolName, data: data.data },
+                                ],
+                              }
+                            : m
+                        )
+                      )
+                      break
 
-                case 'guide_recommendation':
-                  setMessages((prev) =>
-                    prev.map((m) =>
-                      m.id === assistantId
-                        ? {
-                            ...m,
-                            guideRecommendation: data.recommendation,
-                          }
-                        : m
-                    )
-                  )
-                  break
+                    case 'guide_question':
+                      setMessages((prev) =>
+                        prev.map((m) =>
+                          m.id === assistantId
+                            ? {
+                                ...m,
+                                guideQuestion: {
+                                  questionId: data.questionId,
+                                  question: data.question,
+                                  options: data.options,
+                                  progress: data.progress,
+                                },
+                              }
+                            : m
+                        )
+                      )
+                      break
 
-                case 'suggested_questions':
-                  setMessages((prev) =>
-                    prev.map((m) =>
-                      m.id === assistantId ? { ...m, suggestedQuestions: data.questions } : m
-                    )
-                  )
-                  break
+                    case 'guide_recommendation':
+                      setMessages((prev) =>
+                        prev.map((m) =>
+                          m.id === assistantId
+                            ? {
+                                ...m,
+                                guideRecommendation: data.recommendation,
+                              }
+                            : m
+                        )
+                      )
+                      break
 
-                case 'done':
-                  setMessages((prev) =>
-                    prev.map((m) => (m.id === assistantId ? { ...m, isStreaming: false } : m))
-                  )
-                  break
+                    case 'suggested_questions':
+                      setMessages((prev) =>
+                        prev.map((m) =>
+                          m.id === assistantId ? { ...m, suggestedQuestions: data.questions } : m
+                        )
+                      )
+                      break
 
-                case 'error':
-                  setError(data.error)
-                  break
+                    case 'done':
+                      setMessages((prev) =>
+                        prev.map((m) => (m.id === assistantId ? { ...m, isStreaming: false } : m))
+                      )
+                      break
+
+                    case 'error':
+                      setError(data.error)
+                      break
+                  }
+                } catch {
+                  // JSON parse error - skip malformed SSE line
+                }
               }
-            } catch {
-              // JSON parse error - skip malformed SSE line
             }
+
+            // 스트림 처리 성공 - 재시도 루프 탈출
+            break
+          } catch (err) {
+            lastError = err as Error
+            // AbortError는 재시도 없이 즉시 중단
+            if (err instanceof Error && err.name === 'AbortError') break
+            // 마지막 시도가 아니면 다음 attempt로 즉시 진행 (대기 없음)
           }
+        }
+
+        // 최종 실패 시 에러 상태 설정 (AbortError 제외)
+        if (lastError && lastError.name !== 'AbortError') {
+          setError(lastError.message)
         }
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {
           setError(err.message)
         }
       } finally {
+        isSendingRef.current = false
         setIsLoading(false)
       }
     },

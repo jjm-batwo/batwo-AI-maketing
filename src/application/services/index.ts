@@ -12,3 +12,6 @@ export * from './BackgroundAnalysisService'
 // Contextual AI Suggestion System
 export * from './ContextDetectionEngine'
 export * from './AISuggestionTiming'
+export * from './FallbackResponseService'
+export * from './ConversationSummarizerService'
+export * from './FewShotExampleRegistry'

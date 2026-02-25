@@ -140,6 +140,28 @@ grep -oP '(\w+Repository)' src/lib/di/types.ts | sort
 
 ---
 
+### New Pattern: AI Chatbot Service/UseCase Registration Check
+
+**Context:** AI 챗봇 강화 기능이 추가되면서 새로운 서비스와 UseCase들이 DI에 등록됨.
+
+**검사:** 다음 서비스/UseCase들이 DI에 등록되었는지 확인합니다:
+- ResilienceService
+- PromptTemplateService
+- FallbackResponseService
+- FewShotExampleRegistry
+- GuideQuestionService
+- GetFeedbackAnalyticsUseCase
+
+```bash
+# AI chatbot service/usecase 등록 확인
+grep -n "ResilienceService\|PromptTemplateService\|FallbackResponseService\|FewShotExampleRegistry\|GuideQuestionService\|GetFeedbackAnalyticsUseCase" src/lib/di/container.ts
+```
+
+**PASS 기준:** 모든 신규 서비스/UseCase가 container.register로 등록됨
+**FAIL 기준:** 누락된 등록이 있음
+
+---
+
 
 ## Output Format
 

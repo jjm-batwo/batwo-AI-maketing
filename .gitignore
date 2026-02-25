@@ -71,3 +71,9 @@ next-env.d.ts
 
 # screenshots
 landing-*.png
+competitors-page.png
+portfolio-page.png
+
+# agent internal state
+.agent/
+.sisyphus/

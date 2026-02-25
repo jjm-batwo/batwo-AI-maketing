@@ -31,20 +31,12 @@ argument-hint: "[선택사항: 특정 스킬 이름 또는 집중할 영역]"
 | 스킬 | 설명 | 커버 파일 패턴 |
 |------|------|---------------|
 | `verify-architecture` | 클린 아키텍처 레이어 의존성 규칙 검증 | `src/domain/**`, `src/application/**`, `src/infrastructure/**` |
-| `verify-di-registration` | DI 컨테이너 토큰-등록 동기화 검증 (Optimization/Audit UseCase 포함) | `src/lib/di/types.ts`, `src/lib/di/container.ts`, `src/domain/repositories/**`, `src/application/ports/**` |
+| `verify-di-registration` | DI 컨테이너 토큰-등록 동기화 검증 (Optimization/Audit/AI Chatbot 포함) | `src/lib/di/types.ts`, `src/lib/di/container.ts`, `src/domain/repositories/**`, `src/application/ports/**` |
 | `verify-cache-tags` | ISR 캐시 태그와 revalidateTag 매핑 일관성 검증 | `src/app/api/**`, `src/app/(dashboard)/**/page.tsx`, `src/app/(admin)/**/page.tsx` |
 | `verify-bundle` | 번들 최적화 검증 (namespace import, dev-only 누출, ssr:false) | `src/**/*.ts`, `src/**/*.tsx`, `package.json` |
 | `verify-meta-api-version` | Meta Graph API v25.0 버전 통일성 검증 | `src/infrastructure/external/meta-*/**`, `src/infrastructure/auth/**`, `src/app/api/meta/**`, `scripts/*` |
 | `verify-token-encryption` | DB accessToken 암복호화 적용 일관성 검증 | `src/app/api/meta/**`, `src/application/use-cases/**`, `src/application/utils/TokenEncryption.ts`, `src/infrastructure/database/repositories/**` |
-| `verify-ui-components` | UI 컴포넌트 일관성, 접근성, 성능 패턴 검증 (랜딩/대시보드/픽셀/온볼딩/감사 컴포넌트 포함) | `src/presentation/components/landing/**`, `src/presentation/components/dashboard/**`, `src/presentation/components/pixel/**`, `src/presentation/components/onboarding/**`, `src/presentation/components/audit/**` |
-|------|------|---------------|
-| `verify-architecture` | 클린 아키텍처 레이어 의존성 규칙 검증 | `src/domain/**`, `src/application/**`, `src/infrastructure/**` |
-| `verify-di-registration` | DI 컨테이너 토큰-등록 동기화 검증 | `src/lib/di/types.ts`, `src/lib/di/container.ts`, `src/domain/repositories/**`, `src/application/ports/**` |
-| `verify-cache-tags` | ISR 캐시 태그와 revalidateTag 매핑 일관성 검증 | `src/app/api/**`, `src/app/(dashboard)/**/page.tsx`, `src/app/(admin)/**/page.tsx` |
-| `verify-bundle` | 번들 최적화 검증 (namespace import, dev-only 누출, ssr:false) | `src/**/*.ts`, `src/**/*.tsx`, `package.json` |
-| `verify-meta-api-version` | Meta Graph API v25.0 버전 통일성 검증 | `src/infrastructure/external/meta-*/**`, `src/infrastructure/auth/**`, `src/app/api/meta/**`, `scripts/*` |
-| `verify-token-encryption` | DB accessToken 암복호화 적용 일관성 검증 | `src/app/api/meta/**`, `src/application/use-cases/**`, `src/application/utils/TokenEncryption.ts`, `src/infrastructure/database/repositories/**` |
-| `verify-ui-components` | UI 컴포넌트 일관성, 접근성, 성능 패턴 검증 | `src/presentation/components/landing/**`, `src/presentation/components/dashboard/**`, `src/presentation/components/pixel/**`, `src/presentation/components/onboarding/**` |
+| `verify-ui-components` | UI 컴포넌트 일관성, 접근성, 성능 패턴 검증 (랜딩/대시보드/채팅/최적화/픽셀/온보딩/감사 포함) | `src/presentation/components/landing/**`, `src/presentation/components/dashboard/**`, `src/presentation/components/chat/**`, `src/presentation/components/optimization/**`, `src/presentation/components/pixel/**`, `src/presentation/components/onboarding/**`, `src/presentation/components/audit/**` |
 
 ## 워크플로우
 

@@ -29,6 +29,7 @@ description: 클린 아키텍처 레이어 의존성 규칙을 검증합니다. 
 | `src/domain/value-objects/*.ts` | 값 객체 (Money, DateRange, SubscriptionPlan 등) |
 | `src/domain/repositories/*.ts` | 리포지토리 인터페이스 (포트) |
 | `src/domain/errors/*.ts` | 도메인 에러 |
+| `src/domain/services/*.ts` | 도메인 서비스 (IntentClassifier 등) |
 | `src/application/use-cases/**/*.ts` | 유스케이스 |
 | `src/application/dto/**/*.ts` | DTO |
 | `src/application/ports/*.ts` | 외부 서비스 인터페이스 |

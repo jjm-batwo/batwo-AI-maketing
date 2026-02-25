@@ -38,6 +38,10 @@ import type { IKnowledgeBaseService } from '@application/ports/IKnowledgeBaseSer
 import type { IResearchService } from '@application/ports/IResearchService'
 import type { ICacheService } from '@application/ports/ICacheService'
 import type { IPlatformAdapter } from '@application/ports/IPlatformAdapter'
+import type { IResilienceService } from '@application/ports/IResilienceService'
+import type { IPromptTemplateService } from '@application/ports/IPromptTemplateService'
+import type { IFallbackResponseService } from '@application/ports/IFallbackResponseService'
+import type { IFewShotExampleRegistry } from '@application/ports/IFewShotExampleRegistry'
 import type { IMetaPixelService } from '@application/ports/IMetaPixelService'
 import type { ICAPIService } from '@application/ports/ICAPIService'
 
@@ -65,6 +69,7 @@ import { Cafe24Adapter } from '@infrastructure/external/platforms/cafe24/Cafe24A
 import { MetaPixelClient } from '@infrastructure/external/meta-pixel/MetaPixelClient'
 import { CAPIClient } from '@infrastructure/external/meta-pixel/CAPIClient'
 import { AIService } from '@infrastructure/external/openai/AIService'
+import { ResilienceService } from '@infrastructure/external/errors/ResilienceService'
 import { StreamingAIService } from '@infrastructure/external/openai/streaming/StreamingAIService'
 import { KnowledgeBaseService } from '@infrastructure/knowledge'
 import { MarketingIntelligenceService } from '@application/services/MarketingIntelligenceService'
@@ -77,6 +82,11 @@ import { registerAllTools } from '@application/tools/registerAllTools'
 import { ConversationalAgentService } from '@application/services/ConversationalAgentService'
 import { ActionConfirmationService } from '@application/services/ActionConfirmationService'
 import { ProactiveAlertService } from '@application/services/ProactiveAlertService'
+import { PromptTemplateService } from '@application/services/PromptTemplateService'
+import { FallbackResponseService } from '@application/services/FallbackResponseService'
+import { FewShotExampleRegistry } from '@application/services/FewShotExampleRegistry'
+import { GuideQuestionService } from '@application/services/GuideQuestionService'
+import type { IGuideQuestionService } from '@application/ports/IGuideQuestionService'
 
 // Application services and use cases
 import { QuotaService } from '@application/services/QuotaService'
@@ -90,7 +100,10 @@ import { CompetitorBenchmarkService } from '@application/services/CompetitorBenc
 import { TargetingRecommendationService } from '@application/services/TargetingRecommendationService'
 import { PermissionService } from '@application/services/PermissionService'
 import { ABTestAnalysisService } from '@application/services/ABTestAnalysisService'
-import { ReportPDFGenerator, type IReportPDFGenerator } from '@infrastructure/pdf/ReportPDFGenerator'
+import {
+  ReportPDFGenerator,
+  type IReportPDFGenerator,
+} from '@infrastructure/pdf/ReportPDFGenerator'
 import { EmailService } from '@infrastructure/email/EmailService'
 import type { IEmailService } from '@application/ports/IEmailService'
 import { CreateCampaignUseCase } from '@application/use-cases/campaign/CreateCampaignUseCase'
@@ -131,7 +144,10 @@ import type { ICreativeAssetRepository } from '@domain/repositories/ICreativeAss
 import { CreateCreativeUseCase } from '@application/use-cases/creative/CreateCreativeUseCase'
 import { UploadAssetUseCase } from '@application/use-cases/creative/UploadAssetUseCase'
 
-import { BlobStorageService, type IBlobStorageService } from '@infrastructure/storage/BlobStorageService'
+import {
+  BlobStorageService,
+  type IBlobStorageService,
+} from '@infrastructure/storage/BlobStorageService'
 import { CreateAdvantageCampaignUseCase } from '@application/use-cases/campaign/CreateAdvantageCampaignUseCase'
 import { RefreshMetaTokenUseCase } from '@application/use-cases/token/RefreshMetaTokenUseCase'
 import { PrismaConversionEventRepository } from '@infrastructure/database/repositories/PrismaConversionEventRepository'
@@ -154,6 +170,7 @@ import { EvaluateOptimizationRulesUseCase } from '@application/use-cases/optimiz
 import { AutoOptimizeCampaignUseCase } from '@application/use-cases/optimization/AutoOptimizeCampaignUseCase'
 import { CalculateSavingsUseCase } from '@application/use-cases/optimization/CalculateSavingsUseCase'
 import { AuditAdAccountUseCase } from '@application/use-cases/audit/AuditAdAccountUseCase'
+import { GetFeedbackAnalyticsUseCase } from '@application/use-cases/ai/GetFeedbackAnalyticsUseCase'
 
 import { prisma } from '@/lib/prisma'
 
@@ -281,10 +298,7 @@ container.registerSingleton<IAlertRepository>(
 )
 
 // Register External Services (Singletons)
-container.registerSingleton<IMetaAdsService>(
-  DI_TOKENS.MetaAdsService,
-  () => new MetaAdsClient()
-)
+container.registerSingleton<IMetaAdsService>(DI_TOKENS.MetaAdsService, () => new MetaAdsClient())
 
 container.registerSingleton<IAIService>(
   DI_TOKENS.AIService,
@@ -303,10 +317,8 @@ container.registerSingleton<IPaymentGateway>(
 
 container.registerSingleton<IPlatformAdapter>(
   DI_TOKENS.PlatformAdapter,
-  () => new Cafe24Adapter(
-    process.env.CAFE24_CLIENT_ID || '',
-    process.env.CAFE24_CLIENT_SECRET || ''
-  )
+  () =>
+    new Cafe24Adapter(process.env.CAFE24_CLIENT_ID || '', process.env.CAFE24_CLIENT_SECRET || '')
 )
 
 container.registerSingleton<IMetaPixelService>(
@@ -314,36 +326,57 @@ container.registerSingleton<IMetaPixelService>(
   () => new MetaPixelClient()
 )
 
-container.registerSingleton<ICAPIService>(
-  DI_TOKENS.CAPIService,
-  () => new CAPIClient()
+container.registerSingleton<ICAPIService>(DI_TOKENS.CAPIService, () => new CAPIClient())
+
+// Resilience Service (Singleton)
+container.registerSingleton<IResilienceService>(
+  DI_TOKENS.ResilienceService,
+  () => new ResilienceService()
+)
+
+// PromptTemplate Service (Singleton)
+container.registerSingleton<IPromptTemplateService>(
+  DI_TOKENS.PromptTemplateService,
+  () => new PromptTemplateService()
+)
+
+// FallbackResponse Service (Singleton)
+container.registerSingleton<IFallbackResponseService>(
+  DI_TOKENS.FallbackResponseService,
+  () => new FallbackResponseService(
+    container.resolve<IResilienceService>(DI_TOKENS.ResilienceService)
+  )
+)
+
+// FewShotExample Registry (Singleton)
+container.registerSingleton<IFewShotExampleRegistry>(
+  DI_TOKENS.FewShotExampleRegistry,
+  () => new FewShotExampleRegistry()
 )
 
 // Register Cache Service (Singleton)
-container.registerSingleton<ICacheService>(
-  DI_TOKENS.CacheService,
-  () => {
-    const cacheEnabled = process.env.CACHE_ENABLED !== 'false'
-    const redisUrl = process.env.REDIS_URL
+container.registerSingleton<ICacheService>(DI_TOKENS.CacheService, () => {
+  const cacheEnabled = process.env.CACHE_ENABLED !== 'false'
+  const redisUrl = process.env.REDIS_URL
 
-    if (cacheEnabled && redisUrl) {
-      console.log('[DI] Using Redis cache service')
-      return new RedisCacheService(redisUrl)
-    } else {
-      console.log('[DI] Using in-memory cache service (development only)')
-      return new MemoryCacheService()
-    }
+  if (cacheEnabled && redisUrl) {
+    console.log('[DI] Using Redis cache service')
+    return new RedisCacheService(redisUrl)
+  } else {
+    console.log('[DI] Using in-memory cache service (development only)')
+    return new MemoryCacheService()
   }
-)
+})
 
 // Register Application Services (Singletons)
 container.registerSingleton(
   DI_TOKENS.QuotaService,
-  () => new QuotaService(
-    container.resolve(DI_TOKENS.UsageLogRepository),
-    container.resolve(DI_TOKENS.UserRepository),
-    container.resolve(DI_TOKENS.SubscriptionRepository)
-  )
+  () =>
+    new QuotaService(
+      container.resolve(DI_TOKENS.UsageLogRepository),
+      container.resolve(DI_TOKENS.UserRepository),
+      container.resolve(DI_TOKENS.SubscriptionRepository)
+    )
 )
 
 container.registerSingleton(
@@ -364,25 +397,16 @@ container.registerSingleton(
     )
 )
 
-container.registerSingleton(
-  DI_TOKENS.AnomalyRootCauseService,
-  () => new AnomalyRootCauseService()
-)
+container.registerSingleton(DI_TOKENS.AnomalyRootCauseService, () => new AnomalyRootCauseService())
 
 container.registerSingleton(
   DI_TOKENS.AnomalySegmentAnalysisService,
   () => new AnomalySegmentAnalysisService()
 )
 
-container.registerSingleton(
-  DI_TOKENS.CopyLearningService,
-  () => new CopyLearningService()
-)
+container.registerSingleton(DI_TOKENS.CopyLearningService, () => new CopyLearningService())
 
-container.registerSingleton(
-  DI_TOKENS.CampaignAnalyzer,
-  () => new CampaignAnalyzer()
-)
+container.registerSingleton(DI_TOKENS.CampaignAnalyzer, () => new CampaignAnalyzer())
 
 container.registerSingleton(
   DI_TOKENS.CompetitorBenchmarkService,
@@ -394,10 +418,7 @@ container.registerSingleton(
   () => new TargetingRecommendationService()
 )
 
-container.registerSingleton(
-  DI_TOKENS.PermissionService,
-  () => new PermissionService(prisma)
-)
+container.registerSingleton(DI_TOKENS.PermissionService, () => new PermissionService(prisma))
 
 container.registerSingleton(
   DI_TOKENS.ABTestAnalysisService,
@@ -405,9 +426,8 @@ container.registerSingleton(
 )
 
 // Conversational Agent Services
-container.registerSingleton<IToolRegistry>(
-  DI_TOKENS.ToolRegistry,
-  () => registerAllTools({
+container.registerSingleton<IToolRegistry>(DI_TOKENS.ToolRegistry, () =>
+  registerAllTools({
     campaignRepository: container.resolve(DI_TOKENS.CampaignRepository),
     kpiRepository: container.resolve(DI_TOKENS.KPIRepository),
     getDashboardKPIUseCase: container.resolve(DI_TOKENS.GetDashboardKPIUseCase),
@@ -424,41 +444,45 @@ container.registerSingleton<IToolRegistry>(
 
 container.registerSingleton(
   DI_TOKENS.ConversationalAgentService,
-  () => new ConversationalAgentService(
-    container.resolve<IToolRegistry>(DI_TOKENS.ToolRegistry),
-    container.resolve<IConversationRepository>(DI_TOKENS.ConversationRepository),
-    container.resolve<IPendingActionRepository>(DI_TOKENS.PendingActionRepository),
-    async (userId: string) => ({
-      userId,
-      accessToken: null, // API route에서 실제 값으로 대체됨
-      adAccountId: null,
-      conversationId: '',
-    })
-  )
+  () =>
+    new ConversationalAgentService(
+      container.resolve<IToolRegistry>(DI_TOKENS.ToolRegistry),
+      container.resolve<IConversationRepository>(DI_TOKENS.ConversationRepository),
+      container.resolve<IPendingActionRepository>(DI_TOKENS.PendingActionRepository),
+      container.resolve<IResilienceService>(DI_TOKENS.ResilienceService),
+      async (userId: string) => ({
+        userId,
+        accessToken: null, // API route에서 실제 값으로 대체됨
+        adAccountId: null,
+        conversationId: '',
+      })
+    )
 )
 
 container.registerSingleton(
   DI_TOKENS.ActionConfirmationService,
-  () => new ActionConfirmationService(
-    container.resolve<IPendingActionRepository>(DI_TOKENS.PendingActionRepository),
-    container.resolve<IConversationRepository>(DI_TOKENS.ConversationRepository),
-    container.resolve<IToolRegistry>(DI_TOKENS.ToolRegistry),
-    async (userId: string) => ({
-      userId,
-      accessToken: null,
-      adAccountId: null,
-      conversationId: '',
-    })
-  )
+  () =>
+    new ActionConfirmationService(
+      container.resolve<IPendingActionRepository>(DI_TOKENS.PendingActionRepository),
+      container.resolve<IConversationRepository>(DI_TOKENS.ConversationRepository),
+      container.resolve<IToolRegistry>(DI_TOKENS.ToolRegistry),
+      async (userId: string) => ({
+        userId,
+        accessToken: null,
+        adAccountId: null,
+        conversationId: '',
+      })
+    )
 )
 
 container.registerSingleton(
   DI_TOKENS.ProactiveAlertService,
-  () => new ProactiveAlertService(
-    container.resolve(DI_TOKENS.CampaignRepository),
-    container.resolve(DI_TOKENS.KPIRepository),
-    container.resolve(DI_TOKENS.AlertRepository),
-  )
+  () =>
+    new ProactiveAlertService(
+      container.resolve(DI_TOKENS.CampaignRepository),
+      container.resolve(DI_TOKENS.KPIRepository),
+      container.resolve(DI_TOKENS.AlertRepository)
+    )
 )
 
 // Register Infrastructure Services (Singletons)
@@ -483,24 +507,22 @@ container.registerSingleton<IResearchService>(
   () => new PerplexityResearchService(process.env.PERPLEXITY_API_KEY)
 )
 
-container.registerSingleton(
-  DI_TOKENS.MarketingIntelligenceService,
-  () => {
-    const knowledgeBase = container.resolve<IKnowledgeBaseService>(DI_TOKENS.KnowledgeBaseService)
-    const researchEnabled = process.env.RESEARCH_ENABLED === 'true'
-    const researchService = researchEnabled
-      ? container.resolve<IResearchService>(DI_TOKENS.ResearchService)
-      : undefined
-    return new MarketingIntelligenceService(knowledgeBase, researchService)
-  }
-)
+container.registerSingleton(DI_TOKENS.MarketingIntelligenceService, () => {
+  const knowledgeBase = container.resolve<IKnowledgeBaseService>(DI_TOKENS.KnowledgeBaseService)
+  const researchEnabled = process.env.RESEARCH_ENABLED === 'true'
+  const researchService = researchEnabled
+    ? container.resolve<IResearchService>(DI_TOKENS.ResearchService)
+    : undefined
+  return new MarketingIntelligenceService(knowledgeBase, researchService)
+})
 
 container.registerSingleton<IAIService>(
   DI_TOKENS.ScienceAIService,
-  () => new ScienceAIService(
-    container.resolve(DI_TOKENS.AIService),
-    container.resolve(DI_TOKENS.MarketingIntelligenceService)
-  )
+  () =>
+    new ScienceAIService(
+      container.resolve(DI_TOKENS.AIService),
+      container.resolve(DI_TOKENS.MarketingIntelligenceService)
+    )
 )
 
 // Register Use Cases (Transient - new instance each time)
@@ -615,31 +637,26 @@ container.registerSingleton<IAdSetRepository>(
 // AdSet Use Cases (Transient)
 container.register(
   DI_TOKENS.CreateAdSetUseCase,
-  () => new CreateAdSetUseCase(
-    container.resolve(DI_TOKENS.CampaignRepository),
-    container.resolve(DI_TOKENS.AdSetRepository)
-  )
+  () =>
+    new CreateAdSetUseCase(
+      container.resolve(DI_TOKENS.CampaignRepository),
+      container.resolve(DI_TOKENS.AdSetRepository)
+    )
 )
 
 container.register(
   DI_TOKENS.UpdateAdSetUseCase,
-  () => new UpdateAdSetUseCase(
-    container.resolve(DI_TOKENS.AdSetRepository)
-  )
+  () => new UpdateAdSetUseCase(container.resolve(DI_TOKENS.AdSetRepository))
 )
 
 container.register(
   DI_TOKENS.DeleteAdSetUseCase,
-  () => new DeleteAdSetUseCase(
-    container.resolve(DI_TOKENS.AdSetRepository)
-  )
+  () => new DeleteAdSetUseCase(container.resolve(DI_TOKENS.AdSetRepository))
 )
 
 container.register(
   DI_TOKENS.ListAdSetsUseCase,
-  () => new ListAdSetsUseCase(
-    container.resolve(DI_TOKENS.AdSetRepository)
-  )
+  () => new ListAdSetsUseCase(container.resolve(DI_TOKENS.AdSetRepository))
 )
 
 // Ad Repository (Singleton)
@@ -669,38 +686,39 @@ container.registerSingleton<IBlobStorageService>(
 // Ad Use Cases (Transient)
 container.register(
   DI_TOKENS.CreateAdUseCase,
-  () => new CreateAdUseCase(
-    container.resolve(DI_TOKENS.AdRepository),
-    container.resolve(DI_TOKENS.AdSetRepository),
-    container.resolve(DI_TOKENS.CreativeRepository)
-  )
+  () =>
+    new CreateAdUseCase(
+      container.resolve(DI_TOKENS.AdRepository),
+      container.resolve(DI_TOKENS.AdSetRepository),
+      container.resolve(DI_TOKENS.CreativeRepository)
+    )
 )
 
 // Creative Use Cases (Transient)
 container.register(
   DI_TOKENS.CreateCreativeUseCase,
-  () => new CreateCreativeUseCase(
-    container.resolve(DI_TOKENS.CreativeRepository)
-  )
+  () => new CreateCreativeUseCase(container.resolve(DI_TOKENS.CreativeRepository))
 )
 
 container.register(
   DI_TOKENS.UploadAssetUseCase,
-  () => new UploadAssetUseCase(
-    container.resolve(DI_TOKENS.CreativeAssetRepository),
-    container.resolve(DI_TOKENS.BlobStorageService)
-  )
+  () =>
+    new UploadAssetUseCase(
+      container.resolve(DI_TOKENS.CreativeAssetRepository),
+      container.resolve(DI_TOKENS.BlobStorageService)
+    )
 )
 
 // Advantage+ Campaign Use Case (Transient)
 container.register(
   DI_TOKENS.CreateAdvantageCampaignUseCase,
-  () => new CreateAdvantageCampaignUseCase(
-    container.resolve(DI_TOKENS.CampaignRepository),
-    container.resolve(DI_TOKENS.AdSetRepository),
-    container.resolve(DI_TOKENS.MetaAdsService),
-    container.resolve(DI_TOKENS.UsageLogRepository)
-  )
+  () =>
+    new CreateAdvantageCampaignUseCase(
+      container.resolve(DI_TOKENS.CampaignRepository),
+      container.resolve(DI_TOKENS.AdSetRepository),
+      container.resolve(DI_TOKENS.MetaAdsService),
+      container.resolve(DI_TOKENS.UsageLogRepository)
+    )
 )
 
 // Pixel Use Cases
@@ -717,47 +735,49 @@ container.register(
 // Payment Use Cases
 container.register(
   DI_TOKENS.IssueBillingKeyUseCase,
-  () => new IssueBillingKeyUseCase(
-    container.resolve(DI_TOKENS.BillingKeyRepository),
-    container.resolve(DI_TOKENS.PaymentGateway)
-  )
+  () =>
+    new IssueBillingKeyUseCase(
+      container.resolve(DI_TOKENS.BillingKeyRepository),
+      container.resolve(DI_TOKENS.PaymentGateway)
+    )
 )
 
 container.register(
   DI_TOKENS.SubscribePlanUseCase,
-  () => new SubscribePlanUseCase(
-    container.resolve(DI_TOKENS.BillingKeyRepository),
-    container.resolve(DI_TOKENS.SubscriptionRepository),
-    container.resolve(DI_TOKENS.InvoiceRepository),
-    container.resolve(DI_TOKENS.PaymentLogRepository),
-    container.resolve(DI_TOKENS.PaymentGateway)
-  )
+  () =>
+    new SubscribePlanUseCase(
+      container.resolve(DI_TOKENS.BillingKeyRepository),
+      container.resolve(DI_TOKENS.SubscriptionRepository),
+      container.resolve(DI_TOKENS.InvoiceRepository),
+      container.resolve(DI_TOKENS.PaymentLogRepository),
+      container.resolve(DI_TOKENS.PaymentGateway)
+    )
 )
 
 container.register(
   DI_TOKENS.CancelSubscriptionUseCase,
-  () => new CancelSubscriptionUseCase(
-    container.resolve(DI_TOKENS.SubscriptionRepository),
-    container.resolve(DI_TOKENS.BillingKeyRepository)
-  )
+  () =>
+    new CancelSubscriptionUseCase(
+      container.resolve(DI_TOKENS.SubscriptionRepository),
+      container.resolve(DI_TOKENS.BillingKeyRepository)
+    )
 )
 
 container.register(
   DI_TOKENS.ChangePlanUseCase,
-  () => new ChangePlanUseCase(
-    container.resolve(DI_TOKENS.SubscriptionRepository),
-    container.resolve(DI_TOKENS.BillingKeyRepository),
-    container.resolve(DI_TOKENS.InvoiceRepository),
-    container.resolve(DI_TOKENS.PaymentLogRepository),
-    container.resolve(DI_TOKENS.PaymentGateway)
-  )
+  () =>
+    new ChangePlanUseCase(
+      container.resolve(DI_TOKENS.SubscriptionRepository),
+      container.resolve(DI_TOKENS.BillingKeyRepository),
+      container.resolve(DI_TOKENS.InvoiceRepository),
+      container.resolve(DI_TOKENS.PaymentLogRepository),
+      container.resolve(DI_TOKENS.PaymentGateway)
+    )
 )
 
 container.register(
   DI_TOKENS.GetPaymentHistoryUseCase,
-  () => new GetPaymentHistoryUseCase(
-    container.resolve(DI_TOKENS.PaymentLogRepository)
-  )
+  () => new GetPaymentHistoryUseCase(container.resolve(DI_TOKENS.PaymentLogRepository))
 )
 
 // Optimization Repository (Singleton)
@@ -769,66 +789,65 @@ container.registerSingleton<IOptimizationRuleRepository>(
 // Optimization Use Cases (Transient)
 container.register(
   DI_TOKENS.AutoOptimizeCampaignUseCase,
-  () => new AutoOptimizeCampaignUseCase(
-    container.resolve(DI_TOKENS.CampaignRepository),
-    container.resolve(DI_TOKENS.MetaAdsService)
-  )
+  () =>
+    new AutoOptimizeCampaignUseCase(
+      container.resolve(DI_TOKENS.CampaignRepository),
+      container.resolve(DI_TOKENS.MetaAdsService)
+    )
 )
 
 container.register(
   DI_TOKENS.CreateOptimizationRuleUseCase,
-  () => new CreateOptimizationRuleUseCase(
-    container.resolve(DI_TOKENS.OptimizationRuleRepository)
-  )
+  () => new CreateOptimizationRuleUseCase(container.resolve(DI_TOKENS.OptimizationRuleRepository))
 )
 
 container.register(
   DI_TOKENS.UpdateOptimizationRuleUseCase,
-  () => new UpdateOptimizationRuleUseCase(
-    container.resolve(DI_TOKENS.OptimizationRuleRepository)
-  )
+  () => new UpdateOptimizationRuleUseCase(container.resolve(DI_TOKENS.OptimizationRuleRepository))
 )
 
 container.register(
   DI_TOKENS.DeleteOptimizationRuleUseCase,
-  () => new DeleteOptimizationRuleUseCase(
-    container.resolve(DI_TOKENS.OptimizationRuleRepository)
-  )
+  () => new DeleteOptimizationRuleUseCase(container.resolve(DI_TOKENS.OptimizationRuleRepository))
 )
 
 container.register(
   DI_TOKENS.ListOptimizationRulesUseCase,
-  () => new ListOptimizationRulesUseCase(
-    container.resolve(DI_TOKENS.OptimizationRuleRepository)
-  )
+  () => new ListOptimizationRulesUseCase(container.resolve(DI_TOKENS.OptimizationRuleRepository))
 )
 
 container.register(
   DI_TOKENS.EvaluateOptimizationRulesUseCase,
-  () => new EvaluateOptimizationRulesUseCase(
-    container.resolve(DI_TOKENS.OptimizationRuleRepository),
-    container.resolve(DI_TOKENS.CampaignRepository),
-    container.resolve(DI_TOKENS.KPIRepository),
-    container.resolve(DI_TOKENS.AutoOptimizeCampaignUseCase)
-  )
+  () =>
+    new EvaluateOptimizationRulesUseCase(
+      container.resolve(DI_TOKENS.OptimizationRuleRepository),
+      container.resolve(DI_TOKENS.CampaignRepository),
+      container.resolve(DI_TOKENS.KPIRepository),
+      container.resolve(DI_TOKENS.AutoOptimizeCampaignUseCase)
+    )
 )
 
 // 절감 금액 계산 UseCase
 container.register(
   DI_TOKENS.CalculateSavingsUseCase,
-  () => new CalculateSavingsUseCase(
-    container.resolve(DI_TOKENS.OptimizationRuleRepository),
-    container.resolve(DI_TOKENS.CampaignRepository),
-    container.resolve(DI_TOKENS.KPIRepository),
-  )
+  () =>
+    new CalculateSavingsUseCase(
+      container.resolve(DI_TOKENS.OptimizationRuleRepository),
+      container.resolve(DI_TOKENS.CampaignRepository),
+      container.resolve(DI_TOKENS.KPIRepository)
+    )
 )
 
 // Audit Use Cases
 container.register(
   DI_TOKENS.AuditAdAccountUseCase,
-  () => new AuditAdAccountUseCase(
-    container.resolve(DI_TOKENS.MetaAdsService)
-  )
+  () => new AuditAdAccountUseCase(container.resolve(DI_TOKENS.MetaAdsService))
+)
+
+// Feedback Analytics Use Cases
+container.register(
+  DI_TOKENS.GetFeedbackAnalyticsUseCase,
+  () => new GetFeedbackAnalyticsUseCase(container.resolve(DI_TOKENS.AIFeedbackRepository))
 )
 
 export { container, DI_TOKENS }
@@ -1111,30 +1130,21 @@ container.registerSingleton<ICompetitorTrackingRepository>(
 // Competitor Tracking Use Cases (Transient)
 container.register(
   DI_TOKENS.TrackCompetitorUseCase,
-  () => new TrackCompetitorUseCase(
-    container.resolve(DI_TOKENS.CompetitorTrackingRepository)
-  )
+  () => new TrackCompetitorUseCase(container.resolve(DI_TOKENS.CompetitorTrackingRepository))
 )
 
 container.register(
   DI_TOKENS.UntrackCompetitorUseCase,
-  () => new UntrackCompetitorUseCase(
-    container.resolve(DI_TOKENS.CompetitorTrackingRepository)
-  )
+  () => new UntrackCompetitorUseCase(container.resolve(DI_TOKENS.CompetitorTrackingRepository))
 )
 
 container.register(
   DI_TOKENS.GetTrackedCompetitorsUseCase,
-  () => new GetTrackedCompetitorsUseCase(
-    container.resolve(DI_TOKENS.CompetitorTrackingRepository)
-  )
+  () => new GetTrackedCompetitorsUseCase(container.resolve(DI_TOKENS.CompetitorTrackingRepository))
 )
 
 // Token Management Use Cases (Transient)
-container.register(
-  DI_TOKENS.RefreshMetaTokenUseCase,
-  () => new RefreshMetaTokenUseCase()
-)
+container.register(DI_TOKENS.RefreshMetaTokenUseCase, () => new RefreshMetaTokenUseCase())
 
 export function getRefreshMetaTokenUseCase(): RefreshMetaTokenUseCase {
   return container.resolve(DI_TOKENS.RefreshMetaTokenUseCase)
@@ -1149,10 +1159,11 @@ container.registerSingleton<IConversionEventRepository>(
 // SendCAPIEvents Use Case (Transient)
 container.register(
   DI_TOKENS.SendCAPIEventsUseCase,
-  () => new SendCAPIEventsUseCase(
-    container.resolve(DI_TOKENS.ConversionEventRepository),
-    container.resolve(DI_TOKENS.CAPIService)
-  )
+  () =>
+    new SendCAPIEventsUseCase(
+      container.resolve(DI_TOKENS.ConversionEventRepository),
+      container.resolve(DI_TOKENS.CAPIService)
+    )
 )
 
 export function getSendCAPIEventsUseCase(): SendCAPIEventsUseCase {
@@ -1205,4 +1216,14 @@ export function getAutoOptimizeCampaignUseCase(): AutoOptimizeCampaignUseCase {
 
 export function getCalculateSavingsUseCase(): CalculateSavingsUseCase {
   return container.resolve(DI_TOKENS.CalculateSavingsUseCase)
+}
+
+// Guide Question Service (Singleton)
+container.registerSingleton<IGuideQuestionService>(
+  DI_TOKENS.GuideQuestionService,
+  () => new GuideQuestionService({ questions: {}, maxQuestionsPerIntent: 5 })
+)
+
+export function getGuideQuestionService(): IGuideQuestionService {
+  return container.resolve(DI_TOKENS.GuideQuestionService)
 }

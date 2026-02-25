@@ -9,3 +9,6 @@ export * from './errors'
 
 // Repositories
 export * from './repositories'
+
+// Services
+export * from './services'

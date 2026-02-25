@@ -140,6 +140,24 @@ export const DI_TOKENS = {
 
   // Audit Use Cases
   AuditAdAccountUseCase: Symbol.for('AuditAdAccountUseCase'),
+
+  // Feedback Analytics Use Cases
+  GetFeedbackAnalyticsUseCase: Symbol.for('GetFeedbackAnalyticsUseCase'),
+
+  // Resilience (new)
+  ResilienceService: Symbol.for('ResilienceService'),
+
+  // Prompt Template (new)
+  PromptTemplateService: Symbol.for('PromptTemplateService'),
+
+  // Fallback Response (new)
+  FallbackResponseService: Symbol.for('FallbackResponseService'),
+
+  // Few-Shot Example Registry (new)
+  FewShotExampleRegistry: Symbol.for('FewShotExampleRegistry'),
+
+  // Guide Question (new)
+  GuideQuestionService: Symbol.for('GuideQuestionService'),
 } as const
 
 export type DIToken = (typeof DI_TOKENS)[keyof typeof DI_TOKENS]

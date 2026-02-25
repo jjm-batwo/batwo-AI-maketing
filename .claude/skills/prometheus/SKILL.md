@@ -73,8 +73,15 @@ Task(subagent_type="oh-my-claudecode:explore", model="haiku",
   3) import 관계와 의존성 방향",
   run_in_background=true)
 
-의도가 Architecture일 때:
+의도가 Architecture일 때 (Codex 우선 — Oracle 역할):
 
+mcp__plugin_oh-my-claudecode_x__ask_codex(
+  agent_role="architect",
+  prompt="아키텍처 상담 요청: {context}. 현재 구조, 옵션, 트레이드오프 분석",
+  context_files=[관련 파일들],
+  background=true)
+
+Codex 불가 시 폴백:
 Task(subagent_type="oh-my-claudecode:architect", model="opus",
   prompt="아키텍처 상담 요청: {context}. 현재 구조, 옵션, 트레이드오프 분석",
   run_in_background=true)
@@ -390,34 +397,47 @@ AskUserQuestion:
     - label: "바로 실행"
       description: "계획이 충분합니다. ralph로 즉시 실행합니다."
     - label: "High Accuracy 검증"
-      description: "verifier로 모든 파일 참조와 수용 기준을 엄격 검증합니다. 정밀도가 올라가지만 시간이 추가됩니다."
+      description: "Codex(Momus)로 모든 파일 참조와 수용 기준을 엄격 검증합니다. Claude와 다른 관점에서 비판하여 정밀도가 올라가지만 시간이 추가됩니다."
     - label: "팀 실행"
       description: "team 모드로 병렬 팀 에이전트가 실행합니다."
     - label: "컨텍스트 정리 후 실행"
       description: "compact 후 ralph 실행. 계획 세션이 길었을 때 권장."
 ```
 
-### High Accuracy 선택 시: Verification Loop
+### High Accuracy 선택 시: Momus Verification Loop (Codex 사용)
+
+oh-my-opencode의 Momus 에이전트와 동일하게, **Codex(GPT)**를 비판 모델로 사용합니다.
+Codex는 계획의 논리적 결함, 누락, 모호성을 Claude와 다른 관점에서 포착합니다.
 
 ```
-Task(subagent_type="oh-my-claudecode:verifier", model="sonnet",
-  prompt="계획 파일을 검증하세요: .omc/plans/{name}.md
+mcp__plugin_oh-my-claudecode_x__ask_codex(
+  agent_role="critic",
+  prompt="다음 계획 파일을 엄격하게 검증하세요: .omc/plans/{name}.md
 
   검증 기준:
-  1. 참조된 파일이 실제로 존재하는지 Read로 확인
+  1. 참조된 파일이 실제로 존재하는지 확인
   2. 참조된 라인 번호가 관련 코드를 포함하는지 확인
   3. 각 태스크에 에이전트 실행 가능한 수용 기준이 있는지
   4. 각 태스크에 QA 시나리오가 포함되어 있는지
   5. '사용자가 수동으로 확인' 같은 금지된 기준이 없는지
+  6. 태스크 간 의존성과 병렬화 전략이 합리적인지
+  7. Must NOT Have 가드레일이 충분히 구체적인지
 
   판정: OKAY 또는 REJECT (최대 3개 차단 이슈)
   REJECT 시 각 이슈는: 구체적 위치 + 필요한 수정 + 차단 이유",
+  context_files=[".omc/plans/{name}.md"])
+```
+
+**Codex 불가 시 폴백:**
+```
+Task(subagent_type="oh-my-claudecode:verifier", model="sonnet",
+  prompt="[위와 동일한 검증 기준]",
   run_in_background=false)
 ```
 
 **REJECT 시:**
-1. verifier의 피드백을 모두 반영하여 계획 수정
-2. 다시 verifier에게 제출
+1. Codex(Momus)의 피드백을 모두 반영하여 계획 수정
+2. 다시 Codex에게 제출
 3. OKAY가 나올 때까지 반복 (최대 3회, 초과 시 사용자에게 현재 버전 제시)
 
 **OKAY 시:**
@@ -444,13 +464,23 @@ rm .omc/drafts/{name}.md
 
 <Tool_Usage>
 - `Task(subagent_type="oh-my-claudecode:explore", model="haiku")` — 코드베이스 사전 조사 (Pre-Interview Research)
-- `Task(subagent_type="oh-my-claudecode:analyst", model="opus")` — 갭 분석 (Metis 역할)
-- `Task(subagent_type="oh-my-claudecode:architect", model="opus")` — 아키텍처 상담
-- `Task(subagent_type="oh-my-claudecode:verifier", model="sonnet")` — 계획 품질 검증 (Momus 역할)
+- `Task(subagent_type="oh-my-claudecode:analyst", model="opus")` — 갭 분석 (Metis 역할, Claude Opus 사용)
+- `mcp__plugin_oh-my-claudecode_x__ask_codex(agent_role="architect")` — 아키텍처 상담 (Oracle 역할, Codex 우선)
+  - 폴백: `Task(subagent_type="oh-my-claudecode:architect", model="opus")`
+- `mcp__plugin_oh-my-claudecode_x__ask_codex(agent_role="critic")` — 계획 품질 검증 (Momus 역할, Codex 우선)
+  - 폴백: `Task(subagent_type="oh-my-claudecode:verifier", model="sonnet")`
 - `Task(subagent_type="oh-my-claudecode:critic", model="opus")` — 합의 모드에서 비평
 - `AskUserQuestion` — 선호도/범위/실행 방식 질문
 - `Write` — 드래프트(.omc/drafts/)와 계획(.omc/plans/) 저장
 - `Edit` — 드래프트/계획 점진적 업데이트
+
+**모델 배정 근거 (oh-my-opencode 원본 참조):**
+| 역할 | oh-my-opencode 1순위 | 우리 구현 |
+|------|---------------------|----------|
+| Prometheus (메인 플래너) | Claude Opus 4.5 | Claude Opus 4.6 |
+| Metis (갭 분석) | Claude Opus 4.5 | analyst (opus 4.6) |
+| Oracle (아키텍처) | GPT-5.2 (Codex) | Codex (gpt-5.3) → architect (opus 4.6) 폴백 |
+| Momus (계획 비판) | GPT-5.2 (Codex) | Codex (gpt-5.3) → verifier (sonnet 4.6) 폴백 |
 </Tool_Usage>
 
 <QA_Scenario_Rules>

@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { AuditReportCard } from '@/presentation/components/audit/AuditReportCard'
 import { AuditCategoryBreakdown } from '@/presentation/components/audit/AuditCategoryBreakdown'
 import { AuditConversionCTA } from '@/presentation/components/audit/AuditConversionCTA'
+import { Share2, Download } from 'lucide-react'
 
 interface AuditReportDTO {
   overall: number
@@ -68,9 +69,63 @@ function AuditCallbackContent() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(errorParam)
   const analyzedRef = useRef(false)
+  const [shareLoading, setShareLoading] = useState(false)
+  const [shareUrl, setShareUrl] = useState<string | null>(null)
+  const [pdfLoading, setPdfLoading] = useState(false)
 
   const handleRetry = () => {
     window.location.href = '/'
+  }
+
+  const handleShare = async () => {
+    if (!report) return
+    setShareLoading(true)
+    try {
+      const res = await fetch('/api/audit/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ report }),
+      })
+      if (!res.ok) throw new Error('공유 링크 생성 실패')
+      const data = await res.json()
+      setShareUrl(data.shareUrl)
+      await navigator.clipboard.writeText(data.shareUrl)
+      alert('공유 링크가 클립보드에 복사되었습니다!')
+    } catch {
+      alert('공유 링크 생성에 실패했습니다. 다시 시도해주세요.')
+    } finally {
+      setShareLoading(false)
+    }
+  }
+
+  const handleDownloadPDF = async () => {
+    if (!report) return
+    setPdfLoading(true)
+    try {
+      const res = await fetch('/api/audit/pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ report }),
+      })
+      if (!res.ok) throw new Error('PDF 생성 실패')
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      const analyzedDate = new Date(report.analyzedAt)
+        .toISOString()
+        .split('T')[0]
+        .replace(/-/g, '')
+      a.download = `바투_광고계정진단_${analyzedDate}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+    } catch {
+      alert('PDF 다운로드에 실패했습니다. 다시 시도해주세요.')
+    } finally {
+      setPdfLoading(false)
+    }
   }
 
   const analyze = useCallback(async () => {
@@ -144,6 +199,28 @@ function AuditCallbackContent() {
       <AuditCategoryBreakdown categories={report.categories} />
 
       <AuditConversionCTA estimatedImprovement={report.estimatedImprovement} />
+
+      {/* 공유 / PDF 다운로드 버튼 */}
+      <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+        <button
+          onClick={handleShare}
+          disabled={shareLoading}
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg border border-border bg-background text-foreground font-medium text-sm hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="진단 결과 공유 링크 복사"
+        >
+          <Share2 className="h-4 w-4" aria-hidden="true" />
+          {shareLoading ? '링크 생성 중...' : shareUrl ? '링크 복사됨' : '결과 공유하기'}
+        </button>
+        <button
+          onClick={handleDownloadPDF}
+          disabled={pdfLoading}
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg border border-border bg-background text-foreground font-medium text-sm hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="진단 결과 PDF 다운로드"
+        >
+          <Download className="h-4 w-4" aria-hidden="true" />
+          {pdfLoading ? 'PDF 생성 중...' : 'PDF 다운로드'}
+        </button>
+      </div>
     </div>
   )
 }
