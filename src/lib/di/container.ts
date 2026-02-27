@@ -174,6 +174,7 @@ import { AuditAdAccountUseCase } from '@application/use-cases/audit/AuditAdAccou
 import { GetFeedbackAnalyticsUseCase } from '@application/use-cases/ai/GetFeedbackAnalyticsUseCase'
 
 import { prisma } from '@/lib/prisma'
+import { safeDecryptToken } from '@application/utils/TokenEncryption'
 
 type Factory<T> = () => T
 
@@ -451,12 +452,19 @@ container.registerSingleton(
       container.resolve<IConversationRepository>(DI_TOKENS.ConversationRepository),
       container.resolve<IPendingActionRepository>(DI_TOKENS.PendingActionRepository),
       container.resolve<IResilienceService>(DI_TOKENS.ResilienceService),
-      async (userId: string) => ({
-        userId,
-        accessToken: null, // API route에서 실제 값으로 대체됨
-        adAccountId: null,
-        conversationId: '',
-      })
+      async (userId: string) => {
+        const metaAccount = await prisma.metaAdAccount.findUnique({
+          where: { userId },
+        })
+        return {
+          userId,
+          accessToken: metaAccount?.accessToken
+            ? safeDecryptToken(metaAccount.accessToken)
+            : null,
+          adAccountId: metaAccount?.metaAccountId ?? null,
+          conversationId: '',
+        }
+      }
     )
 )
 

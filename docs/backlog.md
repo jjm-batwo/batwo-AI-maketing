@@ -26,3 +26,7 @@
 | 7 | RSC Suspense wrapping | `src/app/(dashboard)/*/page.tsx` | fetch 블로킹 해소, 스트리밍 SSR 활성화 | 2026-02-19 |
 | 8 | Dashboard/meta-connect CSR→RSC 전환 | `dashboard/page.tsx`, `meta-connect/page.tsx` | 대형 리팩토링, Zustand 의존성 분리 필요 | 2026-02-19 |
 | 9 | AdSet/Creative/Asset mutation API revalidateTag 추가 | `src/app/api/adsets/`, `src/app/api/creatives/`, `src/app/api/assets/` | 8개 API, ISR 페이지 연결 시 승격 | 2026-02-25 |
+| 10 | AgentStreamChunk 타입 서버/클라이언트 공유 파일 도입 | `src/application/services/ConversationalAgentService.ts`, `src/presentation/hooks/useAgentChat.ts` | 변경 시 양쪽 동기화 필요 제거 | 2026-02-25 |
+| 11 | toCoreMessages()에 tool 메시지 포함 | `src/application/services/ConversationalAgentService.ts` | LLM이 이전 도구 호출 결과 참조 가능하도록 | 2026-02-25 |
+| 12 | Domain/Application IntentClassifier 이름 중복 해소 | `src/domain/services/IntentClassifier.ts`, `src/application/services/IntentClassifier.ts` | 개발자 혼란 방지, 리네이밍 | 2026-02-25 |
+| 13 | SSE eventsource-parser 도입 | `src/presentation/hooks/useAgentChat.ts` | TCP 패킷 분할 시 JSON 파싱 실패 방지 | 2026-02-25 |

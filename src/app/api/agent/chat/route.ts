@@ -3,12 +3,18 @@ import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS } from '@/lib/di/container'
 import { ConversationalAgentService } from '@application/services/ConversationalAgentService'
 import type { AgentStreamChunk } from '@application/services/ConversationalAgentService'
+import { checkRateLimit, getClientIp, rateLimitExceededResponse } from '@/lib/middleware/rateLimit'
 
 export async function POST(request: NextRequest) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
   try {
+    const clientIp = getClientIp(request)
+    const rateLimitResult = await checkRateLimit(`${user.id}:${clientIp}`, 'ai')
+    if (!rateLimitResult.success) {
+      return rateLimitExceededResponse(rateLimitResult)
+    }
     const body = await request.json()
     const { message, conversationId, uiContext } = body as {
       message?: string
@@ -67,6 +73,9 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         Connection: 'keep-alive',
+        'X-RateLimit-Limit': String(rateLimitResult.limit),
+        'X-RateLimit-Remaining': String(rateLimitResult.remaining),
+        'X-RateLimit-Reset': String(rateLimitResult.reset),
       },
     })
   } catch (error) {

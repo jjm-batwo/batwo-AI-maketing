@@ -20,9 +20,9 @@
 
 예시:
 - `[Intent: Explicit] Campaign 엔티티 검증 추가 → Domain | executor (sonnet)`
-- `[Intent: Open-ended] 온보딩 플로우 리팩토링 → prometheus → ask_codex(architect) → executor (sonnet)`
-- `[Intent: Open-ended] 랜딩 페이지 디자인 개선 → ask_gemini(designer) → executor (sonnet)`
-- `[Intent: Explicit] API 보안 취약점 점검 → ask_codex(security-reviewer)`
+- `[Intent: Open-ended] 온보딩 플로우 리팩토링 → prometheus → omc-teams:codex(architect) → executor (sonnet)`
+- `[Intent: Open-ended] 랜딩 페이지 디자인 개선 → omc-teams:gemini(designer) → executor (sonnet)`
+- `[Intent: Explicit] API 보안 취약점 점검 → omc-teams:codex(security-reviewer)`
 - `[Intent: Trivial] README 오타 수정 → 직접 실행`
 
 ## 에이전트 위임 규칙
@@ -44,31 +44,30 @@
 | Git 작업 | git-master | sonnet | Claude 전용 (git 접근) |
 
 **Codex (GPT-5.3) 우선** — 비판적 분석, 아키텍처, 보안:
-| 작업 영역 | MCP 호출 | 폴백 | 비고 |
+| 작업 영역 | 호출 방식 | 폴백 | 비고 |
 |----------|---------|------|------|
-| 아키텍처 결정 | `ask_codex(role="architect")` | architect (opus) | 아키텍처 리뷰 특화 |
-| 계획 비판/검증 | `ask_codex(role="critic")` | critic (opus) | Momus 패턴 (oh-my-opencode) |
-| 보안 검토 | `ask_codex(role="security-reviewer")` | security-reviewer (sonnet) | 보안 취약점 분석 특화 |
-| 코드 리뷰 | `ask_codex(role="code-reviewer")` | code-reviewer (opus) | 포괄적 코드 분석 |
-| 계획 수립 | `ask_codex(role="planner")` | planner (opus) | 계획 검증/시퀀싱 |
-| 요구사항 분석 | `ask_codex(role="analyst")` | analyst (opus) | Gap 분석 특화 |
+| 아키텍처 결정 | `/omc-teams 1:codex "architect 분석"` | architect (opus) | 아키텍처 리뷰 특화 |
+| 계획 비판/검증 | `/omc-teams 1:codex "critic 검증"` | critic (opus) | Momus 패턴 |
+| 보안 검토 | `/omc-teams 1:codex "security-review"` | security-reviewer (sonnet) | 보안 취약점 분석 특화 |
+| 코드 리뷰 | `/omc-teams 1:codex "code-review"` | code-reviewer (opus) | 포괄적 코드 분석 |
+| 계획 수립 | `/omc-teams 1:codex "planner 분석"` | planner (opus) | 계획 검증/시퀀싱 |
+| 요구사항 분석 | `/omc-teams 1:codex "analyst 분석"` | analyst (opus) | Gap 분석 특화 |
 
 **Gemini (gemini-3-pro-preview) 우선** — UI/UX, 문서, 시각 분석:
-| 작업 영역 | MCP 호출 | 폴백 | 비고 |
+| 작업 영역 | 호출 방식 | 폴백 | 비고 |
 |----------|---------|------|------|
-| UI 컴포넌트 설계 | `ask_gemini(role="designer")` | designer (sonnet) | 1M 컨텍스트, UI/UX 특화 |
-| 문서 작성 | `ask_gemini(role="writer")` | writer (haiku) | 대용량 컨텍스트 문서화 |
-| 이미지/스크린샷 분석 | `ask_gemini(role="vision")` | vision (sonnet) | 시각 분석 특화 |
+| UI 컴포넌트 설계 | `/omc-teams 1:gemini "designer 분석"` | designer (sonnet) | 1M 컨텍스트, UI/UX 특화 |
+| 문서 작성 | `/omc-teams 1:gemini "writer 문서화"` | writer (haiku) | 대용량 컨텍스트 문서화 |
+| 이미지/스크린샷 분석 | `/omc-teams 1:gemini "vision 분석"` | vision (sonnet) | 시각 분석 특화 |
 
-**API Route 보안 검토**: executor (Claude) + `ask_codex(role="security-reviewer")` 병렬 실행
+**API Route 보안 검토**: executor (Claude) + `/omc-teams 1:codex "security-review"` 병렬 실행
 
-### MCP 라우팅 규칙
+### 외부 CLI 워커 라우팅 규칙
 
-1. **MCP 우선**: Codex/Gemini 권장 역할은 MCP 먼저 호출, 실패 시 Claude 폴백
+1. **tmux 워커 방식**: Codex/Gemini는 `/omc-teams`로 tmux 패인에 CLI 프로세스 스폰 (구 MCP 서버 방식 폐기)
 2. **Claude 전용**: 코드 작성/실행/파일 접근이 필요한 작업은 반드시 Claude 에이전트
-3. **병렬 활용**: 설계(Codex) + 구현(Claude) + 리뷰(Gemini) 동시 실행 가능
-4. **context_files 필수**: MCP 호출 시 관련 파일 경로를 반드시 첨부
-5. **MCP는 자문**: MCP 출력은 참고용, 최종 검증(tsc/vitest/build)은 Claude 에이전트가 수행
+3. **병렬 활용**: 설계(Codex) + 구현(Claude) + 리뷰(Gemini) 동시 실행 가능 (`/ccg` 활용)
+4. **워커는 자문**: 외부 CLI 출력은 참고용, 최종 검증(tsc/vitest/build)은 Claude 에이전트가 수행
 
 ### 구조화된 위임 프로토콜 (6-Section Prompt)
 
@@ -150,7 +149,7 @@
 **Evolving 영역**: CSS/Tailwind 변경은 브라우저 검증. 구조 변경 시 빌드 확인.
 
 ## 보안 자동 검토 대상
-다음 경로 변경 시 `ask_codex(role="security-reviewer")` 자동 실행 (Codex 불가 시 Claude security-reviewer 폴백):
+다음 경로 변경 시 `/omc-teams 1:codex "security-review"` 자동 실행 (Codex 불가 시 Claude security-reviewer 폴백):
 - `src/app/api/**` — API 엔드포인트
 - `src/infrastructure/auth/**` — 인증/인가
 - `src/infrastructure/external/**` — 외부 API 연동
@@ -172,7 +171,6 @@
 | `verify-token-encryption` | DB accessToken 암복호화 적용 일관성 검증 |
 | `verify-ui-components` | UI 컴포넌트 일관성, 접근성, 성능 패턴 검증 (랜딩/대시보드/채팅/최적화/픽셀/온보딩/감사 변경 후 사용) |
 | `prometheus` | Prometheus 전략 계획 컨설턴트 — Pre-Interview Research, Intent-Specific Interview, Clearance Check, Verification Loop (Codex Momus), QA Scenarios. 복잡한 기능 구현 전 `/prometheus`로 호출 |
-| `hephaestus` | Hephaestus 자율 딥 워커 — Codex(GPT-5.3) 기반 목표 지향 자율 실행. 목표만 주면 코드베이스 탐색 → 패턴 연구 → end-to-end 실행. `/hephaestus`로 호출 |
 
 ## 린트 자동 수정 주의사항
 - `no-unused-vars` 수정 시 사용 중인 변수에 `_` 접두사를 붙이는 실수 주의

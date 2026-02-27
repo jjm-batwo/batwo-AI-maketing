@@ -11,13 +11,18 @@ import { CircuitBreakerImpl } from './CircuitBreaker'
  * Exposes retry capability and a circuit breaker factory per name.
  */
 export class ResilienceService implements IResilienceService {
+  private readonly breakers = new Map<string, ICircuitBreaker>()
+
   withRetry<T>(fn: () => Promise<T>, options?: RetryOptions): Promise<T> {
     return withRetry<T>(fn, options)
   }
 
-  circuitBreaker(_name: string): ICircuitBreaker {
-    // Provide a simple per-service circuit breaker with sensible defaults.
-    // Consumers can override by passing a custom implementation if needed.
-    return new CircuitBreakerImpl(5, 30000)
+  circuitBreaker(name: string): ICircuitBreaker {
+    let breaker = this.breakers.get(name)
+    if (!breaker) {
+      breaker = new CircuitBreakerImpl(5, 30000)
+      this.breakers.set(name, breaker)
+    }
+    return breaker
   }
 }

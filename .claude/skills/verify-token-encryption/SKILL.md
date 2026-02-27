@@ -28,6 +28,10 @@ description: DB accessToken 저장/조회 경로에서 암복호화 함수가 �
 | `src/application/use-cases/campaign/SyncCampaignsUseCase.ts` | 캠페인 동기화 — 토큰 조회 (safeDecryptToken) |
 | `src/application/use-cases/token/RefreshMetaTokenUseCase.ts` | 토큰 갱신 — 복호화 후 교환, 재암호화 저장 |
 | `src/infrastructure/database/repositories/PrismaConversionEventRepository.ts` | CAPI 이벤트 저장소 — findPixelTokenMappings에서 safeDecryptToken 사용 |
+| `src/lib/di/container.ts` | DI 컨테이너 — buildAgentContext에서 safeDecryptToken으로 Meta 토큰 복호화 |
+| `src/app/api/platform/cafe24/callback/route.ts` | Cafe24 OAuth 콜백 — 토큰 저장 (encryptToken) |
+| `src/app/api/platform/cafe24/inject/route.ts` | Cafe24 스크립트 주입 — 토큰 조회 (safeDecryptToken) |
+| `src/app/api/platform/cafe24/disconnect/route.ts` | Cafe24 연결 해제 — 토큰 조회 (safeDecryptToken) |
 | `tests/unit/application/utils/TokenEncryption.test.ts` | TokenEncryption 단위 테스트 |
 
 ## Workflow
