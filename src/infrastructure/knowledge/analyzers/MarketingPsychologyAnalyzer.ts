@@ -2,7 +2,6 @@ import type { DomainAnalyzer, AnalysisInput } from '@application/ports/IKnowledg
 import type { DomainScore, ScoringFactor, Citation, DomainRecommendation } from '@domain/value-objects/MarketingScience'
 import { getGrade } from '@domain/value-objects/MarketingScience'
 import { CIALDINI_PRINCIPLES, COGNITIVE_BIASES } from '../data/psychological-principles'
-import { findPowerWords } from '../data/korean-power-words'
 
 /**
  * Marketing Psychology Domain Analyzer

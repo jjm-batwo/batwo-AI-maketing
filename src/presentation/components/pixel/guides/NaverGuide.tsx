@@ -45,7 +45,6 @@ export function NaverGuide({ pixelId, pixelCode }: NaverGuideProps) {
 
   useEffect(() => {
     let cancelled = false
-    setIsLoadingSnippet(true)
 
     fetch(`/api/pixel/${pixelId}/snippet`)
       .then((res) => res.text())

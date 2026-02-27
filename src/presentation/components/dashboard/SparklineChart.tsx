@@ -1,6 +1,6 @@
 'use client'
 
-import { memo, useMemo } from 'react'
+import { memo, useId, useMemo } from 'react'
 
 interface SparklineChartProps {
   data: number[]
@@ -17,15 +17,15 @@ export const SparklineChart = memo(function SparklineChart({
   width = 80,
   className,
 }: SparklineChartProps) {
-  const { points, fillPoints, gradientId } = useMemo(() => {
-    if (data.length < 2) return { points: '', fillPoints: '', gradientId: '' }
+  const baseId = useId().replace(/:/g, '')
+  const gradientId = `sparkline-${baseId}`
+  const { points, fillPoints } = useMemo(() => {
+    if (data.length < 2) return { points: '', fillPoints: '' }
 
     const max = Math.max(...data)
     const min = Math.min(...data)
     const range = max - min || 1
     const padding = 2
-
-    const id = `sparkline-${Math.random().toString(36).slice(2, 9)}`
 
     const pts = data.map((value, index) => {
       const x = padding + (index / (data.length - 1)) * (width - padding * 2)
@@ -36,7 +36,7 @@ export const SparklineChart = memo(function SparklineChart({
     const linePoints = pts.join(' ')
     const fill = `${pts[0].split(',')[0]},${height} ${linePoints} ${pts[pts.length - 1].split(',')[0]},${height}`
 
-    return { points: linePoints, fillPoints: fill, gradientId: id }
+    return { points: linePoints, fillPoints: fill }
   }, [data, height, width])
 
   if (data.length < 2) return null

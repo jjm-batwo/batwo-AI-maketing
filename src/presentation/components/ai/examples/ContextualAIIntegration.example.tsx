@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Integration Examples for Contextual AI Suggestion System
  *
@@ -15,7 +14,7 @@ import {
   CompactAISuggestion,
   useManualSuggestion,
   useSuggestionTiming
-} from './index'
+} from '../index'
 
 /**
  * Example 1: Global Provider
@@ -74,11 +73,11 @@ export function CampaignFormExample() {
     trackAction('input_campaign_name', { valueChanged: name.length > 0 })
   }
 
-  const handleBudgetChange = (budget: number) => {
+  const handleBudgetChange = (_budget: number) => {
     trackAction('input_budget', { valueChanged: true })
   }
 
-  const _handleSubmitError = (error: Error) => {
+  const _handleSubmitError = (_error: Error) => {
     trackAction('campaign_creation_error', { errorOccurred: true })
   }
 
@@ -322,7 +321,7 @@ export function ErrorRecoveryExample() {
     try {
       // API call that might fail
       await fetch('/api/campaign')
-    } catch (error) {
+    } catch (_error) {
       // Track error
       trackAction('api_error', {
         errorOccurred: true,
@@ -345,8 +344,7 @@ export function ErrorRecoveryExample() {
  * Example 12: A/B Test Different Suggestions
  */
 export function ABTestSuggestionsExample({ children }: { children: React.ReactNode }) {
-  // Randomly assign users to variant A or B
-  const variant = Math.random() > 0.5 ? 'A' : 'B'
+  const variant: 'A' | 'B' = 'A'
 
   const customSuggestions = variant === 'A'
     ? {

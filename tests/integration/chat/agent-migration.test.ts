@@ -4,7 +4,7 @@ import { POST as agentPost } from '../../../src/app/api/agent/chat/route'
 import { existsSync } from 'fs'
 import { resolve } from 'path'
 
-function mockNextRequest(body: any): NextRequest {
+function mockNextRequest(body: unknown): NextRequest {
   // Lightweight mock; route handlers typically read .json()
   return { json: async () => body } as unknown as NextRequest
 }
@@ -20,7 +20,10 @@ describe('Legacy migration - /api/ai/chat removed, /api/agent/chat active', () =
       test: 'data',
       conversation: [{ role: 'user', content: 'Hello' }],
     })
-    const res: any = await (agentPost as any)(req)
+    const res = await (agentPost as (request: NextRequest) => Promise<unknown>)(req) as {
+      status?: number
+      statusCode?: number
+    }
     const status = res?.status ?? res?.statusCode ?? 0
     expect(status).toBeGreaterThanOrEqual(0)
   })

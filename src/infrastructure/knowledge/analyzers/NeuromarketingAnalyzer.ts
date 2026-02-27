@@ -179,7 +179,7 @@ export class NeuromarketingAnalyzer implements DomainAnalyzer {
     return { factor, citation }
   }
 
-  private analyzeAttentionHook(headline: string, primaryText: string): {
+  private analyzeAttentionHook(headline: string, _primaryText: string): {
     factor: ScoringFactor
     citation: Citation
   } {

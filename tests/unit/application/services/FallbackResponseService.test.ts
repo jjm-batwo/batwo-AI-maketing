@@ -10,7 +10,6 @@
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { FallbackResponseService } from '@application/services/FallbackResponseService'
-import type { FallbackResponse } from '@application/services/FallbackResponseService'
 import type { IResilienceService } from '@application/ports/IResilienceService'
 
 describe('FallbackResponseService', () => {

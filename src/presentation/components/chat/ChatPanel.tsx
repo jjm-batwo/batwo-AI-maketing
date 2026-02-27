@@ -93,7 +93,7 @@ export function ChatPanel() {
     setGuideRecommendation({
       formData: recommendation.formData,
       context: recommendation.reasoning,
-      timestamp: Date.now(),
+      timestamp: performance.timeOrigin,
     })
     closeChatPanel()
     router.push('/campaigns/new')

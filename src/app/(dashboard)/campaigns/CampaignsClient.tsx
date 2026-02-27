@@ -39,9 +39,24 @@ const PERIOD_LABELS: Record<KPIPeriod, string> = {
 
 interface CampaignWithKPI {
   id: string
-  status: string
+  name: string
+  status: 'ACTIVE' | 'PAUSED' | 'COMPLETED' | 'DRAFT' | 'PENDING_REVIEW'
+  objective: string
+  dailyBudget: number
   createdAt?: string
-  [key: string]: any
+  spend?: number
+  roas?: number
+  ctr?: number
+  impressions?: number
+  reach?: number
+  clicks?: number
+  linkClicks?: number
+  conversions?: number
+  revenue?: number
+  cpa?: number
+  cpc?: number
+  cvr?: number
+  cpm?: number
 }
 
 interface CampaignsClientProps {
@@ -259,7 +274,7 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
         )}
 
         {/* Campaign Table */}
-        <CampaignTable campaigns={campaigns as any} isLoading={isKpiLoading} />
+        <CampaignTable campaigns={campaigns} isLoading={isKpiLoading} />
       </div>
     </div>
   )

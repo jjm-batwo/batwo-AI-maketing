@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import { UserRoleDialog } from './UserRoleDialog'
 

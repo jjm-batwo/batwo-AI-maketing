@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { AutoOptimizeCampaignUseCase } from '@application/use-cases/optimization/AutoOptimizeCampaignUseCase'
 import { MockCampaignRepository } from '@tests/mocks/repositories/MockCampaignRepository'
-import { MockKPIRepository } from '@tests/mocks/repositories/MockKPIRepository'
 import { OptimizationRule } from '@domain/entities/OptimizationRule'
 import { RuleCondition } from '@domain/value-objects/RuleCondition'
 import { RuleAction } from '@domain/value-objects/RuleAction'
@@ -61,13 +60,11 @@ const makeKPI = () =>
 
 describe('AutoOptimizeCampaignUseCase', () => {
   let campaignRepository: MockCampaignRepository
-  let kpiRepository: MockKPIRepository
   let metaAdsService: { updateCampaignStatus: ReturnType<typeof vi.fn> }
   let useCase: AutoOptimizeCampaignUseCase
 
   beforeEach(() => {
     campaignRepository = new MockCampaignRepository()
-    kpiRepository = new MockKPIRepository()
     metaAdsService = { updateCampaignStatus: vi.fn().mockResolvedValue(undefined) }
     useCase = new AutoOptimizeCampaignUseCase(
       campaignRepository,

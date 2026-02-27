@@ -133,12 +133,6 @@ export class PrismaKPIRepository implements IKPIRepository {
     totalSpend: number
     totalRevenue: number
   }> {
-    console.log('[aggregateByCampaignId] Input params:', {
-      campaignId,
-      startDate,
-      endDate,
-    })
-
     const result = await this.prisma.kPISnapshot.aggregate({
       where: {
         campaignId,
@@ -157,8 +151,6 @@ export class PrismaKPIRepository implements IKPIRepository {
       },
     })
 
-    console.log('[aggregateByCampaignId] Raw result from aggregate:', result)
-
     const output = {
       totalImpressions: result._sum.impressions ?? 0,
       totalClicks: result._sum.clicks ?? 0,
@@ -167,8 +159,6 @@ export class PrismaKPIRepository implements IKPIRepository {
       totalSpend: Number(result._sum.spend ?? 0),
       totalRevenue: Number(result._sum.revenue ?? 0),
     }
-
-    console.log('[aggregateByCampaignId] Mapped output:', output)
 
     return output
   }
@@ -236,12 +226,6 @@ export class PrismaKPIRepository implements IKPIRepository {
     startDate: Date,
     endDate: Date
   ): Promise<DailyKPIAggregate[]> {
-    console.log('[getDailyAggregates] Input params:', {
-      campaignIds,
-      startDate,
-      endDate,
-    })
-
     if (campaignIds.length === 0) {
       return []
     }
@@ -266,8 +250,6 @@ export class PrismaKPIRepository implements IKPIRepository {
       orderBy: { date: 'asc' },
     })
 
-    console.log('[getDailyAggregates] Raw results from groupBy:', results)
-
     const mapped = results.map((r) => ({
       date: r.date,
       totalImpressions: r._sum.impressions ?? 0,
@@ -277,8 +259,6 @@ export class PrismaKPIRepository implements IKPIRepository {
       totalSpend: Number(r._sum.spend ?? 0),
       totalRevenue: Number(r._sum.revenue ?? 0),
     }))
-
-    console.log('[getDailyAggregates] Mapped output:', mapped)
 
     return mapped
   }

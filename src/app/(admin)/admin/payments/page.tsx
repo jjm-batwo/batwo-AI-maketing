@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal, ChevronLeft, ChevronRight, Eye, CreditCard, TrendingUp, TrendingDown, AlertCircle, RefreshCw } from 'lucide-react'
@@ -31,24 +30,6 @@ interface Invoice {
   receiptUrl?: string
   createdAt: string
   updatedAt: string
-}
-
-interface PaymentsResponse {
-  data: Invoice[]
-  total: number
-  page: number
-  limit: number
-  totalPages: number
-}
-
-interface PaymentStats {
-  totalRevenue: number
-  revenueThisMonth: number
-  revenueLastMonth: number
-  pendingPayments: number
-  failedPayments: number
-  refundedAmount: number
-  refundedThisMonth: number
 }
 
 interface PageProps {

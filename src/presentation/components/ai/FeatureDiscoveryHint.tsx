@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { X, Sparkles } from 'lucide-react'
 import { useFeatureDiscovery, AIFeatureType } from '@/presentation/hooks/useFeatureDiscovery'
 import { cn } from '@/lib/utils'
@@ -23,23 +23,11 @@ export function FeatureDiscoveryHint({
   className,
 }: FeatureDiscoveryHintProps) {
   const { isDiscovered, markDiscovered, isLoaded } = useFeatureDiscovery()
-  const [isVisible, setIsVisible] = useState(false)
   const [isDismissed, setIsDismissed] = useState(false)
-
-  useEffect(() => {
-    if (!isLoaded) return
-
-    // If showOnce is true and feature is already discovered, don't show
-    if (showOnce && isDiscovered(feature)) {
-      setIsVisible(false)
-    } else {
-      setIsVisible(true)
-    }
-  }, [isLoaded, isDiscovered, feature, showOnce])
+  const isVisible = isLoaded && (!showOnce || !isDiscovered(feature)) && !isDismissed
 
   const handleDismiss = () => {
     setIsDismissed(true)
-    setIsVisible(false)
     markDiscovered(feature)
     onDismiss?.()
   }

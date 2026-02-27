@@ -1,14 +1,11 @@
 import { memo } from 'react'
 import { Sparkles } from 'lucide-react'
-import type { DashboardTab } from './dashboardData'
-
 interface AIInsightProps {
   title: string
   content: string
-  activeTab: DashboardTab
 }
 
-export const AIInsight = memo(function AIInsight({ title, content, activeTab }: AIInsightProps) {
+export const AIInsight = memo(function AIInsight({ title, content }: AIInsightProps) {
   return (
     <div
       className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/40 dark:to-emerald-950/40 rounded-lg border border-green-200/50 dark:border-green-900/50 shadow-sm transition-all duration-300"

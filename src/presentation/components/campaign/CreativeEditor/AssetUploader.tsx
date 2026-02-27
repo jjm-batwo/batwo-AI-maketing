@@ -1,7 +1,7 @@
 'use client'
 
-import { useCallback, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { useCallback, useMemo, useState } from 'react'
+import { useFormContext, useWatch } from 'react-hook-form'
 import { Upload, X, ImageIcon, Film } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -13,8 +13,9 @@ interface AssetUploaderProps {
 }
 
 export function AssetUploader({ onUpload, isUploading = false }: AssetUploaderProps) {
-  const { watch, setValue } = useFormContext<ExtendedCampaignFormData>()
-  const assetIds = watch('creative.assetIds') || []
+  const { control, setValue } = useFormContext<ExtendedCampaignFormData>()
+  const watchedAssetIds = useWatch({ control, name: 'creative.assetIds', defaultValue: [] as string[] })
+  const assetIds = useMemo(() => watchedAssetIds, [watchedAssetIds])
   const [assets, setAssets] = useState<UploadedAsset[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)

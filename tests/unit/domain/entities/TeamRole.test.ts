@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest'
-import { TeamRoleEntity, TeamRoleName } from '@/domain/entities/TeamRole'
+import { TeamRoleEntity } from '@/domain/entities/TeamRole'
 import { Permission } from '@/domain/value-objects/Permission'
 
 describe('TeamRoleEntity', () => {

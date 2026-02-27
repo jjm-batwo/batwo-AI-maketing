@@ -6,7 +6,12 @@ import type { FacebookAuthResponse } from '@/types/facebook'
 export type FacebookLoginStatus = 'connected' | 'not_authorized' | 'unknown' | 'loading'
 
 export function useFacebookLoginStatus() {
-  const [status, setStatus] = useState<FacebookLoginStatus>('loading')
+  const isTestOrWebDriver =
+    process.env.NODE_ENV === 'test' ||
+    (typeof navigator !== 'undefined' && navigator.webdriver)
+  const [status, setStatus] = useState<FacebookLoginStatus>(
+    isTestOrWebDriver ? 'unknown' : 'loading'
+  )
   const [authResponse, setAuthResponse] = useState<FacebookAuthResponse | null>(null)
   const [isSDKLoaded, setIsSDKLoaded] = useState(false)
 
@@ -23,8 +28,7 @@ export function useFacebookLoginStatus() {
     if (checkSDK()) return
 
     // In test environment, skip SDK loading to avoid timeouts
-    if (process.env.NODE_ENV === 'test' || (typeof navigator !== 'undefined' && navigator.webdriver)) {
-      setStatus('unknown')
+    if (isTestOrWebDriver) {
       return
     }
 
@@ -47,7 +51,7 @@ export function useFacebookLoginStatus() {
       clearInterval(interval)
       clearTimeout(timeout)
     }
-  }, [])
+  }, [isTestOrWebDriver])
 
   // Check login status once SDK is loaded
   useEffect(() => {

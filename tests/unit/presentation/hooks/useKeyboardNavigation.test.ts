@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { useKeyboardNavigation } from '@presentation/hooks/useKeyboardNavigation'
-import { createRef } from 'react'
 
 describe('useKeyboardNavigation', () => {
   let container: HTMLElement

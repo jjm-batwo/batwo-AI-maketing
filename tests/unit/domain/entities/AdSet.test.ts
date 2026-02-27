@@ -5,7 +5,6 @@ import { BillingEvent } from '@domain/value-objects/BillingEvent'
 import { OptimizationGoal } from '@domain/value-objects/OptimizationGoal'
 import { BidStrategy } from '@domain/value-objects/BidStrategy'
 import { Money } from '@domain/value-objects/Money'
-import { InvalidAdSetError } from '@domain/errors/InvalidAdSetError'
 
 describe('AdSet Entity', () => {
   beforeEach(() => {

@@ -128,6 +128,40 @@ export function useProactiveInsights(
   const autoDismissTimers = useRef<Map<string, NodeJS.Timeout>>(new Map())
 
   /**
+   * Dismiss an insight
+   */
+  const dismiss = useCallback((id: string) => {
+    setInsights((prev) =>
+      prev.map((insight) =>
+        insight.id === id
+          ? { ...insight, dismissedAt: new Date() }
+          : insight
+      )
+    )
+
+    // Remove after animation
+    setTimeout(() => {
+      setInsights((prev) => prev.filter((insight) => insight.id !== id))
+    }, 300)
+
+    // Clear auto-dismiss timer
+    const timer = autoDismissTimers.current.get(id)
+    if (timer) {
+      clearTimeout(timer)
+      autoDismissTimers.current.delete(id)
+    }
+  }, [])
+
+  /**
+   * Handle action click
+   */
+  const handleAction = useCallback((result: AnalysisResult) => {
+    if (result.suggestedAction?.url) {
+      window.location.href = result.suggestedAction.url
+    }
+  }, [])
+
+  /**
    * Transform AnalysisResult to ProactiveInsight
    */
   const transformResult = useCallback(
@@ -152,26 +186,15 @@ export function useProactiveInsights(
         createdAt: result.createdAt,
       }
     },
-    [minConfidence]
+    [handleAction, minConfidence]
   )
-
-  /**
-   * Handle action click
-   */
-  const handleAction = (result: AnalysisResult) => {
-    if (result.suggestedAction?.url) {
-      window.location.href = result.suggestedAction.url
-    } else if (result.suggestedAction?.handler) {
-      // Custom handler logic could be implemented here
-      console.log('Custom handler:', result.suggestedAction.handler)
-    }
-  }
 
   /**
    * Subscribe to service results
    */
   useEffect(() => {
     const service = getServiceInstance()
+    const timers = autoDismissTimers.current
 
     const unsubscribe = service.onResult((result) => {
       const insight = transformResult(result)
@@ -194,7 +217,7 @@ export function useProactiveInsights(
           dismiss(insight.id)
         }, autoDismissDelay)
 
-        autoDismissTimers.current.set(insight.id, timer)
+        timers.set(insight.id, timer)
       }
     })
 
@@ -202,40 +225,16 @@ export function useProactiveInsights(
       unsubscribe()
 
       // Clear all timers
-      autoDismissTimers.current.forEach((timer) => clearTimeout(timer))
-      autoDismissTimers.current.clear()
+      timers.forEach((timer) => clearTimeout(timer))
+      timers.clear()
     }
   }, [
     transformResult,
+    dismiss,
     maxVisible,
     enableAutoDismiss,
     autoDismissDelay,
   ])
-
-  /**
-   * Dismiss an insight
-   */
-  const dismiss = useCallback((id: string) => {
-    setInsights((prev) =>
-      prev.map((insight) =>
-        insight.id === id
-          ? { ...insight, dismissedAt: new Date() }
-          : insight
-      )
-    )
-
-    // Remove after animation
-    setTimeout(() => {
-      setInsights((prev) => prev.filter((insight) => insight.id !== id))
-    }, 300)
-
-    // Clear auto-dismiss timer
-    const timer = autoDismissTimers.current.get(id)
-    if (timer) {
-      clearTimeout(timer)
-      autoDismissTimers.current.delete(id)
-    }
-  }, [])
 
   /**
    * Mark an insight as seen

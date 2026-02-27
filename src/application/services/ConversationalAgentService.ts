@@ -227,7 +227,7 @@ export class ConversationalAgentService {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   private async *handleToolCall(
     part: { toolName: string; input: unknown },
     setupData: { conversationId: string; agentContext: AgentContext },

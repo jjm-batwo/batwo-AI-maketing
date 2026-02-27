@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { useTranslations } from 'next-intl'
 import { useUpdateCampaign } from '@/presentation/hooks'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -47,7 +46,6 @@ interface CampaignDetailClientProps {
 }
 
 export function CampaignDetailClient({ campaign }: CampaignDetailClientProps) {
-  const t = useTranslations()
   const updateCampaign = useUpdateCampaign()
 
   const statusInfo = statusConfig[campaign.status as keyof typeof statusConfig] || statusConfig.DRAFT

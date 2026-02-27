@@ -128,16 +128,19 @@ export function CampaignReportTemplate({ report }: CampaignReportTemplateProps) 
   const campaignName = campaignSection?.title || '캠페인'
 
   // Generate daily breakdown (simplified)
-  const daysInPeriod = Math.ceil(
-    (new Date(dateRange.endDate).getTime() - new Date(dateRange.startDate).getTime()) /
-      (1000 * 60 * 60 * 24)
+  const dayMs = 1000 * 60 * 60 * 24
+  const daysInPeriod = Math.max(
+    1,
+    Math.ceil((new Date(dateRange.endDate).getTime() - new Date(dateRange.startDate).getTime()) / dayMs)
   )
   const dailyMetrics = Array.from({ length: Math.min(daysInPeriod, 7) }, (_, i) => {
     const date = new Date(dateRange.startDate)
     date.setDate(date.getDate() + i)
 
-    // Distribute metrics across days (simplified)
-    const dayFactor = 0.8 + Math.random() * 0.4
+    // Keep pseudo-variance deterministic for stable report regeneration.
+    const hashBase = `${report.id}-${date.toISOString()}-${i}`
+    const hash = Array.from(hashBase).reduce((acc, char) => acc + char.charCodeAt(0), 0)
+    const dayFactor = 0.8 + (hash % 41) / 100
     return {
       date: date.toISOString(),
       impressions: Math.floor((summaryMetrics.totalImpressions / daysInPeriod) * dayFactor),

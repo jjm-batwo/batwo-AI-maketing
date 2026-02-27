@@ -34,7 +34,6 @@ vi.mock('@/lib/di/container', () => ({
 
 vi.mock('@/lib/cache/kpiCache', () => ({
   invalidateCache: vi.fn(),
-  getUserPattern: vi.fn((userId: string) => `kpi:${userId}:`),
 }))
 
 vi.mock('next/cache', () => ({
@@ -44,7 +43,7 @@ vi.mock('next/cache', () => ({
 import { validateCronAuth } from '@/lib/middleware/cronAuth'
 import { prisma } from '@/lib/prisma'
 import { container, DI_TOKENS } from '@/lib/di/container'
-import { invalidateCache, getUserPattern } from '@/lib/cache/kpiCache'
+import { invalidateCache } from '@/lib/cache/kpiCache'
 import { revalidateTag } from 'next/cache'
 
 // Route import는 mock 이후에

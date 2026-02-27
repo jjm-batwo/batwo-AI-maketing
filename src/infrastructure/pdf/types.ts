@@ -1,5 +1,4 @@
 import type { ReportDTO } from '@application/dto/report/ReportDTO'
-import type { ReportSection } from '@domain/entities/Report'
 
 // ========================================
 // Common Types

@@ -219,7 +219,6 @@ export function KPIChart({
                 {/* 데이터 포인트 + 호버 영역 */}
                 {data.map((_, index) => {
                   const x = data.length > 1 ? (index / (data.length - 1)) * svgWidth : svgWidth / 2
-                  const y = svgHeight - (data[index].value / maxValue) * (svgHeight - 8) - 4
                   const sliceWidth = data.length > 1 ? svgWidth / (data.length - 1) : svgWidth
                   return (
                     <g key={index}>

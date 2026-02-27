@@ -98,6 +98,8 @@ class AuditShareCacheWrapper {
 
 // Hot-reload 시 중복 setInterval 방지를 위한 globalThis 싱글턴 패턴
 const globalKey = '__auditShareCache' as const
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const auditShareCache: AuditShareCacheWrapper = (globalThis as any)[globalKey] ??
-  ((globalThis as any)[globalKey] = new AuditShareCacheWrapper())
+const globalCache = globalThis as typeof globalThis & {
+  __auditShareCache?: AuditShareCacheWrapper
+}
+export const auditShareCache: AuditShareCacheWrapper =
+  globalCache[globalKey] ?? (globalCache[globalKey] = new AuditShareCacheWrapper())

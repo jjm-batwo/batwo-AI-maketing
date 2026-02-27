@@ -94,7 +94,7 @@ export function AnalyticsClient({ campaign }: AnalyticsClientProps) {
 
   const summary = data?.summary
   const comparison = data?.comparison
-  const chartData = data?.chartData ?? []
+  const chartData = useMemo(() => data?.chartData ?? [], [data?.chartData])
 
   // chartData에서 sparkline 및 차트 데이터 추출
   const sparklinePatterns = useMemo(() => {

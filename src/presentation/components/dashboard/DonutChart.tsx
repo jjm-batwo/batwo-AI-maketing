@@ -33,19 +33,23 @@ export const DonutChart = memo(function DonutChart({
   const center = size / 2
 
   const arcs = useMemo(() => {
-    let offset = 0
-    return segments.map((segment) => {
-      const percentage = total > 0 ? segment.value / total : 0
-      const dashLength = percentage * circumference
-      const dashOffset = -offset
-      offset += dashLength
-      return {
-        ...segment,
-        dashLength,
-        dashOffset,
-        percentage,
-      }
-    })
+    return segments
+      .reduce<{
+        offset: number
+        arcs: Array<DonutSegment & { dashLength: number; dashOffset: number; percentage: number }>
+      }>(
+        (acc, segment) => {
+          const percentage = total > 0 ? segment.value / total : 0
+          const dashLength = percentage * circumference
+          const dashOffset = -acc.offset
+          return {
+            offset: acc.offset + dashLength,
+            arcs: [...acc.arcs, { ...segment, dashLength, dashOffset, percentage }],
+          }
+        },
+        { offset: 0, arcs: [] }
+      )
+      .arcs
   }, [segments, total, circumference])
 
   return (

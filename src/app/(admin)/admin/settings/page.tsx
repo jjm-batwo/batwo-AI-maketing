@@ -28,33 +28,6 @@ interface PlanConfig {
   description: string
 }
 
-interface SystemSettings {
-  maintenanceMode: boolean
-  trialDays: number
-  maxTeamMembers: number
-}
-
-interface SettingsData {
-  quotaLimits: Record<string, QuotaLimit>
-  planConfigs: PlanConfig[]
-  systemSettings: SystemSettings
-}
-
-interface Admin {
-  id: string
-  name: string | null
-  email: string
-  globalRole: string
-  createdAt: string
-  image: string | null
-  isSuperAdmin: boolean
-}
-
-interface AdminsData {
-  admins: Admin[]
-  total: number
-}
-
 function formatCurrency(amount: number): string {
   if (amount === -1) return '맞춤'
   return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW', maximumFractionDigits: 0 }).format(amount)

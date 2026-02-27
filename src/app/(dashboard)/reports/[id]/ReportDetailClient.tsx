@@ -5,7 +5,7 @@ import { useDownloadReport, useShareReport } from '@/presentation/hooks'
 import { useUIStore } from '@/presentation/stores'
 
 interface ReportDetailClientProps {
-  report: any
+  report: Parameters<typeof ReportDetail>[0]['report']
   reportId: string
 }
 

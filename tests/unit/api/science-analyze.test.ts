@@ -23,7 +23,7 @@ vi.mock('@/lib/middleware/rateLimit', () => ({
   checkRateLimit: vi.fn(),
   getClientIp: vi.fn(() => '127.0.0.1'),
   addRateLimitHeaders: vi.fn((response) => response),
-  rateLimitExceededResponse: vi.fn((result) =>
+  rateLimitExceededResponse: vi.fn((_result) =>
     NextResponse.json({ message: 'Rate limit exceeded' }, { status: 429 })
   ),
 }))

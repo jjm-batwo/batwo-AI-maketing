@@ -13,7 +13,7 @@
  *
  * @see docs/plans/PLAN_ai-chatbot-enhancement.md - Phase 2, Test 2.1
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { IntentClassifier } from '@domain/services/IntentClassifier'
 import { ChatIntent } from '@domain/value-objects/ChatIntent'
 import { IntentClassificationResult } from '@domain/value-objects/IntentClassificationResult'
@@ -345,7 +345,7 @@ describe('IntentClassifier', () => {
       const result = classifier.classify(KEYWORD_MESSAGES.campaignCreation.ko)
 
       expect(() => {
-        ;(result as any).intent = ChatIntent.GENERAL
+        ;(result as { intent: ChatIntent }).intent = ChatIntent.GENERAL
       }).toThrow()
     })
 

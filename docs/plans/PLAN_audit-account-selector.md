@@ -1,6 +1,6 @@
 # Implementation Plan: 광고 진단 계정 선택 기능
 
-**Status**: ⏳ Pending
+**Status**: ✅ Complete
 **Started**: 2026-02-27
 **Last Updated**: 2026-02-27
 **Estimated Completion**: 2026-02-27
@@ -120,7 +120,7 @@ tests/
 ### Phase 1: 캐시 타입 확장 + 계정 목록 API
 **Goal**: `account_status`를 캐시에 저장하고, 프론트에서 계정 목록을 조회할 수 있는 API 제공
 **Estimated Time**: 1.5 시간
-**Status**: ⏳ Pending
+**Status**: ✅ Complete
 
 #### Tasks
 
@@ -202,7 +202,7 @@ npx vitest run  # 전체 테스트 회귀 확인
 ### Phase 2: 계정 선택 UI 컴포넌트
 **Goal**: 콜백 페이지에 계정 선택 카드 UI를 추가하여 사용자가 진단할 계정을 선택할 수 있게 함
 **Estimated Time**: 2 시간
-**Status**: ⏳ Pending
+**Status**: ✅ Complete
 
 #### Tasks
 
@@ -274,7 +274,7 @@ npx vitest run  # 전체 테스트 회귀 확인
 ### Phase 3: 콜백 페이지 플로우 통합
 **Goal**: 콜백 페이지에서 계정 선택 → 분석 실행 플로우를 완성하고 기존 테스트 호환성 유지
 **Estimated Time**: 1.5 시간
-**Status**: ⏳ Pending
+**Status**: ✅ Complete
 
 #### Tasks
 
@@ -439,6 +439,6 @@ npx next build  # 빌드 성공 확인
 
 ---
 
-**Plan Status**: ⏳ Pending Approval
-**Next Action**: 사용자 승인 후 Phase 1 시작
+**Plan Status**: ✅ Complete
+**Next Action**: 운영 배포 전 환경변수/회귀 테스트 최종 점검
 **Blocked By**: None

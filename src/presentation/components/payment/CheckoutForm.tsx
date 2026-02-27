@@ -24,6 +24,16 @@ interface CheckoutInfo {
   amount: number
 }
 
+interface BillingWidget {
+  requestBillingAuth: (params: {
+    method: 'CARD'
+    successUrl: string
+    failUrl: string
+    customerEmail?: string
+    customerName?: string
+  }) => Promise<void>
+}
+
 export function CheckoutForm({
   plan,
   planLabel,
@@ -36,7 +46,7 @@ export function CheckoutForm({
   const [isInitializing, setIsInitializing] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [checkoutInfo, setCheckoutInfo] = useState<CheckoutInfo | null>(null)
-  const [billingWidget, setBillingWidget] = useState<any>(null)
+  const [billingWidget, setBillingWidget] = useState<BillingWidget | null>(null)
 
   // Calculate amounts
   const monthlyAmount = price

@@ -69,7 +69,8 @@ export default async function CampaignsPage() {
   }
 
   // 캠페인 목록 fetch (KPI는 CampaignsClient에서 기간별 클라이언트 사이드 fetch)
-  let campaigns: any[] = []
+  type CampaignsClientProps = Parameters<typeof CampaignsClient>[0]
+  let campaigns: CampaignsClientProps['initialCampaigns'] = []
 
   try {
     const campaignsRes = await fetch(`${baseUrl}/api/campaigns?pageSize=100`, {

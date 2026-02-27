@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { BarChart3 } from 'lucide-react'
 
 interface EmptyAuditResultProps {
@@ -35,12 +36,12 @@ export function EmptyAuditResult({ analyzedAt }: EmptyAuditResultProps) {
             분석 시도: {analyzedDate}
           </p>
         </div>
-        <a
+        <Link
           href="/"
           className="px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           무료 진단 다시 받기
-        </a>
+        </Link>
       </div>
     </div>
   )

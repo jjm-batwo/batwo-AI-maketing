@@ -8,7 +8,7 @@
  * Expected to FAIL: GuideQuestionService, GuideQuestionConfig, ChatIntent,
  * GuideQuestion, QuestionContext types do not exist yet.
  */
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { GuideQuestionService } from '@application/services/GuideQuestionService'
 import {
   GuideQuestionConfig,

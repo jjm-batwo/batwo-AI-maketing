@@ -17,13 +17,13 @@
 | 계획 | 시작일 | 요약 | 예상 완료 | 비고 |
 |------|--------|------|----------|------|
 | [ai-chatbot-enhancement](PLAN_ai-chatbot-enhancement.md) | 2026-02-24 | AI 챗봇 강화 | 2026-03-03 | - |
-| [audit-improvements](PLAN_audit-improvements.md) | 2026-02-27 | 무료검사 종합 개선 (CCG 분석 기반) | Large (5 Phase) | Phase 1-2 완료, **Phase 3-5 미구현** (UX/Rate Limit/폴리시) |
 
 ## 완료 (Done)
 
 | 계획 | 완료일 | 요약 |
 |------|--------|------|
 | [audit-account-selector](PLAN_audit-account-selector.md) | 2026-02-27 | 광고 진단 계정 선택 기능 (3 Phase 전체) |
+| [audit-improvements](PLAN_audit-improvements.md) | 2026-02-27 | 무료검사 종합 개선 (6 Phase, 품질게이트 통과) |
 | [ax-experience-optimization](../../.omc/plans/ax-experience-optimization.md) | 2026-02 | AX(AI Experience) 최적화 — 스트리밍 AI 경험 |
 | [science-backed-marketing-intelligence](../../.omc/plans/science-backed-marketing-intelligence.md) | 2026-02 | 과학 기반 마케팅 인텔리전스 레이어 |
 | [production-readiness](../../.omc/plans/production-readiness.md) | 2026-02 | Meta 앱 검수 + 랜딩 + E2E |

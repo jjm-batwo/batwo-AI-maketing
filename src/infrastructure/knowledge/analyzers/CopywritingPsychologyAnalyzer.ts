@@ -23,7 +23,6 @@ import {
   countKoreanWords,
   KOREAN_POWER_WORDS,
 } from '../data/korean-power-words'
-import { SUCCESS_FRAMEWORK } from '../data/psychological-principles'
 
 // --- CTA Psychology Data ---
 
@@ -226,7 +225,6 @@ function scoreHeadlineQuality(headline: string): ScoringFactor {
   }
 
   const charCount = Array.from(headline).length
-  const wordCount = countKoreanWords(headline)
   const powerWords = findPowerWords(headline)
   const hasNumber = /\d/.test(headline)
   const hasSpecifics = /\d+%|\d+원|\d+명|\d+개/.test(headline)
@@ -423,7 +421,6 @@ function scoreCtaStrength(cta: string): ScoringFactor {
 
 function scoreReadability(text: string): ScoringFactor {
   const charCount = Array.from(text).length
-  const wordCount = countKoreanWords(text)
   const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 0)
   const sentenceCount = sentences.length
 

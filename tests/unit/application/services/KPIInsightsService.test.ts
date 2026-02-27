@@ -18,7 +18,7 @@ describe('KPIInsightsService', () => {
   describe('generateInsights - 배치 쿼리 최적화', () => {
     it('should_use_batch_queries_instead_of_individual_queries', async () => {
       // Given: Spy 설정 먼저
-      const aggregateByIdSpy = vi.spyOn(kpiRepository, 'aggregateByCampaignId')
+      vi.spyOn(kpiRepository, 'aggregateByCampaignId')
       const aggregateByIdsSpy = vi.spyOn(kpiRepository, 'aggregateByCampaignIds')
 
       // Service 생성 (spy 설정 후)

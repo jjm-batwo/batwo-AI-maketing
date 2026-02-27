@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { test, expect } from '@playwright/test'
 import * as path from 'path'
 // import { MockHelper } from '../helpers/mock.helper'

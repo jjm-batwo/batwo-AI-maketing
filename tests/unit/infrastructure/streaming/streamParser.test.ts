@@ -4,7 +4,7 @@ import {
   parseAdCopyChunk,
   streamToAsyncIterable
 } from '@/infrastructure/external/openai/streaming/streamParser'
-import type { StreamChunk, AdCopyStreamChunk } from '@/application/ports/IStreamingAIService'
+import type { StreamChunk } from '@/application/ports/IStreamingAIService'
 
 describe('parseSSEStream', () => {
   it('handles SSE format', async () => {

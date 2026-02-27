@@ -8,6 +8,7 @@ import type {
   KnowledgeDomain,
   DomainScore,
   DomainRecommendation,
+  CompositeScore,
 } from '@domain/value-objects/MarketingScience'
 import {
   buildCompositeScore,
@@ -119,7 +120,7 @@ export class KnowledgeBaseService implements IKnowledgeBaseService {
    * - Each domain's score and top finding
    * - Top 5 recommendations with citations
    */
-  private formatKnowledgeContext(composite: typeof buildCompositeScore extends (...args: any[]) => infer R ? R : never): string {
+  private formatKnowledgeContext(composite: CompositeScore): string {
     const lines: string[] = []
 
     // Header

@@ -1,6 +1,6 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -82,7 +82,7 @@ export function CampaignEditForm({
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
     formState: { errors, isDirty },
   } = useForm<CampaignEditFormData>({
@@ -101,7 +101,7 @@ export function CampaignEditForm({
     },
   })
 
-  const formData = watch()
+  const formData = useWatch({ control })
   const objectiveInfo = objectives.find((o) => o.id === initialData.objective)
   const ObjectiveIcon = objectiveInfo?.icon || Target
 

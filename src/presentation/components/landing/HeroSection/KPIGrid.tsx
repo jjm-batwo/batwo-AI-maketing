@@ -1,13 +1,12 @@
 import { memo } from 'react'
 import { cn } from '@/lib/utils'
-import type { KPIData, DashboardTab } from './dashboardData'
+import type { KPIData } from './dashboardData'
 
 interface KPIGridProps {
   kpis: KPIData[]
-  activeTab: DashboardTab
 }
 
-export const KPIGrid = memo(function KPIGrid({ kpis, activeTab }: KPIGridProps) {
+export const KPIGrid = memo(function KPIGrid({ kpis }: KPIGridProps) {
   return (
     <dl className="grid grid-cols-3 gap-3 md:gap-4">
       {kpis.map((kpi, i) => (

@@ -2,8 +2,8 @@
  * OptimizationRule 도메인 엔티티 테스트
  * TDD: RED → GREEN → REFACTOR
  */
-import { describe, it, expect, beforeEach } from 'vitest'
-import { OptimizationRule, type OptimizationRuleProps, type RuleType } from '@domain/entities/OptimizationRule'
+import { describe, it, expect } from 'vitest'
+import { OptimizationRule } from '@domain/entities/OptimizationRule'
 import { RuleCondition } from '@domain/value-objects/RuleCondition'
 import { RuleAction } from '@domain/value-objects/RuleAction'
 import { KPI } from '@domain/entities/KPI'

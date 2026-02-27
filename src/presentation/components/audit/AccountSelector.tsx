@@ -169,7 +169,7 @@ export function AccountSelector({ accounts, onSelect, loading, selectedAccountId
 
       {/* 비활성 계정 확인 다이얼로그 */}
       {confirmTarget && (
-        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+         
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
           role="dialog"

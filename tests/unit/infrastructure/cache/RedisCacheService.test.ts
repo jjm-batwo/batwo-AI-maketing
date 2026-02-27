@@ -10,8 +10,9 @@ import { RedisCacheService } from '@infrastructure/cache/RedisCacheService'
 // import Redis from 'ioredis-mock'
 
 // Mock ioredis to use ioredis-mock
-vi.mock('ioredis', () => {
-  const RedisMock = require('ioredis-mock')
+vi.mock('ioredis', async () => {
+  const RedisMockModule = await import('ioredis-mock')
+  const RedisMock = RedisMockModule.default
   return {
     default: RedisMock,
     Redis: RedisMock,

@@ -101,7 +101,7 @@ export default function DashboardPage() {
 
   const summary = data?.summary
   const changes = summary?.changes
-  const chartData = data?.chartData ?? []
+  const chartData = useMemo(() => data?.chartData ?? [], [data?.chartData])
 
   // chartData에서 KPI별 스파크라인 데이터 추출 (실데이터)
   const sparklinePatterns = useMemo(() => {

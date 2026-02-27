@@ -152,7 +152,7 @@ Complete usage guide with examples covering:
 - Testing strategies
 - Performance considerations
 
-#### `/src/presentation/components/ai/INTEGRATION_EXAMPLE.tsx`
+#### `/src/presentation/components/ai/examples/ContextualAIIntegration.example.tsx`
 12 practical examples:
 1. Global provider setup
 2. Custom suggestions
@@ -427,7 +427,7 @@ timing.updateConfig({
 
 For questions or issues:
 - See usage guide: `CONTEXTUAL_SUGGESTION_USAGE.md`
-- See examples: `INTEGRATION_EXAMPLE.tsx`
+- See examples: `examples/ContextualAIIntegration.example.tsx`
 - Check implementation: Source files in this directory
 
 ## License

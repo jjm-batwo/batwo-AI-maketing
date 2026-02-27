@@ -18,7 +18,8 @@ export default async function ReportsPage() {
   const cookieStore = await cookies()
   const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
 
-  let reports: any[] = []
+  type ReportsClientProps = Parameters<typeof ReportsClient>[0]
+  let reports: ReportsClientProps['initialReports'] = []
   let error = null
 
   try {

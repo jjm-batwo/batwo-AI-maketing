@@ -321,7 +321,7 @@ function scoreIndustryAlignment(colors: string[], industry: string): ScoringFact
   }
 }
 
-function scoreCulturalFit(colors: string[], industry: string, objective: string): ScoringFactor {
+function scoreCulturalFit(colors: string[], industry: string, _objective: string): ScoringFactor {
   let score = 70 // Base
   const issues: string[] = []
   const positives: string[] = []

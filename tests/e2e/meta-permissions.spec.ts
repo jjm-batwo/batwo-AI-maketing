@@ -104,11 +104,9 @@ test.describe('Meta Permission E2E Flows', () => {
 
       // Look for engagement-related text/metrics
       const engagementTerms = ['참여', 'engagement', '좋아요', '댓글', '공유', '노출', 'impression']
-      let foundEngagement = false
       for (const term of engagementTerms) {
         const element = page.getByText(new RegExp(term, 'i'))
         if (await element.first().isVisible({ timeout: 2000 }).catch(() => false)) {
-          foundEngagement = true
           break
         }
       }

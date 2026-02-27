@@ -55,6 +55,8 @@ interface UseKPIInsightsResult {
   refetch: () => void
 }
 
+const EMPTY_INSIGHTS: KPIInsightDTO[] = []
+
 // ============================================================================
 // Fetch Function
 // ============================================================================
@@ -99,7 +101,7 @@ export function useKPIInsights(options: UseKPIInsightsOptions = {}): UseKPIInsig
   })
 
   return {
-    insights: query.data?.insights ?? [],
+    insights: query.data?.insights ?? EMPTY_INSIGHTS,
     summary: query.data?.summary ?? null,
     isLoading: query.isLoading,
     isError: query.isError,

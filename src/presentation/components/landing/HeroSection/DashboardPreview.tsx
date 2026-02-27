@@ -27,10 +27,10 @@ export const DashboardPreview = memo(function DashboardPreview() {
 
         <div className="p-4 md:p-6 space-y-6 transition-all duration-300">
           {/* Dashboard Header */}
-          <DashboardHeader title={data.title} subtitle={data.subtitle} activeTab={activeTab} />
+          <DashboardHeader title={data.title} subtitle={data.subtitle} />
 
           {/* KPI Grid */}
-          <KPIGrid kpis={data.kpis} activeTab={activeTab} />
+          <KPIGrid kpis={data.kpis} />
 
           {/* Mini Chart */}
           <MiniChart data={data.chart} activeTab={activeTab} />
@@ -39,7 +39,6 @@ export const DashboardPreview = memo(function DashboardPreview() {
           <AIInsight
             title={data.insight.title}
             content={data.insight.content}
-            activeTab={activeTab}
           />
         </div>
       </div>
@@ -50,10 +49,9 @@ export const DashboardPreview = memo(function DashboardPreview() {
 interface DashboardHeaderProps {
   title: string
   subtitle: string
-  activeTab: DashboardTab
 }
 
-const DashboardHeader = memo(function DashboardHeader({ title, subtitle, activeTab }: DashboardHeaderProps) {
+const DashboardHeader = memo(function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
   return (
     <div className="flex items-center justify-between">
       <div className="transition-opacity duration-300">

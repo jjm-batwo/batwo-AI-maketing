@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { AuditReportCard } from '@/presentation/components/audit/AuditReportCard'
 import { AuditCategoryBreakdown } from '@/presentation/components/audit/AuditCategoryBreakdown'
@@ -61,12 +62,12 @@ function ExpiredView() {
           공유 링크는 생성 후 7일간 유효합니다. 새로운 진단을 받으시려면 아래 버튼을 클릭하세요.
         </p>
       </div>
-      <a
+      <Link
         href="/"
         className="px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         무료 진단 받기
-      </a>
+      </Link>
     </div>
   )
 }
@@ -175,12 +176,12 @@ export default function AuditSharedPage() {
           <p className="text-sm text-muted-foreground mb-3">
             내 광고 계정도 무료로 진단해보세요
           </p>
-          <a
+          <Link
             href="/"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold hover:from-amber-600 hover:to-orange-600 transition-all shadow-sm hover:shadow-md"
           >
             나도 무료 진단 받기
-          </a>
+          </Link>
         </div>
       </div>
     </main>

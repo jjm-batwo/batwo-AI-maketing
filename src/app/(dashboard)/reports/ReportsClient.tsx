@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Sparkles } from 'lucide-react'
 
 interface ReportsClientProps {
-  initialReports: any[]
+  initialReports: Parameters<typeof ReportList>[0]['reports']
 }
 
 export function ReportsClient({ initialReports }: ReportsClientProps) {

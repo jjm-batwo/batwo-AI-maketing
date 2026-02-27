@@ -18,7 +18,6 @@ const ctaLabels: Record<string, string> = {
 export function AdPreview() {
   const { watch } = useFormContext<ExtendedCampaignFormData>()
   const creative = watch('creative')
-  const campaignName = watch('name')
 
   const hasContent = creative?.headline || creative?.primaryText
 

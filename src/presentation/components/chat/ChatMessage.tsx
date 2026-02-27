@@ -7,10 +7,10 @@ interface ChatMessageProps {
   role: 'user' | 'assistant' | 'system'
   content: string
   isStreaming?: boolean
-  timestamp: Date
+  timestamp?: Date
 }
 
-export function ChatMessage({ role, content, isStreaming, timestamp }: ChatMessageProps) {
+export function ChatMessage({ role, content, isStreaming }: ChatMessageProps) {
   const isUser = role === 'user'
   const roleLabel = isUser ? '사용자' : role === 'assistant' ? '어시스턴트' : '시스템'
 

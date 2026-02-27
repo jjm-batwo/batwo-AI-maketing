@@ -13,7 +13,6 @@ import type {
   DomainRecommendation,
 } from '@domain/value-objects/MarketingScience'
 import { getGrade } from '@domain/value-objects/MarketingScience'
-import { CIALDINI_PRINCIPLES } from '../data/psychological-principles'
 import { findPowerWords } from '../data/korean-power-words'
 
 export class CrowdPsychologyAnalyzer implements DomainAnalyzer {

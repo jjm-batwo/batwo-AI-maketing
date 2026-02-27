@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useForm, FormProvider } from 'react-hook-form'
+import { useForm, FormProvider, useWatch } from 'react-hook-form'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { AlertCircle, Sparkles } from 'lucide-react'
@@ -84,12 +84,18 @@ export function CampaignCreateForm({
     },
   })
 
-  const { handleSubmit, trigger, watch } = methods
-  const campaignMode = watch('campaignMode')
+  const { handleSubmit, trigger } = methods
+  const campaignMode = useWatch({ control: methods.control, name: 'campaignMode' })
 
   const steps = getStepsForMode(campaignMode)
   const totalSteps = steps.length
-  const currentStepDef = steps[currentStep - 1]
+  const clampStep = (step: number) => Math.max(1, Math.min(step, totalSteps))
+  const activeStep = clampStep(currentStep)
+  const currentStepDef = steps[activeStep - 1]
+
+  const setStep = (step: number) => setCurrentStep(clampStep(step))
+  const goToNextStep = () => setStep(activeStep + 1)
+  const goToPreviousStep = () => setStep(activeStep - 1)
 
   const handleNext = async () => {
     if (!currentStepDef) return
@@ -100,27 +106,12 @@ export function CampaignCreateForm({
       if (!isValid) return
     }
 
-    setCurrentStep((prev) => Math.min(prev + 1, totalSteps))
+    goToNextStep()
   }
 
   const handleBack = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 1))
+    goToPreviousStep()
   }
-
-  // 모드 변경 시 단계 조정 (현재 단계가 새 총 단계수보다 크면 리셋)
-  const handleModeChange = () => {
-    const newSteps = getStepsForMode(watch('campaignMode'))
-    if (currentStep > newSteps.length) {
-      setCurrentStep(1)
-    }
-  }
-
-  // 모드 변경 감지
-  methods.watch((_, { name }) => {
-    if (name === 'campaignMode') {
-      handleModeChange()
-    }
-  })
 
   const handleFormSubmit = handleSubmit((data) => {
     onSubmit(data)
@@ -147,7 +138,7 @@ export function CampaignCreateForm({
     }
   }
 
-  const isLastStep = currentStep === totalSteps
+  const isLastStep = activeStep === totalSteps
   const isSubmitInProgress = submitStage !== 'idle' && submitStage !== 'done' && submitStage !== 'error'
 
   return (
@@ -158,14 +149,14 @@ export function CampaignCreateForm({
             <div className="flex items-center justify-between">
               <CardTitle>{currentStepDef?.title}</CardTitle>
               <span className="text-sm text-muted-foreground">
-                {currentStep}/{totalSteps}
+                {activeStep}/{totalSteps}
               </span>
             </div>
             {/* Progress bar */}
             <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full bg-primary transition-all duration-300"
-                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+                style={{ width: `${(activeStep / totalSteps) * 100}%` }}
               />
             </div>
           </CardHeader>
@@ -191,7 +182,7 @@ export function CampaignCreateForm({
               취소
             </Button>
             <div className="flex gap-2">
-              {currentStep > 1 && (
+              {activeStep > 1 && (
                 <Button type="button" variant="outline" onClick={handleBack} disabled={isSubmitInProgress}>
                   이전
                 </Button>

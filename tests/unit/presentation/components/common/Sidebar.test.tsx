@@ -185,7 +185,7 @@ describe('Sidebar', () => {
     it('should render navigation icons', () => {
       vi.mocked(usePathname).mockReturnValue('/dashboard')
 
-      const { container } = render(<Sidebar />, { wrapper: Wrapper })
+      render(<Sidebar />, { wrapper: Wrapper })
 
       // Each nav item should have an icon (svg)
       const navIcons = container.querySelectorAll('nav svg')
@@ -195,7 +195,7 @@ describe('Sidebar', () => {
     it('should have proper icon styling', () => {
       vi.mocked(usePathname).mockReturnValue('/dashboard')
 
-      const { container } = render(<Sidebar />, { wrapper: Wrapper })
+      render(<Sidebar />, { wrapper: Wrapper })
 
       const dashboardIcon = screen.getByText('대시보드').parentElement?.querySelector('svg')
       expect(dashboardIcon).toHaveClass('h-5', 'w-5')
@@ -327,7 +327,7 @@ describe('Sidebar', () => {
     it('should have AccountPopover in bottom section with border-t', () => {
       vi.mocked(usePathname).mockReturnValue('/dashboard')
 
-      const { container } = render(<Sidebar />, { wrapper: Wrapper })
+      render(<Sidebar />, { wrapper: Wrapper })
 
       const accountPopover = screen.getByTestId('account-popover')
       // AccountPopover의 부모 div (wrapper div)가 border-t를 가짐

@@ -10,9 +10,7 @@ import type { IAuditCache } from '@application/ports/IAuditCache'
 import { MemoryAuditCache, type MemoryAuditCacheOptions } from './MemoryAuditCache'
 import { UpstashAuditCache } from './UpstashAuditCache'
 
-export interface AuditCacheFactoryOptions extends MemoryAuditCacheOptions {
-  // 향후 확장을 위한 여백
-}
+export type AuditCacheFactoryOptions = MemoryAuditCacheOptions
 
 /**
  * 환경변수에 따라 IAuditCache 구현체를 생성한다.

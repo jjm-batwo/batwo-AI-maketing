@@ -114,7 +114,7 @@ tests/
 ### Phase 1: 핵심 보안 및 인프라 (CRITICAL 3건)
 **Goal**: 서버리스 캐시, Race Condition, 보고서 위조 방어 — 배포 전 필수 해결
 **Estimated Time**: 5-6 hours
-**Status**: ⏳ Pending
+**Status**: ✅ Complete
 **Severity**: CRITICAL
 
 #### 개선 항목
@@ -251,7 +251,7 @@ npx next build
 ### Phase 2: 성능 최적화 (HIGH 1건 + MEDIUM 1건)
 **Goal**: N+1 문제 해결 + currency 하드코딩 수정 — 분석 응답 시간 50% 단축
 **Estimated Time**: 3-4 hours
-**Status**: ⏳ Pending
+**Status**: ✅ Complete
 **Severity**: HIGH
 **Dependencies**: Phase 1 완료
 
@@ -330,7 +330,7 @@ npx next build
 ### Phase 3: UX 피드백 개선 (HIGH 3건 + MEDIUM 1건)
 **Goal**: alert() 제거, 에러 피드백 추가, 진행률 표시, 포커스 트랩 — 사용자 경험 대폭 개선
 **Estimated Time**: 4-5 hours
-**Status**: ⏳ Pending
+**Status**: ✅ Complete
 **Severity**: HIGH
 **Dependencies**: Phase 1 완료 (signature state 연동)
 
@@ -433,7 +433,7 @@ npx next build
 ### Phase 4: Rate Limit 설계 + 안정성 (MEDIUM 3건)
 **Goal**: Rate Limit 키 합리화, 메모리 누수 방지, 전환추적 오탐 개선
 **Estimated Time**: 3-4 hours
-**Status**: ⏳ Pending
+**Status**: ✅ Complete
 **Severity**: MEDIUM
 **Dependencies**: Phase 1 완료
 
@@ -511,7 +511,7 @@ npx next build
 ### Phase 5: 폴리시 및 전환 최적화 (LOW 5건)
 **Goal**: 바이럴/전환 극대화 + 접근성 완성 + 엣지케이스 처리
 **Estimated Time**: 3-4 hours
-**Status**: ⏳ Pending
+**Status**: ✅ Complete
 **Severity**: LOW
 **Dependencies**: Phase 3 완료
 
@@ -605,7 +605,7 @@ npx playwright test tests/e2e/audit-flow.spec.ts
 ### Phase 6: 품질게이트 강화 (HARDENING 2건)
 **Goal**: Integration 테스트 명령 정합성 확보 + HMAC 시크릿 운영환경 강제 정책
 **Estimated Time**: 1-2 hours
-**Status**: ⏳ Pending
+**Status**: ✅ Complete
 **Severity**: HARDENING (코드 리뷰 피드백 반영)
 **Dependencies**: Phase 1 완료
 
@@ -747,7 +747,7 @@ npx next build
   - 조치 4: `DailyReportTemplate` 테스트를 `renderToBuffer` 기반으로 수정해 unhandled 에러 제거
   - 결과: `npx vitest run` 통과 (182 files, 2770 tests)
   - 결과: `npx next build` 통과
-- 남은 작업: E2E/접근성 수동 검증 체크리스트 완료 후 최종 문서 `Complete` 마킹.
+- 남은 작업: 프로덕션 배포 전 `AUDIT_HMAC_SECRET` 환경변수 설정 점검.
 - 2026-02-27: E2E + 접근성 최종 검증
   - `npx playwright test tests/e2e/audit-flow.spec.ts` 통과 (14 passed)
   - `npm run -s test:run -- tests/unit/presentation/components/audit` 통과 (6 files, 46 tests)
