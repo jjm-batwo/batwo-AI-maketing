@@ -48,6 +48,10 @@ description: 클린 아키텍처 레이어 의존성 규칙을 검증합니다. 
 | `src/infrastructure/external/errors/CircuitBreaker.ts` | 서킷 브레이커 (infrastructure 레이어, domain import 금지) |
 | `src/infrastructure/external/errors/ResilienceService.ts` | 복원력 서비스 구현 (infrastructure 레이어) |
 | `src/infrastructure/external/errors/withRetry.ts` | 재시도 유틸리티 (infrastructure 레이어, domain import 금지) |
+| `src/domain/value-objects/AuditScore.ts` | 감사 점수 도메인 값 객체 |
+| `src/infrastructure/cache/audit/MemoryAuditCache.ts` | 인메모리 캐시 어댑터 |
+| `src/infrastructure/cache/audit/UpstashAuditCache.ts` | Upstash Redis 캐시 어댑터 |
+| `src/infrastructure/cache/audit/auditCacheFactory.ts` | 캐시 어댑터 팩토리 |
 
 ## Workflow
 

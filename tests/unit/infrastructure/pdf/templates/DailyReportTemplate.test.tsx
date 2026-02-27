@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import React from 'react'
-import { render } from '@react-pdf/renderer'
+import { renderToBuffer } from '@react-pdf/renderer'
 import { DailyReportTemplate } from '@infrastructure/pdf/templates/DailyReportTemplate'
 import type { ReportDTO } from '@application/dto/report/ReportDTO'
 
@@ -46,8 +46,7 @@ describe('DailyReportTemplate', () => {
   it('should render daily report template', async () => {
     const component = <DailyReportTemplate report={mockReport} />
 
-    // Should not throw error
-    expect(() => render(component)).not.toThrow()
+    await expect(renderToBuffer(component)).resolves.toBeInstanceOf(Buffer)
   })
 
   it('should include required sections', () => {
@@ -65,7 +64,7 @@ describe('DailyReportTemplate', () => {
 
     const component = <DailyReportTemplate report={emptyReport} />
 
-    expect(() => render(component)).not.toThrow()
+    await expect(renderToBuffer(component)).resolves.toBeInstanceOf(Buffer)
   })
 
   it('should display correct date format', () => {

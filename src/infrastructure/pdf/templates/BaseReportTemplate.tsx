@@ -15,21 +15,29 @@ import type { ChartData, TableData, PDFGenerationOptions } from '../types'
 // Font Registration
 // ========================================
 
-Font.register({
-  family: 'NotoSansKR',
-  fonts: [
-    {
-      src: 'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-400-normal.ttf',
-      fontWeight: 'normal',
-    },
-    {
-      src: 'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-700-normal.ttf',
-      fontWeight: 'bold',
-    },
-  ],
-})
+const shouldUseRemotePdfFont =
+  process.env.NODE_ENV !== 'test' &&
+  process.env.DISABLE_REMOTE_PDF_FONT !== 'true'
 
-Font.registerHyphenationCallback((word) => [word])
+export const PDF_FONT_FAMILY = shouldUseRemotePdfFont ? 'NotoSansKR' : 'Helvetica'
+
+if (shouldUseRemotePdfFont) {
+  Font.register({
+    family: 'NotoSansKR',
+    fonts: [
+      {
+        src: 'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-400-normal.ttf',
+        fontWeight: 'normal',
+      },
+      {
+        src: 'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-700-normal.ttf',
+        fontWeight: 'bold',
+      },
+    ],
+  })
+
+  Font.registerHyphenationCallback((word) => [word])
+}
 
 // ========================================
 // Base Styles
@@ -40,7 +48,7 @@ export const baseStyles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: '#ffffff',
     padding: 40,
-    fontFamily: 'NotoSansKR',
+    fontFamily: PDF_FONT_FAMILY,
   },
   header: {
     marginBottom: 30,

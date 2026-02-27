@@ -1,0 +1,74 @@
+# Dependencies (1.7GB)
+node_modules/
+
+# Build output (135MB)
+.next/
+out/
+build/
+dist/
+
+# Test artifacts (11MB)
+coverage/
+playwright-report/
+test-results/
+
+# Generated code
+src/generated/
+
+# TypeScript build cache
+*.tsbuildinfo
+
+# OMC runtime state (sessions/checkpoints/replays — 5MB+)
+.omc/sessions/
+.omc/state/checkpoints/
+.omc/state/agent-replay-*.jsonl
+.omc/prompts/
+.omc/logs/
+.omc/drafts/
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+*.secret
+*.secrets
+*credentials*.json
+*service-account*.json
+*.pem
+*.key
+
+# Vercel
+.vercel/
+
+# Playwright MCP
+.playwright-mcp/
+
+# Agent internal state
+.agent/
+.sisyphus/
+.kombai/
+
+# OS files
+.DS_Store
+
+# Lock files (large, not useful for code analysis)
+package-lock.json
+
+# Media/screenshots
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.svg
+!public/**/*.svg
+
+# Office docs
+*.pdf
+*.docx
+*.xlsx
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

@@ -12,24 +12,31 @@ import { BarChart } from '../components/BarChart'
 import { MetricCard } from '../components/MetricCard'
 import { InsightCard } from '../components/InsightCard'
 import { ActionItemCard } from '../components/ActionItemCard'
+import { PDF_FONT_FAMILY } from './BaseReportTemplate'
 
-// Noto Sans KR 폰트 등록 (한글 지원)
-Font.register({
-  family: 'NotoSansKR',
-  fonts: [
-    {
-      src: 'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-400-normal.ttf',
-      fontWeight: 'normal',
-    },
-    {
-      src: 'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-700-normal.ttf',
-      fontWeight: 'bold',
-    },
-  ],
-})
+const shouldUseRemotePdfFont =
+  process.env.NODE_ENV !== 'test' &&
+  process.env.DISABLE_REMOTE_PDF_FONT !== 'true'
 
-// Hyphenation callback 비활성화 (한글 줄바꿈 개선)
-Font.registerHyphenationCallback((word) => [word])
+if (shouldUseRemotePdfFont) {
+  // Noto Sans KR 폰트 등록 (한글 지원)
+  Font.register({
+    family: 'NotoSansKR',
+    fonts: [
+      {
+        src: 'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-400-normal.ttf',
+        fontWeight: 'normal',
+      },
+      {
+        src: 'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-700-normal.ttf',
+        fontWeight: 'bold',
+      },
+    ],
+  })
+
+  // Hyphenation callback 비활성화 (한글 줄바꿈 개선)
+  Font.registerHyphenationCallback((word) => [word])
+}
 
 // Define styles
 const styles = StyleSheet.create({
@@ -37,7 +44,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: '#ffffff',
     padding: 40,
-    fontFamily: 'NotoSansKR',
+    fontFamily: PDF_FONT_FAMILY,
   },
   header: {
     marginBottom: 30,

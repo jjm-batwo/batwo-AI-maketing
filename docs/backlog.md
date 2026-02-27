@@ -30,3 +30,5 @@
 | 11 | toCoreMessages()에 tool 메시지 포함 | `src/application/services/ConversationalAgentService.ts` | LLM이 이전 도구 호출 결과 참조 가능하도록 | 2026-02-25 |
 | 12 | Domain/Application IntentClassifier 이름 중복 해소 | `src/domain/services/IntentClassifier.ts`, `src/application/services/IntentClassifier.ts` | 개발자 혼란 방지, 리네이밍 | 2026-02-25 |
 | 13 | SSE eventsource-parser 도입 | `src/presentation/hooks/useAgentChat.ts` | TCP 패킷 분할 시 JSON 파싱 실패 방지 | 2026-02-25 |
+| 14 | `meta-warmup/route.ts:176` accessToken 변수명 명확화 | `src/app/api/meta/meta-warmup/route.ts` | verify-token-encryption WARN | 2026-02-27 |
+| 15 | `INTEGRATION_EXAMPLE.tsx` 'use client' 지시어 추가 | `src/presentation/components/INTEGRATION_EXAMPLE.tsx` | verify-ui-components WARN | 2026-02-27 |

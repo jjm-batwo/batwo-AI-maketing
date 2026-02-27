@@ -37,6 +37,7 @@ argument-hint: "[선택사항: 특정 스킬 이름 또는 집중할 영역]"
 | `verify-meta-api-version` | Meta Graph API v25.0 버전 통일성 검증 | `src/infrastructure/external/meta-*/**`, `src/infrastructure/auth/**`, `src/app/api/meta/**`, `scripts/*` |
 | `verify-token-encryption` | DB accessToken 암복호화 적용 일관성 검증 | `src/app/api/meta/**`, `src/application/use-cases/**`, `src/application/utils/TokenEncryption.ts`, `src/infrastructure/database/repositories/**` |
 | `verify-ui-components` | UI 컴포넌트 일관성, 접근성, 성능 패턴 검증 (랜딩/대시보드/캠페인/채팅/최적화/픽셀/온보딩/감사 포함) | `src/presentation/components/landing/**`, `src/presentation/components/dashboard/**`, `src/presentation/components/campaign/**`, `src/presentation/components/chat/**`, `src/presentation/components/optimization/**`, `src/presentation/components/pixel/**`, `src/presentation/components/onboarding/**`, `src/presentation/components/audit/**`, `src/presentation/utils/**` |
+| `verify-audit-security` | 감사 보고서 HMAC 서명/검증 일관성 검증 | `src/lib/security/**`, `src/app/api/audit/**` |
 
 ## 워크플로우
 

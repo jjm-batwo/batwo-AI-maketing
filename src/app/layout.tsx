@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Suspense } from 'react'
 import localFont from 'next/font/local'
-import { Geist_Mono, Noto_Sans } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { NextIntlClientProvider } from 'next-intl'
@@ -17,19 +16,6 @@ const pretendard = localFont({
   variable: '--font-pretendard',
   display: 'swap',
   weight: '100 900',
-})
-
-const notoSans = Noto_Sans({
-  variable: '--font-noto-sans',
-  subsets: ['latin'],
-  display: 'swap',
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
-})
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-  display: 'swap',
 })
 
 // SEO 메타데이터
@@ -66,7 +52,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${pretendard.variable} ${geistMono.variable} ${notoSans.variable} antialiased`}
+        className={`${pretendard.variable} antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
           <Providers>{children}</Providers>

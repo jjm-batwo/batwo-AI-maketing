@@ -28,9 +28,12 @@ function LoginForm() {
   // URL에서 에러 파라미터를 읽은 후 클리어하여 새로고침 시 에러 재표시 방지
   useEffect(() => {
     if (urlError) {
-      router.replace('/login', { scroll: false })
+      const nextLoginUrl = callbackUrl
+        ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}`
+        : '/login'
+      router.replace(nextLoginUrl, { scroll: false })
     }
-  }, [urlError, router])
+  }, [callbackUrl, urlError, router])
 
   // Facebook login status check
   const { isConnected: isFacebookConnected } = useFacebookLoginStatus()

@@ -96,6 +96,15 @@ async function memoryRateLimit(
 let upstashRatelimit: unknown = null
 let upstashInitialized = false
 
+async function optionalImport(moduleName: string): Promise<unknown | null> {
+  try {
+    const importFn = new Function('m', 'return import(m)') as (m: string) => Promise<unknown>
+    return await importFn(moduleName)
+  } catch {
+    return null
+  }
+}
+
 async function initUpstash(): Promise<boolean> {
   if (upstashInitialized) return upstashRatelimit !== null
 
@@ -127,13 +136,8 @@ async function initUpstash(): Promise<boolean> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let upstashRedisModule: any = null
 
-    try {
-      // @ts-expect-error - 옵셔널 의존성, 설치되지 않을 수 있음
-      upstashRatelimitModule = await import('@upstash/ratelimit')
-      upstashRedisModule = await import('@upstash/redis')
-    } catch {
-      // 패키지 미설치 시 무시
-    }
+    upstashRatelimitModule = await optionalImport('@upstash/ratelimit')
+    upstashRedisModule = await optionalImport('@upstash/redis')
 
     if (!upstashRatelimitModule || !upstashRedisModule) {
       if (process.env.NODE_ENV !== 'production') {

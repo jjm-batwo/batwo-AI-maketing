@@ -77,6 +77,7 @@ React 컴포넌트 구현의 일관성과 품질을 검증합니다:
 | `src/presentation/hooks/useOptimizationRules.ts`                          | 최적화 규칙 CRUD 훅                                      |
 | `src/presentation/components/audit/AccountSelector.tsx`                    | 감사 계정 선택기 — OAuth 콜백 후 광고 계정 선택          |
 | `src/presentation/utils/accountStatus.ts`                                  | 계정 상태 유틸리티 — 감사 계정 상태 판별 헬퍼           |
+| `src/app/audit/callback/page.tsx`                                          | 감사 콜백 페이지 (핵심 감사 UI)                         |
 | `src/components/ui/`                                                      | shadcn/ui 기본 컴포넌트들                                |
 
 ## Workflow
@@ -94,6 +95,7 @@ grep -rn "interface.*Props" src/presentation/components/optimization/ --include=
 grep -rn "interface.*Props" src/presentation/components/pixel/ --include="*.tsx"
 grep -rn "interface.*Props" src/presentation/components/onboarding/ --include="*.tsx"
 grep -rn "interface.*Props" src/presentation/components/audit/ --include="*.tsx"
+grep -rn "interface.*Props" src/presentation/utils/ --include="*.ts" --include="*.tsx"
 ```
 
 **PASS 기준:** 모든 컴포넌트가 Props 인터페이스 정의
@@ -129,6 +131,7 @@ grep -rn "@/components/ui/" src/presentation/components/optimization/ --include=
 grep -rn "@/components/ui/" src/presentation/components/pixel/ --include="*.tsx"
 grep -rn "@/components/ui/" src/presentation/components/onboarding/ --include="*.tsx"
 grep -rn "@/components/ui/" src/presentation/components/audit/ --include="*.tsx"
+grep -rn "@/components/ui/" src/presentation/utils/ --include="*.ts" --include="*.tsx"
 ```
 
 **PASS 기준:** Card, Button, Input 등 기본 UI는 shadcn/ui 사용
@@ -148,6 +151,7 @@ grep -rn "cn(" src/presentation/components/optimization/ --include="*.tsx"
 grep -rn "cn(" src/presentation/components/pixel/ --include="*.tsx"
 grep -rn "cn(" src/presentation/components/onboarding/ --include="*.tsx"
 grep -rn "cn(" src/presentation/components/audit/ --include="*.tsx"
+grep -rn "cn(" src/presentation/utils/ --include="*.ts" --include="*.tsx"
 ```
 
 **PASS 기준:** 조건 클래스는 `cn()` 유틸리티 사용
@@ -177,6 +181,7 @@ grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/compo
 grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/components/pixel/ --include="*.tsx"
 grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/components/onboarding/ --include="*.tsx"
 grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/components/audit/ --include="*.tsx"
+grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/utils/ --include="*.ts" --include="*.tsx"
 ```
 
 **PASS 기준:**
@@ -223,6 +228,7 @@ grep -rn "md:\|lg:\|sm:" src/presentation/components/optimization/ --include="*.
 grep -rn "md:\|lg:\|sm:" src/presentation/components/pixel/ --include="*.tsx" | head -20
 grep -rn "md:\|lg:\|sm:" src/presentation/components/onboarding/ --include="*.tsx" | head -20
 grep -rn "md:\|lg:\|sm:" src/presentation/components/audit/ --include="*.tsx" | head -20
+grep -rn "md:\|lg:\|sm:" src/presentation/utils/ --include="*.ts" --include="*.tsx" | head -20
 ```
 
 **PASS 기준:** 모든 UI가 모바일 우선으로 구현

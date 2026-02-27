@@ -319,7 +319,7 @@ test.describe('무료 감사 플로우', () => {
       ).toBeVisible({ timeout: 15000 })
     })
 
-    test('다시 시도하기 버튼 클릭 시 랜딩 페이지로 이동해야 한다', async ({ page }) => {
+    test('다시 시도하기 버튼 클릭 시 인증 상태 기준 기본 페이지로 이동해야 한다', async ({ page }) => {
       await page.goto('/audit/callback?error=access_denied', {
         waitUntil: 'domcontentloaded',
       })
@@ -328,9 +328,9 @@ test.describe('무료 감사 플로우', () => {
       const retryButton = page.getByRole('button', { name: /무료 진단 다시 시도|다시 시도하기/ })
       await expect(retryButton).toBeVisible({ timeout: 10000 })
 
-      // 클릭 시 / 으로 이동 (window.location.href = '/')
+      // 클릭 시 / 로 이동하더라도, 로그인 상태에서는 authorized 콜백에 의해 /campaigns로 리다이렉트됨
       await retryButton.click()
-      await expect(page).toHaveURL('/', { timeout: 10000 })
+      await expect(page).toHaveURL('/campaigns', { timeout: 10000 })
     })
 
     test('session이나 adAccountId가 없으면 빈 화면이 표시되어야 한다', async ({ page }) => {

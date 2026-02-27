@@ -36,6 +36,7 @@ argument-hint: "[선택사항: 특정 verify 스킬 이름]"
 | 5 | `verify-meta-api-version` | Meta Graph API v25.0 버전 통일성 검증 |
 | 6 | `verify-token-encryption` | DB accessToken 암복호화 적용 일관성 검증 |
 | 7 | `verify-ui-components` | UI 컴포넌트 일관성, 접근성, 성능 패턴 검증 |
+| 8 | `verify-audit-security` | 감사 보고서 HMAC 서명/검증 일관성 검증 |
 
 ## 워크플로우
 

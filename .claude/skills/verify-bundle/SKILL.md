@@ -35,6 +35,7 @@ description: 프로덕션 번들 크기에 영향을 주는 패턴을 검증합�
 | `src/infrastructure/external/errors/ResilienceService.ts` | 복원력 서비스 — 서버 전용, 클라이언트 번들 포함 여부 확인 |
 | `src/infrastructure/external/errors/withRetry.ts` | 재시도 유틸리티 — 서버 전용, 클라이언트 번들 포함 여부 확인 |
 | `src/infrastructure/pdf/AuditPDFGenerator.ts` | 감사 PDF 생성기 — 서버 전용 (`pdf-lib` 등 대형 라이브러리 사용 시 번들 확인) |
+| `src/infrastructure/cache/audit/UpstashAuditCache.ts` | Upstash Redis 서버전용 의존성 |
 | `package.json` | dependencies vs devDependencies |
 
 ## Workflow
