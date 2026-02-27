@@ -66,6 +66,7 @@ export interface AgentChatInput {
   message: string
   conversationId?: string
   uiContext?: 'dashboard' | 'campaigns' | 'reports' | 'competitors' | 'portfolio' | 'general'
+  insightsContext?: string
 }
 
 // ============================================================================
@@ -118,7 +119,7 @@ export class ConversationalAgentService {
 
             const history = await this.conversationRepo.getMessages(conversationId, { limit: 20 })
             const messages = this.toCoreMessages(history)
-            const systemPrompt = this.buildSystemPrompt(input.uiContext, input.message)
+            const systemPrompt = this.buildSystemPrompt(input.uiContext, input.message, input.insightsContext)
 
             return { conversationId, agentContext, messages, systemPrompt }
           }),
@@ -330,7 +331,8 @@ export class ConversationalAgentService {
    */
   private buildSystemPrompt(
     uiContext?: 'dashboard' | 'campaigns' | 'reports' | 'competitors' | 'portfolio' | 'general',
-    userMessage?: string
+    userMessage?: string,
+    insightsContext?: string
   ): string {
     const toolDescriptions = this.toolRegistry
       .getAll()
@@ -382,7 +384,17 @@ export class ConversationalAgentService {
 사용자 확인 없이 mutation 도구를 바로 실행하지 마세요.
 
 ${intentGuides}
+${insightsContext ? `
+=== 현재 대시보드 AI 인사이트 (실시간 데이터 — 최우선 참조) ===
+아래는 대시보드에서 실시간 감지된 인사이트입니다. 이 데이터는 Meta API에서 직접 가져온 최신 값이므로 도구 결과보다 우선합니다.
 
+사용자가 인사이트에 언급된 지표(하락, 급증 등)를 질문하면:
+1. 인사이트의 수치(현재값, 변화율, 캠페인명)를 정확히 인용하여 답변합니다
+2. 도구(checkAnomalies/analyzeTrends)는 추가 맥락(기간별 추세, 다른 지표 비교)을 보충하는 용도로 사용합니다
+3. 도구 결과와 인사이트 수치가 다르면 인사이트 수치가 정확합니다 (도구는 로컬 DB 집계이므로 지연 가능)
+
+${insightsContext}
+` : ''}
 사용 가능한 도구:
 ${toolDescriptions}`
   }
@@ -406,10 +418,13 @@ BEGINNER → Advantage+ 강력 추천, INTERMEDIATE → Advantage+ 기본, ADVAN
 NEVER: "캠페인 ID를 입력하세요"`,
 
       [ChatIntent.KPI_ANALYSIS]: `=== 성과 분석 가이드 ===
-getPerformanceKPI 또는 analyzeTrends를 호출합니다.
+대시보드 인사이트에 관련 데이터가 있으면 그 수치를 정확히 인용하여 답변합니다 (도구 호출 없이도 답변 가능).
+추가 분석이 필요하면 checkAnomalies 또는 analyzeTrends를 보충 호출합니다.
+이상 징후(하락, 급증, 급감, 감지) 질문에는 인사이트 인용 + checkAnomalies 보충.
+일반 성과 조회에는 getPerformanceKPI 또는 analyzeTrends를 호출합니다.
 핵심 지표 3개 먼저: "ROAS X.XX | CTR X.XX% | 지출 ₩X만원"
-인사이트 → 원인 → 구체적인 액션 순서로 답변
-NEVER: 장문 설명 없이 지표만 나열`,
+인사이트 수치 인용 → 원인 분석 → 구체적인 액션 순서로 답변
+NEVER: 장문 설명 없이 지표만 나열, 도구 결과를 인사이트보다 우선하지 마세요`,
 
       [ChatIntent.PIXEL_SETUP]: `=== 픽셀 설정 가이드 ===
 설치 플랫폼 확인 → 전환 이벤트 설정 → 기존 픽셀 상태 점검 순서로 안내합니다.

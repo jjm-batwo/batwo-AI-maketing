@@ -8,12 +8,12 @@
  * - auditTokenCache에 15분 TTL로 저장
  * - /audit/callback?session=<uuid> 로 리다이렉트
  * - DB에 사용자 데이터 저장하지 않음
- * - IP Rate Limit: audit 타입 (3회/일)
+ * - Rate Limit 없음: Meta가 호출하는 OAuth 콜백이므로 사용자 한도 차감 불가
+ *   (auth-url에서 이미 gate 역할 수행)
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { auditTokenCache } from '@/lib/cache/auditTokenCache'
 import { auditStateCache } from '@/lib/cache/auditStateCache'
-import { checkRateLimit, getClientIp, rateLimitExceededResponse } from '@/lib/middleware/rateLimit'
 
 const META_API_URL = 'https://graph.facebook.com/v25.0'
 
@@ -31,11 +31,6 @@ interface MetaAdAccount {
 }
 
 export async function GET(request: NextRequest) {
-  // IP 기반 Rate Limit 체크 (콜백 남용 방지)
-  const ip = getClientIp(request)
-  const rateLimit = await checkRateLimit(`audit-callback:${ip}`, 'audit')
-  if (!rateLimit.success) return rateLimitExceededResponse(rateLimit)
-
   const { searchParams } = new URL(request.url)
   const code = searchParams.get('code')
   const error = searchParams.get('error')
@@ -97,21 +92,20 @@ export async function GET(request: NextRequest) {
     }
 
     // 3. 임시 캐시에 저장 (15분 TTL, DB 저장 없음)
+    // adAccountId는 프론트에서 계정 선택 후 결정 (빈 문자열로 초기화)
     const sessionId = auditTokenCache.set({
       accessToken: tokenData.access_token,
-      adAccountId: accounts[0].id, // 기본값: 첫 번째 계정
+      adAccountId: '',
       adAccounts: accounts.map((a) => ({
         id: a.id,
         name: a.name,
         currency: a.currency,
+        accountStatus: a.account_status,
       })),
     })
 
     return NextResponse.redirect(
-      new URL(
-        `/audit/callback?session=${sessionId}&adAccountId=${encodeURIComponent(accounts[0].id)}`,
-        request.url
-      )
+      new URL(`/audit/callback?session=${sessionId}`, request.url)
     )
   } catch (err) {
     console.error('[AUDIT CALLBACK] OAuth 처리 오류:', err instanceof Error ? err.message : err)

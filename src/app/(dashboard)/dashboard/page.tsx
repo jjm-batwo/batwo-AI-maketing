@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, lazy, useMemo } from 'react'
+import { Suspense, lazy, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ApiSourceBadge } from '@/presentation/components/common/ApiSourceBadge'
 import Link from 'next/link'
@@ -52,6 +52,7 @@ export default function DashboardPage() {
     dashboardObjective,
     setDashboardObjective,
     openChatPanel,
+    setDashboardInsights,
   } = useUIStore()
   const { isConnected, isLoading: isCheckingConnection } = useMetaConnection()
   const { data, isLoading, error } = useDashboardKPI({
@@ -76,6 +77,24 @@ export default function DashboardPage() {
   } = useKPIInsights({
     enabled: isConnected,
   })
+
+  // AI 인사이트가 로드되면 uiStore에 저장 → 챗봇 컨텍스트로 공유
+  useEffect(() => {
+    if (kpiInsights.length > 0) {
+      setDashboardInsights(
+        kpiInsights.map((insight) => ({
+          type: insight.type,
+          priority: insight.priority,
+          title: insight.title,
+          description: insight.description,
+          metric: insight.metric,
+          currentValue: insight.currentValue,
+          changePercent: insight.changePercent,
+          campaignName: insight.campaignName,
+        }))
+      )
+    }
+  }, [kpiInsights, setDashboardInsights])
 
   const summary = data?.summary
   const changes = summary?.changes

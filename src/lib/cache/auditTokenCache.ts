@@ -1,9 +1,11 @@
 /**
  * 무료 감사 임시 토큰 캐시
  *
- * 비로그인 사용자의 Meta OAuth 토큰을 인메모리로 15분간 보관.
- * DB에 저장하지 않으며, 1회 사용 후 즉시 삭제한다.
+ * 비로그인 사용자의 Meta OAuth 토큰을 IAuditCache 어댑터 기반으로 15분간 보관.
+ * DB에 저장하지 않으며, getAndDelete()로 Race Condition을 방어한다.
  */
+import { createAuditCache } from '@/infrastructure/cache/audit/auditCacheFactory'
+import type { IAuditCache } from '@/application/ports/IAuditCache'
 
 // =============================================================================
 // Types
@@ -15,13 +17,25 @@ export interface AuditSession {
   /** 기본 광고 계정 ID */
   adAccountId: string
   /** 사용자 보유 광고 계정 목록 */
-  adAccounts: { id: string; name: string; currency: string }[]
-  /** 만료 시각 (Unix ms) */
+  adAccounts: { id: string; name: string; currency: string; accountStatus: number }[]
+  /** 만료 시각 (Unix ms) — 레거시 호환용, IAuditCache가 TTL을 관리 */
   expiresAt: number
 }
 
 // =============================================================================
-// Cache Implementation
+// 내부 저장 타입 (expiresAt은 IAuditCache TTL로 관리하므로 별도 보관)
+// =============================================================================
+
+interface AuditTokenData {
+  accessToken: string
+  adAccountId: string
+  adAccounts: { id: string; name: string; currency: string; accountStatus: number }[]
+  /** 소비자가 expiresAt을 참조할 수 있으므로 저장 시 계산해서 보관 */
+  expiresAt: number
+}
+
+// =============================================================================
+// 상수
 // =============================================================================
 
 /** 세션 TTL: 15분 */
@@ -30,105 +44,70 @@ const SESSION_TTL_MS = 15 * 60 * 1000
 /** 최대 저장 항목 수 (메모리 보호) */
 const MAX_TOKEN_ENTRIES = 1_000
 
-/** 만료 항목 정리 주기: 1분 */
-const CLEANUP_INTERVAL_MS = 60 * 1000
+// =============================================================================
+// Cache Wrapper
+// =============================================================================
 
-class AuditTokenCache {
-  private store = new Map<string, AuditSession>()
+class AuditTokenCacheWrapper {
+  private cache: IAuditCache<AuditTokenData>
 
   constructor() {
-    // 서버 환경에서만 주기적 정리 실행
-    if (typeof setInterval !== 'undefined') {
-      setInterval(() => this.cleanup(), CLEANUP_INTERVAL_MS)
-    }
+    this.cache = createAuditCache<AuditTokenData>('token', { maxEntries: MAX_TOKEN_ENTRIES })
   }
 
   /**
    * 세션 저장
-   * MAX_TOKEN_ENTRIES 초과 시 가장 오래된 항목을 삭제한다.
-   * @returns 생성된 sessionId (UUID)
+   * @returns 생성된 sessionId (UUID v4)
    */
-  set(data: Omit<AuditSession, 'expiresAt'>): string {
-    // 최대 항목 수 초과 시 가장 오래된 항목 삭제
-    if (this.store.size >= MAX_TOKEN_ENTRIES) {
-      this.evictOldest()
-    }
-
+  async set(data: Omit<AuditSession, 'expiresAt'>): Promise<string> {
     const sessionId = crypto.randomUUID()
-    this.store.set(sessionId, {
-      ...data,
-      expiresAt: Date.now() + SESSION_TTL_MS,
-    })
+    const expiresAt = Date.now() + SESSION_TTL_MS
+    await this.cache.set(sessionId, { ...data, expiresAt }, SESSION_TTL_MS)
     return sessionId
-  }
-
-  /**
-   * 가장 오래된 항목 삭제 (expiresAt 기준 — 가장 먼저 만료될 항목)
-   */
-  private evictOldest(): void {
-    let oldestKey: string | null = null
-    let oldestTime = Infinity
-
-    for (const [key, session] of this.store.entries()) {
-      if (session.expiresAt < oldestTime) {
-        oldestTime = session.expiresAt
-        oldestKey = key
-      }
-    }
-
-    if (oldestKey !== null) {
-      this.store.delete(oldestKey)
-    }
   }
 
   /**
    * 세션 조회 (만료 시 null 반환)
    */
-  get(sessionId: string): AuditSession | null {
-    const session = this.store.get(sessionId)
-    if (!session) return null
-
-    if (Date.now() > session.expiresAt) {
-      this.store.delete(sessionId)
-      return null
-    }
-
-    return session
+  async get(sessionId: string): Promise<AuditSession | null> {
+    const data = await this.cache.get(sessionId)
+    if (!data) return null
+    return data
   }
 
   /**
-   * 세션 삭제 (1회용 사용 후 호출)
+   * 세션 원자적 조회 후 즉시 삭제 (Race Condition 방어용, 1회용)
    */
-  delete(sessionId: string): void {
-    this.store.delete(sessionId)
+  async getAndDelete(sessionId: string): Promise<AuditSession | null> {
+    const data = await this.cache.getAndDelete(sessionId)
+    if (!data) return null
+    return data
   }
 
   /**
-   * 만료된 항목 일괄 정리
+   * 세션 삭제
    */
-  private cleanup(): void {
-    const now = Date.now()
-    for (const [key, session] of this.store.entries()) {
-      if (now > session.expiresAt) {
-        this.store.delete(key)
-      }
-    }
+  async delete(sessionId: string): Promise<void> {
+    await this.cache.delete(sessionId)
   }
 
   /**
    * 현재 저장된 세션 수 (테스트용)
    */
-  size(): number {
-    return this.store.size
+  async size(): Promise<number> {
+    return this.cache.size()
   }
 
   /**
    * 전체 초기화 (테스트용)
    */
-  clearAll(): void {
-    this.store.clear()
+  async clearAll(): Promise<void> {
+    await this.cache.clearAll()
   }
 }
 
-// 싱글턴 인스턴스
-export const auditTokenCache = new AuditTokenCache()
+// Hot-reload 시 중복 setInterval 방지를 위한 globalThis 싱글턴 패턴
+const globalKey = '__auditTokenCache' as const
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const auditTokenCache: AuditTokenCacheWrapper = (globalThis as any)[globalKey] ??
+  ((globalThis as any)[globalKey] = new AuditTokenCacheWrapper())

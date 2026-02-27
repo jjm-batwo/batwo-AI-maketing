@@ -169,7 +169,7 @@
 | `verify-bundle` | 번들 최적화 검증 (namespace import, dev-only 누출, ssr:false) |
 | `verify-meta-api-version` | Meta Graph API v25.0 버전 통일성 검증 |
 | `verify-token-encryption` | DB accessToken 암복호화 적용 일관성 검증 |
-| `verify-ui-components` | UI 컴포넌트 일관성, 접근성, 성능 패턴 검증 (랜딩/대시보드/채팅/최적화/픽셀/온보딩/감사 변경 후 사용) |
+| `verify-ui-components` | UI 컴포넌트 일관성, 접근성, 성능 패턴 검증 (랜딩/대시보드/캠페인/채팅/최적화/픽셀/온보딩/감사 변경 후 사용) |
 | `prometheus` | Prometheus 전략 계획 컨설턴트 — Pre-Interview Research, Intent-Specific Interview, Clearance Check, Verification Loop (Codex Momus), QA Scenarios. 복잡한 기능 구현 전 `/prometheus`로 호출 |
 
 ## 린트 자동 수정 주의사항

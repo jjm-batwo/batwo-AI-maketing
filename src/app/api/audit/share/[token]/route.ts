@@ -20,7 +20,7 @@ export async function GET(
     return NextResponse.json({ message: '공유 토큰이 필요합니다' }, { status: 400 })
   }
 
-  const entry = auditShareCache.get(token)
+  const entry = await auditShareCache.get(token)
   if (!entry) {
     return NextResponse.json(
       { message: '공유 링크가 만료되었거나 존재하지 않습니다' },

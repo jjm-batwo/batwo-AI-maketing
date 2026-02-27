@@ -56,7 +56,7 @@ interface DashboardHeaderProps {
 const DashboardHeader = memo(function DashboardHeader({ title, subtitle, activeTab }: DashboardHeaderProps) {
   return (
     <div className="flex items-center justify-between">
-      <div key={activeTab} className="animate-fade-in">
+      <div className="transition-opacity duration-300">
         <h4 className="font-semibold text-lg tracking-tight">{title}</h4>
         <p className="text-xs text-muted-foreground">{subtitle}</p>
       </div>

@@ -130,7 +130,6 @@ async function initUpstash(): Promise<boolean> {
     try {
       // @ts-expect-error - 옵셔널 의존성, 설치되지 않을 수 있음
       upstashRatelimitModule = await import('@upstash/ratelimit')
-      // @ts-expect-error - 옵셔널 의존성, 설치되지 않을 수 있음
       upstashRedisModule = await import('@upstash/redis')
     } catch {
       // 패키지 미설치 시 무시

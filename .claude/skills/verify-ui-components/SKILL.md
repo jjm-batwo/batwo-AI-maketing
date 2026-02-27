@@ -1,6 +1,6 @@
 ---
 name: verify-ui-components
-description: UI 컴포넌트의 일관성, 접근성, 성능 패턴을 검증합니다. 랜딩/대시보드/채팅/최적화/픽셀/온보딩/감사 컴포넌트 변경 후 사용.
+description: UI 컴포넌트의 일관성, 접근성, 성능 패턴을 검증합니다. 랜딩/대시보드/캠페인/채팅/최적화/픽셀/온보딩/감사 컴포넌트 변경 후 사용.
 ---
 
 # UI 컴포넌트 검증
@@ -21,6 +21,7 @@ React 컴포넌트 구현의 일관성과 품질을 검증합니다:
 - 랜딩 페이지 섹션을 수정한 후
 - 대시보드 컴포넌트를 변경한 후
 - 채팅 UI 컴포넌트를 추가/수정한 후
+- 캠페인 관리 컴포넌트를 변경한 후
 - 최적화 규칙 관리 컴포넌트를 변경한 후
 - shadcn/ui 컴포넌트를 커스터마이징한 후
 
@@ -30,6 +31,12 @@ React 컴포넌트 구현의 일관성과 품질을 검증합니다:
 | ------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `src/presentation/components/landing/FeaturesSection/FeaturesSection.tsx` | 랜딩 페이지 기능 섹션 — Intersection Observer 애니메이션 |
 | `src/presentation/components/landing/HeroSection/HeroContent.tsx`         | 랜딩 페이지 히어로 — CTA 버튼, 소셜 프루프               |
+| `src/presentation/components/landing/HeroSection/AIInsight.tsx`           | 히어로 AI 인사이트 — 실시간 분석 데모 카드               |
+| `src/presentation/components/landing/HeroSection/DashboardPreview.tsx`    | 히어로 대시보드 프리뷰 — 탭 기반 데모 UI                 |
+| `src/presentation/components/landing/HeroSection/FreeAuditButton.tsx`     | 히어로 무료 감사 CTA 버튼                                |
+| `src/presentation/components/landing/HeroSection/KPIGrid.tsx`             | 히어로 KPI 그리드 — 미니 KPI 카드 레이아웃               |
+| `src/presentation/components/landing/HeroSection/MiniChart.tsx`           | 히어로 미니 차트 — 스파클라인 SVG 차트                   |
+| `src/presentation/components/landing/HeroSection/TabSwitcher.tsx`         | 히어로 탭 스위처 — 대시보드/감사/캠페인 탭 전환          |
 | `src/presentation/components/landing/PricingSection/PricingSection.tsx`   | 가격 섹션 — 토글, 카드 그리드                            |
 | `src/presentation/components/landing/ProductShowcaseSection.tsx`          | 제품 쇼케이스 — 탭 인터페이스                            |
 | `src/presentation/components/landing/SocialProofSection.tsx`              | 소셜 프루프 — 카드 그리드, 인용구                        |
@@ -46,9 +53,15 @@ React 컴포넌트 구현의 일관성과 품질을 검증합니다:
 | `src/presentation/components/chat/ChatPanel.tsx`                          | 채팅 패널 — 메시지 목록, 스크롤, 가이드 질문            |
 | `src/presentation/components/chat/ChatMessageFeedback.tsx`                | 채팅 피드백 — 좋아요/싫어요 버튼, ARIA 접근성           |
 | `src/presentation/components/optimization/*.tsx`                          | 최적화 규칙 관리 — CRUD UI 컴포넌트                     |
+| `src/presentation/components/campaign/CampaignTable.tsx`                  | 캠페인 테이블 — 토글 스위치, 정렬, 벌크 액션            |
+| `src/presentation/components/campaign/CampaignCard.tsx`                   | 캠페인 카드 — 상태 뱃지, 액션 드롭다운                  |
+| `src/presentation/components/campaign/CampaignList.tsx`                   | 캠페인 목록 — 필터링, 카드 그리드                       |
+| `src/presentation/components/campaign/CampaignEditForm.tsx`               | 캠페인 편집 폼 — 예산, 타겟팅 설정                      |
+| `src/presentation/components/campaign/OptimizationPanel.tsx`              | 캠페인 최적화 패널 — AI 추천 표시                       |
 | `src/presentation/components/audit/AuditReportCard.tsx`                   | 감사 리포트 카드 — 점수 및 개선사항 요약                |
 | `src/presentation/components/audit/AuditCategoryBreakdown.tsx`            | 감사 카테고리 분석 — 세부 카테고리별 점수               |
 | `src/presentation/components/audit/AuditConversionCTA.tsx`                | 감사 전환 CTA — 묶음 서비스 신청 유도                   |
+| `src/presentation/components/audit/EmptyAuditResult.tsx`                  | 감사 빈 결과 — 분석 데이터 없을 때 안내 UI              |
 | `src/presentation/components/pixel/PlatformSelector.tsx`                  | 픽셀 설치 — 플랫폼 선택 카드 (카페24/자체몰/네이버)     |
 | `src/presentation/components/pixel/guides/CustomSiteGuide.tsx`            | 픽셀 설치 — 자체몰 설치 가이드                           |
 | `src/presentation/components/pixel/guides/NaverGuide.tsx`                 | 픽셀 설치 — 네이버 스마트스토어 설치 가이드              |
@@ -57,10 +70,13 @@ React 컴포넌트 구현의 일관성과 품질을 검증합니다:
 | `src/presentation/hooks/useDashboardKPI.ts`                               | 대시보드 KPI 데이터 훅                                   |
 | `src/presentation/hooks/useSavings.ts`                                    | 절감 금액 계산 훅                                       |
 | `src/presentation/hooks/useAgentChat.ts`                                  | AI 채팅 SSE 스트리밍 훅                                  |
+| `src/presentation/stores/uiStore.ts`                                      | 전역 UI 상태 — ChatPanel/인사이트 공유 (DashboardInsightSummary) |
 | `src/presentation/hooks/useFeedback.ts`                                   | 채팅 메시지 피드백 훅                                    |
 | `src/presentation/hooks/useFeedbackAnalytics.ts`                          | 피드백 분석 데이터 훅                                    |
 | `src/presentation/hooks/useKeyboardNavigation.ts`                         | 채팅 키보드 네비게이션 훅                                |
 | `src/presentation/hooks/useOptimizationRules.ts`                          | 최적화 규칙 CRUD 훅                                      |
+| `src/presentation/components/audit/AccountSelector.tsx`                    | 감사 계정 선택기 — OAuth 콜백 후 광고 계정 선택          |
+| `src/presentation/utils/accountStatus.ts`                                  | 계정 상태 유틸리티 — 감사 계정 상태 판별 헬퍼           |
 | `src/components/ui/`                                                      | shadcn/ui 기본 컴포넌트들                                |
 
 ## Workflow
@@ -72,6 +88,7 @@ React 컴포넌트 구현의 일관성과 품질을 검증합니다:
 ```bash
 grep -rn "interface.*Props" src/presentation/components/landing/ --include="*.tsx"
 grep -rn "interface.*Props" src/presentation/components/dashboard/ --include="*.tsx"
+grep -rn "interface.*Props" src/presentation/components/campaign/ --include="*.tsx"
 grep -rn "interface.*Props" src/presentation/components/chat/ --include="*.tsx"
 grep -rn "interface.*Props" src/presentation/components/optimization/ --include="*.tsx"
 grep -rn "interface.*Props" src/presentation/components/pixel/ --include="*.tsx"
@@ -106,6 +123,7 @@ done
 # shadcn/ui 컴포넌트 import 확인
 grep -rn "@/components/ui/" src/presentation/components/landing/ --include="*.tsx"
 grep -rn "@/components/ui/" src/presentation/components/dashboard/ --include="*.tsx"
+grep -rn "@/components/ui/" src/presentation/components/campaign/ --include="*.tsx"
 grep -rn "@/components/ui/" src/presentation/components/chat/ --include="*.tsx"
 grep -rn "@/components/ui/" src/presentation/components/optimization/ --include="*.tsx"
 grep -rn "@/components/ui/" src/presentation/components/pixel/ --include="*.tsx"
@@ -124,6 +142,7 @@ grep -rn "@/components/ui/" src/presentation/components/audit/ --include="*.tsx"
 # cn() 유틸리티 사용 확인
 grep -rn "cn(" src/presentation/components/landing/ --include="*.tsx"
 grep -rn "cn(" src/presentation/components/dashboard/ --include="*.tsx"
+grep -rn "cn(" src/presentation/components/campaign/ --include="*.tsx"
 grep -rn "cn(" src/presentation/components/chat/ --include="*.tsx"
 grep -rn "cn(" src/presentation/components/optimization/ --include="*.tsx"
 grep -rn "cn(" src/presentation/components/pixel/ --include="*.tsx"
@@ -152,6 +171,7 @@ grep -rn "cn(" src/presentation/components/audit/ --include="*.tsx"
 # 버튼에 aria-label 또는 명확한 텍스트 확인
 grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/components/landing/ --include="*.tsx"
 grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/components/dashboard/ --include="*.tsx"
+grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/components/campaign/ --include="*.tsx"
 grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/components/chat/ --include="*.tsx"
 grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/components/optimization/ --include="*.tsx"
 grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/components/pixel/ --include="*.tsx"
@@ -172,8 +192,9 @@ grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/compo
 **검사:** 불필요한 리렌더링을 방지하는 패턴이 적용되었는지 확인합니다.
 
 ```bash
-# useMemo/useCallback 사용 확인 (대시보드/채팅의 무거운 계산)
+# useMemo/useCallback 사용 확인 (대시보드/캠페인/채팅의 무거운 계산)
 grep -rn "useMemo\|useCallback" src/presentation/components/dashboard/ --include="*.tsx"
+grep -rn "useMemo\|useCallback" src/presentation/components/campaign/ --include="*.tsx"
 grep -rn "useMemo\|useCallback" src/presentation/components/chat/ --include="*.tsx"
 
 # React.memo 사용 확인
@@ -185,6 +206,7 @@ grep -rn "React.memo\|memo(" src/presentation/components/ --include="*.tsx"
 - 무거운 계산은 `useMemo`로 메모이제이션
 - 자주 리렌더링되는 리스트 아이템은 `React.memo`
 - 대시보드 KPI 계산은 `useMemo` 사용
+- 캠페인 테이블 정렬/필터링은 `useMemo`/`useCallback` 사용
 - 채팅 이벤트 핸들러는 `useCallback` 사용
 
 ### Step 7: 반응형 디자인 검증
@@ -195,6 +217,7 @@ grep -rn "React.memo\|memo(" src/presentation/components/ --include="*.tsx"
 # 반응형 클래스 사용 확인 (md:, lg:)
 grep -rn "md:\|lg:\|sm:" src/presentation/components/landing/ --include="*.tsx" | head -20
 grep -rn "md:\|lg:\|sm:" src/presentation/components/dashboard/ --include="*.tsx" | head -20
+grep -rn "md:\|lg:\|sm:" src/presentation/components/campaign/ --include="*.tsx" | head -20
 grep -rn "md:\|lg:\|sm:" src/presentation/components/chat/ --include="*.tsx" | head -20
 grep -rn "md:\|lg:\|sm:" src/presentation/components/optimization/ --include="*.tsx" | head -20
 grep -rn "md:\|lg:\|sm:" src/presentation/components/pixel/ --include="*.tsx" | head -20

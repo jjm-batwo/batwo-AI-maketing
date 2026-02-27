@@ -169,6 +169,19 @@ export default function AuditSharedPage() {
         <AuditCategoryBreakdown categories={report.categories} />
 
         <AuditConversionCTA estimatedImprovement={report.estimatedImprovement} />
+
+        {/* 바이럴 CTA */}
+        <div className="text-center py-6 border-t border-border">
+          <p className="text-sm text-muted-foreground mb-3">
+            내 광고 계정도 무료로 진단해보세요
+          </p>
+          <a
+            href="/"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold hover:from-amber-600 hover:to-orange-600 transition-all shadow-sm hover:shadow-md"
+          >
+            나도 무료 진단 받기
+          </a>
+        </div>
       </div>
     </main>
   )

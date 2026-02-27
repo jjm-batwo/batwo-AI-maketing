@@ -80,7 +80,7 @@ const PERIOD_LABELS: Record<KPIPeriod, string> = {
 
 export function AnalyticsClient({ campaign }: AnalyticsClientProps) {
   const t = useTranslations()
-  const [period, setPeriod] = useState<KPIPeriod>('7d')
+  const [period, setPeriod] = useState<KPIPeriod>('today')
 
   const { data, isLoading } = useQuery<CampaignKPIResponse>({
     queryKey: ['campaign-kpi', campaign.id, period],

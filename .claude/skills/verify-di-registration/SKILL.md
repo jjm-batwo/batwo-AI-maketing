@@ -35,6 +35,7 @@ DI(Dependency Injection) 컨테이너의 일관성을 검증합니다:
 | `src/application/ports/IPromptTemplateService.ts` | 프롬프트 템플릿 서비스 포트 — DI 등록 대상 |
 | `src/application/ports/IResilienceService.ts` | 복원력 서비스 포트 — DI 등록 대상 |
 | `src/application/use-cases/ai/GetFeedbackAnalyticsUseCase.ts` | 피드백 분석 유스케이스 — DI 등록 대상 |
+| `src/application/ports/IAuditCache.ts` | 감사 캐시 포트 인터페이스 — 캐시 팩토리 패턴 사용 |
 
 ## Workflow
 
@@ -194,3 +195,4 @@ grep -n "ResilienceService\|PromptTemplateService\|FallbackResponseService\|FewS
 3. **편의 함수 (get*)** — `container.ts` 하단의 `export function get*()` 함수들은 편의 래퍼이며, 존재 여부와 등록 여부는 별개
 4. **인터페이스 파일명과 토큰명 불일치** — `IPaymentGateway.ts` ↔ `PaymentGateway` 토큰처럼 `I` 접두사 제거 형태는 정상
 5. **IConversationalAgent.ts의 IToolRegistry** — 파일명과 인터페이스명이 다를 수 있음 (하나의 파일에 여러 인터페이스 정의)
+6. **IAuditCache.ts** — 캐시 팩토리 패턴(`createUpstashAuditCache`)으로 인스턴스를 직접 생성하며, DI 컨테이너를 통하지 않음. 포트 인터페이스이지만 DI 토큰 미등록은 의도적 설계

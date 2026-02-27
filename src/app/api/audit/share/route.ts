@@ -12,6 +12,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auditShareCache } from '@/lib/cache/auditShareCache'
 import { auditReportSchema } from '@/lib/validations/audit'
 import { checkRateLimit, getClientIp, rateLimitExceededResponse } from '@/lib/middleware/rateLimit'
+import { verifyReport } from '@/lib/security/auditHmac'
 import { z } from 'zod'
 
 // =============================================================================
@@ -20,6 +21,7 @@ import { z } from 'zod'
 
 const shareRequestSchema = z.object({
   report: auditReportSchema,
+  signature: z.string().min(1),
 })
 
 // =============================================================================
@@ -47,10 +49,15 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { report } = validation.data
+  const { report, signature } = validation.data
+
+  // HMAC 서명 검증 (위조/변조된 report 차단)
+  if (!verifyReport(report, signature)) {
+    return NextResponse.json({ message: '유효하지 않은 서명입니다' }, { status: 403 })
+  }
 
   // 공유 토큰 생성 (UUID v4, 7일 만료)
-  const token = auditShareCache.set(report)
+  const token = await auditShareCache.set(report)
 
   // 공유 URL 구성 — NEXTAUTH_URL 환경변수 사용 (origin 헤더는 위조 가능하므로 사용 안 함)
   const baseUrl = process.env.NEXTAUTH_URL || ''

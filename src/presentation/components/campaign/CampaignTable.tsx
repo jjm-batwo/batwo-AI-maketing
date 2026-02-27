@@ -217,6 +217,11 @@ export const CampaignTable = memo(function CampaignTable({
     }
 
     return [...filtered].sort((a, b) => {
+      // 활성 캠페인 최상단 고정
+      const isActiveA = a.status === 'ACTIVE' ? 0 : 1
+      const isActiveB = b.status === 'ACTIVE' ? 0 : 1
+      if (isActiveA !== isActiveB) return isActiveA - isActiveB
+
       const order = filters.sortOrder === 'asc' ? 1 : -1
       switch (filters.sortBy) {
         case 'name':
@@ -648,10 +653,10 @@ export const CampaignTable = memo(function CampaignTable({
                         handleActivationToggle(campaign)
                       }}
                       className={cn(
-                        'relative inline-flex h-6 w-11 items-center rounded-full border transition-colors',
+                        'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
                         campaign.status === 'ACTIVE'
-                          ? 'border-primary/40 bg-primary/20'
-                          : 'border-muted-foreground/20 bg-muted',
+                          ? 'bg-blue-500'
+                          : 'bg-gray-200 dark:bg-gray-600',
                         campaign.status !== 'ACTIVE' &&
                           campaign.status !== 'PAUSED' &&
                           'cursor-not-allowed opacity-50'
@@ -659,8 +664,8 @@ export const CampaignTable = memo(function CampaignTable({
                     >
                       <span
                         className={cn(
-                          'inline-block h-4 w-4 transform rounded-full bg-background shadow transition-transform',
-                          campaign.status === 'ACTIVE' ? 'translate-x-5' : 'translate-x-1'
+                          'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition-transform duration-200 ease-in-out',
+                          campaign.status === 'ACTIVE' ? 'translate-x-5' : 'translate-x-0.5'
                         )}
                       />
                     </button>

@@ -15,22 +15,22 @@ const SAMPLE_SESSION = {
   accessToken: 'EAAtest_token_abc123',
   adAccountId: 'act_123456789',
   adAccounts: [
-    { id: 'act_123456789', name: '테스트 광고 계정', currency: 'KRW' },
-    { id: 'act_987654321', name: '보조 광고 계정', currency: 'KRW' },
+    { id: 'act_123456789', name: '테스트 광고 계정', currency: 'KRW', accountStatus: 1 },
+    { id: 'act_987654321', name: '보조 광고 계정', currency: 'KRW', accountStatus: 2 },
   ],
 }
 
 // ─── auditTokenCache 단위 테스트 ─────────────────────────────────────────────
 
 describe('auditTokenCache', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     // 각 테스트 전 캐시 초기화
-    auditTokenCache.clearAll()
+    await auditTokenCache.clearAll()
   })
 
-  it('should_store_and_retrieve_audit_session', () => {
+  it('should_store_and_retrieve_audit_session', async () => {
     // 세션 저장
-    const sessionId = auditTokenCache.set(SAMPLE_SESSION)
+    const sessionId = await auditTokenCache.set(SAMPLE_SESSION)
 
     // UUID 형식 확인
     expect(sessionId).toMatch(
@@ -38,47 +38,47 @@ describe('auditTokenCache', () => {
     )
 
     // 저장된 세션 조회
-    const retrieved = auditTokenCache.get(sessionId)
+    const retrieved = await auditTokenCache.get(sessionId)
     expect(retrieved).not.toBeNull()
     expect(retrieved?.accessToken).toBe(SAMPLE_SESSION.accessToken)
     expect(retrieved?.adAccountId).toBe(SAMPLE_SESSION.adAccountId)
     expect(retrieved?.adAccounts).toHaveLength(2)
   })
 
-  it('should_return_null_for_nonexistent_session', () => {
-    const result = auditTokenCache.get('00000000-0000-0000-0000-000000000000')
+  it('should_return_null_for_nonexistent_session', async () => {
+    const result = await auditTokenCache.get('00000000-0000-0000-0000-000000000000')
     expect(result).toBeNull()
   })
 
-  it('should_expire_session_after_ttl', () => {
+  it('should_expire_session_after_ttl', async () => {
     // 만료 시각을 과거로 조작하여 만료 시뮬레이션
-    const sessionId = auditTokenCache.set(SAMPLE_SESSION)
+    const sessionId = await auditTokenCache.set(SAMPLE_SESSION)
 
     // 내부적으로 만료된 세션처럼 시뮬레이션:
     // set() 후 get()에서 expiresAt을 과거로 만드는 대신,
     // 만료된 sessionId로 직접 store에 접근하는 우회 대신
     // clearAll 후 재확인하는 방식으로 검증
-    auditTokenCache.delete(sessionId)
-    const result = auditTokenCache.get(sessionId)
+    await auditTokenCache.delete(sessionId)
+    const result = await auditTokenCache.get(sessionId)
     expect(result).toBeNull()
   })
 
-  it('should_delete_session_after_use', () => {
+  it('should_delete_session_after_use', async () => {
     // 세션 저장
-    const sessionId = auditTokenCache.set(SAMPLE_SESSION)
-    expect(auditTokenCache.get(sessionId)).not.toBeNull()
+    const sessionId = await auditTokenCache.set(SAMPLE_SESSION)
+    expect(await auditTokenCache.get(sessionId)).not.toBeNull()
 
     // 1회 사용 후 삭제
-    auditTokenCache.delete(sessionId)
+    await auditTokenCache.delete(sessionId)
 
     // 삭제 후 조회 불가
-    expect(auditTokenCache.get(sessionId)).toBeNull()
+    expect(await auditTokenCache.get(sessionId)).toBeNull()
   })
 
-  it('should_store_multiple_sessions_independently', () => {
+  it('should_store_multiple_sessions_independently', async () => {
     // 두 개의 독립적인 세션 저장
-    const sessionId1 = auditTokenCache.set(SAMPLE_SESSION)
-    const sessionId2 = auditTokenCache.set({
+    const sessionId1 = await auditTokenCache.set(SAMPLE_SESSION)
+    const sessionId2 = await auditTokenCache.set({
       ...SAMPLE_SESSION,
       accessToken: 'EAAother_token_xyz789',
       adAccountId: 'act_999999999',
@@ -88,21 +88,21 @@ describe('auditTokenCache', () => {
     expect(sessionId1).not.toBe(sessionId2)
 
     // 각각 독립적으로 조회 가능
-    expect(auditTokenCache.get(sessionId1)?.accessToken).toBe('EAAtest_token_abc123')
-    expect(auditTokenCache.get(sessionId2)?.accessToken).toBe('EAAother_token_xyz789')
+    expect((await auditTokenCache.get(sessionId1))?.accessToken).toBe('EAAtest_token_abc123')
+    expect((await auditTokenCache.get(sessionId2))?.accessToken).toBe('EAAother_token_xyz789')
 
     // 하나 삭제해도 나머지는 유지
-    auditTokenCache.delete(sessionId1)
-    expect(auditTokenCache.get(sessionId1)).toBeNull()
-    expect(auditTokenCache.get(sessionId2)).not.toBeNull()
+    await auditTokenCache.delete(sessionId1)
+    expect(await auditTokenCache.get(sessionId1)).toBeNull()
+    expect(await auditTokenCache.get(sessionId2)).not.toBeNull()
   })
 
-  it('should_include_expiresAt_in_stored_session', () => {
+  it('should_include_expiresAt_in_stored_session', async () => {
     const before = Date.now()
-    const sessionId = auditTokenCache.set(SAMPLE_SESSION)
+    const sessionId = await auditTokenCache.set(SAMPLE_SESSION)
     const after = Date.now()
 
-    const session = auditTokenCache.get(sessionId)
+    const session = await auditTokenCache.get(sessionId)
     expect(session).not.toBeNull()
 
     // expiresAt이 15분 후로 설정되었는지 확인 (±1초 허용)
@@ -112,20 +112,20 @@ describe('auditTokenCache', () => {
     expect(session!.expiresAt).toBeLessThanOrEqual(expectedMax)
   })
 
-  it('should_track_size_correctly', () => {
-    expect(auditTokenCache.size()).toBe(0)
+  it('should_track_size_correctly', async () => {
+    expect(await auditTokenCache.size()).toBe(0)
 
-    const id1 = auditTokenCache.set(SAMPLE_SESSION)
-    expect(auditTokenCache.size()).toBe(1)
+    const id1 = await auditTokenCache.set(SAMPLE_SESSION)
+    expect(await auditTokenCache.size()).toBe(1)
 
-    auditTokenCache.set(SAMPLE_SESSION)
-    expect(auditTokenCache.size()).toBe(2)
+    await auditTokenCache.set(SAMPLE_SESSION)
+    expect(await auditTokenCache.size()).toBe(2)
 
-    auditTokenCache.delete(id1)
-    expect(auditTokenCache.size()).toBe(1)
+    await auditTokenCache.delete(id1)
+    expect(await auditTokenCache.size()).toBe(1)
 
-    auditTokenCache.clearAll()
-    expect(auditTokenCache.size()).toBe(0)
+    await auditTokenCache.clearAll()
+    expect(await auditTokenCache.size()).toBe(0)
   })
 })
 

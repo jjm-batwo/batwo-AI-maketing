@@ -10,6 +10,7 @@ import './globals.css'
 import { Providers } from './providers'
 import { getMetadata, getJsonLdScript } from '@/lib/constants/seo'
 import { DemoModeProvider } from '@/presentation/components/demo/DemoModeProvider'
+import { Toaster } from '@/components/ui/sonner'
 
 const pretendard = localFont({
   src: '../fonts/PretendardVariable.woff2',
@@ -74,6 +75,7 @@ export default async function RootLayout({
         <Suspense fallback={null}>
           <DemoModeProvider />
         </Suspense>
+        <Toaster position="top-center" richColors closeButton />
         {/* Vercel Analytics - 사용자 분석 (deferred) */}
         <Suspense fallback={null}>
           <Analytics />

@@ -1,6 +1,10 @@
-import { memo, useCallback } from 'react'
+'use client'
+
+import { memo, useCallback, useRef, useEffect } from 'react'
 import type { DashboardTab } from './dashboardData'
 import { TAB_CONFIG } from './dashboardData'
+
+const HOVER_DELAY_MS = 200
 
 interface TabSwitcherProps {
   activeTab: DashboardTab
@@ -29,16 +33,43 @@ interface TabButtonProps {
 }
 
 const TabButton = memo(function TabButton({ tab, isActive, onClick }: TabButtonProps) {
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   const handleClick = useCallback(() => {
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current)
+      hoverTimerRef.current = null
+    }
     onClick(tab.id)
   }, [onClick, tab.id])
+
+  const handleMouseEnter = useCallback(() => {
+    hoverTimerRef.current = setTimeout(() => {
+      onClick(tab.id)
+      hoverTimerRef.current = null
+    }, HOVER_DELAY_MS)
+  }, [onClick, tab.id])
+
+  const handleMouseLeave = useCallback(() => {
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current)
+      hoverTimerRef.current = null
+    }
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current)
+    }
+  }, [])
 
   return (
     <button
       type="button"
       role="tab"
       onClick={handleClick}
-      onMouseEnter={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onFocus={handleClick}
       aria-label={`${tab.label} 탭으로 전환`}
       aria-selected={isActive}

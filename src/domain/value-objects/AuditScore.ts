@@ -39,6 +39,8 @@ export interface CampaignAuditData {
   conversions: number
   spend: number
   revenue: number
+  /** 캠페인 생성 시각 (ISO 8601). 최근 캠페인의 conversions=0 오탐 방지에 사용 */
+  createdTime?: string
 }
 
 /**
@@ -264,10 +266,14 @@ export class AuditScore {
 
   /**
    * 전환 추적 평가: conversions가 0인 캠페인 = 전환 추적 미설정
+   * 단, 최근 7일 이내 생성된 캠페인은 데이터 수집 중으로 간주하여 warning 처리
    */
   private static evaluateConversionTracking(campaigns: CampaignAuditData[]): AuditCategory {
     const findings: AuditFinding[] = []
     const recommendations: AuditRecommendation[] = []
+
+    const RECENT_CAMPAIGN_DAYS = 7
+    const recentThreshold = Date.now() - RECENT_CAMPAIGN_DAYS * 24 * 60 * 60 * 1000
 
     const untrackedCampaigns = campaigns.filter(c => c.conversions === 0)
 
@@ -279,20 +285,41 @@ export class AuditScore {
       return { name: '전환 추적', score: 100, findings, recommendations }
     }
 
-    untrackedCampaigns.forEach(c => {
+    // conversions=0인 캠페인을 최근/오래된 두 그룹으로 분류
+    const recentCampaigns = untrackedCampaigns.filter(
+      c => c.createdTime && new Date(c.createdTime).getTime() > recentThreshold
+    )
+    const staleUntrackedCampaigns = untrackedCampaigns.filter(
+      c => !c.createdTime || new Date(c.createdTime).getTime() <= recentThreshold
+    )
+
+    // 최근 캠페인: 데이터 수집 중 (warning)
+    recentCampaigns.forEach(c => {
+      findings.push({
+        type: 'warning',
+        message: `캠페인 "${c.campaignName}"은 최근 생성되어 데이터 수집 중입니다. 7일 후 다시 확인하세요.`,
+      })
+    })
+
+    // 오래된 캠페인 또는 createdTime 없음: 전환 추적 미설정 (critical)
+    staleUntrackedCampaigns.forEach(c => {
       findings.push({
         type: 'critical',
         message: `캠페인 "${c.campaignName}"에 전환 추적이 설정되어 있지 않습니다.`,
       })
     })
 
-    recommendations.push({
-      priority: 'high',
-      message: '전환 추적이 없는 캠페인에 Meta 픽셀 이벤트(Purchase, AddToCart 등)를 연결하세요.',
-      estimatedImpact: '전환 데이터 확보 시 자동 최적화로 ROAS 평균 30% 개선 예상',
-    })
+    if (staleUntrackedCampaigns.length > 0) {
+      recommendations.push({
+        priority: 'high',
+        message: '전환 추적이 없는 캠페인에 Meta 픽셀 이벤트(Purchase, AddToCart 등)를 연결하세요.',
+        estimatedImpact: '전환 데이터 확보 시 자동 최적화로 ROAS 평균 30% 개선 예상',
+      })
+    }
 
-    const trackedRatio = 1 - untrackedCampaigns.length / campaigns.length
+    // 점수 계산: recent 캠페인은 50% 가중 (완전 무시도 아니고 critical도 아닌 중간값)
+    const effectiveTracked = campaigns.length - staleUntrackedCampaigns.length - recentCampaigns.length * 0.5
+    const trackedRatio = effectiveTracked / campaigns.length
     const score = Math.round(trackedRatio * 100)
 
     return { name: '전환 추적', score, findings, recommendations }

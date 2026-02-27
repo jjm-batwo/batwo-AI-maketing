@@ -13,6 +13,18 @@ interface Modal {
   props?: Record<string, unknown>
 }
 
+// AI 인사이트 요약 (챗봇 컨텍스트 공유용)
+export interface DashboardInsightSummary {
+  type: 'opportunity' | 'warning' | 'tip' | 'success'
+  priority: 'critical' | 'high' | 'medium' | 'low'
+  title: string
+  description: string
+  metric?: string
+  currentValue?: number
+  changePercent?: number
+  campaignName?: string
+}
+
 interface UIState {
   // Sidebar
   isSidebarOpen: boolean
@@ -53,6 +65,10 @@ interface UIState {
   // Campaign objective filter
   dashboardObjective: 'ALL' | 'AWARENESS' | 'TRAFFIC' | 'ENGAGEMENT' | 'LEADS' | 'APP_PROMOTION' | 'SALES' | 'CONVERSIONS'
   setDashboardObjective: (objective: 'ALL' | 'AWARENESS' | 'TRAFFIC' | 'ENGAGEMENT' | 'LEADS' | 'APP_PROMOTION' | 'SALES' | 'CONVERSIONS') => void
+
+  // Dashboard AI Insights (챗봇 컨텍스트 공유)
+  dashboardInsights: DashboardInsightSummary[]
+  setDashboardInsights: (insights: DashboardInsightSummary[]) => void
 
   // Chat Panel
   isChatPanelOpen: boolean
@@ -129,11 +145,15 @@ export const useUIStore = create<UIState>((set) => ({
   setTheme: (theme) => set({ theme }),
 
   // Dashboard
-  dashboardPeriod: '7d',
+  dashboardPeriod: 'today',
   setDashboardPeriod: (period) => set({ dashboardPeriod: period }),
 
   dashboardObjective: 'ALL',
   setDashboardObjective: (objective) => set({ dashboardObjective: objective }),
+
+  // Dashboard AI Insights
+  dashboardInsights: [],
+  setDashboardInsights: (insights) => set({ dashboardInsights: insights }),
 
   // Chat Panel
   isChatPanelOpen: false,

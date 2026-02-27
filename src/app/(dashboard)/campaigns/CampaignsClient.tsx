@@ -54,7 +54,7 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
   const showApiSource = searchParams.get('showApiSource') === 'true'
   const { filters, setFilters, selectedCampaignIds } = useCampaignStore()
   const { openChatPanel } = useUIStore()
-  const [period, setPeriod] = useState<KPIPeriod>('7d')
+  const [period, setPeriod] = useState<KPIPeriod>('today')
 
   // 기간별 KPI 데이터 (클라이언트 사이드 fetch)
   const { data: kpiData, isLoading: isKpiLoading } = useDashboardKPI({

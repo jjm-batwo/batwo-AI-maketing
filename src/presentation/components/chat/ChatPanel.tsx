@@ -2,7 +2,7 @@
 
 import { useRef, useEffect, useMemo } from 'react'
 import { useKeyboardNavigation } from '@/presentation/hooks/useKeyboardNavigation'
-import { Bot } from 'lucide-react'
+import { Bot, AlertTriangle, TrendingUp, Lightbulb } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUIStore } from '@/presentation/stores/uiStore'
 import { useAgentChat } from '@/presentation/hooks/useAgentChat'
@@ -28,6 +28,8 @@ export function ChatPanel() {
   const router = useRouter()
   const pathname = usePathname()
   const { setGuideRecommendation } = useCampaignStore()
+
+  const { dashboardInsights } = useUIStore()
 
   const contextCopy = useMemo(() => {
     if (pathname?.includes('/reports')) {
@@ -170,6 +172,7 @@ export function ChatPanel() {
               title={contextCopy.title}
               description={contextCopy.description}
               suggestions={contextCopy.suggestions}
+              insights={dashboardInsights}
               onSuggestion={handleSendMessage}
             />
           ) : (
@@ -273,22 +276,115 @@ function EmptyState({
   title,
   description,
   suggestions,
+  insights,
   onSuggestion,
 }: {
   title: string
   description: string
   suggestions: string[]
+  insights?: import('@/presentation/stores/uiStore').DashboardInsightSummary[]
   onSuggestion: (msg: string) => void
 }) {
+  // 인사이트 기반 동적 제안 생성
+  const insightSuggestions = insights?.length
+    ? insights.slice(0, 2).map((insight) => {
+        if (insight.type === 'warning') {
+          return `${insight.title} 원인을 분석해줘`
+        }
+        if (insight.type === 'opportunity') {
+          return `${insight.title} 활용 방법을 알려줘`
+        }
+        return `${insight.title}에 대해 자세히 알려줘`
+      })
+    : []
+
+  const finalSuggestions = insightSuggestions.length > 0
+    ? [...insightSuggestions, suggestions[2] ?? suggestions[0]]
+    : suggestions
+
+  const insightIconMap = {
+    warning: AlertTriangle,
+    opportunity: TrendingUp,
+    tip: Lightbulb,
+    success: TrendingUp,
+  }
+
+  const insightColorMap = {
+    warning: 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950/30 dark:border-amber-800 dark:text-amber-300',
+    opportunity: 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-950/30 dark:border-blue-800 dark:text-blue-300',
+    tip: 'bg-purple-50 border-purple-200 text-purple-700 dark:bg-purple-950/30 dark:border-purple-800 dark:text-purple-300',
+    success: 'bg-green-50 border-green-200 text-green-700 dark:bg-green-950/30 dark:border-green-800 dark:text-green-300',
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center h-full px-8 text-center">
+    <div className="flex flex-col items-center justify-center h-full px-6 text-center">
       <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
         <Bot className="h-6 w-6 text-primary" />
       </div>
       <h3 className="text-sm font-semibold text-foreground mb-1">{title}</h3>
-      <p className="text-xs text-muted-foreground mb-6 max-w-[280px]">{description}</p>
+      <p className="text-xs text-muted-foreground mb-5 max-w-[280px]">{description}</p>
+
+      {/* AI 인사이트 알림 카드 */}
+      {insights && insights.length > 0 && (
+        <div className="w-full space-y-2 mb-4">
+          {insights.slice(0, 2).map((insight, index) => {
+            const Icon = insightIconMap[insight.type]
+            return (
+              <button
+                key={index}
+                onClick={() => onSuggestion(
+                  insight.type === 'warning'
+                    ? `${insight.title} 원인을 분석해줘`
+                    : `${insight.title}에 대해 자세히 알려줘`
+                )}
+                className={cn(
+                  'w-full text-left rounded-xl px-4 py-3 border transition-all',
+                  'hover:shadow-sm hover:scale-[1.01]',
+                  insightColorMap[insight.type]
+                )}
+              >
+                <div className="flex items-start gap-2.5">
+                  <Icon className="h-4 w-4 mt-0.5 shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold leading-tight">{insight.title}</p>
+                    <p className="text-[11px] opacity-80 mt-0.5 line-clamp-2">{insight.description}</p>
+                    {(insight.currentValue !== undefined || insight.changePercent !== undefined) && (
+                      <div className="flex items-center gap-2 mt-1.5">
+                        {insight.currentValue !== undefined && (
+                          <span className="text-xs font-bold">
+                            {insight.metric === 'ctr' || insight.metric === 'cvr'
+                              ? `${insight.currentValue.toFixed(2)}%`
+                              : insight.metric === 'roas'
+                                ? `${insight.currentValue.toFixed(2)}x`
+                                : insight.metric === 'spend' || insight.metric === 'revenue' || insight.metric === 'cpa'
+                                  ? `${insight.currentValue.toLocaleString()}원`
+                                  : insight.currentValue.toLocaleString()}
+                          </span>
+                        )}
+                        {insight.changePercent !== undefined && (
+                          <span className={cn(
+                            'text-[11px] font-medium',
+                            insight.changePercent >= 0 ? 'text-green-600' : 'text-red-600'
+                          )}>
+                            {insight.changePercent >= 0 ? '↑' : '↓'}{Math.abs(insight.changePercent).toFixed(1)}%
+                          </span>
+                        )}
+                      </div>
+                    )}
+                    <p className="text-[11px] font-medium mt-1.5 opacity-70">
+                      클릭하여 원인 분석 →
+                    </p>
+                  </div>
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      )}
+
+      {/* 제안 질문 */}
       <div className="w-full space-y-2">
-        {suggestions.map((suggestion, index) => (
+        {finalSuggestions.map((suggestion, index) => (
           <button
             key={index}
             onClick={() => onSuggestion(suggestion)}

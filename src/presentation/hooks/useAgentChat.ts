@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef } from 'react'
 import { usePathname } from 'next/navigation'
+import { useUIStore } from '@/presentation/stores/uiStore'
 // Unique ID counter to prevent collisions when messages sent rapidly
 let messageIdCounter = 0
 const generateMessageId = (prefix: string) => `${prefix}-${Date.now()}-${++messageIdCounter}`
@@ -163,11 +164,19 @@ export function useAgentChat(initialConversationId?: string): UseAgentChatReturn
       try {
         abortRef.current = new AbortController()
 
+        // AI 인사이트 컨텍스트: 대시보드에서 로드된 인사이트를 챗봇에 전달
+        const { dashboardInsights } = useUIStore.getState()
+        const insightsContext = dashboardInsights.length > 0
+          ? dashboardInsights.map((i) =>
+              `[${i.type}/${i.priority}] ${i.campaignName ? `(${i.campaignName}) ` : ''}${i.title}: ${i.description}${i.currentValue !== undefined ? ` (현재값: ${i.currentValue}${i.changePercent !== undefined ? `, 변화: ${i.changePercent > 0 ? '+' : ''}${i.changePercent.toFixed(1)}%` : ''})` : ''}`
+            ).join('\n')
+          : undefined
+
         // 서버에서 retry+CB를 처리하므로 클라이언트는 단일 요청만 수행
         const response = await fetch('/api/agent/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message, conversationId, uiContext }),
+          body: JSON.stringify({ message, conversationId, uiContext, insightsContext }),
           signal: abortRef.current.signal,
         })
 

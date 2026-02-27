@@ -24,7 +24,7 @@ export const MiniChart = memo(function MiniChart({ data, activeTab }: MiniChartP
         aria-label={`${chartLabel} 차트. 최근 7일간 데이터`}
       >
         {data.map((height, i) => (
-          <ChartBar key={`${activeTab}-bar-${i}`} height={height} index={i} />
+          <ChartBar key={`bar-${i}`} height={height} index={i} />
         ))}
       </div>
     </div>
@@ -40,7 +40,7 @@ const ChartBar = memo(function ChartBar({ height, index }: ChartBarProps) {
   return (
     <div className="group/bar flex flex-col items-center gap-1 w-full h-full justify-end">
       <div
-        className="w-full max-w-[12px] bg-primary/70 rounded-t-sm transition-all duration-500 hover:bg-primary hover:scale-y-110 origin-bottom animate-slide-up"
+        className="w-full max-w-[12px] bg-primary/70 rounded-t-sm transition-all duration-500 hover:bg-primary hover:scale-y-110 origin-bottom"
         style={{
           height: `${height}%`,
           animationDelay: `${index * 30}ms`,

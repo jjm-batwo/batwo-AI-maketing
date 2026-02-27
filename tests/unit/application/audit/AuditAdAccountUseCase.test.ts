@@ -71,9 +71,11 @@ const makeUnprofitableInsights = (campaignId: string): MetaInsightsData => ({
   dateStop: '2026-01-30',
 })
 
+// currency 추가 (하위 호환: 선택적 필드)
 const TEST_DTO = {
   accessToken: 'test-access-token',
   adAccountId: 'act_123456789',
+  currency: 'KRW',
 }
 
 describe('AuditAdAccountUseCase', () => {
@@ -200,5 +202,65 @@ describe('AuditAdAccountUseCase', () => {
     expect(mockMetaAdsService.updateCampaignStatus).not.toHaveBeenCalled()
     expect(mockMetaAdsService.deleteCampaign).not.toHaveBeenCalled()
     expect(mockMetaAdsService.createCampaign).not.toHaveBeenCalled()
+  })
+
+  it('20개 캠페인 → getCampaignInsights가 배치로 호출된다', async () => {
+    // 20개 캠페인 생성
+    const campaigns = Array.from({ length: 20 }, (_, i) =>
+      makeActiveCampaignItem({ id: `meta-campaign-${i + 1}`, name: `캠페인 ${i + 1}` })
+    )
+    vi.mocked(mockMetaAdsService.listCampaigns).mockResolvedValue({
+      campaigns,
+      paging: { hasNext: false },
+    } satisfies ListCampaignsResponse)
+    // 모든 인사이트 성공
+    vi.mocked(mockMetaAdsService.getCampaignInsights).mockImplementation(
+      (_, campaignId) => Promise.resolve(makeProfitableInsights(campaignId))
+    )
+
+    const report = await useCase.execute(TEST_DTO)
+
+    // 20개 캠페인 모두 처리됨
+    expect(report.totalCampaigns).toBe(20)
+    // getCampaignInsights가 20번 호출됨
+    expect(mockMetaAdsService.getCampaignInsights).toHaveBeenCalledTimes(20)
+    expect(report.overall).toBeGreaterThanOrEqual(0)
+  })
+
+  it('currency가 DTO 값을 리포트에 반영한다', async () => {
+    const campaigns = [makeActiveCampaignItem()]
+    vi.mocked(mockMetaAdsService.listCampaigns).mockResolvedValue({
+      campaigns,
+      paging: { hasNext: false },
+    } satisfies ListCampaignsResponse)
+    vi.mocked(mockMetaAdsService.getCampaignInsights).mockResolvedValue(
+      makeUnprofitableInsights('meta-campaign-1')
+    )
+
+    const report = await useCase.execute({
+      accessToken: 'test-token',
+      adAccountId: 'act_123',
+      currency: 'USD',
+    })
+
+    // estimatedWaste/estimatedImprovement 통화 코드가 USD여야 함
+    expect(report.estimatedWaste.currency).toBe('USD')
+    expect(report.estimatedImprovement.currency).toBe('USD')
+  })
+
+  it('currency 미전달 시 기본값 KRW를 사용한다', async () => {
+    vi.mocked(mockMetaAdsService.listCampaigns).mockResolvedValue({
+      campaigns: [],
+      paging: { hasNext: false },
+    } satisfies ListCampaignsResponse)
+
+    // currency 필드 없이 호출
+    const report = await useCase.execute({
+      accessToken: 'test-token',
+      adAccountId: 'act_123',
+    })
+
+    expect(report.estimatedWaste.currency).toBe('KRW')
+    expect(report.estimatedImprovement.currency).toBe('KRW')
   })
 })

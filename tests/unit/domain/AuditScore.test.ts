@@ -106,6 +106,81 @@ describe('AuditScore 값 객체', () => {
       expect(hasNegativeFinding).toBe(true)
     })
 
+    it('should_treat_recent_campaign_with_zero_conversions_as_warning_not_critical', () => {
+      // createdTime이 3일 전 → 최근 캠페인이므로 warning
+      const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+      const campaigns = [
+        makeUnprofitableCampaign({ conversions: 0, createdTime: threeDaysAgo }),
+      ]
+      const result = AuditScore.evaluate(campaigns)
+      const conversionCategory = result.categories.find(c => c.name === '전환 추적')
+      expect(conversionCategory).toBeDefined()
+
+      // warning이 있어야 하고 critical은 없어야 함
+      const hasWarning = conversionCategory!.findings.some(f => f.type === 'warning')
+      const hasCritical = conversionCategory!.findings.some(f => f.type === 'critical')
+      expect(hasWarning).toBe(true)
+      expect(hasCritical).toBe(false)
+    })
+
+    it('should_treat_old_campaign_with_zero_conversions_as_critical', () => {
+      // createdTime이 10일 전 → 오래된 캠페인이므로 critical
+      const tenDaysAgo = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString()
+      const campaigns = [
+        makeUnprofitableCampaign({ conversions: 0, createdTime: tenDaysAgo }),
+      ]
+      const result = AuditScore.evaluate(campaigns)
+      const conversionCategory = result.categories.find(c => c.name === '전환 추적')
+      expect(conversionCategory).toBeDefined()
+
+      const hasCritical = conversionCategory!.findings.some(f => f.type === 'critical')
+      expect(hasCritical).toBe(true)
+    })
+
+    it('should_treat_campaign_without_createdTime_and_zero_conversions_as_critical', () => {
+      // createdTime 없음 → 하위 호환: critical
+      const campaigns = [
+        makeUnprofitableCampaign({ conversions: 0 }),
+      ]
+      const result = AuditScore.evaluate(campaigns)
+      const conversionCategory = result.categories.find(c => c.name === '전환 추적')
+      expect(conversionCategory).toBeDefined()
+
+      const hasCritical = conversionCategory!.findings.some(f => f.type === 'critical')
+      expect(hasCritical).toBe(true)
+    })
+
+    it('should_treat_recent_campaign_with_conversions_as_positive', () => {
+      // conversions > 0 + createdTime이 1일 전 → 정상 (전환 추적 설정됨)
+      const oneDayAgo = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
+      const campaigns = [
+        makeProfitableCampaign({ conversions: 5, createdTime: oneDayAgo }),
+      ]
+      const result = AuditScore.evaluate(campaigns)
+      const conversionCategory = result.categories.find(c => c.name === '전환 추적')
+      expect(conversionCategory).toBeDefined()
+
+      // conversions > 0이면 positive
+      const hasPositive = conversionCategory!.findings.some(f => f.type === 'positive')
+      expect(hasPositive).toBe(true)
+      expect(conversionCategory!.score).toBe(100)
+    })
+
+    it('should_apply_half_weight_for_recent_campaigns_in_score_calculation', () => {
+      // 2개 캠페인: 1개 tracked, 1개 recent untracked
+      // effectiveTracked = 2 - 0(stale) - 1*0.5(recent) = 1.5
+      // trackedRatio = 1.5 / 2 = 0.75 → score = 75
+      const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString()
+      const campaigns = [
+        makeProfitableCampaign({ campaignId: 'c1', conversions: 5 }),
+        makeUnprofitableCampaign({ campaignId: 'c2', conversions: 0, createdTime: threeDaysAgo }),
+      ]
+      const result = AuditScore.evaluate(campaigns)
+      const conversionCategory = result.categories.find(c => c.name === '전환 추적')
+      expect(conversionCategory).toBeDefined()
+      expect(conversionCategory!.score).toBe(75)
+    })
+
     it('should_rate_targeting_accuracy_based_on_ctr', () => {
       // CTR > 2% 캠페인 → 타겟팅 우수
       const goodTargetingCampaign = makeProfitableCampaign({

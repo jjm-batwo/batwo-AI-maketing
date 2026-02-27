@@ -4,7 +4,7 @@ import type { ICampaignRepository } from '@domain/repositories/ICampaignReposito
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
 
 const paramsSchema = z.object({
-  campaignId: z.string().optional().describe('특정 캠페인 ID (미지정 시 전체 캠페인 확인)'),
+  campaignId: z.string().optional().describe('캠페인 ID 또는 캠페인 이름 (미지정 시 전체 캠페인 확인). 정확한 ID를 모르면 캠페인 이름을 전달해도 됩니다.'),
   metric: z.enum(['spend', 'ctr', 'roas', 'conversions', 'all']).default('all').describe('확인할 지표'),
 })
 
@@ -21,9 +21,23 @@ export function createCheckAnomaliesTool(
     requiresConfirmation: false,
 
     async execute(params: Params, context: AgentContext): Promise<ToolExecutionResult> {
-      const campaigns = params.campaignId
-        ? [await campaignRepository.findById(params.campaignId)].filter(Boolean)
-        : await campaignRepository.findByUserId(context.userId)
+      let campaigns
+      if (params.campaignId) {
+        // ID로 먼저 검색, 없으면 이름으로 폴백 (LLM이 이름을 ID로 넘기는 경우 대응)
+        const byId = await campaignRepository.findById(params.campaignId)
+        if (byId) {
+          campaigns = [byId]
+        } else {
+          const allCampaigns = await campaignRepository.findByUserId(context.userId)
+          const byName = allCampaigns.filter(c =>
+            c.name.toLowerCase().includes(params.campaignId!.toLowerCase()) ||
+            params.campaignId!.toLowerCase().includes(c.name.toLowerCase())
+          )
+          campaigns = byName.length > 0 ? byName : allCampaigns
+        }
+      } else {
+        campaigns = await campaignRepository.findByUserId(context.userId)
+      }
 
       if (campaigns.length === 0) {
         return {

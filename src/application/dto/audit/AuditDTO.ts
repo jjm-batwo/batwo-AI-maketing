@@ -5,6 +5,8 @@
 export interface AuditRequestDTO {
   accessToken: string
   adAccountId: string
+  /** 광고 계정 통화 코드 (기본값 'KRW') */
+  currency?: string
 }
 
 export interface AuditCategoryDTO {

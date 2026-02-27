@@ -40,6 +40,9 @@ export default defineConfig({
       '@presentation': path.resolve(__dirname, './src/presentation'),
       '@lib': path.resolve(__dirname, './src/lib'),
       '@tests': path.resolve(__dirname, './tests'),
+      // 옵셔널 의존성 mock (단위/통합 테스트 공통)
+      '@upstash/ratelimit': path.resolve(__dirname, './tests/__mocks__/upstash-ratelimit.ts'),
+      '@upstash/redis': path.resolve(__dirname, './tests/__mocks__/upstash-redis.ts'),
     },
   },
 })

@@ -35,6 +35,10 @@ Next.js ISR의 캐시 태그 시스템이 올바르게 구성되어 있는지 �
 | `src/app/api/dashboard/kpi/route.ts` | 대시보드 KPI API — 캐시 서비스 사용 (Redis), 짧은 기간(2분 TTL) |
 | `src/app/api/ai/feedback/route.ts` | AI 피드백 API — 읽기전용 GET + 생성 POST (ISR 태그 불필요, 예외 대상) |
 | `src/app/api/ai/feedback/analytics/route.ts` | 피드백 분석 API — 읽기전용 GET (ISR 태그 불필요, 예외 대상) |
+| `src/app/api/audit/accounts/route.ts` | 감사 대상 광고 계정 목록 API — 읽기전용 GET (ISR 캐시 불필요) |
+| `src/app/api/audit/analyze/route.ts` | 감사 분석 실행 API — 일회성 POST (ISR 캐시 불필요) |
+| `src/app/api/audit/auth-url/route.ts` | 감사 OAuth URL 생성 API — 읽기전용 GET (ISR 캐시 불필요) |
+| `src/app/api/audit/callback/route.ts` | 감사 OAuth 콜백 API — 토큰 교환 GET (ISR 캐시 불필요) |
 | `src/app/api/audit/pdf/route.ts` | 감사 PDF 생성 API — 읽기전용 POST (일회성 생성, ISR 캐시 불필요) |
 | `src/app/api/audit/share/route.ts` | 감사 결과 공유 링크 생성 API — 인메모리 캐시 사용 (`auditShareCache`) |
 | `src/app/api/audit/share/[token]/route.ts` | 공유 토큰 조회 API — 읽기전용 GET (ISR 태그 불필요) |
@@ -125,7 +129,19 @@ grep -rl "export async function \(POST\|PATCH\|PUT\|DELETE\)" src/app/api/ --inc
 
 1. **Meta 연결 상태 API** — 실시간 데이터 API는 캐시를 사용하지 않으므로 revalidateTag가 불필요
 2. **읽기 전용 API** — GET만 export하는 API 라우트는 mutation이 아니므로 revalidateTag가 불필요
-3. **웹훅 API** — `src/app/api/webhooks/` 외부 웹훅 수신 API는 별도 캐시 전략 가능
+3. **웹훅 API** — `src/app/api/payments/webhook/` 등 외부 웹훅 수신 API는 별도 캐시 전략 가능
 4. **인증 API** — `src/app/api/auth/` 관련 API는 세션 기반이므로 ISR 태그와 무관
 5. **AdSet/Ad/Creative/Asset API** — 새로 추가된 API로 아직 ISR 페이지와 연결되지 않은 경우 경고만 표시
 6. **KPI/Cron API** — 배치/동기화 전용 API는 직접 캐시 무효화가 아닌 별도 메커니즘 사용 가능
+7. **AI/Agent API** — `src/app/api/ai/**`, `src/app/api/agent/**` 챗봇/AI 분석 API는 실시간 응답으로 ISR 페이지와 무관
+8. **감사(Audit) API** — `src/app/api/audit/**` 일회성 분석/PDF 생성/공유 API는 ISR 캐시 불필요 (인메모리 캐시 사용)
+9. **Pixel API** — `src/app/api/pixel/**` 픽셀 설치/이벤트 API는 ISR 페이지 미연결 (향후 확장 시 추가)
+10. **결제(Payments) API** — `src/app/api/payments/**` 결제/구독/빌링 API는 ISR 페이지 미연결
+11. **팀(Teams) API** — `src/app/api/teams/**` 팀 관리 API는 ISR 페이지 미연결
+12. **플랫폼(Platform) API** — `src/app/api/platform/**` 카페24 연동 API는 ISR 페이지 미연결
+13. **알림(Alerts) API** — `src/app/api/alerts/**`, `src/app/api/campaigns/[id]/budget-alert/` 알림 API는 실시간 처리
+14. **내부(Internal) API** — `src/app/api/internal/**` 통계/워밍업 API는 운영용으로 ISR 태그와 무관
+15. **테스트(Test) API** — `src/app/api/test/**` 개발 전용 API로 ISR 태그 불필요
+16. **에셋(Assets) API** — `src/app/api/assets/**` 파일 업로드 API는 ISR 페이지와 직접 연결 없음
+17. **AB 테스트 API** — `src/app/api/ab-tests/**` 실험 API는 ISR 페이지 미연결
+18. **Meta 계정 API** — `src/app/api/meta/accounts/`, `src/app/api/meta/select-account/` Meta 계정 선택/연결 API는 ISR 페이지 미연결

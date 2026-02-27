@@ -16,10 +16,11 @@ export async function POST(request: NextRequest) {
       return rateLimitExceededResponse(rateLimitResult)
     }
     const body = await request.json()
-    const { message, conversationId, uiContext } = body as {
+    const { message, conversationId, uiContext, insightsContext } = body as {
       message?: string
       conversationId?: string
       uiContext?: 'dashboard' | 'campaigns' | 'reports' | 'competitors' | 'portfolio' | 'general'
+      insightsContext?: string
     }
 
     if (!message || typeof message !== 'string' || message.trim().length === 0) {
@@ -54,6 +55,7 @@ export async function POST(request: NextRequest) {
             message: message.trim(),
             conversationId,
             uiContext,
+            insightsContext,
           })) {
             sendEvent(chunk)
           }
