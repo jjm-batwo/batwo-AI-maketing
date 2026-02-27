@@ -2,7 +2,6 @@ import NextAuth from 'next-auth'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
 import Google from 'next-auth/providers/google'
-import Kakao from 'next-auth/providers/kakao'
 import { prisma } from '@/lib/prisma'
 import { authConfig } from './auth.config'
 
@@ -96,14 +95,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
-      // NOTE: allowDangerousEmailAccountLinking은 동일 이메일 기반 계정 자동 연결 허용
-      // 사업자가 Google/Kakao/Meta 중 어떤 것으로든 로그인 가능하게 하기 위해 의도적 설정
-      // 위험: 이메일을 제어하는 공격자가 계정 탈취 가능 → 프로덕션에서 이메일 검증 필수
-      allowDangerousEmailAccountLinking: true,
-    }),
-    Kakao({
-      clientId: process.env.KAKAO_CLIENT_ID ?? '',
-      clientSecret: process.env.KAKAO_CLIENT_SECRET ?? '',
       // NOTE: allowDangerousEmailAccountLinking은 동일 이메일 기반 계정 자동 연결 허용
       // 사업자가 Google/Kakao/Meta 중 어떤 것으로든 로그인 가능하게 하기 위해 의도적 설정
       // 위험: 이메일을 제어하는 공격자가 계정 탈취 가능 → 프로덕션에서 이메일 검증 필수

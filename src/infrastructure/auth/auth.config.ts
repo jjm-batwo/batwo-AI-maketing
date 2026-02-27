@@ -1,7 +1,6 @@
 import type { NextAuthConfig } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import Google from 'next-auth/providers/google'
-import Kakao from 'next-auth/providers/kakao'
 import Facebook from 'next-auth/providers/facebook'
 import { z } from 'zod'
 import { GlobalRole } from '@domain/value-objects/GlobalRole'
@@ -135,10 +134,6 @@ export const authConfig = {
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
-    }),
-    Kakao({
-      clientId: process.env.KAKAO_CLIENT_ID ?? '',
-      clientSecret: process.env.KAKAO_CLIENT_SECRET ?? '',
     }),
     Facebook({
       clientId: process.env.META_APP_ID ?? '',

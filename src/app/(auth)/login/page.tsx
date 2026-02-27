@@ -27,7 +27,7 @@ function LoginForm() {
   // Facebook login status check
   const { isConnected: isFacebookConnected } = useFacebookLoginStatus()
 
-  const handleSocialLogin = async (provider: 'google' | 'kakao' | 'facebook') => {
+  const handleSocialLogin = async (provider: 'google' | 'facebook') => {
     setIsLoading(provider)
     setError(null)
     try {
@@ -89,23 +89,6 @@ function LoginForm() {
               </svg>
             )}
             {t('login.continueWith.google')}
-          </Button>
-
-          {/* 카카오 로그인 - 카카오 노란색 */}
-          <Button
-            type="button"
-            className="w-full h-12 bg-[#FEE500] text-[#191919] hover:bg-[#FEE500]/90 font-medium"
-            onClick={() => handleSocialLogin('kakao')}
-            disabled={isLoading !== null}
-          >
-            {isLoading === 'kakao' ? (
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            ) : (
-              <svg className="mr-3 h-5 w-5" viewBox="0 0 24 24" fill="#191919">
-                <path d="M12 3C6.477 3 2 6.463 2 10.71c0 2.746 1.829 5.158 4.582 6.528l-.916 3.407c-.082.307.257.554.52.381l4.059-2.67c.558.073 1.127.114 1.755.114 5.523 0 10-3.463 10-7.76S17.523 3 12 3z" />
-              </svg>
-            )}
-            {t('login.continueWith.kakao')}
           </Button>
 
           {/* Meta 로그인 - Meta 파란색 */}
