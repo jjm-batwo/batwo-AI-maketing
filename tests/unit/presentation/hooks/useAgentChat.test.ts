@@ -67,48 +67,24 @@ describe('useAgentChat', () => {
     })
   })
 
-  describe('reconnection logic', () => {
-    it('should retry connection on failure', async () => {
+  describe('error handling', () => {
+    it('should not retry on failure (server handles retry+CB)', async () => {
       const mockFetch = vi
         .fn()
-        .mockRejectedValueOnce(new Error('Network error')) // Fail 1st
-        .mockRejectedValueOnce(new Error('Network error')) // Fail 2nd
-        .mockResolvedValue({
-          // Success 3rd
-          ok: true,
-          body: {
-            getReader: () => ({
-              read: vi
-                .fn()
-                .mockResolvedValueOnce({
-                  done: false,
-                  value: new TextEncoder().encode('data: {"type":"done"}\n'),
-                })
-                .mockResolvedValueOnce({ done: true, value: undefined }),
-            }),
-          },
-        })
+        .mockRejectedValueOnce(new Error('Network error'))
       global.fetch = mockFetch
 
       const { result } = renderHook(() => useAgentChat())
 
       await act(async () => {
-        result.current.sendMessage('Retry test')
+        result.current.sendMessage('Error test')
       })
 
-      // Fast-forward time to bypass backoff
-      await act(async () => {
-        vi.runAllTimers()
+      // 클라이언트는 단일 요청만 수행 — 서버에서 retry+CB 처리
+      expect(mockFetch).toHaveBeenCalledTimes(1)
+      await waitFor(() => {
+        expect(result.current.error).toBe('Network error')
       })
-
-      // We expect it to eventually succeed or at least try multiple times
-      // Since the hook currently doesn't implement retry, this test should fail (it will likely just error out after 1st attempt)
-      await waitFor(
-        () => {
-          expect(mockFetch).toHaveBeenCalledTimes(3)
-        },
-        { timeout: 5000 }
-      )
     })
   })
 })

@@ -1,4 +1,4 @@
-import { streamText, stepCountIs, type UserModelMessage, type AssistantModelMessage } from 'ai'
+import { streamText, stepCountIs, type UserModelMessage, type AssistantModelMessage, type ToolModelMessage } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import type { IToolRegistry, AgentContext } from '@application/ports/IConversationalAgent'
 import type {
@@ -430,16 +430,70 @@ NEVER: 모호한 "상황에 따라 다릅니다" 답변`,
 
   /**
    * DB 메시지를 Vercel AI SDK CoreMessage로 변환
+   * tool 메시지를 포함하여 LLM이 이전 도구 호출 결과를 참조할 수 있도록 함
    */
   private toCoreMessages(
     messages: ConversationMessageData[]
-  ): (UserModelMessage | AssistantModelMessage)[] {
+  ): (UserModelMessage | AssistantModelMessage | ToolModelMessage)[] {
+    // toolCallId 매핑: assistant의 toolCalls와 후속 tool 결과를 연결
+    const toolCallIdMap = new Map<string, string>()
+    let pendingCalls: { toolCallId: string; toolName: string }[] = []
+
+    for (const m of messages) {
+      if (m.role === 'assistant' && m.toolCalls?.length) {
+        pendingCalls = m.toolCalls.map((tc, i) => ({
+          toolCallId: `${m.id}-tc-${i}`,
+          toolName: tc.name,
+        }))
+      } else if (m.role === 'tool' && m.toolName) {
+        const match = pendingCalls.find((tc) => tc.toolName === m.toolName)
+        if (match) {
+          toolCallIdMap.set(m.id, match.toolCallId)
+          pendingCalls = pendingCalls.filter((tc) => tc !== match)
+        } else {
+          toolCallIdMap.set(m.id, `orphan-${m.id}`)
+        }
+      }
+    }
+
     return messages
-      .filter((m) => m.role === 'user' || m.role === 'assistant')
-      .map((m) => ({
-        role: m.role as 'user' | 'assistant',
-        content: m.content ?? '',
-      }))
+      .filter((m) => m.role !== 'system')
+      .map((m): UserModelMessage | AssistantModelMessage | ToolModelMessage => {
+        if (m.role === 'assistant' && m.toolCalls?.length) {
+          return {
+            role: 'assistant' as const,
+            content: [
+              ...(m.content ? [{ type: 'text' as const, text: m.content }] : []),
+              ...m.toolCalls.map((tc, i) => ({
+                type: 'tool-call' as const,
+                toolCallId: `${m.id}-tc-${i}`,
+                toolName: tc.name,
+                input: tc.args as unknown,
+              })),
+            ],
+          } as AssistantModelMessage
+        }
+        if (m.role === 'tool') {
+          return {
+            role: 'tool' as const,
+            content: [
+              {
+                type: 'tool-result' as const,
+                toolCallId: toolCallIdMap.get(m.id) ?? `orphan-${m.id}`,
+                toolName: m.toolName ?? 'unknown',
+                output: {
+                  type: 'json' as const,
+                  value: m.toolResult ?? m.content ?? '',
+                },
+              },
+            ],
+          } as ToolModelMessage
+        }
+        return {
+          role: m.role as 'user' | 'assistant',
+          content: m.content ?? '',
+        }
+      })
   }
 
   /**

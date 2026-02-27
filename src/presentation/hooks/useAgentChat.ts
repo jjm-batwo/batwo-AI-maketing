@@ -107,8 +107,6 @@ type AgentStreamChunk =
 // Hook
 // ============================================================================
 
-// 최대 재시도 횟수
-const MAX_RETRIES = 3
 
 export function useAgentChat(initialConversationId?: string): UseAgentChatReturn {
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -165,25 +163,20 @@ export function useAgentChat(initialConversationId?: string): UseAgentChatReturn
       try {
         abortRef.current = new AbortController()
 
-        // 재연결 로직: 최대 MAX_RETRIES 회 시도
-        let lastError: Error | null = null
-        for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-          try {
-            const response = await fetch('/api/agent/chat', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ message, conversationId, uiContext }),
-              signal: abortRef.current.signal,
-            })
+        // 서버에서 retry+CB를 처리하므로 클라이언트는 단일 요청만 수행
+        const response = await fetch('/api/agent/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message, conversationId, uiContext }),
+          signal: abortRef.current.signal,
+        })
 
-            if (!response.ok) throw new Error('Chat request failed')
-            if (!response.body) throw new Error('No response body')
+        if (!response.ok) throw new Error('Chat request failed')
+        if (!response.body) throw new Error('No response body')
 
-            // 성공 시 에러 초기화
-            lastError = null
-
-            const reader = response.body.getReader()
-            const decoder = new TextDecoder()
+        {
+          const reader = response.body.getReader()
+          const decoder = new TextDecoder()
 
             while (true) {
               const { done, value } = await reader.read()
@@ -316,19 +309,6 @@ export function useAgentChat(initialConversationId?: string): UseAgentChatReturn
               }
             }
 
-            // 스트림 처리 성공 - 재시도 루프 탈출
-            break
-          } catch (err) {
-            lastError = err as Error
-            // AbortError는 재시도 없이 즉시 중단
-            if (err instanceof Error && err.name === 'AbortError') break
-            // 마지막 시도가 아니면 다음 attempt로 즉시 진행 (대기 없음)
-          }
-        }
-
-        // 최종 실패 시 에러 상태 설정 (AbortError 제외)
-        if (lastError && lastError.name !== 'AbortError') {
-          setError(lastError.message)
         }
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {
