@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { signIn } from 'next-auth/react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
@@ -12,6 +12,7 @@ import { useFacebookLoginStatus } from '@/presentation/hooks/useFacebookLoginSta
 function LoginForm() {
   const t = useTranslations()
   const searchParams = useSearchParams()
+  const router = useRouter()
   const callbackUrl = searchParams.get('callbackUrl') || '/'
   const urlError = searchParams.get('error')
   const [isLoading, setIsLoading] = useState<string | null>(null)
@@ -23,6 +24,13 @@ function LoginForm() {
     }
     return null
   })
+
+  // URL에서 에러 파라미터를 읽은 후 클리어하여 새로고침 시 에러 재표시 방지
+  useEffect(() => {
+    if (urlError) {
+      router.replace('/login', { scroll: false })
+    }
+  }, [urlError, router])
 
   // Facebook login status check
   const { isConnected: isFacebookConnected } = useFacebookLoginStatus()

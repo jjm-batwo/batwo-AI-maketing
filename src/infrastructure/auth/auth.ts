@@ -85,7 +85,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
   // Only use adapter if database is available
   ...(USE_DATABASE_ADAPTER ? { adapter: PrismaAdapter(prisma) } : {}),
-  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+  // secret은 AUTH_SECRET 환경변수에서 자동 추론 (next-auth가 내부적으로 배열로 변환)
+  // 명시적 string 주입 시 @auth/core의 배열 기대와 불일치하여 state 쿠키 복호화 실패 가능
   session: {
     strategy: 'jwt',
   },
