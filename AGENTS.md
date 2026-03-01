@@ -13,7 +13,7 @@ This document provides comprehensive guidance for AI agents working on the Batwo
 **Key Responsibilities:**
 - Maintain clean architecture layers (domain → application → infrastructure → presentation)
 - Follow TDD strictly: RED → GREEN → REFACTOR
-- Adhere to the Korean project conventions in CLAUDE.md
+- Adhere to the Korean project conventions
 - Ensure TypeScript type safety and Prisma consistency
 - Write E2E tests with Playwright for critical flows
 - Document all changes for the project team
@@ -24,7 +24,7 @@ This document provides comprehensive guidance for AI agents working on the Batwo
 
 **Stack**: Next.js 16.1 + React 19.2 + TypeScript 5.x + PostgreSQL + Prisma 7.x + NextAuth.js v5
 **Pattern**: Clean Architecture with strict layer separation
-**Language**: Primary: TypeScript | Docs: Korean (CLAUDE.md) & English
+**Language**: Primary: TypeScript | Docs: Korean & English
 
 **Key Features**:
 - Meta Ads campaign automation and KPI tracking
@@ -40,8 +40,7 @@ This document provides comprehensive guidance for AI agents working on the Batwo
 
 | File | Purpose | Owner |
 |------|---------|-------|
-| `CLAUDE.md` | Project guidelines, Korean instructions for AI team | 개발팀 |
-| `.claude/CLAUDE.md` | Global oh-my-claudecode settings | System |
+| `AGENTS.md` | Project guidelines and architecture reference | 개발팀 |
 | `package.json` | Dependencies, scripts, Prisma seed config | DevOps |
 | `tsconfig.json` | TypeScript paths, compiler options | DevOps |
 | `next.config.ts` | Next.js configuration (Turbopack, compression) | DevOps |
@@ -60,7 +59,7 @@ This document provides comprehensive guidance for AI agents working on the Batwo
 
 ```
 batwo/
-├── CLAUDE.md                 # Korean project guidelines (MUST READ)
+├── AGENTS.md                 # Project guidelines (MUST READ)
 ├── AGENTS.md                 # This file
 ├── package.json              # Dependencies & scripts
 ├── tsconfig.json             # TypeScript configuration
@@ -74,7 +73,7 @@ batwo/
 ├── docs/                     # Documentation
 ├── scripts/                  # Utility scripts
 ├── public/                   # Static assets
-└── .claude/                  # Claude local config
+└── .opencode/                # OpenCode local config
 ```
 
 ### `/src` - Clean Architecture Layers
@@ -538,7 +537,7 @@ test: add Campaign creation tests
 docs: update AGENTS.md
 ```
 
-See `.claude/CLAUDE.md` for team-specific commit conventions.
+See project conventions for team-specific commit guidelines.
 
 ---
 
@@ -1220,7 +1219,7 @@ npm run warmup:start --interval=60
 
 ### When You Start
 
-1. Read CLAUDE.md (Korean) for project context and conventions
+1. Read AGENTS.md for project context and conventions
 2. Check `git log --oneline -5` for recent patterns
 3. Review existing tests in `tests/` for code style
 4. Refer to this AGENTS.md for architecture guidance
@@ -1247,7 +1246,7 @@ npm run build         # Must succeed
 ### When You Get Stuck
 
 1. Check existing code in that layer (find similar patterns)
-2. Review CLAUDE.md for team conventions
+2. Review AGENTS.md for team conventions
 3. Look at recent commits for examples: `git log --oneline -20`
 4. Run tests to understand expected behavior
 5. Ask questions clearly with context
@@ -1256,7 +1255,7 @@ npm run build         # Must succeed
 
 ## References
 
-- **Project Guide**: `/Users/jm/batwo-maketting service-saas/CLAUDE.md` (Korean)
+- **Project Guide**: `AGENTS.md`
 - **AI Team Guide**: `docs/ai-team/user-guide-ko.md`
 - **Tech Specs**: `docs/deployment/README.md`
 - **Deployment**: `docs/deployment/PRODUCTION_CHECKLIST.md`
