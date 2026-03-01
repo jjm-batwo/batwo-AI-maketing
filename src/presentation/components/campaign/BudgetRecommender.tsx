@@ -389,13 +389,15 @@ export function BudgetRecommender({
 /**
  * 간소화된 예산 추천 배지 (기존 폼에서 사용)
  */
+interface BudgetRecommendationBadgeProps {
+  industry: Industry
+  businessScale: BusinessScale
+}
+
 export function BudgetRecommendationBadge({
   industry,
   businessScale,
-}: {
-  industry: Industry
-  businessScale: BusinessScale
-}) {
+}: BudgetRecommendationBadgeProps) {
   const budgetService = useMemo(() => new BudgetRecommendationService(), [])
 
   const recommendation = useMemo(() => {

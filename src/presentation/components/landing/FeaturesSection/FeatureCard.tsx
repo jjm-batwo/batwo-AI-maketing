@@ -1,5 +1,6 @@
 import { memo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 import type { Feature } from './featuresData'
 
 interface FeatureCardProps {
@@ -8,16 +9,18 @@ interface FeatureCardProps {
   isIntersecting: boolean
 }
 
-export const FeatureCard = memo(function FeatureCard({ feature, index, isIntersecting }: FeatureCardProps) {
+export const FeatureCard = memo(function FeatureCard({
+  feature,
+  index,
+  isIntersecting,
+}: FeatureCardProps) {
   const Icon = feature.icon
-
   return (
     <Card
-      className={`group relative border-0 shadow-sm transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-3 hover:border-primary/30 cursor-default overflow-hidden ${
+      className={cn(
+        'group relative border-0 shadow-sm transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-3 hover:border-primary/30 cursor-default overflow-hidden',
         isIntersecting ? 'animate-fade-in-up' : 'opacity-0'
-      }`}
-      style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'backwards' }}
-      role="listitem"
+      )}
     >
       {/* Top accent line */}
       <div
@@ -29,7 +32,6 @@ export const FeatureCard = memo(function FeatureCard({ feature, index, isInterse
         className="absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
         aria-hidden="true"
       />
-
       <CardHeader className="relative z-10">
         <div
           className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 transition-all duration-300 group-hover:bg-primary/20 group-hover:scale-110"

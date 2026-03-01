@@ -382,15 +382,9 @@ docs/
 ├── ai-team/
 │   ├── user-guide-ko.md  # Korean guide for AI team
 │   └── tcrei-templates.md
-├── meta-app-review/
-│   ├── META_APP_REVIEW_GUIDE.md
-│   ├── SUBMISSION_NOTES.md
-│   ├── RECORDING_INSTRUCTIONS.md
-│   ├── RECORDING_SETUP.md
-│   └── QUICK_START.md
 ├── ux-reports/
 │   └── audit-2026-01-13.md
-└── meta-app-review-plan.md
+└── meta-app-review-plan.md  # (삭제됨 - App Review 통과 완료)
 ```
 
 ---
@@ -1259,7 +1253,6 @@ npm run build         # Must succeed
 - **AI Team Guide**: `docs/ai-team/user-guide-ko.md`
 - **Tech Specs**: `docs/deployment/README.md`
 - **Deployment**: `docs/deployment/PRODUCTION_CHECKLIST.md`
-- **Meta App Review**: `docs/meta-app-review/QUICK_START.md`
 
 ---
 

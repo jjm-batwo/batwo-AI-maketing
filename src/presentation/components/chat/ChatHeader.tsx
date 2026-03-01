@@ -21,6 +21,7 @@ export function ChatHeader({ title, onNewChat, onClose }: ChatHeaderProps) {
       <div className="flex items-center gap-1">
         <button
           onClick={onNewChat}
+          aria-label="새 대화 시작"
           className={cn(
             'flex h-8 w-8 items-center justify-center rounded-lg',
             'text-muted-foreground hover:text-foreground hover:bg-muted',
@@ -32,6 +33,7 @@ export function ChatHeader({ title, onNewChat, onClose }: ChatHeaderProps) {
         </button>
         <button
           onClick={onClose}
+          aria-label="채팅 닫기"
           className={cn(
             'flex h-8 w-8 items-center justify-center rounded-lg',
             'text-muted-foreground hover:text-foreground hover:bg-muted',

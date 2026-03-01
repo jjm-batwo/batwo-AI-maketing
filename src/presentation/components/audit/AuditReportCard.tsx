@@ -1,6 +1,7 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 
 interface AuditReportCardProps {
@@ -12,13 +13,16 @@ interface AuditReportCardProps {
   activeCampaigns: number
 }
 
-const gradeColors: Record<string, {
-  bg: string
-  text: string
-  border: string
-  stroke: string
-  badgeBg: string
-}> = {
+const gradeColors: Record<
+  string,
+  {
+    bg: string
+    text: string
+    border: string
+    stroke: string
+    badgeBg: string
+  }
+> = {
   A: {
     bg: 'bg-emerald-50',
     text: 'text-emerald-600',
@@ -72,13 +76,7 @@ function ScoreGauge({ score, grade }: { score: number; grade: string }) {
 
   return (
     <div className="relative inline-flex items-center justify-center" aria-hidden="true">
-      <svg
-        width="140"
-        height="140"
-        viewBox="0 0 140 140"
-        className="-rotate-90"
-        aria-hidden="true"
-      >
+      <svg width="140" height="140" viewBox="0 0 140 140" className="-rotate-90" aria-hidden="true">
         {/* 배경 트랙 */}
         <circle
           cx="70"
@@ -99,12 +97,12 @@ function ScoreGauge({ score, grade }: { score: number; grade: string }) {
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={dashOffset}
-          className={`${colors.stroke} transition-all duration-700 ease-out`}
+          className={cn(colors.stroke, 'transition-all duration-700 ease-out')}
         />
       </svg>
       {/* 중앙 텍스트 */}
       <div className="absolute flex flex-col items-center justify-center">
-        <span className={`text-3xl font-bold leading-none ${colors.text}`}>{score}</span>
+        <span className={cn('text-3xl font-bold leading-none', colors.text)}>{score}</span>
         <span className="text-xs text-muted-foreground mt-1">/ 100</span>
       </div>
     </div>
@@ -122,13 +120,13 @@ export function AuditReportCard({
   const colors = gradeColors[grade] ?? gradeColors['C']
 
   return (
-    <Card className={`w-full border-2 ${colors.border} ${colors.bg}`}>
+    <Card className={cn('w-full border-2', colors.border, colors.bg)}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <CardTitle className="text-xl font-bold text-foreground">광고 계정 종합 진단</CardTitle>
           <Badge
             variant="outline"
-            className={`text-lg font-bold px-3 py-1 ${colors.badgeBg} border`}
+            className={cn('text-lg font-bold px-3 py-1', colors.badgeBg, 'border')}
             aria-label={`등급 ${grade}`}
           >
             {grade}등급
@@ -141,7 +139,7 @@ export function AuditReportCard({
         <div className="flex flex-col sm:flex-row items-center gap-6">
           <div className="flex flex-col items-center gap-2">
             <ScoreGauge score={overall} grade={grade} />
-            <p className={`text-sm font-semibold ${colors.text}`}>종합 점수</p>
+            <p className={cn('text-sm font-semibold', colors.text)}>종합 점수</p>
           </div>
 
           {/* 주요 지표 */}

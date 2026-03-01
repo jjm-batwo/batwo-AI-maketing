@@ -1,3 +1,5 @@
+'use client'
+
 import { memo, useMemo } from 'react'
 import { Star } from 'lucide-react'
 

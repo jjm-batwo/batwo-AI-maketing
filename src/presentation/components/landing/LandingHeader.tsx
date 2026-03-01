@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 import { Menu, X } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 
 const navLinks = [
@@ -33,7 +34,6 @@ export function LandingHeader() {
   // Focus trap for mobile menu
   useEffect(() => {
     if (!isMenuOpen || !menuRef.current) return
-
     const menu = menuRef.current
     const focusableElements = menu.querySelectorAll<HTMLElement>(
       'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
@@ -78,12 +78,13 @@ export function LandingHeader() {
       <a href="#main-content" className="skip-to-content">
         Skip to main content
       </a>
-
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled || isMenuOpen
-          ? 'bg-white border-b border-gray-200'
-          : 'bg-transparent border-transparent'
-          }`}
+        className={cn(
+          'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
+          scrolled || isMenuOpen
+            ? 'bg-white border-b border-gray-200'
+            : 'bg-transparent border-transparent'
+        )}
       >
         <div className="container mx-auto px-4">
           <div className="relative flex h-16 md:h-20 items-center justify-between">
@@ -121,16 +122,28 @@ export function LandingHeader() {
                 <div className="h-10 w-24 bg-muted animate-pulse rounded-md" />
               ) : isLoggedIn ? (
                 <>
-                  <Button variant="ghost" asChild className="hover:bg-primary/5 text-muted-foreground hover:text-primary">
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className="hover:bg-primary/5 text-muted-foreground hover:text-primary"
+                  >
                     <Link href="/campaigns">대시보드</Link>
                   </Button>
-                  <Button variant="outline" asChild className="border-primary/20 hover:border-primary/50 hover:bg-primary/5">
+                  <Button
+                    variant="outline"
+                    asChild
+                    className="border-primary/20 hover:border-primary/50 hover:bg-primary/5"
+                  >
                     <Link href="/api/auth/signout">로그아웃</Link>
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button variant="ghost" asChild className="hover:bg-primary/5 text-muted-foreground hover:text-primary">
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className="hover:bg-primary/5 text-muted-foreground hover:text-primary"
+                  >
                     <Link href="/login">로그인</Link>
                   </Button>
                   <Button asChild className="shadow-sm transition-all hover:-translate-y-0.5">
@@ -157,8 +170,10 @@ export function LandingHeader() {
           <div
             ref={menuRef}
             id="mobile-menu"
-            className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-96 opacity-100 pb-6' : 'max-h-0 opacity-0'
-              }`}
+            className={cn(
+              'md:hidden overflow-hidden transition-all duration-300 ease-in-out',
+              isMenuOpen ? 'max-h-96 opacity-100 pb-6' : 'max-h-0 opacity-0'
+            )}
             aria-hidden={!isMenuOpen}
             role="navigation"
             aria-label="Mobile navigation menu"
@@ -188,7 +203,11 @@ export function LandingHeader() {
                 </>
               ) : (
                 <>
-                  <Button variant="outline" className="w-full justify-center border-primary/20" asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-center border-primary/20"
+                    asChild
+                  >
                     <Link href="/login">로그인</Link>
                   </Button>
                   <Button className="w-full justify-center shadow-sm bg-primary border-0" asChild>

@@ -72,6 +72,7 @@ export function ChatMessageFeedback({ messageId, onFeedback }: ChatMessageFeedba
         <form onSubmit={handleCommentSubmit} className="flex flex-col gap-2">
           <textarea
             data-testid="feedback-comment"
+            aria-label="피드백 입력"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="어떤 점이 아쉬우셨나요? (선택사항)"
