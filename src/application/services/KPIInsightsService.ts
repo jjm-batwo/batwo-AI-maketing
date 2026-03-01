@@ -6,15 +6,16 @@
 
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
+import type { InsightCategory } from '@domain/types/InsightCategory'
 import type { IAIService } from '@application/ports/IAIService'
 import type { ICacheService } from '@application/ports/ICacheService'
+import type { IInsightHistoryRepository } from '@domain/repositories/IInsightHistoryRepository'
 
 // ============================================================================
 // Types
 // ============================================================================
 
 export type InsightPriority = 'critical' | 'high' | 'medium' | 'low'
-export type InsightCategory = 'budget' | 'performance' | 'opportunity' | 'warning' | 'trend'
 
 export interface ActionButton {
   label: string
@@ -38,6 +39,14 @@ export interface KPIInsight {
   campaignName?: string
   createdAt: Date
   aiDescription?: string
+  rootCause?: string
+  recommendations?: string[]
+  forecast?: {
+    direction: 'improving' | 'declining' | 'stable'
+    confidence: number
+    reasoning: string
+  }
+  actionUrl?: string
 }
 
 export interface KPIInsightsResult {
@@ -99,12 +108,21 @@ export interface LiveDataOverrides {
 // ============================================================================
 
 export class KPIInsightsService {
+  private insightHistoryRepository?: IInsightHistoryRepository
+
   constructor(
     private readonly kpiRepository: IKPIRepository,
     private readonly campaignRepository: ICampaignRepository,
     private readonly aiService?: IAIService,
     private readonly cacheService?: ICacheService
   ) {}
+
+  /**
+   * Optional setter for InsightHistory repository (avoids breaking existing constructor calls)
+   */
+  setInsightHistoryRepository(repo: IInsightHistoryRepository): void {
+    this.insightHistoryRepository = repo
+  }
 
   /**
    * 사용자의 모든 캠페인에 대한 KPI 인사이트 생성
@@ -183,6 +201,27 @@ export class KPIInsightsService {
     const topInsights = insights.slice(0, 10)
     const enhancedInsights = await this.enhanceWithLLM(topInsights, userId)
 
+    // Fire-and-forget: persist insights to history (non-blocking)
+    if (this.insightHistoryRepository && userId) {
+      for (const insight of enhancedInsights) {
+        this.insightHistoryRepository.save({
+          userId,
+          campaignId: insight.campaignId,
+          category: insight.category,
+          priority: insight.priority,
+          title: insight.title,
+          description: insight.aiDescription ?? insight.description,
+          rootCause: insight.rootCause,
+          metadata: {
+            recommendations: insight.recommendations,
+            forecast: insight.forecast,
+          },
+        }).catch((e: unknown) => {
+          console.warn('[KPIInsightsService] InsightHistory save failed (non-blocking):', e)
+        })
+      }
+    }
+
     return {
       insights: enhancedInsights,
       summary: {
@@ -205,29 +244,157 @@ export class KPIInsightsService {
     const cacheKey = `kpi-insights-llm:${userId}`
 
     try {
-      const hasCritical = insights.some((i) => i.priority === 'critical')
-      const model = hasCritical ? 'gpt-4o' : 'gpt-4o-mini'
+      const hasHighPriority = insights.some(
+        (i) => i.priority === 'critical' || i.priority === 'high'
+      )
+      const model = hasHighPriority ? 'gpt-4o' : 'gpt-4o-mini'
+
+      const parseJsonResponse = (response: string): unknown => {
+        const jsonStr = response
+          .replace(/```json\n?/g, '')
+          .replace(/```\n?/g, '')
+          .trim()
+        return JSON.parse(jsonStr)
+      }
+
+      const parseStructuredResponse = (response: string) => {
+        let parsed: unknown
+        try {
+          parsed = parseJsonResponse(response)
+        } catch {
+          return null
+        }
+
+        if (!Array.isArray(parsed)) {
+          return null
+        }
+
+        const normalized = parsed
+          .map((item) => {
+            const record = item as {
+              id?: unknown
+              rootCause?: unknown
+              recommendations?: unknown
+              forecast?: {
+                direction?: unknown
+                confidence?: unknown
+                reasoning?: unknown
+              }
+            }
+
+            const direction = record.forecast?.direction
+            if (
+              typeof record.id !== 'string' ||
+              typeof record.rootCause !== 'string' ||
+              !Array.isArray(record.recommendations) ||
+              !record.recommendations.every((rec) => typeof rec === 'string') ||
+              (direction !== 'improving' && direction !== 'declining' && direction !== 'stable') ||
+              typeof record.forecast?.confidence !== 'number' ||
+              typeof record.forecast.reasoning !== 'string'
+            ) {
+              return null
+            }
+
+            return {
+              id: record.id,
+              rootCause: record.rootCause,
+              recommendations: record.recommendations,
+              forecast: {
+                direction,
+                confidence: Math.max(0, Math.min(100, Math.round(record.forecast.confidence))),
+                reasoning: record.forecast.reasoning,
+              },
+            }
+          })
+          .filter(
+            (
+              item
+            ): item is {
+              id: string
+              rootCause: string
+              recommendations: string[]
+              forecast: {
+                direction: 'improving' | 'declining' | 'stable'
+                confidence: number
+                reasoning: string
+              }
+            } => item !== null
+          )
+
+        return normalized
+      }
+
+      const parseBasicResponse = (response: string) => {
+        let parsed: unknown
+        try {
+          parsed = parseJsonResponse(response)
+        } catch {
+          return null
+        }
+
+        if (!Array.isArray(parsed)) {
+          return null
+        }
+
+        const normalized = parsed
+          .map((item) => {
+            const record = item as { id?: unknown; aiDescription?: unknown }
+            if (typeof record.id !== 'string' || typeof record.aiDescription !== 'string') {
+              return null
+            }
+            return { id: record.id, aiDescription: record.aiDescription }
+          })
+          .filter((item): item is { id: string; aiDescription: string } => item !== null)
+
+        return normalized.length > 0 ? normalized : null
+      }
 
       const fetchLLM = async (): Promise<KPIInsight[]> => {
         const systemPrompt =
-          '당신은 디지털 마케팅 KPI 분석 전문가입니다. 캠페인 성과 데이터를 분석하여 실행 가능한 인사이트를 한국어로 제공합니다. 간결하고 액션 중심으로 작성하세요.'
-        const userPrompt = `다음 인사이트들을 분석하고 각각에 aiDescription을 추가해 주세요. 응답은 반드시 다음 형식의 JSON 배열이어야 합니다: [{"id": "...", "aiDescription": "..."}]\n\n인사이트:\n${JSON.stringify(insights.map((i) => ({ id: i.id, title: i.title, description: i.description, priority: i.priority, category: i.category })))}\n\n각 aiDescription은 한국어로 50자 이내의 실행 가능한 설명으로 작성하세요.`
+          '당신은 한국 이커머스 광고 성과를 분석하는 디지털 마케팅 KPI 전략가입니다. 입력 인사이트를 근거 기반으로 해석하고, 반드시 유효한 JSON만 반환하세요.'
+        const structuredUserPrompt = `다음 KPI 인사이트를 분석해 각 항목에 대한 구조화된 분석을 작성하세요.\n\n입력 인사이트:\n${JSON.stringify(insights.map((i) => ({ id: i.id, title: i.title, description: i.description, priority: i.priority, category: i.category, metric: i.metric, currentValue: i.currentValue, changePercent: i.changePercent })))}\n\n반환 형식(반드시 JSON 배열, 마크다운 금지):\n[{\n  "id": "인사이트 ID",\n  "rootCause": "근본 원인 분석(1문장)",\n  "recommendations": ["즉시 실행 가능한 액션 1", "즉시 실행 가능한 액션 2"],\n  "forecast": {\n    "direction": "improving | declining | stable",\n    "confidence": 0-100 숫자,\n    "reasoning": "예측 근거(1문장)"\n  }\n}]`
 
-        const response = await aiService.chatCompletion(systemPrompt, userPrompt, {
+        const basicFallbackUserPrompt = `다음 인사이트들을 분석하고 각각에 aiDescription을 추가해 주세요. 응답은 반드시 다음 형식의 JSON 배열이어야 합니다: [{"id": "...", "aiDescription": "..."}]\n\n인사이트:\n${JSON.stringify(insights.map((i) => ({ id: i.id, title: i.title, description: i.description, priority: i.priority, category: i.category })))}\n\n각 aiDescription은 한국어로 50자 이내의 실행 가능한 설명으로 작성하세요.`
+
+        const response = await aiService.chatCompletion(systemPrompt, structuredUserPrompt, {
           model,
           temperature: 0.4,
-          maxTokens: 1000,
+          maxTokens: 3000,
         })
 
         try {
-          const jsonStr = response
-            .replace(/```json\n?/g, '')
-            .replace(/```\n?/g, '')
-            .trim()
-          const enhanced = JSON.parse(jsonStr) as Array<{ id: string; aiDescription: string }>
+          const structured = parseStructuredResponse(response)
+          if (structured) {
+            return insights.map((insight) => {
+              const match = structured.find((e) => e.id === insight.id)
+              return match
+                ? {
+                    ...insight,
+                    rootCause: match.rootCause,
+                    recommendations: match.recommendations,
+                    forecast: match.forecast,
+                  }
+                : insight
+            })
+          }
+
+          const fallbackResponse = await aiService.chatCompletion(
+            systemPrompt,
+            basicFallbackUserPrompt,
+            {
+              model,
+              temperature: 0.4,
+              maxTokens: 3000,
+            }
+          )
+          const basic = parseBasicResponse(fallbackResponse)
+
+          if (!basic) {
+            return insights
+          }
 
           return insights.map((insight) => {
-            const match = enhanced.find((e) => e.id === insight.id)
+            const match = basic.find((e) => e.id === insight.id)
             return match?.aiDescription
               ? { ...insight, aiDescription: match.aiDescription }
               : insight
@@ -397,6 +564,7 @@ export class KPIInsightsService {
         },
         campaignId: data.campaignId,
         campaignName: data.campaignName,
+        actionUrl: `/campaigns/edit/${data.campaignId}?section=budget`,
         createdAt: now,
       })
     } else if (budgetPace > budgetFastThreshold) {
@@ -418,6 +586,7 @@ export class KPIInsightsService {
         },
         campaignId: data.campaignId,
         campaignName: data.campaignName,
+        actionUrl: `/campaigns/edit/${data.campaignId}?section=budget`,
         createdAt: now,
       })
     } else if (budgetPace < -30 && data.currentHour >= 12) {
@@ -439,6 +608,7 @@ export class KPIInsightsService {
         },
         campaignId: data.campaignId,
         campaignName: data.campaignName,
+        actionUrl: `/campaigns/${data.campaignId}`,
         createdAt: now,
       })
     }
@@ -464,6 +634,7 @@ export class KPIInsightsService {
           timeContext: '어제 동시간 대비',
           campaignId: data.campaignId,
           campaignName: data.campaignName,
+          actionUrl: `/campaigns/${data.campaignId}`,
           createdAt: now,
         })
       }
@@ -492,6 +663,7 @@ export class KPIInsightsService {
           },
           campaignId: data.campaignId,
           campaignName: data.campaignName,
+          actionUrl: `/campaigns/${data.campaignId}`,
           createdAt: now,
         })
       } else if (ctrChange > 0.5) {
@@ -508,6 +680,7 @@ export class KPIInsightsService {
           timeContext,
           campaignId: data.campaignId,
           campaignName: data.campaignName,
+          actionUrl: `/campaigns/${data.campaignId}`,
           createdAt: now,
         })
       }
@@ -536,6 +709,7 @@ export class KPIInsightsService {
           },
           campaignId: data.campaignId,
           campaignName: data.campaignName,
+          actionUrl: `/campaigns/${data.campaignId}`,
           createdAt: now,
         })
       } else if (data.todayROAS > data.last7DaysAvgRoas * 1.3) {
@@ -557,6 +731,7 @@ export class KPIInsightsService {
           },
           campaignId: data.campaignId,
           campaignName: data.campaignName,
+          actionUrl: `/campaigns/edit/${data.campaignId}?section=budget`,
           createdAt: now,
         })
       }

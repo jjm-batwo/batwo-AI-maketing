@@ -2,8 +2,23 @@
 
 import { useEffect, useState } from 'react'
 import { X, TrendingUp, AlertTriangle, Lightbulb, Target } from 'lucide-react'
-import type { ProactiveInsight } from '@presentation/hooks/useProactiveInsights'
-import type { AnalysisTaskType } from '@application/services/BackgroundAnalysisService'
+
+type AnalysisTaskType = 'anomaly' | 'trend' | 'opportunity' | 'recommendation'
+
+interface ProactiveInsight {
+  id: string
+  type: AnalysisTaskType
+  title: string
+  message: string
+  confidence: number
+  action?: {
+    label: string
+    onClick: () => void
+  }
+  dismissedAt?: Date
+  seenAt?: Date
+  createdAt: Date
+}
 
 // ============================================================================
 // Types
@@ -38,11 +53,7 @@ interface AmbientInsightToastProps {
  * />
  * ```
  */
-export function AmbientInsightToast({
-  insight,
-  onDismiss,
-  onSeen,
-}: AmbientInsightToastProps) {
+export function AmbientInsightToast({ insight, onDismiss, onSeen }: AmbientInsightToastProps) {
   const [isVisible, setIsVisible] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
 
@@ -113,20 +124,14 @@ export function AmbientInsightToast({
             {/* Text Content */}
             <div className="flex-1 min-w-0">
               {/* Title */}
-              <h3 className="text-sm font-semibold text-gray-900 mb-1">
-                {insight.title}
-              </h3>
+              <h3 className="text-sm font-semibold text-gray-900 mb-1">{insight.title}</h3>
 
               {/* Message */}
-              <p className="text-sm text-gray-700 leading-relaxed">
-                {insight.message}
-              </p>
+              <p className="text-sm text-gray-700 leading-relaxed">{insight.message}</p>
 
               {/* Confidence Badge */}
               <div className="mt-2 flex items-center gap-2">
-                <span className="text-xs text-gray-500">
-                  신뢰도: {insight.confidence}%
-                </span>
+                <span className="text-xs text-gray-500">신뢰도: {insight.confidence}%</span>
                 {insight.confidence >= 85 && (
                   <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                     높음
@@ -215,8 +220,7 @@ function getTypeConfig(type: AnalysisTaskType): TypeConfig {
       iconBgColor: 'bg-amber-100',
       iconColor: 'text-amber-600',
       confidenceColor: 'bg-amber-500',
-      actionButtonClass:
-        'bg-amber-100 text-amber-700 hover:bg-amber-200',
+      actionButtonClass: 'bg-amber-100 text-amber-700 hover:bg-amber-200',
     },
     trend: {
       icon: TrendingUp,
@@ -234,8 +238,7 @@ function getTypeConfig(type: AnalysisTaskType): TypeConfig {
       iconBgColor: 'bg-green-100',
       iconColor: 'text-green-600',
       confidenceColor: 'bg-green-500',
-      actionButtonClass:
-        'bg-green-100 text-green-700 hover:bg-green-200',
+      actionButtonClass: 'bg-green-100 text-green-700 hover:bg-green-200',
     },
     recommendation: {
       icon: Lightbulb,
@@ -244,8 +247,7 @@ function getTypeConfig(type: AnalysisTaskType): TypeConfig {
       iconBgColor: 'bg-purple-100',
       iconColor: 'text-purple-600',
       confidenceColor: 'bg-purple-500',
-      actionButtonClass:
-        'bg-purple-100 text-purple-700 hover:bg-purple-200',
+      actionButtonClass: 'bg-purple-100 text-purple-700 hover:bg-purple-200',
     },
   }
 

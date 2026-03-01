@@ -1,10 +1,17 @@
 'use client'
 
-import { memo, useMemo } from 'react'
+import { memo, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import {
   Sparkles,
   TrendingUp,
@@ -18,6 +25,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
+import { InsightDetailModal } from './InsightDetailModal'
 
 // ============================================================================
 // Types
@@ -46,6 +54,15 @@ interface Insight {
   timeContext?: string
   action?: InsightAction
   campaignName?: string
+  campaignId?: string
+  rootCause?: string
+  recommendations?: string[]
+  forecast?: {
+    direction: 'improving' | 'declining' | 'stable'
+    confidence: number
+    reasoning: string
+  }
+  actionUrl?: string
 }
 
 interface AIInsightsProps {
@@ -59,11 +76,14 @@ interface AIInsightsProps {
 // Config
 // ============================================================================
 
-const typeConfig: Record<InsightType, {
-  icon: React.ComponentType<{ className?: string }>
-  className: string
-  darkClassName: string
-}> = {
+const typeConfig: Record<
+  InsightType,
+  {
+    icon: React.ComponentType<{ className?: string }>
+    className: string
+    darkClassName: string
+  }
+> = {
   opportunity: {
     icon: TrendingUp,
     className: 'bg-blue-50 border-blue-200 text-blue-700',
@@ -86,10 +106,13 @@ const typeConfig: Record<InsightType, {
   },
 }
 
-const priorityConfig: Record<InsightPriority, {
-  label: string
-  className: string
-}> = {
+const priorityConfig: Record<
+  InsightPriority,
+  {
+    label: string
+    className: string
+  }
+> = {
   critical: {
     label: '긴급',
     className: 'bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300',
@@ -146,6 +169,32 @@ export const AIInsights = memo(function AIInsights({
   const t = useTranslations('aiInsights')
   const insights = useMemo(() => providedInsights ?? [], [providedInsights])
 
+  const [filterType, setFilterType] = useState<string>('')
+  const [filterPriority, setFilterPriority] = useState<string>('')
+  const [filterCampaign, setFilterCampaign] = useState<string>('')
+  const [selectedInsight, setSelectedInsight] = useState<Insight | null>(null)
+
+  const uniqueCampaigns = useMemo(() => {
+    const seen = new Set<string>()
+    const campaigns: { id: string; name: string }[] = []
+    insights.forEach((insight) => {
+      if (insight.campaignId && !seen.has(insight.campaignId)) {
+        seen.add(insight.campaignId)
+        campaigns.push({ id: insight.campaignId, name: insight.campaignName || insight.campaignId })
+      }
+    })
+    return campaigns
+  }, [insights])
+
+  const filteredInsights = useMemo(() => {
+    return insights.filter((insight) => {
+      if (filterType && insight.type !== filterType) return false
+      if (filterPriority && insight.priority !== filterPriority) return false
+      if (filterCampaign && insight.campaignId !== filterCampaign) return false
+      return true
+    })
+  }, [insights, filterType, filterPriority, filterCampaign])
+
   if (isLoading) {
     return (
       <Card className={className}>
@@ -193,9 +242,7 @@ export const AIInsights = memo(function AIInsights({
         <CardContent>
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <Sparkles className="h-12 w-12 text-muted-foreground/30 mb-4" />
-            <p className="text-sm text-muted-foreground">
-              {t('empty')}
-            </p>
+            <p className="text-sm text-muted-foreground">{t('empty')}</p>
           </div>
         </CardContent>
       </Card>
@@ -219,10 +266,73 @@ export const AIInsights = memo(function AIInsights({
             </Button>
           )}
         </div>
+        {/* Filter Row */}
+        <div className="flex items-center gap-2 mt-2 flex-wrap">
+          <Select value={filterType || 'all-types'} onValueChange={(v) => setFilterType(v === 'all-types' ? '' : v)}>
+            <SelectTrigger data-testid="filter-category" className="h-7 text-xs w-[120px]">
+              <SelectValue placeholder="카테고리" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all-types">전체</SelectItem>
+              <SelectItem value="opportunity">기회</SelectItem>
+              <SelectItem value="warning">경고</SelectItem>
+              <SelectItem value="tip">팁</SelectItem>
+              <SelectItem value="success">성과</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={filterPriority || 'all-priorities'} onValueChange={(v) => setFilterPriority(v === 'all-priorities' ? '' : v)}>
+            <SelectTrigger data-testid="filter-priority" className="h-7 text-xs w-[120px]">
+              <SelectValue placeholder="우선순위" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all-priorities">전체</SelectItem>
+              <SelectItem value="critical">긴급</SelectItem>
+              <SelectItem value="high">높음</SelectItem>
+              <SelectItem value="medium">보통</SelectItem>
+              <SelectItem value="low">낮음</SelectItem>
+            </SelectContent>
+          </Select>
+          {uniqueCampaigns.length > 0 && (
+            <Select value={filterCampaign || 'all-campaigns'} onValueChange={(v) => setFilterCampaign(v === 'all-campaigns' ? '' : v)}>
+              <SelectTrigger data-testid="filter-campaign" className="h-7 text-xs w-[140px]">
+                <SelectValue placeholder="캠페인" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all-campaigns">전체</SelectItem>
+                {uniqueCampaigns.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          {(filterType || filterPriority || filterCampaign) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              data-testid="filter-reset"
+              className="h-7 text-xs px-2"
+              onClick={() => {
+                setFilterType('')
+                setFilterPriority('')
+                setFilterCampaign('')
+              }}
+            >
+              초기화
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
-          {insights.map((insight) => {
+        <div className="space-y-2">
+          {filteredInsights.length === 0 && insights.length > 0 && (
+            <div
+              className="text-center py-8 text-sm text-muted-foreground"
+              data-testid="filter-empty-state"
+            >
+              필터 결과가 없습니다
+            </div>
+          )}
+          {filteredInsights.map((insight) => {
             const config = typeConfig[insight.type]
             const Icon = config.icon
             const priority = insight.priority ? priorityConfig[insight.priority] : null
@@ -232,8 +342,10 @@ export const AIInsights = memo(function AIInsights({
             return (
               <div
                 key={insight.id}
+                data-testid={`insight-card-${insight.id}`}
+                onClick={() => setSelectedInsight(insight)}
                 className={cn(
-                  'rounded-lg border p-3 transition-all hover:shadow-sm',
+                  'rounded-lg border p-3 transition-all hover:shadow-sm cursor-pointer',
                   config.className,
                   config.darkClassName
                 )}
@@ -276,10 +388,14 @@ export const AIInsights = memo(function AIInsights({
                           </span>
                         )}
                         {hasChange && (
-                          <span className={cn(
-                            'flex items-center text-xs font-medium',
-                            isPositiveChange ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-                          )}>
+                          <span
+                            className={cn(
+                              'flex items-center text-xs font-medium',
+                              isPositiveChange
+                                ? 'text-green-600 dark:text-green-400'
+                                : 'text-red-600 dark:text-red-400'
+                            )}
+                          >
                             {isPositiveChange ? (
                               <ArrowUpRight className="h-3 w-3" />
                             ) : (
@@ -293,7 +409,7 @@ export const AIInsights = memo(function AIInsights({
 
                     {/* Action Button */}
                     {insight.action && (
-                      <div className="mt-2">
+                      <div className="mt-2" onClick={(e) => e.stopPropagation()}>
                         <Button variant="outline" size="sm" className="h-6 text-xs px-2" asChild>
                           <Link href={insight.action.href}>{insight.action.label}</Link>
                         </Button>
@@ -306,6 +422,13 @@ export const AIInsights = memo(function AIInsights({
           })}
         </div>
       </CardContent>
+      <InsightDetailModal
+        insight={selectedInsight}
+        open={selectedInsight !== null}
+        onOpenChange={(open) => {
+          if (!open) setSelectedInsight(null)
+        }}
+      />
     </Card>
   )
 })

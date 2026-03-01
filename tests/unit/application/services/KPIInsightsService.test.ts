@@ -69,7 +69,9 @@ describe('KPIInsightsService', () => {
 
       // Mock KPI 데이터 생성
       const now = new Date()
-      const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0))
+      const todayStart = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0)
+      )
 
       for (const campaign of campaigns) {
         const kpi = KPI.create({
@@ -93,9 +95,9 @@ describe('KPIInsightsService', () => {
 
       // Then: 각 호출은 모든 캠페인 ID를 배치로 받음
       const callArgs = aggregateByIdsSpy.mock.calls
-      expect(callArgs[0][0]).toEqual(campaigns.map(c => c.id)) // today
-      expect(callArgs[1][0]).toEqual(campaigns.map(c => c.id)) // yesterday
-      expect(callArgs[2][0]).toEqual(campaigns.map(c => c.id)) // last7days
+      expect(callArgs[0][0]).toEqual(campaigns.map((c) => c.id)) // today
+      expect(callArgs[1][0]).toEqual(campaigns.map((c) => c.id)) // yesterday
+      expect(callArgs[2][0]).toEqual(campaigns.map((c) => c.id)) // last7days
     })
 
     it('should_generate_budget_depleting_insight_when_spend_exceeds_90_percent', async () => {
@@ -118,7 +120,9 @@ describe('KPIInsightsService', () => {
       await campaignRepository.save(campaign)
 
       const now = new Date()
-      const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0))
+      const todayStart = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0)
+      )
 
       const kpi = KPI.create({
         campaignId: campaign.id,
@@ -136,7 +140,7 @@ describe('KPIInsightsService', () => {
       const result = await service.generateInsights(userId)
 
       // Then: critical 인사이트 생성
-      const budgetInsight = result.insights.find(i => i.id.includes('budget-depleting'))
+      const budgetInsight = result.insights.find((i) => i.id.includes('budget-depleting'))
       expect(budgetInsight).toBeDefined()
       expect(budgetInsight?.priority).toBe('critical')
       expect(budgetInsight?.category).toBe('budget')
@@ -162,7 +166,9 @@ describe('KPIInsightsService', () => {
       await campaignRepository.save(campaign)
 
       const now = new Date()
-      const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0))
+      const todayStart = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0)
+      )
       const yesterdayStart = new Date(todayStart)
       yesterdayStart.setUTCDate(yesterdayStart.getUTCDate() - 1)
       const last7DaysStart = new Date(todayStart)
@@ -202,7 +208,7 @@ describe('KPIInsightsService', () => {
       const result = await service.generateInsights(userId)
 
       // Then: ROAS 손익분기점 미달 인사이트
-      const roasInsight = result.insights.find(i => i.id.includes('roas-below'))
+      const roasInsight = result.insights.find((i) => i.id.includes('roas-below'))
       expect(roasInsight).toBeDefined()
       expect(roasInsight?.priority).toBe('critical')
       expect(roasInsight?.category).toBe('warning')
@@ -259,7 +265,9 @@ describe('KPIInsightsService', () => {
       await campaignRepository.save(mediumCampaign)
 
       const now = new Date()
-      const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0))
+      const todayStart = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0)
+      )
 
       // Critical 캠페인: 95% 소진
       const criticalKPI = KPI.create({
@@ -291,7 +299,7 @@ describe('KPIInsightsService', () => {
       const result = await service.generateInsights(userId)
 
       // Then: critical > high > medium > low 순서
-      const priorities = result.insights.map(i => i.priority)
+      const priorities = result.insights.map((i) => i.priority)
       const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 }
 
       for (let i = 0; i < priorities.length - 1; i++) {
@@ -349,7 +357,17 @@ describe('KPIInsightsService', () => {
 
         // 오늘: budgetUsagePercent = 42%, expectedUsagePercent = 25%
         // budgetPace = 17 → 15 < 17 < 20 (동적 threshold에서만 트리거)
-        const todayMap = new Map<string, { totalImpressions: number; totalClicks: number; totalLinkClicks: number; totalConversions: number; totalSpend: number; totalRevenue: number }>()
+        const todayMap = new Map<
+          string,
+          {
+            totalImpressions: number
+            totalClicks: number
+            totalLinkClicks: number
+            totalConversions: number
+            totalSpend: number
+            totalRevenue: number
+          }
+        >()
         todayMap.set(campaignId, {
           totalImpressions: 5000,
           totalClicks: 250,
@@ -358,7 +376,17 @@ describe('KPIInsightsService', () => {
           totalSpend: 42000,
           totalRevenue: 84000,
         })
-        const yesterdayMap = new Map<string, { totalImpressions: number; totalClicks: number; totalLinkClicks: number; totalConversions: number; totalSpend: number; totalRevenue: number }>()
+        const yesterdayMap = new Map<
+          string,
+          {
+            totalImpressions: number
+            totalClicks: number
+            totalLinkClicks: number
+            totalConversions: number
+            totalSpend: number
+            totalRevenue: number
+          }
+        >()
         yesterdayMap.set(campaignId, {
           totalImpressions: 0,
           totalClicks: 0,
@@ -374,7 +402,7 @@ describe('KPIInsightsService', () => {
         const result = await service.generateInsights(userId, { todayMap, yesterdayMap })
 
         // Then: budget-fast 인사이트 생성됨 (동적 threshold 15 < 17)
-        const budgetFastInsight = result.insights.find(i => i.id.includes('budget-fast'))
+        const budgetFastInsight = result.insights.find((i) => i.id.includes('budget-fast'))
         expect(budgetFastInsight).toBeDefined()
         expect(budgetFastInsight?.priority).toBe('high')
         expect(budgetFastInsight?.category).toBe('budget')
@@ -431,7 +459,17 @@ describe('KPIInsightsService', () => {
         // 어제 totalSpend = 10000 → 동시간 예상치 = 10000 * (6/24) = 2500
         // 오늘 totalSpend = 3075 → spendChange = ((3075-2500)/2500)*100 = 23%
         // 23% > 22.5 (동적 threshold) → spend-up 생성됨
-        const todayMap = new Map<string, { totalImpressions: number; totalClicks: number; totalLinkClicks: number; totalConversions: number; totalSpend: number; totalRevenue: number }>()
+        const todayMap = new Map<
+          string,
+          {
+            totalImpressions: number
+            totalClicks: number
+            totalLinkClicks: number
+            totalConversions: number
+            totalSpend: number
+            totalRevenue: number
+          }
+        >()
         todayMap.set(campaignId, {
           totalImpressions: 1000,
           totalClicks: 50,
@@ -440,7 +478,17 @@ describe('KPIInsightsService', () => {
           totalSpend: 3075,
           totalRevenue: 6000,
         })
-        const yesterdayMap = new Map<string, { totalImpressions: number; totalClicks: number; totalLinkClicks: number; totalConversions: number; totalSpend: number; totalRevenue: number }>()
+        const yesterdayMap = new Map<
+          string,
+          {
+            totalImpressions: number
+            totalClicks: number
+            totalLinkClicks: number
+            totalConversions: number
+            totalSpend: number
+            totalRevenue: number
+          }
+        >()
         yesterdayMap.set(campaignId, {
           totalImpressions: 5000,
           totalClicks: 250,
@@ -456,7 +504,7 @@ describe('KPIInsightsService', () => {
         const result = await service.generateInsights(userId, { todayMap, yesterdayMap })
 
         // Then: spend-up 인사이트 생성됨
-        const spendUpInsight = result.insights.find(i => i.id.includes('spend-up'))
+        const spendUpInsight = result.insights.find((i) => i.id.includes('spend-up'))
         expect(spendUpInsight).toBeDefined()
         expect(spendUpInsight?.category).toBe('performance')
       } finally {
@@ -483,7 +531,9 @@ describe('KPIInsightsService', () => {
       await campaignRepository.save(campaign)
 
       const now = new Date()
-      const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0))
+      const todayStart = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0)
+      )
       await kpiRepository.save(
         KPI.create({
           campaignId: campaign.id,
@@ -502,12 +552,12 @@ describe('KPIInsightsService', () => {
 
       // Then: 모든 인사이트에 aiDescription 없음
       expect(result.insights.length).toBeGreaterThan(0)
-      result.insights.forEach(insight => {
+      result.insights.forEach((insight) => {
         expect(insight.aiDescription).toBeUndefined()
       })
     })
 
-    it('should_add_aiDescription_when_llm_call_succeeds', async () => {
+    it('should_add_structured_fields_when_llm_returns_valid_json', async () => {
       // Given: 캠페인 설정
       const userId = 'user-with-ai'
       const campaignId = crypto.randomUUID()
@@ -526,7 +576,9 @@ describe('KPIInsightsService', () => {
       await campaignRepository.save(campaign)
 
       const now = new Date()
-      const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0))
+      const todayStart = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0)
+      )
       await kpiRepository.save(
         KPI.create({
           campaignId,
@@ -548,23 +600,196 @@ describe('KPIInsightsService', () => {
         generateBudgetRecommendation: vi.fn(),
         generateCreativeVariants: vi.fn(),
         chatCompletion: vi.fn().mockResolvedValue(
-          JSON.stringify([{ id: `budget-depleting-${campaignId}`, aiDescription: '예산 부족' }])
+          JSON.stringify([
+            {
+              id: `budget-depleting-${campaignId}`,
+              rootCause: '학습 완료된 광고 세트에서 입찰 경쟁이 심화되었습니다.',
+              recommendations: ['예산을 20% 증액해 노출 손실을 방지하세요.'],
+              forecast: {
+                direction: 'declining',
+                confidence: 78,
+                reasoning: '동일 예산 유지 시 저녁 시간대 노출 점유율 하락이 예상됩니다.',
+              },
+            },
+          ])
         ),
       }
 
-      const service = new KPIInsightsService(
-        kpiRepository,
-        campaignRepository,
-        mockAiService
-      )
+      const service = new KPIInsightsService(kpiRepository, campaignRepository, mockAiService)
 
       // When
       const result = await service.generateInsights(userId)
 
-      // Then: aiDescription이 설정된 인사이트가 존재
-      const aiInsight = result.insights.find(i => i.aiDescription !== undefined)
+      const enhancedInsight = result.insights.find((i) => i.rootCause !== undefined)
+      expect(enhancedInsight).toBeDefined()
+      expect(enhancedInsight?.rootCause).toContain('입찰 경쟁')
+      expect(enhancedInsight?.recommendations).toEqual([
+        '예산을 20% 증액해 노출 손실을 방지하세요.',
+      ])
+      expect(enhancedInsight?.forecast).toEqual({
+        direction: 'declining',
+        confidence: 78,
+        reasoning: '동일 예산 유지 시 저녁 시간대 노출 점유율 하락이 예상됩니다.',
+      })
+
+      expect(mockAiService.chatCompletion).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(String),
+        expect.objectContaining({
+          model: 'gpt-4o',
+          maxTokens: 3000,
+        })
+      )
+    })
+
+    it('should_fallback_to_basic_aiDescription_when_structured_json_is_malformed', async () => {
+      // Given
+      const userId = 'user-structured-fallback'
+      const campaignId = crypto.randomUUID()
+
+      const campaign = Campaign.restore({
+        id: campaignId,
+        userId,
+        name: 'Fallback Campaign',
+        objective: 'CONVERSIONS',
+        dailyBudget: Money.create(10000, 'KRW'),
+        startDate: new Date(),
+        status: 'ACTIVE',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      await campaignRepository.save(campaign)
+
+      const now = new Date()
+      const todayStart = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0)
+      )
+      await kpiRepository.save(
+        KPI.create({
+          campaignId,
+          date: todayStart,
+          impressions: 10000,
+          clicks: 500,
+          linkClicks: 450,
+          conversions: 50,
+          spend: Money.create(9500, 'KRW'),
+          revenue: Money.create(47500, 'KRW'),
+        })
+      )
+
+      const mockAiService = {
+        generateCampaignOptimization: vi.fn(),
+        generateReportInsights: vi.fn(),
+        generateAdCopy: vi.fn(),
+        generateBudgetRecommendation: vi.fn(),
+        generateCreativeVariants: vi.fn(),
+        chatCompletion: vi
+          .fn()
+          .mockResolvedValueOnce('```json\n[{"id":"broken"')
+          .mockResolvedValueOnce(
+            JSON.stringify([
+              {
+                id: `budget-depleting-${campaignId}`,
+                aiDescription: '예산 부족 리스크가 높습니다.',
+              },
+            ])
+          ),
+      }
+
+      const service = new KPIInsightsService(kpiRepository, campaignRepository, mockAiService)
+
+      // When
+      const result = await service.generateInsights(userId)
+
+      // Then
+      const aiInsight = result.insights.find((i) => i.aiDescription !== undefined)
       expect(aiInsight).toBeDefined()
-      expect(aiInsight?.aiDescription).toBe('예산 부족')
+      expect(aiInsight?.aiDescription).toBe('예산 부족 리스크가 높습니다.')
+      expect(mockAiService.chatCompletion).toHaveBeenCalledTimes(2)
+    })
+
+    it('should_use_gpt_4o_for_high_or_critical_and_gpt_4o_mini_for_medium_or_low', async () => {
+      const mockAiService = {
+        generateCampaignOptimization: vi.fn(),
+        generateReportInsights: vi.fn(),
+        generateAdCopy: vi.fn(),
+        generateBudgetRecommendation: vi.fn(),
+        generateCreativeVariants: vi.fn(),
+        chatCompletion: vi.fn().mockResolvedValue('[]'),
+      }
+
+      const service = new KPIInsightsService(kpiRepository, campaignRepository, mockAiService)
+
+      await (
+        service as unknown as {
+          enhanceWithLLM: (insights: unknown[], userId: string) => Promise<unknown[]>
+        }
+      ).enhanceWithLLM(
+        [
+          {
+            id: 'high-priority',
+            category: 'performance',
+            priority: 'high',
+            title: 'High priority insight',
+            description: 'desc',
+            createdAt: new Date(),
+          },
+        ],
+        'user-high'
+      )
+
+      await (
+        service as unknown as {
+          enhanceWithLLM: (insights: unknown[], userId: string) => Promise<unknown[]>
+        }
+      ).enhanceWithLLM(
+        [
+          {
+            id: 'medium-priority',
+            category: 'performance',
+            priority: 'medium',
+            title: 'Medium priority insight',
+            description: 'desc',
+            createdAt: new Date(),
+          },
+        ],
+        'user-medium'
+      )
+
+      expect(mockAiService.chatCompletion).toHaveBeenNthCalledWith(
+        1,
+        expect.any(String),
+        expect.any(String),
+        expect.objectContaining({ model: 'gpt-4o' })
+      )
+      expect(mockAiService.chatCompletion).toHaveBeenNthCalledWith(
+        2,
+        expect.any(String),
+        expect.any(String),
+        expect.objectContaining({ model: 'gpt-4o-mini' })
+      )
+    })
+
+    it('should_not_call_llm_when_insights_array_is_empty', async () => {
+      const mockAiService = {
+        generateCampaignOptimization: vi.fn(),
+        generateReportInsights: vi.fn(),
+        generateAdCopy: vi.fn(),
+        generateBudgetRecommendation: vi.fn(),
+        generateCreativeVariants: vi.fn(),
+        chatCompletion: vi.fn().mockResolvedValue('[]'),
+      }
+
+      const service = new KPIInsightsService(kpiRepository, campaignRepository, mockAiService)
+
+      const result = await (
+        service as unknown as {
+          enhanceWithLLM: (insights: unknown[], userId: string) => Promise<unknown[]>
+        }
+      ).enhanceWithLLM([], 'user-empty')
+
+      expect(result).toEqual([])
+      expect(mockAiService.chatCompletion).not.toHaveBeenCalled()
     })
 
     it('should_gracefully_fallback_when_llm_times_out', async () => {
@@ -615,11 +840,7 @@ describe('KPIInsightsService', () => {
           chatCompletion: vi.fn().mockReturnValue(new Promise(() => {})),
         }
 
-        const service = new KPIInsightsService(
-          kpiRepository,
-          campaignRepository,
-          mockAiService
-        )
+        const service = new KPIInsightsService(kpiRepository, campaignRepository, mockAiService)
 
         // When: 인���이트 생성 시작 (비동기)
         const resultPromise = service.generateInsights(userId)
@@ -631,7 +852,7 @@ describe('KPIInsightsService', () => {
 
         // Then: 인사이트는 반환되고, aiDescription 없음 (크래시 없이 graceful fallback)
         expect(result.insights.length).toBeGreaterThan(0)
-        result.insights.forEach(insight => {
+        result.insights.forEach((insight) => {
           expect(insight.aiDescription).toBeUndefined()
         })
       } finally {
@@ -658,7 +879,9 @@ describe('KPIInsightsService', () => {
       await campaignRepository.save(campaign)
 
       const now = new Date()
-      const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0))
+      const todayStart = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0)
+      )
       await kpiRepository.save(
         KPI.create({
           campaignId,
@@ -711,5 +934,150 @@ describe('KPIInsightsService', () => {
       )
     })
   })
-})
+  describe('fire-and-forget InsightHistory persistence', () => {
+    it('should_succeed_generating_insights_even_when_history_save_throws', async () => {
+      // Given: 1개 활성 캠페인
+      const userId = 'user-1'
+      const campaign = Campaign.restore({
+        id: crypto.randomUUID(),
+        userId,
+        name: 'Campaign A',
+        objective: 'CONVERSIONS',
+        dailyBudget: Money.create(10000, 'KRW'),
+        startDate: new Date(),
+        status: 'ACTIVE',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      await campaignRepository.save(campaign)
 
+      const now = new Date()
+      const todayStart = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0)
+      )
+      const kpi = KPI.create({
+        campaignId: campaign.id,
+        date: todayStart,
+        impressions: 1000,
+        clicks: 50,
+        linkClicks: 40,
+        conversions: 5,
+        spend: 5000,
+        revenue: 15000,
+      })
+      await kpiRepository.save(kpi)
+
+      // Mock InsightHistory repository that always throws
+      const mockInsightHistoryRepo = {
+        save: vi.fn().mockRejectedValue(new Error('DB write failed')),
+        findByUserId: vi.fn().mockResolvedValue([]),
+      }
+
+      const service = new KPIInsightsService(kpiRepository, campaignRepository)
+      service.setInsightHistoryRepository(mockInsightHistoryRepo)
+
+      // When: suppress console.warn for cleaner test output
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const result = await service.generateInsights(userId)
+
+      // Then: insights are still returned successfully
+      expect(result).toBeDefined()
+      expect(result.insights.length).toBeGreaterThanOrEqual(0)
+      expect(result.generatedAt).toBeInstanceOf(Date)
+
+      // verify save was attempted (fire-and-forget)
+      // Wait a tick for the catch handler to fire
+      await new Promise((resolve) => setTimeout(resolve, 10))
+      // save may or may not have been called depending on insights generated
+      // The point is that the function did NOT throw
+
+      warnSpy.mockRestore()
+    })
+
+    it('should_call_insightHistoryRepository_save_for_each_insight', async () => {
+      // Given: 1 활성 캠페인 with data that triggers budget insight
+      const userId = 'user-budget'
+      const campaign = Campaign.restore({
+        id: crypto.randomUUID(),
+        userId,
+        name: 'Budget Test Campaign',
+        objective: 'CONVERSIONS',
+        dailyBudget: Money.create(10000, 'KRW'),
+        startDate: new Date(),
+        status: 'ACTIVE',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      await campaignRepository.save(campaign)
+
+      const now = new Date()
+      const todayStart = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0)
+      )
+
+      // Spend 95% of budget to trigger 'budget-depleting' insight
+      const kpi = KPI.create({
+        campaignId: campaign.id,
+        date: todayStart,
+        impressions: 10000,
+        clicks: 500,
+        linkClicks: 400,
+        conversions: 50,
+        spend: 9500,
+        revenue: 25000,
+      })
+      await kpiRepository.save(kpi)
+
+      const mockInsightHistoryRepo = {
+        save: vi.fn().mockResolvedValue(undefined),
+        findByUserId: vi.fn().mockResolvedValue([]),
+      }
+
+      const service = new KPIInsightsService(kpiRepository, campaignRepository)
+      service.setInsightHistoryRepository(mockInsightHistoryRepo)
+
+      // When
+      const result = await service.generateInsights(userId)
+
+      // Then: save called for each insight
+      await new Promise((resolve) => setTimeout(resolve, 10))
+      expect(mockInsightHistoryRepo.save).toHaveBeenCalledTimes(result.insights.length)
+
+      // Verify the DTO structure of the first save call
+      if (result.insights.length > 0) {
+        const firstCall = mockInsightHistoryRepo.save.mock.calls[0][0]
+        expect(firstCall.userId).toBe(userId)
+        expect(firstCall.category).toBeDefined()
+        expect(firstCall.priority).toBeDefined()
+        expect(firstCall.title).toBeDefined()
+        expect(firstCall.description).toBeDefined()
+      }
+    })
+
+    it('should_not_call_insightHistoryRepository_when_not_set', async () => {
+      // Given: service without InsightHistory repo
+      const userId = 'user-no-repo'
+      const campaign = Campaign.restore({
+        id: crypto.randomUUID(),
+        userId,
+        name: 'No Repo Campaign',
+        objective: 'CONVERSIONS',
+        dailyBudget: Money.create(10000, 'KRW'),
+        startDate: new Date(),
+        status: 'ACTIVE',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      await campaignRepository.save(campaign)
+
+      const service = new KPIInsightsService(kpiRepository, campaignRepository)
+      // NOT calling setInsightHistoryRepository
+
+      // When: should work fine without history repo
+      const result = await service.generateInsights(userId)
+
+      // Then: no error thrown
+      expect(result).toBeDefined()
+    })
+  })
+})

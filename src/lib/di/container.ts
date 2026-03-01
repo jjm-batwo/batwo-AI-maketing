@@ -29,6 +29,7 @@ import type { IConversationRepository } from '@domain/repositories/IConversation
 import type { IPendingActionRepository } from '@domain/repositories/IPendingActionRepository'
 import type { IAlertRepository } from '@domain/repositories/IAlertRepository'
 import type { IMetaAdAccountRepository } from '@application/ports/IMetaAdAccountRepository'
+import type { IInsightHistoryRepository } from '@domain/repositories/IInsightHistoryRepository'
 import type { IPaymentGateway } from '@application/ports/IPaymentGateway'
 
 // Port interfaces
@@ -65,6 +66,7 @@ import { PrismaConversationRepository } from '@infrastructure/database/repositor
 import { PrismaPendingActionRepository } from '@infrastructure/database/repositories/PrismaPendingActionRepository'
 import { PrismaAlertRepository } from '@infrastructure/database/repositories/PrismaAlertRepository'
 import { PrismaMetaAdAccountRepository } from '@infrastructure/database/repositories/PrismaMetaAdAccountRepository'
+import { PrismaInsightHistoryRepository } from '@infrastructure/database/repositories/PrismaInsightHistoryRepository'
 import { TossPaymentsClient } from '@infrastructure/payment/TossPaymentsClient'
 import { MetaAdsClient } from '@infrastructure/external/meta-ads/MetaAdsClient'
 import { Cafe24Adapter } from '@infrastructure/external/platforms/cafe24/Cafe24Adapter'
@@ -501,15 +503,25 @@ container.registerSingleton(
 )
 
 // KPI Insights Service (Singleton)
+container.registerSingleton<IInsightHistoryRepository>(
+  DI_TOKENS.InsightHistoryRepository,
+  () => new PrismaInsightHistoryRepository(prisma)
+)
+
 container.registerSingleton(
   DI_TOKENS.KPIInsightsService,
-  () =>
-    new KPIInsightsService(
+  () => {
+    const service = new KPIInsightsService(
       container.resolve(DI_TOKENS.KPIRepository),
       container.resolve(DI_TOKENS.CampaignRepository),
       container.resolve<IAIService>(DI_TOKENS.AIService),
       container.resolve<ICacheService>(DI_TOKENS.CacheService)
     )
+    service.setInsightHistoryRepository(
+      container.resolve<IInsightHistoryRepository>(DI_TOKENS.InsightHistoryRepository)
+    )
+    return service
+  }
 )
 
 // Register Infrastructure Services (Singletons)
