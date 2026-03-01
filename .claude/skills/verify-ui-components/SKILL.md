@@ -45,6 +45,7 @@ React 컴포넌트 구현의 일관성과 품질을 검증합니다:
 | `src/presentation/components/dashboard/CampaignSummaryTable.tsx`          | 캠페인 요약 테이블 — 정렬, 필터링                        |
 | `src/presentation/components/dashboard/DonutChart.tsx`                    | 도넛 차트 — 캠페인 상태 분포                             |
 | `src/presentation/components/dashboard/AIInsights.tsx`                    | AI 인사이트 카드                                         |
+| `src/presentation/components/dashboard/InsightDetailModal.tsx`           | AI 인사이트 상세 모달 — Dialog 기반, rootCause/recommendations/forecast 표시, null guard 패턴 |
 | `src/presentation/components/dashboard/OptimizationTimeline.tsx`          | 최적화 타임라인 — 규칙 적용 히스토리 표시               |
 | `src/presentation/components/dashboard/SavingsWidget.tsx`                 | 절감 위젯 — 예상 절감 금액 표시                         |
 | `src/presentation/components/dashboard/FeedbackSummaryCard.tsx`           | 피드백 요약 카드 — 긍정률/최근 부정 피드백 표시         |

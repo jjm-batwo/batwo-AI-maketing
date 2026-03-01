@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+
+echo "[pre-push] Running type-check"
+npm run type-check || exit 1
+
+echo "[pre-push] Running unit tests"
+npm run test:unit -- --reporter=dot || exit 1
+
+if [ "$PREPUSH_FULL" = "1" ]; then
+  echo "[pre-push] PREPUSH_FULL=1 detected, running integration tests"
+  npm run test:integration -- --reporter=verbose || exit 1
+fi

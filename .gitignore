@@ -63,8 +63,6 @@ next-env.d.ts
 /src/generated/prisma
 .playwright-mcp/
 
-# oh-my-claudecode state
-.omc/
 
 # kombai
 .kombai/

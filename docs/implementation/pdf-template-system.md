@@ -375,5 +375,5 @@ await emailService.send({
 바투 AI 마케팅 SaaS의 PDF 보고서 템플릿 시스템이 성공적으로 구현되었습니다. 5가지 전문적인 보고서 템플릿과 확장 가능한 아키텍처를 통해 다양한 사용자 요구사항을 충족할 수 있습니다.
 
 **구현 완료**: 2026-02-05
-**구현자**: Sisyphus-Junior (oh-my-claudecode:executor)
+**구현자**: Sisyphus-Junior (Claude Code)
 **검증 상태**: ✅ 모든 테스트 통과

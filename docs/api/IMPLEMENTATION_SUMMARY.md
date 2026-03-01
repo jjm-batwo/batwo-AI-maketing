@@ -253,6 +253,6 @@ swagger-cli serve docs/api/openapi.yaml
 
 ---
 
-**작성자**: Sisyphus-Junior (oh-my-claudecode:executor)
+**작성자**: Sisyphus-Junior (Claude Code)
 **작성일**: 2024-02-05
 **문서 버전**: 1.0.0

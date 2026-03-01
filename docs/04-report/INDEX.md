@@ -226,7 +226,7 @@ Database
 ### 6.1 설정 및 지침
 
 - `CLAUDE.md`: 프로젝트 지침 및 개발 팀 구성
-- `.claude/CLAUDE.md`: OMC (oh-my-claudecode) 지침
+- `.claude/CLAUDE.md`: Claude Code 지침
 - `AGENTS.md`: AI 에이전트 및 스킬 정의
 
 ### 6.2 구현 가이드

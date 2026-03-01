@@ -309,7 +309,7 @@
 
 ### 프로젝트 지침
 - `CLAUDE.md` - 프로젝트 지침
-- `.claude/CLAUDE.md` - OMC 지침
+- `.claude/CLAUDE.md` - Claude Code 지침
 - `AGENTS.md` - AI 에이전트 정의
 
 ### 구현 가이드
