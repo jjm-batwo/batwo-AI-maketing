@@ -26,6 +26,14 @@ export interface KPIInsightDTO {
   action?: ActionButton
   campaignId?: string
   campaignName?: string
+  rootCause?: string
+  recommendations?: string[]
+  forecast?: {
+    direction: 'improving' | 'declining' | 'stable'
+    confidence: number
+    reasoning: string
+  }
+  actionUrl?: string
 }
 
 interface KPIInsightsResponse {

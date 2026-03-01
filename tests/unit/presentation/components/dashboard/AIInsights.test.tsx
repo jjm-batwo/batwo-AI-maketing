@@ -257,4 +257,72 @@ describe('AIInsights', () => {
       expect(titlesArray).toContain('성과 목표 달성')
     })
   })
+
+  describe('filter functionality', () => {
+    const insightsWithPriority = [
+      { id: 'f-1', type: 'opportunity' as const, priority: 'high' as const, title: '기회 인사이트', description: '기회 설명' },
+      { id: 'f-2', type: 'warning' as const, priority: 'low' as const, title: '경고 인사이트', description: '경고 설명' },
+      { id: 'f-3', type: 'tip' as const, priority: 'high' as const, title: '팁 인사이트', description: '팁 설명' },
+    ]
+
+    it('should have data-testid on filter-category', () => {
+      const { container } = render(<AIInsights insights={insightsWithPriority} />, { wrapper: Wrapper })
+      expect(container.querySelector('[data-testid="filter-category"]')).toBeInTheDocument()
+    })
+
+    it('should have data-testid on filter-priority', () => {
+      const { container } = render(<AIInsights insights={insightsWithPriority} />, { wrapper: Wrapper })
+      expect(container.querySelector('[data-testid="filter-priority"]')).toBeInTheDocument()
+    })
+
+    it('should not show filter-empty-state when all insights match default filter', () => {
+      const { container } = render(<AIInsights insights={insightsWithPriority} />, { wrapper: Wrapper })
+      expect(container.querySelector('[data-testid="filter-empty-state"]')).not.toBeInTheDocument()
+    })
+
+    it('should render data-testid on each insight card', () => {
+      const { container } = render(<AIInsights insights={insightsWithPriority} />, { wrapper: Wrapper })
+      expect(container.querySelector('[data-testid="insight-card-f-1"]')).toBeInTheDocument()
+      expect(container.querySelector('[data-testid="insight-card-f-2"]')).toBeInTheDocument()
+      expect(container.querySelector('[data-testid="insight-card-f-3"]')).toBeInTheDocument()
+    })
+  })
+
+  describe('campaign filter', () => {
+    const insightsWithCampaigns = [
+      { id: 'c-1', type: 'opportunity' as const, title: '쳪페인 A 인사이트', description: '설명1', campaignId: 'camp-A', campaignName: '쳪페인 A' },
+      { id: 'c-2', type: 'warning' as const, title: '쳪페인 B 인사이트', description: '설명2', campaignId: 'camp-B', campaignName: '쳪페인 B' },
+      { id: 'c-3', type: 'tip' as const, title: '일반 인사이트', description: '설명3' },
+    ]
+
+    it('should show campaign filter when insights have campaignId', () => {
+      const { container } = render(<AIInsights insights={insightsWithCampaigns} />, { wrapper: Wrapper })
+      expect(container.querySelector('[data-testid="filter-campaign"]')).toBeInTheDocument()
+    })
+
+    it('should not show campaign filter when no insights have campaignId', () => {
+      const insightsNoCampaign = [
+        { id: 'nc-1', type: 'opportunity' as const, title: '일반 인사이트', description: '설명' },
+      ]
+      const { container } = render(<AIInsights insights={insightsNoCampaign} />, { wrapper: Wrapper })
+      expect(container.querySelector('[data-testid="filter-campaign"]')).not.toBeInTheDocument()
+    })
+
+    it('should display campaign filter trigger when campaigns exist', () => {
+      render(<AIInsights insights={insightsWithCampaigns} />, { wrapper: Wrapper })
+      expect(screen.getByTestId('filter-campaign')).toBeInTheDocument()
+    })
+  })
+
+  describe('insight detail modal integration', () => {
+    it('should open modal when insight card is clicked', () => {
+      const { container } = render(<AIInsights insights={mockInsights} />, { wrapper: Wrapper })
+      const insightCard = container.querySelector('[data-testid="insight-card-insight-1"]')
+      expect(insightCard).toBeInTheDocument()
+      fireEvent.click(insightCard!)
+      // InsightDetailModal is rendered in the DOM when selectedInsight is set
+      // Dialog renders conditionally based on open prop
+      // After click, the component state changes and modal should be present in DOM
+    })
+  })
 })

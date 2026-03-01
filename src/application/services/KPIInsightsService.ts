@@ -46,6 +46,7 @@ export interface KPIInsight {
     confidence: number
     reasoning: string
   }
+  actionUrl?: string
 }
 
 export interface KPIInsightsResult {
@@ -563,6 +564,7 @@ export class KPIInsightsService {
         },
         campaignId: data.campaignId,
         campaignName: data.campaignName,
+        actionUrl: `/campaigns/edit/${data.campaignId}?section=budget`,
         createdAt: now,
       })
     } else if (budgetPace > budgetFastThreshold) {
@@ -584,6 +586,7 @@ export class KPIInsightsService {
         },
         campaignId: data.campaignId,
         campaignName: data.campaignName,
+        actionUrl: `/campaigns/edit/${data.campaignId}?section=budget`,
         createdAt: now,
       })
     } else if (budgetPace < -30 && data.currentHour >= 12) {
@@ -605,6 +608,7 @@ export class KPIInsightsService {
         },
         campaignId: data.campaignId,
         campaignName: data.campaignName,
+        actionUrl: `/campaigns/${data.campaignId}`,
         createdAt: now,
       })
     }
@@ -630,6 +634,7 @@ export class KPIInsightsService {
           timeContext: '어제 동시간 대비',
           campaignId: data.campaignId,
           campaignName: data.campaignName,
+          actionUrl: `/campaigns/${data.campaignId}`,
           createdAt: now,
         })
       }
@@ -658,6 +663,7 @@ export class KPIInsightsService {
           },
           campaignId: data.campaignId,
           campaignName: data.campaignName,
+          actionUrl: `/campaigns/${data.campaignId}`,
           createdAt: now,
         })
       } else if (ctrChange > 0.5) {
@@ -674,6 +680,7 @@ export class KPIInsightsService {
           timeContext,
           campaignId: data.campaignId,
           campaignName: data.campaignName,
+          actionUrl: `/campaigns/${data.campaignId}`,
           createdAt: now,
         })
       }
@@ -702,6 +709,7 @@ export class KPIInsightsService {
           },
           campaignId: data.campaignId,
           campaignName: data.campaignName,
+          actionUrl: `/campaigns/${data.campaignId}`,
           createdAt: now,
         })
       } else if (data.todayROAS > data.last7DaysAvgRoas * 1.3) {
@@ -723,6 +731,7 @@ export class KPIInsightsService {
           },
           campaignId: data.campaignId,
           campaignName: data.campaignName,
+          actionUrl: `/campaigns/edit/${data.campaignId}?section=budget`,
           createdAt: now,
         })
       }
