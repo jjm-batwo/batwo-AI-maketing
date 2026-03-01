@@ -194,6 +194,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: lint
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test -d test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://test:test@127.0.0.1:5432/test
+      DATABASE_URL_TEST: postgresql://test:test@127.0.0.1:5432/test
 
     steps:
       - name: Checkout
@@ -213,6 +230,9 @@ jobs:
 
       - name: Generate Prisma Client
         run: npx prisma generate
+
+      - name: Run Prisma Migrations
+        run: npx prisma migrate deploy
 
       - name: Run Integration Tests
         run: npm run test:integration -- --reporter=verbose

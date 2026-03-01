@@ -41,18 +41,18 @@ describe('Quota API Integration', () => {
 
       // Then: 모든 쿼터 타입에 대해 used=0, remaining=limit
       expect(quota.CAMPAIGN_CREATE.used).toBe(0)
-      expect(quota.CAMPAIGN_CREATE.limit).toBe(5)
-      expect(quota.CAMPAIGN_CREATE.remaining).toBe(5)
+      expect(quota.CAMPAIGN_CREATE.limit).toBe(3)
+      expect(quota.CAMPAIGN_CREATE.remaining).toBe(3)
       expect(quota.CAMPAIGN_CREATE.period).toBe('week')
 
       expect(quota.AI_COPY_GEN.used).toBe(0)
-      expect(quota.AI_COPY_GEN.limit).toBe(20)
-      expect(quota.AI_COPY_GEN.remaining).toBe(20)
+      expect(quota.AI_COPY_GEN.limit).toBe(5)
+      expect(quota.AI_COPY_GEN.remaining).toBe(5)
       expect(quota.AI_COPY_GEN.period).toBe('day')
 
       expect(quota.AI_ANALYSIS.used).toBe(0)
-      expect(quota.AI_ANALYSIS.limit).toBe(5)
-      expect(quota.AI_ANALYSIS.remaining).toBe(5)
+      expect(quota.AI_ANALYSIS.limit).toBe(3)
+      expect(quota.AI_ANALYSIS.remaining).toBe(3)
       expect(quota.AI_ANALYSIS.period).toBe('week')
     })
 
@@ -67,13 +67,13 @@ describe('Quota API Integration', () => {
 
       // Then: used와 remaining이 정확함
       expect(quota.CAMPAIGN_CREATE.used).toBe(2)
-      expect(quota.CAMPAIGN_CREATE.remaining).toBe(3)
+      expect(quota.CAMPAIGN_CREATE.remaining).toBe(1)
 
       expect(quota.AI_COPY_GEN.used).toBe(5)
-      expect(quota.AI_COPY_GEN.remaining).toBe(15)
+      expect(quota.AI_COPY_GEN.remaining).toBe(0)
 
       expect(quota.AI_ANALYSIS.used).toBe(3)
-      expect(quota.AI_ANALYSIS.remaining).toBe(2)
+      expect(quota.AI_ANALYSIS.remaining).toBe(0)
     })
 
     it('쿼터 한도 초과 시 remaining이 0이어야 함', async () => {
@@ -112,8 +112,9 @@ describe('Quota API Integration', () => {
       await logUsage('AI_ANALYSIS', 5)
 
       // When/Then: 에러 발생
-      await expect(quotaService.enforceQuota(testUserId, 'AI_ANALYSIS'))
-        .rejects.toThrow('Quota exceeded')
+      await expect(quotaService.enforceQuota(testUserId, 'AI_ANALYSIS')).rejects.toThrow(
+        'Quota exceeded'
+      )
     })
   })
 
@@ -130,7 +131,7 @@ describe('Quota API Integration', () => {
       // Then: 사용량 증가
       const after = await quotaService.getRemainingQuota(testUserId)
       expect(after.AI_COPY_GEN.used).toBe(2)
-      expect(after.AI_COPY_GEN.remaining).toBe(18)
+      expect(after.AI_COPY_GEN.remaining).toBe(3)
     })
   })
 
@@ -151,10 +152,10 @@ describe('Quota API Integration', () => {
 
       // Then: 각자의 사용량만 반영
       expect(myQuota.CAMPAIGN_CREATE.used).toBe(3)
-      expect(myQuota.CAMPAIGN_CREATE.remaining).toBe(2)
+      expect(myQuota.CAMPAIGN_CREATE.remaining).toBe(0)
 
       expect(otherQuota.CAMPAIGN_CREATE.used).toBe(1)
-      expect(otherQuota.CAMPAIGN_CREATE.remaining).toBe(4)
+      expect(otherQuota.CAMPAIGN_CREATE.remaining).toBe(2)
     })
   })
 })

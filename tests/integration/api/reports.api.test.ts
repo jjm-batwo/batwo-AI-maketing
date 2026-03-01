@@ -21,6 +21,7 @@ import { Money } from '@domain/value-objects/Money'
 import { DateRange } from '@domain/value-objects/DateRange'
 import { toReportDTO } from '@application/dto/report/ReportDTO'
 import type { IAIService } from '@application/ports/IAIService'
+import { ForbiddenError } from '@application/errors'
 
 describe('Reports API Integration', () => {
   setupIntegrationTest()
@@ -78,7 +79,13 @@ describe('Reports API Integration', () => {
   const createTestKPI = async (
     campaignId: string,
     daysAgo: number,
-    data: { impressions: number; clicks: number; conversions: number; spend: number; revenue: number }
+    data: {
+      impressions: number
+      clicks: number
+      conversions: number
+      spend: number
+      revenue: number
+    }
   ) => {
     const date = new Date()
     date.setDate(date.getDate() - daysAgo)
@@ -340,7 +347,7 @@ describe('Reports API Integration', () => {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
         })
-      ).rejects.toThrow('not found or unauthorized')
+      ).rejects.toThrow(ForbiddenError)
     })
 
     it('사용량 로그가 기록되어야 함', async () => {

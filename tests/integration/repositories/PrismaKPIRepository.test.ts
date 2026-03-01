@@ -104,8 +104,10 @@ describe('PrismaKPIRepository', () => {
 
   describe('findByCampaignId', () => {
     it('should find all KPIs for a campaign', async () => {
+      const tomorrow = new Date()
+      tomorrow.setDate(tomorrow.getDate() + 1)
       const kpi1 = createTestKPI({ id: crypto.randomUUID() })
-      const kpi2 = createTestKPI({ id: crypto.randomUUID() })
+      const kpi2 = createTestKPI({ id: crypto.randomUUID(), date: tomorrow })
 
       await repository.save(kpi1)
       await repository.save(kpi2)
@@ -126,17 +128,13 @@ describe('PrismaKPIRepository', () => {
       const kpiInRange = createTestKPI({ date: yesterday })
       const kpiOutOfRange = createTestKPI({
         id: crypto.randomUUID(),
-        date: threeDaysAgo
+        date: threeDaysAgo,
       })
 
       await repository.save(kpiInRange)
       await repository.save(kpiOutOfRange)
 
-      const kpis = await repository.findByCampaignIdAndDateRange(
-        testCampaignId,
-        twoDaysAgo,
-        today
-      )
+      const kpis = await repository.findByCampaignIdAndDateRange(testCampaignId, twoDaysAgo, today)
 
       expect(kpis).toHaveLength(1)
       expect(kpis[0].id).toBe(kpiInRange.id)
