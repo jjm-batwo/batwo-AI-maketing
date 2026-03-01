@@ -6,6 +6,7 @@
 
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
+import type { IAIService } from '@application/ports/IAIService'
 
 // ============================================================================
 // Types
@@ -98,7 +99,8 @@ export interface LiveDataOverrides {
 export class KPIInsightsService {
   constructor(
     private readonly kpiRepository: IKPIRepository,
-    private readonly campaignRepository: ICampaignRepository
+    private readonly campaignRepository: ICampaignRepository,
+    private readonly aiService?: IAIService
   ) {}
 
   /**

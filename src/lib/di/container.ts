@@ -87,6 +87,7 @@ import { FallbackResponseService } from '@application/services/FallbackResponseS
 import { FewShotExampleRegistry } from '@application/services/FewShotExampleRegistry'
 import { GuideQuestionService } from '@application/services/GuideQuestionService'
 import { ConversationSummarizerService } from '@application/services/ConversationSummarizerService'
+import { KPIInsightsService } from '@application/services/KPIInsightsService'
 import type { IGuideQuestionService } from '@application/ports/IGuideQuestionService'
 
 // Application services and use cases
@@ -491,6 +492,17 @@ container.registerSingleton(
       container.resolve(DI_TOKENS.CampaignRepository),
       container.resolve(DI_TOKENS.KPIRepository),
       container.resolve(DI_TOKENS.AlertRepository)
+    )
+)
+
+// KPI Insights Service (Singleton)
+container.registerSingleton(
+  DI_TOKENS.KPIInsightsService,
+  () =>
+    new KPIInsightsService(
+      container.resolve(DI_TOKENS.KPIRepository),
+      container.resolve(DI_TOKENS.CampaignRepository),
+      container.resolve<IAIService>(DI_TOKENS.AIService)
     )
 )
 
@@ -1245,4 +1257,8 @@ container.register<ConversationSummarizerService>(
 
 export function getConversationSummarizerService(): ConversationSummarizerService {
   return container.resolve(DI_TOKENS.ConversationSummarizerService)
+}
+
+export function getKPIInsightsService(): KPIInsightsService {
+  return container.resolve(DI_TOKENS.KPIInsightsService)
 }
