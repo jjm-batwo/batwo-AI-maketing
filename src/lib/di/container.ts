@@ -346,9 +346,8 @@ container.registerSingleton<IPromptTemplateService>(
 // FallbackResponse Service (Singleton)
 container.registerSingleton<IFallbackResponseService>(
   DI_TOKENS.FallbackResponseService,
-  () => new FallbackResponseService(
-    container.resolve<IResilienceService>(DI_TOKENS.ResilienceService)
-  )
+  () =>
+    new FallbackResponseService(container.resolve<IResilienceService>(DI_TOKENS.ResilienceService))
 )
 
 // FewShotExample Registry (Singleton)
@@ -459,9 +458,7 @@ container.registerSingleton(
         })
         return {
           userId,
-          accessToken: metaAccount?.accessToken
-            ? safeDecryptToken(metaAccount.accessToken)
-            : null,
+          accessToken: metaAccount?.accessToken ? safeDecryptToken(metaAccount.accessToken) : null,
           adAccountId: metaAccount?.metaAccountId ?? null,
           conversationId: '',
         }
@@ -502,7 +499,8 @@ container.registerSingleton(
     new KPIInsightsService(
       container.resolve(DI_TOKENS.KPIRepository),
       container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve<IAIService>(DI_TOKENS.AIService)
+      container.resolve<IAIService>(DI_TOKENS.AIService),
+      container.resolve<ICacheService>(DI_TOKENS.CacheService)
     )
 )
 

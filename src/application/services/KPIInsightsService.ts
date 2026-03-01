@@ -7,6 +7,7 @@
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import type { IAIService } from '@application/ports/IAIService'
+import type { ICacheService } from '@application/ports/ICacheService'
 
 // ============================================================================
 // Types
@@ -36,6 +37,7 @@ export interface KPIInsight {
   campaignId?: string
   campaignName?: string
   createdAt: Date
+  aiDescription?: string
 }
 
 export interface KPIInsightsResult {
@@ -100,7 +102,8 @@ export class KPIInsightsService {
   constructor(
     private readonly kpiRepository: IKPIRepository,
     private readonly campaignRepository: ICampaignRepository,
-    private readonly aiService?: IAIService
+    private readonly aiService?: IAIService,
+    private readonly cacheService?: ICacheService
   ) {}
 
   /**
@@ -178,17 +181,78 @@ export class KPIInsightsService {
 
     // 상위 10개만 반환
     const topInsights = insights.slice(0, 10)
+    const enhancedInsights = await this.enhanceWithLLM(topInsights, userId)
 
     return {
-      insights: topInsights,
+      insights: enhancedInsights,
       summary: {
-        critical: topInsights.filter((i) => i.priority === 'critical').length,
-        high: topInsights.filter((i) => i.priority === 'high').length,
-        medium: topInsights.filter((i) => i.priority === 'medium').length,
-        low: topInsights.filter((i) => i.priority === 'low').length,
-        total: topInsights.length,
+        critical: enhancedInsights.filter((i) => i.priority === 'critical').length,
+        high: enhancedInsights.filter((i) => i.priority === 'high').length,
+        medium: enhancedInsights.filter((i) => i.priority === 'medium').length,
+        low: enhancedInsights.filter((i) => i.priority === 'low').length,
+        total: enhancedInsights.length,
       },
       generatedAt: now,
+    }
+  }
+
+  private async enhanceWithLLM(insights: KPIInsight[], userId: string): Promise<KPIInsight[]> {
+    if (!this.aiService || insights.length === 0) {
+      return insights
+    }
+
+    const aiService = this.aiService
+    const cacheKey = `kpi-insights-llm:${userId}`
+
+    try {
+      const hasCritical = insights.some((i) => i.priority === 'critical')
+      const model = hasCritical ? 'gpt-4o' : 'gpt-4o-mini'
+
+      const fetchLLM = async (): Promise<KPIInsight[]> => {
+        const systemPrompt =
+          '당신은 디지털 마케팅 KPI 분석 전문가입니다. 캠페인 성과 데이터를 분석하여 실행 가능한 인사이트를 한국어로 제공합니다. 간결하고 액션 중심으로 작성하세요.'
+        const userPrompt = `다음 인사이트들을 분석하고 각각에 aiDescription을 추가해 주세요. 응답은 반드시 다음 형식의 JSON 배열이어야 합니다: [{"id": "...", "aiDescription": "..."}]\n\n인사이트:\n${JSON.stringify(insights.map((i) => ({ id: i.id, title: i.title, description: i.description, priority: i.priority, category: i.category })))}\n\n각 aiDescription은 한국어로 50자 이내의 실행 가능한 설명으로 작성하세요.`
+
+        const response = await aiService.chatCompletion(systemPrompt, userPrompt, {
+          model,
+          temperature: 0.4,
+          maxTokens: 1000,
+        })
+
+        try {
+          const jsonStr = response
+            .replace(/```json\n?/g, '')
+            .replace(/```\n?/g, '')
+            .trim()
+          const enhanced = JSON.parse(jsonStr) as Array<{ id: string; aiDescription: string }>
+
+          return insights.map((insight) => {
+            const match = enhanced.find((e) => e.id === insight.id)
+            return match?.aiDescription
+              ? { ...insight, aiDescription: match.aiDescription }
+              : insight
+          })
+        } catch {
+          return insights
+        }
+      }
+
+      const timeoutPromise = () =>
+        new Promise<KPIInsight[]>((_, reject) => {
+          setTimeout(() => reject(new Error('LLM timeout')), 10000)
+        })
+
+      if (this.cacheService) {
+        return await this.cacheService.getOrSet(
+          cacheKey,
+          () => Promise.race([fetchLLM(), timeoutPromise()]),
+          7200
+        )
+      }
+
+      return await Promise.race([fetchLLM(), timeoutPromise()])
+    } catch {
+      return insights
     }
   }
 
