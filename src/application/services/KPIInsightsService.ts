@@ -6,6 +6,7 @@
 
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
+import type { InsightCategory } from '@domain/types/InsightCategory'
 import type { IAIService } from '@application/ports/IAIService'
 import type { ICacheService } from '@application/ports/ICacheService'
 
@@ -14,7 +15,6 @@ import type { ICacheService } from '@application/ports/ICacheService'
 // ============================================================================
 
 export type InsightPriority = 'critical' | 'high' | 'medium' | 'low'
-export type InsightCategory = 'budget' | 'performance' | 'opportunity' | 'warning' | 'trend'
 
 export interface ActionButton {
   label: string

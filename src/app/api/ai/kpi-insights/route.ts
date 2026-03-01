@@ -11,6 +11,7 @@ import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import type { CampaignAggregate, LiveDataOverrides } from '@application/services/KPIInsightsService'
 import { container, DI_TOKENS, getKPIInsightsService, getQuotaService } from '@/lib/di/container'
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
+import type { InsightCategory } from '@domain/types/InsightCategory'
 import type { IMetaAdsService } from '@application/ports/IMetaAdsService'
 import { prisma } from '@/lib/prisma'
 import { safeDecryptToken } from '@application/utils/TokenEncryption'
@@ -21,7 +22,7 @@ import { safeDecryptToken } from '@application/utils/TokenEncryption'
  */
 async function fetchLiveOverrides(
   userId: string,
-  campaignRepository: ICampaignRepository,
+  campaignRepository: ICampaignRepository
 ): Promise<LiveDataOverrides | undefined> {
   const metaAccount = await prisma.metaAdAccount.findUnique({
     where: { userId },
@@ -33,39 +34,53 @@ async function fetchLiveOverrides(
     const metaService = container.resolve<IMetaAdsService>(DI_TOKENS.MetaAdsService)
 
     const campaigns = await campaignRepository.findByUserId(userId)
-    const metaCampaigns = campaigns.filter(c => c.status === 'ACTIVE' && c.metaCampaignId)
+    const metaCampaigns = campaigns.filter((c) => c.status === 'ACTIVE' && c.metaCampaignId)
 
     if (metaCampaigns.length === 0) return undefined
 
     // 오늘 + 어제 병렬 조회
     const [todayResults, yesterdayResults] = await Promise.all([
       Promise.allSettled(
-        metaCampaigns.map(async c => {
-          const data = await metaService.getCampaignDailyInsights(
-            token, c.metaCampaignId!, 'today',
-          )
+        metaCampaigns.map(async (c) => {
+          const data = await metaService.getCampaignDailyInsights(token, c.metaCampaignId!, 'today')
           return { campaignId: c.id, data }
-        }),
+        })
       ),
       Promise.allSettled(
-        metaCampaigns.map(async c => {
+        metaCampaigns.map(async (c) => {
           const data = await metaService.getCampaignDailyInsights(
-            token, c.metaCampaignId!, 'yesterday',
+            token,
+            c.metaCampaignId!,
+            'yesterday'
           )
           return { campaignId: c.id, data }
-        }),
+        })
       ),
     ])
 
     const buildMap = (
-      results: PromiseSettledResult<{ campaignId: string; data: Array<{ impressions: number; clicks: number; conversions: number; spend: number; revenue: number; linkClicks: number }> }>[],
+      results: PromiseSettledResult<{
+        campaignId: string
+        data: Array<{
+          impressions: number
+          clicks: number
+          conversions: number
+          spend: number
+          revenue: number
+          linkClicks: number
+        }>
+      }>[]
     ): Map<string, CampaignAggregate> => {
       const map = new Map<string, CampaignAggregate>()
       for (const result of results) {
         if (result.status !== 'fulfilled') continue
         const { campaignId, data } = result.value
-        let totalImpressions = 0, totalClicks = 0, totalLinkClicks = 0
-        let totalConversions = 0, totalSpend = 0, totalRevenue = 0
+        let totalImpressions = 0,
+          totalClicks = 0,
+          totalLinkClicks = 0
+        let totalConversions = 0,
+          totalSpend = 0,
+          totalRevenue = 0
         for (const d of data) {
           totalImpressions += d.impressions
           totalClicks += d.clicks
@@ -75,8 +90,12 @@ async function fetchLiveOverrides(
           totalRevenue += d.revenue
         }
         map.set(campaignId, {
-          totalImpressions, totalClicks, totalLinkClicks,
-          totalConversions, totalSpend, totalRevenue,
+          totalImpressions,
+          totalClicks,
+          totalLinkClicks,
+          totalConversions,
+          totalSpend,
+          totalRevenue,
         })
       }
       return map
@@ -103,7 +122,7 @@ export async function GET() {
     if (!hasQuota) {
       return NextResponse.json(
         { success: false, message: '오늘의 KPI 인사이트 분석 횟수를 초과했습니다' },
-        { status: 429 },
+        { status: 429 }
       )
     }
 
@@ -121,7 +140,7 @@ export async function GET() {
 
     // LLM 호출이 발생한 경우에만 사용량 기록
     // (캐시 히트 시 aiDescription이 존재하지 않을 수 있으나, 쿼터는 첫 생성 시에만 차감)
-    const hasLLMResult = result.insights.some(i => i.aiDescription)
+    const hasLLMResult = result.insights.some((i) => i.aiDescription)
     if (hasLLMResult) {
       await quotaService.logUsage(user.id, 'AI_KPI_INSIGHT')
     }
@@ -129,7 +148,7 @@ export async function GET() {
     // 응답 형식 변환 (프론트엔드 호환)
     const response = {
       success: true,
-      insights: result.insights.map(insight => ({
+      insights: result.insights.map((insight) => ({
         id: insight.id,
         type: mapCategoryToType(insight.category),
         priority: insight.priority,
@@ -154,7 +173,7 @@ export async function GET() {
     console.error('Failed to generate KPI insights:', error)
     return NextResponse.json(
       { success: false, message: 'KPI 인사이트 생성에 실패했습니다' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -162,7 +181,9 @@ export async function GET() {
 /**
  * 카테고리를 프론트엔드 타입으로 변환
  */
-function mapCategoryToType(category: string): 'opportunity' | 'warning' | 'tip' | 'success' {
+function mapCategoryToType(
+  category: InsightCategory
+): 'opportunity' | 'warning' | 'tip' | 'success' {
   switch (category) {
     case 'opportunity':
       return 'opportunity'
@@ -174,6 +195,10 @@ function mapCategoryToType(category: string): 'opportunity' | 'warning' | 'tip' 
     case 'trend':
       return 'tip'
     default:
-      return 'tip'
+      return assertUnreachableCategory(category)
   }
+}
+
+function assertUnreachableCategory(category: never): never {
+  throw new Error(`Unhandled insight category: ${String(category)}`)
 }
