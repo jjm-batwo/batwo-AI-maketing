@@ -36,6 +36,7 @@ DI(Dependency Injection) 컨테이너의 일관성을 검증합니다:
 | `src/application/ports/IResilienceService.ts` | 복원력 서비스 포트 — DI 등록 대상 |
 | `src/application/use-cases/ai/GetFeedbackAnalyticsUseCase.ts` | 피드백 분석 유스케이스 — DI 등록 대상 |
 | `src/application/ports/IAuditCache.ts` | 감사 캐시 포트 인터페이스 — 캐시 팩토리 패턴 사용 |
+| `src/application/services/KPIInsightsService.ts` | KPI 인사이트 서비스 — DI 등록 대상 (KPIInsightsService 토큰) |
 
 ## Workflow
 
@@ -168,6 +169,21 @@ grep -n "ResilienceService\|PromptTemplateService\|FallbackResponseService\|FewS
 **FAIL 기준:** 누락된 등록이 있음
 
 ---
+
+### New Pattern: KPI Insights Service Registration Check
+
+**Context:** AI KPI 인사이트 개선 (Phase 1)으로 KPIInsightsService가 DI에 등록됨.
+
+**검사:** KPIInsightsService가 DI에 등록되었는지 확인합니다:
+- KPIInsightsService
+
+```bash
+# KPI insights service 등록 확인
+grep -n "KPIInsightsService" src/lib/di/container.ts
+```
+
+**PASS 기준:** KPIInsightsService가 container.registerSingleton으로 등록됨
+**FAIL 기준:** 누락된 등록이 있음
 
 
 ## Output Format

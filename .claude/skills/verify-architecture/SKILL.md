@@ -43,6 +43,8 @@ description: 클린 아키텍처 레이어 의존성 규칙을 검증합니다. 
 | `src/application/services/FewShotExampleRegistry.ts` | 퓨샷 예시 레지스트리 구현 (application 레이어) |
 | `src/application/services/GuideQuestionService.ts` | 가이드 질문 서비스 구현 (application 레이어) |
 | `src/application/services/PromptTemplateService.ts` | 프롬프트 템플릿 서비스 구현 (application 레이어) |
+| `src/application/services/KPIInsightsService.ts` | KPI 인사이트 서비스 — 동적 기준선 + LLM 자연어 인사이트 (application 레이어) |
+| `src/application/services/QuotaService.ts` | 쿼터 서비스 — 사용량 제한 관리 (application 레이어) |
 | `src/infrastructure/database/**/*.ts` | Prisma 리포지토리 구현 |
 | `src/infrastructure/external/**/*.ts` | 외부 API 클라이언트 |
 | `src/infrastructure/external/errors/CircuitBreaker.ts` | 서킷 브레이커 (infrastructure 레이어, domain import 금지) |
