@@ -111,4 +111,34 @@ describe('QuotaExceededDialog', () => {
       screen.getByText('더 많은 기능을 원하시면')
     ).toBeInTheDocument()
   })
+  it('should show correct message for AI_KPI_INSIGHT', () => {
+    render(
+      <QuotaExceededDialog
+        open
+        onClose={mockOnClose}
+        onUpgrade={mockOnUpgrade}
+        type="AI_KPI_INSIGHT"
+      />
+    )
+    expect(
+      screen.getByText('오늘의 KPI 인사이트 분석 횟수를 초과했습니다')
+    ).toBeInTheDocument()
+  })
+
+  it('should show upgrade CTA for AI_KPI_INSIGHT', () => {
+    render(
+      <QuotaExceededDialog
+        open
+        onClose={mockOnClose}
+        onUpgrade={mockOnUpgrade}
+        type="AI_KPI_INSIGHT"
+      />
+    )
+    expect(
+      screen.getByText('더 많은 기능을 원하시면')
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: '유료 플랜 알아보기' })
+    ).toBeInTheDocument()
+  })
 })

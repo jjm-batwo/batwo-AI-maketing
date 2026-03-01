@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { AlertCircle, Sparkles } from 'lucide-react'
 
-type QuotaType = 'CAMPAIGN_CREATE' | 'AI_COPY_GEN' | 'AI_ANALYSIS'
+type QuotaType = 'CAMPAIGN_CREATE' | 'AI_COPY_GEN' | 'AI_ANALYSIS' | 'AI_KPI_INSIGHT'
 
 interface QuotaExceededDialogProps {
   open: boolean
@@ -24,12 +24,14 @@ const quotaMessages: Record<QuotaType, string> = {
   CAMPAIGN_CREATE: '이번 주 캠페인 생성 횟수(5회)를 모두 사용했어요',
   AI_COPY_GEN: '오늘 AI 카피 생성 횟수(20회)를 모두 사용했어요',
   AI_ANALYSIS: '이번 주 AI 분석 횟수(5회)를 모두 사용했어요',
+  AI_KPI_INSIGHT: '오늘의 KPI 인사이트 분석 횟수를 초과했습니다',
 }
 
 const quotaResetMessages: Record<QuotaType, string> = {
   CAMPAIGN_CREATE: '다음 주 월요일에 초기화됩니다',
   AI_COPY_GEN: '내일 자정에 초기화됩니다',
   AI_ANALYSIS: '다음 주 월요일에 초기화됩니다',
+  AI_KPI_INSIGHT: '내일 자정에 초기화됩니다',
 }
 
 export function QuotaExceededDialog({
