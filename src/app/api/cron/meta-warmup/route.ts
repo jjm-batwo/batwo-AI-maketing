@@ -14,7 +14,7 @@ interface AccountResult {
 }
 
 interface AccountInfo {
-  accessToken: string
+  metaAccessToken: string
   metaAccountId: string
   businessName: string | null
 }
@@ -38,7 +38,7 @@ async function tryGetAccountsFromDB(targetAccountId: string | undefined): Promis
     })
     return {
       accounts: accounts.map(a => ({
-        accessToken: safeDecryptToken(a.accessToken),
+        metaAccessToken: safeDecryptToken(a.accessToken),
         metaAccountId: a.metaAccountId,
         businessName: a.businessName,
       })),
@@ -140,7 +140,7 @@ export async function GET(request: NextRequest) {
       if (envToken && envAccountId) {
         console.log('[Meta Warmup] Using env vars fallback (DB unavailable or empty)')
         accounts = [{
-          accessToken: envToken,
+          metaAccessToken: envToken,
           metaAccountId: envAccountId,
           businessName: 'Env Config',
         }]
@@ -173,7 +173,7 @@ export async function GET(request: NextRequest) {
     for (const account of accounts) {
       try {
         const summary = await warmupClient.runWarmupSequence(
-          account.accessToken,
+          account.metaAccessToken,
           account.metaAccountId,
           {
             maxCampaigns: 50,  // 앱 검수를 위해 최대화

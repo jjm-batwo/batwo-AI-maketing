@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS, getCacheService } from '@/lib/di/container'
 import { SyncCampaignsUseCase, MetaConnectionError } from '@application/use-cases/campaign/SyncCampaignsUseCase'
@@ -54,6 +55,11 @@ export async function POST(request: NextRequest) {
     // 2. DI CacheService (MemoryCacheService / Redis) — 대시보드 API가 실제 사용하는 캐시
     const cacheService = getCacheService()
     await cacheService.deletePattern(CacheKeys.userPattern(user.id))
+
+    // 3. Next.js ISR 캐시 무효화
+    revalidateTag('campaigns', 'default')
+    revalidateTag('kpi', 'default')
+    revalidateTag('admin-dashboard', 'default')
 
     return NextResponse.json({
       success: true,
