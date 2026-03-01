@@ -8,10 +8,8 @@
 
 import { NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
-import { KPIInsightsService } from '@application/services/KPIInsightsService'
 import type { CampaignAggregate, LiveDataOverrides } from '@application/services/KPIInsightsService'
-import { container, DI_TOKENS } from '@/lib/di/container'
-import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
+import { container, DI_TOKENS, getKPIInsightsService, getQuotaService } from '@/lib/di/container'
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import type { IMetaAdsService } from '@application/ports/IMetaAdsService'
 import { prisma } from '@/lib/prisma'
@@ -99,18 +97,34 @@ export async function GET() {
   if (!user) return unauthorizedResponse()
 
   try {
+    // 쿼터 확인 (캐시 히트 시에는 차감 없음 — LLM 호출 성공 후에만 logUsage)
+    const quotaService = getQuotaService()
+    const hasQuota = await quotaService.checkQuota(user.id, 'AI_KPI_INSIGHT')
+    if (!hasQuota) {
+      return NextResponse.json(
+        { success: false, message: '오늘의 KPI 인사이트 분석 횟수를 초과했습니다' },
+        { status: 429 },
+      )
+    }
+
     // DI에서 리포지토리 가져오기
-    const kpiRepository = container.resolve<IKPIRepository>(DI_TOKENS.KPIRepository)
     const campaignRepository = container.resolve<ICampaignRepository>(DI_TOKENS.CampaignRepository)
 
     // Meta API 라이브 데이터 가져오기 (실패 시 DB 폴백)
     const liveOverrides = await fetchLiveOverrides(user.id, campaignRepository)
 
-    // 서비스 인스턴스 생성
-    const kpiInsightsService = new KPIInsightsService(kpiRepository, campaignRepository)
+    // DI 컨테이너에서 서비스 가져오기 (AI + 캐시 포함)
+    const kpiInsightsService = getKPIInsightsService()
 
     // 인사이트 생성 (라이브 데이터 우선)
     const result = await kpiInsightsService.generateInsights(user.id, liveOverrides)
+
+    // LLM 호출이 발생한 경우에만 사용량 기록
+    // (캐시 히트 시 aiDescription이 존재하지 않을 수 있으나, 쿼터는 첫 생성 시에만 차감)
+    const hasLLMResult = result.insights.some(i => i.aiDescription)
+    if (hasLLMResult) {
+      await quotaService.logUsage(user.id, 'AI_KPI_INSIGHT')
+    }
 
     // 응답 형식 변환 (프론트엔드 호환)
     const response = {
@@ -121,6 +135,7 @@ export async function GET() {
         priority: insight.priority,
         title: insight.title,
         description: insight.description,
+        aiDescription: insight.aiDescription,
         metric: insight.metric,
         currentValue: insight.currentValue,
         comparisonValue: insight.comparisonValue,
@@ -139,7 +154,7 @@ export async function GET() {
     console.error('Failed to generate KPI insights:', error)
     return NextResponse.json(
       { success: false, message: 'KPI 인사이트 생성에 실패했습니다' },
-      { status: 500 }
+      { status: 500 },
     )
   }
 }

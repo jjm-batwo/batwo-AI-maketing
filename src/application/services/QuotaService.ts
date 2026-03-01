@@ -17,6 +17,7 @@ function getQuotaLimitsForPlan(plan: SubscriptionPlan): QuotaLimits {
     AI_COPY_GEN: { count: config.aiCopyPerDay, period: 'day' },
     AI_ANALYSIS: { count: config.aiAnalysisPerWeek, period: 'week' },
     AI_SCIENCE: { count: config.aiSciencePerWeek, period: 'week' },
+    AI_KPI_INSIGHT: { count: config.aiKPIInsightPerDay, period: 'day' },
   }
 }
 

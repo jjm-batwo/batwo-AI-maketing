@@ -42,6 +42,7 @@ export interface PlanConfig {
   aiCopyPremiumPerDay: number // -1 = unlimited, 0 = not available
   aiAnalysisPerWeek: number // -1 = unlimited
   aiSciencePerWeek: number // -1 = unlimited
+  aiKPIInsightPerDay: number // -1 = unlimited
   competitorAnalysisPerWeek: number // -1 = unlimited
   teamMembers: number // max team members, -1 = unlimited
   aiModelTier: AIModelTier
@@ -74,6 +75,7 @@ export const PLAN_CONFIGS: Record<SubscriptionPlan, PlanConfig> = {
     aiCopyPremiumPerDay: 0,
     aiAnalysisPerWeek: 3,
     aiSciencePerWeek: 0,
+    aiKPIInsightPerDay: 5,
     competitorAnalysisPerWeek: 0,
     teamMembers: 1,
     aiModelTier: 'mini',
@@ -102,6 +104,7 @@ export const PLAN_CONFIGS: Record<SubscriptionPlan, PlanConfig> = {
     aiCopyPremiumPerDay: 5,
     aiAnalysisPerWeek: 15,
     aiSciencePerWeek: 5,
+    aiKPIInsightPerDay: 10,
     competitorAnalysisPerWeek: 3,
     teamMembers: 2,
     aiModelTier: 'standard',
@@ -134,6 +137,7 @@ export const PLAN_CONFIGS: Record<SubscriptionPlan, PlanConfig> = {
     aiCopyPremiumPerDay: 20,
     aiAnalysisPerWeek: -1,
     aiSciencePerWeek: -1,
+    aiKPIInsightPerDay: 20,
     competitorAnalysisPerWeek: -1,
     teamMembers: 5,
     aiModelTier: 'premium',
@@ -171,6 +175,7 @@ export const PLAN_CONFIGS: Record<SubscriptionPlan, PlanConfig> = {
     aiCopyPremiumPerDay: -1,
     aiAnalysisPerWeek: -1,
     aiSciencePerWeek: -1,
+    aiKPIInsightPerDay: -1,
     competitorAnalysisPerWeek: -1,
     teamMembers: -1,
     aiModelTier: 'premium',

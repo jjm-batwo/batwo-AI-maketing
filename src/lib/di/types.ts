@@ -48,6 +48,7 @@ export const DI_TOKENS = {
   ConversationalAgentService: Symbol.for('ConversationalAgentService'),
   ActionConfirmationService: Symbol.for('ActionConfirmationService'),
   ProactiveAlertService: Symbol.for('ProactiveAlertService'),
+  KPIInsightsService: Symbol.for('KPIInsightsService'),
 
   // Infrastructure Services
   ReportPDFGenerator: Symbol.for('ReportPDFGenerator'),
