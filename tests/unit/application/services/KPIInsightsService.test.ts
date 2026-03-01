@@ -934,4 +934,150 @@ describe('KPIInsightsService', () => {
       )
     })
   })
+  describe('fire-and-forget InsightHistory persistence', () => {
+    it('should_succeed_generating_insights_even_when_history_save_throws', async () => {
+      // Given: 1개 활성 캠페인
+      const userId = 'user-1'
+      const campaign = Campaign.restore({
+        id: crypto.randomUUID(),
+        userId,
+        name: 'Campaign A',
+        objective: 'CONVERSIONS',
+        dailyBudget: Money.create(10000, 'KRW'),
+        startDate: new Date(),
+        status: 'ACTIVE',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      await campaignRepository.save(campaign)
+
+      const now = new Date()
+      const todayStart = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0)
+      )
+      const kpi = KPI.create({
+        campaignId: campaign.id,
+        date: todayStart,
+        impressions: 1000,
+        clicks: 50,
+        linkClicks: 40,
+        conversions: 5,
+        spend: 5000,
+        revenue: 15000,
+      })
+      await kpiRepository.save(kpi)
+
+      // Mock InsightHistory repository that always throws
+      const mockInsightHistoryRepo = {
+        save: vi.fn().mockRejectedValue(new Error('DB write failed')),
+        findByUserId: vi.fn().mockResolvedValue([]),
+      }
+
+      const service = new KPIInsightsService(kpiRepository, campaignRepository)
+      service.setInsightHistoryRepository(mockInsightHistoryRepo)
+
+      // When: suppress console.warn for cleaner test output
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+      const result = await service.generateInsights(userId)
+
+      // Then: insights are still returned successfully
+      expect(result).toBeDefined()
+      expect(result.insights.length).toBeGreaterThanOrEqual(0)
+      expect(result.generatedAt).toBeInstanceOf(Date)
+
+      // verify save was attempted (fire-and-forget)
+      // Wait a tick for the catch handler to fire
+      await new Promise((resolve) => setTimeout(resolve, 10))
+      // save may or may not have been called depending on insights generated
+      // The point is that the function did NOT throw
+
+      warnSpy.mockRestore()
+    })
+
+    it('should_call_insightHistoryRepository_save_for_each_insight', async () => {
+      // Given: 1 활성 캠페인 with data that triggers budget insight
+      const userId = 'user-budget'
+      const campaign = Campaign.restore({
+        id: crypto.randomUUID(),
+        userId,
+        name: 'Budget Test Campaign',
+        objective: 'CONVERSIONS',
+        dailyBudget: Money.create(10000, 'KRW'),
+        startDate: new Date(),
+        status: 'ACTIVE',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      await campaignRepository.save(campaign)
+
+      const now = new Date()
+      const todayStart = new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0)
+      )
+
+      // Spend 95% of budget to trigger 'budget-depleting' insight
+      const kpi = KPI.create({
+        campaignId: campaign.id,
+        date: todayStart,
+        impressions: 10000,
+        clicks: 500,
+        linkClicks: 400,
+        conversions: 50,
+        spend: 9500,
+        revenue: 25000,
+      })
+      await kpiRepository.save(kpi)
+
+      const mockInsightHistoryRepo = {
+        save: vi.fn().mockResolvedValue(undefined),
+        findByUserId: vi.fn().mockResolvedValue([]),
+      }
+
+      const service = new KPIInsightsService(kpiRepository, campaignRepository)
+      service.setInsightHistoryRepository(mockInsightHistoryRepo)
+
+      // When
+      const result = await service.generateInsights(userId)
+
+      // Then: save called for each insight
+      await new Promise((resolve) => setTimeout(resolve, 10))
+      expect(mockInsightHistoryRepo.save).toHaveBeenCalledTimes(result.insights.length)
+
+      // Verify the DTO structure of the first save call
+      if (result.insights.length > 0) {
+        const firstCall = mockInsightHistoryRepo.save.mock.calls[0][0]
+        expect(firstCall.userId).toBe(userId)
+        expect(firstCall.category).toBeDefined()
+        expect(firstCall.priority).toBeDefined()
+        expect(firstCall.title).toBeDefined()
+        expect(firstCall.description).toBeDefined()
+      }
+    })
+
+    it('should_not_call_insightHistoryRepository_when_not_set', async () => {
+      // Given: service without InsightHistory repo
+      const userId = 'user-no-repo'
+      const campaign = Campaign.restore({
+        id: crypto.randomUUID(),
+        userId,
+        name: 'No Repo Campaign',
+        objective: 'CONVERSIONS',
+        dailyBudget: Money.create(10000, 'KRW'),
+        startDate: new Date(),
+        status: 'ACTIVE',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      await campaignRepository.save(campaign)
+
+      const service = new KPIInsightsService(kpiRepository, campaignRepository)
+      // NOT calling setInsightHistoryRepository
+
+      // When: should work fine without history repo
+      const result = await service.generateInsights(userId)
+
+      // Then: no error thrown
+      expect(result).toBeDefined()
+    })
+  })
 })

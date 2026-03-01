@@ -9,6 +9,7 @@ import type { ICampaignRepository } from '@domain/repositories/ICampaignReposito
 import type { InsightCategory } from '@domain/types/InsightCategory'
 import type { IAIService } from '@application/ports/IAIService'
 import type { ICacheService } from '@application/ports/ICacheService'
+import type { IInsightHistoryRepository } from '@domain/repositories/IInsightHistoryRepository'
 
 // ============================================================================
 // Types
@@ -106,12 +107,21 @@ export interface LiveDataOverrides {
 // ============================================================================
 
 export class KPIInsightsService {
+  private insightHistoryRepository?: IInsightHistoryRepository
+
   constructor(
     private readonly kpiRepository: IKPIRepository,
     private readonly campaignRepository: ICampaignRepository,
     private readonly aiService?: IAIService,
     private readonly cacheService?: ICacheService
   ) {}
+
+  /**
+   * Optional setter for InsightHistory repository (avoids breaking existing constructor calls)
+   */
+  setInsightHistoryRepository(repo: IInsightHistoryRepository): void {
+    this.insightHistoryRepository = repo
+  }
 
   /**
    * 사용자의 모든 캠페인에 대한 KPI 인사이트 생성
@@ -189,6 +199,27 @@ export class KPIInsightsService {
     // 상위 10개만 반환
     const topInsights = insights.slice(0, 10)
     const enhancedInsights = await this.enhanceWithLLM(topInsights, userId)
+
+    // Fire-and-forget: persist insights to history (non-blocking)
+    if (this.insightHistoryRepository && userId) {
+      for (const insight of enhancedInsights) {
+        this.insightHistoryRepository.save({
+          userId,
+          campaignId: insight.campaignId,
+          category: insight.category,
+          priority: insight.priority,
+          title: insight.title,
+          description: insight.aiDescription ?? insight.description,
+          rootCause: insight.rootCause,
+          metadata: {
+            recommendations: insight.recommendations,
+            forecast: insight.forecast,
+          },
+        }).catch((e: unknown) => {
+          console.warn('[KPIInsightsService] InsightHistory save failed (non-blocking):', e)
+        })
+      }
+    }
 
     return {
       insights: enhancedInsights,

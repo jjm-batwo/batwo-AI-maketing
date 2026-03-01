@@ -252,6 +252,27 @@ model KPISnapshot {
 }
 
 // ========================================
+// Insight History
+// ========================================
+
+model InsightHistory {
+  id          String   @id @default(cuid())
+  userId      String
+  campaignId  String?
+  category    String   // InsightCategory value
+  priority    String   // InsightPriority value
+  title       String
+  description String   @db.Text
+  rootCause   String?  @db.Text
+  metadata    Json?    // recommendations, forecast, etc.
+  createdAt   DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([campaignId])
+  @@index([createdAt])
+}
+
+// ========================================
 // Report Management
 // ========================================
 

@@ -24,6 +24,7 @@ export const DI_TOKENS = {
   PendingActionRepository: Symbol.for('PendingActionRepository'),
   AlertRepository: Symbol.for('AlertRepository'),
   MetaAdAccountRepository: Symbol.for('MetaAdAccountRepository'),
+  InsightHistoryRepository: Symbol.for('InsightHistoryRepository'),
 
   // External Services
   MetaAdsService: Symbol.for('MetaAdsService'),
