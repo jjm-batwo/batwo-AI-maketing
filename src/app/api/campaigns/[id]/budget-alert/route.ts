@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidateTag } from 'next/cache'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { getBudgetAlertService, getCampaignRepository } from '@/lib/di/container'
 import { createBudgetAlertSchema, updateBudgetAlertSchema, validateBody } from '@/lib/validations'
@@ -104,6 +105,9 @@ export async function POST(
       thresholdPercent,
     })
 
+    // ISR 캐시 무효화
+    revalidateTag('campaigns', 'default')
+
     return NextResponse.json({
       campaignId: alert.campaignId,
       thresholdPercent: alert.thresholdPercent,
@@ -176,6 +180,9 @@ export async function PATCH(
 
     const alert = await budgetAlertService.getAlert(id)
 
+    // ISR 캐시 무효화
+    revalidateTag('campaigns', 'default')
+
     return NextResponse.json({
       campaignId: alert!.campaignId,
       thresholdPercent: alert!.thresholdPercent,
@@ -231,6 +238,9 @@ export async function DELETE(
 
     const budgetAlertService = getBudgetAlertService()
     await budgetAlertService.deleteAlert(id)
+
+    // ISR 캐시 무효화
+    revalidateTag('campaigns', 'default')
 
     return new NextResponse(null, { status: 204 })
   } catch (error) {
