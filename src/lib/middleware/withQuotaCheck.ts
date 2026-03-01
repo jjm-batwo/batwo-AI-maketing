@@ -98,6 +98,8 @@ function getQuotaExceededMessage(
       return `${periodKo} AI 분석 횟수(${limit}회)를 모두 사용했어요`
     case 'AI_SCIENCE':
       return `${periodKo} AI 과학 분석 횟수(${limit}회)를 모두 사용했어요`
+    case 'AI_KPI_INSIGHT':
+      return '오늘의 KPI 인사이트 분석 횟수를 초과했습니다'
     default:
       return `${periodKo} 사용량 한도(${limit}회)에 도달했어요`
   }
