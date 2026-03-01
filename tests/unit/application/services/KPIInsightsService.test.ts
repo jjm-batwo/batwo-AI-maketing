@@ -299,4 +299,417 @@ describe('KPIInsightsService', () => {
       }
     })
   })
+
+  describe('generateInsights - 동적 기준선 및 LLM 강화', () => {
+    it('should_use_dynamic_budget_threshold_when_7day_average_available', async () => {
+      // Given: 시간 고정 (6시 → expectedUsagePercent = 25%)
+      vi.useFakeTimers()
+      const fakeNow = new Date(2026, 0, 15, 6, 0, 0)
+      vi.setSystemTime(fakeNow)
+
+      try {
+        const userId = 'user-dynamic-budget'
+        const campaignId = crypto.randomUUID()
+        const dailyBudget = 100000
+
+        const campaign = Campaign.restore({
+          id: campaignId,
+          userId,
+          name: 'Dynamic Threshold Campaign',
+          objective: 'CONVERSIONS',
+          dailyBudget: Money.create(dailyBudget, 'KRW'),
+          startDate: new Date(),
+          status: 'ACTIVE',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        await campaignRepository.save(campaign)
+
+        // 7일 KPI 데이터: 총 70000 → 평균 10000
+        // dynamicThreshold = Math.max(15, (10000/100000)*100*0.3) = Math.max(15, 3) = 15
+        const todayStartUTC = new Date(
+          Date.UTC(fakeNow.getUTCFullYear(), fakeNow.getUTCMonth(), fakeNow.getUTCDate(), 0, 0, 0)
+        )
+        for (let i = 1; i <= 7; i++) {
+          const date = new Date(todayStartUTC)
+          date.setUTCDate(date.getUTCDate() - i)
+          await kpiRepository.save(
+            KPI.create({
+              campaignId,
+              date,
+              impressions: 1000,
+              clicks: 50,
+              linkClicks: 40,
+              conversions: 5,
+              spend: Money.create(10000, 'KRW'),
+              revenue: Money.create(20000, 'KRW'),
+            })
+          )
+        }
+
+        // 오늘: budgetUsagePercent = 42%, expectedUsagePercent = 25%
+        // budgetPace = 17 → 15 < 17 < 20 (동적 threshold에서만 트리거)
+        const todayMap = new Map<string, { totalImpressions: number; totalClicks: number; totalLinkClicks: number; totalConversions: number; totalSpend: number; totalRevenue: number }>()
+        todayMap.set(campaignId, {
+          totalImpressions: 5000,
+          totalClicks: 250,
+          totalLinkClicks: 200,
+          totalConversions: 10,
+          totalSpend: 42000,
+          totalRevenue: 84000,
+        })
+        const yesterdayMap = new Map<string, { totalImpressions: number; totalClicks: number; totalLinkClicks: number; totalConversions: number; totalSpend: number; totalRevenue: number }>()
+        yesterdayMap.set(campaignId, {
+          totalImpressions: 0,
+          totalClicks: 0,
+          totalLinkClicks: 0,
+          totalConversions: 0,
+          totalSpend: 0,
+          totalRevenue: 0,
+        })
+
+        const service = new KPIInsightsService(kpiRepository, campaignRepository)
+
+        // When
+        const result = await service.generateInsights(userId, { todayMap, yesterdayMap })
+
+        // Then: budget-fast 인사이트 생성됨 (동적 threshold 15 < 17)
+        const budgetFastInsight = result.insights.find(i => i.id.includes('budget-fast'))
+        expect(budgetFastInsight).toBeDefined()
+        expect(budgetFastInsight?.priority).toBe('high')
+        expect(budgetFastInsight?.category).toBe('budget')
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+
+    it('should_use_dynamic_spend_change_threshold_when_7day_average_available', async () => {
+      // Given: 시간 고정 (6시)
+      vi.useFakeTimers()
+      const fakeNow = new Date(2026, 0, 15, 6, 0, 0)
+      vi.setSystemTime(fakeNow)
+
+      try {
+        const userId = 'user-dynamic-spend'
+        const campaignId = crypto.randomUUID()
+
+        const campaign = Campaign.restore({
+          id: campaignId,
+          userId,
+          name: 'Spend Change Campaign',
+          objective: 'CONVERSIONS',
+          dailyBudget: Money.create(1000000, 'KRW'),
+          startDate: new Date(),
+          status: 'ACTIVE',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        await campaignRepository.save(campaign)
+
+        // 7일 KPI: 총 spend = 525 → 평균 = 75
+        // spendChangeThreshold = Math.min(50, Math.max(20, 75 * 0.3)) = Math.min(50, 22.5) = 22.5
+        const todayStartUTC = new Date(
+          Date.UTC(fakeNow.getUTCFullYear(), fakeNow.getUTCMonth(), fakeNow.getUTCDate(), 0, 0, 0)
+        )
+        for (let i = 1; i <= 7; i++) {
+          const date = new Date(todayStartUTC)
+          date.setUTCDate(date.getUTCDate() - i)
+          await kpiRepository.save(
+            KPI.create({
+              campaignId,
+              date,
+              impressions: 100,
+              clicks: 5,
+              linkClicks: 4,
+              conversions: 1,
+              spend: Money.create(75, 'KRW'),
+              revenue: Money.create(150, 'KRW'),
+            })
+          )
+        }
+
+        // 어제 totalSpend = 10000 → 동시간 예상치 = 10000 * (6/24) = 2500
+        // 오늘 totalSpend = 3075 → spendChange = ((3075-2500)/2500)*100 = 23%
+        // 23% > 22.5 (동적 threshold) → spend-up 생성됨
+        const todayMap = new Map<string, { totalImpressions: number; totalClicks: number; totalLinkClicks: number; totalConversions: number; totalSpend: number; totalRevenue: number }>()
+        todayMap.set(campaignId, {
+          totalImpressions: 1000,
+          totalClicks: 50,
+          totalLinkClicks: 40,
+          totalConversions: 5,
+          totalSpend: 3075,
+          totalRevenue: 6000,
+        })
+        const yesterdayMap = new Map<string, { totalImpressions: number; totalClicks: number; totalLinkClicks: number; totalConversions: number; totalSpend: number; totalRevenue: number }>()
+        yesterdayMap.set(campaignId, {
+          totalImpressions: 5000,
+          totalClicks: 250,
+          totalLinkClicks: 200,
+          totalConversions: 10,
+          totalSpend: 10000,
+          totalRevenue: 20000,
+        })
+
+        const service = new KPIInsightsService(kpiRepository, campaignRepository)
+
+        // When
+        const result = await service.generateInsights(userId, { todayMap, yesterdayMap })
+
+        // Then: spend-up 인사이트 생성됨
+        const spendUpInsight = result.insights.find(i => i.id.includes('spend-up'))
+        expect(spendUpInsight).toBeDefined()
+        expect(spendUpInsight?.category).toBe('performance')
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+
+    it('should_not_add_aiDescription_when_aiService_not_provided', async () => {
+      // Given: aiService 없이 서비스 생성 (2개 파라미터만)
+      const service = new KPIInsightsService(kpiRepository, campaignRepository)
+
+      const userId = 'user-no-ai'
+      const campaign = Campaign.restore({
+        id: crypto.randomUUID(),
+        userId,
+        name: 'No AI Campaign',
+        objective: 'CONVERSIONS',
+        dailyBudget: Money.create(10000, 'KRW'),
+        startDate: new Date(),
+        status: 'ACTIVE',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      await campaignRepository.save(campaign)
+
+      const now = new Date()
+      const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0))
+      await kpiRepository.save(
+        KPI.create({
+          campaignId: campaign.id,
+          date: todayStart,
+          impressions: 10000,
+          clicks: 500,
+          linkClicks: 450,
+          conversions: 50,
+          spend: Money.create(9500, 'KRW'),
+          revenue: Money.create(47500, 'KRW'),
+        })
+      )
+
+      // When
+      const result = await service.generateInsights(userId)
+
+      // Then: 모든 인사이트에 aiDescription 없음
+      expect(result.insights.length).toBeGreaterThan(0)
+      result.insights.forEach(insight => {
+        expect(insight.aiDescription).toBeUndefined()
+      })
+    })
+
+    it('should_add_aiDescription_when_llm_call_succeeds', async () => {
+      // Given: 캠페인 설정
+      const userId = 'user-with-ai'
+      const campaignId = crypto.randomUUID()
+
+      const campaign = Campaign.restore({
+        id: campaignId,
+        userId,
+        name: 'AI Campaign',
+        objective: 'CONVERSIONS',
+        dailyBudget: Money.create(10000, 'KRW'),
+        startDate: new Date(),
+        status: 'ACTIVE',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      await campaignRepository.save(campaign)
+
+      const now = new Date()
+      const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0))
+      await kpiRepository.save(
+        KPI.create({
+          campaignId,
+          date: todayStart,
+          impressions: 10000,
+          clicks: 500,
+          linkClicks: 450,
+          conversions: 50,
+          spend: Money.create(9500, 'KRW'),
+          revenue: Money.create(47500, 'KRW'),
+        })
+      )
+
+      // Mock aiService: chatCompletion이 유효한 JSON 반환
+      const mockAiService = {
+        generateCampaignOptimization: vi.fn(),
+        generateReportInsights: vi.fn(),
+        generateAdCopy: vi.fn(),
+        generateBudgetRecommendation: vi.fn(),
+        generateCreativeVariants: vi.fn(),
+        chatCompletion: vi.fn().mockResolvedValue(
+          JSON.stringify([{ id: `budget-depleting-${campaignId}`, aiDescription: '예산 부족' }])
+        ),
+      }
+
+      const service = new KPIInsightsService(
+        kpiRepository,
+        campaignRepository,
+        mockAiService
+      )
+
+      // When
+      const result = await service.generateInsights(userId)
+
+      // Then: aiDescription이 설정된 인사이트가 존재
+      const aiInsight = result.insights.find(i => i.aiDescription !== undefined)
+      expect(aiInsight).toBeDefined()
+      expect(aiInsight?.aiDescription).toBe('예산 부족')
+    })
+
+    it('should_gracefully_fallback_when_llm_times_out', async () => {
+      vi.useFakeTimers()
+      const fakeNow = new Date(2026, 0, 15, 6, 0, 0)
+      vi.setSystemTime(fakeNow)
+
+      try {
+        const userId = 'user-timeout'
+        const campaignId = crypto.randomUUID()
+
+        const campaign = Campaign.restore({
+          id: campaignId,
+          userId,
+          name: 'Timeout Campaign',
+          objective: 'CONVERSIONS',
+          dailyBudget: Money.create(10000, 'KRW'),
+          startDate: new Date(),
+          status: 'ACTIVE',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        await campaignRepository.save(campaign)
+
+        const todayStartUTC = new Date(
+          Date.UTC(fakeNow.getUTCFullYear(), fakeNow.getUTCMonth(), fakeNow.getUTCDate(), 0, 0, 0)
+        )
+        await kpiRepository.save(
+          KPI.create({
+            campaignId,
+            date: todayStartUTC,
+            impressions: 10000,
+            clicks: 500,
+            linkClicks: 450,
+            conversions: 50,
+            spend: Money.create(9500, 'KRW'),
+            revenue: Money.create(47500, 'KRW'),
+          })
+        )
+
+        // Mock: chatCompletion이 절대 resolve되지 않음 (hang)
+        const mockAiService = {
+          generateCampaignOptimization: vi.fn(),
+          generateReportInsights: vi.fn(),
+          generateAdCopy: vi.fn(),
+          generateBudgetRecommendation: vi.fn(),
+          generateCreativeVariants: vi.fn(),
+          chatCompletion: vi.fn().mockReturnValue(new Promise(() => {})),
+        }
+
+        const service = new KPIInsightsService(
+          kpiRepository,
+          campaignRepository,
+          mockAiService
+        )
+
+        // When: 인���이트 생성 시작 (비동기)
+        const resultPromise = service.generateInsights(userId)
+
+        // 11초 진행 → 10초 timeout 트리거
+        await vi.advanceTimersByTimeAsync(11000)
+
+        const result = await resultPromise
+
+        // Then: 인사이트는 반환되고, aiDescription 없음 (크래시 없이 graceful fallback)
+        expect(result.insights.length).toBeGreaterThan(0)
+        result.insights.forEach(insight => {
+          expect(insight.aiDescription).toBeUndefined()
+        })
+      } finally {
+        vi.useRealTimers()
+      }
+    })
+
+    it('should_use_cache_when_cacheService_provided', async () => {
+      // Given
+      const userId = 'user-cache-test'
+      const campaignId = crypto.randomUUID()
+
+      const campaign = Campaign.restore({
+        id: campaignId,
+        userId,
+        name: 'Cache Campaign',
+        objective: 'CONVERSIONS',
+        dailyBudget: Money.create(10000, 'KRW'),
+        startDate: new Date(),
+        status: 'ACTIVE',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      await campaignRepository.save(campaign)
+
+      const now = new Date()
+      const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0))
+      await kpiRepository.save(
+        KPI.create({
+          campaignId,
+          date: todayStart,
+          impressions: 10000,
+          clicks: 500,
+          linkClicks: 450,
+          conversions: 50,
+          spend: Money.create(9500, 'KRW'),
+          revenue: Money.create(47500, 'KRW'),
+        })
+      )
+
+      // Mock aiService
+      const mockAiService = {
+        generateCampaignOptimization: vi.fn(),
+        generateReportInsights: vi.fn(),
+        generateAdCopy: vi.fn(),
+        generateBudgetRecommendation: vi.fn(),
+        generateCreativeVariants: vi.fn(),
+        chatCompletion: vi.fn().mockResolvedValue('[]'),
+      }
+
+      // Mock cacheService
+      const mockCacheService = {
+        get: vi.fn(),
+        set: vi.fn(),
+        delete: vi.fn(),
+        deletePattern: vi.fn(),
+        invalidateUserCache: vi.fn(),
+        isHealthy: vi.fn(),
+        getOrSet: vi.fn().mockImplementation((_key: string, fn: () => Promise<unknown>) => fn()),
+      }
+
+      const service = new KPIInsightsService(
+        kpiRepository,
+        campaignRepository,
+        mockAiService,
+        mockCacheService
+      )
+
+      // When
+      await service.generateInsights(userId)
+
+      // Then: getOrSet가 올바른 키와 TTL로 호출됨
+      expect(mockCacheService.getOrSet).toHaveBeenCalledWith(
+        `kpi-insights-llm:${userId}`,
+        expect.any(Function),
+        7200
+      )
+    })
+  })
 })
+
