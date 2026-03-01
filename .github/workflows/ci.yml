@@ -18,7 +18,7 @@ env:
   NPM_VERSION: '11.9.0'
   # CI 환경변수 (테스트용)
   DATABASE_URL: 'postgresql://test:test@localhost:5432/test'
-  NEXTAUTH_SECRET: 'test-secret-for-ci-only'
+  NEXTAUTH_SECRET: 'test-secret-for-ci-only-min-32-chars'
   NEXTAUTH_URL: 'http://localhost:3000'
 
 jobs:

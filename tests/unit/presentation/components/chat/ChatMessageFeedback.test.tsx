@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ChatMessageFeedback } from '@/presentation/components/chat/ChatMessageFeedback'
@@ -38,10 +38,7 @@ describe('ChatMessageFeedback', () => {
     it('should_have_correct_aria_labels_for_accessibility', () => {
       render(<ChatMessageFeedback {...defaultProps} />)
 
-      expect(screen.getByTestId('feedback-positive')).toHaveAttribute(
-        'aria-label',
-        '도움이 됐어요'
-      )
+      expect(screen.getByTestId('feedback-positive')).toHaveAttribute('aria-label', '도움이 됐어요')
       expect(screen.getByTestId('feedback-negative')).toHaveAttribute(
         'aria-label',
         '도움이 안 됐어요'

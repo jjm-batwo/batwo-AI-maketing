@@ -185,7 +185,7 @@ describe('Sidebar', () => {
     it('should render navigation icons', () => {
       vi.mocked(usePathname).mockReturnValue('/dashboard')
 
-      render(<Sidebar />, { wrapper: Wrapper })
+      const { container } = render(<Sidebar />, { wrapper: Wrapper })
 
       // Each nav item should have an icon (svg)
       const navIcons = container.querySelectorAll('nav svg')
@@ -450,7 +450,7 @@ describe('Sidebar', () => {
 
       // No nav item should be highlighted
       const navLinks = screen.getAllByRole('link').slice(1, 4) // Skip home link, 3 nav items
-      navLinks.forEach(link => {
+      navLinks.forEach((link) => {
         expect(link).not.toHaveClass('bg-gray-100')
       })
     })
