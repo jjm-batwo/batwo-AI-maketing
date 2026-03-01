@@ -107,22 +107,29 @@ export class KPIInsightsService {
    * 사용자의 모든 캠페인에 대한 KPI 인사이트 생성
    * @param liveOverrides Meta API에서 가져온 실시간 데이터 (DB 대신 사용)
    */
-  async generateInsights(userId: string, liveOverrides?: LiveDataOverrides): Promise<KPIInsightsResult> {
+  async generateInsights(
+    userId: string,
+    liveOverrides?: LiveDataOverrides
+  ): Promise<KPIInsightsResult> {
     const insights: KPIInsight[] = []
     const now = new Date()
     const currentHour = now.getHours()
 
     // 활성 캠페인 조회
     const campaigns = await this.campaignRepository.findByUserId(userId)
-    const activeCampaigns = campaigns.filter(c => c.status === 'ACTIVE')
+    const activeCampaigns = campaigns.filter((c) => c.status === 'ACTIVE')
 
     if (activeCampaigns.length === 0) {
       return this.createEmptyResult()
     }
 
     // 시간 범위 계산
-    const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0))
-    const todayEnd = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59))
+    const todayStart = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0)
+    )
+    const todayEnd = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59)
+    )
     const yesterdayStart = new Date(todayStart)
     yesterdayStart.setUTCDate(yesterdayStart.getUTCDate() - 1)
     const yesterdayEnd = new Date(todayEnd)
@@ -132,10 +139,12 @@ export class KPIInsightsService {
 
     // 배치 쿼리로 모든 캠페인의 KPI 데이터 한 번에 조회 (N+1 방지)
     // liveOverrides가 있으면 Meta API 실시간 데이터 우선 사용
-    const campaignIds = activeCampaigns.map(c => c.id)
+    const campaignIds = activeCampaigns.map((c) => c.id)
     const [todayMap, yesterdayMap, last7DaysMap] = await Promise.all([
-      liveOverrides?.todayMap ?? this.kpiRepository.aggregateByCampaignIds(campaignIds, todayStart, todayEnd),
-      liveOverrides?.yesterdayMap ?? this.kpiRepository.aggregateByCampaignIds(campaignIds, yesterdayStart, yesterdayEnd),
+      liveOverrides?.todayMap ??
+        this.kpiRepository.aggregateByCampaignIds(campaignIds, todayStart, todayEnd),
+      liveOverrides?.yesterdayMap ??
+        this.kpiRepository.aggregateByCampaignIds(campaignIds, yesterdayStart, yesterdayEnd),
       this.kpiRepository.aggregateByCampaignIds(campaignIds, last7DaysStart, yesterdayEnd),
     ])
 
@@ -173,10 +182,10 @@ export class KPIInsightsService {
     return {
       insights: topInsights,
       summary: {
-        critical: topInsights.filter(i => i.priority === 'critical').length,
-        high: topInsights.filter(i => i.priority === 'high').length,
-        medium: topInsights.filter(i => i.priority === 'medium').length,
-        low: topInsights.filter(i => i.priority === 'low').length,
+        critical: topInsights.filter((i) => i.priority === 'critical').length,
+        high: topInsights.filter((i) => i.priority === 'high').length,
+        medium: topInsights.filter((i) => i.priority === 'medium').length,
+        low: topInsights.filter((i) => i.priority === 'low').length,
         total: topInsights.length,
       },
       generatedAt: now,
@@ -251,18 +260,15 @@ export class KPIInsightsService {
     const yesterdaySameHourClicks = yesterday.totalClicks * hourRatio
 
     // CTR, ROAS 계산
-    const todayCTR = today.totalImpressions > 0
-      ? (today.totalClicks / today.totalImpressions) * 100
-      : 0
-    const todayROAS = today.totalSpend > 0
-      ? today.totalRevenue / today.totalSpend
-      : 0
-    const yesterdayCTR = yesterday.totalImpressions > 0
-      ? (yesterday.totalClicks / yesterday.totalImpressions) * 100
-      : 0
-    const yesterdayROAS = yesterday.totalSpend > 0
-      ? yesterday.totalRevenue / yesterday.totalSpend
-      : 0
+    const todayCTR =
+      today.totalImpressions > 0 ? (today.totalClicks / today.totalImpressions) * 100 : 0
+    const todayROAS = today.totalSpend > 0 ? today.totalRevenue / today.totalSpend : 0
+    const yesterdayCTR =
+      yesterday.totalImpressions > 0
+        ? (yesterday.totalClicks / yesterday.totalImpressions) * 100
+        : 0
+    const yesterdayROAS =
+      yesterday.totalSpend > 0 ? yesterday.totalRevenue / yesterday.totalSpend : 0
 
     return {
       campaignId,
@@ -280,7 +286,8 @@ export class KPIInsightsService {
       last7DaysAvgSpend: last7Days.totalSpend / 7,
       last7DaysAvgClicks: last7Days.totalClicks / 7,
       last7DaysAvgConversions: last7Days.totalConversions / 7,
-      last7DaysAvgRoas: last7Days.totalSpend > 0 ? last7Days.totalRevenue / last7Days.totalSpend : 0,
+      last7DaysAvgRoas:
+        last7Days.totalSpend > 0 ? last7Days.totalRevenue / last7Days.totalSpend : 0,
       currentHour,
       todayCTR,
       todayROAS,
@@ -298,11 +305,14 @@ export class KPIInsightsService {
     const timeContext = `오늘 ${data.currentHour}시 기준`
 
     // 1. 예산 소진율 분석
-    const budgetUsagePercent = data.dailyBudget > 0
-      ? (data.todaySpend / data.dailyBudget) * 100
-      : 0
+    const budgetUsagePercent = data.dailyBudget > 0 ? (data.todaySpend / data.dailyBudget) * 100 : 0
     const expectedUsagePercent = (data.currentHour / 24) * 100
     const budgetPace = budgetUsagePercent - expectedUsagePercent
+
+    const budgetFastThreshold =
+      data.last7DaysAvgSpend > 0 && data.dailyBudget > 0
+        ? Math.max(15, (data.last7DaysAvgSpend / data.dailyBudget) * 100 * 0.3)
+        : 20
 
     if (budgetUsagePercent >= 90) {
       insights.push({
@@ -325,7 +335,7 @@ export class KPIInsightsService {
         campaignName: data.campaignName,
         createdAt: now,
       })
-    } else if (budgetPace > 20) {
+    } else if (budgetPace > budgetFastThreshold) {
       insights.push({
         id: `budget-fast-${data.campaignId}`,
         category: 'budget',
@@ -371,9 +381,12 @@ export class KPIInsightsService {
 
     // 2. 어제 동시간 대비 성과 분석
     if (data.yesterdaySameHourSpend > 0) {
-      const spendChange = ((data.todaySpend - data.yesterdaySameHourSpend) / data.yesterdaySameHourSpend) * 100
+      const spendChange =
+        ((data.todaySpend - data.yesterdaySameHourSpend) / data.yesterdaySameHourSpend) * 100
+      const spendChangeThreshold =
+        data.last7DaysAvgSpend > 0 ? Math.min(50, Math.max(20, data.last7DaysAvgSpend * 0.3)) : 30
 
-      if (spendChange > 30) {
+      if (spendChange > spendChangeThreshold) {
         insights.push({
           id: `spend-up-${data.campaignId}`,
           category: 'performance',
@@ -487,7 +500,8 @@ export class KPIInsightsService {
 
     // 5. 전환 분석
     if (data.todayConversions > 0 && data.last7DaysAvgConversions > 0) {
-      const conversionPace = (data.todayConversions / data.last7DaysAvgConversions) * 100 * (24 / data.currentHour)
+      const conversionPace =
+        (data.todayConversions / data.last7DaysAvgConversions) * 100 * (24 / data.currentHour)
 
       if (conversionPace > 150) {
         insights.push({
@@ -519,7 +533,10 @@ export class KPIInsightsService {
   /**
    * 전체 포트폴리오 분석
    */
-  private async analyzePortfolio(userId: string, activeCampaignCount: number): Promise<KPIInsight[]> {
+  private async analyzePortfolio(
+    userId: string,
+    activeCampaignCount: number
+  ): Promise<KPIInsight[]> {
     const insights: KPIInsight[] = []
     const now = new Date()
 
@@ -548,19 +565,21 @@ export class KPIInsightsService {
    */
   private createEmptyResult(): KPIInsightsResult {
     return {
-      insights: [{
-        id: 'no-data',
-        category: 'warning',
-        priority: 'medium',
-        title: '데이터 수집 중',
-        description: '캠페인 성과 데이터를 수집하고 있습니다. 동기화 후 인사이트가 표시됩니다.',
-        action: {
-          label: '동기화',
-          href: '#sync',
-          variant: 'primary',
+      insights: [
+        {
+          id: 'no-data',
+          category: 'warning',
+          priority: 'medium',
+          title: '데이터 수집 중',
+          description: '캠페인 성과 데이터를 수집하고 있습니다. 동기화 후 인사이트가 표시됩니다.',
+          action: {
+            label: '동기화',
+            href: '#sync',
+            variant: 'primary',
+          },
+          createdAt: new Date(),
         },
-        createdAt: new Date(),
-      }],
+      ],
       summary: {
         critical: 0,
         high: 0,
