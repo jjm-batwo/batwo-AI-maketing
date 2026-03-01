@@ -1,10 +1,25 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import React from 'react'
 import { renderToBuffer } from '@react-pdf/renderer'
 import { DailyReportTemplate } from '@infrastructure/pdf/templates/DailyReportTemplate'
 import type { ReportDTO } from '@application/dto/report/ReportDTO'
 
 describe('DailyReportTemplate', () => {
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>
+
+  beforeEach(() => {
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+      const [firstArg] = args
+      if (typeof firstArg === 'string' && firstArg.includes('not wrapped in act')) {
+        return
+      }
+    })
+  })
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore()
+  })
+
   const mockReport: ReportDTO = {
     id: 'test-report-1',
     type: 'DAILY',

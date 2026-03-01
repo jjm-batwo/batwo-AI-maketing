@@ -23,6 +23,7 @@ export const DI_TOKENS = {
   ConversationRepository: Symbol.for('ConversationRepository'),
   PendingActionRepository: Symbol.for('PendingActionRepository'),
   AlertRepository: Symbol.for('AlertRepository'),
+  MetaAdAccountRepository: Symbol.for('MetaAdAccountRepository'),
 
   // External Services
   MetaAdsService: Symbol.for('MetaAdsService'),
@@ -71,6 +72,7 @@ export const DI_TOKENS = {
   SyncCampaignsUseCase: Symbol.for('SyncCampaignsUseCase'),
   GenerateWeeklyReportUseCase: Symbol.for('GenerateWeeklyReportUseCase'),
   GetDashboardKPIUseCase: Symbol.for('GetDashboardKPIUseCase'),
+  GetLiveDashboardKPIUseCase: Symbol.for('GetLiveDashboardKPIUseCase'),
   SyncMetaInsightsUseCase: Symbol.for('SyncMetaInsightsUseCase'),
   SyncAllInsightsUseCase: Symbol.for('SyncAllInsightsUseCase'),
 

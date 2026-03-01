@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
-import { PrismaCreativeRepository } from '@/infrastructure/database/repositories/PrismaCreativeRepository'
-import { CreateCreativeUseCase } from '@application/use-cases/creative/CreateCreativeUseCase'
+import { container, DI_TOKENS } from '@/lib/di/container'
 import { toCreativeDTO } from '@application/dto/creative/CreativeDTO'
+import type { ICreativeRepository } from '@domain/repositories/ICreativeRepository'
 import { CreativeFormat } from '@domain/value-objects/CreativeFormat'
 import { CTAType } from '@domain/value-objects/CTAType'
-import { prisma } from '@/lib/prisma'
+import { CreateCreativeUseCase } from '@application/use-cases/creative/CreateCreativeUseCase'
 import { revalidateTag } from 'next/cache'
 
 export async function GET() {
@@ -13,7 +13,7 @@ export async function GET() {
   if (!user) return unauthorizedResponse()
 
   try {
-    const creativeRepository = new PrismaCreativeRepository(prisma)
+    const creativeRepository = container.resolve<ICreativeRepository>(DI_TOKENS.CreativeRepository)
     const creatives = await creativeRepository.findByUserId(user.id)
 
     return NextResponse.json({
@@ -21,10 +21,7 @@ export async function GET() {
     })
   } catch (error) {
     console.error('Failed to fetch creatives:', error)
-    return NextResponse.json(
-      { message: 'Failed to fetch creatives' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to fetch creatives' }, { status: 500 })
   }
 }
 
@@ -35,8 +32,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    const creativeRepository = new PrismaCreativeRepository(prisma)
-    const useCase = new CreateCreativeUseCase(creativeRepository)
+    const useCase = container.resolve<CreateCreativeUseCase>(DI_TOKENS.CreateCreativeUseCase)
 
     const result = await useCase.execute({
       userId: user.id,
@@ -55,9 +51,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result, { status: 201 })
   } catch (error) {
     console.error('Failed to create creative:', error)
-    return NextResponse.json(
-      { message: 'Failed to create creative' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to create creative' }, { status: 500 })
   }
 }

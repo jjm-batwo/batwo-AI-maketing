@@ -1,11 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { PDFReportService } from '@infrastructure/pdf/PDFReportService'
 import type { ReportDTO } from '@application/dto/report/ReportDTO'
 
 describe('PDFReportService', () => {
   let service: PDFReportService
   let mockReport: ReportDTO
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>
+
+  beforeEach(() => {
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+      const [firstArg] = args
+      if (typeof firstArg === 'string' && firstArg.includes('not wrapped in act')) {
+        return
+      }
+    })
+  })
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore()
+  })
 
   beforeEach(() => {
     service = new PDFReportService()
@@ -150,9 +164,9 @@ describe('PDFReportService', () => {
     })
 
     it('should throw error for unknown template type', async () => {
-      await expect(
-        service.generateReport('UNKNOWN' as any, mockReport)
-      ).rejects.toThrow('Unknown report template type')
+      await expect(service.generateReport('UNKNOWN' as any, mockReport)).rejects.toThrow(
+        'Unknown report template type'
+      )
     })
   })
 

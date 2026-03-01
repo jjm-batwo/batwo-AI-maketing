@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ChatMessageFeedback } from '@/presentation/components/chat/ChatMessageFeedback'
@@ -150,13 +150,14 @@ describe('ChatMessageFeedback', () => {
       const commentInput = screen.getByTestId('feedback-comment')
       await user.type(commentInput, '응답이 부정확합니다')
 
-      // 폼 제출 (Enter 또는 제출 버튼)
-      fireEvent.submit(commentInput.closest('form')!)
+      await user.click(screen.getByRole('button', { name: /제출/i }))
 
-      expect(mockSubmit).toHaveBeenCalledWith({
-        messageId: 'msg-001',
-        rating: 'negative',
-        comment: '응답이 부정확합니다',
+      await waitFor(() => {
+        expect(mockSubmit).toHaveBeenCalledWith({
+          messageId: 'msg-001',
+          rating: 'negative',
+          comment: '응답이 부정확합니다',
+        })
       })
     })
   })

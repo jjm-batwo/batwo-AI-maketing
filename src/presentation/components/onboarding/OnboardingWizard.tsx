@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -93,12 +94,10 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         aria-label={t('aria.wizard')}
       >
         <DialogHeader>
+          <DialogDescription className="sr-only">{t('aria.wizard')}</DialogDescription>
           <div className="flex items-center justify-between">
             <DialogTitle>{stepTitles[currentStep - 1]}</DialogTitle>
-            <span
-              className="text-sm text-muted-foreground"
-              aria-label={t('aria.progress')}
-            >
+            <span className="text-sm text-muted-foreground" aria-label={t('aria.progress')}>
               {currentStep}/{totalSteps}
             </span>
           </div>
@@ -124,12 +123,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         </div>
 
         <div className="flex items-center justify-between border-t pt-4">
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={handleSkip}
-            className="text-gray-500"
-          >
+          <Button type="button" variant="ghost" onClick={handleSkip} className="text-gray-500">
             {t('buttons.skip')}
           </Button>
 

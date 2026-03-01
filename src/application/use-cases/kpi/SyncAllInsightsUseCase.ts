@@ -3,7 +3,7 @@ import { Money } from '@domain/value-objects/Money'
 import { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import { IKPIRepository } from '@domain/repositories/IKPIRepository'
 import { IMetaAdsService } from '@application/ports/IMetaAdsService'
-import { prisma } from '@/lib/prisma'
+import { IMetaAdAccountRepository } from '@application/ports/IMetaAdAccountRepository'
 import { safeDecryptToken } from '@application/utils/TokenEncryption'
 
 export interface SyncAllInsightsInput {
@@ -23,14 +23,13 @@ export class SyncAllInsightsUseCase {
   constructor(
     private readonly campaignRepository: ICampaignRepository,
     private readonly kpiRepository: IKPIRepository,
-    private readonly metaAdsService: IMetaAdsService
+    private readonly metaAdsService: IMetaAdsService,
+    private readonly metaAdAccountRepository: IMetaAdAccountRepository
   ) {}
 
   async execute(input: SyncAllInsightsInput): Promise<SyncAllInsightsResult> {
     // Get user's Meta access token
-    const metaAccount = await prisma.metaAdAccount.findUnique({
-      where: { userId: input.userId },
-    })
+    const metaAccount = await this.metaAdAccountRepository.findByUserId(input.userId)
 
     console.log('[SyncInsights] Starting sync for user:', input.userId)
     console.log('[SyncInsights] Meta account found:', !!metaAccount?.accessToken)
@@ -42,7 +41,7 @@ export class SyncAllInsightsUseCase {
 
     // Get all campaigns with metaCampaignId
     const campaigns = await this.campaignRepository.findByUserId(input.userId)
-    const metaCampaigns = campaigns.filter(c => c.metaCampaignId)
+    const metaCampaigns = campaigns.filter((c) => c.metaCampaignId)
 
     console.log('[SyncInsights] Total campaigns:', campaigns.length)
     console.log('[SyncInsights] Campaigns with Meta ID:', metaCampaigns.length)
@@ -57,12 +56,18 @@ export class SyncAllInsightsUseCase {
     // Sync daily insights for each campaign (for chart data)
     for (const campaign of metaCampaigns) {
       try {
-        console.log(`[SyncInsights] Fetching insights for campaign: ${campaign.name} (${campaign.metaCampaignId})`)
+        console.log(
+          `[SyncInsights] Fetching insights for campaign: ${campaign.name} (${campaign.metaCampaignId})`
+        )
 
         // date_preset 대신 명시적 since/until 사용 (Meta의 date_preset은 최근 데이터 누락 가능)
         const until = new Date().toISOString().split('T')[0] // 오늘
         const presetDays: Record<string, number> = {
-          'today': 0, 'yesterday': 1, 'last_7d': 7, 'last_30d': 30, 'last_90d': 90
+          today: 0,
+          yesterday: 1,
+          last_7d: 7,
+          last_30d: 30,
+          last_90d: 90,
         }
         const days = presetDays[input.datePreset || 'last_7d'] ?? 7
         const sinceDate = new Date()
@@ -81,7 +86,10 @@ export class SyncAllInsightsUseCase {
         console.log(`[SyncInsights] Received ${dailyInsights.length} daily insights`)
         if (dailyInsights.length > 0) {
           console.log('[SyncInsights] Sample data:', JSON.stringify(dailyInsights[0]))
-          console.log('[SyncInsights] Last data:', JSON.stringify(dailyInsights[dailyInsights.length - 1]))
+          console.log(
+            '[SyncInsights] Last data:',
+            JSON.stringify(dailyInsights[dailyInsights.length - 1])
+          )
         }
 
         // Save each daily KPI record
@@ -100,7 +108,9 @@ export class SyncAllInsightsUseCase {
           await this.kpiRepository.save(kpi)
         }
 
-        console.log(`[SyncInsights] Saved ${dailyInsights.length} KPI records for campaign ${campaign.name}`)
+        console.log(
+          `[SyncInsights] Saved ${dailyInsights.length} KPI records for campaign ${campaign.name}`
+        )
         result.synced += dailyInsights.length
       } catch (error) {
         console.error(`[SyncInsights] Error syncing campaign ${campaign.id}:`, error)

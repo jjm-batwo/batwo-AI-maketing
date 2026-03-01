@@ -1,15 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { RefreshMetaTokenUseCase } from '@application/use-cases/token/RefreshMetaTokenUseCase'
-
-// prisma 모킹
-vi.mock('@/lib/prisma', () => ({
-  prisma: {
-    metaAdAccount: {
-      findMany: vi.fn(),
-      update: vi.fn(),
-    },
-  },
-}))
+import { RefreshMetaTokenUseCase } from '../../../../../src/application/use-cases/token/RefreshMetaTokenUseCase'
+import { safeDecryptToken } from '../../../../../src/application/utils/TokenEncryption'
+import type {
+  IMetaAdAccountRepository,
+  MetaAdAccountTokenRecord,
+} from '../../../../../src/application/ports/IMetaAdAccountRepository'
 
 // fetch 모킹
 const mockFetch = vi.fn()
@@ -19,18 +14,20 @@ vi.stubGlobal('fetch', mockFetch)
 vi.stubEnv('META_APP_ID', 'test-app-id')
 vi.stubEnv('META_APP_SECRET', 'test-app-secret')
 
-import { prisma } from '@/lib/prisma'
-
 describe('RefreshMetaTokenUseCase', () => {
   let useCase: RefreshMetaTokenUseCase
-  const mockPrismaMetaAdAccount = prisma.metaAdAccount as {
-    findMany: ReturnType<typeof vi.fn>
-    update: ReturnType<typeof vi.fn>
+  const findByUserIdMock = vi.fn()
+  const findExpiringBeforeMock = vi.fn()
+  const updateTokenMock = vi.fn()
+  const mockMetaAdAccountRepository: IMetaAdAccountRepository = {
+    findByUserId: findByUserIdMock,
+    findExpiringBefore: findExpiringBeforeMock,
+    updateToken: updateTokenMock,
   }
 
   beforeEach(() => {
     vi.clearAllMocks()
-    useCase = new RefreshMetaTokenUseCase()
+    useCase = new RefreshMetaTokenUseCase(mockMetaAdAccountRepository)
   })
 
   describe('execute', () => {
@@ -43,9 +40,9 @@ describe('RefreshMetaTokenUseCase', () => {
         accessToken: 'old-access-token',
         tokenExpiry: expiringDate,
         metaAccountId: 'meta-account-1',
-      }
+      } satisfies MetaAdAccountTokenRecord
 
-      mockPrismaMetaAdAccount.findMany.mockResolvedValue([mockAccount])
+      findExpiringBeforeMock.mockResolvedValue([mockAccount])
 
       const newToken = 'new-long-lived-token'
       const newExpiresIn = 60 * 24 * 60 * 60 // 60일(초)
@@ -58,7 +55,7 @@ describe('RefreshMetaTokenUseCase', () => {
         }),
       })
 
-      mockPrismaMetaAdAccount.update.mockResolvedValue({})
+      updateTokenMock.mockResolvedValue(undefined)
 
       const result = await useCase.execute()
 
@@ -74,11 +71,11 @@ describe('RefreshMetaTokenUseCase', () => {
       expect(fetchCall).toContain('fb_exchange_token=old-access-token')
 
       // DB 업데이트 확인
-      expect(mockPrismaMetaAdAccount.update).toHaveBeenCalledOnce()
-      const updateCall = mockPrismaMetaAdAccount.update.mock.calls[0][0]
-      expect(updateCall.where.id).toBe('account-1')
-      expect(updateCall.data.accessToken).toBe(newToken)
-      expect(updateCall.data.tokenExpiry).toBeInstanceOf(Date)
+      expect(updateTokenMock).toHaveBeenCalledOnce()
+      const [savedAccountId, savedToken, savedExpiry] = updateTokenMock.mock.calls[0]
+      expect(savedAccountId).toBe('account-1')
+      expect(safeDecryptToken(savedToken as string)).toBe(newToken)
+      expect(savedExpiry).toBeInstanceOf(Date)
     })
 
     it('should_skip_account_when_token_expiry_is_null', async () => {
@@ -88,9 +85,9 @@ describe('RefreshMetaTokenUseCase', () => {
         accessToken: 'some-token',
         tokenExpiry: null,
         metaAccountId: 'meta-account-1',
-      }
+      } satisfies MetaAdAccountTokenRecord
 
-      mockPrismaMetaAdAccount.findMany.mockResolvedValue([mockAccount])
+      findExpiringBeforeMock.mockResolvedValue([mockAccount])
 
       const result = await useCase.execute()
 
@@ -108,9 +105,9 @@ describe('RefreshMetaTokenUseCase', () => {
         accessToken: 'old-access-token',
         tokenExpiry: expiringDate,
         metaAccountId: 'meta-account-1',
-      }
+      } satisfies MetaAdAccountTokenRecord
 
-      mockPrismaMetaAdAccount.findMany.mockResolvedValue([mockAccount])
+      findExpiringBeforeMock.mockResolvedValue([mockAccount])
 
       mockFetch.mockResolvedValue({
         ok: true,
@@ -129,7 +126,7 @@ describe('RefreshMetaTokenUseCase', () => {
       expect(result.failed).toBe(1)
       expect(result.errors).toHaveLength(1)
       expect(result.errors[0]).toContain('user-1')
-      expect(mockPrismaMetaAdAccount.update).not.toHaveBeenCalled()
+      expect(updateTokenMock).not.toHaveBeenCalled()
     })
 
     it('should_handle_already_expired_token_as_failure', async () => {
@@ -141,9 +138,9 @@ describe('RefreshMetaTokenUseCase', () => {
         accessToken: 'expired-token',
         tokenExpiry: expiredDate,
         metaAccountId: 'meta-account-1',
-      }
+      } satisfies MetaAdAccountTokenRecord
 
-      mockPrismaMetaAdAccount.findMany.mockResolvedValue([mockAccount])
+      findExpiringBeforeMock.mockResolvedValue([mockAccount])
 
       mockFetch.mockResolvedValue({
         ok: true,
@@ -164,7 +161,7 @@ describe('RefreshMetaTokenUseCase', () => {
 
     it('should_process_multiple_accounts_and_aggregate_results', async () => {
       const expiringDate = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
-      const mockAccounts = [
+      const mockAccounts: MetaAdAccountTokenRecord[] = [
         {
           id: 'account-1',
           userId: 'user-1',
@@ -188,7 +185,7 @@ describe('RefreshMetaTokenUseCase', () => {
         },
       ]
 
-      mockPrismaMetaAdAccount.findMany.mockResolvedValue(mockAccounts)
+      findExpiringBeforeMock.mockResolvedValue(mockAccounts)
 
       // account-1: 성공, account-3: Meta API 에러
       mockFetch
@@ -207,7 +204,7 @@ describe('RefreshMetaTokenUseCase', () => {
           }),
         })
 
-      mockPrismaMetaAdAccount.update.mockResolvedValue({})
+      updateTokenMock.mockResolvedValue(undefined)
 
       const result = await useCase.execute()
 
@@ -218,7 +215,7 @@ describe('RefreshMetaTokenUseCase', () => {
     })
 
     it('should_return_empty_result_when_no_expiring_accounts_found', async () => {
-      mockPrismaMetaAdAccount.findMany.mockResolvedValue([])
+      findExpiringBeforeMock.mockResolvedValue([])
 
       const result = await useCase.execute()
 
@@ -236,9 +233,9 @@ describe('RefreshMetaTokenUseCase', () => {
         accessToken: 'old-token',
         tokenExpiry: expiringDate,
         metaAccountId: 'meta-1',
-      }
+      } satisfies MetaAdAccountTokenRecord
 
-      mockPrismaMetaAdAccount.findMany.mockResolvedValue([mockAccount])
+      findExpiringBeforeMock.mockResolvedValue([mockAccount])
 
       const expiresInSeconds = 60 * 24 * 60 * 60 // 60일
       mockFetch.mockResolvedValue({
@@ -250,14 +247,13 @@ describe('RefreshMetaTokenUseCase', () => {
         }),
       })
 
-      mockPrismaMetaAdAccount.update.mockResolvedValue({})
+      updateTokenMock.mockResolvedValue(undefined)
 
       const before = Date.now()
       await useCase.execute()
       const after = Date.now()
 
-      const updateCall = mockPrismaMetaAdAccount.update.mock.calls[0][0]
-      const savedExpiry: Date = updateCall.data.tokenExpiry
+      const [, , savedExpiry] = updateTokenMock.mock.calls[0] as [string, string, Date]
       const expectedExpiry = before + expiresInSeconds * 1000
 
       // 60일 후 ± 1초 허용

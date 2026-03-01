@@ -1,4 +1,5 @@
 export * from './IMetaAdsService'
+export * from './IMetaAdAccountRepository'
 export * from './IAIService'
 export * from './IMetaPixelService'
 export * from './ICAPIService'

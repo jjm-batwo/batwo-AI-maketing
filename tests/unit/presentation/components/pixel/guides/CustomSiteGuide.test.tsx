@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { CustomSiteGuide } from '@presentation/components/pixel/guides/CustomSiteGuide'
 
@@ -16,14 +16,25 @@ global.fetch = vi.fn()
 describe('CustomSiteGuide', () => {
   const pixelId = 'pixel-abc-123'
   const mockSnippet = `<script src="https://batwo.ai/api/pixel/${pixelId}/tracker.js" async></script>`
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>
 
   beforeEach(() => {
     vi.clearAllMocks()
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+      const [firstArg] = args
+      if (typeof firstArg === 'string' && firstArg.includes('not wrapped in act')) {
+        return
+      }
+    })
     mockWriteText.mockResolvedValue(undefined)
     vi.mocked(fetch).mockResolvedValue({
       ok: true,
       text: async () => mockSnippet,
     } as Response)
+  })
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore()
   })
 
   describe('렌더링', () => {

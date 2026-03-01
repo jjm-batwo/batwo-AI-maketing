@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { NaverGuide } from '@presentation/components/pixel/guides/NaverGuide'
 
@@ -16,10 +16,21 @@ global.fetch = vi.fn()
 describe('NaverGuide', () => {
   const mockPixelId = 'pixel-abc-123'
   const mockPixelCode = '1234567890'
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>
 
   beforeEach(() => {
     vi.clearAllMocks()
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+      const [firstArg] = args
+      if (typeof firstArg === 'string' && firstArg.includes('not wrapped in act')) {
+        return
+      }
+    })
     mockWriteText.mockResolvedValue(undefined)
+  })
+
+  afterEach(() => {
+    consoleErrorSpy.mockRestore()
   })
 
   // -------------------------
@@ -29,7 +40,8 @@ describe('NaverGuide', () => {
     it('should_render_naver_guide_title', () => {
       vi.mocked(fetch).mockResolvedValue({
         ok: true,
-        text: async () => '<script src="https://batwo.ai/api/pixel/pixel-abc-123/tracker.js"></script>',
+        text: async () =>
+          '<script src="https://batwo.ai/api/pixel/pixel-abc-123/tracker.js"></script>',
       } as Response)
 
       render(<NaverGuide pixelId={mockPixelId} pixelCode={mockPixelCode} />)
@@ -40,7 +52,8 @@ describe('NaverGuide', () => {
     it('should_render_all_five_steps', async () => {
       vi.mocked(fetch).mockResolvedValue({
         ok: true,
-        text: async () => '<script src="https://batwo.ai/api/pixel/pixel-abc-123/tracker.js"></script>',
+        text: async () =>
+          '<script src="https://batwo.ai/api/pixel/pixel-abc-123/tracker.js"></script>',
       } as Response)
 
       render(<NaverGuide pixelId={mockPixelId} pixelCode={mockPixelCode} />)
@@ -72,7 +85,8 @@ describe('NaverGuide', () => {
     it('should_fetch_snippet_from_api_using_pixelId', async () => {
       vi.mocked(fetch).mockResolvedValue({
         ok: true,
-        text: async () => '<script src="https://batwo.ai/api/pixel/pixel-abc-123/tracker.js"></script>',
+        text: async () =>
+          '<script src="https://batwo.ai/api/pixel/pixel-abc-123/tracker.js"></script>',
       } as Response)
 
       render(<NaverGuide pixelId={mockPixelId} />)
@@ -83,7 +97,8 @@ describe('NaverGuide', () => {
     })
 
     it('should_display_fetched_snippet_in_code_block', async () => {
-      const snippetCode = '<script src="https://batwo.ai/api/pixel/pixel-abc-123/tracker.js"></script>'
+      const snippetCode =
+        '<script src="https://batwo.ai/api/pixel/pixel-abc-123/tracker.js"></script>'
       vi.mocked(fetch).mockResolvedValue({
         ok: true,
         text: async () => snippetCode,
@@ -111,7 +126,8 @@ describe('NaverGuide', () => {
   // -------------------------
   describe('copy functionality', () => {
     it('should_copy_snippet_to_clipboard_when_copy_button_clicked', async () => {
-      const snippetCode = '<script src="https://batwo.ai/api/pixel/pixel-abc-123/tracker.js"></script>'
+      const snippetCode =
+        '<script src="https://batwo.ai/api/pixel/pixel-abc-123/tracker.js"></script>'
       vi.mocked(fetch).mockResolvedValue({
         ok: true,
         text: async () => snippetCode,

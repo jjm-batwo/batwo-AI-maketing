@@ -7,7 +7,7 @@
  * Meta Graph API: /oauth/access_token (grant_type=fb_exchange_token)
  */
 
-import { prisma } from '@/lib/prisma'
+import { IMetaAdAccountRepository } from '@application/ports/IMetaAdAccountRepository'
 import { safeDecryptToken, encryptToken } from '@application/utils/TokenEncryption'
 
 const META_API_VERSION = 'v25.0'
@@ -35,6 +35,8 @@ interface MetaTokenResponse {
 }
 
 export class RefreshMetaTokenUseCase {
+  constructor(private readonly metaAdAccountRepository: IMetaAdAccountRepository) {}
+
   async execute(): Promise<TokenRefreshResult> {
     const result: TokenRefreshResult = {
       refreshed: 0,
@@ -53,20 +55,7 @@ export class RefreshMetaTokenUseCase {
     // 만료 7일 이내 계정 조회
     const thresholdDate = new Date(Date.now() + REFRESH_THRESHOLD_DAYS * 24 * 60 * 60 * 1000)
 
-    const accounts = await prisma.metaAdAccount.findMany({
-      where: {
-        tokenExpiry: {
-          lte: thresholdDate,
-        },
-      },
-      select: {
-        id: true,
-        userId: true,
-        accessToken: true,
-        tokenExpiry: true,
-        metaAccountId: true,
-      },
-    })
+    const accounts = await this.metaAdAccountRepository.findExpiringBefore(thresholdDate)
 
     if (accounts.length === 0) {
       return result
@@ -80,17 +69,19 @@ export class RefreshMetaTokenUseCase {
       }
 
       try {
-        const newToken = await this.exchangeToken(safeDecryptToken(account.accessToken), appId, appSecret)
+        const newToken = await this.exchangeToken(
+          safeDecryptToken(account.accessToken),
+          appId,
+          appSecret
+        )
 
         // DB 업데이트 (새 토큰 암호화 저장)
         const tokenExpiry = new Date(Date.now() + newToken.expires_in * 1000)
-        await prisma.metaAdAccount.update({
-          where: { id: account.id },
-          data: {
-            accessToken: encryptToken(newToken.access_token),
-            tokenExpiry,
-          },
-        })
+        await this.metaAdAccountRepository.updateToken(
+          account.id,
+          encryptToken(newToken.access_token),
+          tokenExpiry
+        )
 
         console.log(
           `[RefreshMetaToken] 사용자 ${account.userId} 토큰 갱신 완료. 새 만료일: ${tokenExpiry.toISOString()}`

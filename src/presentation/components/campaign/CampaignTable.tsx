@@ -24,6 +24,11 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 import {
+  formatMultiplier as formatMultiplierValue,
+  formatNumber as formatNumberValue,
+  formatPercent as formatPercentValue,
+} from '@/lib/utils/format'
+import {
   MoreVertical,
   Play,
   Pause,
@@ -181,20 +186,19 @@ export const CampaignTable = memo(function CampaignTable({
   )
 
   const formatNumber = useCallback((value: number | undefined) => {
-    return (value ?? 0).toLocaleString()
+    return formatNumberValue(value ?? 0)
   }, [])
 
   const formatCurrency = useCallback((value: number | undefined) => {
-    // Currency: round to nearest integer (like Meta Ads Manager)
-    return Math.round(value ?? 0).toLocaleString()
+    return formatNumberValue(Math.round(value ?? 0))
   }, [])
 
   const formatPercent = useCallback((value: number | undefined) => {
-    return `${(value ?? 0).toFixed(2)}%`
+    return formatPercentValue(value ?? 0)
   }, [])
 
   const formatMultiplier = useCallback((value: number | undefined) => {
-    return `${(value ?? 0).toFixed(2)}x`
+    return formatMultiplierValue(value ?? 0)
   }, [])
 
   const handleSort = useCallback(

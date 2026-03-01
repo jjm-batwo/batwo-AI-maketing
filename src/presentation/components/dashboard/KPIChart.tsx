@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
+import { formatCurrency, formatMultiplier, formatNumber, formatPercent } from '@/lib/utils/format'
 
 interface DataPoint {
   date?: string
@@ -65,20 +66,20 @@ export function KPIChart({
     if (value < 100) {
       return Number(value).toFixed(3)
     }
-    return value.toLocaleString()
+    return formatNumber(value)
   }
 
   const formatTooltipValue = (value: number): string => {
     if (yAxisFormat === 'multiplier') {
-      return `${value.toFixed(2)}x`
+      return formatMultiplier(value)
     }
     if (yAxisFormat === 'percentage') {
-      return `${value.toFixed(2)}%`
+      return formatPercent(value)
     }
     if (yAxisFormat === 'number') {
-      return value.toLocaleString()
+      return formatNumber(value)
     }
-    return `${value.toLocaleString()}원`
+    return formatCurrency(value)
   }
 
   const formatYAxisLabel = (value: number): string => {
@@ -91,7 +92,7 @@ export function KPIChart({
     if (yAxisFormat === 'number') {
       if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`
       if (value >= 1000) return `${(value / 1000).toFixed(0)}K`
-      return value.toLocaleString()
+      return formatNumber(value)
     }
     // Default currency
     if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M원`

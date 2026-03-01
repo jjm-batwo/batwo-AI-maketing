@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { Copy, Check, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -42,6 +42,7 @@ export function NaverGuide({ pixelId, pixelCode }: NaverGuideProps) {
   const [isLoadingSnippet, setIsLoadingSnippet] = useState(true)
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle')
   const [isTroubleshootingOpen, setIsTroubleshootingOpen] = useState(false)
+  const copyResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -65,15 +66,29 @@ export function NaverGuide({ pixelId, pixelCode }: NaverGuideProps) {
     }
   }, [pixelId])
 
+  useEffect(() => {
+    return () => {
+      if (copyResetTimerRef.current) {
+        clearTimeout(copyResetTimerRef.current)
+      }
+    }
+  }, [])
+
   const handleCopy = useCallback(async () => {
     if (!snippet) return
     try {
       await navigator.clipboard.writeText(snippet)
       setCopyStatus('success')
-      setTimeout(() => setCopyStatus('idle'), 3000)
+      if (copyResetTimerRef.current) {
+        clearTimeout(copyResetTimerRef.current)
+      }
+      copyResetTimerRef.current = setTimeout(() => setCopyStatus('idle'), 3000)
     } catch {
       setCopyStatus('error')
-      setTimeout(() => setCopyStatus('idle'), 3000)
+      if (copyResetTimerRef.current) {
+        clearTimeout(copyResetTimerRef.current)
+      }
+      copyResetTimerRef.current = setTimeout(() => setCopyStatus('idle'), 3000)
     }
   }, [snippet])
 
@@ -95,19 +110,14 @@ src="https://www.facebook.com/tr?id=${pixelCode}&ev=PageView&noscript=1"/></nosc
     <div className="space-y-6">
       {/* 헤더 */}
       <div>
-        <h3 className="text-lg font-semibold">
-          네이버 스마트스토어 픽셀 설치 가이드
-        </h3>
+        <h3 className="text-lg font-semibold">네이버 스마트스토어 픽셀 설치 가이드</h3>
         <p className="mt-1 text-sm text-muted-foreground">
           아래 단계를 따라 Meta 픽셀을 스마트스토어에 설치하세요.
         </p>
       </div>
 
       {/* 5단계 가이드 */}
-      <ol
-        className="space-y-4"
-        aria-label="설치 단계"
-      >
+      <ol className="space-y-4" aria-label="설치 단계">
         {STEPS.map((step) => (
           <li key={step.number} className="flex gap-3">
             {/* 단계 번호 배지 */}
@@ -146,10 +156,7 @@ src="https://www.facebook.com/tr?id=${pixelCode}&ev=PageView&noscript=1"/></nosc
                     )}
                   >
                     {isLoadingSnippet ? (
-                      <span
-                        data-testid="naver-snippet-loading"
-                        className="text-muted-foreground"
-                      >
+                      <span data-testid="naver-snippet-loading" className="text-muted-foreground">
                         코드를 불러오는 중...
                       </span>
                     ) : (
@@ -171,8 +178,7 @@ src="https://www.facebook.com/tr?id=${pixelCode}&ev=PageView&noscript=1"/></nosc
                       aria-label="스크립트 복사"
                       className={cn(
                         'absolute right-2 top-2',
-                        copyStatus === 'success' &&
-                          'border-green-500 text-green-600',
+                        copyStatus === 'success' && 'border-green-500 text-green-600',
                         copyStatus === 'error' && 'border-red-500 text-red-600'
                       )}
                     >
@@ -239,8 +245,8 @@ src="https://www.facebook.com/tr?id=${pixelCode}&ev=PageView&noscript=1"/></nosc
             )}
 
             <p className="text-xs text-muted-foreground">
-              인라인 방식은 외부 스크립트 없이 fbq 추적 코드를 직접 삽입합니다.
-              스크립트 차단 환경에서도 안정적으로 동작합니다.
+              인라인 방식은 외부 스크립트 없이 fbq 추적 코드를 직접 삽입합니다. 스크립트 차단
+              환경에서도 안정적으로 동작합니다.
             </p>
           </div>
         )}

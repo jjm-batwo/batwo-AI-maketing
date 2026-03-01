@@ -4,7 +4,7 @@ import { CampaignObjective } from '@domain/value-objects/CampaignObjective'
 import { Money } from '@domain/value-objects/Money'
 import { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import { IMetaAdsService, MetaCampaignListItem } from '@application/ports/IMetaAdsService'
-import { prisma } from '@/lib/prisma'
+import { IMetaAdAccountRepository } from '@application/ports/IMetaAdAccountRepository'
 import { isTokenExpired } from '@application/utils/metaTokenUtils'
 import { safeDecryptToken } from '@application/utils/TokenEncryption'
 
@@ -29,14 +29,13 @@ export class MetaConnectionError extends Error {
 export class SyncCampaignsUseCase {
   constructor(
     private readonly campaignRepository: ICampaignRepository,
-    private readonly metaAdsService: IMetaAdsService
+    private readonly metaAdsService: IMetaAdsService,
+    private readonly metaAdAccountRepository: IMetaAdAccountRepository
   ) {}
 
   async execute(input: SyncCampaignsInput): Promise<SyncCampaignsOutput> {
     // 1. Get user's Meta Ad Account
-    const metaAdAccount = await prisma.metaAdAccount.findUnique({
-      where: { userId: input.userId },
-    })
+    const metaAdAccount = await this.metaAdAccountRepository.findByUserId(input.userId)
 
     if (!metaAdAccount) {
       throw new MetaConnectionError('Meta Ad Account not connected')
@@ -151,9 +150,7 @@ export class SyncCampaignsUseCase {
     if (budgetAmount === 0 && metaCampaign.lifetimeBudget) {
       // Estimate daily budget from lifetime budget
       // Assume 30 days if no end date, or calculate from date range
-      const startDate = metaCampaign.startTime
-        ? new Date(metaCampaign.startTime)
-        : new Date()
+      const startDate = metaCampaign.startTime ? new Date(metaCampaign.startTime) : new Date()
       const endDate = metaCampaign.endTime
         ? new Date(metaCampaign.endTime)
         : new Date(startDate.getTime() + 30 * 24 * 60 * 60 * 1000)
@@ -225,10 +222,7 @@ export class SyncCampaignsUseCase {
     // Update budget if different
     const newBudgetAmount = metaCampaign.dailyBudget
     if (newBudgetAmount) {
-      const newBudget = Money.create(
-        newBudgetAmount,
-        updatedCampaign.dailyBudget.currency
-      )
+      const newBudget = Money.create(newBudgetAmount, updatedCampaign.dailyBudget.currency)
 
       if (
         newBudget.amount !== updatedCampaign.dailyBudget.amount ||
@@ -288,7 +282,9 @@ export class SyncCampaignsUseCase {
 
     const mapped = objectiveMap[metaObjective]
     if (!mapped) {
-      console.warn(`[SyncCampaigns] Unknown Meta objective: "${metaObjective}", defaulting to CONVERSIONS`)
+      console.warn(
+        `[SyncCampaigns] Unknown Meta objective: "${metaObjective}", defaulting to CONVERSIONS`
+      )
       return CampaignObjective.CONVERSIONS
     }
     return mapped

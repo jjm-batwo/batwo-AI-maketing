@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Copy, Check, AlertCircle, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -48,6 +48,7 @@ export function CustomSiteGuide({ pixelId }: CustomSiteGuideProps) {
   const [snippet, setSnippet] = useState<string>('')
   const [fetchStatus, setFetchStatus] = useState<FetchStatus>('loading')
   const [copyStatus, setCopyStatus] = useState<CopyStatus>('idle')
+  const copyResetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // 스니펫 fetch
   useEffect(() => {
@@ -78,15 +79,29 @@ export function CustomSiteGuide({ pixelId }: CustomSiteGuideProps) {
     }
   }, [pixelId])
 
+  useEffect(() => {
+    return () => {
+      if (copyResetTimerRef.current) {
+        clearTimeout(copyResetTimerRef.current)
+      }
+    }
+  }, [])
+
   const handleCopy = useCallback(async () => {
     if (!snippet) return
     try {
       await navigator.clipboard.writeText(snippet)
       setCopyStatus('success')
-      setTimeout(() => setCopyStatus('idle'), 3000)
+      if (copyResetTimerRef.current) {
+        clearTimeout(copyResetTimerRef.current)
+      }
+      copyResetTimerRef.current = setTimeout(() => setCopyStatus('idle'), 3000)
     } catch {
       setCopyStatus('error')
-      setTimeout(() => setCopyStatus('idle'), 3000)
+      if (copyResetTimerRef.current) {
+        clearTimeout(copyResetTimerRef.current)
+      }
+      copyResetTimerRef.current = setTimeout(() => setCopyStatus('idle'), 3000)
     }
   }, [snippet])
 
@@ -180,10 +195,7 @@ export function CustomSiteGuide({ pixelId }: CustomSiteGuideProps) {
               copyStatus === 'error' && 'border-red-500 dark:border-red-700'
             )}
           >
-            <code
-              data-testid="snippet-code"
-              aria-label="픽셀 설치 스크립트 코드"
-            >
+            <code data-testid="snippet-code" aria-label="픽셀 설치 스크립트 코드">
               {snippet}
             </code>
           </pre>

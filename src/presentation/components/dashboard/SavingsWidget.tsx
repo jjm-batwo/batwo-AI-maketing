@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Zap, Trophy } from 'lucide-react'
+import { formatCompactKrw } from '@/lib/utils/format'
 
 interface SavingsWidgetProps {
   totalSavings: { amount: number; currency: string }
@@ -13,13 +14,6 @@ interface SavingsWidgetProps {
     estimatedSavings: { amount: number; currency: string }
   } | null
   isLoading?: boolean
-}
-
-function formatSavings(amount: number): string {
-  if (amount >= 10000) {
-    return `${Math.round(amount / 10000).toLocaleString()}만원`
-  }
-  return `${amount.toLocaleString()}원`
 }
 
 export function SavingsWidget({
@@ -57,13 +51,11 @@ export function SavingsWidget({
             <div>
               <p
                 className="text-3xl font-bold text-emerald-600"
-                aria-label={`이번 달 AI가 절감한 광고비 ${formatSavings(totalSavings.amount)}`}
+                aria-label={`이번 달 AI가 절감한 광고비 ${formatCompactKrw(totalSavings.amount)}`}
               >
-                +₩{formatSavings(totalSavings.amount)}
+                +{formatCompactKrw(totalSavings.amount)}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                이번 달 AI가 절감한 광고비
-              </p>
+              <p className="text-xs text-muted-foreground mt-1">이번 달 AI가 절감한 광고비</p>
             </div>
             <p className="text-sm text-muted-foreground">
               자동 최적화{' '}
@@ -74,7 +66,10 @@ export function SavingsWidget({
                 className="flex items-start gap-2 rounded-md bg-emerald-50 dark:bg-emerald-950/20 p-2"
                 aria-label={`최대 절감 캠페인: ${topSavingEvent.campaignName}`}
               >
-                <Trophy className="h-3.5 w-3.5 text-emerald-600 mt-0.5 shrink-0" aria-hidden="true" />
+                <Trophy
+                  className="h-3.5 w-3.5 text-emerald-600 mt-0.5 shrink-0"
+                  aria-hidden="true"
+                />
                 <div className="min-w-0">
                   <p className="text-xs text-emerald-700 dark:text-emerald-400 font-medium">
                     최대 절감
@@ -82,7 +77,7 @@ export function SavingsWidget({
                   <p className="text-xs text-muted-foreground truncate">
                     {topSavingEvent.campaignName} —{' '}
                     <span className="text-emerald-600 font-medium">
-                      ₩{formatSavings(topSavingEvent.estimatedSavings.amount)}
+                      {formatCompactKrw(topSavingEvent.estimatedSavings.amount)}
                     </span>
                   </p>
                 </div>
@@ -91,9 +86,7 @@ export function SavingsWidget({
           </>
         ) : (
           <div className="py-4 text-center space-y-2">
-            <p className="text-sm text-muted-foreground">
-              아직 자동 최적화가 실행되지 않았습니다
-            </p>
+            <p className="text-sm text-muted-foreground">아직 자동 최적화가 실행되지 않았습니다</p>
             <Badge variant="outline" className="text-xs">
               최적화 규칙을 설정해 보세요
             </Badge>

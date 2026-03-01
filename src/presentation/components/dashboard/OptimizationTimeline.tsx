@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Clock, PauseCircle, TrendingDown, Bell } from 'lucide-react'
+import { formatCompactKrw } from '@/lib/utils/format'
 
 interface OptimizationEvent {
   ruleId: string
@@ -75,13 +76,6 @@ function getActionConfig(actionType: string): ActionConfig {
   }
 }
 
-function formatAmount(amount: number): string {
-  if (amount >= 10000) {
-    return `₩${Math.round(amount / 10000).toLocaleString()}만원`
-  }
-  return `₩${amount.toLocaleString()}원`
-}
-
 export function OptimizationTimeline({ events, isLoading }: OptimizationTimelineProps) {
   if (isLoading) {
     return (
@@ -129,9 +123,7 @@ export function OptimizationTimeline({ events, isLoading }: OptimizationTimeline
                       className={`h-2.5 w-2.5 rounded-full mt-1 ${config.dotClass}`}
                       aria-hidden="true"
                     />
-                    {!isLast && (
-                      <div className="w-px flex-1 bg-border mt-1" aria-hidden="true" />
-                    )}
+                    {!isLast && <div className="w-px flex-1 bg-border mt-1" aria-hidden="true" />}
                   </div>
 
                   {/* 콘텐츠 */}
@@ -145,13 +137,11 @@ export function OptimizationTimeline({ events, isLoading }: OptimizationTimeline
                         {config.label}
                       </Badge>
                     </div>
-                    <p className="text-xs font-medium text-foreground truncate">
-                      {event.ruleName}
-                    </p>
+                    <p className="text-xs font-medium text-foreground truncate">{event.ruleName}</p>
                     <p className="text-xs text-muted-foreground truncate">{event.campaignName}</p>
                     <div className="flex items-center justify-between mt-0.5">
                       <span className="text-xs text-emerald-600 font-medium">
-                        절감 {formatAmount(event.estimatedSavings.amount)}
+                        절감 {formatCompactKrw(event.estimatedSavings.amount)}
                       </span>
                       <span className="text-xs text-muted-foreground">
                         {getRelativeTime(event.triggeredAt)}

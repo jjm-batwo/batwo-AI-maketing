@@ -28,6 +28,7 @@ import type { IAIFeedbackRepository } from '@domain/repositories/IAIFeedbackRepo
 import type { IConversationRepository } from '@domain/repositories/IConversationRepository'
 import type { IPendingActionRepository } from '@domain/repositories/IPendingActionRepository'
 import type { IAlertRepository } from '@domain/repositories/IAlertRepository'
+import type { IMetaAdAccountRepository } from '@application/ports/IMetaAdAccountRepository'
 import type { IPaymentGateway } from '@application/ports/IPaymentGateway'
 
 // Port interfaces
@@ -63,6 +64,7 @@ import { PrismaAIFeedbackRepository } from '@infrastructure/database/repositorie
 import { PrismaConversationRepository } from '@infrastructure/database/repositories/PrismaConversationRepository'
 import { PrismaPendingActionRepository } from '@infrastructure/database/repositories/PrismaPendingActionRepository'
 import { PrismaAlertRepository } from '@infrastructure/database/repositories/PrismaAlertRepository'
+import { PrismaMetaAdAccountRepository } from '@infrastructure/database/repositories/PrismaMetaAdAccountRepository'
 import { TossPaymentsClient } from '@infrastructure/payment/TossPaymentsClient'
 import { MetaAdsClient } from '@infrastructure/external/meta-ads/MetaAdsClient'
 import { Cafe24Adapter } from '@infrastructure/external/platforms/cafe24/Cafe24Adapter'
@@ -118,6 +120,7 @@ import { ListCampaignsUseCase } from '@application/use-cases/campaign/ListCampai
 import { SyncCampaignsUseCase } from '@application/use-cases/campaign/SyncCampaignsUseCase'
 import { GenerateWeeklyReportUseCase } from '@application/use-cases/report/GenerateWeeklyReportUseCase'
 import { GetDashboardKPIUseCase } from '@application/use-cases/kpi/GetDashboardKPIUseCase'
+import { GetLiveDashboardKPIUseCase } from '@application/use-cases/kpi/GetLiveDashboardKPIUseCase'
 import { SyncMetaInsightsUseCase } from '@application/use-cases/kpi/SyncMetaInsightsUseCase'
 import { SyncAllInsightsUseCase } from '@application/use-cases/kpi/SyncAllInsightsUseCase'
 import { ListUserPixelsUseCase } from '@application/use-cases/pixel/ListUserPixelsUseCase'
@@ -298,6 +301,11 @@ container.registerSingleton<IPendingActionRepository>(
 container.registerSingleton<IAlertRepository>(
   DI_TOKENS.AlertRepository,
   () => new PrismaAlertRepository(prisma)
+)
+
+container.registerSingleton<IMetaAdAccountRepository>(
+  DI_TOKENS.MetaAdAccountRepository,
+  () => new PrismaMetaAdAccountRepository(prisma)
 )
 
 // Register External Services (Singletons)
@@ -602,7 +610,8 @@ container.register(
   () =>
     new SyncCampaignsUseCase(
       container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.MetaAdsService)
+      container.resolve(DI_TOKENS.MetaAdsService),
+      container.resolve(DI_TOKENS.MetaAdAccountRepository)
     )
 )
 
@@ -628,6 +637,16 @@ container.register(
 )
 
 container.register(
+  DI_TOKENS.GetLiveDashboardKPIUseCase,
+  () =>
+    new GetLiveDashboardKPIUseCase(
+      container.resolve(DI_TOKENS.CampaignRepository),
+      container.resolve(DI_TOKENS.MetaAdsService),
+      container.resolve(DI_TOKENS.MetaAdAccountRepository)
+    )
+)
+
+container.register(
   DI_TOKENS.SyncMetaInsightsUseCase,
   () =>
     new SyncMetaInsightsUseCase(
@@ -643,7 +662,8 @@ container.register(
     new SyncAllInsightsUseCase(
       container.resolve(DI_TOKENS.CampaignRepository),
       container.resolve(DI_TOKENS.KPIRepository),
-      container.resolve(DI_TOKENS.MetaAdsService)
+      container.resolve(DI_TOKENS.MetaAdsService),
+      container.resolve(DI_TOKENS.MetaAdAccountRepository)
     )
 )
 
@@ -1163,7 +1183,10 @@ container.register(
 )
 
 // Token Management Use Cases (Transient)
-container.register(DI_TOKENS.RefreshMetaTokenUseCase, () => new RefreshMetaTokenUseCase())
+container.register(
+  DI_TOKENS.RefreshMetaTokenUseCase,
+  () => new RefreshMetaTokenUseCase(container.resolve(DI_TOKENS.MetaAdAccountRepository))
+)
 
 export function getRefreshMetaTokenUseCase(): RefreshMetaTokenUseCase {
   return container.resolve(DI_TOKENS.RefreshMetaTokenUseCase)

@@ -1,93 +1,58 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
-import { PrismaAdRepository } from '@/infrastructure/database/repositories/PrismaAdRepository'
-import { PrismaCreativeRepository } from '@/infrastructure/database/repositories/PrismaCreativeRepository'
+import { container, DI_TOKENS } from '@/lib/di/container'
+import { CreateAdUseCase } from '@application/use-cases/ad/CreateAdUseCase'
 import { toAdDTO } from '@application/dto/ad/AdDTO'
-import { AdMapper } from '@/infrastructure/database/mappers/AdMapper'
-import { prisma } from '@/lib/prisma'
+import type { IAdRepository } from '@domain/repositories/IAdRepository'
 import { revalidateTag } from 'next/cache'
 
-// AdSet 리포지토리는 동일 워커에서 생성될 수 있으므로 인라인으로 처리
-async function getAdSetById(id: string) {
-  return prisma.adSet.findUnique({ where: { id } })
-}
-
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
   try {
     const { id: adSetId } = await params
-    const ads = await prisma.ad.findMany({
-      where: { adSetId },
-      orderBy: { createdAt: 'desc' },
-    })
+    const adRepository = container.resolve<IAdRepository>(DI_TOKENS.AdRepository)
+    const ads = await adRepository.findByAdSetId(adSetId)
 
     return NextResponse.json({
-      ads: ads.map((ad) => toAdDTO(AdMapper.toDomain(ad))),
+      ads: ads.map(toAdDTO),
     })
   } catch (error) {
     console.error('Failed to fetch ads:', error)
-    return NextResponse.json(
-      { message: 'Failed to fetch ads' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to fetch ads' }, { status: 500 })
   }
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
   try {
     const { id: adSetId } = await params
     const body = await request.json()
-
-    // AdSet 존재 확인
-    const adSet = await getAdSetById(adSetId)
-    if (!adSet) {
-      return NextResponse.json(
-        { message: 'AdSet not found' },
-        { status: 404 }
-      )
-    }
-
-    const adRepository = new PrismaAdRepository(prisma)
-    const creativeRepository = new PrismaCreativeRepository(prisma)
-
-    // Creative 존재 확인 (인라인 — AdSet 리포지토리 의존성 회피)
-    const creative = await creativeRepository.findById(body.creativeId)
-    if (!creative) {
-      return NextResponse.json(
-        { message: 'Creative not found' },
-        { status: 404 }
-      )
-    }
-
-    const { Ad } = await import('@domain/entities/Ad')
-    const ad = Ad.create({
+    const createAdUseCase = container.resolve<CreateAdUseCase>(DI_TOKENS.CreateAdUseCase)
+    const savedAd = await createAdUseCase.execute({
       adSetId,
       name: body.name,
       creativeId: body.creativeId,
     })
 
-    const savedAd = await adRepository.save(ad)
-
     revalidateTag('campaigns', 'default')
     revalidateTag('kpi', 'default')
 
-    return NextResponse.json(toAdDTO(savedAd), { status: 201 })
+    return NextResponse.json(savedAd, { status: 201 })
   } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to create ad'
+    if (message.includes('AdSet not found')) {
+      return NextResponse.json({ message: 'AdSet not found' }, { status: 404 })
+    }
+
+    if (message.includes('Creative not found')) {
+      return NextResponse.json({ message: 'Creative not found' }, { status: 404 })
+    }
+
     console.error('Failed to create ad:', error)
-    return NextResponse.json(
-      { message: 'Failed to create ad' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to create ad' }, { status: 500 })
   }
 }

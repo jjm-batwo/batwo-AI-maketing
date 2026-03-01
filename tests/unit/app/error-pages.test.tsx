@@ -4,7 +4,7 @@
  * These tests verify that error pages render correctly with Korean text.
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import NotFoundPage from '@/app/not-found'
 import ErrorPage from '@/app/error'
@@ -91,17 +91,26 @@ describe('Error Pages', () => {
   describe('GlobalErrorPage', () => {
     const mockError = new Error('Critical error')
     const mockReset = vi.fn()
+    let consoleErrorSpy: ReturnType<typeof vi.spyOn>
 
     beforeEach(() => {
       mockReset.mockClear()
+      consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+        const [firstArg] = args
+        if (typeof firstArg === 'string' && firstArg.startsWith('Global error:')) {
+          return
+        }
+      })
+    })
+
+    afterEach(() => {
+      consoleErrorSpy.mockRestore()
     })
 
     it('should render global error page content', () => {
       // GlobalError renders html/body but RTL wraps in container
       // We test that the component renders correctly
-      const { container } = render(
-        <GlobalErrorPage error={mockError} reset={mockReset} />
-      )
+      const { container } = render(<GlobalErrorPage error={mockError} reset={mockReset} />)
 
       // Check the rendered structure includes main content
       expect(container.querySelector('main')).toBeInTheDocument()

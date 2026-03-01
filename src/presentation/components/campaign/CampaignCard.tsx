@@ -12,7 +12,17 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
-import { MoreVertical, Play, Pause, BarChart3, Pencil, Trash2, Coins, TrendingUp } from 'lucide-react'
+import { formatMultiplier, formatNumber } from '@/lib/utils/format'
+import {
+  MoreVertical,
+  Play,
+  Pause,
+  BarChart3,
+  Pencil,
+  Trash2,
+  Coins,
+  TrendingUp,
+} from 'lucide-react'
 
 interface CampaignCardProps {
   id: string
@@ -64,9 +74,9 @@ export const CampaignCard = memo(function CampaignCard({
     onStatusChange?.(id, 'ACTIVE')
   }, [id, onStatusChange])
 
-  const formattedBudget = useMemo(() => dailyBudget.toLocaleString(), [dailyBudget])
-  const formattedSpend = useMemo(() => spend.toLocaleString(), [spend])
-  const formattedRoas = useMemo(() => roas.toFixed(2), [roas])
+  const formattedBudget = useMemo(() => `${formatNumber(Math.round(dailyBudget))}원`, [dailyBudget])
+  const formattedSpend = useMemo(() => `${formatNumber(Math.round(spend))}원`, [spend])
+  const formattedRoas = useMemo(() => formatMultiplier(roas), [roas])
 
   return (
     <Card className={cn('transition-shadow hover:shadow-md', className)}>
@@ -77,17 +87,10 @@ export const CampaignCard = memo(function CampaignCard({
               {name}
             </Link>
           </CardTitle>
-          <span className="text-sm text-muted-foreground">
-            {objectiveLabel}
-          </span>
+          <span className="text-sm text-muted-foreground">{objectiveLabel}</span>
         </div>
         <div className="flex items-center gap-2">
-          <span
-            className={cn(
-              'rounded-full px-2 py-1 text-xs font-medium',
-              statusInfo.className
-            )}
-          >
+          <span className={cn('rounded-full px-2 py-1 text-xs font-medium', statusInfo.className)}>
             {statusInfo.label}
           </span>
           <DropdownMenu>
@@ -134,13 +137,13 @@ export const CampaignCard = memo(function CampaignCard({
       <CardContent>
         <div className="flex flex-wrap gap-2">
           <span className="inline-flex items-center gap-1 bg-muted px-2 py-0.5 rounded-md text-xs">
-            <Coins className="h-3 w-3" /> {formattedBudget}원
+            <Coins className="h-3 w-3" /> {formattedBudget}
           </span>
           <span className="inline-flex items-center gap-1 bg-muted px-2 py-0.5 rounded-md text-xs">
-            <TrendingUp className="h-3 w-3" /> {formattedSpend}원
+            <TrendingUp className="h-3 w-3" /> {formattedSpend}
           </span>
           <span className="inline-flex items-center gap-1 bg-muted px-2 py-0.5 rounded-md text-xs">
-            <BarChart3 className="h-3 w-3" /> {formattedRoas}x
+            <BarChart3 className="h-3 w-3" /> {formattedRoas}
           </span>
         </div>
       </CardContent>
