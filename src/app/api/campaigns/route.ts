@@ -101,7 +101,6 @@ export async function POST(request: NextRequest) {
     // Invalidate KPI cache for this user
     invalidateCache(getUserPattern(user.id))
     revalidateTag('campaigns', 'default')
-    revalidateTag('kpi', 'default')
     revalidateTag('admin-dashboard', 'default')
 
     const response = NextResponse.json(result, { status: 201 })

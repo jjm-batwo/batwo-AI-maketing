@@ -86,7 +86,6 @@ export async function PATCH(
     // Invalidate KPI cache for this user
     invalidateCache(getUserPattern(user.id))
     revalidateTag('campaigns', 'default')
-    revalidateTag('kpi', 'default')
     revalidateTag('admin-dashboard', 'default')
 
     return NextResponse.json(result)
@@ -166,7 +165,6 @@ export async function DELETE(
     // Invalidate KPI cache for this user
     invalidateCache(getUserPattern(user.id))
     revalidateTag('campaigns', 'default')
-    revalidateTag('kpi', 'default')
     revalidateTag('admin-dashboard', 'default')
 
     return new NextResponse(null, { status: 204 })

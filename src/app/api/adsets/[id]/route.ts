@@ -73,7 +73,6 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     })
 
     revalidateTag('campaigns', 'default')
-    revalidateTag('kpi', 'default')
 
     return NextResponse.json(result)
   } catch (error) {
@@ -110,7 +109,6 @@ export async function DELETE(
     await deleteAdSet.execute(id)
 
     revalidateTag('campaigns', 'default')
-    revalidateTag('kpi', 'default')
 
     return new NextResponse(null, { status: 204 })
   } catch (error) {

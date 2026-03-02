@@ -39,7 +39,6 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     })
 
     revalidateTag('campaigns', 'default')
-    revalidateTag('kpi', 'default')
 
     return NextResponse.json(savedAd, { status: 201 })
   } catch (error) {
