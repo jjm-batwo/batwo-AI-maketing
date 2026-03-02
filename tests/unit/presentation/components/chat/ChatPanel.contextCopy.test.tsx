@@ -6,13 +6,14 @@ beforeAll(() => {
   window.HTMLElement.prototype.scrollIntoView = vi.fn()
 })
 
-// 외부 의존성 공통 모킹
+// 외부 의존성 공통 모킹 (dashboardInsights를 동적으로 변경 가능)
+const mockDashboardInsights = vi.fn<() => undefined | Array<{ type: string; title: string; description: string }>>()
 vi.mock('@/presentation/stores/uiStore', () => ({
   useUIStore: () => ({
     isChatPanelOpen: true,
     closeChatPanel: vi.fn(),
     activeConversationId: null,
-    dashboardInsights: undefined,
+    dashboardInsights: mockDashboardInsights(),
   }),
 }))
 
@@ -51,6 +52,7 @@ vi.mock('next/navigation', () => ({
 describe('ChatPanel contextCopy — 탭별 제안 메시지', () => {
   beforeEach(() => {
     mockPathname.mockReset()
+    mockDashboardInsights.mockReturnValue(undefined)
   })
 
   it('should_show_dashboard_title_when_pathname_includes_dashboard', () => {
@@ -124,5 +126,39 @@ describe('ChatPanel contextCopy — 탭별 제안 메시지', () => {
     mockPathname.mockReturnValue('/unknown-page')
     render(<ChatPanel />)
     expect(screen.getByText('바투 AI 어시스턴트')).toBeInTheDocument()
+  })
+
+  it('should_not_override_tab_suggestions_with_dashboard_insights_on_non_dashboard_tabs', () => {
+    // dashboardInsights가 존재하더라도 /campaigns 등 비대시보드 탭에서는 탭별 제안이 유지되어야 함
+    mockDashboardInsights.mockReturnValue([
+      { type: 'warning', title: 'CTR 급락', description: '어제 대비 CTR 20% 하락' },
+      { type: 'opportunity', title: 'CPA 개선 기회', description: 'CPA 최적화 가능' },
+    ])
+
+    const nonDashboardPaths = ['/campaigns', '/reports', '/competitors', '/portfolio']
+
+    for (const path of nonDashboardPaths) {
+      mockPathname.mockReturnValue(path)
+      const { unmount } = render(<ChatPanel />)
+
+      // insight 기반 제안("CTR 급락 원인을 분석해줘")이 렌더링되지 않아야 함
+      expect(screen.queryByText('CTR 급락 원인을 분석해줘')).not.toBeInTheDocument()
+      expect(screen.queryByText('CPA 개선 기회 활용 방법을 알려줘')).not.toBeInTheDocument()
+
+      unmount()
+    }
+  })
+
+  it('should_show_insight_suggestions_on_dashboard_tab_when_insights_exist', () => {
+    mockDashboardInsights.mockReturnValue([
+      { type: 'warning', title: 'CTR 급락', description: '어제 대비 CTR 20% 하락' },
+      { type: 'opportunity', title: 'CPA 개선 기회', description: 'CPA 최적화 가능' },
+    ])
+    mockPathname.mockReturnValue('/dashboard')
+    render(<ChatPanel />)
+
+    // /dashboard에서는 insight 기반 제안이 렌더링되어야 함
+    expect(screen.getByText('CTR 급락 원인을 분석해줘')).toBeInTheDocument()
+    expect(screen.getByText('CPA 개선 기회 활용 방법을 알려줘')).toBeInTheDocument()
   })
 })

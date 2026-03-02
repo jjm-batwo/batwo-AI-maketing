@@ -196,7 +196,7 @@ export function ChatPanel() {
               title={contextCopy.title}
               description={contextCopy.description}
               suggestions={contextCopy.suggestions}
-              insights={dashboardInsights}
+              insights={pathname?.includes('/dashboard') ? dashboardInsights : undefined}
               onSuggestion={handleSendMessage}
             />
           ) : (
