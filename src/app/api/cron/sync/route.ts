@@ -109,7 +109,6 @@ export async function GET(request: NextRequest) {
     // ISR 캐시 무효화 (전체 1회)
     if (results.processed > 0) {
       revalidateTag('campaigns', 'default')
-      revalidateTag('kpi', 'default')
     }
 
     console.log('[Sync Cron] 완료:', results)

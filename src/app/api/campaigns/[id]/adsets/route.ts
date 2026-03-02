@@ -81,7 +81,6 @@ export async function POST(
     })
 
     revalidateTag('campaigns', 'default')
-    revalidateTag('kpi', 'default')
 
     return NextResponse.json(result, { status: 201 })
   } catch (error) {

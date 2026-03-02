@@ -54,7 +54,6 @@ export async function POST(
 
       invalidateCache(getUserPattern(user.id))
       revalidateTag('campaigns', 'default')
-      revalidateTag('kpi', 'default')
       revalidateTag('admin-dashboard', 'default')
 
       return NextResponse.json(result)
@@ -72,7 +71,6 @@ export async function POST(
 
       invalidateCache(getUserPattern(user.id))
       revalidateTag('campaigns', 'default')
-      revalidateTag('kpi', 'default')
       revalidateTag('admin-dashboard', 'default')
 
       return NextResponse.json(result)

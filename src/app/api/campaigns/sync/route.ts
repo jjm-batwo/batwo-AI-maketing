@@ -58,7 +58,6 @@ export async function POST(request: NextRequest) {
 
     // 3. Next.js ISR 캐시 무효화
     revalidateTag('campaigns', 'default')
-    revalidateTag('kpi', 'default')
     revalidateTag('admin-dashboard', 'default')
 
     return NextResponse.json({
