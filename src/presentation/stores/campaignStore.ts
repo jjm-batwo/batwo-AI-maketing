@@ -125,6 +125,13 @@ interface CampaignState {
   moveColumn: (fromIndex: number, toIndex: number) => void
   resetColumnOrder: () => void
 
+  // Hierarchy navigation (non-persisted)
+  activeTab: 'campaigns' | 'adsets' | 'ads'
+  setActiveTab: (tab: 'campaigns' | 'adsets' | 'ads') => void
+  selectedCampaignForDrilldown: string | null
+  setSelectedCampaignForDrilldown: (id: string | null) => void
+  selectedAdSetForDrilldown: string | null
+  setSelectedAdSetForDrilldown: (id: string | null) => void
   // Column presets (persisted) - save/load custom column configurations
   columnPresets: ColumnPreset[]
   saveColumnPreset: (name: string) => void
@@ -216,6 +223,14 @@ export const useCampaignStore = create<CampaignState>()(
           return { columnOrder: newOrder }
         }),
       resetColumnOrder: () => set({ columnOrder: defaultColumnOrder }),
+
+      // Hierarchy navigation (non-persisted)
+      activeTab: 'campaigns' as const,
+      setActiveTab: (tab) => set({ activeTab: tab }),
+      selectedCampaignForDrilldown: null,
+      setSelectedCampaignForDrilldown: (id) => set({ selectedCampaignForDrilldown: id }),
+      selectedAdSetForDrilldown: null,
+      setSelectedAdSetForDrilldown: (id) => set({ selectedAdSetForDrilldown: id }),
 
 
       // Column presets (persisted)

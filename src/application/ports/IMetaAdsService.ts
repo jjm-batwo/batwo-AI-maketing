@@ -201,6 +201,37 @@ export interface IMetaAdsService {
 
   listAdSets(accessToken: string, campaignId: string): Promise<MetaAdSetData[]>
 
+  // AdSet Insights
+  getAdSetInsights(
+    accessToken: string,
+    adSetId: string,
+    datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d'
+  ): Promise<MetaInsightsData>
+
+  getAdSetDailyInsights(
+    accessToken: string,
+    adSetId: string,
+    datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d',
+    options?: { since?: string; until?: string }
+  ): Promise<MetaDailyInsightsData[]>
+
+  // Ad listing by adSet
+  listAds(accessToken: string, adSetId: string): Promise<MetaAdData[]>
+
+  // Ad Insights
+  getAdInsights(
+    accessToken: string,
+    adId: string,
+    datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d'
+  ): Promise<MetaInsightsData>
+
+  getAdDailyInsights(
+    accessToken: string,
+    adId: string,
+    datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d',
+    options?: { since?: string; until?: string }
+  ): Promise<MetaDailyInsightsData[]>
+
   // Ad
   createAd(accessToken: string, adAccountId: string, input: CreateMetaAdInput): Promise<MetaAdData>
 

@@ -817,6 +817,263 @@ export class MetaAdsClient implements IMetaAdsService {
     )
   }
 
+  // --- AdSet Insights ---
+
+  async getAdSetInsights(
+    accessToken: string,
+    adSetId: string,
+    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d'
+  ): Promise<MetaInsightsData> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] getAdSetInsights called with mock mode')
+      const today = new Date().toISOString().split('T')[0]
+      return {
+        campaignId: adSetId,
+        impressions: 8000,
+        reach: 6500,
+        clicks: 220,
+        linkClicks: 180,
+        spend: 65000,
+        conversions: 6,
+        revenue: 240000,
+        dateStart: today,
+        dateStop: today,
+      }
+    }
+
+    return withSpan(
+      'meta.getAdSetInsights',
+      async () => {
+        const fields =
+          'campaign_id,impressions,reach,clicks,spend,actions,action_values,date_start,date_stop'
+
+        const response = await this.requestWithRetry<MetaApiInsightsResponse>(
+          accessToken,
+          `/${adSetId}/insights?fields=${fields}&date_preset=${datePreset}`,
+          { method: 'GET' }
+        )
+
+        return this.mapInsightsResponse(adSetId, response)
+      },
+      {
+        'meta.adSetId': adSetId,
+        'meta.datePreset': datePreset,
+      }
+    )
+  }
+
+  async getAdSetDailyInsights(
+    accessToken: string,
+    adSetId: string,
+    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d',
+    options?: { since?: string; until?: string }
+  ): Promise<MetaDailyInsightsData[]> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] getAdSetDailyInsights called with mock mode')
+      const parsedDays = parseInt(datePreset.match(/\d+/)?.[0] || '7', 10)
+      const days =
+        datePreset === 'today'
+          ? 1
+          : datePreset === 'yesterday'
+            ? 1
+            : Number.isNaN(parsedDays)
+              ? 7
+              : parsedDays
+      const mockData: MetaDailyInsightsData[] = []
+
+      for (let i = 0; i < days; i++) {
+        const date = new Date()
+        date.setDate(date.getDate() - i)
+        mockData.push({
+          campaignId: adSetId,
+          date: date.toISOString().split('T')[0],
+          impressions: Math.floor(1000 + Math.random() * 300),
+          reach: Math.floor(800 + Math.random() * 200),
+          clicks: Math.floor(30 + Math.random() * 10),
+          linkClicks: Math.floor(25 + Math.random() * 8),
+          spend: Math.floor(8000 + Math.random() * 3000),
+          conversions: Math.floor(1 + Math.random() * 2),
+          revenue: Math.floor(30000 + Math.random() * 15000),
+        })
+      }
+
+      return mockData
+    }
+
+    return withSpan(
+      'meta.getAdSetDailyInsights',
+      async () => {
+        const fields =
+          'campaign_id,impressions,reach,clicks,spend,actions,action_values,date_start,date_stop'
+
+        const dateParams =
+          options?.since && options?.until
+            ? `time_range=${encodeURIComponent(JSON.stringify({ since: options.since, until: options.until }))}`
+            : `date_preset=${datePreset}`
+        const response = await this.requestWithRetry<MetaApiInsightsResponse>(
+          accessToken,
+          `/${adSetId}/insights?fields=${fields}&${dateParams}&time_increment=1`,
+          { method: 'GET' }
+        )
+
+        return this.mapDailyInsightsResponse(adSetId, response)
+      },
+      {
+        'meta.adSetId': adSetId,
+        'meta.datePreset': datePreset,
+      }
+    )
+  }
+
+  // --- Ad listing by adSet ---
+
+  async listAds(accessToken: string, adSetId: string): Promise<MetaAdData[]> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] listAds called with mock mode')
+      return [
+        {
+          id: 'mock_ad_1',
+          name: 'Mock Ad 1',
+          status: 'ACTIVE',
+        },
+        {
+          id: 'mock_ad_2',
+          name: 'Mock Ad 2',
+          status: 'PAUSED',
+        },
+      ]
+    }
+
+    return withSpan(
+      'meta.listAds',
+      async () => {
+        const fields = 'id,name,status'
+        const response = await this.requestWithRetry<{
+          data: {
+            id: string
+            name: string
+            status: string
+          }[]
+        }>(accessToken, `/${adSetId}/ads?fields=${fields}`, { method: 'GET' })
+
+        return response.data.map((item) => ({
+          id: item.id,
+          name: item.name,
+          status: item.status,
+        }))
+      },
+      { 'meta.adSetId': adSetId }
+    )
+  }
+
+  // --- Ad Insights ---
+
+  async getAdInsights(
+    accessToken: string,
+    adId: string,
+    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d'
+  ): Promise<MetaInsightsData> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] getAdInsights called with mock mode')
+      const today = new Date().toISOString().split('T')[0]
+      return {
+        campaignId: adId,
+        impressions: 4000,
+        reach: 3200,
+        clicks: 110,
+        linkClicks: 90,
+        spend: 32000,
+        conversions: 3,
+        revenue: 120000,
+        dateStart: today,
+        dateStop: today,
+      }
+    }
+
+    return withSpan(
+      'meta.getAdInsights',
+      async () => {
+        const fields =
+          'campaign_id,impressions,reach,clicks,spend,actions,action_values,date_start,date_stop'
+
+        const response = await this.requestWithRetry<MetaApiInsightsResponse>(
+          accessToken,
+          `/${adId}/insights?fields=${fields}&date_preset=${datePreset}`,
+          { method: 'GET' }
+        )
+
+        return this.mapInsightsResponse(adId, response)
+      },
+      {
+        'meta.adId': adId,
+        'meta.datePreset': datePreset,
+      }
+    )
+  }
+
+  async getAdDailyInsights(
+    accessToken: string,
+    adId: string,
+    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d',
+    options?: { since?: string; until?: string }
+  ): Promise<MetaDailyInsightsData[]> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] getAdDailyInsights called with mock mode')
+      const parsedDays = parseInt(datePreset.match(/\d+/)?.[0] || '7', 10)
+      const days =
+        datePreset === 'today'
+          ? 1
+          : datePreset === 'yesterday'
+            ? 1
+            : Number.isNaN(parsedDays)
+              ? 7
+              : parsedDays
+      const mockData: MetaDailyInsightsData[] = []
+
+      for (let i = 0; i < days; i++) {
+        const date = new Date()
+        date.setDate(date.getDate() - i)
+        mockData.push({
+          campaignId: adId,
+          date: date.toISOString().split('T')[0],
+          impressions: Math.floor(500 + Math.random() * 150),
+          reach: Math.floor(400 + Math.random() * 100),
+          clicks: Math.floor(15 + Math.random() * 5),
+          linkClicks: Math.floor(12 + Math.random() * 4),
+          spend: Math.floor(4000 + Math.random() * 1500),
+          conversions: Math.floor(Math.random() * 2),
+          revenue: Math.floor(15000 + Math.random() * 8000),
+        })
+      }
+
+      return mockData
+    }
+
+    return withSpan(
+      'meta.getAdDailyInsights',
+      async () => {
+        const fields =
+          'campaign_id,impressions,reach,clicks,spend,actions,action_values,date_start,date_stop'
+
+        const dateParams =
+          options?.since && options?.until
+            ? `time_range=${encodeURIComponent(JSON.stringify({ since: options.since, until: options.until }))}`
+            : `date_preset=${datePreset}`
+        const response = await this.requestWithRetry<MetaApiInsightsResponse>(
+          accessToken,
+          `/${adId}/insights?fields=${fields}&${dateParams}&time_increment=1`,
+          { method: 'GET' }
+        )
+
+        return this.mapDailyInsightsResponse(adId, response)
+      },
+      {
+        'meta.adId': adId,
+        'meta.datePreset': datePreset,
+      }
+    )
+  }
+
   // --- Creative ---
 
   async createAdCreative(
