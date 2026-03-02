@@ -1,8 +1,9 @@
 'use client'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Zap, Trophy } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import { Zap, Trophy, Settings2 } from 'lucide-react'
 import { formatCompactKrw } from '@/lib/utils/format'
 
 interface SavingsWidgetProps {
@@ -87,9 +88,12 @@ export function SavingsWidget({
         ) : (
           <div className="py-4 text-center space-y-2">
             <p className="text-sm text-muted-foreground">아직 자동 최적화가 실행되지 않았습니다</p>
-            <Badge variant="outline" className="text-xs">
-              최적화 규칙을 설정해 보세요
-            </Badge>
+            <Button variant="outline" size="sm" className="text-xs" asChild>
+              <Link href="/optimization-rules">
+                <Settings2 className="mr-1.5 h-3.5 w-3.5" />
+                최적화 규칙 설정하기
+              </Link>
+            </Button>
           </div>
         )}
       </CardContent>
