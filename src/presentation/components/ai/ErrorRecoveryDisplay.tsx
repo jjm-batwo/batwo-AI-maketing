@@ -86,7 +86,7 @@ export function ErrorRecoveryDisplay({
         </div>
 
         {onDismiss && (
-          <button
+          <button type="button"
             onClick={onDismiss}
             className="p-1 hover:bg-white/50 rounded-md transition-colors flex-shrink-0"
             aria-label="닫기"
@@ -102,7 +102,7 @@ export function ErrorRecoveryDisplay({
 
         {/* Recommended Option */}
         {recommendedOption && (
-          <button
+          <button type="button"
             onClick={recommendedOption.action}
             className={cn(
               'w-full text-left p-3 rounded-lg border-2',
@@ -140,7 +140,7 @@ export function ErrorRecoveryDisplay({
         {otherOptions.length > 0 && (
           <div className="space-y-2">
             {otherOptions.map((option) => (
-              <button
+              <button type="button"
                 key={option.id}
                 onClick={option.action}
                 className={cn(

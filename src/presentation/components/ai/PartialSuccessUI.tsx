@@ -154,7 +154,7 @@ export function PartialSuccessUI({
 
                 {/* Retry Button for Failed Items */}
                 {result.status === 'failed' && onRetryFailed && (
-                  <button
+                  <button type="button"
                     onClick={() => onRetryFailed(result.field)}
                     className={cn(
                       'flex items-center gap-1 px-3 py-1.5 text-sm rounded-md',
@@ -175,7 +175,7 @@ export function PartialSuccessUI({
       {/* Action Footer */}
       {hasFailures && onRetryFailed && (
         <div className="flex items-center justify-end pt-2 border-t">
-          <button
+          <button type="button"
             onClick={() => {
               results
                 .filter((r) => r.status === 'failed')

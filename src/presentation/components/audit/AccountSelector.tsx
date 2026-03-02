@@ -27,7 +27,12 @@ interface AccountSelectorProps {
   selectedAccountId?: string
 }
 
-export function AccountSelector({ accounts, onSelect, loading, selectedAccountId }: AccountSelectorProps) {
+export function AccountSelector({
+  accounts,
+  onSelect,
+  loading,
+  selectedAccountId,
+}: AccountSelectorProps) {
   const [confirmTarget, setConfirmTarget] = useState<string | null>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
   const sorted = sortByStatus(accounts)
@@ -169,7 +174,6 @@ export function AccountSelector({ accounts, onSelect, loading, selectedAccountId
 
       {/* 비활성 계정 확인 다이얼로그 */}
       {confirmTarget && (
-         
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
           role="dialog"
@@ -201,16 +205,19 @@ export function AccountSelector({ accounts, onSelect, loading, selectedAccountId
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                이 계정은 현재 운영 중이 아닙니다. 진단 결과가 제한적일 수 있습니다. 계속하시겠습니까?
+                이 계정은 현재 운영 중이 아닙니다. 진단 결과가 제한적일 수 있습니다.
+                계속하시겠습니까?
               </p>
               <div className="flex gap-3 justify-end">
                 <button
+                  type="button"
                   onClick={() => setConfirmTarget(null)}
                   className="px-4 py-2 text-sm font-medium rounded-lg border border-border bg-background hover:bg-muted transition-colors"
                 >
                   취소
                 </button>
                 <button
+                  type="button"
                   onClick={handleConfirm}
                   className="px-4 py-2 text-sm font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
                 >

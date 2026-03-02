@@ -121,7 +121,7 @@ export function MetricsDashboardExample() {
 
   return (
     <div>
-      <button onClick={handleRefresh}>새로고침</button>
+      <button type="button" onClick={handleRefresh}>새로고침</button>
       {/* Dashboard content */}
     </div>
   )
@@ -142,7 +142,7 @@ export function ManualSuggestionExample() {
 
   return (
     <div>
-      <button onClick={handleComplexAction}>
+      <button type="button" onClick={handleComplexAction}>
         복잡한 작업 완료
       </button>
 
@@ -228,7 +228,7 @@ export function SuggestionStatsExample() {
   }
 
   return (
-    <button onClick={handleViewStats}>
+    <button type="button" onClick={handleViewStats}>
       제안 통계 보기
     </button>
   )
@@ -256,7 +256,7 @@ export function ConditionalSuggestionExample() {
   }
 
   return (
-    <button onClick={handleCheckSuggestion}>
+    <button type="button" onClick={handleCheckSuggestion}>
       제안 상태 확인
     </button>
   )
@@ -288,17 +288,17 @@ export function DashboardWithContextualAI() {
     <div className="dashboard">
       <h1>대시보드</h1>
 
-      <button onClick={handleAnalyzeMetrics}>
+      <button type="button" onClick={handleAnalyzeMetrics}>
         성과 분석
       </button>
 
-      <button onClick={handleCreateCampaign}>
+      <button type="button" onClick={handleCreateCampaign}>
         새 캠페인
       </button>
 
       <div className="reports">
         {['weekly', 'monthly'].map((reportId) => (
-          <button
+          <button type="button"
             key={reportId}
             onClick={() => handleViewReport(reportId)}
           >
@@ -334,7 +334,7 @@ export function ErrorRecoveryExample() {
   }
 
   return (
-    <button onClick={handleApiError}>
+    <button type="button" onClick={handleApiError}>
       API 호출 (오류 테스트)
     </button>
   )

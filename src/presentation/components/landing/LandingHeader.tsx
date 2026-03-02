@@ -154,7 +154,7 @@ export function LandingHeader() {
             </div>
 
             {/* Mobile Menu Button */}
-            <button
+            <button type="button"
               ref={menuButtonRef}
               className="md:hidden p-2 -mr-2 text-muted-foreground hover:text-foreground transition-colors rounded-md"
               onClick={() => setIsMenuOpen(!isMenuOpen)}

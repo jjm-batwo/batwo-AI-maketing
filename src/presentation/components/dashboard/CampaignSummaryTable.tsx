@@ -35,7 +35,15 @@ type MetricFormat = 'currency' | 'number' | 'percentage' | 'multiplier'
 type CampaignMetricKey =
   | keyof Pick<
       CampaignSummary,
-      'spend' | 'revenue' | 'roas' | 'ctr' | 'clicks' | 'impressions' | 'conversions' | 'cpa' | 'cvr'
+      | 'spend'
+      | 'revenue'
+      | 'roas'
+      | 'ctr'
+      | 'clicks'
+      | 'impressions'
+      | 'conversions'
+      | 'cpa'
+      | 'cvr'
     >
   | 'linkClicks'
 
@@ -92,7 +100,7 @@ export const CampaignSummaryTable = memo(function CampaignSummaryTable({
   )
   if (isLoading) {
     return (
-      <Card className={className}>
+      <Card className={cn(className)}>
         <CardHeader>
           <CardTitle className="text-sm font-medium">{t('campaignSummary.title')}</CardTitle>
         </CardHeader>
@@ -113,7 +121,7 @@ export const CampaignSummaryTable = memo(function CampaignSummaryTable({
   }
 
   return (
-    <Card className={className}>
+    <Card className={cn(className)}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium">{t('campaignSummary.title')}</CardTitle>

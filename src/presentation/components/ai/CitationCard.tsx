@@ -192,7 +192,7 @@ export function CitationList({
       </div>
 
       {hasMore && (
-        <button
+        <button type="button"
           onClick={() => setIsExpanded(!isExpanded)}
           className={cn(
             'w-full py-3 rounded-xl',

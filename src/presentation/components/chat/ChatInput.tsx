@@ -94,7 +94,7 @@ export function ChatInput({
             </span>
           )}
         </div>
-        <button
+        <button type="button"
           data-testid="chat-send-button"
           onClick={handleSend}
           disabled={!input.trim() || isLoading || isOverLimit}

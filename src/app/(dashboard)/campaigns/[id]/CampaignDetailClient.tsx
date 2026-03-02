@@ -10,6 +10,10 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ArrowLeft, Pencil, BarChart3, Play, Pause } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { CampaignHierarchySection } from '@/presentation/components/campaign/CampaignHierarchySection'
+import {
+  mapDetailPeriodToDatePreset,
+  type CampaignDetailPeriod,
+} from '@/presentation/utils/campaignPeriod'
 
 const statusConfig = {
   ACTIVE: { label: '진행 중', className: 'bg-green-500/15 text-green-500' },
@@ -47,10 +51,8 @@ interface CampaignDetailClientProps {
   campaign: Campaign
 }
 
-type DetailPeriod = 'today' | '3d' | '7d' | '30d'
-
 export function CampaignDetailClient({ campaign }: CampaignDetailClientProps) {
-  const [period, setPeriod] = useState<DetailPeriod>('7d')
+  const [period, setPeriod] = useState<CampaignDetailPeriod>('7d')
   const updateCampaign = useUpdateCampaign()
   const campaignKPI = useCampaignKPI(campaign.id, period)
 
@@ -59,12 +61,7 @@ export function CampaignDetailClient({ campaign }: CampaignDetailClientProps) {
   const objectiveLabel = objectiveLabels[campaign.objective] || campaign.objective
 
   const kpiSummary = campaignKPI.data?.summary
-  const hierarchyDatePreset = useMemo(() => {
-    if (period === 'today') return 'today'
-    if (period === '3d') return 'last_3d'
-    if (period === '30d') return 'last_30d'
-    return 'last_7d'
-  }, [period])
+  const hierarchyDatePreset = useMemo(() => mapDetailPeriodToDatePreset(period), [period])
 
   const handleStatusChange = (newStatus: 'ACTIVE' | 'PAUSED') => {
     updateCampaign.mutate({ id: campaign.id, status: newStatus })
@@ -124,7 +121,7 @@ export function CampaignDetailClient({ campaign }: CampaignDetailClientProps) {
 
       {/* KPI Summary */}
       <div className="flex items-center justify-end">
-        <Tabs value={period} onValueChange={(v) => setPeriod(v as DetailPeriod)}>
+        <Tabs value={period} onValueChange={(v) => setPeriod(v as CampaignDetailPeriod)}>
           <TabsList className="grid grid-cols-4">
             <TabsTrigger value="today">1일</TabsTrigger>
             <TabsTrigger value="3d">3일</TabsTrigger>

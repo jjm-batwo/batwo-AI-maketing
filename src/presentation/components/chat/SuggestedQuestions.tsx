@@ -20,7 +20,7 @@ export function SuggestedQuestions({ questions, onSelect, className }: Suggested
       </div>
       <div className="flex flex-wrap gap-2">
         {questions.map((question, index) => (
-          <button
+          <button type="button"
             data-testid="suggested-question-button"
             key={index}
             onClick={() => onSelect(question)}

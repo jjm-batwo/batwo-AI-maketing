@@ -8,6 +8,10 @@ import { useTranslations } from 'next-intl'
 import { CampaignTable } from '@/presentation/components/campaign'
 import { useCampaignStore, useUIStore } from '@/presentation/stores'
 import { useDashboardKPI } from '@/presentation/hooks'
+import {
+  CAMPAIGN_KPI_PERIOD_LABELS,
+  type CampaignKPIPeriod,
+} from '@/presentation/utils/campaignPeriod'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -26,15 +30,6 @@ const STATUS_PRIORITY: Record<string, number> = {
   PENDING_REVIEW: 2,
   DRAFT: 3,
   COMPLETED: 4,
-}
-
-type KPIPeriod = 'today' | 'yesterday' | '7d' | '30d'
-
-const PERIOD_LABELS: Record<KPIPeriod, string> = {
-  today: '오늘',
-  yesterday: '어제',
-  '7d': '최근 7일',
-  '30d': '최근 30일',
 }
 
 interface CampaignWithKPI {
@@ -69,7 +64,7 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
   const showApiSource = searchParams.get('showApiSource') === 'true'
   const { filters, setFilters, selectedCampaignIds } = useCampaignStore()
   const { openChatPanel } = useUIStore()
-  const [period, setPeriod] = useState<KPIPeriod>('today')
+  const [period, setPeriod] = useState<CampaignKPIPeriod>('today')
 
   // 기간별 KPI 데이터 (클라이언트 사이드 fetch)
   const { data: kpiData, isLoading: isKpiLoading } = useDashboardKPI({
@@ -182,7 +177,7 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <Tabs
               value={period}
-              onValueChange={(v) => setPeriod(v as KPIPeriod)}
+              onValueChange={(v) => setPeriod(v as CampaignKPIPeriod)}
               className="w-full sm:w-auto"
             >
               <TabsList className="grid w-full grid-cols-4 sm:w-auto bg-muted/50 dark:bg-muted/20">
@@ -193,7 +188,9 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
               </TabsList>
             </Tabs>
             <span className="text-xs text-muted-foreground">
-              {isKpiLoading ? '데이터 로딩 중...' : `${PERIOD_LABELS[period]} 기준 성과 데이터`}
+              {isKpiLoading
+                ? '데이터 로딩 중...'
+                : `${CAMPAIGN_KPI_PERIOD_LABELS[period]} 기준 성과 데이터`}
             </span>
           </div>
 

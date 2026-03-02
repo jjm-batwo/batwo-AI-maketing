@@ -13,43 +13,135 @@ interface Caption {
 // Meta App Review 촬영용 캡션 시퀀스
 const captionSequence: Caption[] = [
   // 인트로
-  { id: 'intro', text: 'Batwo - AI Marketing Solution for E-commerce Advertisers', subtitle: 'Optimize Meta ad campaigns with real-time data and AI insights' },
+  {
+    id: 'intro',
+    text: 'Batwo - AI Marketing Solution for E-commerce Advertisers',
+    subtitle: 'Optimize Meta ad campaigns with real-time data and AI insights',
+  },
 
   // 로그인
-  { id: 'login-1', text: 'Step 1: User Authentication', subtitle: 'Users can sign in with Google, Kakao, or Meta accounts' },
-  { id: 'login-2', text: 'Click "Continue with Meta" to start OAuth flow', subtitle: 'This initiates the permission request process' },
+  {
+    id: 'login-1',
+    text: 'Step 1: User Authentication',
+    subtitle: 'Users can sign in with Google, Kakao, or Meta accounts',
+  },
+  {
+    id: 'login-2',
+    text: 'Click "Continue with Meta" to start OAuth flow',
+    subtitle: 'This initiates the permission request process',
+  },
 
   // OAuth 권한
-  { id: 'oauth-1', text: 'Step 2: User Grants Permissions', subtitle: 'The following permissions are requested:' },
-  { id: 'oauth-2', text: 'ads_read - View ad campaign performance metrics', subtitle: 'Access ROAS, CTR, conversions, and spend data' },
-  { id: 'oauth-3', text: 'ads_management - AI-powered campaign optimization', subtitle: 'Enable personalized optimization recommendations' },
-  { id: 'oauth-4', text: 'business_management - Multi-account management', subtitle: 'Manage multiple ad accounts from one dashboard' },
-  { id: 'oauth-5', text: 'pages_show_list & pages_read_engagement', subtitle: 'Analyze Facebook and Instagram page engagement' },
-  { id: 'oauth-6', text: 'User clicks "Continue" to grant access', subtitle: 'Permissions are now authorized' },
+  {
+    id: 'oauth-1',
+    text: 'Step 2: User Grants Permissions',
+    subtitle: 'The following permissions are requested:',
+  },
+  {
+    id: 'oauth-2',
+    text: 'ads_read - View ad campaign performance metrics',
+    subtitle: 'Access ROAS, CTR, conversions, and spend data',
+  },
+  {
+    id: 'oauth-3',
+    text: 'ads_management - AI-powered campaign optimization',
+    subtitle: 'Enable personalized optimization recommendations',
+  },
+  {
+    id: 'oauth-4',
+    text: 'business_management - Multi-account management',
+    subtitle: 'Manage multiple ad accounts from one dashboard',
+  },
+  {
+    id: 'oauth-5',
+    text: 'pages_show_list & pages_read_engagement',
+    subtitle: 'Analyze Facebook and Instagram page engagement',
+  },
+  {
+    id: 'oauth-6',
+    text: 'User clicks "Continue" to grant access',
+    subtitle: 'Permissions are now authorized',
+  },
 
   // 온보딩
-  { id: 'onboard-1', text: 'Step 3: Onboarding - Permission Explanation', subtitle: 'App explains why each permission is needed' },
-  { id: 'onboard-2', text: 'Why connect your Meta account?', subtitle: 'Clear explanation of data usage and benefits' },
+  {
+    id: 'onboard-1',
+    text: 'Step 3: Onboarding - Permission Explanation',
+    subtitle: 'App explains why each permission is needed',
+  },
+  {
+    id: 'onboard-2',
+    text: 'Why connect your Meta account?',
+    subtitle: 'Clear explanation of data usage and benefits',
+  },
 
   // Use Case 1: ads_read
-  { id: 'use1-1', text: 'Use Case 1: Real-time Ad Performance Monitoring', subtitle: 'Using ads_read permission' },
-  { id: 'use1-2', text: 'Dashboard displays real-time KPIs from Meta Ads', subtitle: 'ROAS, CTR, Conversions, Total Spend' },
-  { id: 'use1-3', text: 'Interactive charts show performance trends', subtitle: 'Spend Trend and ROAS Trend over time' },
+  {
+    id: 'use1-1',
+    text: 'Use Case 1: Real-time Ad Performance Monitoring',
+    subtitle: 'Using ads_read permission',
+  },
+  {
+    id: 'use1-2',
+    text: 'Dashboard displays real-time KPIs from Meta Ads',
+    subtitle: 'ROAS, CTR, Conversions, Total Spend',
+  },
+  {
+    id: 'use1-3',
+    text: 'Interactive charts show performance trends',
+    subtitle: 'Spend Trend and ROAS Trend over time',
+  },
 
   // Use Case 2: ads_management
-  { id: 'use2-1', text: 'Use Case 2: AI-Powered Optimization', subtitle: 'Using ads_management permission' },
-  { id: 'use2-2', text: 'AI Insight: ROAS Improvement Opportunity', subtitle: 'Weekend budget increase could raise ROAS by 0.3x' },
-  { id: 'use2-3', text: 'AI Insight: Budget Depletion Warning', subtitle: 'Daily budget will be depleted by 3 PM' },
-  { id: 'use2-4', text: 'AI Insight: Targeting Optimization', subtitle: 'Women 25-34 have 2.1x higher conversion rate' },
-  { id: 'use2-5', text: 'Users can take immediate action', subtitle: 'Click to adjust budget or targeting based on AI recommendations' },
+  {
+    id: 'use2-1',
+    text: 'Use Case 2: AI-Powered Optimization',
+    subtitle: 'Using ads_management permission',
+  },
+  {
+    id: 'use2-2',
+    text: 'AI Insight: ROAS Improvement Opportunity',
+    subtitle: 'Weekend budget increase could raise ROAS by 0.3x',
+  },
+  {
+    id: 'use2-3',
+    text: 'AI Insight: Budget Depletion Warning',
+    subtitle: 'Daily budget will be depleted by 3 PM',
+  },
+  {
+    id: 'use2-4',
+    text: 'AI Insight: Targeting Optimization',
+    subtitle: 'Women 25-34 have 2.1x higher conversion rate',
+  },
+  {
+    id: 'use2-5',
+    text: 'Users can take immediate action',
+    subtitle: 'Click to adjust budget or targeting based on AI recommendations',
+  },
 
   // Use Case 3: business_management
-  { id: 'use3-1', text: 'Use Case 3: Campaign Management', subtitle: 'Using business_management permission' },
-  { id: 'use3-2', text: 'View all campaigns with status and performance', subtitle: 'Filter by Active, Paused, Completed, Draft' },
+  {
+    id: 'use3-1',
+    text: 'Use Case 3: Campaign Management',
+    subtitle: 'Using business_management permission',
+  },
+  {
+    id: 'use3-2',
+    text: 'View all campaigns with status and performance',
+    subtitle: 'Filter by Active, Paused, Completed, Draft',
+  },
 
   // 엔딩
-  { id: 'end-1', text: 'Summary: Batwo provides advertisers with:', subtitle: '✓ Real-time monitoring ✓ AI optimization ✓ Unified management' },
-  { id: 'end-2', text: 'All features require the requested Meta permissions', subtitle: 'Thank you for reviewing our application' },
+  {
+    id: 'end-1',
+    text: 'Summary: Batwo provides advertisers with:',
+    subtitle: '✓ Real-time monitoring ✓ AI optimization ✓ Unified management',
+  },
+  {
+    id: 'end-2',
+    text: 'All features require the requested Meta permissions',
+    subtitle: 'Thank you for reviewing our application',
+  },
 ]
 
 export function CaptionOverlay() {
@@ -107,6 +199,7 @@ export function CaptionOverlay() {
     return (
       <div className="fixed bottom-4 right-4 z-[9999]">
         <button
+          type="button"
           onClick={toggleVisibility}
           className="rounded-full bg-black/80 px-4 py-2 text-sm text-white shadow-lg hover:bg-black/90"
         >
@@ -128,9 +221,12 @@ export function CaptionOverlay() {
         >
           {isMinimized ? (
             <div className="flex items-center gap-4 text-white">
-              <span className="text-sm opacity-70">{currentIndex + 1}/{captionSequence.length}</span>
+              <span className="text-sm opacity-70">
+                {currentIndex + 1}/{captionSequence.length}
+              </span>
               <span className="text-sm truncate max-w-xs">{currentCaption.text}</span>
               <button
+                type="button"
                 onClick={() => setIsMinimized(false)}
                 className="text-xs opacity-70 hover:opacity-100"
               >
@@ -154,6 +250,7 @@ export function CaptionOverlay() {
               {/* 컨트롤 */}
               <div className="mt-4 flex items-center justify-center gap-4">
                 <button
+                  type="button"
                   onClick={prevCaption}
                   disabled={currentIndex === 0}
                   className="rounded-full bg-white/20 px-3 py-1 text-sm text-white hover:bg-white/30 disabled:opacity-30 disabled:cursor-not-allowed"
@@ -166,6 +263,7 @@ export function CaptionOverlay() {
                 </span>
 
                 <button
+                  type="button"
                   onClick={nextCaption}
                   disabled={currentIndex === captionSequence.length - 1}
                   className="rounded-full bg-white/20 px-3 py-1 text-sm text-white hover:bg-white/30 disabled:opacity-30 disabled:cursor-not-allowed"
@@ -175,12 +273,14 @@ export function CaptionOverlay() {
 
                 <div className="ml-4 border-l border-white/20 pl-4 flex gap-2">
                   <button
+                    type="button"
                     onClick={() => setIsMinimized(true)}
                     className="rounded-full bg-white/10 px-2 py-1 text-xs text-white/70 hover:bg-white/20"
                   >
                     Minimize
                   </button>
                   <button
+                    type="button"
                     onClick={toggleVisibility}
                     className="rounded-full bg-white/10 px-2 py-1 text-xs text-white/70 hover:bg-white/20"
                   >

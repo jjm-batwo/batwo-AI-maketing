@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useCampaignStore } from '@/presentation/stores/campaignStore'
 import { useAdSetsWithInsights } from '@/presentation/hooks/useAdSetsWithInsights'
 import { useAdsWithInsights } from '@/presentation/hooks/useAdsWithInsights'
+import { type CampaignDatePreset } from '@/presentation/utils/campaignPeriod'
 import { AdSetTable } from './AdSetTable'
 import { AdTable } from './AdTable'
 import { HierarchyBreadcrumb } from './HierarchyBreadcrumb'
@@ -12,7 +13,7 @@ import { HierarchyBreadcrumb } from './HierarchyBreadcrumb'
 interface CampaignHierarchySectionProps {
   campaignId: string
   campaignName: string
-  datePreset?: 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d'
+  datePreset?: CampaignDatePreset
 }
 
 export function CampaignHierarchySection({

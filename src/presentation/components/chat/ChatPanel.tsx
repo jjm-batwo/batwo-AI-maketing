@@ -354,7 +354,7 @@ function EmptyState({
           {insights.slice(0, 2).map((insight, index) => {
             const Icon = insightIconMap[insight.type]
             return (
-              <button
+              <button type="button"
                 key={index}
                 onClick={() => onSuggestion(
                   insight.type === 'warning'
@@ -409,7 +409,7 @@ function EmptyState({
       {/* 제안 질문 */}
       <div className="w-full space-y-2">
         {finalSuggestions.map((suggestion, index) => (
-          <button
+          <button type="button"
             key={index}
             onClick={() => onSuggestion(suggestion)}
             className={cn(

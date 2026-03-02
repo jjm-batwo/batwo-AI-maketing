@@ -104,7 +104,7 @@ export function FeatureOnboardingExample() {
         <p className="text-gray-600 dark:text-gray-400">
           사용자가 AI 기능을 자연스럽게 발견하고 학습할 수 있도록 돕습니다.
         </p>
-        <button
+        <button type="button"
           onClick={() => setIsTourOpen(true)}
           className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
         >

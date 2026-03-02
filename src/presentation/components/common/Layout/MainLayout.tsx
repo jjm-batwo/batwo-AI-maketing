@@ -18,7 +18,6 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <div className="flex h-screen bg-slate-50 overflow-hidden relative selection:bg-primary/20">
-
       {/* Desktop sidebar - hidden on mobile */}
       <Sidebar />
       {/* Mobile sidebar - Sheet component */}
@@ -34,6 +33,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       {/* Floating Chat Button */}
       {!isChatPanelOpen && (
         <button
+          type="button"
           data-testid="chat-trigger-button"
           onClick={toggleChatPanel}
           className={cn(

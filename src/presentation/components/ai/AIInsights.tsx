@@ -216,7 +216,7 @@ export const AIInsights = memo(function AIInsights({
       <div className={`space-y-4 ${className}`}>
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">AI 인사이트</h3>
-          <button
+          <button type="button"
             onClick={refetch}
             className="p-2 hover:bg-muted rounded-lg transition-colors"
             aria-label="다시 로드"
@@ -238,7 +238,7 @@ export const AIInsights = memo(function AIInsights({
       <div className={`space-y-4 ${className}`}>
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">AI 인사이트</h3>
-          <button
+          <button type="button"
             onClick={refetch}
             className="p-2 hover:bg-muted rounded-lg transition-colors"
             aria-label="다시 로드"
@@ -259,7 +259,7 @@ export const AIInsights = memo(function AIInsights({
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">AI 인사이트</h3>
-        <button
+        <button type="button"
           onClick={refetch}
           className="p-2 hover:bg-muted rounded-lg transition-colors"
           aria-label="다시 로드"

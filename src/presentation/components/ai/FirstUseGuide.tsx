@@ -221,7 +221,7 @@ export function FirstUseGuide({
                   <p className="text-sm text-gray-500 dark:text-gray-400">처음 사용하시는군요!</p>
                 </div>
               </div>
-              <button
+              <button type="button"
                 onClick={handleDismiss}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
                 aria-label="닫기"
@@ -290,14 +290,14 @@ export function FirstUseGuide({
                 <span>다시 보지 않기</span>
               </label>
               <div className="flex items-center gap-2">
-                <button
+                <button type="button"
                   onClick={handleDismiss}
                   className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 >
                   닫기
                 </button>
                 {onStartTour && (
-                  <button
+                  <button type="button"
                     onClick={handleStartTour}
                     className="px-4 py-2 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
                   >
@@ -335,7 +335,7 @@ export function FirstUseGuide({
               <p className="text-sm text-gray-500 dark:text-gray-400">처음 사용하시는군요!</p>
             </div>
           </div>
-          <button
+          <button type="button"
             onClick={handleDismiss}
             className="p-1.5 hover:bg-white/50 dark:hover:bg-gray-800/50 rounded-lg transition-colors"
             aria-label="닫기"
@@ -395,14 +395,14 @@ export function FirstUseGuide({
             <span>다시 보지 않기</span>
           </label>
           <div className="flex items-center gap-2">
-            <button
+            <button type="button"
               onClick={handleDismiss}
               className="px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
               닫기
             </button>
             {onStartTour && (
-              <button
+              <button type="button"
                 onClick={handleStartTour}
                 className="px-3 py-1.5 text-xs font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
               >

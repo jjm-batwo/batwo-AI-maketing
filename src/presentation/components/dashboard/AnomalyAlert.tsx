@@ -60,14 +60,20 @@ function SimpleCollapsibleContent({
   children: ReactNode
 }) {
   if (!open) return null
-  return <div className={className}>{children}</div>
+  return <div className={cn(className)}>{children}</div>
 }
 
 // ============================================
 // Types
 // ============================================
 
-type AnomalyType = 'spike' | 'drop' | 'trend_reversal' | 'budget_anomaly' | 'performance_degradation' | 'unusual_pattern'
+type AnomalyType =
+  | 'spike'
+  | 'drop'
+  | 'trend_reversal'
+  | 'budget_anomaly'
+  | 'performance_degradation'
+  | 'unusual_pattern'
 type AnomalySeverity = 'critical' | 'warning' | 'info'
 type CauseCategory = 'external' | 'internal' | 'technical' | 'market'
 
@@ -198,9 +204,7 @@ const PRIORITY_COLORS = {
 // ============================================
 
 async function fetchAnomalies(includeRootCause: boolean): Promise<AnomalyResponse> {
-  const url = includeRootCause
-    ? '/api/ai/anomalies?includeRootCause=true'
-    : '/api/ai/anomalies'
+  const url = includeRootCause ? '/api/ai/anomalies?includeRootCause=true' : '/api/ai/anomalies'
   const response = await fetch(url)
   if (!response.ok) {
     const error = await response.json()
@@ -213,11 +217,22 @@ async function fetchAnomalies(includeRootCause: boolean): Promise<AnomalyRespons
 // Sub-components
 // ============================================
 
-function MetricDisplay({ label, value, unit = '' }: { label: string; value: number; unit?: string }) {
+function MetricDisplay({
+  label,
+  value,
+  unit = '',
+}: {
+  label: string
+  value: number
+  unit?: string
+}) {
   return (
     <div className="text-xs">
       <span className="text-muted-foreground">{label}: </span>
-      <span className="font-medium">{typeof value === 'number' ? value.toFixed(2) : value}{unit}</span>
+      <span className="font-medium">
+        {typeof value === 'number' ? value.toFixed(2) : value}
+        {unit}
+      </span>
     </div>
   )
 }
@@ -255,9 +270,7 @@ function RootCauseSection({ analysis }: { analysis: RootCauseAnalysis }) {
                   {Math.round(primaryCause.probability * 100)}% 확률
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground mb-2">
-                {primaryCause.description}
-              </p>
+              <p className="text-xs text-muted-foreground mb-2">{primaryCause.description}</p>
 
               {/* Evidence */}
               {primaryCause.evidence.length > 0 && (
@@ -277,15 +290,16 @@ function RootCauseSection({ analysis }: { analysis: RootCauseAnalysis }) {
                   <span className="text-xs font-medium">권장 조치:</span>
                   <div className="mt-1 space-y-1">
                     {primaryCause.actions.slice(0, 2).map((action) => (
-                      <div
-                        key={action.id}
-                        className="flex items-center gap-2 text-xs"
-                      >
+                      <div key={action.id} className="flex items-center gap-2 text-xs">
                         <Badge
                           variant="outline"
                           className={cn('text-xs px-1.5 py-0', PRIORITY_COLORS[action.priority])}
                         >
-                          {action.priority === 'high' ? '긴급' : action.priority === 'medium' ? '권장' : '참고'}
+                          {action.priority === 'high'
+                            ? '긴급'
+                            : action.priority === 'medium'
+                              ? '권장'
+                              : '참고'}
                         </Badge>
                         <span>{action.action}</span>
                       </div>
@@ -330,11 +344,7 @@ function DetectionMethodsBadge({ methods }: { methods: string[] }) {
   return (
     <div className="flex gap-1 flex-wrap">
       {methods.map((method) => (
-        <Badge
-          key={method}
-          variant="secondary"
-          className="text-xs px-1.5 py-0 bg-current/10"
-        >
+        <Badge key={method} variant="secondary" className="text-xs px-1.5 py-0 bg-current/10">
           {methodLabels[method] || method}
         </Badge>
       ))}
@@ -349,30 +359,20 @@ function AnomalyCard({ anomaly }: { anomaly: Anomaly }) {
   const SeverityIcon = severityConfig.icon
 
   return (
-    <div
-      className={cn(
-        'rounded-lg border p-4 transition-colors',
-        severityConfig.color
-      )}
-    >
+    <div className={cn('rounded-lg border p-4 transition-colors', severityConfig.color)}>
       <div className="flex items-start gap-3">
         <div className="shrink-0 mt-0.5">
           <SeverityIcon className="h-5 w-5" />
         </div>
         <div className="flex-1 space-y-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <Badge
-              variant="outline"
-              className={cn('text-xs', severityConfig.badgeColor)}
-            >
+            <Badge variant="outline" className={cn('text-xs', severityConfig.badgeColor)}>
               {severityConfig.label}
             </Badge>
             <Badge variant="outline" className="text-xs">
               {TYPE_LABELS[anomaly.type]}
             </Badge>
-            <span className="text-xs text-current/70 truncate">
-              {anomaly.campaignName}
-            </span>
+            <span className="text-xs text-current/70 truncate">{anomaly.campaignName}</span>
           </div>
           <p className="font-medium text-sm">{anomaly.message}</p>
           <div className="flex items-center gap-2 text-xs text-current/70">
@@ -381,9 +381,7 @@ function AnomalyCard({ anomaly }: { anomaly: Anomaly }) {
             <span
               className={cn(
                 'font-medium',
-                anomaly.changePercent > 0
-                  ? 'text-green-600'
-                  : 'text-red-600'
+                anomaly.changePercent > 0 ? 'text-green-600' : 'text-red-600'
               )}
             >
               {anomaly.changePercent > 0 ? '+' : ''}
@@ -411,7 +409,11 @@ function AnomalyCard({ anomaly }: { anomaly: Anomaly }) {
               onClick={() => setIsExpanded(!isExpanded)}
               className="flex items-center gap-1 text-xs text-current/60 hover:text-current/80 mt-2"
             >
-              {isExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+              {isExpanded ? (
+                <ChevronDown className="h-3 w-3" />
+              ) : (
+                <ChevronRight className="h-3 w-3" />
+              )}
               <span>상세 정보</span>
             </SimpleCollapsibleTrigger>
             <SimpleCollapsibleContent open={isExpanded} className="mt-2">
@@ -452,7 +454,7 @@ export function AnomalyAlert({ className, maxItems = 5, showRootCause = true }: 
 
   if (isLoading) {
     return (
-      <Card className={className}>
+      <Card className={cn(className)}>
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <Bell className="h-5 w-5 text-primary" />
@@ -479,7 +481,7 @@ export function AnomalyAlert({ className, maxItems = 5, showRootCause = true }: 
   const marketContext = data?.marketContext
 
   return (
-    <Card className={className}>
+    <Card className={cn(className)}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -491,12 +493,7 @@ export function AnomalyAlert({ className, maxItems = 5, showRootCause = true }: 
               </Badge>
             )}
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => refetch()}
-            className="h-8 w-8"
-          >
+          <Button variant="ghost" size="icon" onClick={() => refetch()} className="h-8 w-8">
             <RefreshCw className="h-4 w-4" />
           </Button>
         </div>
@@ -512,15 +509,9 @@ export function AnomalyAlert({ className, maxItems = 5, showRootCause = true }: 
         {/* Summary Stats */}
         {summary && anomalies.length > 0 && (
           <div className="mt-2 flex gap-3 text-xs">
-            {summary.critical > 0 && (
-              <span className="text-red-600">긴급 {summary.critical}</span>
-            )}
-            {summary.warning > 0 && (
-              <span className="text-amber-600">주의 {summary.warning}</span>
-            )}
-            {summary.info > 0 && (
-              <span className="text-blue-600">정보 {summary.info}</span>
-            )}
+            {summary.critical > 0 && <span className="text-red-600">긴급 {summary.critical}</span>}
+            {summary.warning > 0 && <span className="text-amber-600">주의 {summary.warning}</span>}
+            {summary.info > 0 && <span className="text-blue-600">정보 {summary.info}</span>}
           </div>
         )}
       </CardHeader>

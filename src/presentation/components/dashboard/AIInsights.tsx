@@ -197,7 +197,7 @@ export const AIInsights = memo(function AIInsights({
 
   if (isLoading) {
     return (
-      <Card className={className}>
+      <Card className={cn(className)}>
         <CardHeader>
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
@@ -225,7 +225,7 @@ export const AIInsights = memo(function AIInsights({
   // 인사이트가 없을 때 빈 상태 표시
   if (insights.length === 0) {
     return (
-      <Card className={className}>
+      <Card className={cn(className)}>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -250,7 +250,7 @@ export const AIInsights = memo(function AIInsights({
   }
 
   return (
-    <Card className={className}>
+    <Card className={cn(className)}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -268,7 +268,10 @@ export const AIInsights = memo(function AIInsights({
         </div>
         {/* Filter Row */}
         <div className="flex items-center gap-2 mt-2 flex-wrap">
-          <Select value={filterType || 'all-types'} onValueChange={(v) => setFilterType(v === 'all-types' ? '' : v)}>
+          <Select
+            value={filterType || 'all-types'}
+            onValueChange={(v) => setFilterType(v === 'all-types' ? '' : v)}
+          >
             <SelectTrigger data-testid="filter-category" className="h-7 text-xs w-[120px]">
               <SelectValue placeholder="카테고리" />
             </SelectTrigger>
@@ -280,7 +283,10 @@ export const AIInsights = memo(function AIInsights({
               <SelectItem value="success">성과</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={filterPriority || 'all-priorities'} onValueChange={(v) => setFilterPriority(v === 'all-priorities' ? '' : v)}>
+          <Select
+            value={filterPriority || 'all-priorities'}
+            onValueChange={(v) => setFilterPriority(v === 'all-priorities' ? '' : v)}
+          >
             <SelectTrigger data-testid="filter-priority" className="h-7 text-xs w-[120px]">
               <SelectValue placeholder="우선순위" />
             </SelectTrigger>
@@ -293,14 +299,19 @@ export const AIInsights = memo(function AIInsights({
             </SelectContent>
           </Select>
           {uniqueCampaigns.length > 0 && (
-            <Select value={filterCampaign || 'all-campaigns'} onValueChange={(v) => setFilterCampaign(v === 'all-campaigns' ? '' : v)}>
+            <Select
+              value={filterCampaign || 'all-campaigns'}
+              onValueChange={(v) => setFilterCampaign(v === 'all-campaigns' ? '' : v)}
+            >
               <SelectTrigger data-testid="filter-campaign" className="h-7 text-xs w-[140px]">
                 <SelectValue placeholder="캠페인" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all-campaigns">전체</SelectItem>
                 {uniqueCampaigns.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Sparkles, ArrowRight, Clock } from 'lucide-react'
 import Link from 'next/link'
+import { cn } from '@/lib/utils'
 
 interface UpgradeCTAProps {
   variant?: 'inline' | 'card'
@@ -31,7 +32,7 @@ export function UpgradeCTA({
     }
 
     return (
-      <Card className={className}>
+      <Card className={cn(className)}>
         <CardContent className="p-6">
           <div className="flex items-start gap-4">
             <div className="rounded-full bg-blue-100 p-3">
@@ -42,9 +43,7 @@ export function UpgradeCTA({
               <p className="mt-1 text-sm text-muted-foreground">
                 체험 기간 동안 모든 기능을 무제한으로 이용하실 수 있습니다.
                 <br />
-                <span className="font-medium text-blue-600">
-                  {trialDaysRemaining}일 남음
-                </span>
+                <span className="font-medium text-blue-600">{trialDaysRemaining}일 남음</span>
               </p>
             </div>
           </div>
@@ -68,7 +67,7 @@ export function UpgradeCTA({
   }
 
   return (
-    <Card className={className}>
+    <Card className={cn(className)}>
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
           <div className="rounded-full bg-primary/10 p-3">
@@ -77,8 +76,7 @@ export function UpgradeCTA({
           <div className="flex-1">
             <h3 className="font-semibold">체험 기간이 종료되었습니다</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              유료 플랜을 이용하시면 캠페인, AI 카피, AI 분석을
-              무제한으로 사용할 수 있어요.
+              유료 플랜을 이용하시면 캠페인, AI 카피, AI 분석을 무제한으로 사용할 수 있어요.
             </p>
             <Button asChild className="mt-4">
               <Link href="/pricing">

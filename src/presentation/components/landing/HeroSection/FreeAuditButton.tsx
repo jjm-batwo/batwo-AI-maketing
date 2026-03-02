@@ -23,7 +23,7 @@ export function FreeAuditButton() {
   }
 
   return (
-    <button
+    <button type="button"
       onClick={handleClick}
       disabled={loading}
       className="group w-full max-w-md mx-auto flex items-center gap-4 px-5 py-4 rounded-2xl border border-amber-200 dark:border-amber-800 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-700 transition-all duration-300 disabled:opacity-60 cursor-pointer"

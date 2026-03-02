@@ -87,7 +87,7 @@ export function GuideRecommendationCard({
 
       {/* 버튼 */}
       <div className="flex gap-2 px-4 py-3 border-t border-green-200 dark:border-green-800">
-        <button
+        <button type="button"
           data-testid="guide-accept-button"
           onClick={onAccept}
           className={cn(
@@ -99,7 +99,7 @@ export function GuideRecommendationCard({
           <ArrowRight className="h-4 w-4" />
           이 설정으로 시작하기
         </button>
-        <button
+        <button type="button"
           data-testid="guide-manual-button"
           onClick={onManual}
           className={cn(

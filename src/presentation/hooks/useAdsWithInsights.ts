@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import { type CampaignDatePreset } from '@/presentation/utils/campaignPeriod'
 
 interface AdInsights {
   impressions: number
@@ -21,11 +22,9 @@ interface AdsWithInsightsResponse {
   ads: AdWithInsights[]
 }
 
-type DatePreset = 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d'
-
 async function fetchAdsWithInsights(
   adSetId: string,
-  datePreset: DatePreset
+  datePreset: CampaignDatePreset
 ): Promise<AdWithInsights[]> {
   const res = await fetch(`/api/adsets/${adSetId}/ads-with-insights?datePreset=${datePreset}`)
   if (!res.ok) {
@@ -35,7 +34,7 @@ async function fetchAdsWithInsights(
   return data.ads
 }
 
-export function useAdsWithInsights(adSetId: string, datePreset: DatePreset = 'last_7d') {
+export function useAdsWithInsights(adSetId: string, datePreset: CampaignDatePreset = 'last_7d') {
   return useQuery({
     queryKey: ['ads-with-insights', adSetId, datePreset],
     queryFn: () => fetchAdsWithInsights(adSetId, datePreset),

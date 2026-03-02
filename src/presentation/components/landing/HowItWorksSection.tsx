@@ -138,7 +138,7 @@ function StepOnePreview() {
             </div>
           </div>
         ))}
-        <button className="w-full h-10 mt-2 bg-primary text-primary-foreground text-sm font-semibold rounded-lg hover:bg-primary/90 transition-colors">
+        <button type="button" className="w-full h-10 mt-2 bg-primary text-primary-foreground text-sm font-semibold rounded-lg hover:bg-primary/90 transition-colors">
           AI 캠페인 생성하기 →
         </button>
       </div>

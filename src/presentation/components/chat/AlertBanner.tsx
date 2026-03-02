@@ -91,7 +91,7 @@ function AlertBannerItem({
           <div className={cn('text-[10px] mt-0.5 line-clamp-2', config.text, 'opacity-80')}>
             {alert.message}
           </div>
-          <button
+          <button type="button"
             onClick={onAnalyze}
             className={cn(
               'flex items-center gap-1 mt-1.5 text-[10px] font-medium',
@@ -103,7 +103,7 @@ function AlertBannerItem({
             자세히 분석하기
           </button>
         </div>
-        <button
+        <button type="button"
           onClick={onDismiss}
           className={cn(
             'shrink-0 rounded p-0.5',

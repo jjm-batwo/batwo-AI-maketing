@@ -1,6 +1,7 @@
 'use client'
 
 import { memo, useId, useMemo } from 'react'
+import { cn } from '@/lib/utils'
 
 interface SparklineChartProps {
   data: number[]
@@ -46,7 +47,7 @@ export const SparklineChart = memo(function SparklineChart({
       width={width}
       height={height}
       viewBox={`0 0 ${width} ${height}`}
-      className={className}
+      className={cn(className)}
       aria-hidden="true"
     >
       <defs>
@@ -55,10 +56,7 @@ export const SparklineChart = memo(function SparklineChart({
           <stop offset="100%" stopColor={color} stopOpacity={0.05} />
         </linearGradient>
       </defs>
-      <polygon
-        points={fillPoints}
-        fill={`url(#${gradientId})`}
-      />
+      <polygon points={fillPoints} fill={`url(#${gradientId})`} />
       <polyline
         points={points}
         fill="none"

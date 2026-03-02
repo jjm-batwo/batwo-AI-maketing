@@ -177,7 +177,7 @@ export function AIFeatureTour({
                     {step.title}
                   </h3>
                 </div>
-                <button
+                <button type="button"
                   onClick={onSkip}
                   className="flex-shrink-0 p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
                   aria-label="투어 종료"
@@ -199,7 +199,7 @@ export function AIFeatureTour({
               {/* Step indicators */}
               <div className="flex items-center justify-center gap-1.5 mb-4">
                 {steps.map((_, index) => (
-                  <button
+                  <button type="button"
                     key={index}
                     onClick={() => handleStepClick(index)}
                     className={cn(
@@ -217,7 +217,7 @@ export function AIFeatureTour({
 
               {/* Navigation buttons */}
               <div className="flex items-center justify-between gap-3">
-                <button
+                <button type="button"
                   onClick={onSkip}
                   className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
                 >
@@ -225,7 +225,7 @@ export function AIFeatureTour({
                 </button>
                 <div className="flex items-center gap-2">
                   {!isFirstStep && (
-                    <button
+                    <button type="button"
                       onClick={handlePrevious}
                       className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
                       aria-label="이전"
@@ -233,7 +233,7 @@ export function AIFeatureTour({
                       <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                     </button>
                   )}
-                  <button
+                  <button type="button"
                     onClick={handleNext}
                     className={cn(
                       'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors',

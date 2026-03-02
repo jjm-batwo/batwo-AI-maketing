@@ -112,7 +112,7 @@ export function ConfirmationCard({
 
       {/* Actions */}
       <div className="flex gap-2 px-4 py-3 border-t border-primary/10">
-        <button
+        <button type="button"
           data-testid="confirm-action-button"
           onClick={handleConfirm}
           disabled={isProcessing || isExpired}
@@ -126,7 +126,7 @@ export function ConfirmationCard({
           <Check className="h-4 w-4" />
           확인
         </button>
-        <button
+        <button type="button"
           data-testid="cancel-action-button"
           onClick={handleCancel}
           disabled={isProcessing}

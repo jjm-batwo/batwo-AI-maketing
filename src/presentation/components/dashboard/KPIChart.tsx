@@ -369,12 +369,12 @@ export function KPIChart({
   // Without title - render just the chart content
   if (!title) {
     if (isLoading) {
-      return <div className={className}>{renderSkeleton()}</div>
+      return <div className={cn(className)}>{renderSkeleton()}</div>
     }
     if (data.length === 0) {
-      return <div className={className}>{renderEmptyState()}</div>
+      return <div className={cn(className)}>{renderEmptyState()}</div>
     }
-    return <div className={className}>{renderChart()}</div>
+    return <div className={cn(className)}>{renderChart()}</div>
   }
 
   // With title - wrap in Card

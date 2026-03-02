@@ -9,10 +9,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { KPICard } from '@/presentation/components/dashboard/KPICard'
 import { KPIChart } from '@/presentation/components/dashboard/KPIChart'
+import {
+  CAMPAIGN_KPI_PERIOD_LABELS,
+  type CampaignKPIPeriod,
+} from '@/presentation/utils/campaignPeriod'
 import { ArrowLeft } from 'lucide-react'
 import type { ChangeType, KPIIconType } from '@/presentation/components/dashboard/KPICard'
-
-type KPIPeriod = 'today' | 'yesterday' | '7d' | '30d'
 
 interface Campaign {
   id: string
@@ -71,16 +73,9 @@ interface AnalyticsClientProps {
   campaign: Campaign
 }
 
-const PERIOD_LABELS: Record<KPIPeriod, string> = {
-  today: '오늘',
-  yesterday: '어제',
-  '7d': '최근 7일',
-  '30d': '최근 30일',
-}
-
 export function AnalyticsClient({ campaign }: AnalyticsClientProps) {
   const t = useTranslations()
-  const [period, setPeriod] = useState<KPIPeriod>('today')
+  const [period, setPeriod] = useState<CampaignKPIPeriod>('today')
 
   const { data, isLoading } = useQuery<CampaignKPIResponse>({
     queryKey: ['campaign-kpi', campaign.id, period],
@@ -100,10 +95,10 @@ export function AnalyticsClient({ campaign }: AnalyticsClientProps) {
   const sparklinePatterns = useMemo(() => {
     if (chartData.length === 0) return {} as Record<string, number[]>
     return {
-      ctr: chartData.map(d => d.ctr),
-      cvr: chartData.map(d => d.clicks > 0 ? (d.conversions / d.clicks) * 100 : 0),
-      cpc: chartData.map(d => d.clicks > 0 ? d.spend / d.clicks : 0),
-      roas: chartData.map(d => d.roas),
+      ctr: chartData.map((d) => d.ctr),
+      cvr: chartData.map((d) => (d.clicks > 0 ? (d.conversions / d.clicks) * 100 : 0)),
+      cpc: chartData.map((d) => (d.clicks > 0 ? d.spend / d.clicks : 0)),
+      roas: chartData.map((d) => d.roas),
     }
   }, [chartData])
 
@@ -187,9 +182,13 @@ export function AnalyticsClient({ campaign }: AnalyticsClientProps) {
 
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">
-            {isLoading ? '데이터 로딩 중...' : `${PERIOD_LABELS[period]} 기준`}
+            {isLoading ? '데이터 로딩 중...' : `${CAMPAIGN_KPI_PERIOD_LABELS[period]} 기준`}
           </span>
-          <Tabs value={period} onValueChange={(v) => setPeriod(v as KPIPeriod)} className="w-full sm:w-auto">
+          <Tabs
+            value={period}
+            onValueChange={(v) => setPeriod(v as CampaignKPIPeriod)}
+            className="w-full sm:w-auto"
+          >
             <TabsList className="grid w-full grid-cols-4 sm:w-auto bg-muted/50 dark:bg-muted/20">
               <TabsTrigger value="today">오늘</TabsTrigger>
               <TabsTrigger value="yesterday">어제</TabsTrigger>
@@ -291,9 +290,7 @@ export function AnalyticsClient({ campaign }: AnalyticsClientProps) {
                 {isLoading ? (
                   <div className="mt-1 h-8 w-20 animate-pulse rounded bg-muted" />
                 ) : (
-                  <p className="text-2xl font-bold">
-                    {summary?.impressions.toLocaleString() ?? 0}
-                  </p>
+                  <p className="text-2xl font-bold">{summary?.impressions.toLocaleString() ?? 0}</p>
                 )}
               </div>
               <div>
@@ -301,9 +298,7 @@ export function AnalyticsClient({ campaign }: AnalyticsClientProps) {
                 {isLoading ? (
                   <div className="mt-1 h-8 w-20 animate-pulse rounded bg-muted" />
                 ) : (
-                  <p className="text-2xl font-bold">
-                    {summary?.clicks.toLocaleString() ?? 0}
-                  </p>
+                  <p className="text-2xl font-bold">{summary?.clicks.toLocaleString() ?? 0}</p>
                 )}
               </div>
               <div>
@@ -311,9 +306,7 @@ export function AnalyticsClient({ campaign }: AnalyticsClientProps) {
                 {isLoading ? (
                   <div className="mt-1 h-8 w-20 animate-pulse rounded bg-muted" />
                 ) : (
-                  <p className="text-2xl font-bold">
-                    {summary?.conversions.toLocaleString() ?? 0}
-                  </p>
+                  <p className="text-2xl font-bold">{summary?.conversions.toLocaleString() ?? 0}</p>
                 )}
               </div>
             </div>
@@ -337,7 +330,8 @@ export function AnalyticsClient({ campaign }: AnalyticsClientProps) {
                     <div className="mt-1 h-6 w-28 animate-pulse rounded bg-muted" />
                   ) : (
                     <p className="font-medium">
-                      {summary?.spend.toLocaleString() ?? 0}{currencySuffix}
+                      {summary?.spend.toLocaleString() ?? 0}
+                      {currencySuffix}
                     </p>
                   )}
                 </div>
