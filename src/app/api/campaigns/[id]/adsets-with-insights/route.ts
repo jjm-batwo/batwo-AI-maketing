@@ -7,10 +7,7 @@ import { safeDecryptToken } from '@application/utils/TokenEncryption'
 
 type DatePreset = 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
@@ -30,13 +27,24 @@ export async function GET(
       return NextResponse.json({ message: 'Meta 계정 연결이 필요합니다' }, { status: 400 })
     }
 
+    const campaign = await prisma.campaign.findFirst({
+      where: { id: campaignId, userId: user.id },
+      select: { metaCampaignId: true },
+    })
+
+    if (!campaign) {
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
+    }
+
+    if (!campaign.metaCampaignId) {
+      return NextResponse.json({ adSets: [] })
+    }
+
     const accessToken = safeDecryptToken(account.accessToken)
-    const adSets = await metaAdsService.listAdSets(accessToken, campaignId)
+    const adSets = await metaAdsService.listAdSets(accessToken, campaign.metaCampaignId)
 
     const settledInsights = await Promise.allSettled(
-      adSets.map((adSet) =>
-        metaAdsService.getAdSetInsights(accessToken, adSet.id, datePreset)
-      )
+      adSets.map((adSet) => metaAdsService.getAdSetInsights(accessToken, adSet.id, datePreset))
     )
 
     const adSetsWithInsights = adSets.map((adSet, index) => {
@@ -56,7 +64,7 @@ export async function GET(
       return {
         ...adSet,
         insights: {
-          campaignId,
+          campaignId: campaign.metaCampaignId,
           impressions: 0,
           reach: 0,
           clicks: 0,
@@ -73,9 +81,6 @@ export async function GET(
     return NextResponse.json({ adSets: adSetsWithInsights })
   } catch (error) {
     console.error('Failed to fetch ad sets with insights:', error)
-    return NextResponse.json(
-      { message: 'Failed to fetch ad sets with insights' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to fetch ad sets with insights' }, { status: 500 })
   }
 }
