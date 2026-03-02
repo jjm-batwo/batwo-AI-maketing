@@ -11,7 +11,7 @@ interface FeatureCardProps {
 
 export const FeatureCard = memo(function FeatureCard({
   feature,
-  index,
+  index: _index,
   isIntersecting,
 }: FeatureCardProps) {
   const Icon = feature.icon
