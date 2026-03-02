@@ -1,12 +1,22 @@
 #!/usr/bin/env sh
 
+set -e
+
+echo "[pre-push] Running lint"
+npm run lint
+
 echo "[pre-push] Running type-check"
-npm run type-check || exit 1
+npm run type-check
 
 echo "[pre-push] Running unit tests"
-npm run test:unit -- --reporter=dot || exit 1
+npm run test:unit -- --reporter=dot
 
 if [ "$PREPUSH_FULL" = "1" ]; then
-  echo "[pre-push] PREPUSH_FULL=1 detected, running integration tests"
-  npm run test:integration -- --reporter=verbose || exit 1
+  echo "[pre-push] Running integration tests"
+  npm run test:integration -- --reporter=verbose
+else
+  echo "[pre-push] Set PREPUSH_FULL=1 to run integration tests before push"
 fi
+
+echo "[pre-push] Running production build"
+SKIP_ENV_VALIDATION=true npm run build
