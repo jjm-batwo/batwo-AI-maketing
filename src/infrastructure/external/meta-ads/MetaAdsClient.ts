@@ -282,7 +282,7 @@ export class MetaAdsClient implements IMetaAdsService {
   async getCampaignInsights(
     accessToken: string,
     campaignId: string,
-    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d'
+    datePreset: 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d'
   ): Promise<MetaInsightsData> {
     if (this.mockMode) {
       console.log('[MetaAdsClient:MOCK] getCampaignInsights called with mock mode')
@@ -325,7 +325,7 @@ export class MetaAdsClient implements IMetaAdsService {
   async getCampaignDailyInsights(
     accessToken: string,
     campaignId: string,
-    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d',
+    datePreset: 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d',
     options?: { since?: string; until?: string }
   ): Promise<MetaDailyInsightsData[]> {
     if (this.mockMode) {
@@ -822,7 +822,7 @@ export class MetaAdsClient implements IMetaAdsService {
   async getAdSetInsights(
     accessToken: string,
     adSetId: string,
-    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d'
+    datePreset: 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d'
   ): Promise<MetaInsightsData> {
     if (this.mockMode) {
       console.log('[MetaAdsClient:MOCK] getAdSetInsights called with mock mode')
@@ -865,7 +865,7 @@ export class MetaAdsClient implements IMetaAdsService {
   async getAdSetDailyInsights(
     accessToken: string,
     adSetId: string,
-    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d',
+    datePreset: 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d',
     options?: { since?: string; until?: string }
   ): Promise<MetaDailyInsightsData[]> {
     if (this.mockMode) {
@@ -971,7 +971,7 @@ export class MetaAdsClient implements IMetaAdsService {
   async getAdInsights(
     accessToken: string,
     adId: string,
-    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d'
+    datePreset: 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d'
   ): Promise<MetaInsightsData> {
     if (this.mockMode) {
       console.log('[MetaAdsClient:MOCK] getAdInsights called with mock mode')
@@ -1014,7 +1014,7 @@ export class MetaAdsClient implements IMetaAdsService {
   async getAdDailyInsights(
     accessToken: string,
     adId: string,
-    datePreset: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d',
+    datePreset: 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d' = 'last_7d',
     options?: { since?: string; until?: string }
   ): Promise<MetaDailyInsightsData[]> {
     if (this.mockMode) {

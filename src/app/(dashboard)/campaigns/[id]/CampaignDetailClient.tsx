@@ -1,10 +1,12 @@
 'use client'
 
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { useUpdateCampaign } from '@/presentation/hooks'
+import { useCampaignKPI, useUpdateCampaign } from '@/presentation/hooks'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ArrowLeft, Pencil, BarChart3, Play, Pause } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { CampaignHierarchySection } from '@/presentation/components/campaign/CampaignHierarchySection'
@@ -45,11 +47,24 @@ interface CampaignDetailClientProps {
   campaign: Campaign
 }
 
-export function CampaignDetailClient({ campaign }: CampaignDetailClientProps) {
-  const updateCampaign = useUpdateCampaign()
+type DetailPeriod = 'today' | '3d' | '7d' | '30d'
 
-  const statusInfo = statusConfig[campaign.status as keyof typeof statusConfig] || statusConfig.DRAFT
+export function CampaignDetailClient({ campaign }: CampaignDetailClientProps) {
+  const [period, setPeriod] = useState<DetailPeriod>('7d')
+  const updateCampaign = useUpdateCampaign()
+  const campaignKPI = useCampaignKPI(campaign.id, period)
+
+  const statusInfo =
+    statusConfig[campaign.status as keyof typeof statusConfig] || statusConfig.DRAFT
   const objectiveLabel = objectiveLabels[campaign.objective] || campaign.objective
+
+  const kpiSummary = campaignKPI.data?.summary
+  const hierarchyDatePreset = useMemo(() => {
+    if (period === 'today') return 'today'
+    if (period === '3d') return 'last_3d'
+    if (period === '30d') return 'last_30d'
+    return 'last_7d'
+  }, [period])
 
   const handleStatusChange = (newStatus: 'ACTIVE' | 'PAUSED') => {
     updateCampaign.mutate({ id: campaign.id, status: newStatus })
@@ -69,9 +84,7 @@ export function CampaignDetailClient({ campaign }: CampaignDetailClientProps) {
             <h1 className="text-2xl font-bold">{campaign.name}</h1>
             <p className="text-muted-foreground">{objectiveLabel}</p>
           </div>
-          <Badge className={cn('ml-2', statusInfo.className)}>
-            {statusInfo.label}
-          </Badge>
+          <Badge className={cn('ml-2', statusInfo.className)}>{statusInfo.label}</Badge>
         </div>
         <div className="flex gap-2">
           {campaign.status === 'ACTIVE' && (
@@ -110,6 +123,17 @@ export function CampaignDetailClient({ campaign }: CampaignDetailClientProps) {
       </div>
 
       {/* KPI Summary */}
+      <div className="flex items-center justify-end">
+        <Tabs value={period} onValueChange={(v) => setPeriod(v as DetailPeriod)}>
+          <TabsList className="grid grid-cols-4">
+            <TabsTrigger value="today">1일</TabsTrigger>
+            <TabsTrigger value="3d">3일</TabsTrigger>
+            <TabsTrigger value="7d">7일</TabsTrigger>
+            <TabsTrigger value="30d">30일</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
@@ -124,7 +148,9 @@ export function CampaignDetailClient({ campaign }: CampaignDetailClientProps) {
             <CardTitle className="text-sm text-muted-foreground">총 지출</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{campaign.totalSpent?.toLocaleString() || 0}원</p>
+            <p className="text-2xl font-bold">
+              {(kpiSummary?.spend ?? campaign.totalSpent ?? 0).toLocaleString()}원
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -132,7 +158,9 @@ export function CampaignDetailClient({ campaign }: CampaignDetailClientProps) {
             <CardTitle className="text-sm text-muted-foreground">전환수</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{campaign.conversions?.toLocaleString() || 0}</p>
+            <p className="text-2xl font-bold">
+              {(kpiSummary?.conversions ?? campaign.conversions ?? 0).toLocaleString()}
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -140,13 +168,19 @@ export function CampaignDetailClient({ campaign }: CampaignDetailClientProps) {
             <CardTitle className="text-sm text-muted-foreground">ROAS</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{campaign.roas?.toFixed(2) || '0.00'}x</p>
+            <p className="text-2xl font-bold">
+              {(kpiSummary?.roas ?? campaign.roas ?? 0).toFixed(2)}x
+            </p>
           </CardContent>
         </Card>
       </div>
 
       {/* Campaign Hierarchy Drill-Down */}
-      <CampaignHierarchySection campaignId={campaign.id} campaignName={campaign.name} />
+      <CampaignHierarchySection
+        campaignId={campaign.id}
+        campaignName={campaign.name}
+        datePreset={hierarchyDatePreset}
+      />
 
       {/* Details */}
       <Card>
@@ -157,16 +191,22 @@ export function CampaignDetailClient({ campaign }: CampaignDetailClientProps) {
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <p className="text-sm text-muted-foreground">노출수</p>
-              <p className="font-medium">{campaign.impressions?.toLocaleString() || 0}</p>
+              <p className="font-medium">
+                {(kpiSummary?.impressions ?? campaign.impressions ?? 0).toLocaleString()}
+              </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">클릭수</p>
-              <p className="font-medium">{campaign.clicks?.toLocaleString() || 0}</p>
+              <p className="font-medium">
+                {(kpiSummary?.clicks ?? campaign.clicks ?? 0).toLocaleString()}
+              </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">시작일</p>
               <p className="font-medium">
-                {campaign.startDate ? new Date(campaign.startDate).toLocaleDateString('ko-KR') : '-'}
+                {campaign.startDate
+                  ? new Date(campaign.startDate).toLocaleDateString('ko-KR')
+                  : '-'}
               </p>
             </div>
             <div>
@@ -178,15 +218,22 @@ export function CampaignDetailClient({ campaign }: CampaignDetailClientProps) {
             <div>
               <p className="text-sm text-muted-foreground">생성일</p>
               <p className="font-medium">
-                {campaign.createdAt ? new Date(campaign.createdAt).toLocaleDateString('ko-KR') : '-'}
+                {campaign.createdAt
+                  ? new Date(campaign.createdAt).toLocaleDateString('ko-KR')
+                  : '-'}
               </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">CTR</p>
               <p className="font-medium">
-                {campaign.impressions && campaign.clicks
-                  ? ((campaign.clicks / campaign.impressions) * 100).toFixed(2)
-                  : '0.00'}%
+                {(kpiSummary?.impressions ?? campaign.impressions ?? 0) > 0
+                  ? (
+                      ((kpiSummary?.clicks ?? campaign.clicks ?? 0) /
+                        (kpiSummary?.impressions ?? campaign.impressions ?? 0)) *
+                      100
+                    ).toFixed(2)
+                  : '0.00'}
+                %
               </p>
             </div>
           </div>

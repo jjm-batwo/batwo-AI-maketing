@@ -5,12 +5,9 @@ import type { IMetaAdsService } from '@application/ports/IMetaAdsService'
 import { prisma } from '@/lib/prisma'
 import { safeDecryptToken } from '@application/utils/TokenEncryption'
 
-type DatePreset = 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d'
+type DatePreset = 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ adId: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ adId: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 

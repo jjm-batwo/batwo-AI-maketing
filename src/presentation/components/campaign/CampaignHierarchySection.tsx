@@ -12,17 +12,19 @@ import { HierarchyBreadcrumb } from './HierarchyBreadcrumb'
 interface CampaignHierarchySectionProps {
   campaignId: string
   campaignName: string
+  datePreset?: 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d'
 }
 
 export function CampaignHierarchySection({
   campaignId,
   campaignName,
+  datePreset = 'last_7d',
 }: CampaignHierarchySectionProps) {
   const selectedAdSetId = useCampaignStore((s) => s.selectedAdSetForDrilldown)
   const setSelectedAdSetId = useCampaignStore((s) => s.setSelectedAdSetForDrilldown)
 
-  const adSetsQuery = useAdSetsWithInsights(campaignId)
-  const adsQuery = useAdsWithInsights(selectedAdSetId ?? '')
+  const adSetsQuery = useAdSetsWithInsights(campaignId, datePreset)
+  const adsQuery = useAdsWithInsights(selectedAdSetId ?? '', datePreset)
 
   const selectedAdSetName = useMemo(() => {
     if (!selectedAdSetId || !adSetsQuery.data) return null
@@ -56,9 +58,7 @@ export function CampaignHierarchySection({
     <Card>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">
-            {selectedAdSetId ? '광고' : '광고 세트'}
-          </CardTitle>
+          <CardTitle className="text-lg">{selectedAdSetId ? '광고' : '광고 세트'}</CardTitle>
           {selectedAdSetId && (
             <button
               type="button"
@@ -73,10 +73,7 @@ export function CampaignHierarchySection({
       </CardHeader>
       <CardContent>
         {selectedAdSetId ? (
-          <AdTable
-            ads={adsQuery.data ?? []}
-            isLoading={adsQuery.isLoading}
-          />
+          <AdTable ads={adsQuery.data ?? []} isLoading={adsQuery.isLoading} />
         ) : (
           <AdSetTable
             adSets={adSetsQuery.data ?? []}

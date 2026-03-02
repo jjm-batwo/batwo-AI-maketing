@@ -22,9 +22,11 @@ interface AdSetsWithInsightsResponse {
   adSets: AdSetWithInsights[]
 }
 
+type DatePreset = 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d'
+
 async function fetchAdSetsWithInsights(
   campaignId: string,
-  datePreset: string
+  datePreset: DatePreset
 ): Promise<AdSetWithInsights[]> {
   const res = await fetch(
     `/api/campaigns/${campaignId}/adsets-with-insights?datePreset=${datePreset}`
@@ -36,10 +38,7 @@ async function fetchAdSetsWithInsights(
   return data.adSets
 }
 
-export function useAdSetsWithInsights(
-  campaignId: string,
-  datePreset: string = 'last_7d'
-) {
+export function useAdSetsWithInsights(campaignId: string, datePreset: DatePreset = 'last_7d') {
   return useQuery({
     queryKey: ['adsets-with-insights', campaignId, datePreset],
     queryFn: () => fetchAdSetsWithInsights(campaignId, datePreset),

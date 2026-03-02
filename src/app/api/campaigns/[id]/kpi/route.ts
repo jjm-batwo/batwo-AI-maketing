@@ -15,7 +15,7 @@ function daysAgoStr(n: number): string {
   return d.toISOString().split('T')[0]
 }
 
-type LivePeriod = 'today' | 'yesterday' | '7d'
+type LivePeriod = 'today' | 'yesterday' | '3d' | '7d'
 
 type ChartRow = {
   date: string
@@ -36,11 +36,7 @@ function calcChange(cur: number, pre: number): number {
 /**
  * Meta API에서 특정 캠페인의 라이브 KPI 데이터 조회
  */
-async function fetchLiveCampaignKPI(
-  userId: string,
-  metaCampaignId: string,
-  period: LivePeriod,
-) {
+async function fetchLiveCampaignKPI(userId: string, metaCampaignId: string, period: LivePeriod) {
   const metaAccount = await prisma.metaAdAccount.findUnique({ where: { userId } })
   if (!metaAccount?.accessToken) return null
 
@@ -48,7 +44,7 @@ async function fetchLiveCampaignKPI(
   const token = safeDecryptToken(metaAccount.accessToken)
   const todayStr = new Date().toISOString().split('T')[0]
 
-  type Preset = 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d'
+  type Preset = 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d'
 
   let currentPreset: Preset
   let currentRange: { since: string; until: string } | undefined
@@ -62,6 +58,11 @@ async function fetchLiveCampaignKPI(
     currentPreset = 'yesterday'
     prevPreset = 'yesterday'
     prevRange = { since: daysAgoStr(2), until: daysAgoStr(2) }
+  } else if (period === '3d') {
+    currentPreset = 'last_3d'
+    currentRange = { since: daysAgoStr(2), until: todayStr }
+    prevPreset = 'last_3d'
+    prevRange = { since: daysAgoStr(5), until: daysAgoStr(3) }
   } else {
     // 7d
     currentPreset = 'last_7d'
@@ -76,7 +77,11 @@ async function fetchLiveCampaignKPI(
   ])
 
   // 현재 기간 집계
-  let impressions = 0, clicks = 0, conversions = 0, spend = 0, revenue = 0
+  let impressions = 0,
+    clicks = 0,
+    conversions = 0,
+    spend = 0,
+    revenue = 0
   for (const d of currentData) {
     impressions += d.impressions
     clicks += d.clicks
@@ -86,7 +91,11 @@ async function fetchLiveCampaignKPI(
   }
 
   // 이전 기간 집계
-  let pImpressions = 0, pClicks = 0, pConversions = 0, pSpend = 0, pRevenue = 0
+  let pImpressions = 0,
+    pClicks = 0,
+    pConversions = 0,
+    pSpend = 0,
+    pRevenue = 0
   for (const d of prevData) {
     pImpressions += d.impressions
     pClicks += d.clicks
@@ -134,10 +143,7 @@ async function fetchLiveCampaignKPI(
   }
 }
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
@@ -147,25 +153,24 @@ export async function GET(
     const period = searchParams.get('period') || '7d'
 
     // 캠페인 소유권 확인
-    const campaignRepository = container.resolve<ICampaignRepository>(
-      DI_TOKENS.CampaignRepository
-    )
+    const campaignRepository = container.resolve<ICampaignRepository>(DI_TOKENS.CampaignRepository)
     const campaign = await campaignRepository.findById(id)
 
     if (!campaign || campaign.userId !== user.id) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     // today/yesterday/7d + metaCampaignId 있는 경우 Meta API 라이브 조회
     if (
-      (period === 'today' || period === 'yesterday' || period === '7d') &&
+      (period === 'today' || period === 'yesterday' || period === '3d' || period === '7d') &&
       campaign.metaCampaignId
     ) {
       try {
-        const live = await fetchLiveCampaignKPI(user.id, campaign.metaCampaignId, period as LivePeriod)
+        const live = await fetchLiveCampaignKPI(
+          user.id,
+          campaign.metaCampaignId,
+          period as LivePeriod
+        )
         if (live) {
           return NextResponse.json({
             campaign: {
@@ -203,6 +208,9 @@ export async function GET(
       case '7d':
         startDate.setDate(startDate.getDate() - 7)
         break
+      case '3d':
+        startDate.setDate(startDate.getDate() - 2)
+        break
       case '30d':
         startDate.setDate(startDate.getDate() - 30)
         break
@@ -223,20 +231,26 @@ export async function GET(
     prevStartDate.setDate(prevStartDate.getDate() - daysDiff)
     const prevEndDate = new Date(startDate)
 
-    const prevKpis = await kpiRepository.findByCampaignIdAndDateRange(id, prevStartDate, prevEndDate)
+    const prevKpis = await kpiRepository.findByCampaignIdAndDateRange(
+      id,
+      prevStartDate,
+      prevEndDate
+    )
     const prevAggregated = KPISnapshot.aggregate(prevKpis)
     const comparison = KPISnapshot.compare(aggregated, prevAggregated)
 
-    const chartData = kpis.map((kpi: KPI) => ({
-      date: kpi.date.toISOString().split('T')[0],
-      impressions: kpi.impressions,
-      clicks: kpi.clicks,
-      conversions: kpi.conversions,
-      spend: kpi.spend.amount,
-      revenue: kpi.revenue.amount,
-      roas: kpi.calculateROAS(),
-      ctr: kpi.calculateCTR().value,
-    })).sort((a: ChartRow, b: ChartRow) => a.date.localeCompare(b.date))
+    const chartData = kpis
+      .map((kpi: KPI) => ({
+        date: kpi.date.toISOString().split('T')[0],
+        impressions: kpi.impressions,
+        clicks: kpi.clicks,
+        conversions: kpi.conversions,
+        spend: kpi.spend.amount,
+        revenue: kpi.revenue.amount,
+        roas: kpi.calculateROAS(),
+        ctr: kpi.calculateCTR().value,
+      }))
+      .sort((a: ChartRow, b: ChartRow) => a.date.localeCompare(b.date))
 
     return NextResponse.json({
       campaign: {
@@ -275,9 +289,6 @@ export async function GET(
     })
   } catch (error) {
     console.error('Failed to fetch campaign KPI:', error)
-    return NextResponse.json(
-      { message: 'Failed to fetch campaign KPI' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to fetch campaign KPI' }, { status: 500 })
   }
 }

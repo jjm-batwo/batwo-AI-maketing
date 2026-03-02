@@ -158,13 +158,13 @@ export interface IMetaAdsService {
   getCampaignInsights(
     accessToken: string,
     campaignId: string,
-    datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d'
+    datePreset?: 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d'
   ): Promise<MetaInsightsData>
 
   getCampaignDailyInsights(
     accessToken: string,
     campaignId: string,
-    datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d',
+    datePreset?: 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d',
     options?: { since?: string; until?: string }
   ): Promise<MetaDailyInsightsData[]>
 
@@ -205,13 +205,13 @@ export interface IMetaAdsService {
   getAdSetInsights(
     accessToken: string,
     adSetId: string,
-    datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d'
+    datePreset?: 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d'
   ): Promise<MetaInsightsData>
 
   getAdSetDailyInsights(
     accessToken: string,
     adSetId: string,
-    datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d',
+    datePreset?: 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d',
     options?: { since?: string; until?: string }
   ): Promise<MetaDailyInsightsData[]>
 
@@ -222,13 +222,13 @@ export interface IMetaAdsService {
   getAdInsights(
     accessToken: string,
     adId: string,
-    datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d'
+    datePreset?: 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d'
   ): Promise<MetaInsightsData>
 
   getAdDailyInsights(
     accessToken: string,
     adId: string,
-    datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d',
+    datePreset?: 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d',
     options?: { since?: string; until?: string }
   ): Promise<MetaDailyInsightsData[]>
 

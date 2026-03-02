@@ -5,12 +5,9 @@ import type { IMetaAdsService } from '@application/ports/IMetaAdsService'
 import { prisma } from '@/lib/prisma'
 import { safeDecryptToken } from '@application/utils/TokenEncryption'
 
-type DatePreset = 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d'
+type DatePreset = 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
@@ -34,9 +31,7 @@ export async function GET(
     const ads = await metaAdsService.listAds(accessToken, adSetId)
 
     const settledInsights = await Promise.allSettled(
-      ads.map((ad) =>
-        metaAdsService.getAdInsights(accessToken, ad.id, datePreset)
-      )
+      ads.map((ad) => metaAdsService.getAdInsights(accessToken, ad.id, datePreset))
     )
 
     const adsWithInsights = ads.map((ad, index) => {
@@ -73,9 +68,6 @@ export async function GET(
     return NextResponse.json({ ads: adsWithInsights })
   } catch (error) {
     console.error('Failed to fetch ads with insights:', error)
-    return NextResponse.json(
-      { message: 'Failed to fetch ads with insights' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to fetch ads with insights' }, { status: 500 })
   }
 }
