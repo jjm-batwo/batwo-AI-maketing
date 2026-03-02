@@ -125,7 +125,7 @@ export function OptimizationRulesClient({
 
   // Client-side campaigns revalidation on mount
   useEffect(() => {
-    fetch('/api/campaigns?pageSize=100')
+    fetch('/api/campaigns?pageSize=100&status=ACTIVE')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data?.campaigns) {

@@ -19,7 +19,7 @@ export default async function OptimizationRulesPage() {
   // 캠페인 목록 fetch (규칙 필터용)
   let campaigns: { id: string; name: string; status: string }[] = []
   try {
-    const res = await fetch(`${baseUrl}/api/campaigns?pageSize=100`, {
+    const res = await fetch(`${baseUrl}/api/campaigns?pageSize=100&status=ACTIVE`, {
       headers: { Cookie: cookieStore.toString() },
       next: { revalidate: 60, tags: ['campaigns'] },
     })
