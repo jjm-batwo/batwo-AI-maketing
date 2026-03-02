@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, Pencil, BarChart3, Play, Pause } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { AdSetList } from '@/presentation/components/campaign/AdSetList'
+import { CampaignHierarchySection } from '@/presentation/components/campaign/CampaignHierarchySection'
 
 const statusConfig = {
   ACTIVE: { label: '진행 중', className: 'bg-green-500/15 text-green-500' },
@@ -145,8 +145,8 @@ export function CampaignDetailClient({ campaign }: CampaignDetailClientProps) {
         </Card>
       </div>
 
-      {/* AdSet List */}
-      <AdSetList campaignId={campaign.id} />
+      {/* Campaign Hierarchy Drill-Down */}
+      <CampaignHierarchySection campaignId={campaign.id} campaignName={campaign.name} />
 
       {/* Details */}
       <Card>
