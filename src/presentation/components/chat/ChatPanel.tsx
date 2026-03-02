@@ -68,6 +68,30 @@ export function ChatPanel() {
       }
     }
 
+    if (pathname?.includes('/competitors')) {
+      return {
+        title: '경쟁사분석 AI 어시스턴트',
+        description: '경쟁사 광고 전략, 점유율 변화, 벤치마크 비교를 빠르게 분석해드려요.',
+        suggestions: [
+          '주요 경쟁사 광고비 변화 추이를 알려줘',
+          '우리 브랜드 대비 경쟁사 ROAS 비교해줘',
+          '경쟁사 대비 차별화 전략을 제안해줘',
+        ],
+      }
+    }
+
+    if (pathname?.includes('/portfolio')) {
+      return {
+        title: '포트폴리오 AI 어시스턴트',
+        description: '광고 포트폴리오 구성, 채널별 배분, 성과 균형을 최적화해드려요.',
+        suggestions: [
+          '현재 포트폴리오 채널별 성과를 분석해줘',
+          '예산 배분 최적화 방안을 추천해줘',
+          '포트폴리오 리밸런싱이 필요한 부분을 알려줘',
+        ],
+      }
+    }
+
     return {
       title: '바투 AI 어시스턴트',
       description: '성과 분석, 예산 최적화, 새 캠페인 생성 등 무엇이든 물어보세요.',
