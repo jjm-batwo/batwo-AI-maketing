@@ -76,3 +76,6 @@ portfolio-page.png
 .agent/
 .sisyphus/
 docs/meta-app-review/recordings/
+
+# git worktrees for parallel agent work
+.worktrees/
