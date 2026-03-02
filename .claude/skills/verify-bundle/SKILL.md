@@ -130,3 +130,4 @@ grep -rn "ssr:\s*false" src/app/**/layout.tsx src/app/**/page.tsx --include="*.t
 3. **테스트 파일** — `tests/` 디렉토리 내 파일은 번들에 포함되지 않음
 4. **타입 전용 namespace import** — `import type * as` 형태는 런타임 번들에 영향 없음
 5. **next/dynamic 없는 일반 dynamic import** — `import()` 표현식 자체는 코드 스플리팅을 위한 것이므로 정상
+6. **shadcn/radix UI 프리미티브 래퍼** — `src/components/ui/**`에서 `import * as React` 및 `import * as <RadixPrimitive>` 패턴은 업스트림(shadcn/radix) 권장 템플릿으로 허용

@@ -1,6 +1,6 @@
 ---
 name: manage-skills
-description: 세션 변경사항을 분석하여 검증 스킬 누락을 탐지합니다. 기존 스킬을 동적으로 탐색하고, 새 스킬을 생성하거나 기존 스킬을 업데이트한 뒤 CLAUDE.md를 관리합니다.
+description: 세션 변경사항을 분석하여 검증 스킬 누락을 탐지합니다. 기존 스킬을 동적으로 탐색하고, 새 스킬을 생성하거나 기존 스킬을 업데이트한 뒤 관련 문서를 동기화합니다.
 disable-model-invocation: true
 argument-hint: "[선택사항: 특정 스킬 이름 또는 집중할 영역]"
 ---
@@ -36,7 +36,7 @@ argument-hint: "[선택사항: 특정 스킬 이름 또는 집중할 영역]"
 | `verify-bundle` | 번들 최적화 검증 (namespace import, dev-only 누출, ssr:false) | `src/**/*.ts`, `src/**/*.tsx`, `package.json` |
 | `verify-meta-api-version` | Meta Graph API v25.0 버전 통일성 검증 | `src/infrastructure/external/meta-*/**`, `src/infrastructure/auth/**`, `src/app/api/meta/**`, `scripts/*` |
 | `verify-token-encryption` | DB accessToken 암복호화 적용 일관성 검증 | `src/app/api/meta/**`, `src/application/use-cases/**`, `src/application/utils/TokenEncryption.ts`, `src/infrastructure/database/repositories/**` |
-| `verify-ui-components` | UI 컴포넌트 일관성, 접근성, 성능 패턴 검증 (랜딩/대시보드/캠페인/채팅/최적화/픽셀/온보딩/감사 포함) | `src/presentation/components/landing/**`, `src/presentation/components/dashboard/**`, `src/presentation/components/campaign/**`, `src/presentation/components/chat/**`, `src/presentation/components/optimization/**`, `src/presentation/components/pixel/**`, `src/presentation/components/onboarding/**`, `src/presentation/components/audit/**`, `src/presentation/utils/**` |
+| `verify-ui-components` | UI 컴포넌트 일관성, 접근성, 성능 패턴 검증 (랜딩/대시보드/캠페인/채팅/최적화/픽셀/온보딩/감사 포함) | `src/presentation/components/landing/**`, `src/presentation/components/dashboard/**`, `src/presentation/components/campaign/**`, `src/presentation/components/chat/**`, `src/presentation/components/optimization/**`, `src/presentation/components/pixel/**`, `src/presentation/components/onboarding/**`, `src/presentation/components/audit/**`, `src/presentation/hooks/**`, `src/presentation/utils/**`, `src/app/(dashboard)/campaigns/**/*Client.tsx` |
 | `verify-audit-security` | 감사 보고서 HMAC 서명/검증 일관성 검증 | `src/lib/security/**`, `src/app/api/audit/**` |
 
 ## 워크플로우
@@ -244,7 +244,7 @@ description: <한 줄 설명>. <트리거 조건> 후 사용.
 - **Output Format** — 결과를 위한 마크다운 테이블
 - **Exceptions** — 최소 2-3개의 현실적인 "위반이 아닌" 케이스
 
-4. **연관 스킬 파일 업데이트** — 새 스킬 생성 후 반드시 아래 3개 파일을 업데이트합니다:
+4. **연관 스킬 파일 업데이트** — 새 스킬 생성 후 반드시 아래 파일을 업데이트합니다:
 
    **4a. 이 파일 자체 (`manage-skills/SKILL.md`) 업데이트:**
    - **등록된 검증 스킬** 섹션의 테이블에 새 스킬 행을 추가합니다
@@ -256,9 +256,9 @@ description: <한 줄 설명>. <트리거 조건> 후 사용.
    - 첫 번째 스킬 추가 시 "(아직 등록된 검증 스킬이 없습니다)" 텍스트와 HTML 주석을 제거하고 테이블로 교체합니다
    - 형식: `| <번호> | verify-<name> | <설명> |`
 
-   **4c. `.claude/CLAUDE.md` 업데이트:**
-   - `## Skills` 테이블에 새 스킬 행을 추가합니다 (주의: Skills 테이블은 `.claude/CLAUDE.md`에 위치)
-   - 형식: `| verify-<name> | <한 줄 설명> |`
+   **4c. `AGENTS.md` 업데이트 (선택):**
+   - 루트 가이드 문서에 검증 스킬 인덱스 섹션이 있다면 새 스킬을 추가합니다
+   - 형식은 해당 문서의 기존 표 스타일을 따릅니다
 
 ### Step 7: 검증
 
@@ -294,7 +294,7 @@ ls <file-path> 2>/dev/null || echo "MISSING: <file-path>"
 ### 업데이트된 연관 파일:
 - `manage-skills/SKILL.md`: 등록된 검증 스킬 테이블 업데이트
 - `verify-implementation/SKILL.md`: 실행 대상 스킬 테이블 업데이트
-- `.claude/CLAUDE.md`: Skills 테이블 업데이트
+- `AGENTS.md` (선택): 검증 스킬 인덱스 동기화
 
 ### 영향없는 스킬: Z개
 - (관련 변경사항 없음)
@@ -323,7 +323,7 @@ ls <file-path> 2>/dev/null || echo "MISSING: <file-path>"
 |------|---------|
 | `.claude/skills/verify-implementation/SKILL.md` | 통합 검증 스킬 (이 스킬이 실행 대상 목록을 관리) |
 | `.claude/skills/manage-skills/SKILL.md` | 이 파일 자체 (등록된 검증 스킬 목록을 관리) |
-| `.claude/CLAUDE.md` | 프로젝트 에이전트 설정 (이 스킬이 Skills 섹션을 관리) |
+| `AGENTS.md` | 프로젝트 지침 문서 (검증 스킬 인덱스가 있으면 동기화) |
 | `.claude/rules/*.md` | 모듈화된 규칙 파일 (기능별 조건부 로딩) |
 
 ## 예외사항
@@ -335,6 +335,6 @@ ls <file-path> 2>/dev/null || echo "MISSING: <file-path>"
 3. **문서 파일** — `README.md`, `CHANGELOG.md`, `LICENSE` 등은 검증이 필요한 코드 패턴이 아님
 4. **테스트 픽스처 파일** — 테스트 픽스처로 사용되는 디렉토리의 파일(예: `fixtures/`, `__fixtures__/`, `test-data/`)은 프로덕션 코드가 아님
 5. **영향받지 않은 스킬** — UNAFFECTED로 표시된 스킬은 검토 불필요; 대부분의 세션에서 대부분의 스킬이 이에 해당
-6. **CLAUDE.md 자체** — CLAUDE.md의 변경은 문서 업데이트이며, 검증이 필요한 코드 패턴이 아님
+6. **가이드 문서 자체** — `AGENTS.md`, `CLAUDE.md` 같은 문서 변경은 문서 업데이트이며, 검증이 필요한 코드 패턴이 아님
 7. **벤더/서드파티 코드** — `vendor/`, `node_modules/` 또는 복사된 라이브러리 디렉토리의 파일은 외부 규칙을 따름
 8. **CI/CD 설정** — `.github/`, `.gitlab-ci.yml`, `Dockerfile` 등은 인프라이며, 검증 스킬이 필요한 애플리케이션 패턴이 아님

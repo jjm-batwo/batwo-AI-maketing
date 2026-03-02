@@ -53,12 +53,18 @@ React 컴포넌트 구현의 일관성과 품질을 검증합니다:
 | `src/presentation/components/chat/ChatMessage.tsx`                        | 채팅 메시지 — role 기반 렌더링, 마크다운 지원           |
 | `src/presentation/components/chat/ChatPanel.tsx`                          | 채팅 패널 — 메시지 목록, 스크롤, 가이드 질문            |
 | `src/presentation/components/chat/ChatMessageFeedback.tsx`                | 채팅 피드백 — 좋아요/싫어요 버튼, ARIA 접근성           |
-| `src/presentation/components/optimization/*.tsx`                          | 최적화 규칙 관리 — CRUD UI 컴포넌트                     |
+| `src/presentation/components/optimization/OptimizationRuleTable.tsx`      | 최적화 규칙 목록 테이블 UI                               |
+| `src/presentation/components/optimization/OptimizationRuleForm.tsx`       | 최적화 규칙 생성/수정 폼 UI                              |
+| `src/presentation/components/optimization/RulePresetCards.tsx`            | 최적화 규칙 프리셋 카드 UI                               |
 | `src/presentation/components/campaign/CampaignTable.tsx`                  | 캠페인 테이블 — 토글 스위치, 정렬, 벌크 액션            |
 | `src/presentation/components/campaign/CampaignCard.tsx`                   | 캠페인 카드 — 상태 뱃지, 액션 드롭다운                  |
 | `src/presentation/components/campaign/CampaignList.tsx`                   | 캠페인 목록 — 필터링, 카드 그리드                       |
 | `src/presentation/components/campaign/CampaignEditForm.tsx`               | 캠페인 편집 폼 — 예산, 타겟팅 설정                      |
 | `src/presentation/components/campaign/OptimizationPanel.tsx`              | 캠페인 최적화 패널 — AI 추천 표시                       |
+| `src/presentation/components/campaign/CampaignHierarchySection.tsx`       | 캠페인 계층 드릴다운 섹션 — 광고세트/광고 탐색 UI       |
+| `src/app/(dashboard)/campaigns/CampaignsClient.tsx`                       | 캠페인 목록 클라이언트 화면 컴포넌트                    |
+| `src/app/(dashboard)/campaigns/[id]/CampaignDetailClient.tsx`             | 캠페인 상세 클라이언트 화면 컴포넌트                    |
+| `src/app/(dashboard)/campaigns/[id]/analytics/AnalyticsClient.tsx`        | 캠페인 분석 클라이언트 화면 컴포넌트                    |
 | `src/presentation/components/audit/AuditReportCard.tsx`                   | 감사 리포트 카드 — 점수 및 개선사항 요약                |
 | `src/presentation/components/audit/AuditCategoryBreakdown.tsx`            | 감사 카테고리 분석 — 세부 카테고리별 점수               |
 | `src/presentation/components/audit/AuditConversionCTA.tsx`                | 감사 전환 CTA — 묶음 서비스 신청 유도                   |
@@ -76,6 +82,8 @@ React 컴포넌트 구현의 일관성과 품질을 검증합니다:
 | `src/presentation/hooks/useFeedbackAnalytics.ts`                          | 피드백 분석 데이터 훅                                    |
 | `src/presentation/hooks/useKeyboardNavigation.ts`                         | 채팅 키보드 네비게이션 훅                                |
 | `src/presentation/hooks/useOptimizationRules.ts`                          | 최적화 규칙 CRUD 훅                                      |
+| `src/presentation/hooks/useAdSetsWithInsights.ts`                         | 캠페인 드릴다운용 광고세트+인사이트 조회 훅             |
+| `src/presentation/hooks/useAdsWithInsights.ts`                            | 캠페인 드릴다운용 광고+인사이트 조회 훅                 |
 | `src/presentation/components/audit/AccountSelector.tsx`                    | 감사 계정 선택기 — OAuth 콜백 후 광고 계정 선택          |
 | `src/presentation/utils/accountStatus.ts`                                  | 계정 상태 유틸리티 — 감사 계정 상태 판별 헬퍼           |
 | `src/app/audit/callback/page.tsx`                                          | 감사 콜백 페이지 (핵심 감사 UI)                         |
@@ -109,6 +117,13 @@ grep -rn "interface.*Props" src/presentation/utils/ --include="*.ts" --include="
 ```bash
 # useState, useEffect, useMemo 등을 사용하면서 'use client'가 없는 파일 검색
 grep -rl "useState\|useEffect\|useMemo" src/presentation/components/ --include="*.tsx" | while read f; do
+  if ! head -1 "$f" | grep -q "'use client'"; then
+    echo "MISSING: $f"
+  fi
+done
+
+# 앱 라우트의 Client 컴포넌트 확인
+grep -rl "useState\|useEffect\|useMemo\|useQuery" "src/app/(dashboard)/campaigns" --include="*Client.tsx" | while read f; do
   if ! head -1 "$f" | grep -q "'use client'"; then
     echo "MISSING: $f"
   fi
@@ -202,6 +217,10 @@ grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/utils
 grep -rn "useMemo\|useCallback" src/presentation/components/dashboard/ --include="*.tsx"
 grep -rn "useMemo\|useCallback" src/presentation/components/campaign/ --include="*.tsx"
 grep -rn "useMemo\|useCallback" src/presentation/components/chat/ --include="*.tsx"
+grep -rn "useMemo\|useCallback" "src/app/(dashboard)/campaigns" --include="*Client.tsx"
+
+# 드릴다운 데이터 훅의 queryKey/datePreset 포함 여부 확인
+grep -rn "queryKey:\s*\[.*datePreset" src/presentation/hooks/useAdSetsWithInsights.ts src/presentation/hooks/useAdsWithInsights.ts
 
 # React.memo 사용 확인
 grep -rn "React.memo\|memo(" src/presentation/components/ --include="*.tsx"
