@@ -22,21 +22,21 @@ DI(Dependency Injection) 컨테이너의 일관성을 검증합니다:
 
 ## Related Files
 
-| File | Purpose |
-|------|---------|
-| `src/lib/di/types.ts` | DI 토큰 정의 (`DI_TOKENS` 객체) |
-| `src/lib/di/container.ts` | DI 컨테이너 구현 (토큰별 팩토리 등록) |
-| `src/domain/repositories/I*.ts` | 리포지토리 인터페이스 |
-| `src/application/ports/I*.ts` | 외부 서비스 포트 인터페이스 |
-| `src/domain/repositories/IOptimizationRuleRepository.ts` | 최적화 규칙 리포지토리 인터페이스 |
-| `src/application/ports/IFallbackResponseService.ts` | 폴백 응답 서비스 포트 — DI 등록 대상 |
-| `src/application/ports/IFewShotExampleRegistry.ts` | 퓨샷 예시 레지스트리 포트 — DI 등록 대상 |
-| `src/application/ports/IGuideQuestionService.ts` | 가이드 질문 서비스 포트 — DI 등록 대상 |
-| `src/application/ports/IPromptTemplateService.ts` | 프롬프트 템플릿 서비스 포트 — DI 등록 대상 |
-| `src/application/ports/IResilienceService.ts` | 복원력 서비스 포트 — DI 등록 대상 |
-| `src/application/use-cases/ai/GetFeedbackAnalyticsUseCase.ts` | 피드백 분석 유스케이스 — DI 등록 대상 |
-| `src/application/ports/IAuditCache.ts` | 감사 캐시 포트 인터페이스 — 캐시 팩토리 패턴 사용 |
-| `src/application/services/KPIInsightsService.ts` | KPI 인사이트 서비스 — DI 등록 대상 (KPIInsightsService 토큰) |
+| File                                                          | Purpose                                                      |
+| ------------------------------------------------------------- | ------------------------------------------------------------ |
+| `src/lib/di/types.ts`                                         | DI 토큰 정의 (`DI_TOKENS` 객체)                              |
+| `src/lib/di/container.ts`                                     | DI 컨테이너 구현 (토큰별 팩토리 등록)                        |
+| `src/domain/repositories/I*.ts`                               | 리포지토리 인터페이스                                        |
+| `src/application/ports/I*.ts`                                 | 외부 서비스 포트 인터페이스                                  |
+| `src/domain/repositories/IOptimizationRuleRepository.ts`      | 최적화 규칙 리포지토리 인터페이스                            |
+| `src/application/ports/IFallbackResponseService.ts`           | 폴백 응답 서비스 포트 — DI 등록 대상                         |
+| `src/application/ports/IFewShotExampleRegistry.ts`            | 퓨샷 예시 레지스트리 포트 — DI 등록 대상                     |
+| `src/application/ports/IGuideQuestionService.ts`              | 가이드 질문 서비스 포트 — DI 등록 대상                       |
+| `src/application/ports/IPromptTemplateService.ts`             | 프롬프트 템플릿 서비스 포트 — DI 등록 대상                   |
+| `src/application/ports/IResilienceService.ts`                 | 복원력 서비스 포트 — DI 등록 대상                            |
+| `src/application/use-cases/ai/GetFeedbackAnalyticsUseCase.ts` | 피드백 분석 유스케이스 — DI 등록 대상                        |
+| `src/application/ports/IAuditCache.ts`                        | 감사 캐시 포트 인터페이스 — 캐시 팩토리 패턴 사용            |
+| `src/application/services/KPIInsightsService.ts`              | KPI 인사이트 서비스 — DI 등록 대상 (KPIInsightsService 토큰) |
 
 ## Workflow
 
@@ -75,6 +75,7 @@ grep -P 'container\.(register|registerSingleton)\s*[<(]' src/lib/di/container.ts
 **FAIL 기준:** 한쪽에만 존재하는 토큰이 있음
 
 **수정 방법:**
+
 - 미등록 토큰: `container.register` 또는 `container.registerSingleton` 호출 추가
 - 미정의 토큰: `types.ts`의 `DI_TOKENS`에 추가
 - 사용하지 않는 토큰: 양쪽에서 제거
@@ -95,6 +96,7 @@ grep -oP '(\w+Repository)' src/lib/di/types.ts | sort
 **FAIL 기준:** 인터페이스는 있지만 토큰이 없는 경우
 
 **수정 방법:**
+
 1. `src/lib/di/types.ts`에 토큰 추가
 2. `src/lib/di/container.ts`에 구현체 등록
 
@@ -111,6 +113,7 @@ ls src/application/ports/I*.ts 2>/dev/null | sed 's|.*/I||;s|\.ts||' | sort
 **Context:** 최적화 규칙 엔진과 감사 시스템이 추가되면서 새로운 UseCase들이 DI에 등록됨.
 
 **검사:** 다음 UseCase들이 DI에 등록되었는지 확인합니다:
+
 - CreateOptimizationRuleUseCase
 - UpdateOptimizationRuleUseCase
 - DeleteOptimizationRuleUseCase
@@ -143,6 +146,7 @@ grep -oP '(\w+Repository)' src/lib/di/types.ts | sort
 ```
 
 **FAIL 시 수정:**
+
 1. `src/lib/di/types.ts`에 OptimizationRuleRepository 토큰 추가 확인
 2. `src/lib/di/container.ts`에 PrismaOptimizationRuleRepository 등록 확인
 
@@ -153,6 +157,7 @@ grep -oP '(\w+Repository)' src/lib/di/types.ts | sort
 **Context:** AI 챗봇 강화 기능이 추가되면서 새로운 서비스와 UseCase들이 DI에 등록됨.
 
 **검사:** 다음 서비스/UseCase들이 DI에 등록되었는지 확인합니다:
+
 - ResilienceService
 - PromptTemplateService
 - FallbackResponseService
@@ -175,6 +180,7 @@ grep -n "ResilienceService\|PromptTemplateService\|FallbackResponseService\|FewS
 **Context:** AI KPI 인사이트 개선 (Phase 1)으로 KPIInsightsService가 DI에 등록됨.
 
 **검사:** KPIInsightsService가 DI에 등록되었는지 확인합니다:
+
 - KPIInsightsService
 
 ```bash
@@ -185,21 +191,20 @@ grep -n "KPIInsightsService" src/lib/di/container.ts
 **PASS 기준:** KPIInsightsService가 container.registerSingleton으로 등록됨
 **FAIL 기준:** 누락된 등록이 있음
 
-
 ## Output Format
 
 ```markdown
 ### verify-di-registration 결과
 
-| # | 검사 | 상태 | 상세 |
-|---|------|------|------|
-| 1 | 토큰 정의 vs 등록 동기화 | PASS/FAIL | 미등록 토큰: X, Y |
-| 2 | 리포지토리 인터페이스 커버리지 | PASS/FAIL | 미등록: INewRepo |
-| 3 | 포트 인터페이스 커버리지 | PASS/FAIL | 미등록: INewService |
-| 4 | Optimization/Audit UseCase 등록 | PASS/FAIL | 미등록 UseCase 목록 |
-| 5 | OptimizationRuleRepository 토큰 | PASS/FAIL | 누락 여부 |
-| 2 | 리포지토리 인터페이스 커버리지 | PASS/FAIL | 미등록: INewRepo |
-| 3 | 포트 인터페이스 커버리지 | PASS/FAIL | 미등록: INewService |
+| #   | 검사                            | 상태      | 상세                |
+| --- | ------------------------------- | --------- | ------------------- |
+| 1   | 토큰 정의 vs 등록 동기화        | PASS/FAIL | 미등록 토큰: X, Y   |
+| 2   | 리포지토리 인터페이스 커버리지  | PASS/FAIL | 미등록: INewRepo    |
+| 3   | 포트 인터페이스 커버리지        | PASS/FAIL | 미등록: INewService |
+| 4   | Optimization/Audit UseCase 등록 | PASS/FAIL | 미등록 UseCase 목록 |
+| 5   | OptimizationRuleRepository 토큰 | PASS/FAIL | 누락 여부           |
+| 2   | 리포지토리 인터페이스 커버리지  | PASS/FAIL | 미등록: INewRepo    |
+| 3   | 포트 인터페이스 커버리지        | PASS/FAIL | 미등록: INewService |
 ```
 
 ## Exceptions
@@ -208,7 +213,17 @@ grep -n "KPIInsightsService" src/lib/di/container.ts
 
 1. **TeamRoleRepository 토큰** — `DI_TOKENS.TeamRoleRepository`는 정의되어 있지만 현재 미사용 예약 토큰. 경고만 표시
 2. **resolve만 하는 토큰** — 다른 register 내부에서 `container.resolve(DI_TOKENS.X)` 형태로 참조되는 것은 정상. 중요한 것은 해당 토큰 자체의 register/registerSingleton 존재 여부
-3. **편의 함수 (get*)** — `container.ts` 하단의 `export function get*()` 함수들은 편의 래퍼이며, 존재 여부와 등록 여부는 별개
+3. **편의 함수 (get\*)** — `container.ts` 하단의 `export function get*()` 함수들은 편의 래퍼이며, 존재 여부와 등록 여부는 별개
 4. **인터페이스 파일명과 토큰명 불일치** — `IPaymentGateway.ts` ↔ `PaymentGateway` 토큰처럼 `I` 접두사 제거 형태는 정상
 5. **IConversationalAgent.ts의 IToolRegistry** — 파일명과 인터페이스명이 다를 수 있음 (하나의 파일에 여러 인터페이스 정의)
 6. **IAuditCache.ts** — 캐시 팩토리 패턴(`createUpstashAuditCache`)으로 인스턴스를 직접 생성하며, DI 컨테이너를 통하지 않음. 포트 인터페이스이지만 DI 토큰 미등록은 의도적 설계
+
+## Reserved Token Policy
+
+의도적으로 미등록 상태를 유지하는 토큰은 아래 형식을 따라 allowlist로 관리합니다.
+
+| Token                | Reason                                                      | Owner   | Review By  |
+| -------------------- | ----------------------------------------------------------- | ------- | ---------- |
+| `TeamRoleRepository` | 향후 팀 권한 모델 확장용 예약 토큰 (현재 resolve 경로 없음) | Backend | 2026-06-30 |
+
+검증 시 allowlist에 있는 항목은 FAIL이 아닌 WARN으로 처리합니다.
