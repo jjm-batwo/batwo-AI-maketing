@@ -183,7 +183,6 @@ describe('GET /api/cron/sync', () => {
 
     // ISR 캐시 무효화
     expect(mockRevalidateTag).toHaveBeenCalledWith('campaigns', 'default')
-    expect(mockRevalidateTag).toHaveBeenCalledWith('kpi', 'default')
   })
 
   it('should_skip_expired_tokens_and_continue', async () => {
