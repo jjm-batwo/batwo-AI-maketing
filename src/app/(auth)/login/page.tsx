@@ -122,7 +122,16 @@ function LoginForm() {
               : t('login.continueWith.meta')}
           </Button>
           {process.env.NODE_ENV === 'development' && (
-            <p className="text-xs text-amber-600 text-center">{t('login.devMode')}</p>
+            <div className="space-y-2 pt-4 border-t">
+              <p className="text-xs text-amber-600 text-center">개발용 빠른 로그인 (Demo)</p>
+              <Button
+                type="button"
+                className="w-full h-12 bg-slate-800 text-white hover:bg-slate-700 font-medium"
+                onClick={() => signIn('credentials', { email: 'demo@batwo.ai', password: 'password', callbackUrl, redirect: true })}
+              >
+                데모 계정으로 로그인 (demo@batwo.ai)
+              </Button>
+            </div>
           )}
         </div>
 

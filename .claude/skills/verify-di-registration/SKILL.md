@@ -37,6 +37,8 @@ DI(Dependency Injection) 컨테이너의 일관성을 검증합니다:
 | `src/application/use-cases/ai/GetFeedbackAnalyticsUseCase.ts` | 피드백 분석 유스케이스 — DI 등록 대상                        |
 | `src/application/ports/IAuditCache.ts`                        | 감사 캐시 포트 인터페이스 — 캐시 팩토리 패턴 사용            |
 | `src/application/services/KPIInsightsService.ts`              | KPI 인사이트 서비스 — DI 등록 대상 (KPIInsightsService 토큰) |
+| `src/application/ports/IEmbeddingService.ts`                  | 임베딩 서비스 포트 인터페이스 — 의도적 미등록 (수동 주입)    |
+| `src/application/ports/IKnowledgeBaseRepository.ts`           | 지식 베이스 리포지토리 인터페이스 — 의도적 미등록 (수동 주입)|
 
 ## Workflow
 
@@ -217,6 +219,7 @@ grep -n "KPIInsightsService" src/lib/di/container.ts
 4. **인터페이스 파일명과 토큰명 불일치** — `IPaymentGateway.ts` ↔ `PaymentGateway` 토큰처럼 `I` 접두사 제거 형태는 정상
 5. **IConversationalAgent.ts의 IToolRegistry** — 파일명과 인터페이스명이 다를 수 있음 (하나의 파일에 여러 인터페이스 정의)
 6. **IAuditCache.ts** — 캐시 팩토리 패턴(`createUpstashAuditCache`)으로 인스턴스를 직접 생성하며, DI 컨테이너를 통하지 않음. 포트 인터페이스이지만 DI 토큰 미등록은 의도적 설계
+7. **IEmbeddingService.ts, IKnowledgeBaseRepository.ts** — RAG 시스템의 시드 스크립트(`seed-knowledge-base.ts`) 또는 독립적인 AI 도구(`searchKnowledgeBase.tool.ts`) 내부에서 수동으로 인스턴스화하여 주입하는 객체이므로 DI 토큰 미등록은 의도적 설계
 
 ## Reserved Token Policy
 

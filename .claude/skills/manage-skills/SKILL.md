@@ -40,6 +40,7 @@ argument-hint: "[선택사항: 특정 스킬 이름 또는 집중할 영역]"
 | `verify-audit-security` | 감사 보고서 HMAC 서명/검증 일관성 검증 | `src/lib/security/**`, `src/app/api/audit/**` |
 | `verify-chat-intents` | ChatIntent 열거형이 프롬프트 제어 분기 및 UI 질문에 올바르게 매핑되어 있는지 검증 | `src/domain/value-objects/ChatIntent.ts`, `src/application/services/ConversationalAgentService.ts`, `src/application/services/GuideQuestionService.ts` |
 | `verify-domain-analyzers` | 도메인 분석기 클래스의 존재성과 레지스트리 확인 및 가중치 합 1.0 검증 | `src/domain/value-objects/MarketingScience.ts`, `src/infrastructure/knowledge/analyzers/**`, `src/infrastructure/knowledge/KnowledgeBaseService.ts` |
+| `verify-knowledge-documents` | 마크다운 파일(지식 베이스 문서)의 파일명 규칙(숫자 두자리 접두사)과 첫 헤더(#) 존재 유무 검증 | `prisma/seeds/marketing-knowledge/*.md` |
 
 ## 워크플로우
 

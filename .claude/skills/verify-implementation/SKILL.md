@@ -39,6 +39,7 @@ argument-hint: "[선택사항: 특정 verify 스킬 이름]"
 | 8 | `verify-audit-security` | 감사 보고서 HMAC 서명/검증 일관성 검증 |
 | 9 | `verify-chat-intents` | ChatIntent 열거형이 프롬프트 제어 분기 및 UI 질문에 올바르게 매핑되어 있는지 검증 |
 | 10 | `verify-domain-analyzers` | 도메인 분석기 클래스의 존재성과 레지스트리 의존성 주입 확인 및 가중치 검증 |
+| 11 | `verify-knowledge-documents` | 마크다운 파일(지식 베이스 문서)의 파일명 규칙과 첫 헤더(#) 존재 여부를 검증 |
 
 ## 워크플로우
 
