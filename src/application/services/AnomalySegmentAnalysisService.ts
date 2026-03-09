@@ -217,7 +217,8 @@ export class AnomalySegmentAnalysisService {
       for (const anomaly of campaignAnomalies) {
         typeCounts.set(anomaly.type, (typeCounts.get(anomaly.type) || 0) + 1)
       }
-      const dominantType = [...typeCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || 'unknown'
+      const dominantType =
+        [...typeCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || 'unknown'
 
       // 건강 점수 계산 (이상 징후가 적을수록, 심각도가 낮을수록 높음)
       const healthScore = Math.max(0, 100 - campaignAnomalies.length * 10 - avgSeverity * 15)
@@ -336,7 +337,8 @@ export class AnomalySegmentAnalysisService {
         metricCounts.set(anomaly.metric, (metricCounts.get(anomaly.metric) || 0) + 1)
       }
 
-      const dominantType = [...typeCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || 'unknown'
+      const dominantType =
+        [...typeCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || 'unknown'
       const mostAffectedMetric =
         [...metricCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || 'unknown'
 
@@ -468,7 +470,8 @@ export class AnomalySegmentAnalysisService {
         metricCounts.set(anomaly.metric, (metricCounts.get(anomaly.metric) || 0) + 1)
       }
 
-      const dominantType = [...typeCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || 'unknown'
+      const dominantType =
+        [...typeCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || 'unknown'
       const mostAffectedMetric =
         [...metricCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || 'unknown'
 
@@ -560,7 +563,10 @@ export class AnomalySegmentAnalysisService {
         description: `전체 이상 징후의 ${Math.round((topMetric[1] / anomalies.length) * 100)}%가 ${topMetric[0]} 메트릭에서 발생했습니다.`,
         confidence: topMetric[1] / anomalies.length,
         relatedSegments: [],
-        actionItems: [`${topMetric[0]} 관련 설정 전체 검토`, '연관된 다른 메트릭과의 상관관계 분석'],
+        actionItems: [
+          `${topMetric[0]} 관련 설정 전체 검토`,
+          '연관된 다른 메트릭과의 상관관계 분석',
+        ],
       })
     }
 
@@ -747,9 +753,17 @@ export class AnomalySegmentAnalysisService {
           '평일 대비 주말 입찰 전략 조정',
         ]
       case 'periodic':
-        return ['주기적 이벤트와 이상 발생 시점 대조', '정기 리포트 일정과 연관성 확인', '자동화 작업 스케줄 검토']
+        return [
+          '주기적 이벤트와 이상 발생 시점 대조',
+          '정기 리포트 일정과 연관성 확인',
+          '자동화 작업 스케줄 검토',
+        ]
       case 'consistent':
-        return ['전 시간대 균등 모니터링 유지', '일일 체크포인트 설정', '트렌드 변화 조기 감지 알림 설정']
+        return [
+          '전 시간대 균등 모니터링 유지',
+          '일일 체크포인트 설정',
+          '트렌드 변화 조기 감지 알림 설정',
+        ]
       default:
         return ['불규칙 패턴에 대한 추가 데이터 수집', '외부 요인 (경쟁사, 시장 변화) 모니터링']
     }

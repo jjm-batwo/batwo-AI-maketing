@@ -20,51 +20,49 @@ import { getGrade } from '@domain/value-objects/MarketingScience'
 
 // --- Industry-Color Mapping Data ---
 
-const INDUSTRY_COLOR_MAP: Record<
-  string,
-  { primary: string[]; accent: string[]; avoid: string[] }
-> = {
-  ecommerce: {
-    primary: ['red', 'orange', 'blue'],
-    accent: ['yellow', 'green'],
-    avoid: ['gray', 'brown'],
-  },
-  food_beverage: {
-    primary: ['red', 'orange', 'yellow'],
-    accent: ['green', 'brown'],
-    avoid: ['blue', 'purple'],
-  },
-  beauty: {
-    primary: ['pink', 'purple', 'gold'],
-    accent: ['white', 'rose'],
-    avoid: ['gray', 'brown'],
-  },
-  fashion: {
-    primary: ['black', 'white', 'gold'],
-    accent: ['red', 'navy'],
-    avoid: [],
-  },
-  education: {
-    primary: ['blue', 'green', 'white'],
-    accent: ['orange', 'yellow'],
-    avoid: ['red', 'black'],
-  },
-  service: {
-    primary: ['blue', 'green', 'white'],
-    accent: ['orange'],
-    avoid: ['red'],
-  },
-  saas: {
-    primary: ['blue', 'purple', 'green'],
-    accent: ['white', 'orange'],
-    avoid: ['red', 'pink'],
-  },
-  health: {
-    primary: ['green', 'blue', 'white'],
-    accent: ['orange', 'yellow'],
-    avoid: ['red', 'black'],
-  },
-}
+const INDUSTRY_COLOR_MAP: Record<string, { primary: string[]; accent: string[]; avoid: string[] }> =
+  {
+    ecommerce: {
+      primary: ['red', 'orange', 'blue'],
+      accent: ['yellow', 'green'],
+      avoid: ['gray', 'brown'],
+    },
+    food_beverage: {
+      primary: ['red', 'orange', 'yellow'],
+      accent: ['green', 'brown'],
+      avoid: ['blue', 'purple'],
+    },
+    beauty: {
+      primary: ['pink', 'purple', 'gold'],
+      accent: ['white', 'rose'],
+      avoid: ['gray', 'brown'],
+    },
+    fashion: {
+      primary: ['black', 'white', 'gold'],
+      accent: ['red', 'navy'],
+      avoid: [],
+    },
+    education: {
+      primary: ['blue', 'green', 'white'],
+      accent: ['orange', 'yellow'],
+      avoid: ['red', 'black'],
+    },
+    service: {
+      primary: ['blue', 'green', 'white'],
+      accent: ['orange'],
+      avoid: ['red'],
+    },
+    saas: {
+      primary: ['blue', 'purple', 'green'],
+      accent: ['white', 'orange'],
+      avoid: ['red', 'pink'],
+    },
+    health: {
+      primary: ['green', 'blue', 'white'],
+      accent: ['orange', 'yellow'],
+      avoid: ['red', 'black'],
+    },
+  }
 
 // --- Korean Color Psychology Data ---
 
@@ -178,7 +176,8 @@ export class ColorPsychologyAnalyzer implements DomainAnalyzer {
             name: 'No Color Data',
             score: 50,
             weight: 1.0,
-            explanation: '색상 정보가 제공되지 않아 평가 불가. 크리에이티브에 주요 색상을 태깅하세요.',
+            explanation:
+              '색상 정보가 제공되지 않아 평가 불가. 크리에이티브에 주요 색상을 태깅하세요.',
           },
         ],
         citations: [],
@@ -187,7 +186,8 @@ export class ColorPsychologyAnalyzer implements DomainAnalyzer {
             domain: 'color_psychology',
             priority: 'high',
             recommendation: '크리에이티브의 주요 색상(최대 3개)을 분석에 제공하세요.',
-            scientificBasis: 'Color psychology requires actual color usage data for meaningful analysis.',
+            scientificBasis:
+              'Color psychology requires actual color usage data for meaningful analysis.',
             expectedImpact: '색상 최적화로 CTR 15-25% 개선 가능 (Labrecque & Milne 2012)',
             citations: [],
           },
@@ -211,9 +211,7 @@ export class ColorPsychologyAnalyzer implements DomainAnalyzer {
       seasonalRelevanceFactor,
     ]
 
-    const totalScore = Math.round(
-      factors.reduce((sum, f) => sum + f.score * f.weight, 0)
-    )
+    const totalScore = Math.round(factors.reduce((sum, f) => sum + f.score * f.weight, 0))
 
     // --- Citations ---
 
@@ -223,7 +221,8 @@ export class ColorPsychologyAnalyzer implements DomainAnalyzer {
         domain: 'color_psychology',
         source: 'Labrecque, L. I., & Milne, G. R. (2012)',
         finding: 'Exciting Red and Competent Blue: The Importance of Color in Marketing',
-        applicability: 'Industry-aligned color choices increase brand perception and purchase intent by 24%.',
+        applicability:
+          'Industry-aligned color choices increase brand perception and purchase intent by 24%.',
         confidenceLevel: 'high',
         year: 2012,
         category: 'Color-Industry Fit',
@@ -286,9 +285,9 @@ function scoreIndustryAlignment(colors: string[], industry: string): ScoringFact
     }
   }
 
-  const primaryMatches = colors.filter(c => industryMap.primary.includes(c)).length
-  const accentMatches = colors.filter(c => industryMap.accent.includes(c)).length
-  const avoidMatches = colors.filter(c => industryMap.avoid.includes(c)).length
+  const primaryMatches = colors.filter((c) => industryMap.primary.includes(c)).length
+  const accentMatches = colors.filter((c) => industryMap.accent.includes(c)).length
+  const avoidMatches = colors.filter((c) => industryMap.avoid.includes(c)).length
 
   let score = 50 // Base
   score += primaryMatches * 20 // Up to +60
@@ -297,11 +296,12 @@ function scoreIndustryAlignment(colors: string[], industry: string): ScoringFact
 
   const finalScore = Math.max(0, Math.min(100, score))
 
-  const explanation = avoidMatches > 0
-    ? `${industry} 업종에 부적합한 색상 ${avoidMatches}개 감지. 최적 색상: ${industryMap.primary.join(', ')}`
-    : primaryMatches > 0
-    ? `${industry} 업종 최적 색상 ${primaryMatches}개 사용 중.`
-    : `${industry} 업종 권장 색상 미사용. 권장: ${industryMap.primary.join(', ')}`
+  const explanation =
+    avoidMatches > 0
+      ? `${industry} 업종에 부적합한 색상 ${avoidMatches}개 감지. 최적 색상: ${industryMap.primary.join(', ')}`
+      : primaryMatches > 0
+        ? `${industry} 업종 최적 색상 ${primaryMatches}개 사용 중.`
+        : `${industry} 업종 권장 색상 미사용. 권장: ${industryMap.primary.join(', ')}`
 
   return {
     name: 'Industry Alignment',
@@ -337,7 +337,7 @@ function scoreCulturalFit(colors: string[], industry: string, _objective: string
     }
 
     // Check positive contexts
-    if (psych.positiveContexts.some(ctx => industry.includes(ctx))) {
+    if (psych.positiveContexts.some((ctx) => industry.includes(ctx))) {
       score += 10
       positives.push(`${color} (${psych.koreanAssociation})`)
     }
@@ -349,8 +349,8 @@ function scoreCulturalFit(colors: string[], industry: string, _objective: string
     issues.length > 0
       ? `한국 시장 문화적 부적합: ${issues.join(', ')}`
       : positives.length > 0
-      ? `한국 소비자에게 긍정적 연상: ${positives.join(', ')}`
-      : '색상의 문화적 연상이 중립적.'
+        ? `한국 소비자에게 긍정적 연상: ${positives.join(', ')}`
+        : '색상의 문화적 연상이 중립적.'
 
   return {
     name: 'Cultural Fit (Korean Market)',
@@ -368,7 +368,7 @@ function scoreEmotionalMatch(colors: string[], objective: string): ScoringFactor
   }
 
   const targetEmotions = objectiveEmotionMap[objective] ?? ['red', 'blue']
-  const matches = colors.filter(c => targetEmotions.includes(c)).length
+  const matches = colors.filter((c) => targetEmotions.includes(c)).length
 
   let score = 50
   score += matches * 25 // Up to +75
@@ -412,8 +412,8 @@ function scoreContrastQuality(colors: string[]): ScoringFactor {
   const explanation = hasLightDark
     ? 'CTA 대비가 우수함 (명암 대비 존재).'
     : uniqueColors.size >= 2
-    ? 'CTA 대비 개선 가능. 밝은 색과 어두운 색 조합 추천.'
-    : '단일 색상 사용 중. 대비 강화 필요.'
+      ? 'CTA 대비 개선 가능. 밝은 색과 어두운 색 조합 추천.'
+      : '단일 색상 사용 중. 대비 강화 필요.'
 
   return {
     name: 'Contrast Quality',
@@ -435,7 +435,7 @@ function scoreContrastQuality(colors: string[]): ScoringFactor {
 
 function scoreSeasonalRelevance(colors: string[]): ScoringFactor {
   const seasonal = getCurrentSeasonalColors()
-  const matches = colors.filter(c => seasonal.colors.includes(c)).length
+  const matches = colors.filter((c) => seasonal.colors.includes(c)).length
 
   let score = 60
   score += matches * 15 // Up to +45
@@ -473,14 +473,15 @@ function generateRecommendations(
       domain: 'color_psychology',
       priority: 'critical',
       recommendation: `색상 전략 전면 재검토 필요. ${industry} 업종 최적 색상(${INDUSTRY_COLOR_MAP[industry]?.primary.join(', ') ?? '미정의'})으로 교체 권장.`,
-      scientificBasis: 'Labrecque & Milne (2012): Industry-aligned colors increase brand recall by 80%.',
+      scientificBasis:
+        'Labrecque & Milne (2012): Industry-aligned colors increase brand recall by 80%.',
       expectedImpact: 'CTR 15-25% 개선 예상',
       citations: [citations[0]],
     })
   }
 
   // Industry alignment issue
-  const industryFactor = factors.find(f => f.name === 'Industry Alignment')
+  const industryFactor = factors.find((f) => f.name === 'Industry Alignment')
   if (industryFactor && industryFactor.score < 50) {
     const industryMap = INDUSTRY_COLOR_MAP[industry]
     recommendations.push({
@@ -494,33 +495,37 @@ function generateRecommendations(
   }
 
   // Contrast issue
-  const contrastFactor = factors.find(f => f.name === 'Contrast Quality')
+  const contrastFactor = factors.find((f) => f.name === 'Contrast Quality')
   if (contrastFactor && contrastFactor.score < 70) {
     recommendations.push({
       domain: 'color_psychology',
       priority: 'high',
-      recommendation: 'CTA 버튼에 고대비 색상 적용 (예: 빨강 버튼 + 흰색 배경, 노랑 버튼 + 검정 배경).',
-      scientificBasis: 'Shaouf et al. (2016): High contrast CTAs increase click-through rate by 21%.',
+      recommendation:
+        'CTA 버튼에 고대비 색상 적용 (예: 빨강 버튼 + 흰색 배경, 노랑 버튼 + 검정 배경).',
+      scientificBasis:
+        'Shaouf et al. (2016): High contrast CTAs increase click-through rate by 21%.',
       expectedImpact: 'CTA 클릭률 +21%',
       citations: [citations[1]],
     })
   }
 
   // Cultural fit issue
-  const culturalFactor = factors.find(f => f.name === 'Cultural Fit (Korean Market)')
+  const culturalFactor = factors.find((f) => f.name === 'Cultural Fit (Korean Market)')
   if (culturalFactor && culturalFactor.score < 60) {
     recommendations.push({
       domain: 'color_psychology',
       priority: 'medium',
-      recommendation: '한국 시장 문화적 연상에 맞는 색상 교체 고려. 예: 프리미엄 제품은 gold/black, 건강 제품은 green/white.',
-      scientificBasis: 'Cultural color associations significantly impact purchase intent in local markets.',
+      recommendation:
+        '한국 시장 문화적 연상에 맞는 색상 교체 고려. 예: 프리미엄 제품은 gold/black, 건강 제품은 green/white.',
+      scientificBasis:
+        'Cultural color associations significantly impact purchase intent in local markets.',
       expectedImpact: '타겟 오디언스 호감도 +15-20%',
       citations: [],
     })
   }
 
   // Seasonal opportunity
-  const seasonalFactor = factors.find(f => f.name === 'Seasonal Relevance')
+  const seasonalFactor = factors.find((f) => f.name === 'Seasonal Relevance')
   if (seasonalFactor && seasonalFactor.score < 70) {
     const seasonal = getCurrentSeasonalColors()
     recommendations.push({

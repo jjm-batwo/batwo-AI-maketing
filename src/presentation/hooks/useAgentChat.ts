@@ -108,7 +108,6 @@ type AgentStreamChunk =
 // Hook
 // ============================================================================
 
-
 export function useAgentChat(initialConversationId?: string): UseAgentChatReturn {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -166,11 +165,15 @@ export function useAgentChat(initialConversationId?: string): UseAgentChatReturn
 
         // AI 인사이트 컨텍스트: 대시보드에서 로드된 인사이트를 챗봇에 전달
         const { dashboardInsights } = useUIStore.getState()
-        const insightsContext = dashboardInsights.length > 0
-          ? dashboardInsights.map((i) =>
-              `[${i.type}/${i.priority}] ${i.campaignName ? `(${i.campaignName}) ` : ''}${i.title}: ${i.description}${i.currentValue !== undefined ? ` (현재값: ${i.currentValue}${i.changePercent !== undefined ? `, 변화: ${i.changePercent > 0 ? '+' : ''}${i.changePercent.toFixed(1)}%` : ''})` : ''}`
-            ).join('\n')
-          : undefined
+        const insightsContext =
+          dashboardInsights.length > 0
+            ? dashboardInsights
+                .map(
+                  (i) =>
+                    `[${i.type}/${i.priority}] ${i.campaignName ? `(${i.campaignName}) ` : ''}${i.title}: ${i.description}${i.currentValue !== undefined ? ` (현재값: ${i.currentValue}${i.changePercent !== undefined ? `, 변화: ${i.changePercent > 0 ? '+' : ''}${i.changePercent.toFixed(1)}%` : ''})` : ''}`
+                )
+                .join('\n')
+            : undefined
 
         // 서버에서 retry+CB를 처리하므로 클라이언트는 단일 요청만 수행
         const response = await fetch('/api/agent/chat', {
@@ -187,137 +190,136 @@ export function useAgentChat(initialConversationId?: string): UseAgentChatReturn
           const reader = response.body.getReader()
           const decoder = new TextDecoder()
 
-            while (true) {
-              const { done, value } = await reader.read()
-              if (done) break
+          while (true) {
+            const { done, value } = await reader.read()
+            if (done) break
 
-              const text = decoder.decode(value, { stream: true })
-              const lines = text.split('\n').filter((l) => l.startsWith('data: '))
+            const text = decoder.decode(value, { stream: true })
+            const lines = text.split('\n').filter((l) => l.startsWith('data: '))
 
-              for (const line of lines) {
-                try {
-                  const data = JSON.parse(line.slice(6)) as AgentStreamChunk
+            for (const line of lines) {
+              try {
+                const data = JSON.parse(line.slice(6)) as AgentStreamChunk
 
-                  switch (data.type) {
-                    case 'conversation':
-                      setConversationId(data.conversationId)
-                      break
+                switch (data.type) {
+                  case 'conversation':
+                    setConversationId(data.conversationId)
+                    break
 
-                    case 'text':
-                      setMessages((prev) =>
-                        prev.map((m) =>
-                          m.id === assistantId ? { ...m, content: m.content + data.content } : m
-                        )
+                  case 'text':
+                    setMessages((prev) =>
+                      prev.map((m) =>
+                        m.id === assistantId ? { ...m, content: m.content + data.content } : m
                       )
-                      break
+                    )
+                    break
 
-                    case 'action_confirmation':
-                      setMessages((prev) =>
-                        prev.map((m) =>
-                          m.id === assistantId
-                            ? {
-                                ...m,
-                                confirmationCard: {
-                                  actionId: data.actionId,
-                                  toolName: data.toolName,
-                                  summary: data.summary,
-                                  details: data.details,
-                                  warnings: data.warnings,
-                                  expiresAt: data.expiresAt,
-                                },
-                              }
-                            : m
-                        )
+                  case 'action_confirmation':
+                    setMessages((prev) =>
+                      prev.map((m) =>
+                        m.id === assistantId
+                          ? {
+                              ...m,
+                              confirmationCard: {
+                                actionId: data.actionId,
+                                toolName: data.toolName,
+                                summary: data.summary,
+                                details: data.details,
+                                warnings: data.warnings,
+                                expiresAt: data.expiresAt,
+                              },
+                            }
+                          : m
                       )
-                      break
+                    )
+                    break
 
-                    case 'data_card':
-                      setMessages((prev) =>
-                        prev.map((m) =>
-                          m.id === assistantId
-                            ? {
-                                ...m,
-                                dataCards: [
-                                  ...(m.dataCards ?? []),
-                                  { cardType: data.cardType, data: data.data },
-                                ],
-                              }
-                            : m
-                        )
+                  case 'data_card':
+                    setMessages((prev) =>
+                      prev.map((m) =>
+                        m.id === assistantId
+                          ? {
+                              ...m,
+                              dataCards: [
+                                ...(m.dataCards ?? []),
+                                { cardType: data.cardType, data: data.data },
+                              ],
+                            }
+                          : m
                       )
-                      break
+                    )
+                    break
 
-                    case 'tool_result':
-                      setMessages((prev) =>
-                        prev.map((m) =>
-                          m.id === assistantId
-                            ? {
-                                ...m,
-                                toolResults: [
-                                  ...(m.toolResults ?? []),
-                                  { toolName: data.toolName, data: data.data },
-                                ],
-                              }
-                            : m
-                        )
+                  case 'tool_result':
+                    setMessages((prev) =>
+                      prev.map((m) =>
+                        m.id === assistantId
+                          ? {
+                              ...m,
+                              toolResults: [
+                                ...(m.toolResults ?? []),
+                                { toolName: data.toolName, data: data.data },
+                              ],
+                            }
+                          : m
                       )
-                      break
+                    )
+                    break
 
-                    case 'guide_question':
-                      setMessages((prev) =>
-                        prev.map((m) =>
-                          m.id === assistantId
-                            ? {
-                                ...m,
-                                guideQuestion: {
-                                  questionId: data.questionId,
-                                  question: data.question,
-                                  options: data.options,
-                                  progress: data.progress,
-                                },
-                              }
-                            : m
-                        )
+                  case 'guide_question':
+                    setMessages((prev) =>
+                      prev.map((m) =>
+                        m.id === assistantId
+                          ? {
+                              ...m,
+                              guideQuestion: {
+                                questionId: data.questionId,
+                                question: data.question,
+                                options: data.options,
+                                progress: data.progress,
+                              },
+                            }
+                          : m
                       )
-                      break
+                    )
+                    break
 
-                    case 'guide_recommendation':
-                      setMessages((prev) =>
-                        prev.map((m) =>
-                          m.id === assistantId
-                            ? {
-                                ...m,
-                                guideRecommendation: data.recommendation,
-                              }
-                            : m
-                        )
+                  case 'guide_recommendation':
+                    setMessages((prev) =>
+                      prev.map((m) =>
+                        m.id === assistantId
+                          ? {
+                              ...m,
+                              guideRecommendation: data.recommendation,
+                            }
+                          : m
                       )
-                      break
+                    )
+                    break
 
-                    case 'suggested_questions':
-                      setMessages((prev) =>
-                        prev.map((m) =>
-                          m.id === assistantId ? { ...m, suggestedQuestions: data.questions } : m
-                        )
+                  case 'suggested_questions':
+                    setMessages((prev) =>
+                      prev.map((m) =>
+                        m.id === assistantId ? { ...m, suggestedQuestions: data.questions } : m
                       )
-                      break
+                    )
+                    break
 
-                    case 'done':
-                      setMessages((prev) =>
-                        prev.map((m) => (m.id === assistantId ? { ...m, isStreaming: false } : m))
-                      )
-                      break
+                  case 'done':
+                    setMessages((prev) =>
+                      prev.map((m) => (m.id === assistantId ? { ...m, isStreaming: false } : m))
+                    )
+                    break
 
-                    case 'error':
-                      setError(data.error)
-                      break
-                  }
-                } catch {
-                  // JSON parse error - skip malformed SSE line
+                  case 'error':
+                    setError(data.error)
+                    break
                 }
+              } catch {
+                // JSON parse error - skip malformed SSE line
               }
             }
-
+          }
         }
       } catch (err) {
         if (err instanceof Error && err.name !== 'AbortError') {

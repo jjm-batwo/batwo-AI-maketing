@@ -513,9 +513,7 @@ export class ABTestAnalyzer {
 
     if (topCTR !== null && bottomCTR !== null && bottomCTR > 0) {
       const improvement = ((topCTR - bottomCTR) / bottomCTR) * 100
-      insights.push(
-        `최고 성과 변형이 최저 대비 CTR ${improvement.toFixed(1)}% 높습니다.`
-      )
+      insights.push(`최고 성과 변형이 최저 대비 CTR ${improvement.toFixed(1)}% 높습니다.`)
     }
 
     // 예측 정확도
@@ -535,16 +533,11 @@ export class ABTestAnalyzer {
   /**
    * 추천 생성
    */
-  private generateRecommendations(
-    variations: CopyVariation[],
-    confidence: number
-  ): string[] {
+  private generateRecommendations(variations: CopyVariation[], confidence: number): string[] {
     const recommendations: string[] = []
 
     if (confidence >= this.minimumConfidence) {
-      recommendations.push(
-        '통계적으로 유의미한 결과입니다. 우승 변형을 메인 광고로 적용하세요.'
-      )
+      recommendations.push('통계적으로 유의미한 결과입니다. 우승 변형을 메인 광고로 적용하세요.')
 
       const winnerHook = variations[0].hookType
       recommendations.push(

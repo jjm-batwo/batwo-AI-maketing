@@ -5,7 +5,7 @@
  * Provides statistical significance calculation and sample size estimation.
  */
 
-export type SignificanceLevel = 0.90 | 0.95 | 0.99
+export type SignificanceLevel = 0.9 | 0.95 | 0.99
 
 export interface StatisticalResult {
   isSignificant: boolean
@@ -62,8 +62,7 @@ export class StatisticalSignificance {
     const p2 = treatmentConversions / treatmentTotal
 
     // Calculate pooled proportion for Z-test
-    const pooledP =
-      (controlConversions + treatmentConversions) / (controlTotal + treatmentTotal)
+    const pooledP = (controlConversions + treatmentConversions) / (controlTotal + treatmentTotal)
 
     // Calculate standard error
     const se = Math.sqrt(pooledP * (1 - pooledP) * (1 / controlTotal + 1 / treatmentTotal))
@@ -140,8 +139,7 @@ export class StatisticalSignificance {
     const zBeta = this.normalInverseCDF(power)
 
     // Calculate sample size
-    const numerator =
-      Math.pow(zAlpha + zBeta, 2) * (p1 * (1 - p1) + p2 * (1 - p2))
+    const numerator = Math.pow(zAlpha + zBeta, 2) * (p1 * (1 - p1) + p2 * (1 - p2))
     const denominator = Math.pow(p2 - p1, 2)
 
     const sampleSize = numerator / denominator
@@ -175,7 +173,7 @@ export class StatisticalSignificance {
    */
   private static getZCritical(confidenceLevel: SignificanceLevel): number {
     const zValues: Record<SignificanceLevel, number> = {
-      0.90: 1.645,
+      0.9: 1.645,
       0.95: 1.96,
       0.99: 2.576,
     }
@@ -198,21 +196,18 @@ export class StatisticalSignificance {
   private static normalInverseCDF(p: number): number {
     // Beasley-Springer-Moro algorithm approximation
     const a = [
-      -3.969683028665376e1, 2.209460984245205e2, -2.759285104469687e2,
-      1.383577518672690e2, -3.066479806614716e1, 2.506628277459239,
+      -3.969683028665376e1, 2.209460984245205e2, -2.759285104469687e2, 1.38357751867269e2,
+      -3.066479806614716e1, 2.506628277459239,
     ]
     const b = [
-      -5.447609879822406e1, 1.615858368580409e2, -1.556989798598866e2,
-      6.680131188771972e1, -1.328068155288572e1,
+      -5.447609879822406e1, 1.615858368580409e2, -1.556989798598866e2, 6.680131188771972e1,
+      -1.328068155288572e1,
     ]
     const c = [
-      -7.784894002430293e-3, -3.223964580411365e-1, -2.400758277161838,
-      -2.549732539343734, 4.374664141464968, 2.938163982698783,
+      -7.784894002430293e-3, -3.223964580411365e-1, -2.400758277161838, -2.549732539343734,
+      4.374664141464968, 2.938163982698783,
     ]
-    const d = [
-      7.784695709041462e-3, 3.224671290700398e-1, 2.445134137142996,
-      3.754408661907416,
-    ]
+    const d = [7.784695709041462e-3, 3.224671290700398e-1, 2.445134137142996, 3.754408661907416]
 
     const pLow = 0.02425
     const pHigh = 1 - pLow
@@ -221,16 +216,19 @@ export class StatisticalSignificance {
 
     if (p < pLow) {
       const q = Math.sqrt(-2 * Math.log(p))
-      x = (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
+      x =
+        (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
         ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1)
     } else if (p <= pHigh) {
       const q = p - 0.5
       const r = q * q
-      x = (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q /
+      x =
+        ((((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q) /
         (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1)
     } else {
       const q = Math.sqrt(-2 * Math.log(1 - p))
-      x = -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
+      x =
+        -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) /
         ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1)
     }
 

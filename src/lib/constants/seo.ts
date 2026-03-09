@@ -126,14 +126,10 @@ export function getMetadata(options: MetadataOptions = {}): Metadata {
     noIndex = false,
   } = options
 
-  const fullTitle = title
-    ? `${title} | ${SEO.siteName}`
-    : SEO.defaultTitle
+  const fullTitle = title ? `${title} | ${SEO.siteName}` : SEO.defaultTitle
 
   const canonicalUrl = `${SEO.siteUrl}${path}`
-  const ogImageUrl = ogImage.startsWith('http')
-    ? ogImage
-    : `${SEO.siteUrl}${ogImage}`
+  const ogImageUrl = ogImage.startsWith('http') ? ogImage : `${SEO.siteUrl}${ogImage}`
 
   return {
     title: fullTitle,
@@ -144,9 +140,7 @@ export function getMetadata(options: MetadataOptions = {}): Metadata {
     publisher: SEO.siteName,
 
     // Robots
-    robots: noIndex
-      ? { index: false, follow: false }
-      : { index: true, follow: true },
+    robots: noIndex ? { index: false, follow: false } : { index: true, follow: true },
 
     // Canonical
     alternates: {

@@ -23,10 +23,7 @@ export class CampaignMapper {
       name: prisma.name,
       objective: prisma.objective as CampaignObjective,
       status: prisma.status as CampaignStatus,
-      dailyBudget: Money.create(
-        Number(prisma.dailyBudget),
-        prisma.currency as Currency
-      ),
+      dailyBudget: Money.create(Number(prisma.dailyBudget), prisma.currency as Currency),
       startDate: prisma.startDate,
       endDate: prisma.endDate ?? undefined,
       targetAudience: prisma.targetAudience as TargetAudience | undefined,
@@ -52,7 +49,7 @@ export class CampaignMapper {
       currency: json.dailyBudget.currency,
       startDate: json.startDate,
       endDate: json.endDate ?? null,
-      targetAudience: json.targetAudience as JsonValue ?? null,
+      targetAudience: (json.targetAudience as JsonValue) ?? null,
       metaCampaignId: json.metaCampaignId ?? null,
       buyingType: json.buyingType ?? 'AUCTION',
       advantageConfig: (json.advantageConfig?.toJSON() ?? null) as unknown as JsonValue,
@@ -73,10 +70,10 @@ export class CampaignMapper {
       currency: json.dailyBudget.currency,
       startDate: json.startDate,
       endDate: json.endDate ?? null,
-      targetAudience: json.targetAudience as JsonValue ?? Prisma.JsonNull,
+      targetAudience: (json.targetAudience as JsonValue) ?? Prisma.JsonNull,
       metaCampaignId: json.metaCampaignId ?? null,
       buyingType: json.buyingType ?? 'AUCTION',
-      advantageConfig: json.advantageConfig?.toJSON() as unknown as JsonValue ?? Prisma.JsonNull,
+      advantageConfig: (json.advantageConfig?.toJSON() as unknown as JsonValue) ?? Prisma.JsonNull,
       createdAt: json.createdAt,
       updatedAt: json.updatedAt,
     }
@@ -92,10 +89,10 @@ export class CampaignMapper {
       currency: json.dailyBudget.currency,
       startDate: json.startDate,
       endDate: json.endDate ?? null,
-      targetAudience: json.targetAudience as JsonValue ?? Prisma.JsonNull,
+      targetAudience: (json.targetAudience as JsonValue) ?? Prisma.JsonNull,
       metaCampaignId: json.metaCampaignId ?? null,
       buyingType: json.buyingType ?? 'AUCTION',
-      advantageConfig: json.advantageConfig?.toJSON() as unknown as JsonValue ?? Prisma.JsonNull,
+      advantageConfig: (json.advantageConfig?.toJSON() as unknown as JsonValue) ?? Prisma.JsonNull,
       updatedAt: new Date(),
     }
   }

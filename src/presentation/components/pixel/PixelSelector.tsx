@@ -39,7 +39,11 @@ export function PixelSelector({
   onCreate,
 }: PixelSelectorProps) {
   const t = useTranslations('pixel')
-  const { data: pixels, isLoading, error } = useQuery({
+  const {
+    data: pixels,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['pixels'],
     queryFn: fetchPixels,
   })
@@ -57,7 +61,9 @@ export function PixelSelector({
     return (
       <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-center">
         <p className="text-sm text-red-600">{t('loadError')}</p>
-        <p className="mt-1 text-xs text-red-500">{error instanceof Error ? error.message : t('unknownError')}</p>
+        <p className="mt-1 text-xs text-red-500">
+          {error instanceof Error ? error.message : t('unknownError')}
+        </p>
       </div>
     )
   }
@@ -90,11 +96,7 @@ export function PixelSelector({
 
   return (
     <div>
-      <ul
-        role="list"
-        aria-label={t('list')}
-        className="space-y-2"
-      >
+      <ul role="list" aria-label={t('list')} className="space-y-2">
         {pixels.map((pixel) => {
           const isSelected = pixel.id === selectedPixelId
 
@@ -140,9 +142,7 @@ export function PixelSelector({
                   >
                     {setupMethodLabel(pixel.setupMethod)}
                   </span>
-                  {isSelected && (
-                    <div className="h-2 w-2 rounded-full bg-primary" />
-                  )}
+                  {isSelected && <div className="h-2 w-2 rounded-full bg-primary" />}
                 </div>
               </button>
             </li>
@@ -151,11 +151,7 @@ export function PixelSelector({
       </ul>
 
       {showCreateButton && (
-        <Button
-          onClick={onCreate}
-          variant="outline"
-          className="mt-4 w-full"
-        >
+        <Button onClick={onCreate} variant="outline" className="mt-4 w-full">
           <Plus className="mr-2 h-4 w-4" />
           {t('newPixel')}
         </Button>

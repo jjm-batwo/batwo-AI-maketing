@@ -22,11 +22,7 @@ export type {
   SubscriptionFilters,
   SubscriptionStats,
 } from './ISubscriptionRepository'
-export type {
-  IInvoiceRepository,
-  InvoiceFilters,
-  PaymentStats,
-} from './IInvoiceRepository'
+export type { IInvoiceRepository, InvoiceFilters, PaymentStats } from './IInvoiceRepository'
 export type {
   IAIFeedbackRepository,
   AIFeedback,

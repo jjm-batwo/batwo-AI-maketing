@@ -13,7 +13,9 @@ export interface PauseCampaignDTO {
 
 export class PauseCampaignError extends Error {
   constructor(campaignId: string, currentStatus: CampaignStatus) {
-    super(`Cannot pause campaign "${campaignId}" with status "${currentStatus}". Only ACTIVE or PAUSED campaigns can be paused.`)
+    super(
+      `Cannot pause campaign "${campaignId}" with status "${currentStatus}". Only ACTIVE or PAUSED campaigns can be paused.`
+    )
     this.name = 'PauseCampaignError'
   }
 }

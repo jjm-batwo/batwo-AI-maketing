@@ -85,16 +85,13 @@ export function ChatInput({
           </span>
           {/* 2000자 초과 시 에러 메시지 */}
           {isOverLimit && (
-            <span
-              id={ERROR_ID}
-              role="alert"
-              className="text-xs text-destructive"
-            >
+            <span id={ERROR_ID} role="alert" className="text-xs text-destructive">
               메시지는 {MAX_LENGTH}자를 초과할 수 없습니다.
             </span>
           )}
         </div>
-        <button type="button"
+        <button
+          type="button"
           data-testid="chat-send-button"
           onClick={handleSend}
           disabled={!input.trim() || isLoading || isOverLimit}

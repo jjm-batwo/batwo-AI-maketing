@@ -122,9 +122,7 @@ export class AIFallbackManager {
         }
       } catch (_error) {
         // Even template failed - this should never happen
-        throw new Error(
-          `All fallback tiers failed. Last error: ${lastError?.message || 'Unknown'}`
-        )
+        throw new Error(`All fallback tiers failed. Last error: ${lastError?.message || 'Unknown'}`)
       }
     }
 

@@ -104,13 +104,14 @@ export async function GET(request: NextRequest) {
       })),
     })
 
-    return NextResponse.redirect(
-      new URL(`/audit/callback?session=${sessionId}`, request.url)
-    )
+    return NextResponse.redirect(new URL(`/audit/callback?session=${sessionId}`, request.url))
   } catch (err) {
     console.error('[AUDIT CALLBACK] OAuth 처리 오류:', err instanceof Error ? err.message : err)
     return NextResponse.redirect(
-      new URL('/audit/callback?error=' + encodeURIComponent('연결 중 오류가 발생했습니다'), request.url)
+      new URL(
+        '/audit/callback?error=' + encodeURIComponent('연결 중 오류가 발생했습니다'),
+        request.url
+      )
     )
   }
 }

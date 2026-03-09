@@ -2,7 +2,9 @@ import { z } from 'zod'
 import type { AgentTool, ToolExecutionResult } from '@application/ports/IConversationalAgent'
 
 const paramsSchema = z.object({
-  experienceLevel: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED']).describe('사용자 광고 경험 수준'),
+  experienceLevel: z
+    .enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED'])
+    .describe('사용자 광고 경험 수준'),
   industry: z.string().describe('업종'),
   objective: z.enum(['sales', 'awareness', 'traffic', 'engagement']).describe('캠페인 목표'),
   dailyBudgetRange: z.string().describe('하루 예산 범위 (예: 10000-50000)'),
@@ -42,7 +44,8 @@ function parseBudgetRange(range: string): number {
 export function createRecommendCampaignSettingsTool(): AgentTool<Params, RecommendationResult> {
   return {
     name: 'recommendCampaignSettings',
-    description: '사용자 인터뷰 결과를 바탕으로 캠페인 설정을 추천합니다. 모든 가이드 질문 완료 후 호출합니다.',
+    description:
+      '사용자 인터뷰 결과를 바탕으로 캠페인 설정을 추천합니다. 모든 가이드 질문 완료 후 호출합니다.',
     parameters: paramsSchema,
     requiresConfirmation: false,
 

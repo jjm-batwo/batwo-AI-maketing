@@ -13,8 +13,18 @@ import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { CompetitorAnalysisService } from '@application/services/CompetitorAnalysisService'
 import { AdLibraryClient } from '@infrastructure/external/meta-ads/AdLibraryClient'
 import { AIService } from '@infrastructure/external/openai/AIService'
-import { competitorsQuerySchema, competitorsTrackingSchema, validateQuery, validateBody } from '@/lib/validations'
-import { checkRateLimit, getClientIp, addRateLimitHeaders, rateLimitExceededResponse } from '@/lib/middleware/rateLimit'
+import {
+  competitorsQuerySchema,
+  competitorsTrackingSchema,
+  validateQuery,
+  validateBody,
+} from '@/lib/validations'
+import {
+  checkRateLimit,
+  getClientIp,
+  addRateLimitHeaders,
+  rateLimitExceededResponse,
+} from '@/lib/middleware/rateLimit'
 import { getTrackCompetitorUseCase } from '@/lib/di/container'
 
 /**
@@ -69,16 +79,10 @@ export async function GET(request: NextRequest) {
     const adLibraryClient = new AdLibraryClient()
     const openaiApiKey = process.env.OPENAI_API_KEY
     if (!openaiApiKey) {
-      return NextResponse.json(
-        { error: 'OpenAI API key not configured' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: 'OpenAI API key not configured' }, { status: 500 })
     }
     const aiService = new AIService(openaiApiKey)
-    const competitorAnalysisService = new CompetitorAnalysisService(
-      adLibraryClient,
-      aiService
-    )
+    const competitorAnalysisService = new CompetitorAnalysisService(adLibraryClient, aiService)
 
     // 5. 경쟁사 광고 검색
     const ads = await competitorAnalysisService.searchCompetitorAds(accessToken, {
@@ -113,10 +117,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
@@ -173,9 +174,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

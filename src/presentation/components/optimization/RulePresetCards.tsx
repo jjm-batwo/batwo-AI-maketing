@@ -145,10 +145,7 @@ export function RulePresetCards({ campaigns, onApplyPreset }: RulePresetCardsPro
           const isApplying = applyingId === preset.id
 
           return (
-            <Card
-              key={preset.id}
-              className="border-border/50 transition-shadow hover:shadow-sm"
-            >
+            <Card key={preset.id} className="border-border/50 transition-shadow hover:shadow-sm">
               <CardHeader className="pb-2 pt-4 px-4">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2">

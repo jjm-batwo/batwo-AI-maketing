@@ -53,10 +53,7 @@ export function validateCronAuth(request: NextRequest): CronAuthResult {
     console.warn('[Cron Auth] Unauthorized cron request attempt')
     return {
       authorized: false,
-      response: NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      ),
+      response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }),
     }
   }
 

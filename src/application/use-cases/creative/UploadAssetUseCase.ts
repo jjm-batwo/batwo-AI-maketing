@@ -31,11 +31,7 @@ export class UploadAssetUseCase {
     })
 
     // Blob Storage 업로드
-    const { url } = await this.blobStorage.upload(
-      dto.file,
-      dto.fileName,
-      dto.mimeType
-    )
+    const { url } = await this.blobStorage.upload(dto.file, dto.fileName, dto.mimeType)
 
     // DB 저장
     const asset: CreativeAssetProps = {

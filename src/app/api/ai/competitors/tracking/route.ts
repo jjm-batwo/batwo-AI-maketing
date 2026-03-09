@@ -43,10 +43,7 @@ export async function DELETE(request: NextRequest) {
     const { pageId } = body
 
     if (!pageId || typeof pageId !== 'string') {
-      return NextResponse.json(
-        { error: 'pageId는 필수입니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'pageId는 필수입니다' }, { status: 400 })
     }
 
     const useCase = getUntrackCompetitorUseCase()

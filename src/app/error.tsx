@@ -54,9 +54,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
         </div>
 
         {/* 제목 */}
-        <h1 className="mb-4 text-2xl font-bold tracking-tight sm:text-3xl">
-          문제가 발생했습니다
-        </h1>
+        <h1 className="mb-4 text-2xl font-bold tracking-tight sm:text-3xl">문제가 발생했습니다</h1>
 
         {/* 설명 */}
         <p className="mb-6 text-muted-foreground">
@@ -68,16 +66,12 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
         {/* 개발 모드에서만 에러 상세 표시 */}
         {isDev && error.message && (
           <div className="mb-6 w-full rounded-lg bg-muted p-4 text-left">
-            <p className="mb-2 text-sm font-medium text-destructive">
-              에러 상세 (개발 모드):
-            </p>
+            <p className="mb-2 text-sm font-medium text-destructive">에러 상세 (개발 모드):</p>
             <code className="block overflow-auto text-xs text-muted-foreground">
               {error.message}
             </code>
             {error.digest && (
-              <p className="mt-2 text-xs text-muted-foreground">
-                Digest: {error.digest}
-              </p>
+              <p className="mt-2 text-xs text-muted-foreground">Digest: {error.digest}</p>
             )}
           </div>
         )}
@@ -134,9 +128,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
                 className="space-y-4"
               >
                 <div>
-                  <label className="mb-1 block text-sm font-medium">
-                    이름 (선택)
-                  </label>
+                  <label className="mb-1 block text-sm font-medium">이름 (선택)</label>
                   <input
                     type="text"
                     name="name"
@@ -145,9 +137,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium">
-                    이메일 (선택)
-                  </label>
+                  <label className="mb-1 block text-sm font-medium">이메일 (선택)</label>
                   <input
                     type="email"
                     name="email"
@@ -156,9 +146,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-sm font-medium">
-                    무엇이 잘못되었나요?
-                  </label>
+                  <label className="mb-1 block text-sm font-medium">무엇이 잘못되었나요?</label>
                   <textarea
                     name="comments"
                     required
@@ -168,11 +156,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
                   />
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => setShowFeedback(false)}
-                  >
+                  <Button type="button" variant="ghost" onClick={() => setShowFeedback(false)}>
                     취소
                   </Button>
                   <Button type="submit">전송</Button>

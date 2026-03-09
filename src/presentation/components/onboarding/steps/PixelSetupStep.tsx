@@ -50,37 +50,30 @@ export function PixelSetupStep() {
         <Code2 className="h-8 w-8 text-purple-600" />
       </div>
 
-      <h2 className="mb-2 text-2xl font-bold text-gray-900">
-        {t('title')}
-      </h2>
+      <h2 className="mb-2 text-2xl font-bold text-gray-900">{t('title')}</h2>
 
-      <p className="mb-6 text-gray-600">
-        {t('description')}
-      </p>
+      <p className="mb-6 text-gray-600">{t('description')}</p>
 
       {/* 분기 1: Meta 미연결 */}
       {!isMetaConnected ? (
         <div className="flex flex-col items-center gap-4">
           <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-left">
-            <p className="text-sm text-yellow-800">
-              {t('connectFirst')}
-            </p>
+            <p className="text-sm text-yellow-800">{t('connectFirst')}</p>
           </div>
         </div>
       ) : !selectedPixel ? (
         /* 분기 2: 픽셀 미선택 → PixelSelector 표시 */
         <div className="w-full max-w-md">
-          <PixelSelector
-            onSelect={handlePixelSelect}
-            showCreateButton={false}
-          />
+          <PixelSelector onSelect={handlePixelSelect} showCreateButton={false} />
         </div>
       ) : !selectedPlatform ? (
         /* 분기 3: 픽셀 선택 + 플랫폼 미선택 → PlatformSelector 표시 */
         <div className="w-full max-w-md space-y-4">
           <div className="flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-green-700">
             <CheckCircle2 className="h-5 w-5" />
-            <span className="font-medium">{selectedPixel.name} {t('selected')}</span>
+            <span className="font-medium">
+              {selectedPixel.name} {t('selected')}
+            </span>
           </div>
 
           <PlatformSelector
@@ -88,12 +81,7 @@ export function PixelSetupStep() {
             selectedPlatform={selectedPlatform ?? undefined}
           />
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleReset}
-            className="text-gray-500"
-          >
+          <Button variant="ghost" size="sm" onClick={handleReset} className="text-gray-500">
             {t('selectOther')}
           </Button>
         </div>
@@ -102,16 +90,16 @@ export function PixelSetupStep() {
         <div className="w-full max-w-md space-y-4">
           <div className="flex items-center gap-2 rounded-full bg-green-100 px-4 py-2 text-green-700">
             <CheckCircle2 className="h-5 w-5" />
-            <span className="font-medium">{selectedPixel.name} {t('selected')}</span>
+            <span className="font-medium">
+              {selectedPixel.name} {t('selected')}
+            </span>
           </div>
 
           {/* 카페24: 기존 스크립트 코드 표시 */}
           {selectedPlatform === EcommercePlatform.CAFE24 && (
             <div className="rounded-lg border bg-gray-50 p-4 text-left">
               <h4 className="mb-2 font-medium text-gray-900">{t('installation.title')}</h4>
-              <p className="mb-3 text-sm text-gray-600">
-                {t('installation.description')}
-              </p>
+              <p className="mb-3 text-sm text-gray-600">{t('installation.description')}</p>
               <div className="relative">
                 <pre className="overflow-x-auto rounded bg-gray-900 p-3 text-xs text-gray-100">
                   <code>{scriptCode}</code>
@@ -143,12 +131,7 @@ export function PixelSetupStep() {
             </div>
           )}
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleReset}
-            className="text-gray-500"
-          >
+          <Button variant="ghost" size="sm" onClick={handleReset} className="text-gray-500">
             {t('selectOther')}
           </Button>
         </div>
@@ -164,9 +147,7 @@ export function PixelSetupStep() {
         </ul>
       </div>
 
-      <p className="mt-4 text-sm text-gray-500">
-        {t('installation.skipMessage')}
-      </p>
+      <p className="mt-4 text-sm text-gray-500">{t('installation.skipMessage')}</p>
     </div>
   )
 }

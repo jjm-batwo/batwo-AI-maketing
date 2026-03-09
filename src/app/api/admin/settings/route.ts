@@ -1,8 +1,5 @@
 import { NextResponse } from 'next/server'
-import {
-  requireSuperAdmin,
-  handleAdminAuth,
-} from '@/infrastructure/auth/adminMiddleware'
+import { requireSuperAdmin, handleAdminAuth } from '@/infrastructure/auth/adminMiddleware'
 import { PLAN_CONFIGS } from '@domain/value-objects/SubscriptionPlan'
 
 // 시스템 설정 조회 (SUPER_ADMIN 전용)
@@ -44,9 +41,6 @@ export async function GET() {
     })
   } catch (error) {
     console.error('Admin settings error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch settings' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 })
   }
 }

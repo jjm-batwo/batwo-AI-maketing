@@ -40,7 +40,10 @@ export function LandingFooter() {
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-3">
               <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <Sparkles className="w-4 w-4 text-primary-foreground fill-current" aria-hidden="true" />
+                <Sparkles
+                  className="w-4 w-4 text-primary-foreground fill-current"
+                  aria-hidden="true"
+                />
               </div>
               <span className="text-lg font-bold text-foreground">바투</span>
             </Link>

@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { revalidateTag } from 'next/cache'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS, getCacheService } from '@/lib/di/container'
-import { SyncCampaignsUseCase, MetaConnectionError } from '@application/use-cases/campaign/SyncCampaignsUseCase'
+import {
+  SyncCampaignsUseCase,
+  MetaConnectionError,
+} from '@application/use-cases/campaign/SyncCampaignsUseCase'
 import { SyncAllInsightsUseCase } from '@application/use-cases/kpi/SyncAllInsightsUseCase'
 import { invalidateCache, getUserPattern } from '@/lib/cache/kpiCache'
 import { CacheKeys } from '@/infrastructure/cache/CacheKeys'
@@ -79,15 +82,9 @@ export async function POST(request: NextRequest) {
     console.error('Failed to sync:', error)
 
     if (error instanceof MetaConnectionError) {
-      return NextResponse.json(
-        { error: error.message },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: error.message }, { status: 400 })
     }
 
-    return NextResponse.json(
-      { error: '동기화에 실패했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '동기화에 실패했습니다' }, { status: 500 })
   }
 }

@@ -15,9 +15,7 @@ export const StarRating = memo(function StarRating({ rating }: StarRatingProps) 
       {stars.map((_, i) => (
         <Star
           key={i}
-          className={`h-4 w-4 ${
-            i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted'
-          }`}
+          className={`h-4 w-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-muted'}`}
           aria-hidden="true"
         />
       ))}

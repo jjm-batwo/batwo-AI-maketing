@@ -34,7 +34,7 @@ export default async function CampaignAnalyticsPage({ params }: CampaignAnalytic
   try {
     const res = await fetch(`${baseUrl}/api/campaigns/${id}`, {
       headers: { Cookie: cookieStore.toString() },
-      next: { revalidate: 60, tags: ['campaigns'] }
+      next: { revalidate: 60, tags: ['campaigns'] },
     })
 
     if (!res.ok) {
@@ -53,12 +53,8 @@ export default async function CampaignAnalyticsPage({ params }: CampaignAnalytic
   if (error || !campaign) {
     return (
       <div className="flex flex-col items-center justify-center py-16">
-        <h2 className="text-xl font-semibold text-red-600">
-          캠페인을 찾을 수 없습니다
-        </h2>
-        <p className="mt-2 text-muted-foreground">
-          {error || '캠페인을 불러오는데 실패했습니다'}
-        </p>
+        <h2 className="text-xl font-semibold text-red-600">캠페인을 찾을 수 없습니다</h2>
+        <p className="mt-2 text-muted-foreground">{error || '캠페인을 불러오는데 실패했습니다'}</p>
         <Button asChild className="mt-4">
           <Link href="/campaigns">
             <ArrowLeft className="mr-2 h-4 w-4" />

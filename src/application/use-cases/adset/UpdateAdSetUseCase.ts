@@ -21,9 +21,7 @@ export interface UpdateAdSetDTO {
 }
 
 export class UpdateAdSetUseCase {
-  constructor(
-    private readonly adSetRepository: IAdSetRepository
-  ) {}
+  constructor(private readonly adSetRepository: IAdSetRepository) {}
 
   async execute(dto: UpdateAdSetDTO): Promise<AdSetDTO> {
     const adSet = await this.adSetRepository.findById(dto.id)

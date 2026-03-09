@@ -3,7 +3,10 @@
  */
 
 export class TimeoutError extends Error {
-  constructor(message: string, public timeoutMs: number) {
+  constructor(
+    message: string,
+    public timeoutMs: number
+  ) {
     super(message)
     this.name = 'TimeoutError'
   }
@@ -35,10 +38,7 @@ export async function fetchWithTimeout(
   } catch (error) {
     clearTimeout(timeoutId)
     if (error instanceof Error && error.name === 'AbortError') {
-      throw new TimeoutError(
-        `Request to ${url} timed out after ${timeoutMs}ms`,
-        timeoutMs
-      )
+      throw new TimeoutError(`Request to ${url} timed out after ${timeoutMs}ms`, timeoutMs)
     }
     throw error
   }
@@ -62,10 +62,7 @@ export async function withTimeout<T>(
   const timeoutPromise = new Promise<never>((_, reject) => {
     timeoutId = setTimeout(() => {
       reject(
-        new TimeoutError(
-          errorMessage || `Operation timed out after ${timeoutMs}ms`,
-          timeoutMs
-        )
+        new TimeoutError(errorMessage || `Operation timed out after ${timeoutMs}ms`, timeoutMs)
       )
     }, timeoutMs)
   })

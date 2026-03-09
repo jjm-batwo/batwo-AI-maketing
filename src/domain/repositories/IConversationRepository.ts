@@ -15,19 +15,25 @@ export interface ConversationMessageData {
 export interface IConversationRepository {
   save(conversation: Conversation): Promise<Conversation>
   findById(id: string): Promise<Conversation | null>
-  findByUserId(userId: string, options?: {
-    includeArchived?: boolean
-    limit?: number
-    offset?: number
-  }): Promise<Conversation[]>
+  findByUserId(
+    userId: string,
+    options?: {
+      includeArchived?: boolean
+      limit?: number
+      offset?: number
+    }
+  ): Promise<Conversation[]>
   addMessage(
     conversationId: string,
     message: Omit<ConversationMessageData, 'id' | 'conversationId' | 'createdAt'>
   ): Promise<ConversationMessageData>
-  getMessages(conversationId: string, options?: {
-    limit?: number
-    offset?: number
-  }): Promise<ConversationMessageData[]>
+  getMessages(
+    conversationId: string,
+    options?: {
+      limit?: number
+      offset?: number
+    }
+  ): Promise<ConversationMessageData[]>
   archive(id: string): Promise<void>
   delete(id: string): Promise<void>
 }

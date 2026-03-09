@@ -80,7 +80,7 @@ export class UpdateCampaignUseCase {
       await this.metaAdsService.updateCampaign(dto.accessToken, campaign.metaCampaignId, {
         name: dto.name,
         dailyBudget: dto.dailyBudget,
-        endTime: dto.endDate === null ? null : (dto.endDate ? new Date(dto.endDate) : undefined),
+        endTime: dto.endDate === null ? null : dto.endDate ? new Date(dto.endDate) : undefined,
       })
     }
 

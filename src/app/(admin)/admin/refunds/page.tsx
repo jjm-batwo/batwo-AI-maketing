@@ -7,7 +7,14 @@ export const metadata: Metadata = {
   description: '환불 요청을 처리하세요',
 }
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Clock, AlertCircle } from 'lucide-react'
 import { format, formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -82,7 +89,9 @@ export default async function AdminRefundsPage() {
         <CardContent>
           <div className="text-2xl font-bold">{data.total}건</div>
           <p className="text-xs text-muted-foreground">
-            {data.total > 0 ? '처리가 필요한 환불 요청이 있습니다.' : '현재 대기 중인 환불 요청이 없습니다.'}
+            {data.total > 0
+              ? '처리가 필요한 환불 요청이 있습니다.'
+              : '현재 대기 중인 환불 요청이 없습니다.'}
           </p>
         </CardContent>
       </Card>
@@ -97,7 +106,9 @@ export default async function AdminRefundsPage() {
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <AlertCircle className="h-12 w-12 text-muted-foreground/50" />
               <p className="mt-4 text-lg font-medium">대기 중인 환불 요청이 없습니다</p>
-              <p className="text-sm text-muted-foreground">새로운 환불 요청이 들어오면 여기에 표시됩니다.</p>
+              <p className="text-sm text-muted-foreground">
+                새로운 환불 요청이 들어오면 여기에 표시됩니다.
+              </p>
             </div>
           ) : (
             <Table>
@@ -114,16 +125,39 @@ export default async function AdminRefundsPage() {
               <TableBody>
                 {data.data.map((request) => (
                   <TableRow key={request.id}>
-                    <TableCell><p className="font-mono text-sm">{request.id.slice(0, 8)}...</p></TableCell>
-                    <TableCell><p className="font-medium">{formatCurrency(request.amount, request.currency)}</p></TableCell>
-                    <TableCell><p className="max-w-[200px] truncate text-sm">{request.refundReason || '-'}</p></TableCell>
+                    <TableCell>
+                      <p className="font-mono text-sm">{request.id.slice(0, 8)}...</p>
+                    </TableCell>
+                    <TableCell>
+                      <p className="font-medium">
+                        {formatCurrency(request.amount, request.currency)}
+                      </p>
+                    </TableCell>
+                    <TableCell>
+                      <p className="max-w-[200px] truncate text-sm">
+                        {request.refundReason || '-'}
+                      </p>
+                    </TableCell>
                     <TableCell>
                       <div>
-                        <p className="text-sm">{format(new Date(request.createdAt), 'yyyy.MM.dd', { locale: ko })}</p>
-                        <p className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(request.createdAt), { addSuffix: true, locale: ko })}</p>
+                        <p className="text-sm">
+                          {format(new Date(request.createdAt), 'yyyy.MM.dd', { locale: ko })}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatDistanceToNow(new Date(request.createdAt), {
+                            addSuffix: true,
+                            locale: ko,
+                          })}
+                        </p>
                       </div>
                     </TableCell>
-                    <TableCell><p className="text-sm">{request.paidAt ? format(new Date(request.paidAt), 'yyyy.MM.dd', { locale: ko }) : '-'}</p></TableCell>
+                    <TableCell>
+                      <p className="text-sm">
+                        {request.paidAt
+                          ? format(new Date(request.paidAt), 'yyyy.MM.dd', { locale: ko })
+                          : '-'}
+                      </p>
+                    </TableCell>
                     <TableCell className="text-right">
                       <RefundActions request={request} />
                     </TableCell>

@@ -41,10 +41,14 @@ export async function withRetry<T>(fn: () => Promise<T>, options: RetryOptions =
         }, delay)
 
         if (signal) {
-          signal.addEventListener('abort', () => {
-            clearTimeout(timeout)
-            reject(new Error('Aborted'))
-          }, { once: true })
+          signal.addEventListener(
+            'abort',
+            () => {
+              clearTimeout(timeout)
+              reject(new Error('Aborted'))
+            },
+            { once: true }
+          )
         }
       })
     }

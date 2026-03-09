@@ -57,10 +57,7 @@ import {
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 
-const ROLE_CONFIG: Record<
-  TeamRole,
-  { icon: typeof Crown; label: string; color: string }
-> = {
+const ROLE_CONFIG: Record<TeamRole, { icon: typeof Crown; label: string; color: string }> = {
   OWNER: {
     icon: Crown,
     label: '소유자',

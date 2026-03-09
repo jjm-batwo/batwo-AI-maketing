@@ -111,9 +111,7 @@ export function mapAnomalyResponse(data: AnomalyAPIResponse): AnomalyInsightDTO[
 
     // Map severity
     const severity: 'low' | 'medium' | 'high' =
-      anomaly.severity === 'critical' ? 'high' :
-      anomaly.severity === 'warning' ? 'medium' :
-      'low'
+      anomaly.severity === 'critical' ? 'high' : anomaly.severity === 'warning' ? 'medium' : 'low'
 
     // Calculate confidence based on detection method and baseline
     const confidence = calculateConfidence(anomaly)
@@ -130,9 +128,10 @@ export function mapAnomalyResponse(data: AnomalyAPIResponse): AnomalyInsightDTO[
       message: anomaly.message,
       recommendation,
       confidence,
-      detectedAt: typeof anomaly.detectedAt === 'string'
-        ? anomaly.detectedAt
-        : anomaly.detectedAt.toISOString(),
+      detectedAt:
+        typeof anomaly.detectedAt === 'string'
+          ? anomaly.detectedAt
+          : anomaly.detectedAt.toISOString(),
     }
   })
 }
@@ -152,8 +151,8 @@ export function mapTrendResponse(data: TrendAPIResponse): TrendInsightDTO[] {
     const impactDirection = event.expectedImpact.trafficIncrease.includes('증가')
       ? 'up'
       : event.expectedImpact.trafficIncrease.includes('감소')
-      ? 'down'
-      : 'stable'
+        ? 'down'
+        : 'stable'
 
     // Parse expected change percentage
     const changeMatch = event.expectedImpact.trafficIncrease.match(/(\d+)/)

@@ -30,11 +30,11 @@ export interface TextAnalysisResult {
   powerWords: string[]
   /** Emotional tone indicators */
   emotionalTone: {
-    urgency: number    // 0-1
-    trust: number      // 0-1
+    urgency: number // 0-1
+    trust: number // 0-1
     excitement: number // 0-1
-    fear: number       // 0-1
-    curiosity: number  // 0-1
+    fear: number // 0-1
+    curiosity: number // 0-1
   }
   /** Reading time estimate (seconds) */
   estimatedReadingTime: number
@@ -44,48 +44,168 @@ export interface TextAnalysisResult {
 
 // Korean urgency words
 const URGENCY_WORDS = [
-  '지금', '즉시', '바로', '오늘', '한정', '마감', '서두르', '놓치', '급', '긴급',
-  '마지막', '단', '딱', '곧', '빨리', '속', '제한', '종료', '마감임박', '품절임박',
+  '지금',
+  '즉시',
+  '바로',
+  '오늘',
+  '한정',
+  '마감',
+  '서두르',
+  '놓치',
+  '급',
+  '긴급',
+  '마지막',
+  '단',
+  '딱',
+  '곧',
+  '빨리',
+  '속',
+  '제한',
+  '종료',
+  '마감임박',
+  '품절임박',
 ]
 
 // Korean trust words
 const TRUST_WORDS = [
-  '검증', '인증', '보증', '안전', '신뢰', '전문', '공식', '정품', '보장', '확인',
-  '증명', '권위', '추천', '인정', '실증', '과학적', '임상', '특허', '수상', '1위',
+  '검증',
+  '인증',
+  '보증',
+  '안전',
+  '신뢰',
+  '전문',
+  '공식',
+  '정품',
+  '보장',
+  '확인',
+  '증명',
+  '권위',
+  '추천',
+  '인정',
+  '실증',
+  '과학적',
+  '임상',
+  '특허',
+  '수상',
+  '1위',
 ]
 
 // Korean excitement words
 const EXCITEMENT_WORDS = [
-  '놀라운', '혁신', '최초', '특별', '독점', '파격', '대박', '초특가', '무료',
-  '혜택', '선물', '보너스', '새로운', '최신', '프리미엄', '럭셔리', '고급', 'VIP',
+  '놀라운',
+  '혁신',
+  '최초',
+  '특별',
+  '독점',
+  '파격',
+  '대박',
+  '초특가',
+  '무료',
+  '혜택',
+  '선물',
+  '보너스',
+  '새로운',
+  '최신',
+  '프리미엄',
+  '럭셔리',
+  '고급',
+  'VIP',
 ]
 
 // Korean fear/loss aversion words
 const FEAR_WORDS = [
-  '놓치', '잃', '위험', '후회', '실패', '손해', '피해', '문제', '걱정', '불안',
-  '경고', '주의', '조심', '안되', '못하', '없어', '사라', '소진', '매진',
+  '놓치',
+  '잃',
+  '위험',
+  '후회',
+  '실패',
+  '손해',
+  '피해',
+  '문제',
+  '걱정',
+  '불안',
+  '경고',
+  '주의',
+  '조심',
+  '안되',
+  '못하',
+  '없어',
+  '사라',
+  '소진',
+  '매진',
 ]
 
 // Korean curiosity words
 const CURIOSITY_WORDS = [
-  '비밀', '비결', '방법', '이유', '알고', '몰랐', '사실', '진짜', '실제',
-  '숨겨진', '알려지지', '처음', '새롭', '발견', '밝혀', '공개', '최초공개',
+  '비밀',
+  '비결',
+  '방법',
+  '이유',
+  '알고',
+  '몰랐',
+  '사실',
+  '진짜',
+  '실제',
+  '숨겨진',
+  '알려지지',
+  '처음',
+  '새롭',
+  '발견',
+  '밝혀',
+  '공개',
+  '최초공개',
 ]
 
 // Korean marketing power words (comprehensive list)
 const POWER_WORDS = [
   // Urgency
-  '지금', '즉시', '바로', '오늘만', '한정', '마감', '서두르세요', '놓치지',
+  '지금',
+  '즉시',
+  '바로',
+  '오늘만',
+  '한정',
+  '마감',
+  '서두르세요',
+  '놓치지',
   // Value
-  '무료', '할인', '특가', '세일', '혜택', '보너스', '선물', '적립',
+  '무료',
+  '할인',
+  '특가',
+  '세일',
+  '혜택',
+  '보너스',
+  '선물',
+  '적립',
   // Social proof
-  '베스트셀러', '인기', '추천', '후기', '리뷰', '만족', '재구매',
+  '베스트셀러',
+  '인기',
+  '추천',
+  '후기',
+  '리뷰',
+  '만족',
+  '재구매',
   // Exclusivity
-  '독점', '한정판', 'VIP', '프리미엄', '특별', '단독',
+  '독점',
+  '한정판',
+  'VIP',
+  '프리미엄',
+  '특별',
+  '단독',
   // Trust
-  '보장', '환불', '교환', '안심', '정품', '공식', '인증',
+  '보장',
+  '환불',
+  '교환',
+  '안심',
+  '정품',
+  '공식',
+  '인증',
   // Action
-  '시작', '도전', '변화', '성공', '달성', '완성',
+  '시작',
+  '도전',
+  '변화',
+  '성공',
+  '달성',
+  '완성',
 ]
 
 /**
@@ -128,11 +248,11 @@ export function countKoreanSyllables(text: string): number {
   for (const char of text) {
     const code = char.charCodeAt(0)
     // Hangul Syllables block: U+AC00 to U+D7AF
-    if (code >= 0xAC00 && code <= 0xD7AF) {
+    if (code >= 0xac00 && code <= 0xd7af) {
       count++
     }
     // Hangul Jamo: U+1100 to U+11FF (also count)
-    else if (code >= 0x1100 && code <= 0x11FF) {
+    else if (code >= 0x1100 && code <= 0x11ff) {
       count++
     }
   }
@@ -149,7 +269,26 @@ function basicMorphemeAnalysis(text: string): MorphemeResult[] {
 
   for (const word of words) {
     // Simple heuristic: Korean words often end with particles/endings
-    const particles = ['은', '는', '이', '가', '을', '를', '에', '에서', '로', '으로', '와', '과', '도', '만', '의', '께', '한테', '에게']
+    const particles = [
+      '은',
+      '는',
+      '이',
+      '가',
+      '을',
+      '를',
+      '에',
+      '에서',
+      '로',
+      '으로',
+      '와',
+      '과',
+      '도',
+      '만',
+      '의',
+      '께',
+      '한테',
+      '에게',
+    ]
 
     let matched = false
     for (const particle of particles) {
@@ -185,7 +324,7 @@ function basicMorphemeAnalysis(text: string): MorphemeResult[] {
         const isKorean = /[\uAC00-\uD7AF]/.test(word)
         results.push({
           surface: word,
-          pos: isKorean ? 'NNG' : (/^[0-9]+$/.test(word) ? 'SN' : 'SL'),
+          pos: isKorean ? 'NNG' : /^[0-9]+$/.test(word) ? 'SN' : 'SL',
         })
       }
     }

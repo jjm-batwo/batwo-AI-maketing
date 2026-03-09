@@ -41,7 +41,9 @@ export class CreativeAssetVO {
   }): void {
     if (props.type === AssetType.IMAGE) {
       if (!IMAGE_MIME_TYPES.includes(props.mimeType)) {
-        throw new Error(`허용되지 않는 이미지 형식입니다: ${props.mimeType}. jpeg, png, webp만 허용됩니다`)
+        throw new Error(
+          `허용되지 않는 이미지 형식입니다: ${props.mimeType}. jpeg, png, webp만 허용됩니다`
+        )
       }
       if (props.fileSize > MAX_IMAGE_SIZE) {
         throw new Error(`이미지 파일 크기는 30MB를 초과할 수 없습니다`)

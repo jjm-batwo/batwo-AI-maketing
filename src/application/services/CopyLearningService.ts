@@ -156,10 +156,7 @@ export class CopyLearningService {
   /**
    * 성과 데이터 분석 및 패턴 학습
    */
-  analyzePerformance(
-    performanceData: CopyPerformanceData[],
-    industry: Industry
-  ): LearningReport {
+  analyzePerformance(performanceData: CopyPerformanceData[], industry: Industry): LearningReport {
     const cacheKey = `${industry}_${performanceData.length}`
     const cached = this.patternCache.get(cacheKey)
     if (cached) return cached
@@ -311,7 +308,8 @@ export class CopyLearningService {
 
       patterns.push({
         season,
-        bestHooks: bestHooks.length > 0 ? bestHooks : this.getDefaultSeasonalPattern(season).bestHooks,
+        bestHooks:
+          bestHooks.length > 0 ? bestHooks : this.getDefaultSeasonalPattern(season).bestHooks,
         avgCTRMultiplier: overallCTR > 0 ? seasonCTR / overallCTR : 1,
         recommendedKeywords: this.extractTopKeywords(seasonData),
         avoidKeywords: [], // 추후 구현: 성과 낮은 키워드 분석
@@ -351,7 +349,9 @@ export class CopyLearningService {
   /**
    * 기본 시즌별 패턴
    */
-  private getDefaultSeasonalPattern(season: 'spring' | 'summer' | 'fall' | 'winter'): SeasonalPattern {
+  private getDefaultSeasonalPattern(
+    season: 'spring' | 'summer' | 'fall' | 'winter'
+  ): SeasonalPattern {
     const patterns: Record<typeof season, SeasonalPattern> = {
       spring: {
         season: 'spring',
@@ -423,7 +423,9 @@ export class CopyLearningService {
   /**
    * 글자 수 분석
    */
-  private analyzeCharacterCounts(data: CopyPerformanceData[]): LearnedPattern['optimalCharacterCounts'] {
+  private analyzeCharacterCounts(
+    data: CopyPerformanceData[]
+  ): LearnedPattern['optimalCharacterCounts'] {
     // 성과 상위 25% 데이터 분석
     const sortedByCTR = [...data].sort((a, b) => {
       const ctrA = a.impressions > 0 ? a.clicks / a.impressions : 0
@@ -446,12 +448,16 @@ export class CopyLearningService {
       primaryText: {
         min: Math.min(...primaryTextLengths),
         max: Math.max(...primaryTextLengths),
-        optimal: Math.round(primaryTextLengths.reduce((a, b) => a + b, 0) / primaryTextLengths.length),
+        optimal: Math.round(
+          primaryTextLengths.reduce((a, b) => a + b, 0) / primaryTextLengths.length
+        ),
       },
       description: {
         min: Math.min(...descriptionLengths),
         max: Math.max(...descriptionLengths),
-        optimal: Math.round(descriptionLengths.reduce((a, b) => a + b, 0) / descriptionLengths.length),
+        optimal: Math.round(
+          descriptionLengths.reduce((a, b) => a + b, 0) / descriptionLengths.length
+        ),
       },
     }
   }
@@ -666,10 +672,7 @@ export class CopyLearningService {
       specialPeriodName: eventNames[0],
       recommendedHooks: recommendedHooks.slice(0, 3),
       avoidHooks,
-      keywordSuggestions: [
-        ...benchmark.topKeywords,
-        ...eventNames,
-      ].slice(0, 10),
+      keywordSuggestions: [...benchmark.topKeywords, ...eventNames].slice(0, 10),
       characterGuidelines,
       timingAdvice,
       ctaRecommendations,

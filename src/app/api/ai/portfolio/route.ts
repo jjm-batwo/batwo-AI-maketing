@@ -12,7 +12,12 @@ import { PortfolioOptimizationService } from '@/application/services/PortfolioOp
 import { CampaignStatus } from '@domain/value-objects/CampaignStatus'
 import { portfolioSimulationSchema, validateBody } from '@/lib/validations'
 import type { CampaignObjective } from '@domain/value-objects/CampaignObjective'
-import { checkRateLimit, getClientIp, addRateLimitHeaders, rateLimitExceededResponse } from '@/lib/middleware/rateLimit'
+import {
+  checkRateLimit,
+  getClientIp,
+  addRateLimitHeaders,
+  rateLimitExceededResponse,
+} from '@/lib/middleware/rateLimit'
 
 /**
  * Campaign performance with marginal ROAS
@@ -35,10 +40,7 @@ interface CampaignPerformanceWithMarginal {
  * Create portfolio service with repository injection
  */
 function createPortfolioService(): PortfolioOptimizationService {
-  return new PortfolioOptimizationService(
-    getCampaignRepository(),
-    getKPIRepository()
-  )
+  return new PortfolioOptimizationService(getCampaignRepository(), getKPIRepository())
 }
 
 /**
@@ -212,8 +214,7 @@ async function getCampaignPerformanceWithMarginal(
         return spend > 0 ? revenue / spend : 0
       })
 
-      const avgROAS =
-        dailyROAS.reduce((sum, r) => sum + r, 0) / Math.max(dailyROAS.length, 1)
+      const avgROAS = dailyROAS.reduce((sum, r) => sum + r, 0) / Math.max(dailyROAS.length, 1)
       const variance =
         dailyROAS.reduce((sum, r) => sum + Math.pow(r - avgROAS, 2), 0) /
         Math.max(dailyROAS.length, 1)

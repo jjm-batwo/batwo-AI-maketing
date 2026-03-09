@@ -55,88 +55,91 @@ export class ContextDetectionEngine {
       context: 'creating_campaign',
       detect: (actions) => {
         const recentActions = actions.slice(-5)
-        const campaignActions = recentActions.filter(a =>
-          a.action.includes('campaign') || a.action.includes('create')
+        const campaignActions = recentActions.filter(
+          (a) => a.action.includes('campaign') || a.action.includes('create')
         )
 
         if (campaignActions.length >= 2) {
           return {
             match: true,
             confidence: Math.min(campaignActions.length / 5, 1),
-            triggers: campaignActions.map(a => a.action)
+            triggers: campaignActions.map((a) => a.action),
           }
         }
 
         return { match: false, confidence: 0, triggers: [] }
-      }
+      },
     },
     {
       context: 'analyzing_metrics',
       detect: (actions) => {
         const recentActions = actions.slice(-5)
-        const metricActions = recentActions.filter(a =>
-          a.action.includes('view_metrics') ||
-          a.action.includes('view_dashboard') ||
-          a.action.includes('analyze')
+        const metricActions = recentActions.filter(
+          (a) =>
+            a.action.includes('view_metrics') ||
+            a.action.includes('view_dashboard') ||
+            a.action.includes('analyze')
         )
 
         if (metricActions.length >= 2) {
           return {
             match: true,
             confidence: Math.min(metricActions.length / 4, 1),
-            triggers: metricActions.map(a => a.action)
+            triggers: metricActions.map((a) => a.action),
           }
         }
 
         return { match: false, confidence: 0, triggers: [] }
-      }
+      },
     },
     {
       context: 'writing_copy',
       detect: (actions) => {
         const recentActions = actions.slice(-5)
-        const writingActions = recentActions.filter(a =>
-          a.action.includes('edit_copy') ||
-          a.action.includes('write') ||
-          a.action.includes('input_text')
+        const writingActions = recentActions.filter(
+          (a) =>
+            a.action.includes('edit_copy') ||
+            a.action.includes('write') ||
+            a.action.includes('input_text')
         )
 
         // Check if user is struggling (multiple edits)
-        const repeatEdits = recentActions.filter(a =>
-          a.metadata.repeatCount && a.metadata.repeatCount > 2
+        const repeatEdits = recentActions.filter(
+          (a) => a.metadata.repeatCount && a.metadata.repeatCount > 2
         )
 
         if (writingActions.length >= 2 || repeatEdits.length > 0) {
           return {
             match: true,
             confidence: Math.min((writingActions.length + repeatEdits.length) / 5, 1),
-            triggers: [...writingActions, ...repeatEdits].map(a => a.action)
+            triggers: [...writingActions, ...repeatEdits].map((a) => a.action),
           }
         }
 
         return { match: false, confidence: 0, triggers: [] }
-      }
+      },
     },
     {
       context: 'reviewing_performance',
       detect: (actions) => {
         const recentActions = actions.slice(-5)
-        const reviewActions = recentActions.filter(a =>
-          a.action.includes('view_report') ||
-          a.action.includes('review') ||
-          a.action.includes('performance')
+        const reviewActions = recentActions.filter(
+          (a) =>
+            a.action.includes('view_report') ||
+            a.action.includes('review') ||
+            a.action.includes('performance')
         )
 
         if (reviewActions.length >= 2) {
           return {
             match: true,
             confidence: Math.min(reviewActions.length / 4, 1),
-            triggers: reviewActions.map(a => a.action)
+            triggers: reviewActions.map((a) => a.action),
           }
         }
 
         return { match: false, confidence: 0, triggers: [] }
-      }
+      },
     },
     {
       context: 'stuck_on_task',
@@ -145,15 +148,15 @@ export class ContextDetectionEngine {
 
         // Detect stuck: repeated actions, errors, long duration
         const repeatedActions = new Map<string, number>()
-        recentActions.forEach(a => {
+        recentActions.forEach((a) => {
           const count = repeatedActions.get(a.action) || 0
           repeatedActions.set(a.action, count + 1)
         })
 
-        const hasRepeats = Array.from(repeatedActions.values()).some(count => count >= 3)
-        const hasErrors = recentActions.some(a => a.metadata.errorOccurred)
-        const longDuration = recentActions.some(a =>
-          a.metadata.duration && a.metadata.duration > 60000 // 1 minute
+        const hasRepeats = Array.from(repeatedActions.values()).some((count) => count >= 3)
+        const hasErrors = recentActions.some((a) => a.metadata.errorOccurred)
+        const longDuration = recentActions.some(
+          (a) => a.metadata.duration && a.metadata.duration > 60000 // 1 minute
         )
 
         if (hasRepeats || hasErrors || longDuration) {
@@ -165,12 +168,12 @@ export class ContextDetectionEngine {
           return {
             match: true,
             confidence: 0.8,
-            triggers
+            triggers,
           }
         }
 
         return { match: false, confidence: 0, triggers: [] }
-      }
+      },
     },
     {
       context: 'idle',
@@ -187,13 +190,13 @@ export class ContextDetectionEngine {
           return {
             match: true,
             confidence: Math.min(timeSinceLastAction / 60000, 1), // Max at 1 minute
-            triggers: [`idle_${Math.floor(timeSinceLastAction / 1000)}s`]
+            triggers: [`idle_${Math.floor(timeSinceLastAction / 1000)}s`],
           }
         }
 
         return { match: false, confidence: 0, triggers: [] }
-      }
-    }
+      },
+    },
   ]
 
   /**
@@ -203,7 +206,7 @@ export class ContextDetectionEngine {
     const record: ActionRecord = {
       action,
       metadata,
-      timestamp: new Date()
+      timestamp: new Date(),
     }
 
     this.actions.push(record)
@@ -222,14 +225,14 @@ export class ContextDetectionEngine {
    */
   private updateContext(): void {
     const detections = this.contextRules
-      .map(rule => {
+      .map((rule) => {
         const result = rule.detect(this.actions)
         return {
           context: rule.context,
-          ...result
+          ...result,
         }
       })
-      .filter(d => d.match)
+      .filter((d) => d.match)
       .sort((a, b) => b.confidence - a.confidence)
 
     const topDetection = detections[0]
@@ -239,7 +242,7 @@ export class ContextDetectionEngine {
         type: topDetection.context,
         confidence: topDetection.confidence,
         triggers: topDetection.triggers,
-        timestamp: new Date()
+        timestamp: new Date(),
       }
 
       // Only notify if context changed or confidence increased significantly
@@ -282,7 +285,7 @@ export class ContextDetectionEngine {
    * Notify all listeners
    */
   private notifyListeners(context: ContextSignal): void {
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       try {
         listener(context)
       } catch (error) {
@@ -310,13 +313,13 @@ export class ContextDetectionEngine {
     if (context.confidence >= 0.6) {
       return {
         suggest: true,
-        reason: `User is ${context.type.replace(/_/g, ' ')} (confidence: ${context.confidence.toFixed(2)})`
+        reason: `User is ${context.type.replace(/_/g, ' ')} (confidence: ${context.confidence.toFixed(2)})`,
       }
     }
 
     return {
       suggest: false,
-      reason: `Confidence too low (${context.confidence.toFixed(2)})`
+      reason: `Confidence too low (${context.confidence.toFixed(2)})`,
     }
   }
 

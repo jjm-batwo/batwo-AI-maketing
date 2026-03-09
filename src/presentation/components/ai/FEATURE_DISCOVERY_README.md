@@ -19,7 +19,7 @@ const steps: TourStep[] = [
     description: '과학적 마케팅 원칙을 기반으로...',
     feature: 'AI 카피 생성',
     position: 'bottom', // 'top' | 'bottom' | 'left' | 'right'
-    offset: { x: 0, y: 0 } // Optional positioning adjustment
+    offset: { x: 0, y: 0 }, // Optional positioning adjustment
   },
   // ... more steps
 ]
@@ -29,9 +29,7 @@ function MyComponent() {
 
   return (
     <>
-      <button onClick={() => setIsTourOpen(true)}>
-        투어 시작
-      </button>
+      <button onClick={() => setIsTourOpen(true)}>투어 시작</button>
 
       <AIFeatureTour
         steps={steps}
@@ -48,6 +46,7 @@ function MyComponent() {
 ```
 
 **Features:**
+
 - Spotlight effect with backdrop blur
 - Step-by-step navigation
 - Progress indicators
@@ -99,6 +98,7 @@ function MyFeature() {
 ```
 
 **Features:**
+
 - Modal or inline variants
 - Feature capabilities list
 - Usage tips
@@ -106,6 +106,7 @@ function MyFeature() {
 - Optional tour CTA
 
 **Supported Features:**
+
 - `copy_generation` - AI 광고 카피 생성
 - `analysis` - AI 캠페인 분석
 - `chat` - AI 마케팅 어시스턴트
@@ -168,11 +169,13 @@ function MyFeature() {
 ```
 
 **Positions:**
+
 - `badge` - Compact "NEW" badge with pulsing animation
 - `inline` - Full-width message with gradient background
 - `tooltip` - Floating tooltip (requires manual positioning)
 
 **Features:**
+
 - Three visual styles
 - Auto-dismiss on click
 - Optional show-once behavior
@@ -190,16 +193,16 @@ import { useFeatureDiscovery, AIFeatureType } from '@/presentation/hooks/useFeat
 
 function MyComponent() {
   const {
-    isLoaded,                    // Boolean: localStorage loaded
-    discoveredFeatures,          // Object: all discovered features
-    markDiscovered,              // Function: mark feature as discovered
-    isDiscovered,                // Function: check if discovered
-    getViewCount,                // Function: get view count
-    getDiscoveryDate,            // Function: get discovery date
-    getUndiscoveredFeatures,     // Function: list undiscovered
-    resetAll,                    // Function: reset all (for testing)
-    getTotalDiscoveredCount,     // Function: count discovered
-    getDiscoveryProgress,        // Function: percentage discovered
+    isLoaded, // Boolean: localStorage loaded
+    discoveredFeatures, // Object: all discovered features
+    markDiscovered, // Function: mark feature as discovered
+    isDiscovered, // Function: check if discovered
+    getViewCount, // Function: get view count
+    getDiscoveryDate, // Function: get discovery date
+    getUndiscoveredFeatures, // Function: list undiscovered
+    resetAll, // Function: reset all (for testing)
+    getTotalDiscoveredCount, // Function: count discovered
+    getDiscoveryProgress, // Function: percentage discovered
   } = useFeatureDiscovery()
 
   // Wait for localStorage to load
@@ -231,10 +234,12 @@ function MyComponent() {
 ```
 
 **Storage:**
+
 - Persists to `localStorage` under key `batwo_discovered_features`
 - Format: `{ [feature]: { discoveredAt: ISO8601, viewCount: number } }`
 
 **AI Feature Types:**
+
 ```typescript
 type AIFeatureType =
   | 'copy_generation'
@@ -254,6 +259,7 @@ type AIFeatureType =
 ## Design Philosophy
 
 ### Progressive Disclosure
+
 Don't overwhelm users with all features at once. Introduce them gradually:
 
 1. **First Visit**: Show 1-2 core features
@@ -262,23 +268,27 @@ Don't overwhelm users with all features at once. Introduce them gradually:
 4. **Ongoing**: Ambient hints for undiscovered features
 
 ### Natural Discovery
+
 Let users discover features through normal usage:
 
 ```tsx
 // BAD: Force tutorial on every page
-<ForcedTutorial />
+;<ForcedTutorial />
 
 // GOOD: Show hint when relevant
-{isOnCampaignPage && !isDiscovered('analysis') && (
-  <FeatureDiscoveryHint
-    feature="analysis"
-    hint="AI가 이 캠페인을 분석할 수 있습니다"
-    position="inline"
-  />
-)}
+{
+  isOnCampaignPage && !isDiscovered('analysis') && (
+    <FeatureDiscoveryHint
+      feature="analysis"
+      hint="AI가 이 캠페인을 분석할 수 있습니다"
+      position="inline"
+    />
+  )
+}
 ```
 
 ### Respectful Interruption
+
 Use the right level of intrusiveness:
 
 - **Badge**: Passive, doesn't block workflow
@@ -291,6 +301,7 @@ Use the right level of intrusiveness:
 ## Best Practices
 
 ### 1. Wait for First Success
+
 ```tsx
 // Wait until user creates their first campaign
 useEffect(() => {
@@ -301,17 +312,21 @@ useEffect(() => {
 ```
 
 ### 2. Context-Aware Hints
+
 ```tsx
 // Show copy generation hint on campaign creation page
-{isCreatingCampaign && !isDiscovered('copy_generation') && (
-  <FeatureDiscoveryHint
-    feature="copy_generation"
-    hint="AI가 광고 카피를 자동으로 생성할 수 있습니다"
-  />
-)}
+{
+  isCreatingCampaign && !isDiscovered('copy_generation') && (
+    <FeatureDiscoveryHint
+      feature="copy_generation"
+      hint="AI가 광고 카피를 자동으로 생성할 수 있습니다"
+    />
+  )
+}
 ```
 
 ### 3. Respect User Preferences
+
 ```tsx
 // Don't show if user dismissed "다시 보지 않기"
 if (!isDiscovered('feature') && showAgain) {
@@ -320,6 +335,7 @@ if (!isDiscovered('feature') && showAgain) {
 ```
 
 ### 4. Group Related Features
+
 ```tsx
 // After discovering basic analysis, hint at advanced features
 useEffect(() => {
@@ -330,11 +346,10 @@ useEffect(() => {
 ```
 
 ### 5. Use Data Attributes for Tours
+
 ```tsx
 // Make tour targets explicit
-<button data-tour="copy-generation">
-  AI 카피 생성
-</button>
+<button data-tour="copy-generation">AI 카피 생성</button>
 ```
 
 ---
@@ -394,17 +409,10 @@ function CampaignPage() {
       )}
 
       {/* Feature UI with tour target */}
-      <button
-        data-tour="copy-generation"
-        onClick={handleCopyButtonClick}
-      >
+      <button data-tour="copy-generation" onClick={handleCopyButtonClick}>
         AI 카피 생성
         {!isDiscovered('copy_generation') && (
-          <FeatureDiscoveryHint
-            feature="copy_generation"
-            hint="NEW"
-            position="badge"
-          />
+          <FeatureDiscoveryHint feature="copy_generation" hint="NEW" position="badge" />
         )}
       </button>
 

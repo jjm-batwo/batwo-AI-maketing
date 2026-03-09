@@ -60,14 +60,21 @@ export function AdSetList({ campaignId }: AdSetListProps) {
           {adSets.map((adSet) => {
             const status = statusLabels[adSet.status] || statusLabels.ACTIVE
             return (
-              <div key={adSet.id} className="flex items-center justify-between py-3 first:pt-0 last:pb-0">
+              <div
+                key={adSet.id}
+                className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
+              >
                 <div>
                   <p className="font-medium text-sm">{adSet.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    {adSet.dailyBudget ? `일일 ${adSet.dailyBudget.toLocaleString()}원` : '예산 미설정'}
+                    {adSet.dailyBudget
+                      ? `일일 ${adSet.dailyBudget.toLocaleString()}원`
+                      : '예산 미설정'}
                     {' · '}
                     {adSet.startDate ? new Date(adSet.startDate).toLocaleDateString('ko-KR') : ''}
-                    {adSet.endDate ? ` ~ ${new Date(adSet.endDate).toLocaleDateString('ko-KR')}` : ''}
+                    {adSet.endDate
+                      ? ` ~ ${new Date(adSet.endDate).toLocaleDateString('ko-KR')}`
+                      : ''}
                   </p>
                 </div>
                 <Badge className={status.className}>{status.label}</Badge>

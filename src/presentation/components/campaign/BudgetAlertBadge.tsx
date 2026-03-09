@@ -2,12 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { AlertTriangle, AlertCircle, CheckCircle, Bell, BellOff } from 'lucide-react'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 export type BudgetStatus = 'normal' | 'warning' | 'exceeded'
 
@@ -69,9 +64,7 @@ export function BudgetAlertBadge({
     >
       <Icon className={cn('h-3.5 w-3.5', config.iconColor)} />
       <span>{spendPercent}%</span>
-      {!isAlertEnabled && (
-        <BellOff className="h-3 w-3 text-gray-400" />
-      )}
+      {!isAlertEnabled && <BellOff className="h-3 w-3 text-gray-400" />}
     </div>
   )
 
@@ -87,9 +80,7 @@ export function BudgetAlertBadge({
           <div className="space-y-1 text-sm">
             <p className="font-medium">{config.description}</p>
             <p>예산 소진: {spendPercent}%</p>
-            {thresholdPercent && (
-              <p>알림 임계값: {thresholdPercent}%</p>
-            )}
+            {thresholdPercent && <p>알림 임계값: {thresholdPercent}%</p>}
             <p className="flex items-center gap-1">
               {isAlertEnabled ? (
                 <>
@@ -149,9 +140,7 @@ export function BudgetProgressBar({
       <div className="mt-1 flex justify-between text-xs text-muted-foreground">
         <span>0%</span>
         {thresholdPercent && thresholdPercent < 100 && (
-          <span style={{ marginLeft: `${thresholdPercent - 10}%` }}>
-            {thresholdPercent}%
-          </span>
+          <span style={{ marginLeft: `${thresholdPercent - 10}%` }}>{thresholdPercent}%</span>
         )}
         <span>100%</span>
       </div>

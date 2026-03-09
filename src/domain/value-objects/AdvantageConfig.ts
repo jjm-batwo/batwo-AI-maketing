@@ -1,7 +1,7 @@
 // Advantage+ 캠페인 설정 값 객체
 export interface AdvantageConfigProps {
-  advantageBudget: boolean    // 캠페인 레벨 예산 자동 최적화
-  advantageAudience: boolean  // AI 타겟팅 자동화
+  advantageBudget: boolean // 캠페인 레벨 예산 자동 최적화
+  advantageAudience: boolean // AI 타겟팅 자동화
   advantagePlacement: boolean // 자동 배치
 }
 
@@ -9,14 +9,14 @@ export class AdvantageConfig {
   private constructor(
     private readonly _advantageBudget: boolean,
     private readonly _advantageAudience: boolean,
-    private readonly _advantagePlacement: boolean,
+    private readonly _advantagePlacement: boolean
   ) {}
 
   static create(props: AdvantageConfigProps): AdvantageConfig {
     return new AdvantageConfig(
       props.advantageBudget,
       props.advantageAudience,
-      props.advantagePlacement,
+      props.advantagePlacement
     )
   }
 

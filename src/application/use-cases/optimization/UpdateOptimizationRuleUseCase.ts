@@ -33,14 +33,13 @@ export class UnauthorizedOptimizationRuleError extends Error {
 }
 
 export class UpdateOptimizationRuleUseCase {
-  constructor(
-    private readonly ruleRepository: IOptimizationRuleRepository
-  ) {}
+  constructor(private readonly ruleRepository: IOptimizationRuleRepository) {}
 
   async execute(dto: UpdateOptimizationRuleDTO): Promise<OptimizationRuleResponseDTO> {
     const rule = await this.ruleRepository.findById(dto.ruleId)
     if (!rule) throw new OptimizationRuleNotFoundError(dto.ruleId)
-    if (rule.userId !== dto.userId) throw new UnauthorizedOptimizationRuleError(dto.ruleId, dto.userId)
+    if (rule.userId !== dto.userId)
+      throw new UnauthorizedOptimizationRuleError(dto.ruleId, dto.userId)
 
     // 변경 가능 필드 순서대로 적용
     let updated: OptimizationRule = rule
@@ -64,14 +63,14 @@ export class UpdateOptimizationRuleUseCase {
     }
 
     if (dto.conditions !== undefined) {
-      const conditions = dto.conditions.map(c =>
+      const conditions = dto.conditions.map((c) =>
         RuleCondition.create(c.metric as ConditionMetric, c.operator as ConditionOperator, c.value)
       )
       updated = updated.updateConditions(conditions)
     }
 
     if (dto.actions !== undefined) {
-      const actions = dto.actions.map(a =>
+      const actions = dto.actions.map((a) =>
         RuleAction.create(a.type as ActionType, {
           percentage: a.params?.percentage,
           notifyChannel: a.params?.notifyChannel as NotifyChannel | undefined,

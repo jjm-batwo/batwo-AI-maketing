@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidateTag } from 'next/cache'
-import {
-  requireAdmin,
-  handleAdminAuth,
-} from '@/infrastructure/auth/adminMiddleware'
+import { requireAdmin, handleAdminAuth } from '@/infrastructure/auth/adminMiddleware'
 import { getInvoiceRepository } from '@/lib/di/container'
 import { InvoiceStatus } from '@domain/value-objects/InvoiceStatus'
 
@@ -12,10 +9,7 @@ interface Params {
 }
 
 // 환불 승인
-export async function POST(
-  request: NextRequest,
-  context: { params: Promise<Params> }
-) {
+export async function POST(request: NextRequest, context: { params: Promise<Params> }) {
   const authResult = await requireAdmin()
   const authError = handleAdminAuth(authResult)
   if (authError) return authError
@@ -27,10 +21,7 @@ export async function POST(
 
     const invoice = await invoiceRepository.findById(id)
     if (!invoice) {
-      return NextResponse.json(
-        { error: 'Invoice not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Invoice not found' }, { status: 404 })
     }
 
     if (invoice.status !== InvoiceStatus.REFUND_REQUESTED) {
@@ -41,9 +32,7 @@ export async function POST(
     }
 
     // 환불 금액 결정 (부분 환불 지원)
-    const refundAmountValue = body.refundAmount
-      ? body.refundAmount
-      : invoice.amount.amount
+    const refundAmountValue = body.refundAmount ? body.refundAmount : invoice.amount.amount
 
     // 환불 처리 (Invoice는 불변 객체이므로 새 인스턴스 반환)
     const processedInvoice = invoice.processRefund(refundAmountValue)
@@ -61,18 +50,12 @@ export async function POST(
     })
   } catch (error) {
     console.error('Admin refund approve error:', error)
-    return NextResponse.json(
-      { error: 'Failed to approve refund' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to approve refund' }, { status: 500 })
   }
 }
 
 // 환불 거절
-export async function DELETE(
-  request: NextRequest,
-  context: { params: Promise<Params> }
-) {
+export async function DELETE(request: NextRequest, context: { params: Promise<Params> }) {
   const authResult = await requireAdmin()
   const authError = handleAdminAuth(authResult)
   if (authError) return authError
@@ -84,10 +67,7 @@ export async function DELETE(
 
     const invoice = await invoiceRepository.findById(id)
     if (!invoice) {
-      return NextResponse.json(
-        { error: 'Invoice not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Invoice not found' }, { status: 404 })
     }
 
     if (invoice.status !== InvoiceStatus.REFUND_REQUESTED) {
@@ -111,9 +91,6 @@ export async function DELETE(
     })
   } catch (error) {
     console.error('Admin refund reject error:', error)
-    return NextResponse.json(
-      { error: 'Failed to reject refund' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to reject refund' }, { status: 500 })
   }
 }

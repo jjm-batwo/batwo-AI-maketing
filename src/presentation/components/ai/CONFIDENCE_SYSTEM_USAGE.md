@@ -23,12 +23,14 @@ import { ConfidenceIndicator } from '@/presentation/components/ai'
 ```
 
 **Props:**
+
 - `confidence: number` - 0-100 범위의 신뢰도 점수
 - `showPercentage?: boolean` - 퍼센트 표시 여부 (기본값: false)
 - `size?: 'sm' | 'md' | 'lg'` - 크기 (기본값: 'md')
 - `className?: string` - 추가 CSS 클래스
 
 **Color Coding:**
+
 - 녹색 (≥85%): 높은 신뢰도
 - 노랑 (60-84%): 보통 신뢰도
 - 빨강 (<60%): 낮은 신뢰도
@@ -74,12 +76,14 @@ const sentences: SentenceConfidence[] = [
 ```
 
 **Props:**
+
 - `sentences: SentenceConfidence[]` - 문장 배열
 - `showConfidence?: boolean` - 신뢰도 하이라이트 표시 여부 (기본값: true)
 - `onSentenceClick?: (sentence: SentenceConfidence) => void` - 문장 클릭 핸들러
 - `className?: string` - 추가 CSS 클래스
 
 **SentenceConfidence Type:**
+
 ```tsx
 interface SentenceConfidence {
   text: string
@@ -141,6 +145,7 @@ const evidence: Evidence[] = [
 ```
 
 **Props:**
+
 - `title?: string` - 패널 제목 (기본값: 'AI 근거 및 추론 과정')
 - `evidence: Evidence[]` - 근거 배열
 - `isOpen: boolean` - 패널 표시 여부
@@ -148,6 +153,7 @@ const evidence: Evidence[] = [
 - `className?: string` - 추가 CSS 클래스
 
 **Evidence Type:**
+
 ```tsx
 interface Evidence {
   type: 'data' | 'research' | 'pattern' | 'inference'
@@ -158,6 +164,7 @@ interface Evidence {
 ```
 
 **Evidence Types:**
+
 - `data` - 데이터: 실제 데이터 기반 근거
 - `research` - 연구: 학술 연구 및 논문 기반
 - `pattern` - 패턴: 관찰된 패턴 분석
@@ -178,7 +185,7 @@ import {
   ConfidenceHighlight,
   EvidencePanel,
   type SentenceConfidence,
-  type Evidence
+  type Evidence,
 } from '@/presentation/components/ai'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -192,13 +199,13 @@ export function AIResponseWithConfidence() {
     {
       text: '이 광고 카피는 전환율을 35% 향상시킬 것으로 예상됩니다.',
       confidence: 92,
-      evidence: '유사한 1,234개 캠페인 데이터 기반'
+      evidence: '유사한 1,234개 캠페인 데이터 기반',
     },
     {
       text: '타겟 고객층의 평균 클릭률은 2.8%입니다.',
       confidence: 88,
-      evidence: '최근 3개월 데이터 분석'
-    }
+      evidence: '최근 3개월 데이터 분석',
+    },
   ]
 
   const evidence: Evidence[] = [
@@ -206,14 +213,14 @@ export function AIResponseWithConfidence() {
       type: 'data',
       source: '2024년 1분기 Meta Ads 캠페인 데이터',
       content: '유사한 타겟팅으로 진행한 1,234개 캠페인 분석 결과...',
-      confidence: 95
+      confidence: 95,
     },
     {
       type: 'research',
       source: 'Journal of Marketing (2023)',
       content: '감성적 소구가 35% 높은 전환율 기록...',
-      confidence: 88
-    }
+      confidence: 88,
+    },
   ]
 
   return (
@@ -221,23 +228,13 @@ export function AIResponseWithConfidence() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>AI 분석 결과</CardTitle>
-          <ConfidenceIndicator
-            confidence={overallConfidence}
-            showPercentage
-          />
+          <ConfidenceIndicator confidence={overallConfidence} showPercentage />
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <ConfidenceHighlight
-          sentences={sentences}
-          onSentenceClick={() => setIsPanelOpen(true)}
-        />
+        <ConfidenceHighlight sentences={sentences} onSentenceClick={() => setIsPanelOpen(true)} />
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setIsPanelOpen(true)}
-        >
+        <Button variant="outline" size="sm" onClick={() => setIsPanelOpen(true)}>
           상세 근거 보기
         </Button>
 
@@ -287,21 +284,25 @@ export function AIResponseWithConfidence() {
 ## Use Cases
 
 ### 1. AI 카피 생성
+
 ```tsx
 <ConfidenceIndicator confidence={aiCopyConfidence} showPercentage />
 ```
 
 ### 2. 마케팅 분석 리포트
+
 ```tsx
 <ConfidenceHighlight sentences={analysisResults} />
 ```
 
 ### 3. 캠페인 추천
+
 ```tsx
 <EvidencePanel evidence={recommendationEvidence} isOpen={showDetails} />
 ```
 
 ### 4. A/B 테스트 제안
+
 ```tsx
 <div className="space-y-2">
   <ConfidenceIndicator confidence={abTestConfidence} />

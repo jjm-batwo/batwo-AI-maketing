@@ -31,7 +31,7 @@ export function AISuggestionBubble({
   onAccept,
   onDismiss,
   position = 'bottom-right',
-  className
+  className,
 }: AISuggestionBubbleProps) {
   const [isVisible, setIsVisible] = useState(false)
   const [isExiting, setIsExiting] = useState(false)
@@ -59,7 +59,7 @@ export function AISuggestionBubble({
   const positionClasses = {
     'bottom-right': 'fixed bottom-6 right-6 z-50 max-w-sm',
     inline: 'relative w-full',
-    tooltip: 'absolute bottom-full left-0 mb-2 z-50 max-w-xs'
+    tooltip: 'absolute bottom-full left-0 mb-2 z-50 max-w-xs',
   }
 
   return (
@@ -67,9 +67,7 @@ export function AISuggestionBubble({
       className={cn(
         positionClasses[position],
         'transition-all duration-300 ease-out',
-        isVisible && !isExiting
-          ? 'opacity-100 translate-y-0'
-          : 'opacity-0 translate-y-4',
+        isVisible && !isExiting ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4',
         className
       )}
     >
@@ -89,11 +87,10 @@ export function AISuggestionBubble({
               <p className="text-xs font-medium text-gray-900 dark:text-gray-100">
                 AI가 도움을 드릴까요?
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                {context}
-              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{context}</p>
             </div>
-            <button type="button"
+            <button
+              type="button"
               onClick={handleDismiss}
               className="flex-shrink-0 w-6 h-6 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 flex items-center justify-center transition-colors"
               aria-label="닫기"
@@ -104,20 +101,20 @@ export function AISuggestionBubble({
 
           {/* Content */}
           <div className="px-4 py-3">
-            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-              {suggestion}
-            </p>
+            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{suggestion}</p>
           </div>
 
           {/* Actions */}
           <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800/50 flex gap-2">
-            <button type="button"
+            <button
+              type="button"
               onClick={handleAccept}
               className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-sm font-medium rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-sm"
             >
               도움받기
             </button>
-            <button type="button"
+            <button
+              type="button"
               onClick={handleDismiss}
               className="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
@@ -144,7 +141,7 @@ export function CompactAISuggestion({
   suggestion,
   onAccept,
   onDismiss,
-  className
+  className,
 }: CompactAISuggestionProps) {
   return (
     <div
@@ -154,17 +151,17 @@ export function CompactAISuggestion({
       )}
     >
       <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-      <p className="flex-1 text-sm text-gray-700 dark:text-gray-300">
-        {suggestion}
-      </p>
+      <p className="flex-1 text-sm text-gray-700 dark:text-gray-300">{suggestion}</p>
       <div className="flex gap-2 flex-shrink-0">
-        <button type="button"
+        <button
+          type="button"
           onClick={onAccept}
           className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded transition-colors"
         >
           도움받기
         </button>
-        <button type="button"
+        <button
+          type="button"
           onClick={onDismiss}
           className="w-6 h-6 rounded hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors"
           aria-label="닫기"
@@ -190,7 +187,7 @@ export function TooltipAISuggestion({
   suggestion,
   onAccept,
   onDismiss,
-  className
+  className,
 }: TooltipAISuggestionProps) {
   return (
     <div
@@ -204,7 +201,8 @@ export function TooltipAISuggestion({
         <p className="flex-1 text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
           {suggestion}
         </p>
-        <button type="button"
+        <button
+          type="button"
           onClick={onDismiss}
           className="w-4 h-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors flex-shrink-0"
           aria-label="닫기"
@@ -212,7 +210,8 @@ export function TooltipAISuggestion({
           <X className="w-3 h-3 text-gray-500 dark:text-gray-400" />
         </button>
       </div>
-      <button type="button"
+      <button
+        type="button"
         onClick={onAccept}
         className="w-full px-3 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xs font-medium rounded transition-all"
       >
@@ -234,7 +233,7 @@ export interface UseSuggestionStateProps {
 export function useSuggestionState({
   onAccept,
   onDismiss,
-  autoHideDelay = 0
+  autoHideDelay = 0,
 }: UseSuggestionStateProps) {
   const [isVisible, setIsVisible] = useState(true)
 
@@ -262,6 +261,6 @@ export function useSuggestionState({
   return {
     isVisible,
     handleAccept,
-    handleDismiss
+    handleDismiss,
   }
 }

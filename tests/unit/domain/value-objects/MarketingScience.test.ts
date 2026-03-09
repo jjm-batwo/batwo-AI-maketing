@@ -130,6 +130,9 @@ describe('MarketingScience', () => {
         meta_best_practices: 0,
         color_psychology: 0,
         copywriting_psychology: 0,
+        creative_diversity: 0,
+        campaign_structure: 0,
+        tracking_health: 0,
       }
 
       // neuromarketing: 80 * 0.7 = 56
@@ -451,6 +454,9 @@ describe('MarketingScience', () => {
         meta_best_practices: 0,
         color_psychology: 0,
         copywriting_psychology: 0,
+        creative_diversity: 0,
+        campaign_structure: 0,
+        tracking_health: 0,
       }
 
       const composite = buildCompositeScore(domainScores, [], customWeights)
@@ -462,8 +468,8 @@ describe('MarketingScience', () => {
   })
 
   describe('Constants', () => {
-    it('ALL_KNOWLEDGE_DOMAINS에 6개 도메인이 있어야 한다', () => {
-      expect(ALL_KNOWLEDGE_DOMAINS).toHaveLength(6)
+    it('ALL_KNOWLEDGE_DOMAINS에 9개 도메인이 있어야 한다', () => {
+      expect(ALL_KNOWLEDGE_DOMAINS).toHaveLength(9)
       expect(ALL_KNOWLEDGE_DOMAINS).toEqual([
         'neuromarketing',
         'marketing_psychology',
@@ -471,6 +477,9 @@ describe('MarketingScience', () => {
         'meta_best_practices',
         'color_psychology',
         'copywriting_psychology',
+        'creative_diversity',
+        'campaign_structure',
+        'tracking_health',
       ])
     })
 
@@ -481,7 +490,7 @@ describe('MarketingScience', () => {
 
     it('DEFAULT_DOMAIN_WEIGHTS가 모든 도메인을 포함해야 한다', () => {
       const domains = Object.keys(DEFAULT_DOMAIN_WEIGHTS)
-      expect(domains).toHaveLength(6)
+      expect(domains).toHaveLength(9)
       ALL_KNOWLEDGE_DOMAINS.forEach(domain => {
         expect(DEFAULT_DOMAIN_WEIGHTS[domain]).toBeDefined()
         expect(DEFAULT_DOMAIN_WEIGHTS[domain]).toBeGreaterThan(0)

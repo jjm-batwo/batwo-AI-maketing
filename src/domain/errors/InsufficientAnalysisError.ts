@@ -8,7 +8,7 @@ export class InsufficientAnalysisError extends Error {
   ) {
     super(
       `Insufficient domain analysis: ${analyzedCount}/${requiredCount} domains succeeded. ` +
-      `Failed: ${failedDomains.join(', ')}`
+        `Failed: ${failedDomains.join(', ')}`
     )
     this.name = 'InsufficientAnalysisError'
   }

@@ -78,15 +78,11 @@ export function HowItWorksSection({ id = 'how-it-works' }: HowItWorksSectionProp
                   <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3">
                     {step.title}
                   </h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {step.description}
-                  </p>
+                  <p className="text-muted-foreground leading-relaxed">{step.description}</p>
                 </div>
 
                 {/* Preview */}
-                <div className="flex-1 w-full min-w-0">
-                  {step.preview}
-                </div>
+                <div className="flex-1 w-full min-w-0">{step.preview}</div>
               </div>
             )
           })}
@@ -130,15 +126,16 @@ function StepOnePreview() {
           { label: '타겟 고객', placeholder: '예) 20-35세 여성' },
         ].map((field) => (
           <div key={field.label}>
-            <label className="text-xs text-gray-600 font-medium mb-1 block">
-              {field.label}
-            </label>
+            <label className="text-xs text-gray-600 font-medium mb-1 block">{field.label}</label>
             <div className="h-9 bg-gray-50 border border-gray-200 rounded-lg flex items-center px-3">
               <span className="text-sm text-gray-400">{field.placeholder}</span>
             </div>
           </div>
         ))}
-        <button type="button" className="w-full h-10 mt-2 bg-primary text-primary-foreground text-sm font-semibold rounded-lg hover:bg-primary/90 transition-colors">
+        <button
+          type="button"
+          className="w-full h-10 mt-2 bg-primary text-primary-foreground text-sm font-semibold rounded-lg hover:bg-primary/90 transition-colors"
+        >
           AI 캠페인 생성하기 →
         </button>
       </div>
@@ -151,7 +148,9 @@ function StepTwoPreview() {
     <PreviewShell>
       <div className="space-y-3">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold">AI 생성 중</p>
+          <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold">
+            AI 생성 중
+          </p>
           <span className="text-xs text-primary font-semibold">85%</span>
         </div>
         <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -170,8 +169,19 @@ function StepTwoPreview() {
               }`}
             >
               {item.done ? (
-                <svg className="w-3 h-3 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                <svg
+                  className="w-3 h-3 text-green-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
               ) : (
                 <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />

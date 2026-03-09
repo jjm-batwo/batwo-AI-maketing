@@ -93,8 +93,8 @@ export function BudgetSimulator({
                   comparison.budgetChange > 0
                     ? 'text-green-600 dark:text-green-400'
                     : comparison.budgetChange < 0
-                    ? 'text-red-600 dark:text-red-400'
-                    : 'text-muted-foreground'
+                      ? 'text-red-600 dark:text-red-400'
+                      : 'text-muted-foreground'
                 }`}
               >
                 {comparison.budgetChange > 0 ? '+' : ''}

@@ -89,12 +89,12 @@ version: '3'
 services:
   tempo:
     image: grafana/tempo:latest
-    command: [ "-config.file=/etc/tempo.yaml" ]
+    command: ['-config.file=/etc/tempo.yaml']
     volumes:
       - ./tempo.yaml:/etc/tempo.yaml
     ports:
-      - "4318:4318"   # OTLP HTTP
-      - "3200:3200"   # Tempo UI
+      - '4318:4318' # OTLP HTTP
+      - '3200:3200' # Tempo UI
 ```
 
 ## 성능 영향

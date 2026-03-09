@@ -62,7 +62,10 @@ export function GuideRecommendationCard({
         <div className="rounded-lg border border-border overflow-hidden">
           {[
             { label: '경험 수준', value: LEVEL_LABELS[experienceLevel] || experienceLevel },
-            { label: '캠페인 모드', value: MODE_LABELS[formData.campaignMode] || formData.campaignMode },
+            {
+              label: '캠페인 모드',
+              value: MODE_LABELS[formData.campaignMode] || formData.campaignMode,
+            },
             { label: '목표', value: OBJECTIVE_LABELS[formData.objective] || formData.objective },
             { label: '일일 예산', value: `₩${formData.dailyBudget.toLocaleString()}` },
           ].map((item, index, arr) => (
@@ -87,7 +90,8 @@ export function GuideRecommendationCard({
 
       {/* 버튼 */}
       <div className="flex gap-2 px-4 py-3 border-t border-green-200 dark:border-green-800">
-        <button type="button"
+        <button
+          type="button"
           data-testid="guide-accept-button"
           onClick={onAccept}
           className={cn(
@@ -96,10 +100,10 @@ export function GuideRecommendationCard({
             'transition-colors'
           )}
         >
-          <ArrowRight className="h-4 w-4" />
-          이 설정으로 시작하기
+          <ArrowRight className="h-4 w-4" />이 설정으로 시작하기
         </button>
-        <button type="button"
+        <button
+          type="button"
           data-testid="guide-manual-button"
           onClick={onManual}
           className={cn(

@@ -26,19 +26,12 @@ export interface IMetaPixelService {
   /**
    * Get pixel from an ad account
    */
-  getAdAccountPixel(
-    accessToken: string,
-    adAccountId: string
-  ): Promise<MetaPixelData | null>
+  getAdAccountPixel(accessToken: string, adAccountId: string): Promise<MetaPixelData | null>
 
   /**
    * Create a new pixel (requires business ID)
    */
-  createPixel(
-    accessToken: string,
-    businessId: string,
-    name: string
-  ): Promise<MetaPixelData>
+  createPixel(accessToken: string, businessId: string, name: string): Promise<MetaPixelData>
 
   /**
    * Get pixel details by ID
@@ -48,8 +41,5 @@ export interface IMetaPixelService {
   /**
    * Get pixel statistics (match rate)
    */
-  getPixelStats(
-    accessToken: string,
-    pixelId: string
-  ): Promise<MetaPixelStats | null>
+  getPixelStats(accessToken: string, pixelId: string): Promise<MetaPixelStats | null>
 }

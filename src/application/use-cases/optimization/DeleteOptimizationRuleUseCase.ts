@@ -15,14 +15,13 @@ export interface DeleteOptimizationRuleDTO {
 }
 
 export class DeleteOptimizationRuleUseCase {
-  constructor(
-    private readonly ruleRepository: IOptimizationRuleRepository
-  ) {}
+  constructor(private readonly ruleRepository: IOptimizationRuleRepository) {}
 
   async execute(dto: DeleteOptimizationRuleDTO): Promise<void> {
     const rule = await this.ruleRepository.findById(dto.ruleId)
     if (!rule) throw new OptimizationRuleNotFoundError(dto.ruleId)
-    if (rule.userId !== dto.userId) throw new UnauthorizedOptimizationRuleError(dto.ruleId, dto.userId)
+    if (rule.userId !== dto.userId)
+      throw new UnauthorizedOptimizationRuleError(dto.ruleId, dto.userId)
 
     await this.ruleRepository.delete(dto.ruleId)
   }

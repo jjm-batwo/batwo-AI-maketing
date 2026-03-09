@@ -20,15 +20,8 @@ const isProduction = process.env.NODE_ENV === 'production'
 // =============================================================================
 
 export const ALLOWED_ORIGINS = isProduction
-  ? [
-      'https://batwo.ai',
-      'https://www.batwo.ai',
-      'https://staging.batwo.ai',
-    ]
-  : [
-      'http://localhost:3000',
-      'http://127.0.0.1:3000',
-    ]
+  ? ['https://batwo.ai', 'https://www.batwo.ai', 'https://staging.batwo.ai']
+  : ['http://localhost:3000', 'http://127.0.0.1:3000']
 
 // =============================================================================
 // Content Security Policy
@@ -78,11 +71,7 @@ const CSP_DIRECTIVES = {
   ],
 
   // 폰트 소스
-  'font-src': [
-    "'self'",
-    'data:',
-    'https://fonts.gstatic.com',
-  ],
+  'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],
 
   // API 연결
   'connect-src': [
@@ -116,10 +105,7 @@ const CSP_DIRECTIVES = {
   ],
 
   // 미디어 소스
-  'media-src': [
-    "'self'",
-    'blob:',
-  ],
+  'media-src': ["'self'", 'blob:'],
 
   // Object 소스 (플러그인 등)
   'object-src': ["'none'"],
@@ -242,12 +228,7 @@ export const RATE_LIMIT_CONFIG = {
 export const CORS_CONFIG = {
   allowedOrigins: ALLOWED_ORIGINS,
   allowedMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',
-    'Accept',
-  ],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   exposedHeaders: ['X-RateLimit-Limit', 'X-RateLimit-Remaining'],
   maxAge: 86400, // 24 hours
   credentials: true,

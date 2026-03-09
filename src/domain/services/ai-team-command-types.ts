@@ -35,27 +35,27 @@ export enum CommandType {
 /**
  * 보고서 유형
  */
-export type ReportType = 'daily' | 'weekly' | 'monthly';
+export type ReportType = 'daily' | 'weekly' | 'monthly'
 
 /**
  * 명령어 파라미터
  */
 export interface CommandParameters {
-  reportType?: ReportType;
-  issueNumber?: number;
-  description?: string;
+  reportType?: ReportType
+  issueNumber?: number
+  description?: string
 }
 
 /**
  * 명령어 처리 결과
  */
 export interface CommandResult {
-  success: boolean;
-  commandType: CommandType;
-  parameters?: CommandParameters;
-  message?: string;
-  error?: string;
-  data?: unknown;
+  success: boolean
+  commandType: CommandType
+  parameters?: CommandParameters
+  message?: string
+  error?: string
+  data?: unknown
 }
 
 /**
@@ -63,100 +63,100 @@ export interface CommandResult {
  */
 export interface SystemStatus {
   build: {
-    status: 'success' | 'failure' | 'pending';
-    lastBuildTime?: Date;
-  };
+    status: 'success' | 'failure' | 'pending'
+    lastBuildTime?: Date
+  }
   tests: {
-    passed: number;
-    total: number;
-    coverage: number;
-  };
+    passed: number
+    total: number
+    coverage: number
+  }
   security: {
-    vulnerabilities: number;
-    lastScanTime?: Date;
-  };
+    vulnerabilities: number
+    lastScanTime?: Date
+  }
   architecture: {
-    compliant: boolean;
-    violations: string[];
-  };
+    compliant: boolean
+    violations: string[]
+  }
   activeTasks: Array<{
-    id: number;
-    title: string;
-    progress: number;
-    stage: 'RED' | 'GREEN' | 'REFACTOR' | 'COMPLETE';
-  }>;
-  lastDeployment?: Date;
+    id: number
+    title: string
+    progress: number
+    stage: 'RED' | 'GREEN' | 'REFACTOR' | 'COMPLETE'
+  }>
+  lastDeployment?: Date
 }
 
 /**
  * 기능 요청 정보
  */
 export interface FeatureRequest {
-  title: string;
-  description: string;
+  title: string
+  description: string
   architectureLayers: {
-    domain: string[];
-    application: string[];
-    infrastructure: string[];
-    presentation: string[];
-  };
+    domain: string[]
+    application: string[]
+    infrastructure: string[]
+    presentation: string[]
+  }
   tddPlan: {
-    redTests: string[];
-    greenImplementation: string[];
-    refactorTasks: string[];
-  };
-  estimatedHours: number;
-  planFilePath: string;
+    redTests: string[]
+    greenImplementation: string[]
+    refactorTasks: string[]
+  }
+  estimatedHours: number
+  planFilePath: string
 }
 
 /**
  * 버그 리포트 정보
  */
 export interface BugReport {
-  title: string;
-  description: string;
-  severity: 'critical' | 'high' | 'medium' | 'low';
-  stepsToReproduce: string[];
-  expectedBehavior: string;
-  actualBehavior: string;
+  title: string
+  description: string
+  severity: 'critical' | 'high' | 'medium' | 'low'
+  stepsToReproduce: string[]
+  expectedBehavior: string
+  actualBehavior: string
 }
 
 /**
  * 품질 게이트 결과
  */
 export interface QualityGateResult {
-  passed: boolean;
+  passed: boolean
   gates: Array<{
-    name: string;
-    passed: boolean;
-    details: string;
-    duration: number;
-  }>;
-  totalDuration: number;
+    name: string
+    passed: boolean
+    details: string
+    duration: number
+  }>
+  totalDuration: number
 }
 
 /**
  * 보고서 데이터
  */
 export interface ReportData {
-  type: ReportType;
-  generatedAt: Date;
+  type: ReportType
+  generatedAt: Date
   period: {
-    start: Date;
-    end: Date;
-  };
-  summary: string;
+    start: Date
+    end: Date
+  }
+  summary: string
   changes: Array<{
-    type: 'feature' | 'bugfix' | 'improvement';
-    title: string;
-    status: 'completed' | 'in-progress' | 'pending';
-  }>;
+    type: 'feature' | 'bugfix' | 'improvement'
+    title: string
+    status: 'completed' | 'in-progress' | 'pending'
+  }>
   metrics: {
-    testsAdded: number;
-    coverage: number;
-    tddCompliance: number;
-    architectureCompliance: number;
-  };
+    testsAdded: number
+    coverage: number
+    tddCompliance: number
+    architectureCompliance: number
+  }
 }
 
 /**
@@ -172,95 +172,95 @@ export type AgentType =
   | 'documentation'
   | 'devops'
   | 'planner'
-  | 'system';
+  | 'system'
 
 /**
  * TDD 워크플로우 단계
  */
-export type TDDStage = 'RED' | 'GREEN' | 'REFACTOR' | 'COMPLETE';
+export type TDDStage = 'RED' | 'GREEN' | 'REFACTOR' | 'COMPLETE'
 
 /**
  * TDD 워크플로우 정보
  */
 export interface TDDWorkflow {
-  stages: TDDStage[];
-  currentStage: TDDStage;
-  testFilePath?: string;
-  implementationFilePath?: string;
+  stages: TDDStage[]
+  currentStage: TDDStage
+  testFilePath?: string
+  implementationFilePath?: string
 }
 
 /**
  * 명령어 라우팅 결과
  */
 export interface CommandRoutingResult {
-  success: boolean;
-  agentType?: AgentType;
-  action?: string;
-  parameters?: CommandParameters;
-  requiresApproval?: boolean;
-  approvalReason?: string;
-  requiresFeaturePlanner?: boolean;
-  tddWorkflow?: TDDWorkflow;
-  architectureValidation?: boolean;
-  error?: string;
+  success: boolean
+  agentType?: AgentType
+  action?: string
+  parameters?: CommandParameters
+  requiresApproval?: boolean
+  approvalReason?: string
+  requiresFeaturePlanner?: boolean
+  tddWorkflow?: TDDWorkflow
+  architectureValidation?: boolean
+  error?: string
 }
 
 /**
  * TDD 워크플로우 전체 상태
  */
 export interface TDDWorkflowState {
-  id: string;
-  featureDescription: string;
-  currentStage: TDDStage;
-  stages: TDDStage[];
-  progress: number;
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  featureDescription: string
+  currentStage: TDDStage
+  stages: TDDStage[]
+  progress: number
+  createdAt: Date
+  updatedAt: Date
 }
 
 /**
  * TDD 단계 전환 결과
  */
 export interface TDDStageTransitionResult {
-  success: boolean;
-  workflow?: TDDWorkflowState;
-  error?: string;
+  success: boolean
+  workflow?: TDDWorkflowState
+  error?: string
 }
 
 /**
  * TDD 단계 가이드
  */
 export interface TDDStageGuide {
-  stage: TDDStage;
-  instructions: string;
-  checklist: string[];
+  stage: TDDStage
+  instructions: string
+  checklist: string[]
 }
 
 /**
  * TDD 단계 검증 입력
  */
 export interface TDDValidationInput {
-  testsExist: boolean;
-  testsPassing: boolean;
-  coveragePercent?: number;
+  testsExist: boolean
+  testsPassing: boolean
+  coveragePercent?: number
 }
 
 /**
  * TDD 단계 검증 결과
  */
 export interface TDDValidationResult {
-  canAdvance: boolean;
-  warning?: string;
-  errors?: string[];
+  canAdvance: boolean
+  warning?: string
+  errors?: string[]
 }
 
 /**
  * TDD 워크플로우 이력 항목
  */
 export interface TDDHistoryEntry {
-  stage: TDDStage;
-  timestamp: Date;
-  notes?: string;
+  stage: TDDStage
+  timestamp: Date
+  notes?: string
 }
 
 // ============================================
@@ -272,11 +272,11 @@ export interface TDDHistoryEntry {
  */
 export interface ConfidenceThresholds {
   /** >= 0.8: 즉시 실행 */
-  high: number;
+  high: number
   /** 0.5 ~ 0.8: 확인 후 실행 */
-  medium: number;
+  medium: number
   /** < 0.5: 명확화 요청 */
-  low: number;
+  low: number
 }
 
 /**
@@ -286,24 +286,24 @@ export const DEFAULT_CONFIDENCE_THRESHOLDS: ConfidenceThresholds = {
   high: 0.8,
   medium: 0.5,
   low: 0.3,
-};
+}
 
 /**
  * 의도 패턴 정의
  */
 export interface IntentPattern {
   /** 대상 명령어 타입 */
-  commandType: CommandType;
+  commandType: CommandType
   /** 주요 키워드 (높은 가중치) */
-  keywords: string[];
+  keywords: string[]
   /** 구문 패턴 (가장 높은 가중치) */
-  phrases: string[];
+  phrases: string[]
   /** 제외 키워드 (점수 감소) */
-  negativeKeywords?: string[];
+  negativeKeywords?: string[]
   /** 맥락 단서 (낮은 가중치) */
-  contextClues?: string[];
+  contextClues?: string[]
   /** 기본 가중치 */
-  weight: number;
+  weight: number
 }
 
 /**
@@ -311,26 +311,26 @@ export interface IntentPattern {
  */
 export interface IntentClassificationResult {
   /** 분류된 명령어 타입 */
-  commandType: CommandType;
+  commandType: CommandType
   /** 신뢰도 점수 (0.0 ~ 1.0) */
-  confidence: number;
+  confidence: number
   /** 매칭된 패턴 목록 */
-  matchedPatterns: string[];
+  matchedPatterns: string[]
   /** 사용자 확인 필요 여부 */
-  requiresConfirmation: boolean;
+  requiresConfirmation: boolean
   /** 확인 질문 (낮은 신뢰도 시) */
-  suggestedQuestion?: string;
+  suggestedQuestion?: string
   /** 원본 입력 */
-  originalInput: string;
+  originalInput: string
   /** 추출된 파라미터 */
-  parameters?: CommandParameters;
+  parameters?: CommandParameters
 }
 
 /**
  * 점수 계산 결과 (내부용)
  */
 export interface IntentScoreResult {
-  commandType: CommandType;
-  score: number;
-  matchedPatterns: string[];
+  commandType: CommandType
+  score: number
+  matchedPatterns: string[]
 }

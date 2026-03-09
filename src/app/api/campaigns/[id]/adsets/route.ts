@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { PrismaAdSetRepository } from '@infrastructure/database/repositories/PrismaAdSetRepository'
 import { PrismaCampaignRepository } from '@infrastructure/database/repositories/PrismaCampaignRepository'
-import { CreateAdSetUseCase, CampaignNotFoundError } from '@application/use-cases/adset/CreateAdSetUseCase'
+import {
+  CreateAdSetUseCase,
+  CampaignNotFoundError,
+} from '@application/use-cases/adset/CreateAdSetUseCase'
 import { ListAdSetsUseCase } from '@application/use-cases/adset/ListAdSetsUseCase'
 import { prisma } from '@/lib/prisma'
 import { revalidateTag } from 'next/cache'
@@ -10,10 +13,7 @@ import { revalidateTag } from 'next/cache'
 const campaignRepository = new PrismaCampaignRepository(prisma)
 const adSetRepository = new PrismaAdSetRepository(prisma)
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
@@ -23,10 +23,7 @@ export async function GET(
     // 캠페인 소유권 확인
     const campaign = await campaignRepository.findById(id)
     if (!campaign || campaign.userId !== user.id) {
-      return NextResponse.json(
-        { error: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     const listAdSets = new ListAdSetsUseCase(adSetRepository)
@@ -35,17 +32,11 @@ export async function GET(
     return NextResponse.json({ adSets })
   } catch (error) {
     console.error('Failed to fetch adsets:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch adsets' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch adsets' }, { status: 500 })
   }
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
@@ -55,10 +46,7 @@ export async function POST(
     // 캠페인 소유권 확인
     const campaign = await campaignRepository.findById(id)
     if (!campaign || campaign.userId !== user.id) {
-      return NextResponse.json(
-        { error: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     const body = await request.json()
@@ -85,16 +73,10 @@ export async function POST(
     return NextResponse.json(result, { status: 201 })
   } catch (error) {
     if (error instanceof CampaignNotFoundError) {
-      return NextResponse.json(
-        { error: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     console.error('Failed to create adset:', error)
-    return NextResponse.json(
-      { error: 'Failed to create adset' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to create adset' }, { status: 500 })
   }
 }

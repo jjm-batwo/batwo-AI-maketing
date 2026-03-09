@@ -22,19 +22,13 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     const abTest = await abTestRepository.findById(id)
     if (!abTest) {
-      return NextResponse.json(
-        { message: 'A/B 테스트를 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: 'A/B 테스트를 찾을 수 없습니다' }, { status: 404 })
     }
 
     // Verify ownership
     const campaign = await campaignRepository.findById(abTest.campaignId)
     if (!campaign || campaign.userId !== user.id) {
-      return NextResponse.json(
-        { message: 'A/B 테스트를 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: 'A/B 테스트를 찾을 수 없습니다' }, { status: 404 })
     }
 
     const statisticalResult = abTest.calculateStatisticalSignificance()
@@ -82,10 +76,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     })
   } catch (error) {
     console.error('Failed to fetch A/B test:', error)
-    return NextResponse.json(
-      { message: 'A/B 테스트를 조회하는데 실패했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'A/B 테스트를 조회하는데 실패했습니다' }, { status: 500 })
   }
 }
 
@@ -111,19 +102,13 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     const abTest = await abTestRepository.findById(id)
     if (!abTest) {
-      return NextResponse.json(
-        { message: 'A/B 테스트를 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: 'A/B 테스트를 찾을 수 없습니다' }, { status: 404 })
     }
 
     // Verify ownership
     const campaign = await campaignRepository.findById(abTest.campaignId)
     if (!campaign || campaign.userId !== user.id) {
-      return NextResponse.json(
-        { message: 'A/B 테스트를 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: 'A/B 테스트를 찾을 수 없습니다' }, { status: 404 })
     }
 
     let updated = abTest
@@ -141,10 +126,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
           updated = abTest.complete()
           break
         default:
-          return NextResponse.json(
-            { message: '유효하지 않은 액션입니다' },
-            { status: 400 }
-          )
+          return NextResponse.json({ message: '유효하지 않은 액션입니다' }, { status: 400 })
       }
     }
 
@@ -192,19 +174,13 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     const abTest = await abTestRepository.findById(id)
     if (!abTest) {
-      return NextResponse.json(
-        { message: 'A/B 테스트를 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: 'A/B 테스트를 찾을 수 없습니다' }, { status: 404 })
     }
 
     // Verify ownership
     const campaign = await campaignRepository.findById(abTest.campaignId)
     if (!campaign || campaign.userId !== user.id) {
-      return NextResponse.json(
-        { message: 'A/B 테스트를 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: 'A/B 테스트를 찾을 수 없습니다' }, { status: 404 })
     }
 
     // Only allow deletion of DRAFT or COMPLETED tests
@@ -222,9 +198,6 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     })
   } catch (error) {
     console.error('Failed to delete A/B test:', error)
-    return NextResponse.json(
-      { message: 'A/B 테스트 삭제에 실패했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'A/B 테스트 삭제에 실패했습니다' }, { status: 500 })
   }
 }

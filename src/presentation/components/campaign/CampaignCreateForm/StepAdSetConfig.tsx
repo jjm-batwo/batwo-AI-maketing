@@ -2,13 +2,24 @@
 
 import { useFormContext } from 'react-hook-form'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { Monitor, LayoutGrid, Lightbulb } from 'lucide-react'
 import type { ExtendedCampaignFormData } from './types'
 
 const placementOptions = [
-  { value: 'AUTOMATIC', label: '자동 배치', icon: Monitor, description: 'Meta AI가 최적의 배치를 선택합니다' },
+  {
+    value: 'AUTOMATIC',
+    label: '자동 배치',
+    icon: Monitor,
+    description: 'Meta AI가 최적의 배치를 선택합니다',
+  },
   { value: 'MANUAL', label: '수동 배치', icon: LayoutGrid, description: '직접 배치를 선택합니다' },
 ] as const
 
@@ -59,7 +70,14 @@ export function StepAdSetConfig() {
                 )}
               >
                 <Icon className={cn('h-6 w-6', isSelected ? 'text-primary' : 'text-gray-400')} />
-                <span className={cn('text-sm font-semibold', isSelected ? 'text-primary' : 'text-gray-700')}>{option.label}</span>
+                <span
+                  className={cn(
+                    'text-sm font-semibold',
+                    isSelected ? 'text-primary' : 'text-gray-700'
+                  )}
+                >
+                  {option.label}
+                </span>
                 <span className="text-xs text-muted-foreground">{option.description}</span>
               </button>
             )
@@ -72,14 +90,21 @@ export function StepAdSetConfig() {
         <Label>최적화 목표</Label>
         <Select
           value={watch('adSetConfig.optimizationGoal')}
-          onValueChange={(value) => setValue('adSetConfig.optimizationGoal', value as ExtendedCampaignFormData['adSetConfig']['optimizationGoal'])}
+          onValueChange={(value) =>
+            setValue(
+              'adSetConfig.optimizationGoal',
+              value as ExtendedCampaignFormData['adSetConfig']['optimizationGoal']
+            )
+          }
         >
           <SelectTrigger>
             <SelectValue placeholder="최적화 목표를 선택하세요" />
           </SelectTrigger>
           <SelectContent>
             {optimizationGoalOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -90,14 +115,21 @@ export function StepAdSetConfig() {
         <Label>입찰 전략</Label>
         <Select
           value={watch('adSetConfig.bidStrategy')}
-          onValueChange={(value) => setValue('adSetConfig.bidStrategy', value as ExtendedCampaignFormData['adSetConfig']['bidStrategy'])}
+          onValueChange={(value) =>
+            setValue(
+              'adSetConfig.bidStrategy',
+              value as ExtendedCampaignFormData['adSetConfig']['bidStrategy']
+            )
+          }
         >
           <SelectTrigger>
             <SelectValue placeholder="입찰 전략을 선택하세요" />
           </SelectTrigger>
           <SelectContent>
             {bidStrategyOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -108,14 +140,21 @@ export function StepAdSetConfig() {
         <Label>과금 이벤트</Label>
         <Select
           value={watch('adSetConfig.billingEvent')}
-          onValueChange={(value) => setValue('adSetConfig.billingEvent', value as ExtendedCampaignFormData['adSetConfig']['billingEvent'])}
+          onValueChange={(value) =>
+            setValue(
+              'adSetConfig.billingEvent',
+              value as ExtendedCampaignFormData['adSetConfig']['billingEvent']
+            )
+          }
         >
           <SelectTrigger>
             <SelectValue placeholder="과금 이벤트를 선택하세요" />
           </SelectTrigger>
           <SelectContent>
             {billingEventOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -124,8 +163,9 @@ export function StepAdSetConfig() {
       {/* 안내 */}
       <div className="rounded-lg bg-blue-50 p-4">
         <p className="text-sm text-blue-800">
-          <Lightbulb className="h-4 w-4 inline text-amber-500" /> <strong>팁</strong>: 처음이라면 <strong>자동 배치</strong> + <strong>최저 비용(자동)</strong>을 추천합니다.
-          Meta AI가 최적의 조합을 찾아줍니다.
+          <Lightbulb className="h-4 w-4 inline text-amber-500" /> <strong>팁</strong>: 처음이라면{' '}
+          <strong>자동 배치</strong> + <strong>최저 비용(자동)</strong>을 추천합니다. Meta AI가
+          최적의 조합을 찾아줍니다.
         </p>
       </div>
     </div>

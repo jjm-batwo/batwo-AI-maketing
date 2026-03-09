@@ -26,10 +26,7 @@ export async function POST(request: NextRequest) {
 
   const validation = auditAnalyzeSchema.safeParse(body)
   if (!validation.success) {
-    return NextResponse.json(
-      { message: validation.error.issues[0].message },
-      { status: 400 }
-    )
+    return NextResponse.json({ message: validation.error.issues[0].message }, { status: 400 })
   }
 
   const { sessionId, adAccountId } = validation.data
@@ -45,7 +42,7 @@ export async function POST(request: NextRequest) {
 
   try {
     // 선택된 광고 계정의 currency 추출 (없으면 기본값 'KRW')
-    const selectedAccount = session.adAccounts.find(a => a.id === adAccountId)
+    const selectedAccount = session.adAccounts.find((a) => a.id === adAccountId)
     const currency = selectedAccount?.currency ?? 'KRW'
 
     // UseCase 실행
@@ -63,9 +60,6 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     // getAndDelete에서 이미 세션 삭제됨 — 별도 delete 불필요
     console.error('[AUDIT ANALYZE] 감사 실행 오류:', err instanceof Error ? err.message : err)
-    return NextResponse.json(
-      { message: '감사 분석 중 오류가 발생했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: '감사 분석 중 오류가 발생했습니다' }, { status: 500 })
   }
 }

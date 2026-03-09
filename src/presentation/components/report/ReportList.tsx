@@ -68,9 +68,7 @@ export function ReportList({ reports, isLoading = false, onDownload }: ReportLis
                   <FileText className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-medium">
-                    {typeLabels[report.type]}
-                  </h3>
+                  <h3 className="font-medium">{typeLabels[report.type]}</h3>
                   <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="h-4 w-4" />
                     <span>
@@ -84,19 +82,12 @@ export function ReportList({ reports, isLoading = false, onDownload }: ReportLis
 
               <div className="flex items-center gap-3">
                 <span
-                  className={cn(
-                    'rounded-full px-2 py-1 text-xs font-medium',
-                    status.className
-                  )}
+                  className={cn('rounded-full px-2 py-1 text-xs font-medium', status.className)}
                 >
                   {status.label}
                 </span>
                 {report.status === 'GENERATED' && onDownload && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onDownload(report.id)}
-                  >
+                  <Button variant="outline" size="sm" onClick={() => onDownload(report.id)}>
                     <Download className="mr-1 h-4 w-4" />
                     다운로드
                   </Button>

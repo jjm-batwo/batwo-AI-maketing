@@ -21,9 +21,9 @@ const taskId = service.queueTask({
   context: {
     campaignId: '123',
     metric: 'ctr',
-    changePercent: -25.3
+    changePercent: -25.3,
   },
-  priority: 'high'
+  priority: 'high',
 })
 
 // Subscribe to results
@@ -242,12 +242,12 @@ No configuration required. It's a stateless service that processes tasks on-dema
 
 ### useProactiveInsights Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `maxVisible` | number | 3 | Maximum insights shown at once |
-| `minConfidence` | number | 70 | Minimum confidence (0-100) to show |
-| `autoDismissDelay` | number | 30000 | Auto-dismiss after N milliseconds |
-| `enableAutoDismiss` | boolean | true | Enable auto-dismiss |
+| Option              | Type    | Default | Description                        |
+| ------------------- | ------- | ------- | ---------------------------------- |
+| `maxVisible`        | number  | 3       | Maximum insights shown at once     |
+| `minConfidence`     | number  | 70      | Minimum confidence (0-100) to show |
+| `autoDismissDelay`  | number  | 30000   | Auto-dismiss after N milliseconds  |
+| `enableAutoDismiss` | boolean | true    | Enable auto-dismiss                |
 
 ### AmbientInsightToast Features
 
@@ -261,12 +261,12 @@ No configuration required. It's a stateless service that processes tasks on-dema
 
 ## Task Types
 
-| Type | Icon | Use Case | Example |
-|------|------|----------|---------|
-| `anomaly` | Alert Triangle | Significant metric changes | CTR drops 25% |
-| `trend` | Trending Up | Pattern detection | Upward CVR trend |
-| `opportunity` | Target | Growth opportunities | Underbudgeted high performer |
-| `recommendation` | Lightbulb | AI suggestions | Pause low ROAS campaign |
+| Type             | Icon           | Use Case                   | Example                      |
+| ---------------- | -------------- | -------------------------- | ---------------------------- |
+| `anomaly`        | Alert Triangle | Significant metric changes | CTR drops 25%                |
+| `trend`          | Trending Up    | Pattern detection          | Upward CVR trend             |
+| `opportunity`    | Target         | Growth opportunities       | Underbudgeted high performer |
+| `recommendation` | Lightbulb      | AI suggestions             | Pause low ROAS campaign      |
 
 ## Priority Levels
 

@@ -5,11 +5,7 @@ import type {
   StreamChunk,
   AdCopyStreamChunk,
 } from '@application/ports/IStreamingAIService'
-import type {
-  AIConfig,
-  GenerateAdCopyInput,
-  AdCopyVariant,
-} from '@application/ports/IAIService'
+import type { AIConfig, GenerateAdCopyInput, AdCopyVariant } from '@application/ports/IAIService'
 import {
   buildAdCopyPrompt,
   AD_COPY_SYSTEM_PROMPT,
@@ -75,8 +71,7 @@ export class StreamingAIService implements IStreamingAIService {
         progress: 100,
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error occurred'
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
 
       yield {
         type: 'error',
@@ -88,9 +83,7 @@ export class StreamingAIService implements IStreamingAIService {
   /**
    * 광고 카피 스트리밍 생성
    */
-  async *streamAdCopy(
-    input: GenerateAdCopyInput
-  ): AsyncIterable<AdCopyStreamChunk> {
+  async *streamAdCopy(input: GenerateAdCopyInput): AsyncIterable<AdCopyStreamChunk> {
     try {
       // 초기 진행 상태
       yield {
@@ -166,8 +159,7 @@ export class StreamingAIService implements IStreamingAIService {
         stage: 'complete',
       }
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error occurred'
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
 
       yield {
         type: 'error',

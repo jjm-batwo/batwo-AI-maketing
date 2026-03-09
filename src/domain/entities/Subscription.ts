@@ -1,8 +1,5 @@
 import { SubscriptionPlan } from '../value-objects/SubscriptionPlan'
-import {
-  SubscriptionStatus,
-  canTransitionSubscription,
-} from '../value-objects/SubscriptionStatus'
+import { SubscriptionStatus, canTransitionSubscription } from '../value-objects/SubscriptionStatus'
 import { InvalidSubscriptionError } from '../errors/InvalidSubscriptionError'
 
 export interface CreateSubscriptionProps {

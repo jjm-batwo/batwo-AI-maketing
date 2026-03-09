@@ -223,14 +223,19 @@ export default function BillingPage() {
                       </p>
                     )}
                   </div>
-                  <Badge variant={planInfo.plan === SubscriptionPlan.FREE ? 'secondary' : 'default'}>
+                  <Badge
+                    variant={planInfo.plan === SubscriptionPlan.FREE ? 'secondary' : 'default'}
+                  >
                     {planInfo.trial?.isActive ? '체험중' : '활성'}
                   </Badge>
                 </div>
 
                 {planInfo.trial?.isActive && (
                   <div className="text-sm text-muted-foreground">
-                    <p>체험 기간: {formatDate(planInfo.trial.startDate)} ~ {formatDate(planInfo.trial.endDate)}</p>
+                    <p>
+                      체험 기간: {formatDate(planInfo.trial.startDate)} ~{' '}
+                      {formatDate(planInfo.trial.endDate)}
+                    </p>
                   </div>
                 )}
 
@@ -250,8 +255,8 @@ export default function BillingPage() {
                         <AlertDialogHeader>
                           <AlertDialogTitle>구독을 취소하시겠습니까?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            구독을 취소하면 다음 결제일부터 요금이 청구되지 않습니다.
-                            현재 결제 기간이 끝날 때까지는 서비스를 계속 이용하실 수 있습니다.
+                            구독을 취소하면 다음 결제일부터 요금이 청구되지 않습니다. 현재 결제
+                            기간이 끝날 때까지는 서비스를 계속 이용하실 수 있습니다.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -300,15 +305,13 @@ export default function BillingPage() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>결제 수단을 삭제하시겠습니까?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        결제 수단을 삭제하면 자동 결제가 중단됩니다.
-                        구독을 계속 이용하려면 새로운 결제 수단을 등록해야 합니다.
+                        결제 수단을 삭제하면 자동 결제가 중단됩니다. 구독을 계속 이용하려면 새로운
+                        결제 수단을 등록해야 합니다.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>취소</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleDeleteCard}>
-                        삭제
-                      </AlertDialogAction>
+                      <AlertDialogAction onClick={handleDeleteCard}>삭제</AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>
@@ -352,17 +355,13 @@ export default function BillingPage() {
                       <TableCell className="text-right font-medium">
                         {formatAmount(payment.amount)}
                       </TableCell>
-                      <TableCell className="text-right">
-                        {getStatusBadge(payment.status)}
-                      </TableCell>
+                      <TableCell className="text-right">{getStatusBadge(payment.status)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                결제 내역이 없습니다
-              </div>
+              <div className="text-center py-8 text-muted-foreground">결제 내역이 없습니다</div>
             )}
           </CardContent>
         </Card>

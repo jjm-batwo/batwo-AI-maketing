@@ -4,7 +4,12 @@ import { container, DI_TOKENS } from '@/lib/di/container'
 import type { IReportRepository } from '@domain/repositories/IReportRepository'
 import { GenerateWeeklyReportUseCase } from '@application/use-cases/report/GenerateWeeklyReportUseCase'
 import { UnauthorizedCampaignError } from '@domain/errors'
-import { reportQuerySchema, createReportSchema, validateQuery, validateBody } from '@/lib/validations'
+import {
+  reportQuerySchema,
+  createReportSchema,
+  validateQuery,
+  validateBody,
+} from '@/lib/validations'
 import { revalidateTag } from 'next/cache'
 
 export async function GET(request: NextRequest) {
@@ -20,9 +25,7 @@ export async function GET(request: NextRequest) {
 
     const { page, pageSize, type } = validation.data
 
-    const reportRepository = container.resolve<IReportRepository>(
-      DI_TOKENS.ReportRepository
-    )
+    const reportRepository = container.resolve<IReportRepository>(DI_TOKENS.ReportRepository)
 
     // Fetch reports with filters
     const allReports = type
@@ -41,7 +44,9 @@ export async function GET(request: NextRequest) {
       status: report.status,
       dateRange: {
         startDate: report.dateRange.startDate.toISOString().split('T')[0],
-        endDate: report.dateRange.endDate?.toISOString().split('T')[0] ?? report.dateRange.startDate.toISOString().split('T')[0],
+        endDate:
+          report.dateRange.endDate?.toISOString().split('T')[0] ??
+          report.dateRange.startDate.toISOString().split('T')[0],
       },
       generatedAt: report.generatedAt?.toISOString(),
       campaignCount: report.campaignIds.length,
@@ -55,10 +60,7 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     console.error('Failed to fetch reports:', error)
-    return NextResponse.json(
-      { message: 'Failed to fetch reports' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to fetch reports' }, { status: 500 })
   }
 }
 
@@ -91,15 +93,9 @@ export async function POST(request: NextRequest) {
     console.error('Failed to generate report:', error)
 
     if (error instanceof UnauthorizedCampaignError) {
-      return NextResponse.json(
-        { message: error.message },
-        { status: 403 }
-      )
+      return NextResponse.json({ message: error.message }, { status: 403 })
     }
 
-    return NextResponse.json(
-      { message: 'Failed to generate report' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to generate report' }, { status: 500 })
   }
 }

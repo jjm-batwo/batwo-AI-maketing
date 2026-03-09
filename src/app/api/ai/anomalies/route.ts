@@ -6,7 +6,10 @@ import {
   getAnomalySegmentAnalysisService,
 } from '@/lib/di/container'
 import type { Anomaly, EnhancedAnomaly } from '@application/services/AnomalyDetectionService'
-import type { RootCauseAnalysis, AnalysisContext } from '@application/services/AnomalyRootCauseService'
+import type {
+  RootCauseAnalysis,
+  AnalysisContext,
+} from '@application/services/AnomalyRootCauseService'
 import type {
   SegmentAnalysisResult,
   CampaignComparison,
@@ -138,10 +141,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(response)
   } catch (error) {
     console.error('Failed to detect anomalies:', error)
-    return NextResponse.json(
-      { message: '이상 탐지에 실패했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: '이상 탐지에 실패했습니다' }, { status: 500 })
   }
 }
 
@@ -165,10 +165,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!anomaly) {
-      return NextResponse.json(
-        { message: '분석할 이상 징후 데이터가 필요합니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ message: '분석할 이상 징후 데이터가 필요합니다' }, { status: 400 })
     }
 
     const rootCauseService = getAnomalyRootCauseService()
@@ -183,9 +180,6 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('Failed to analyze root cause:', error)
-    return NextResponse.json(
-      { message: '원인 분석에 실패했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: '원인 분석에 실패했습니다' }, { status: 500 })
   }
 }

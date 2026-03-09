@@ -74,9 +74,7 @@ export class MetaApiLogRepository {
     const errorCalls = totalCalls - successCalls
     const errorRate = totalCalls > 0 ? (errorCalls / totalCalls) * 100 : 0
     const avgLatencyMs =
-      totalCalls > 0
-        ? allLogs.reduce((sum, log) => sum + log.latencyMs, 0) / totalCalls
-        : 0
+      totalCalls > 0 ? allLogs.reduce((sum, log) => sum + log.latencyMs, 0) / totalCalls : 0
 
     // 엔드포인트별 호출 수
     const callsByEndpoint: Record<string, number> = {}
@@ -85,10 +83,7 @@ export class MetaApiLogRepository {
     })
 
     // 일별 분석
-    const dailyMap = new Map<
-      string,
-      { calls: number; errors: number }
-    >()
+    const dailyMap = new Map<string, { calls: number; errors: number }>()
 
     allLogs.forEach((log) => {
       const dateKey = log.createdAt.toISOString().split('T')[0]
@@ -161,14 +156,10 @@ export class MetaApiLogRepository {
     } else {
       const issues: string[] = []
       if (!callsOk) {
-        issues.push(
-          `호출 수 부족: ${stats.totalCalls}/${requiredCalls}회`
-        )
+        issues.push(`호출 수 부족: ${stats.totalCalls}/${requiredCalls}회`)
       }
       if (!errorOk) {
-        issues.push(
-          `에러율 초과: ${stats.errorRate.toFixed(1)}% (기준: <${maxErrorRate}%)`
-        )
+        issues.push(`에러율 초과: ${stats.errorRate.toFixed(1)}% (기준: <${maxErrorRate}%)`)
       }
       message = `❌ 기준 미충족: ${issues.join(', ')}`
     }

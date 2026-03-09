@@ -177,7 +177,8 @@ export function AIFeatureTour({
                     {step.title}
                   </h3>
                 </div>
-                <button type="button"
+                <button
+                  type="button"
                   onClick={onSkip}
                   className="flex-shrink-0 p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
                   aria-label="투어 종료"
@@ -199,7 +200,8 @@ export function AIFeatureTour({
               {/* Step indicators */}
               <div className="flex items-center justify-center gap-1.5 mb-4">
                 {steps.map((_, index) => (
-                  <button type="button"
+                  <button
+                    type="button"
                     key={index}
                     onClick={() => handleStepClick(index)}
                     className={cn(
@@ -207,8 +209,8 @@ export function AIFeatureTour({
                       index === currentStep
                         ? 'w-6 bg-purple-600 dark:bg-purple-400'
                         : index < currentStep
-                        ? 'w-1.5 bg-purple-300 dark:bg-purple-600'
-                        : 'w-1.5 bg-gray-300 dark:bg-gray-600'
+                          ? 'w-1.5 bg-purple-300 dark:bg-purple-600'
+                          : 'w-1.5 bg-gray-300 dark:bg-gray-600'
                     )}
                     aria-label={`${index + 1}단계로 이동`}
                   />
@@ -217,7 +219,8 @@ export function AIFeatureTour({
 
               {/* Navigation buttons */}
               <div className="flex items-center justify-between gap-3">
-                <button type="button"
+                <button
+                  type="button"
                   onClick={onSkip}
                   className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
                 >
@@ -225,7 +228,8 @@ export function AIFeatureTour({
                 </button>
                 <div className="flex items-center gap-2">
                   {!isFirstStep && (
-                    <button type="button"
+                    <button
+                      type="button"
                       onClick={handlePrevious}
                       className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
                       aria-label="이전"
@@ -233,7 +237,8 @@ export function AIFeatureTour({
                       <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                     </button>
                   )}
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={handleNext}
                     className={cn(
                       'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors',
@@ -263,10 +268,14 @@ export function AIFeatureTour({
           <div
             className={cn(
               'absolute w-3 h-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700',
-              tooltipPosition.position === 'top' && 'bottom-[-6px] left-1/2 -translate-x-1/2 rotate-45 border-t-0 border-l-0',
-              tooltipPosition.position === 'bottom' && 'top-[-6px] left-1/2 -translate-x-1/2 rotate-45 border-b-0 border-r-0',
-              tooltipPosition.position === 'left' && 'right-[-6px] top-1/2 -translate-y-1/2 rotate-45 border-b-0 border-l-0',
-              tooltipPosition.position === 'right' && 'left-[-6px] top-1/2 -translate-y-1/2 rotate-45 border-t-0 border-r-0'
+              tooltipPosition.position === 'top' &&
+                'bottom-[-6px] left-1/2 -translate-x-1/2 rotate-45 border-t-0 border-l-0',
+              tooltipPosition.position === 'bottom' &&
+                'top-[-6px] left-1/2 -translate-x-1/2 rotate-45 border-b-0 border-r-0',
+              tooltipPosition.position === 'left' &&
+                'right-[-6px] top-1/2 -translate-y-1/2 rotate-45 border-b-0 border-l-0',
+              tooltipPosition.position === 'right' &&
+                'left-[-6px] top-1/2 -translate-y-1/2 rotate-45 border-t-0 border-r-0'
             )}
           />
         </div>

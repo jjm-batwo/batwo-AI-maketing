@@ -64,9 +64,7 @@ export interface CreateABTestInput {
 const AB_TESTS_QUERY_KEY = ['ab-tests'] as const
 
 async function fetchABTests(campaignId?: string): Promise<ABTestsResponse> {
-  const url = campaignId
-    ? `/api/ab-tests?campaignId=${campaignId}`
-    : '/api/ab-tests'
+  const url = campaignId ? `/api/ab-tests?campaignId=${campaignId}` : '/api/ab-tests'
   const response = await fetch(url)
   if (!response.ok) {
     throw new Error('A/B 테스트 목록을 불러오는데 실패했습니다')

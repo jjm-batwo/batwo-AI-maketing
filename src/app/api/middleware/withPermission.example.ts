@@ -1,4 +1,3 @@
- 
 /**
  * Example Usage: Permission Middleware
  *
@@ -24,11 +23,14 @@ export const POST_CreateCampaign = withPermission(
     // Your campaign creation logic here
     // User is guaranteed to have campaign:create permission in this team
 
-    return NextResponse.json({
-      id: 'campaign-123',
-      teamId,
-      name: body.name,
-    }, { status: 201 })
+    return NextResponse.json(
+      {
+        id: 'campaign-123',
+        teamId,
+        name: body.name,
+      },
+      { status: 201 }
+    )
   },
   {
     permission: 'campaign:create',
@@ -99,11 +101,14 @@ export const POST_CreateCampaignWithHeader = withPermission(
     const body = await request.json()
 
     // Your campaign creation logic here
-    return NextResponse.json({
-      id: 'campaign-456',
-      teamId,
-      name: body.name,
-    }, { status: 201 })
+    return NextResponse.json(
+      {
+        id: 'campaign-456',
+        teamId,
+        name: body.name,
+      },
+      { status: 201 }
+    )
   },
   {
     permission: 'campaign:create',

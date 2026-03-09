@@ -14,9 +14,7 @@ export async function GET() {
     })
 
     const isConnected = !!account
-    const isExpired = account?.tokenExpiry
-      ? new Date(account.tokenExpiry) < new Date()
-      : false
+    const isExpired = account?.tokenExpiry ? new Date(account.tokenExpiry) < new Date() : false
 
     return NextResponse.json({
       isConnected: isConnected && !isExpired,

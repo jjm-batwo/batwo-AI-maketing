@@ -4,10 +4,7 @@ import { prisma } from '@/lib/prisma'
 export async function GET() {
   // SECURITY: Only allow in development environment
   if (process.env.NODE_ENV !== 'development') {
-    return NextResponse.json(
-      { error: 'Not Found' },
-      { status: 404 }
-    )
+    return NextResponse.json({ error: 'Not Found' }, { status: 404 })
   }
 
   // Test database connection

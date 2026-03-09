@@ -56,7 +56,12 @@ export function StepReviewExtended({ submitStage = 'idle' }: StepReviewExtendedP
 
   // 제출 진행 상태 표시
   if (submitStage !== 'idle') {
-    const stages: WizardSubmitStage[] = ['creating-campaign', 'creating-creative', 'creating-ad', 'done']
+    const stages: WizardSubmitStage[] = [
+      'creating-campaign',
+      'creating-creative',
+      'creating-ad',
+      'done',
+    ]
     const currentIndex = stages.indexOf(submitStage)
 
     return (
@@ -79,13 +84,15 @@ export function StepReviewExtended({ submitStage = 'idle' }: StepReviewExtendedP
                 ) : (
                   <div className="h-5 w-5 rounded-full border-2 border-gray-200" />
                 )}
-                <span className={cn(
-                  'text-sm',
-                  isCompleted && 'text-green-600',
-                  isCurrent && 'font-medium text-primary',
-                  isError && 'text-red-500',
-                  !isCompleted && !isCurrent && !isError && 'text-muted-foreground'
-                )}>
+                <span
+                  className={cn(
+                    'text-sm',
+                    isCompleted && 'text-green-600',
+                    isCurrent && 'font-medium text-primary',
+                    isError && 'text-red-500',
+                    !isCompleted && !isCurrent && !isError && 'text-muted-foreground'
+                  )}
+                >
                   {stageLabels[s]}
                 </span>
               </div>
@@ -128,7 +135,8 @@ export function StepReviewExtended({ submitStage = 'idle' }: StepReviewExtendedP
           <div className="flex justify-between p-3">
             <span className="text-sm text-muted-foreground">기간</span>
             <span className="text-sm font-medium">
-              {formData.startDate}{formData.endDate ? ` ~ ${formData.endDate}` : ' ~ 무기한'}
+              {formData.startDate}
+              {formData.endDate ? ` ~ ${formData.endDate}` : ' ~ 무기한'}
             </span>
           </div>
         </div>
@@ -147,11 +155,15 @@ export function StepReviewExtended({ submitStage = 'idle' }: StepReviewExtendedP
             </div>
             <div className="flex justify-between p-3">
               <span className="text-sm text-muted-foreground">성별</span>
-              <span className="text-sm font-medium">{genderLabels[formData.targetAudience.gender]}</span>
+              <span className="text-sm font-medium">
+                {genderLabels[formData.targetAudience.gender]}
+              </span>
             </div>
             <div className="flex justify-between p-3">
               <span className="text-sm text-muted-foreground">지역</span>
-              <span className="text-sm font-medium">{formData.targetAudience.locations?.join(', ')}</span>
+              <span className="text-sm font-medium">
+                {formData.targetAudience.locations?.join(', ')}
+              </span>
             </div>
           </div>
         </div>
@@ -163,20 +175,28 @@ export function StepReviewExtended({ submitStage = 'idle' }: StepReviewExtendedP
         <div className="divide-y rounded-lg border">
           <div className="flex justify-between p-3">
             <span className="text-sm text-muted-foreground">포맷</span>
-            <span className="text-sm font-medium">{formatLabels[formData.creative?.format] || '-'}</span>
+            <span className="text-sm font-medium">
+              {formatLabels[formData.creative?.format] || '-'}
+            </span>
           </div>
           <div className="flex justify-between p-3">
             <span className="text-sm text-muted-foreground">헤드라인</span>
-            <span className="text-sm font-medium truncate ml-4">{formData.creative?.headline || '-'}</span>
+            <span className="text-sm font-medium truncate ml-4">
+              {formData.creative?.headline || '-'}
+            </span>
           </div>
           <div className="flex justify-between p-3">
             <span className="text-sm text-muted-foreground">에셋</span>
-            <span className="text-sm font-medium">{formData.creative?.assetIds?.length || 0}개</span>
+            <span className="text-sm font-medium">
+              {formData.creative?.assetIds?.length || 0}개
+            </span>
           </div>
           {formData.creative?.callToAction && (
             <div className="flex justify-between p-3">
               <span className="text-sm text-muted-foreground">CTA</span>
-              <span className="text-sm font-medium">{ctaLabels[formData.creative.callToAction]}</span>
+              <span className="text-sm font-medium">
+                {ctaLabels[formData.creative.callToAction]}
+              </span>
             </div>
           )}
         </div>
@@ -186,8 +206,8 @@ export function StepReviewExtended({ submitStage = 'idle' }: StepReviewExtendedP
       {isAdvantage && (
         <div className="rounded-lg bg-blue-50 p-4">
           <p className="text-sm text-blue-800">
-            <Rocket className="h-4 w-4 inline" /> <strong>Advantage+</strong>: AI가 타겟팅, 배치, 예산을 자동으로 최적화합니다.
-            캠페인, 광고 세트, 광고가 한번에 생성됩니다.
+            <Rocket className="h-4 w-4 inline" /> <strong>Advantage+</strong>: AI가 타겟팅, 배치,
+            예산을 자동으로 최적화합니다. 캠페인, 광고 세트, 광고가 한번에 생성됩니다.
           </p>
         </div>
       )}

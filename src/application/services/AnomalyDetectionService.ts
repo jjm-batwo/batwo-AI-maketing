@@ -455,8 +455,11 @@ export class AnomalyDetectionService {
         })
 
         // Z-Score로 이미 감지되지 않았으면 추가
-        if (anomaly && !this.isDuplicateAnomaly(anomalies, anomaly) &&
-            !this.isExpectedByMarketContext(anomaly, marketContext)) {
+        if (
+          anomaly &&
+          !this.isDuplicateAnomaly(anomalies, anomaly) &&
+          !this.isExpectedByMarketContext(anomaly, marketContext)
+        ) {
           anomalies.push(anomaly)
         }
       }
@@ -533,9 +536,8 @@ export class AnomalyDetectionService {
       const trend = detectTrend(values.slice(-this.config.movingAverageWindow))
       const isSpike = deviation > 0
 
-      const changePercent = previousValue > 0
-        ? ((latestValue - previousValue) / previousValue) * 100
-        : 0
+      const changePercent =
+        previousValue > 0 ? ((latestValue - previousValue) / previousValue) * 100 : 0
 
       const anomaly: Anomaly = {
         id: this.generateAnomalyId(campaignId, metric, 'ma'),
@@ -598,11 +600,7 @@ export class AnomalyDetectionService {
   /**
    * 한국 시장 컨텍스트 조회
    */
-  private getMarketContext(
-    date: Date,
-    metric: MetricName,
-    industry?: string
-  ): MarketContext {
+  private getMarketContext(date: Date, metric: MetricName, industry?: string): MarketContext {
     if (!this.config.useKoreanCalendar) {
       return {
         isSpecialDay: false,
@@ -730,9 +728,12 @@ export class AnomalyDetectionService {
       marketContext,
     } = params
 
-    const changePercent = previousValue > 0
-      ? ((latestValue - previousValue) / previousValue) * 100
-      : (latestValue > 0 ? 100 : 0)
+    const changePercent =
+      previousValue > 0
+        ? ((latestValue - previousValue) / previousValue) * 100
+        : latestValue > 0
+          ? 100
+          : 0
 
     const trend = detectTrend([baseline.mean, previousValue, latestValue])
 
@@ -820,10 +821,7 @@ export class AnomalyDetectionService {
       return 'unusual_pattern'
     }
 
-    if (
-      (trend === 'increasing' && !isSpike) ||
-      (trend === 'decreasing' && isSpike)
-    ) {
+    if ((trend === 'increasing' && !isSpike) || (trend === 'decreasing' && isSpike)) {
       return 'trend_reversal'
     }
 
@@ -987,9 +985,7 @@ export class AnomalyDetectionService {
       warning: 1,
       info: 2,
     }
-    return anomalies.sort(
-      (a, b) => severityOrder[a.severity] - severityOrder[b.severity]
-    )
+    return anomalies.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity])
   }
 }
 

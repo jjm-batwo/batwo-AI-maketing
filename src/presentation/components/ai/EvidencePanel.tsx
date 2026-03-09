@@ -87,10 +87,7 @@ export function EvidencePanel({
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b bg-muted/30">
-            <h2
-              id="evidence-panel-title"
-              className="text-lg font-semibold text-foreground"
-            >
+            <h2 id="evidence-panel-title" className="text-lg font-semibold text-foreground">
               {title}
             </h2>
             <Button
@@ -134,10 +131,7 @@ export function EvidencePanel({
                             <Icon className={cn('h-4 w-4', config.color)} />
                           </div>
                           <div>
-                            <Badge
-                              variant="outline"
-                              className="text-xs font-medium"
-                            >
+                            <Badge variant="outline" className="text-xs font-medium">
                               {config.label}
                             </Badge>
                             <p className="text-xs text-muted-foreground mt-0.5">
@@ -157,9 +151,7 @@ export function EvidencePanel({
                         <>
                           <Separator />
                           <div className="space-y-1">
-                            <p className="text-xs font-medium text-muted-foreground">
-                              출처
-                            </p>
+                            <p className="text-xs font-medium text-muted-foreground">출처</p>
                             <p className="text-sm">{item.source}</p>
                           </div>
                         </>
@@ -168,12 +160,8 @@ export function EvidencePanel({
                       {/* Content */}
                       <Separator />
                       <div className="space-y-1">
-                        <p className="text-xs font-medium text-muted-foreground">
-                          내용
-                        </p>
-                        <p className="text-sm leading-relaxed text-foreground">
-                          {item.content}
-                        </p>
+                        <p className="text-xs font-medium text-muted-foreground">내용</p>
+                        <p className="text-sm leading-relaxed text-foreground">{item.content}</p>
                       </div>
                     </div>
                   )

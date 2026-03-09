@@ -1,7 +1,4 @@
-import {
-  Ad as PrismaAd,
-  AdStatus as PrismaAdStatus,
-} from '@/generated/prisma'
+import { Ad as PrismaAd, AdStatus as PrismaAdStatus } from '@/generated/prisma'
 import { Ad } from '@domain/entities/Ad'
 import { AdStatus } from '@domain/value-objects/AdStatus'
 

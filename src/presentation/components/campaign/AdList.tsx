@@ -48,9 +48,7 @@ export function AdList({ adSetId }: AdListProps) {
   const ads = data?.ads || []
 
   if (ads.length === 0) {
-    return (
-      <p className="py-2 text-xs text-muted-foreground">광고가 없습니다</p>
-    )
+    return <p className="py-2 text-xs text-muted-foreground">광고가 없습니다</p>
   }
 
   return (
@@ -63,7 +61,9 @@ export function AdList({ adSetId }: AdListProps) {
               <Megaphone className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm font-medium">{ad.name}</span>
             </div>
-            <Badge variant="outline" className={status.className}>{status.label}</Badge>
+            <Badge variant="outline" className={status.className}>
+              {status.label}
+            </Badge>
           </div>
         )
       })}

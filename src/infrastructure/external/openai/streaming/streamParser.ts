@@ -49,9 +49,7 @@ export function parseAdCopyChunk(chunk: string): AdCopyStreamChunk | null {
 /**
  * ReadableStream을 AsyncIterable로 변환
  */
-export async function* streamToAsyncIterable<T>(
-  stream: ReadableStream<T>
-): AsyncIterable<T> {
+export async function* streamToAsyncIterable<T>(stream: ReadableStream<T>): AsyncIterable<T> {
   const reader = stream.getReader()
   try {
     while (true) {

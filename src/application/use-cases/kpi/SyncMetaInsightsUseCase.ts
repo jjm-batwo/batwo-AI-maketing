@@ -80,8 +80,7 @@ export class SyncMetaInsightsUseCase {
         campaignId: input.campaignId,
         kpiId: '',
         synced: false,
-        message:
-          error instanceof Error ? error.message : 'Failed to sync insights',
+        message: error instanceof Error ? error.message : 'Failed to sync insights',
       }
     }
   }

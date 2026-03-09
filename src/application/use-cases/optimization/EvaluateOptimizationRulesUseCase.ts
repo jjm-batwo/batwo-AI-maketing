@@ -15,7 +15,10 @@ import { IOptimizationRuleRepository } from '@domain/repositories/IOptimizationR
 import { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import { IKPIRepository } from '@domain/repositories/IKPIRepository'
 import { CampaignStatus } from '@domain/value-objects/CampaignStatus'
-import { AutoOptimizeCampaignUseCase, AutoOptimizeCampaignResult } from './AutoOptimizeCampaignUseCase'
+import {
+  AutoOptimizeCampaignUseCase,
+  AutoOptimizeCampaignResult,
+} from './AutoOptimizeCampaignUseCase'
 
 export interface EvaluateOptimizationRulesResult {
   evaluatedCount: number

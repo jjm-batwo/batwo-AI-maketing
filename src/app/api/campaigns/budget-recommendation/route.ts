@@ -51,31 +51,28 @@ export async function POST(request: NextRequest) {
     // 입력 유효성 검사
     const { industry, businessScale } = body
     if (!industry || !businessScale) {
-      return NextResponse.json(
-        { error: '업종과 사업 규모는 필수입니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: '업종과 사업 규모는 필수입니다' }, { status: 400 })
     }
 
     // 업종 유효성 검사
     const validIndustries: Industry[] = [
-      'ecommerce', 'food_beverage', 'beauty', 'fashion',
-      'education', 'service', 'saas', 'other'
+      'ecommerce',
+      'food_beverage',
+      'beauty',
+      'fashion',
+      'education',
+      'service',
+      'saas',
+      'other',
     ]
     if (!validIndustries.includes(industry)) {
-      return NextResponse.json(
-        { error: '유효하지 않은 업종입니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: '유효하지 않은 업종입니다' }, { status: 400 })
     }
 
     // 사업 규모 유효성 검사
     const validScales: BusinessScale[] = ['individual', 'small', 'medium', 'large']
     if (!validScales.includes(businessScale)) {
-      return NextResponse.json(
-        { error: '유효하지 않은 사업 규모입니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: '유효하지 않은 사업 규모입니다' }, { status: 400 })
     }
 
     // 예산 추천 생성
@@ -94,10 +91,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(recommendation)
   } catch (error) {
     console.error('Budget recommendation error:', error)
-    return NextResponse.json(
-      { error: '예산 추천 생성 중 오류가 발생했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '예산 추천 생성 중 오류가 발생했습니다' }, { status: 500 })
   }
 }
 
@@ -132,9 +126,6 @@ export async function GET() {
     })
   } catch (error) {
     console.error('Budget recommendation options error:', error)
-    return NextResponse.json(
-      { error: '옵션 조회 중 오류가 발생했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '옵션 조회 중 오류가 발생했습니다' }, { status: 500 })
   }
 }

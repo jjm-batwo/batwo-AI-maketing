@@ -10,7 +10,12 @@ import type { CampaignFormData } from './index'
 const objectives = [
   { value: 'TRAFFIC', label: '트래픽', icon: MousePointerClick, description: '웹사이트 방문 유도' },
   { value: 'CONVERSIONS', label: '전환', icon: Target, description: '구매, 가입 등 행동 유도' },
-  { value: 'BRAND_AWARENESS', label: '브랜드 인지도', icon: Eye, description: '브랜드 노출 최대화' },
+  {
+    value: 'BRAND_AWARENESS',
+    label: '브랜드 인지도',
+    icon: Eye,
+    description: '브랜드 노출 최대화',
+  },
   { value: 'REACH', label: '도달', icon: Users, description: '최대한 많은 사람에게 노출' },
   { value: 'ENGAGEMENT', label: '참여', icon: Heart, description: '좋아요, 댓글, 공유 유도' },
 ] as const
@@ -40,9 +45,7 @@ export function Step1BusinessInfo() {
             },
           })}
         />
-        {errors.name && (
-          <p className="text-sm text-red-500">{errors.name.message}</p>
-        )}
+        {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
       </div>
 
       <div className="space-y-2">
@@ -63,12 +66,7 @@ export function Step1BusinessInfo() {
                     : 'border-gray-200 hover:border-gray-300'
                 )}
               >
-                <Icon
-                  className={cn(
-                    'h-6 w-6',
-                    isSelected ? 'text-primary' : 'text-gray-500'
-                  )}
-                />
+                <Icon className={cn('h-6 w-6', isSelected ? 'text-primary' : 'text-gray-500')} />
                 <span
                   className={cn(
                     'text-sm font-medium',
@@ -77,9 +75,7 @@ export function Step1BusinessInfo() {
                 >
                   {obj.label}
                 </span>
-                <span className="text-xs text-muted-foreground">
-                  {obj.description}
-                </span>
+                <span className="text-xs text-muted-foreground">{obj.description}</span>
               </button>
             )
           })}

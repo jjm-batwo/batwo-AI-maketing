@@ -32,9 +32,6 @@ export async function GET() {
     })
   } catch (error) {
     console.error('Failed to detect anomalies:', error)
-    return NextResponse.json(
-      { message: '알림을 조회하는데 실패했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: '알림을 조회하는데 실패했습니다' }, { status: 500 })
   }
 }

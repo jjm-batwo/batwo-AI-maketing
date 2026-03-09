@@ -50,11 +50,7 @@ export class BudgetRecommendationService {
     } = input
 
     // 1. AOV 결정 (우선순위: 기존 데이터 > 직접 입력 > 업종 기본값)
-    const { aov, aovSource } = this.determineAOV(
-      averageOrderValue,
-      existingCampaignData,
-      industry
-    )
+    const { aov, aovSource } = this.determineAOV(averageOrderValue, existingCampaignData, industry)
 
     // 2. 목표 ROAS 계산
     const targetROAS = calculateTargetROAS(aov, marginRate)
@@ -321,9 +317,10 @@ export class BudgetRecommendationService {
       potentialImpact = '예산 최적화로 ROAS 개선 후 재증액을 권장합니다'
     } else {
       currentVsRecommended = `현재 예산 ${formatBudget(existingData.avgDailySpend)} 유지 권장`
-      potentialImpact = performanceRatio >= 1.0
-        ? '성과 안정화 후 점진적 증액을 고려하세요'
-        : 'ROAS 개선에 집중하세요'
+      potentialImpact =
+        performanceRatio >= 1.0
+          ? '성과 안정화 후 점진적 증액을 고려하세요'
+          : 'ROAS 개선에 집중하세요'
     }
 
     return { currentVsRecommended, potentialImpact }

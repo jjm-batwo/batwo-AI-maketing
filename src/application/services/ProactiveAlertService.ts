@@ -13,7 +13,7 @@ export class ProactiveAlertService {
   constructor(
     private readonly campaignRepo: ICampaignRepository,
     private readonly kpiRepo: IKPIRepository,
-    private readonly alertRepo: IAlertRepository,
+    private readonly alertRepo: IAlertRepository
   ) {}
 
   /**
@@ -29,9 +29,7 @@ export class ProactiveAlertService {
     try {
       // 활성 캠페인 목록 조회
       const campaigns = await this.campaignRepo.findByUserId(userId)
-      const activeCampaigns = campaigns.filter(
-        (c) => c.status === CampaignStatus.ACTIVE
-      )
+      const activeCampaigns = campaigns.filter((c) => c.status === CampaignStatus.ACTIVE)
 
       if (activeCampaigns.length === 0) return result
 
@@ -49,9 +47,7 @@ export class ProactiveAlertService {
         if (recentKPIs.length < 2) continue
 
         // 가장 최근 2일치 분리
-        const sorted = recentKPIs.sort(
-          (a, b) => b.date.getTime() - a.date.getTime()
-        )
+        const sorted = recentKPIs.sort((a, b) => b.date.getTime() - a.date.getTime())
         const today = sorted[0]
         const prev = sorted[1]
 

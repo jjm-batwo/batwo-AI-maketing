@@ -16,8 +16,8 @@ const getMetaLoginScopes = () => {
   // email requires app review in production or test user in development
   // We request it but handle gracefully if denied
   return process.env.NODE_ENV === 'development'
-    ? baseScopes  // Minimal scope for guaranteed dev login
-    : 'email,public_profile'  // Full scope for production
+    ? baseScopes // Minimal scope for guaranteed dev login
+    : 'email,public_profile' // Full scope for production
 }
 
 const META_LOGIN_SCOPES = getMetaLoginScopes()

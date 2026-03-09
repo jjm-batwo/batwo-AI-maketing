@@ -30,21 +30,11 @@ export class TeamRoleEntity {
   }
 
   static create(props: TeamRoleProps): TeamRoleEntity {
-    return new TeamRoleEntity(
-      crypto.randomUUID(),
-      props.name,
-      props.permissions,
-      new Date()
-    )
+    return new TeamRoleEntity(crypto.randomUUID(), props.name, props.permissions, new Date())
   }
 
   static restore(data: TeamRoleData): TeamRoleEntity {
-    return new TeamRoleEntity(
-      data.id,
-      data.name,
-      data.permissions,
-      data.createdAt
-    )
+    return new TeamRoleEntity(data.id, data.name, data.permissions, data.createdAt)
   }
 
   // Factory methods for standard roles
@@ -87,12 +77,7 @@ export class TeamRoleEntity {
       Permission.create('dashboard', 'manage'),
     ]
 
-    return new TeamRoleEntity(
-      crypto.randomUUID(),
-      'owner',
-      permissions,
-      new Date()
-    )
+    return new TeamRoleEntity(crypto.randomUUID(), 'owner', permissions, new Date())
   }
 
   static createAdmin(): TeamRoleEntity {
@@ -128,12 +113,7 @@ export class TeamRoleEntity {
       Permission.create('dashboard', 'read'),
     ]
 
-    return new TeamRoleEntity(
-      crypto.randomUUID(),
-      'admin',
-      permissions,
-      new Date()
-    )
+    return new TeamRoleEntity(crypto.randomUUID(), 'admin', permissions, new Date())
   }
 
   static createEditor(): TeamRoleEntity {
@@ -154,12 +134,7 @@ export class TeamRoleEntity {
       Permission.create('dashboard', 'read'),
     ]
 
-    return new TeamRoleEntity(
-      crypto.randomUUID(),
-      'editor',
-      permissions,
-      new Date()
-    )
+    return new TeamRoleEntity(crypto.randomUUID(), 'editor', permissions, new Date())
   }
 
   static createViewer(): TeamRoleEntity {
@@ -170,12 +145,7 @@ export class TeamRoleEntity {
       Permission.create('report', 'read'),
     ]
 
-    return new TeamRoleEntity(
-      crypto.randomUUID(),
-      'viewer',
-      permissions,
-      new Date()
-    )
+    return new TeamRoleEntity(crypto.randomUUID(), 'viewer', permissions, new Date())
   }
 
   // Getters
@@ -198,7 +168,7 @@ export class TeamRoleEntity {
 
   // Permission checks
   hasPermission(permission: Permission): boolean {
-    return this._permissions.some(p => p.equals(permission))
+    return this._permissions.some((p) => p.equals(permission))
   }
 
   /**
@@ -240,7 +210,7 @@ export class TeamRoleEntity {
     return {
       id: this._id,
       name: this._name,
-      permissions: this._permissions.map(p => p),
+      permissions: this._permissions.map((p) => p),
       createdAt: this._createdAt,
     }
   }

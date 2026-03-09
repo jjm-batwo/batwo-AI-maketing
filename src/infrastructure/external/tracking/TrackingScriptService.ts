@@ -241,9 +241,7 @@ window.batwoPixel = {
     }
 
     // 이벤트 시간 파싱
-    const eventTime = parsed.timestamp
-      ? new Date(parsed.timestamp as number)
-      : new Date()
+    const eventTime = parsed.timestamp ? new Date(parsed.timestamp as number) : new Date()
 
     return {
       eventName: parsed.event as string,

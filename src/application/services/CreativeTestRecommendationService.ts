@@ -81,10 +81,7 @@ export class CreativeTestRecommendationService {
     // 3. 현재 성과 메트릭 계산
     const currentMetrics: CurrentMetrics = {
       ctr: latestKPI.calculateCTR().value,
-      cvr:
-        latestKPI.clicks > 0
-          ? (latestKPI.conversions / latestKPI.clicks) * 100
-          : 0,
+      cvr: latestKPI.clicks > 0 ? (latestKPI.conversions / latestKPI.clicks) * 100 : 0,
       impressions: latestKPI.impressions,
       clicks: latestKPI.clicks,
       conversions: latestKPI.conversions,
@@ -97,10 +94,7 @@ export class CreativeTestRecommendationService {
     // 5. AI를 사용하여 변형 생성
     const variants = await this.aiService.generateCreativeVariants({
       element: currentAnalysis.weakestElement,
-      currentText: this.getCurrentElementText(
-        currentAnalysis.weakestElement,
-        campaign
-      ),
+      currentText: this.getCurrentElementText(currentAnalysis.weakestElement, campaign),
       productContext: campaign.name,
       targetAudience: this.formatTargetAudience(campaign.targetAudience),
       weaknessAnalysis: currentAnalysis.hypothesis,
@@ -130,10 +124,7 @@ export class CreativeTestRecommendationService {
         hypothesis: currentAnalysis.hypothesis,
       },
       recommendedTest: {
-        controlElement: this.getCurrentElementText(
-          currentAnalysis.weakestElement,
-          campaign
-        ),
+        controlElement: this.getCurrentElementText(currentAnalysis.weakestElement, campaign),
         variants,
         recommendedDuration,
         minSampleSize,
@@ -150,9 +141,7 @@ export class CreativeTestRecommendationService {
   /**
    * 현재 크리에이티브 요소 중 가장 약한 부분 식별
    */
-  private analyzeCurrentCreative(
-    currentMetrics: CurrentMetrics
-  ): {
+  private analyzeCurrentCreative(currentMetrics: CurrentMetrics): {
     weakestElement: 'headline' | 'primary_text' | 'description' | 'cta'
     hypothesis: string
   } {
@@ -232,10 +221,7 @@ export class CreativeTestRecommendationService {
   /**
    * 테스트 권장 기간 계산
    */
-  private calculateTestDuration(
-    minSampleSize: number,
-    avgDailyImpressions: number
-  ): string {
+  private calculateTestDuration(minSampleSize: number, avgDailyImpressions: number): string {
     if (avgDailyImpressions === 0) {
       return '14-21일 (트래픽 데이터 부족)'
     }
@@ -310,9 +296,7 @@ export class CreativeTestRecommendationService {
 
     if (targetAudience.genders && targetAudience.genders.length > 0) {
       const genderStr =
-        targetAudience.genders[0] === 'all'
-          ? '남녀 모두'
-          : targetAudience.genders.join(', ')
+        targetAudience.genders[0] === 'all' ? '남녀 모두' : targetAudience.genders.join(', ')
       parts.push(genderStr)
     }
 

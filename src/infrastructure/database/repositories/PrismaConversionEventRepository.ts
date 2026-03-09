@@ -1,5 +1,8 @@
 import type { PrismaClient } from '@/generated/prisma'
-import type { IConversionEventRepository, PixelTokenMapping } from '@domain/repositories/IConversionEventRepository'
+import type {
+  IConversionEventRepository,
+  PixelTokenMapping,
+} from '@domain/repositories/IConversionEventRepository'
 import { ConversionEvent } from '@domain/entities/ConversionEvent'
 import type { UserData, CustomData } from '@domain/entities/ConversionEvent'
 import { safeDecryptToken } from '@application/utils/TokenEncryption'

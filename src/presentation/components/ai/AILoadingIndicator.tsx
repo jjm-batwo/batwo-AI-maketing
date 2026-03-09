@@ -12,7 +12,7 @@ interface AILoadingIndicatorProps {
 const STAGE_LABELS: Record<string, string> = {
   analyzing: '분석 중',
   generating: '생성 중',
-  optimizing: '최적화 중'
+  optimizing: '최적화 중',
 }
 
 /**
@@ -30,7 +30,7 @@ export const AILoadingIndicator = memo(function AILoadingIndicator({
   stage,
   progress,
   message,
-  className = ''
+  className = '',
 }: AILoadingIndicatorProps) {
   const stageLabel = stage ? STAGE_LABELS[stage] || stage : 'AI 처리 중'
 
@@ -56,9 +56,7 @@ export const AILoadingIndicator = memo(function AILoadingIndicator({
 
       {/* Stage Label */}
       <div className="text-center space-y-2">
-        <p className="text-sm font-medium text-foreground">
-          {stageLabel}
-        </p>
+        <p className="text-sm font-medium text-foreground">{stageLabel}</p>
 
         {/* Progress Bar */}
         {progress !== undefined && (
@@ -75,11 +73,7 @@ export const AILoadingIndicator = memo(function AILoadingIndicator({
         )}
 
         {/* Additional Message */}
-        {message && (
-          <p className="text-xs text-muted-foreground mt-2">
-            {message}
-          </p>
-        )}
+        {message && <p className="text-xs text-muted-foreground mt-2">{message}</p>}
       </div>
     </div>
   )

@@ -13,21 +13,20 @@ interface TabSwitcherProps {
 
 export const TabSwitcher = memo(function TabSwitcher({ activeTab, onTabChange }: TabSwitcherProps) {
   return (
-    <div className="flex p-1.5 bg-muted/50 border-b border-border/50 gap-1 relative z-10" role="tablist" aria-label="대시보드 탭">
+    <div
+      className="flex p-1.5 bg-muted/50 border-b border-border/50 gap-1 relative z-10"
+      role="tablist"
+      aria-label="대시보드 탭"
+    >
       {TAB_CONFIG.map((tab) => (
-        <TabButton
-          key={tab.id}
-          tab={tab}
-          isActive={activeTab === tab.id}
-          onClick={onTabChange}
-        />
+        <TabButton key={tab.id} tab={tab} isActive={activeTab === tab.id} onClick={onTabChange} />
       ))}
     </div>
   )
 })
 
 interface TabButtonProps {
-  tab: typeof TAB_CONFIG[number]
+  tab: (typeof TAB_CONFIG)[number]
   isActive: boolean
   onClick: (tab: DashboardTab) => void
 }

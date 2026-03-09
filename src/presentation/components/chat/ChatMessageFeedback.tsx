@@ -42,7 +42,8 @@ export function ChatMessageFeedback({ messageId, onFeedback }: ChatMessageFeedba
   return (
     <div className="flex flex-col gap-2 mt-1">
       <div className="flex items-center gap-1">
-        <button type="button"
+        <button
+          type="button"
           data-testid="feedback-positive"
           aria-label="도움이 됐어요"
           onClick={handlePositive}
@@ -54,7 +55,8 @@ export function ChatMessageFeedback({ messageId, onFeedback }: ChatMessageFeedba
         >
           👍
         </button>
-        <button type="button"
+        <button
+          type="button"
           data-testid="feedback-negative"
           aria-label="도움이 안 됐어요"
           onClick={handleNegative}

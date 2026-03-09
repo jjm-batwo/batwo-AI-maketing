@@ -58,8 +58,8 @@ describe('KnowledgeBaseService', () => {
       expect(output.compositeScore).toBeDefined()
       expect(output.knowledgeContext).toBeDefined()
 
-      // All 6 domains should be analyzed
-      expect(output.compositeScore.domainScores.length).toBe(6)
+      // All 9 domains should be analyzed
+      expect(output.compositeScore.domainScores.length).toBe(9)
 
       // Verify all expected domains are present
       const domains = output.compositeScore.domainScores.map(ds => ds.domain)
@@ -79,7 +79,7 @@ describe('KnowledgeBaseService', () => {
       expect(output.compositeScore.overall).toBeLessThanOrEqual(100)
 
       expect(output.compositeScore.grade).toBeTypeOf('string')
-      expect(['A', 'B', 'C', 'D', 'F']).toContain(output.compositeScore.grade)
+      expect(['A+', 'A', 'B+', 'B', 'C+', 'C', 'D', 'F']).toContain(output.compositeScore.grade)
 
       expect(Array.isArray(output.compositeScore.domainScores)).toBe(true)
       expect(output.compositeScore.domainScores.length).toBeGreaterThan(0)
@@ -119,7 +119,7 @@ describe('KnowledgeBaseService', () => {
       const output = service.analyzeAll(metricsInput)
 
       expect(output).toBeDefined()
-      expect(output.compositeScore.domainScores.length).toBe(6)
+      expect(output.compositeScore.domainScores.length).toBe(9)
       expect(output.compositeScore.overall).toBeGreaterThanOrEqual(0)
     })
 
@@ -127,7 +127,7 @@ describe('KnowledgeBaseService', () => {
       const output = service.analyzeAll(minimalInput)
 
       expect(output).toBeDefined()
-      expect(output.compositeScore.domainScores.length).toBe(6)
+      expect(output.compositeScore.domainScores.length).toBe(9)
     })
   })
 
@@ -166,7 +166,7 @@ describe('KnowledgeBaseService', () => {
       expect(output.compositeScore.domainScores.length).toBe(3)
     })
 
-    it('모든 6개 도메인을 선택하면 analyzeAll과 동일한 결과를 반환해야 한다', () => {
+    it('모든 9개 도메인을 선택하면 analyzeAll과 동일한 결과를 반환해야 한다', () => {
       const allDomains = [
         'neuromarketing',
         'marketing_psychology',
@@ -174,12 +174,15 @@ describe('KnowledgeBaseService', () => {
         'meta_best_practices',
         'color_psychology',
         'copywriting_psychology',
+        'creative_diversity',
+        'campaign_structure',
+        'tracking_health',
       ] as const
 
       const output = service.analyzeSpecific(koreanCopyInput, [...allDomains])
 
       expect(output).toBeDefined()
-      expect(output.compositeScore.domainScores.length).toBe(6)
+      expect(output.compositeScore.domainScores.length).toBe(9)
     })
   })
 
@@ -273,10 +276,10 @@ describe('KnowledgeBaseService', () => {
       // At least some recommendations should exist
       expect(recommendations.length).toBeGreaterThan(0)
 
-      // Recommendations can come from any of the 6 domains
+      // Recommendations can come from any of the 9 domains
       const domains = new Set(recommendations.map(r => r.domain))
       expect(domains.size).toBeGreaterThan(0)
-      expect(domains.size).toBeLessThanOrEqual(6)
+      expect(domains.size).toBeLessThanOrEqual(9)
     })
 
     it('빈 입력에 대해서도 추천을 생성해야 한다', () => {
@@ -296,7 +299,7 @@ describe('KnowledgeBaseService', () => {
       expect(output.compositeScore.grade).toBeDefined()
 
       // All domains should be analyzed
-      expect(output.compositeScore.domainScores.length).toBe(6)
+      expect(output.compositeScore.domainScores.length).toBe(9)
 
       // Each domain should have scores and factors
       output.compositeScore.domainScores.forEach(ds => {
@@ -317,7 +320,7 @@ describe('KnowledgeBaseService', () => {
       const output = service.analyzeAll(metricsInput)
 
       expect(output.compositeScore.overall).toBeGreaterThan(0)
-      expect(output.compositeScore.domainScores.length).toBe(6)
+      expect(output.compositeScore.domainScores.length).toBe(9)
 
       // Should analyze metrics-relevant domains
       const metaBestPractices = output.compositeScore.domainScores.find(
@@ -356,7 +359,7 @@ describe('KnowledgeBaseService', () => {
       const output = service.analyzeAll(complexInput)
 
       expect(output.compositeScore.overall).toBeGreaterThan(0)
-      expect(output.compositeScore.domainScores.length).toBe(6)
+      expect(output.compositeScore.domainScores.length).toBe(9)
 
       // Should analyze all aspects
       const colorPsych = output.compositeScore.domainScores.find(

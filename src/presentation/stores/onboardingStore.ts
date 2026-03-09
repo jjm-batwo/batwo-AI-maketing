@@ -29,7 +29,7 @@ export const useOnboardingStore = create<OnboardingState>()(
   persist(
     (set, get) => ({
       currentStep: 1,
-      totalSteps: 4,  // 1: Welcome, 2: Meta 연결, 3: 픽셀 설치, 4: Completion
+      totalSteps: 4, // 1: Welcome, 2: Meta 연결, 3: 픽셀 설치, 4: Completion
       isCompleted: false,
       _hasHydrated: false,
 

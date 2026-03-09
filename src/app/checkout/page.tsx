@@ -19,11 +19,7 @@ export default async function CheckoutPage({
 
   // Validate plan
   const plan = planParam?.toUpperCase() as SubscriptionPlan
-  if (
-    !plan ||
-    !Object.values(SubscriptionPlan).includes(plan) ||
-    plan === SubscriptionPlan.FREE
-  ) {
+  if (!plan || !Object.values(SubscriptionPlan).includes(plan) || plan === SubscriptionPlan.FREE) {
     redirect('/#pricing')
   }
 

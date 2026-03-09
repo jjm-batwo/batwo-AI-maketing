@@ -16,6 +16,10 @@ export type KnowledgeDomain =
   | 'meta_best_practices'
   | 'color_psychology'
   | 'copywriting_psychology'
+  // 2026 Meta Trinity 기반 신규 도메인
+  | 'creative_diversity'
+  | 'campaign_structure'
+  | 'tracking_health'
 
 export const ALL_KNOWLEDGE_DOMAINS: readonly KnowledgeDomain[] = [
   'neuromarketing',
@@ -24,6 +28,9 @@ export const ALL_KNOWLEDGE_DOMAINS: readonly KnowledgeDomain[] = [
   'meta_best_practices',
   'color_psychology',
   'copywriting_psychology',
+  'creative_diversity',
+  'campaign_structure',
+  'tracking_health',
 ] as const
 
 // --- Grade Boundaries (SINGLE SOURCE OF TRUTH) ---
@@ -99,12 +106,16 @@ export interface CompositeScore {
 
 // --- Default Domain Weights ---
 export const DEFAULT_DOMAIN_WEIGHTS: Record<KnowledgeDomain, number> = {
-  neuromarketing: 0.20,
-  marketing_psychology: 0.20,
-  crowd_psychology: 0.15,
-  meta_best_practices: 0.20,
-  color_psychology: 0.10,
-  copywriting_psychology: 0.15,
+  neuromarketing: 0.1,
+  marketing_psychology: 0.1,
+  crowd_psychology: 0.05,
+  meta_best_practices: 0.15,
+  color_psychology: 0.05,
+  copywriting_psychology: 0.1,
+  // 2026 기반 신규 도메인 가중치 배분
+  creative_diversity: 0.2,
+  campaign_structure: 0.15,
+  tracking_health: 0.1,
 }
 
 // --- Pure Scoring Utilities ---
@@ -126,9 +137,7 @@ export function rankRecommendations(
   recommendations: DomainRecommendation[]
 ): DomainRecommendation[] {
   const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 }
-  return [...recommendations].sort(
-    (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]
-  )
+  return [...recommendations].sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority])
 }
 
 export function buildCompositeScore(
@@ -137,13 +146,13 @@ export function buildCompositeScore(
   weights?: Record<KnowledgeDomain, number>
 ): CompositeScore {
   const overall = calculateWeightedAverage(domainScores, weights)
-  const allRecs = domainScores.flatMap(ds => ds.recommendations)
-  const allCitations = domainScores.flatMap(ds => ds.citations)
+  const allRecs = domainScores.flatMap((ds) => ds.recommendations)
+  const allCitations = domainScores.flatMap((ds) => ds.citations)
   return {
     overall,
     grade: getGrade(overall),
     domainScores,
-    analyzedDomains: domainScores.map(ds => ds.domain),
+    analyzedDomains: domainScores.map((ds) => ds.domain),
     failedDomains,
     topRecommendations: rankRecommendations(allRecs).slice(0, 5),
     totalCitations: allCitations,
@@ -152,7 +161,10 @@ export function buildCompositeScore(
 }
 
 // --- Industry Benchmarks ---
-export const INDUSTRY_BENCHMARKS: Record<string, { avgCTR: number; avgCVR: number; avgROAS: number }> = {
+export const INDUSTRY_BENCHMARKS: Record<
+  string,
+  { avgCTR: number; avgCVR: number; avgROAS: number }
+> = {
   ecommerce: { avgCTR: 1.2, avgCVR: 2.5, avgROAS: 3.0 },
   food_beverage: { avgCTR: 1.5, avgCVR: 3.0, avgROAS: 2.5 },
   beauty: { avgCTR: 1.8, avgCVR: 3.5, avgROAS: 4.0 },

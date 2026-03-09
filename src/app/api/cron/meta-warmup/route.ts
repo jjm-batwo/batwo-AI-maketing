@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { MetaAdsWarmupClient, WarmupSummary } from '@infrastructure/external/meta-ads/MetaAdsWarmupClient'
+import {
+  MetaAdsWarmupClient,
+  WarmupSummary,
+} from '@infrastructure/external/meta-ads/MetaAdsWarmupClient'
 import { validateCronAuth } from '@/lib/middleware/cronAuth'
 import { safeDecryptToken } from '@application/utils/TokenEncryption'
 
@@ -29,15 +32,12 @@ async function tryGetAccountsFromDB(targetAccountId: string | undefined): Promis
     const { prisma } = await import('@/lib/prisma')
     const accounts = await prisma.metaAdAccount.findMany({
       where: {
-        OR: [
-          { tokenExpiry: null },
-          { tokenExpiry: { gt: new Date() } },
-        ],
+        OR: [{ tokenExpiry: null }, { tokenExpiry: { gt: new Date() } }],
         ...(targetAccountId && { metaAccountId: targetAccountId }),
       },
     })
     return {
-      accounts: accounts.map(a => ({
+      accounts: accounts.map((a) => ({
         metaAccessToken: safeDecryptToken(a.accessToken),
         metaAccountId: a.metaAccountId,
         businessName: a.businessName,
@@ -45,7 +45,10 @@ async function tryGetAccountsFromDB(targetAccountId: string | undefined): Promis
       fromDb: true,
     }
   } catch (error) {
-    console.warn('[Meta Warmup] DB access failed, falling back to env vars:', error instanceof Error ? error.message : 'Unknown')
+    console.warn(
+      '[Meta Warmup] DB access failed, falling back to env vars:',
+      error instanceof Error ? error.message : 'Unknown'
+    )
     return {
       accounts: [],
       fromDb: false,
@@ -58,7 +61,8 @@ async function tryGetAccountsFromDB(targetAccountId: string | undefined): Promis
 async function tryLogToDatabase(summary: WarmupSummary, accountId: string): Promise<boolean> {
   try {
     const { prisma } = await import('@/lib/prisma')
-    const { MetaApiLogRepository } = await import('@infrastructure/external/meta-ads/MetaApiLogRepository')
+    const { MetaApiLogRepository } =
+      await import('@infrastructure/external/meta-ads/MetaApiLogRepository')
     const logRepository = new MetaApiLogRepository(prisma)
 
     for (const result of summary.results) {
@@ -75,7 +79,10 @@ async function tryLogToDatabase(summary: WarmupSummary, accountId: string): Prom
     }
     return true
   } catch (error) {
-    console.warn('[Meta Warmup] DB logging failed:', error instanceof Error ? error.message : 'Unknown')
+    console.warn(
+      '[Meta Warmup] DB logging failed:',
+      error instanceof Error ? error.message : 'Unknown'
+    )
     return false
   }
 }
@@ -91,7 +98,8 @@ async function tryGetReviewStatus(): Promise<{
 } | null> {
   try {
     const { prisma } = await import('@/lib/prisma')
-    const { MetaApiLogRepository } = await import('@infrastructure/external/meta-ads/MetaApiLogRepository')
+    const { MetaApiLogRepository } =
+      await import('@infrastructure/external/meta-ads/MetaApiLogRepository')
     const logRepository = new MetaApiLogRepository(prisma)
     return await logRepository.checkAppReviewStatus()
   } catch {
@@ -139,11 +147,13 @@ export async function GET(request: NextRequest) {
 
       if (envToken && envAccountId) {
         console.log('[Meta Warmup] Using env vars fallback (DB unavailable or empty)')
-        accounts = [{
-          metaAccessToken: envToken,
-          metaAccountId: envAccountId,
-          businessName: 'Env Config',
-        }]
+        accounts = [
+          {
+            metaAccessToken: envToken,
+            metaAccountId: envAccountId,
+            businessName: 'Env Config',
+          },
+        ]
       }
     }
 
@@ -176,7 +186,7 @@ export async function GET(request: NextRequest) {
           account.metaAccessToken,
           account.metaAccountId,
           {
-            maxCampaigns: 50,  // 앱 검수를 위해 최대화
+            maxCampaigns: 50, // 앱 검수를 위해 최대화
             maxAdSets: 30,
             maxAds: 30,
           }
@@ -237,7 +247,7 @@ export async function GET(request: NextRequest) {
       totalApiCalls,
       successfulCalls,
       failedCalls,
-      accounts: accountResults.map(r => ({
+      accounts: accountResults.map((r) => ({
         accountId: r.accountId,
         businessName: r.businessName,
         calls: r.totalCalls,

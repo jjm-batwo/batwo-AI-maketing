@@ -36,7 +36,10 @@ export const TestimonialCard = memo(function TestimonialCard({
       {/* Author */}
       <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
         <Avatar className={`w-9 h-9 ${testimonial.avatarColor}`}>
-          <AvatarFallback className="text-white text-xs font-semibold" aria-label={testimonial.name}>
+          <AvatarFallback
+            className="text-white text-xs font-semibold"
+            aria-label={testimonial.name}
+          >
             {testimonial.name.slice(0, 2)}
           </AvatarFallback>
         </Avatar>

@@ -68,10 +68,7 @@ export class PrismaReportRepository implements IReportRepository {
     return reports.map(ReportMapper.toDomain)
   }
 
-  async findLatestByUserAndType(
-    userId: string,
-    type: ReportType
-  ): Promise<Report | null> {
+  async findLatestByUserAndType(userId: string, type: ReportType): Promise<Report | null> {
     const report = await this.prisma.report.findFirst({
       where: {
         userId,
@@ -126,10 +123,10 @@ export class PrismaReportRepository implements IReportRepository {
     if (filters.dateFrom || filters.dateTo) {
       where.createdAt = {}
       if (filters.dateFrom) {
-        (where.createdAt as Record<string, Date>).gte = filters.dateFrom
+        ;(where.createdAt as Record<string, Date>).gte = filters.dateFrom
       }
       if (filters.dateTo) {
-        (where.createdAt as Record<string, Date>).lte = filters.dateTo
+        ;(where.createdAt as Record<string, Date>).lte = filters.dateTo
       }
     }
 

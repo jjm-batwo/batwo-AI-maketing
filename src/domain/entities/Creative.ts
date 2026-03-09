@@ -118,26 +118,48 @@ export class Creative {
   }
 
   // Getters
-  get id(): string { return this._id }
-  get userId(): string { return this._userId }
-  get name(): string { return this._name }
-  get format(): CreativeFormat { return this._format }
-  get primaryText(): string | undefined { return this._primaryText }
-  get headline(): string | undefined { return this._headline }
-  get description(): string | undefined { return this._description }
-  get callToAction(): CTAType { return this._callToAction }
-  get linkUrl(): string | undefined { return this._linkUrl }
-  get assets(): CreativeAssetData[] { return [...this._assets] }
-  get metaCreativeId(): string | undefined { return this._metaCreativeId }
-  get createdAt(): Date { return new Date(this._createdAt) }
-  get updatedAt(): Date { return new Date(this._updatedAt) }
+  get id(): string {
+    return this._id
+  }
+  get userId(): string {
+    return this._userId
+  }
+  get name(): string {
+    return this._name
+  }
+  get format(): CreativeFormat {
+    return this._format
+  }
+  get primaryText(): string | undefined {
+    return this._primaryText
+  }
+  get headline(): string | undefined {
+    return this._headline
+  }
+  get description(): string | undefined {
+    return this._description
+  }
+  get callToAction(): CTAType {
+    return this._callToAction
+  }
+  get linkUrl(): string | undefined {
+    return this._linkUrl
+  }
+  get assets(): CreativeAssetData[] {
+    return [...this._assets]
+  }
+  get metaCreativeId(): string | undefined {
+    return this._metaCreativeId
+  }
+  get createdAt(): Date {
+    return new Date(this._createdAt)
+  }
+  get updatedAt(): Date {
+    return new Date(this._updatedAt)
+  }
 
   // 카피 업데이트 - 새 인스턴스 반환
-  updateCopy(props: {
-    primaryText?: string
-    headline?: string
-    description?: string
-  }): Creative {
+  updateCopy(props: { primaryText?: string; headline?: string; description?: string }): Creative {
     const newPrimaryText = props.primaryText ?? this._primaryText
     const newHeadline = props.headline ?? this._headline
     const newDescription = props.description ?? this._description

@@ -106,7 +106,10 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (action === 'accept') {
       // User can only accept their own invitation
       if (targetMember.email !== session.user.email) {
-        return NextResponse.json({ error: 'Cannot accept invitation for another user' }, { status: 403 })
+        return NextResponse.json(
+          { error: 'Cannot accept invitation for another user' },
+          { status: 403 }
+        )
       }
 
       if (targetMember.isActive) {
@@ -187,10 +190,14 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     // Update only permissions
     if (permissions !== undefined) {
       const validPermissions = DEFAULT_ROLE_PERMISSIONS[targetMember.role]
-      const invalidPerms = permissions.filter((p: string) => !validPermissions.includes(p as TeamPermission))
+      const invalidPerms = permissions.filter(
+        (p: string) => !validPermissions.includes(p as TeamPermission)
+      )
       if (invalidPerms.length > 0) {
         return NextResponse.json(
-          { error: `Invalid permissions for role ${targetMember.role}: ${invalidPerms.join(', ')}` },
+          {
+            error: `Invalid permissions for role ${targetMember.role}: ${invalidPerms.join(', ')}`,
+          },
           { status: 400 }
         )
       }
@@ -254,7 +261,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
 
     // User can leave the team themselves
-    const isSelfRemoval = targetMember.userId === session.user.id || targetMember.email === session.user.email
+    const isSelfRemoval =
+      targetMember.userId === session.user.id || targetMember.email === session.user.email
 
     // Otherwise, require team management permission
     if (!isSelfRemoval && !currentMember.canManageTeam()) {

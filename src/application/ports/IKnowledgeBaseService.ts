@@ -28,12 +28,20 @@ export interface AnalysisInput {
     roas?: number
     cpa?: number
     frequency?: number
+    // 2026 Meta Trinity 기반 신규 메트릭스
+    campaignCount?: number
+    adsetCount?: number
+    adCount?: number
+    emqScore?: number
+    weeklyConversions?: number
   }
   creative?: {
     format?: 'image' | 'video' | 'carousel'
     dominantColors?: string[]
     hasVideo?: boolean
     videoDuration?: number
+    // 2026 Meta Trinity 기반 신규 분류기
+    entityIdCount?: number
   }
 }
 

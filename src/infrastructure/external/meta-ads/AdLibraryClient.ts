@@ -10,7 +10,10 @@
  * - 활성 Meta 연결 필요
  */
 
-import { IAdLibraryClient, type CompetitorAd } from '@application/services/CompetitorAnalysisService'
+import {
+  IAdLibraryClient,
+  type CompetitorAd,
+} from '@application/services/CompetitorAnalysisService'
 import { MetaAdsApiError } from '../errors'
 import { withRetry } from '@lib/utils/retry'
 import { fetchWithTimeout } from '@lib/utils/timeout'
@@ -163,9 +166,7 @@ export class AdLibraryClient implements IAdLibraryClient {
     })
   }
 
-  private mapAdLibraryItem(
-    item: MetaAdLibraryResponse['data'][0]
-  ): CompetitorAd {
+  private mapAdLibraryItem(item: MetaAdLibraryResponse['data'][0]): CompetitorAd {
     return {
       id: item.id,
       pageId: item.page_id || 'unknown',

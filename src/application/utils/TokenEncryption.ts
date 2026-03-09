@@ -9,7 +9,7 @@ import { createCipheriv, createDecipheriv, randomBytes } from 'crypto'
  */
 
 const ALGORITHM = 'aes-256-gcm'
-const IV_LENGTH = 12  // GCM 권장 IV 길이 (바이트)
+const IV_LENGTH = 12 // GCM 권장 IV 길이 (바이트)
 const TAG_LENGTH = 16 // GCM 인증 태그 길이 (바이트)
 const SEPARATOR = ':'
 
@@ -51,11 +51,7 @@ export function encryptToken(plainToken: string): string {
   encrypted += cipher.final('hex')
   const tag = cipher.getAuthTag()
 
-  return [
-    iv.toString('hex'),
-    encrypted,
-    tag.toString('hex'),
-  ].join(SEPARATOR)
+  return [iv.toString('hex'), encrypted, tag.toString('hex')].join(SEPARATOR)
 }
 
 /**

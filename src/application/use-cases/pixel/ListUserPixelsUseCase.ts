@@ -1,9 +1,6 @@
 import { IMetaPixelRepository } from '@domain/repositories/IMetaPixelRepository'
 import { PixelSetupMethod } from '@domain/entities/MetaPixel'
-import {
-  MetaPixelListDTO,
-  toMetaPixelDTO,
-} from '@application/dto/pixel/MetaPixelDTO'
+import { MetaPixelListDTO, toMetaPixelDTO } from '@application/dto/pixel/MetaPixelDTO'
 
 export interface ListUserPixelsInput {
   userId: string

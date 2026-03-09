@@ -31,11 +31,7 @@ const FEATURE_GUIDES: Record<
   analysis: {
     title: 'AI 캠페인 분석',
     description: '캠페인 성과를 AI가 분석하고 개선 방향을 제시합니다.',
-    capabilities: [
-      '실시간 성과 지표 분석',
-      'ROI 개선 기회 발견',
-      '경쟁사 대비 벤치마킹',
-    ],
+    capabilities: ['실시간 성과 지표 분석', 'ROI 개선 기회 발견', '경쟁사 대비 벤치마킹'],
     tips: [
       '최소 7일간의 데이터가 있을 때 가장 정확합니다',
       '주간 단위로 정기 분석을 받아보세요',
@@ -45,11 +41,7 @@ const FEATURE_GUIDES: Record<
   chat: {
     title: 'AI 마케팅 어시스턴트',
     description: '마케팅 전략과 전술에 대해 AI와 대화하며 아이디어를 얻으세요.',
-    capabilities: [
-      '24/7 마케팅 자문',
-      '즉각적인 전략 피드백',
-      '맞춤형 솔루션 제안',
-    ],
+    capabilities: ['24/7 마케팅 자문', '즉각적인 전략 피드백', '맞춤형 솔루션 제안'],
     tips: [
       '구체적인 상황을 설명할수록 정확한 답변을 받습니다',
       '캠페인 데이터를 공유하면 더 맞춤화된 조언을 받습니다',
@@ -59,11 +51,7 @@ const FEATURE_GUIDES: Record<
   insights: {
     title: 'AI 인사이트',
     description: '데이터에서 숨겨진 패턴과 기회를 자동으로 발견합니다.',
-    capabilities: [
-      '트렌드 및 패턴 인식',
-      '이상 징후 조기 경보',
-      '최적화 기회 추천',
-    ],
+    capabilities: ['트렌드 및 패턴 인식', '이상 징후 조기 경보', '최적화 기회 추천'],
     tips: [
       '매일 인사이트를 확인하는 습관을 만드세요',
       '중요한 인사이트는 북마크하여 추적하세요',
@@ -73,11 +61,7 @@ const FEATURE_GUIDES: Record<
   proactive_insights: {
     title: '능동적 인사이트',
     description: 'AI가 자동으로 중요한 변화를 감지하고 알려드립니다.',
-    capabilities: [
-      '실시간 성과 모니터링',
-      '자동 이상 탐지',
-      '즉각적인 알림 전송',
-    ],
+    capabilities: ['실시간 성과 모니터링', '자동 이상 탐지', '즉각적인 알림 전송'],
     tips: [
       '알림 설정을 맞춤화하세요',
       '긴급도에 따라 우선순위를 정하세요',
@@ -87,11 +71,7 @@ const FEATURE_GUIDES: Record<
   science_score: {
     title: '과학 신뢰도 점수',
     description: 'AI 제안의 과학적 근거와 신뢰도를 투명하게 보여줍니다.',
-    capabilities: [
-      '학술 논문 기반 검증',
-      '신뢰도 수준 명시',
-      '출처 추적 가능',
-    ],
+    capabilities: ['학술 논문 기반 검증', '신뢰도 수준 명시', '출처 추적 가능'],
     tips: [
       '높은 점수(80% 이상)의 제안을 우선 시도하세요',
       '낮은 점수 제안도 맥락에 따라 가치가 있을 수 있습니다',
@@ -101,11 +81,7 @@ const FEATURE_GUIDES: Record<
   contextual_suggestions: {
     title: '맥락 기반 AI 제안',
     description: '작업 중인 화면에 맞춰 적절한 AI 제안을 제공합니다.',
-    capabilities: [
-      '상황에 맞는 자동 제안',
-      '원클릭 적용',
-      '학습하는 추천 시스템',
-    ],
+    capabilities: ['상황에 맞는 자동 제안', '원클릭 적용', '학습하는 추천 시스템'],
     tips: [
       '제안을 사용할수록 더 정확해집니다',
       '필요없는 제안은 숨김 처리하세요',
@@ -115,11 +91,7 @@ const FEATURE_GUIDES: Record<
   ambient_insights: {
     title: '앰비언트 인사이트',
     description: '업무 흐름을 방해하지 않고 부드럽게 인사이트를 전달합니다.',
-    capabilities: [
-      '비침투적 알림',
-      '타이밍 최적화',
-      '맥락 인식 전달',
-    ],
+    capabilities: ['비침투적 알림', '타이밍 최적화', '맥락 인식 전달'],
     tips: [
       '알림 빈도를 조절할 수 있습니다',
       '중요한 인사이트는 자동 저장됩니다',
@@ -129,11 +101,7 @@ const FEATURE_GUIDES: Record<
   error_recovery: {
     title: 'AI 오류 복구',
     description: 'AI 작업 중 오류가 발생해도 부분 결과를 활용할 수 있습니다.',
-    capabilities: [
-      '부분 성공 결과 보존',
-      '자동 재시도 옵션',
-      '대안 솔루션 제안',
-    ],
+    capabilities: ['부분 성공 결과 보존', '자동 재시도 옵션', '대안 솔루션 제안'],
     tips: [
       '부분 결과도 가치가 있을 수 있습니다',
       '재시도 전에 문제를 확인하세요',
@@ -143,11 +111,7 @@ const FEATURE_GUIDES: Record<
   confidence_indicator: {
     title: '신뢰도 표시',
     description: 'AI 응답의 확실성 수준을 색상으로 표시합니다.',
-    capabilities: [
-      '문장별 신뢰도 표시',
-      '시각적 색상 코드',
-      '근거 자료 링크',
-    ],
+    capabilities: ['문장별 신뢰도 표시', '시각적 색상 코드', '근거 자료 링크'],
     tips: [
       '녹색: 높은 신뢰도 (바로 사용 가능)',
       '노란색: 중간 신뢰도 (검토 권장)',
@@ -221,7 +185,8 @@ export function FirstUseGuide({
                   <p className="text-sm text-gray-500 dark:text-gray-400">처음 사용하시는군요!</p>
                 </div>
               </div>
-              <button type="button"
+              <button
+                type="button"
                 onClick={handleDismiss}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
                 aria-label="닫기"
@@ -248,7 +213,10 @@ export function FirstUseGuide({
               </div>
               <ul className="space-y-2">
                 {guide.capabilities.map((capability, index) => (
-                  <li key={index} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <li
+                    key={index}
+                    className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400"
+                  >
                     <ChevronRight className="w-4 h-4 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
                     <span>{capability}</span>
                   </li>
@@ -266,7 +234,10 @@ export function FirstUseGuide({
               </div>
               <ul className="space-y-2">
                 {guide.tips.map((tip, index) => (
-                  <li key={index} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <li
+                    key={index}
+                    className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400"
+                  >
                     <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center bg-amber-100 dark:bg-amber-900/30 rounded-full text-xs font-medium text-amber-700 dark:text-amber-400">
                       {index + 1}
                     </span>
@@ -290,14 +261,16 @@ export function FirstUseGuide({
                 <span>다시 보지 않기</span>
               </label>
               <div className="flex items-center gap-2">
-                <button type="button"
+                <button
+                  type="button"
                   onClick={handleDismiss}
                   className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 >
                   닫기
                 </button>
                 {onStartTour && (
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={handleStartTour}
                     className="px-4 py-2 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
                   >
@@ -335,7 +308,8 @@ export function FirstUseGuide({
               <p className="text-sm text-gray-500 dark:text-gray-400">처음 사용하시는군요!</p>
             </div>
           </div>
-          <button type="button"
+          <button
+            type="button"
             onClick={handleDismiss}
             className="p-1.5 hover:bg-white/50 dark:hover:bg-gray-800/50 rounded-lg transition-colors"
             aria-label="닫기"
@@ -356,7 +330,10 @@ export function FirstUseGuide({
           </h3>
           <ul className="space-y-1.5">
             {guide.capabilities.map((capability, index) => (
-              <li key={index} className="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-400">
+              <li
+                key={index}
+                className="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-400"
+              >
                 <ChevronRight className="w-3 h-3 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
                 <span>{capability}</span>
               </li>
@@ -371,7 +348,10 @@ export function FirstUseGuide({
           </h3>
           <ul className="space-y-1.5">
             {guide.tips.slice(0, 2).map((tip, index) => (
-              <li key={index} className="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-400">
+              <li
+                key={index}
+                className="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-400"
+              >
                 <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center bg-amber-100 dark:bg-amber-900/30 rounded-full text-xs font-medium text-amber-700 dark:text-amber-400">
                   {index + 1}
                 </span>
@@ -395,14 +375,16 @@ export function FirstUseGuide({
             <span>다시 보지 않기</span>
           </label>
           <div className="flex items-center gap-2">
-            <button type="button"
+            <button
+              type="button"
               onClick={handleDismiss}
               className="px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
               닫기
             </button>
             {onStartTour && (
-              <button type="button"
+              <button
+                type="button"
                 onClick={handleStartTour}
                 className="px-3 py-1.5 text-xs font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
               >

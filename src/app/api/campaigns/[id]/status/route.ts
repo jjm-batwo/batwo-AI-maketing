@@ -22,10 +22,7 @@ interface StatusChangeRequest {
   accessToken?: string
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
@@ -41,9 +38,7 @@ export async function POST(
     }
 
     if (body.action === 'pause') {
-      const pauseCampaign = container.resolve<PauseCampaignUseCase>(
-        DI_TOKENS.PauseCampaignUseCase
-      )
+      const pauseCampaign = container.resolve<PauseCampaignUseCase>(DI_TOKENS.PauseCampaignUseCase)
 
       const result = await pauseCampaign.execute({
         campaignId: id,
@@ -77,30 +72,18 @@ export async function POST(
     }
   } catch (error) {
     if (error instanceof CampaignNotFoundError) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     if (error instanceof UnauthorizedCampaignAccessError) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     if (error instanceof PauseCampaignError || error instanceof ResumeCampaignError) {
-      return NextResponse.json(
-        { message: error.message },
-        { status: 400 }
-      )
+      return NextResponse.json({ message: error.message }, { status: 400 })
     }
 
     console.error('Failed to change campaign status:', error)
-    return NextResponse.json(
-      { message: 'Failed to change campaign status' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to change campaign status' }, { status: 500 })
   }
 }

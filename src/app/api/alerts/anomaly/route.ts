@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/infrastructure/auth'
 import { prisma } from '@/lib/prisma'
-import {
-  getKPIRepository,
-  getCampaignRepository,
-  getEmailService,
-} from '@/lib/di/container'
+import { getKPIRepository, getCampaignRepository, getEmailService } from '@/lib/di/container'
 import { AnomalyDetectionService } from '@application/services/AnomalyDetectionService'
 import { AnomalyAlertService } from '@application/services/AnomalyAlertService'
 
@@ -20,10 +16,7 @@ export async function GET(_request: NextRequest) {
     const session = await auth()
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { message: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
     }
 
     const userId = session.user.id
@@ -38,10 +31,7 @@ export async function GET(_request: NextRequest) {
     })
 
     if (!user) {
-      return NextResponse.json(
-        { message: 'User not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: 'User not found' }, { status: 404 })
     }
 
     // Initialize services
@@ -81,10 +71,7 @@ export async function POST(request: NextRequest) {
     const session = await auth()
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { message: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
     }
 
     const userId = session.user.id
@@ -99,18 +86,12 @@ export async function POST(request: NextRequest) {
     })
 
     if (!user) {
-      return NextResponse.json(
-        { message: 'User not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: 'User not found' }, { status: 404 })
     }
 
     // Parse request body for custom config
     const body = await request.json().catch(() => ({}))
-    const {
-      minimumSeverity = 'warning',
-      sendEmail = true,
-    } = body
+    const { minimumSeverity = 'warning', sendEmail = true } = body
 
     // Initialize services
     const anomalyDetectionService = new AnomalyDetectionService(

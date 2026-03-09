@@ -33,7 +33,7 @@ export default async function ReportDetailPage({ params }: ReportDetailPageProps
   try {
     const res = await fetch(`${baseUrl}/api/reports/${reportId}`, {
       headers: { Cookie: cookieStore.toString() },
-      next: { revalidate: 0 }
+      next: { revalidate: 0 },
     })
 
     if (!res.ok) {

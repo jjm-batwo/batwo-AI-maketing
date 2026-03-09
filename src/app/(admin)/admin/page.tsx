@@ -86,10 +86,13 @@ function formatCurrency(amount: number, currency: string = 'KRW') {
 async function getDashboardData(): Promise<DashboardData | null> {
   try {
     const cookieStore = await cookies()
-    const res = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/admin/dashboard`, {
-      headers: { Cookie: cookieStore.toString() },
-      next: { revalidate: 300, tags: ['admin-dashboard'] },
-    })
+    const res = await fetch(
+      `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/admin/dashboard`,
+      {
+        headers: { Cookie: cookieStore.toString() },
+        next: { revalidate: 300, tags: ['admin-dashboard'] },
+      }
+    )
 
     if (!res.ok) {
       throw new Error('Failed to fetch dashboard data')
@@ -111,9 +114,7 @@ export default async function AdminDashboardPage() {
         <h1 className="text-2xl font-bold">관리자 대시보드</h1>
         <Card>
           <CardContent className="pt-6">
-            <p className="text-destructive">
-              데이터를 불러오는데 실패했습니다.
-            </p>
+            <p className="text-destructive">데이터를 불러오는데 실패했습니다.</p>
           </CardContent>
         </Card>
       </div>
@@ -173,22 +174,13 @@ export default async function AdminDashboardPage() {
           <CardContent>
             <div className="space-y-4">
               {data.recent.users.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  최근 가입한 회원이 없습니다.
-                </p>
+                <p className="text-sm text-muted-foreground">최근 가입한 회원이 없습니다.</p>
               ) : (
                 data.recent.users.map((user) => (
-                  <div
-                    key={user.id}
-                    className="flex items-center justify-between"
-                  >
+                  <div key={user.id} className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium">
-                        {user.name || '이름 없음'}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {user.email}
-                      </p>
+                      <p className="text-sm font-medium">{user.name || '이름 없음'}</p>
+                      <p className="text-xs text-muted-foreground">{user.email}</p>
                     </div>
                     <div className="text-right">
                       {user.subscription ? (
@@ -225,28 +217,19 @@ export default async function AdminDashboardPage() {
           <CardContent>
             <div className="space-y-4">
               {data.recent.payments.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  최근 결제 내역이 없습니다.
-                </p>
+                <p className="text-sm text-muted-foreground">최근 결제 내역이 없습니다.</p>
               ) : (
                 data.recent.payments.map((payment) => (
-                  <div
-                    key={payment.id}
-                    className="flex items-center justify-between"
-                  >
+                  <div key={payment.id} className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium">
                         {formatCurrency(payment.amount, payment.currency)}
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        {payment.id.slice(0, 8)}...
-                      </p>
+                      <p className="text-xs text-muted-foreground">{payment.id.slice(0, 8)}...</p>
                     </div>
                     <div className="text-right">
                       <Badge
-                        variant={
-                          payment.status === 'PAID' ? 'default' : 'secondary'
-                        }
+                        variant={payment.status === 'PAID' ? 'default' : 'secondary'}
                         className="text-xs"
                       >
                         {payment.status}
@@ -281,15 +264,10 @@ export default async function AdminDashboardPage() {
           <CardContent>
             <div className="space-y-4">
               {data.pendingRefunds.items.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  대기 중인 환불 요청이 없습니다.
-                </p>
+                <p className="text-sm text-muted-foreground">대기 중인 환불 요청이 없습니다.</p>
               ) : (
                 data.pendingRefunds.items.map((refund) => (
-                  <div
-                    key={refund.id}
-                    className="flex items-center justify-between"
-                  >
+                  <div key={refund.id} className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium">
                         {formatCurrency(refund.amount, refund.currency)}

@@ -60,11 +60,31 @@ interface UIState {
 
   // Dashboard period
   dashboardPeriod: 'today' | 'yesterday' | '7d' | '30d' | 'this_month' | 'last_month'
-  setDashboardPeriod: (period: 'today' | 'yesterday' | '7d' | '30d' | 'this_month' | 'last_month') => void
+  setDashboardPeriod: (
+    period: 'today' | 'yesterday' | '7d' | '30d' | 'this_month' | 'last_month'
+  ) => void
 
   // Campaign objective filter
-  dashboardObjective: 'ALL' | 'AWARENESS' | 'TRAFFIC' | 'ENGAGEMENT' | 'LEADS' | 'APP_PROMOTION' | 'SALES' | 'CONVERSIONS'
-  setDashboardObjective: (objective: 'ALL' | 'AWARENESS' | 'TRAFFIC' | 'ENGAGEMENT' | 'LEADS' | 'APP_PROMOTION' | 'SALES' | 'CONVERSIONS') => void
+  dashboardObjective:
+    | 'ALL'
+    | 'AWARENESS'
+    | 'TRAFFIC'
+    | 'ENGAGEMENT'
+    | 'LEADS'
+    | 'APP_PROMOTION'
+    | 'SALES'
+    | 'CONVERSIONS'
+  setDashboardObjective: (
+    objective:
+      | 'ALL'
+      | 'AWARENESS'
+      | 'TRAFFIC'
+      | 'ENGAGEMENT'
+      | 'LEADS'
+      | 'APP_PROMOTION'
+      | 'SALES'
+      | 'CONVERSIONS'
+  ) => void
 
   // Dashboard AI Insights (챗봇 컨텍스트 공유)
   dashboardInsights: DashboardInsightSummary[]
@@ -88,15 +108,13 @@ export const useUIStore = create<UIState>((set) => ({
   // Sidebar
   isSidebarOpen: true,
   isSidebarCollapsed: false,
-  toggleSidebar: () =>
-    set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
+  toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
   collapseSidebar: () => set({ isSidebarCollapsed: true }),
   expandSidebar: () => set({ isSidebarCollapsed: false }),
 
   // Mobile menu
   isMobileMenuOpen: false,
-  toggleMobileMenu: () =>
-    set((state) => ({ isMobileMenuOpen: !state.isMobileMenuOpen })),
+  toggleMobileMenu: () => set((state) => ({ isMobileMenuOpen: !state.isMobileMenuOpen })),
   closeMobileMenu: () => set({ isMobileMenuOpen: false }),
 
   // Toast notifications

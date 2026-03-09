@@ -204,21 +204,23 @@ export class KPIInsightsService {
     // Fire-and-forget: persist insights to history (non-blocking)
     if (this.insightHistoryRepository && userId) {
       for (const insight of enhancedInsights) {
-        this.insightHistoryRepository.save({
-          userId,
-          campaignId: insight.campaignId,
-          category: insight.category,
-          priority: insight.priority,
-          title: insight.title,
-          description: insight.aiDescription ?? insight.description,
-          rootCause: insight.rootCause,
-          metadata: {
-            recommendations: insight.recommendations,
-            forecast: insight.forecast,
-          },
-        }).catch((e: unknown) => {
-          console.warn('[KPIInsightsService] InsightHistory save failed (non-blocking):', e)
-        })
+        this.insightHistoryRepository
+          .save({
+            userId,
+            campaignId: insight.campaignId,
+            category: insight.category,
+            priority: insight.priority,
+            title: insight.title,
+            description: insight.aiDescription ?? insight.description,
+            rootCause: insight.rootCause,
+            metadata: {
+              recommendations: insight.recommendations,
+              forecast: insight.forecast,
+            },
+          })
+          .catch((e: unknown) => {
+            console.warn('[KPIInsightsService] InsightHistory save failed (non-blocking):', e)
+          })
       }
     }
 

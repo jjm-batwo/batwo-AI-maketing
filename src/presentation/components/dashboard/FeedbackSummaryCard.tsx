@@ -43,9 +43,7 @@ export function FeedbackSummaryCard({ data, isLoading }: FeedbackSummaryCardProp
           <MessageSquare className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground py-4 text-center">
-            피드백 데이터가 없습니다
-          </p>
+          <p className="text-sm text-muted-foreground py-4 text-center">피드백 데이터가 없습니다</p>
         </CardContent>
       </Card>
     )
@@ -102,10 +100,7 @@ export function FeedbackSummaryCard({ data, isLoading }: FeedbackSummaryCardProp
             <p className="text-xs font-medium text-muted-foreground mb-2">최근 부정 피드백</p>
             <ul className="space-y-2">
               {recentNegative.map((item) => (
-                <li
-                  key={item.id}
-                  className="rounded-md bg-red-50 dark:bg-red-950/20 px-2 py-1.5"
-                >
+                <li key={item.id} className="rounded-md bg-red-50 dark:bg-red-950/20 px-2 py-1.5">
                   <p className="text-xs text-red-700 dark:text-red-400 line-clamp-2">
                     {item.comment ?? '(코멘트 없음)'}
                   </p>
@@ -119,9 +114,7 @@ export function FeedbackSummaryCard({ data, isLoading }: FeedbackSummaryCardProp
         )}
 
         {summary.total === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-2">
-            아직 피드백이 없습니다
-          </p>
+          <p className="text-sm text-muted-foreground text-center py-2">아직 피드백이 없습니다</p>
         )}
       </CardContent>
     </Card>

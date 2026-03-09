@@ -317,14 +317,15 @@ export class PrismaUserRepository implements IUserRepository {
         status: c.status,
         createdAt: c.createdAt,
       })),
-      invoices: user.subscription?.invoices.map((inv) => ({
-        id: inv.id,
-        amount: Number(inv.amount),
-        currency: inv.currency,
-        status: inv.status,
-        paidAt: inv.paidAt,
-        createdAt: inv.createdAt,
-      })) ?? [],
+      invoices:
+        user.subscription?.invoices.map((inv) => ({
+          id: inv.id,
+          amount: Number(inv.amount),
+          currency: inv.currency,
+          status: inv.status,
+          paidAt: inv.paidAt,
+          createdAt: inv.createdAt,
+        })) ?? [],
       lastActiveAt: user.sessions[0]?.expires ?? null,
     }
   }
@@ -409,18 +410,16 @@ export class PrismaUserRepository implements IUserRepository {
   // Private helpers
   // ========================================
 
-  private mapToUser(
-    prismaUser: {
-      id: string
-      email: string
-      name: string | null
-      image: string | null
-      emailVerified: Date | null
-      globalRole: string
-      createdAt: Date
-      updatedAt: Date
-    }
-  ): User {
+  private mapToUser(prismaUser: {
+    id: string
+    email: string
+    name: string | null
+    image: string | null
+    emailVerified: Date | null
+    globalRole: string
+    createdAt: Date
+    updatedAt: Date
+  }): User {
     return {
       id: prismaUser.id,
       email: prismaUser.email,
@@ -433,24 +432,22 @@ export class PrismaUserRepository implements IUserRepository {
     }
   }
 
-  private mapToUserWithSubscription(
-    prismaUser: {
+  private mapToUserWithSubscription(prismaUser: {
+    id: string
+    email: string
+    name: string | null
+    image: string | null
+    emailVerified: Date | null
+    globalRole: string
+    createdAt: Date
+    updatedAt: Date
+    subscription?: {
       id: string
-      email: string
-      name: string | null
-      image: string | null
-      emailVerified: Date | null
-      globalRole: string
-      createdAt: Date
-      updatedAt: Date
-      subscription?: {
-        id: string
-        plan: string
-        status: string
-        currentPeriodEnd: Date
-      } | null
-    }
-  ): UserWithSubscription {
+      plan: string
+      status: string
+      currentPeriodEnd: Date
+    } | null
+  }): UserWithSubscription {
     return {
       ...this.mapToUser(prismaUser),
       subscription: prismaUser.subscription

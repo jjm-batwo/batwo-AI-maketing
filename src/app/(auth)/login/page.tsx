@@ -57,9 +57,7 @@ function LoginForm() {
     <Card className="w-full max-w-md shadow-lg">
       <CardHeader className="text-center space-y-2">
         <h1 className="text-2xl font-bold">{t('login.title')}</h1>
-        <CardDescription className="text-base">
-          {t('login.subtitle')}
-        </CardDescription>
+        <CardDescription className="text-base">{t('login.subtitle')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {error && (
@@ -104,9 +102,7 @@ function LoginForm() {
 
           {/* Meta 로그인 - Meta 파란색 */}
           {isFacebookConnected && (
-            <p className="text-xs text-green-600 text-center">
-              {t('login.facebookConnected')}
-            </p>
+            <p className="text-xs text-green-600 text-center">{t('login.facebookConnected')}</p>
           )}
           <Button
             type="button"
@@ -121,12 +117,12 @@ function LoginForm() {
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
               </svg>
             )}
-            {isFacebookConnected ? t('login.continueWith.metaConnected') : t('login.continueWith.meta')}
+            {isFacebookConnected
+              ? t('login.continueWith.metaConnected')
+              : t('login.continueWith.meta')}
           </Button>
           {process.env.NODE_ENV === 'development' && (
-            <p className="text-xs text-amber-600 text-center">
-              {t('login.devMode')}
-            </p>
+            <p className="text-xs text-amber-600 text-center">{t('login.devMode')}</p>
           )}
         </div>
 
@@ -134,8 +130,8 @@ function LoginForm() {
           {t('login.termsPrefix')}{' '}
           <a href="/terms" className="underline hover:text-foreground">
             {t('login.terms')}
-          </a>
-          {' '}{t('login.termsAnd')}{' '}
+          </a>{' '}
+          {t('login.termsAnd')}{' '}
           <a href="/privacy" className="underline hover:text-foreground">
             {t('login.privacy')}
           </a>
@@ -148,11 +144,13 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      }
+    >
       <LoginForm />
     </Suspense>
   )

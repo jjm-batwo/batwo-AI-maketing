@@ -1,13 +1,24 @@
 'use client'
 
 import { useState } from 'react'
-import { ScienceScore, DomainBreakdown, RecommendationCard, CitationCard } from '@/presentation/components/ai'
+import {
+  ScienceScore,
+  DomainBreakdown,
+  RecommendationCard,
+  CitationCard,
+} from '@/presentation/components/ai'
 import { useScienceScore, useScienceCopy } from '@/presentation/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Sparkles, RefreshCw, Loader2, Copy, Check } from 'lucide-react'
 
@@ -39,19 +50,22 @@ export default function ScienceAnalysisPage() {
     objective: 'conversion' as 'awareness' | 'consideration' | 'conversion',
   })
 
-  const [scoreInput, setScoreInput] = useState<{
-    content?: {
-      headline?: string
-      primaryText?: string
-      description?: string
-      callToAction?: string
-    }
-    context?: {
-      industry?: string
-      targetAudience?: string
-      objective?: 'awareness' | 'consideration' | 'conversion'
-    }
-  } | undefined>(undefined)
+  const [scoreInput, setScoreInput] = useState<
+    | {
+        content?: {
+          headline?: string
+          primaryText?: string
+          description?: string
+          callToAction?: string
+        }
+        context?: {
+          industry?: string
+          targetAudience?: string
+          objective?: 'awareness' | 'consideration' | 'conversion'
+        }
+      }
+    | undefined
+  >(undefined)
   const { data: scoreData, isLoading, error } = useScienceScore(scoreInput)
 
   const [hasAnalyzed, setHasAnalyzed] = useState(false)
@@ -59,7 +73,7 @@ export default function ScienceAnalysisPage() {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+    setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
   const handleAnalyze = (e: React.FormEvent) => {
@@ -109,9 +123,7 @@ export default function ScienceAnalysisPage() {
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-primary">
-            과학 기반 마케팅 분석
-          </h1>
+          <h1 className="text-3xl font-bold tracking-tight text-primary">과학 기반 마케팅 분석</h1>
           <p className="text-muted-foreground mt-1">
             6개 과학 도메인을 기반으로 광고 카피의 설득력을 분석합니다
           </p>
@@ -291,11 +303,10 @@ export default function ScienceAnalysisPage() {
                 <div className="rounded-full bg-primary/10 p-6 mb-4">
                   <Sparkles className="h-12 w-12 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">
-                  과학적 근거를 기반으로 분석합니다
-                </h3>
+                <h3 className="text-xl font-semibold mb-2">과학적 근거를 기반으로 분석합니다</h3>
                 <p className="text-muted-foreground max-w-md">
-                  행동경제학, 신경과학, 사회심리학, 인지심리학, 소비자행동론, 설득심리학 6개 도메인에서 광고 카피를 평가합니다
+                  행동경제학, 신경과학, 사회심리학, 인지심리학, 소비자행동론, 설득심리학 6개
+                  도메인에서 광고 카피를 평가합니다
                 </p>
               </CardContent>
             </Card>
@@ -358,24 +369,40 @@ export default function ScienceAnalysisPage() {
               )}
 
               {/* Top Recommendations */}
-              {scoreData?.score.topRecommendations && scoreData.score.topRecommendations.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>주요 개선 제안</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {scoreData.score.topRecommendations.slice(0, 3).map((rec: { domain: string; priority: 'critical' | 'high' | 'medium' | 'low'; recommendation: string; impact: string; evidence: string[] }, index: number) => (
-                      <RecommendationCard
-                        key={index}
-                        recommendation={rec.recommendation}
-                        priority={rec.priority === 'critical' ? 'high' : rec.priority as 'high' | 'medium' | 'low'}
-                        domain={rec.domain}
-                        citationCount={rec.evidence?.length || 0}
-                      />
-                    ))}
-                  </CardContent>
-                </Card>
-              )}
+              {scoreData?.score.topRecommendations &&
+                scoreData.score.topRecommendations.length > 0 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>주요 개선 제안</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {scoreData.score.topRecommendations.slice(0, 3).map(
+                        (
+                          rec: {
+                            domain: string
+                            priority: 'critical' | 'high' | 'medium' | 'low'
+                            recommendation: string
+                            impact: string
+                            evidence: string[]
+                          },
+                          index: number
+                        ) => (
+                          <RecommendationCard
+                            key={index}
+                            recommendation={rec.recommendation}
+                            priority={
+                              rec.priority === 'critical'
+                                ? 'high'
+                                : (rec.priority as 'high' | 'medium' | 'low')
+                            }
+                            domain={rec.domain}
+                            citationCount={rec.evidence?.length || 0}
+                          />
+                        )
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
 
               {/* Generated Ad Copy Variants */}
               {scienceCopyMutation.data && (
@@ -387,57 +414,86 @@ export default function ScienceAnalysisPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {scienceCopyMutation.data.variants.map((variant: { headline: string; primaryText: string; description: string; callToAction: string; reasoning: string }, index: number) => (
-                      <Card key={index} className="border-border/50 bg-muted/20">
-                        <CardContent className="pt-4 space-y-3">
-                          <div className="flex items-center justify-between">
-                            <Badge variant="outline" className="text-primary border-primary/30">
-                              변형 {index + 1}
-                            </Badge>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleCopyText(
-                                `${variant.headline}\n${variant.primaryText}\n${variant.description}\n${variant.callToAction}`,
-                                index
-                              )}
-                              className="h-8 text-xs"
-                            >
-                              {copiedIndex === index ? (
-                                <><Check className="mr-1 h-3 w-3" /> 복사됨</>
-                              ) : (
-                                <><Copy className="mr-1 h-3 w-3" /> 복사</>
-                              )}
-                            </Button>
-                          </div>
-                          <div className="space-y-2">
-                            <div>
-                              <span className="text-xs font-medium text-muted-foreground">헤드라인</span>
-                              <p className="text-sm font-semibold">{variant.headline}</p>
+                    {scienceCopyMutation.data.variants.map(
+                      (
+                        variant: {
+                          headline: string
+                          primaryText: string
+                          description: string
+                          callToAction: string
+                          reasoning: string
+                        },
+                        index: number
+                      ) => (
+                        <Card key={index} className="border-border/50 bg-muted/20">
+                          <CardContent className="pt-4 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <Badge variant="outline" className="text-primary border-primary/30">
+                                변형 {index + 1}
+                              </Badge>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() =>
+                                  handleCopyText(
+                                    `${variant.headline}\n${variant.primaryText}\n${variant.description}\n${variant.callToAction}`,
+                                    index
+                                  )
+                                }
+                                className="h-8 text-xs"
+                              >
+                                {copiedIndex === index ? (
+                                  <>
+                                    <Check className="mr-1 h-3 w-3" /> 복사됨
+                                  </>
+                                ) : (
+                                  <>
+                                    <Copy className="mr-1 h-3 w-3" /> 복사
+                                  </>
+                                )}
+                              </Button>
                             </div>
-                            <div>
-                              <span className="text-xs font-medium text-muted-foreground">본문</span>
-                              <p className="text-sm">{variant.primaryText}</p>
-                            </div>
-                            {variant.description && (
+                            <div className="space-y-2">
                               <div>
-                                <span className="text-xs font-medium text-muted-foreground">설명</span>
-                                <p className="text-sm text-muted-foreground">{variant.description}</p>
+                                <span className="text-xs font-medium text-muted-foreground">
+                                  헤드라인
+                                </span>
+                                <p className="text-sm font-semibold">{variant.headline}</p>
                               </div>
-                            )}
-                            <div>
-                              <span className="text-xs font-medium text-muted-foreground">CTA</span>
-                              <p className="text-sm font-medium text-primary">{variant.callToAction}</p>
+                              <div>
+                                <span className="text-xs font-medium text-muted-foreground">
+                                  본문
+                                </span>
+                                <p className="text-sm">{variant.primaryText}</p>
+                              </div>
+                              {variant.description && (
+                                <div>
+                                  <span className="text-xs font-medium text-muted-foreground">
+                                    설명
+                                  </span>
+                                  <p className="text-sm text-muted-foreground">
+                                    {variant.description}
+                                  </p>
+                                </div>
+                              )}
+                              <div>
+                                <span className="text-xs font-medium text-muted-foreground">
+                                  CTA
+                                </span>
+                                <p className="text-sm font-medium text-primary">
+                                  {variant.callToAction}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                          {variant.reasoning && (
-                            <p className="text-xs text-muted-foreground italic border-t pt-2">
-                              {variant.reasoning}
-                            </p>
-                          )}
-                        </CardContent>
-                      </Card>
-                    ))}
+                            {variant.reasoning && (
+                              <p className="text-xs text-muted-foreground italic border-t pt-2">
+                                {variant.reasoning}
+                              </p>
+                            )}
+                          </CardContent>
+                        </Card>
+                      )
+                    )}
 
                     {/* Remaining Quota */}
                     <div className="text-center">
@@ -463,32 +519,40 @@ export default function ScienceAnalysisPage() {
               )}
 
               {/* Citations */}
-              {scoreData?.score.domainScores && scoreData.score.domainScores.some((ds: { evidence: string[] }) => ds.evidence && ds.evidence.length > 0) && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-sm">과학적 근거 인용</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    {scoreData.score.domainScores
-                      .flatMap((ds: { domain: string; evidence: string[] }) =>
-                        (ds.evidence || []).slice(0, 2).map((ev: string, idx: number) => ({
-                          domain: ds.domain,
-                          evidence: ev,
-                          id: `${ds.domain}-${idx}`,
-                        }))
-                      )
-                      .slice(0, 5)
-                      .map((item: { id: string; domain: string; evidence: string }, index: number) => (
-                        <CitationCard
-                          key={item.id || index}
-                          source={item.domain}
-                          finding={item.evidence}
-                          applicability={0.8}
-                        />
-                      ))}
-                  </CardContent>
-                </Card>
-              )}
+              {scoreData?.score.domainScores &&
+                scoreData.score.domainScores.some(
+                  (ds: { evidence: string[] }) => ds.evidence && ds.evidence.length > 0
+                ) && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-sm">과학적 근거 인용</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      {scoreData.score.domainScores
+                        .flatMap((ds: { domain: string; evidence: string[] }) =>
+                          (ds.evidence || []).slice(0, 2).map((ev: string, idx: number) => ({
+                            domain: ds.domain,
+                            evidence: ev,
+                            id: `${ds.domain}-${idx}`,
+                          }))
+                        )
+                        .slice(0, 5)
+                        .map(
+                          (
+                            item: { id: string; domain: string; evidence: string },
+                            index: number
+                          ) => (
+                            <CitationCard
+                              key={item.id || index}
+                              source={item.domain}
+                              finding={item.evidence}
+                              applicability={0.8}
+                            />
+                          )
+                        )}
+                    </CardContent>
+                  </Card>
+                )}
             </>
           )}
         </div>

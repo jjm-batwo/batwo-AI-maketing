@@ -21,9 +21,17 @@ export enum InvoiceStatus {
  */
 export const INVOICE_STATUS_TRANSITIONS: Record<InvoiceStatus, InvoiceStatus[]> = {
   [InvoiceStatus.PENDING]: [InvoiceStatus.PAID, InvoiceStatus.FAILED],
-  [InvoiceStatus.PAID]: [InvoiceStatus.REFUND_REQUESTED, InvoiceStatus.REFUNDED, InvoiceStatus.PARTIALLY_REFUNDED],
+  [InvoiceStatus.PAID]: [
+    InvoiceStatus.REFUND_REQUESTED,
+    InvoiceStatus.REFUNDED,
+    InvoiceStatus.PARTIALLY_REFUNDED,
+  ],
   [InvoiceStatus.FAILED]: [InvoiceStatus.PENDING],
-  [InvoiceStatus.REFUND_REQUESTED]: [InvoiceStatus.PAID, InvoiceStatus.REFUNDED, InvoiceStatus.PARTIALLY_REFUNDED],
+  [InvoiceStatus.REFUND_REQUESTED]: [
+    InvoiceStatus.PAID,
+    InvoiceStatus.REFUNDED,
+    InvoiceStatus.PARTIALLY_REFUNDED,
+  ],
   [InvoiceStatus.REFUNDED]: [],
   [InvoiceStatus.PARTIALLY_REFUNDED]: [InvoiceStatus.REFUND_REQUESTED, InvoiceStatus.REFUNDED],
 }

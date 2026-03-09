@@ -22,6 +22,7 @@ npm run dev
 ```
 
 브라우저에서 접속:
+
 - **Swagger UI**: http://localhost:3000/docs
 - **OpenAPI JSON**: http://localhost:3000/api/docs
 
@@ -91,6 +92,7 @@ registry.registerPath({
 ### 자동 타입 안전성
 
 Zod 스키마에서 OpenAPI 스펙을 자동 생성하므로:
+
 - ✅ 런타임 검증과 문서가 항상 동기화
 - ✅ 타입스크립트 타입과 API 스펙 일치
 - ✅ 수동 문서 작성 불필요
@@ -121,6 +123,7 @@ security: [{ bearerAuth: [] }]
 ## 문서화된 엔드포인트
 
 ### Campaigns
+
 - `GET /api/campaigns` - 캠페인 목록 조회
 - `POST /api/campaigns` - 캠페인 생성 (Rate limit: 5회/주)
 - `GET /api/campaigns/{id}` - 캠페인 상세 조회
@@ -128,15 +131,18 @@ security: [{ bearerAuth: [] }]
 - `DELETE /api/campaigns/{id}` - 캠페인 삭제
 
 ### Dashboard
+
 - `GET /api/dashboard/kpi` - KPI 대시보드 조회 (캐시: 5분)
 
 ### Reports
+
 - `GET /api/reports` - 리포트 목록 조회
 - `POST /api/reports` - 리포트 생성
 
 ## 확장 가능성
 
 향후 추가 가능한 엔드포인트:
+
 - AI 분석 API (`/api/ai/*`)
 - 픽셀 관리 API (`/api/pixel/*`)
 - 팀 관리 API (`/api/team/*`)

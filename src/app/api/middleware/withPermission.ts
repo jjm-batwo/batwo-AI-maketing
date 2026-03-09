@@ -102,9 +102,7 @@ export function withPermission(
 
     // 3. Check permission
     try {
-      const permissionService = container.resolve<IPermissionService>(
-        DI_TOKENS.PermissionService
-      )
+      const permissionService = container.resolve<IPermissionService>(DI_TOKENS.PermissionService)
 
       const hasPermission = await permissionService.checkPermission(
         userId,
@@ -200,17 +198,15 @@ export function withAnyPermission(
 
     // 3. Check if user has ANY of the required permissions
     try {
-      const permissionService = container.resolve<IPermissionService>(
-        DI_TOKENS.PermissionService
-      )
+      const permissionService = container.resolve<IPermissionService>(DI_TOKENS.PermissionService)
 
       const permissionChecks = await Promise.all(
-        options.permissions.map(permission =>
+        options.permissions.map((permission) =>
           permissionService.checkPermission(userId, teamId, permission)
         )
       )
 
-      const hasAnyPermission = permissionChecks.some(result => result === true)
+      const hasAnyPermission = permissionChecks.some((result) => result === true)
 
       if (!hasAnyPermission) {
         return NextResponse.json(

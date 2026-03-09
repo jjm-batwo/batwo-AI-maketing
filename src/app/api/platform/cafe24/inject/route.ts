@@ -21,19 +21,13 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json()
   } catch {
-    return NextResponse.json(
-      { error: '잘못된 요청입니다' },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: '잘못된 요청입니다' }, { status: 400 })
   }
 
   const { pixelId } = body
 
   if (!pixelId) {
-    return NextResponse.json(
-      { error: '픽셀 ID가 필요합니다' },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: '픽셀 ID가 필요합니다' }, { status: 400 })
   }
 
   try {
@@ -47,27 +41,18 @@ export async function POST(request: NextRequest) {
     })
 
     if (!pixel) {
-      return NextResponse.json(
-        { error: '픽셀을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: '픽셀을 찾을 수 없습니다' }, { status: 404 })
     }
 
     if (!pixel.platformIntegration) {
-      return NextResponse.json(
-        { error: '플랫폼 연동이 되어있지 않습니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: '플랫폼 연동이 되어있지 않습니다' }, { status: 400 })
     }
 
     const integration = pixel.platformIntegration
 
     // Check if already injected
     if (integration.status === IntegrationStatus.ACTIVE && integration.scriptTagId) {
-      return NextResponse.json(
-        { error: '이미 스크립트가 설치되어 있습니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: '이미 스크립트가 설치되어 있습니다' }, { status: 400 })
     }
 
     const adapter = new Cafe24Adapter(CAFE24_CLIENT_ID, CAFE24_CLIENT_SECRET)
@@ -136,10 +121,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const errorMessage = error instanceof Error ? error.message : '스크립트 설치 중 오류가 발생했습니다'
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
-    )
+    const errorMessage =
+      error instanceof Error ? error.message : '스크립트 설치 중 오류가 발생했습니다'
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }

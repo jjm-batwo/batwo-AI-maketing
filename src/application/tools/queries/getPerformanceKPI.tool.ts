@@ -1,5 +1,9 @@
 import { z } from 'zod'
-import type { AgentTool, AgentContext, ToolExecutionResult } from '@application/ports/IConversationalAgent'
+import type {
+  AgentTool,
+  AgentContext,
+  ToolExecutionResult,
+} from '@application/ports/IConversationalAgent'
 import type { GetDashboardKPIUseCase } from '@application/use-cases/kpi/GetDashboardKPIUseCase'
 import type { DateRangePreset } from '@application/dto/kpi/DashboardKPIDTO'
 
@@ -22,7 +26,8 @@ export function createGetPerformanceKPITool(
 ): AgentTool<Params> {
   return {
     name: 'getPerformanceKPI',
-    description: '사용자의 광고 캠페인 성과 지표(KPI)를 조회합니다. ROAS, CPA, CTR, 지출, 매출 등을 확인할 수 있습니다.',
+    description:
+      '사용자의 광고 캠페인 성과 지표(KPI)를 조회합니다. ROAS, CPA, CTR, 지출, 매출 등을 확인할 수 있습니다.',
     parameters: paramsSchema,
     requiresConfirmation: false,
 

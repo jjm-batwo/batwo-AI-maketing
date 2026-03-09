@@ -51,34 +51,28 @@ function useRulesState(initialRules: OptimizationRuleResponseDTO[]) {
     }
   }, [])
 
-  const createRule = useCallback(
-    async (payload: Record<string, unknown>) => {
-      const res = await fetch('/api/optimization-rules', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-      if (!res.ok) throw new Error('규칙 생성에 실패했습니다')
-      const data = await res.json()
-      setRules((prev) => [data.rule, ...prev])
-      return data.rule
-    },
-    []
-  )
+  const createRule = useCallback(async (payload: Record<string, unknown>) => {
+    const res = await fetch('/api/optimization-rules', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    if (!res.ok) throw new Error('규칙 생성에 실패했습니다')
+    const data = await res.json()
+    setRules((prev) => [data.rule, ...prev])
+    return data.rule
+  }, [])
 
-  const updateRule = useCallback(
-    async (id: string, payload: Record<string, unknown>) => {
-      const res = await fetch(`/api/optimization-rules/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-      if (!res.ok) throw new Error('규칙 수정에 실패했습니다')
-      const data = await res.json()
-      setRules((prev) => prev.map((r) => (r.id === id ? data.rule : r)))
-    },
-    []
-  )
+  const updateRule = useCallback(async (id: string, payload: Record<string, unknown>) => {
+    const res = await fetch(`/api/optimization-rules/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    if (!res.ok) throw new Error('규칙 수정에 실패했습니다')
+    const data = await res.json()
+    setRules((prev) => prev.map((r) => (r.id === id ? data.rule : r)))
+  }, [])
 
   const deleteRule = useCallback(async (id: string) => {
     const res = await fetch(`/api/optimization-rules/${id}`, { method: 'DELETE' })

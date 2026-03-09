@@ -141,7 +141,8 @@ export function AmbientInsightToast({ insight, onDismiss, onSeen }: AmbientInsig
 
               {/* Action Button */}
               {insight.action && (
-                <button type="button"
+                <button
+                  type="button"
                   onClick={() => {
                     insight.action?.onClick()
                     handleDismiss()
@@ -172,7 +173,8 @@ export function AmbientInsightToast({ insight, onDismiss, onSeen }: AmbientInsig
             </div>
 
             {/* Dismiss Button */}
-            <button type="button"
+            <button
+              type="button"
               onClick={handleDismiss}
               className="
                 flex-shrink-0 w-6 h-6 rounded-full

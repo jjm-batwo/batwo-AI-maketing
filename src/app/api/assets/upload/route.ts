@@ -71,10 +71,7 @@ export async function POST(request: NextRequest) {
     const file = formData.get('file') as File | null
 
     if (!file) {
-      return NextResponse.json(
-        { message: 'File is required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ message: 'File is required' }, { status: 400 })
     }
 
     const typeStr = (formData.get('type') as string) ?? 'IMAGE'

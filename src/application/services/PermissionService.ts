@@ -43,7 +43,7 @@ export class PermissionService implements IPermissionService {
     if (!teamMember) return []
 
     const role = this.getRoleEntity(this.mapDatabaseRoleToTeamRoleName(teamMember.role))
-    return role.permissions.map(p => p.toString())
+    return role.permissions.map((p) => p.toString())
   }
 
   async getUserRole(userId: string, teamId: string): Promise<TeamRoleName | null> {

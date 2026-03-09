@@ -83,10 +83,6 @@ export class OpenAIApiError extends ExternalServiceError {
   }
 
   static isTransientError(error: OpenAIApiError): boolean {
-    return (
-      error.statusCode === 500 ||
-      error.statusCode === 502 ||
-      error.statusCode === 503
-    )
+    return error.statusCode === 500 || error.statusCode === 502 || error.statusCode === 503
   }
 }

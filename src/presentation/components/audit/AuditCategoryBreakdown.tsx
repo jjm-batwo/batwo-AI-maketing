@@ -9,12 +9,12 @@ import {
 import { Badge } from '@/components/ui/badge'
 
 interface Finding {
-  type: string  // 'positive' | 'warning' | 'critical'
+  type: string // 'positive' | 'warning' | 'critical'
   message: string
 }
 
 interface Recommendation {
-  priority: string  // 'high' | 'medium' | 'low'
+  priority: string // 'high' | 'medium' | 'low'
   message: string
   estimatedImpact: string
 }
@@ -130,7 +130,9 @@ export function AuditCategoryBreakdown({ categories }: AuditCategoryBreakdownPro
                       style={{ width: `${category.score}%` }}
                     />
                   </div>
-                  <span className={`text-sm font-bold w-10 text-right ${getScoreColor(category.score)}`}>
+                  <span
+                    className={`text-sm font-bold w-10 text-right ${getScoreColor(category.score)}`}
+                  >
                     {category.score}
                   </span>
                 </div>
@@ -158,18 +160,15 @@ export function AuditCategoryBreakdown({ categories }: AuditCategoryBreakdownPro
               {/* Recommendations */}
               {category.recommendations.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-muted-foreground mb-2">개선 권고사항</h3>
+                  <h3 className="text-sm font-semibold text-muted-foreground mb-2">
+                    개선 권고사항
+                  </h3>
                   <ul className="space-y-3" role="list">
                     {category.recommendations.map((rec, rIndex) => (
-                      <li
-                        key={rIndex}
-                        className="rounded-md bg-muted/50 p-3 space-y-1"
-                      >
+                      <li key={rIndex} className="rounded-md bg-muted/50 p-3 space-y-1">
                         <div className="flex items-center gap-2">
                           <PriorityBadge priority={rec.priority} />
-                          <span className="text-sm font-medium text-foreground">
-                            {rec.message}
-                          </span>
+                          <span className="text-sm font-medium text-foreground">{rec.message}</span>
                         </div>
                         <p className="text-xs text-muted-foreground pl-1">
                           예상 효과: {rec.estimatedImpact}

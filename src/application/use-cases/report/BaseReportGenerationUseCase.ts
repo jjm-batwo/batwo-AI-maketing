@@ -63,7 +63,10 @@ export abstract class BaseReportGenerationUseCase {
       const savedReport = await this.reportRepository.save(report)
       return toReportDTO(savedReport)
     } catch (error) {
-      throw ExternalServiceError.database('save report', error instanceof Error ? error.message : undefined)
+      throw ExternalServiceError.database(
+        'save report',
+        error instanceof Error ? error.message : undefined
+      )
     }
   }
 
@@ -137,7 +140,10 @@ export abstract class BaseReportGenerationUseCase {
         throw error
       }
       // Wrap unknown errors
-      throw ExternalServiceError.database('fetch campaigns', error instanceof Error ? error.message : undefined)
+      throw ExternalServiceError.database(
+        'fetch campaigns',
+        error instanceof Error ? error.message : undefined
+      )
     }
   }
 
@@ -192,7 +198,10 @@ export abstract class BaseReportGenerationUseCase {
 
       return { report: updatedReport, summaries: campaignSummaries }
     } catch (error) {
-      throw ExternalServiceError.database('aggregate KPI data', error instanceof Error ? error.message : undefined)
+      throw ExternalServiceError.database(
+        'aggregate KPI data',
+        error instanceof Error ? error.message : undefined
+      )
     }
   }
 

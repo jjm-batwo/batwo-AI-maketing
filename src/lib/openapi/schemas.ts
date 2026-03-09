@@ -20,11 +20,20 @@ export const campaignQuerySchema = z.object({
 })
 
 export const createCampaignSchema = z.object({
-  name: z.string().min(1, '캠페인 이름은 필수입니다').max(255).openapi({ example: 'Summer Sale Campaign' }),
-  objective: z.enum(['AWARENESS', 'TRAFFIC', 'ENGAGEMENT', 'LEADS', 'CONVERSIONS', 'SALES']).openapi({ example: 'CONVERSIONS' }),
+  name: z
+    .string()
+    .min(1, '캠페인 이름은 필수입니다')
+    .max(255)
+    .openapi({ example: 'Summer Sale Campaign' }),
+  objective: z
+    .enum(['AWARENESS', 'TRAFFIC', 'ENGAGEMENT', 'LEADS', 'CONVERSIONS', 'SALES'])
+    .openapi({ example: 'CONVERSIONS' }),
   dailyBudget: z.number().positive('일일 예산은 0보다 커야 합니다').openapi({ example: 50000 }),
   currency: z.enum(['KRW', 'USD', 'EUR', 'JPY']).default('KRW').openapi({ example: 'KRW' }),
-  startDate: z.string().datetime('유효한 날짜 형식이 아닙니다').openapi({ example: '2026-01-25T00:00:00Z' }),
+  startDate: z
+    .string()
+    .datetime('유효한 날짜 형식이 아닙니다')
+    .openapi({ example: '2026-01-25T00:00:00Z' }),
   endDate: z.string().datetime().optional().openapi({ example: '2026-02-25T23:59:59Z' }),
   targetAudience: z.record(z.string(), z.unknown()).optional(),
   syncToMeta: z.boolean().optional().openapi({ example: true }),
@@ -45,6 +54,12 @@ export const createReportSchema = z.object({
     .array(z.string().uuid('유효한 UUID 형식이 아닙니다'))
     .min(1, '최소 1개의 캠페인이 필요합니다')
     .openapi({ example: ['550e8400-e29b-41d4-a716-446655440000'] }),
-  startDate: z.string().datetime('유효한 날짜 형식이 아닙니다').openapi({ example: '2026-01-18T00:00:00Z' }),
-  endDate: z.string().datetime('유효한 날짜 형식이 아닙니다').openapi({ example: '2026-01-25T23:59:59Z' }),
+  startDate: z
+    .string()
+    .datetime('유효한 날짜 형식이 아닙니다')
+    .openapi({ example: '2026-01-18T00:00:00Z' }),
+  endDate: z
+    .string()
+    .datetime('유효한 날짜 형식이 아닙니다')
+    .openapi({ example: '2026-01-25T23:59:59Z' }),
 })

@@ -13,7 +13,7 @@ import {
   useContextTracking,
   CompactAISuggestion,
   useManualSuggestion,
-  useSuggestionTiming
+  useSuggestionTiming,
 } from '../index'
 
 /**
@@ -22,11 +22,7 @@ import {
  * Add to your root layout to enable contextual suggestions globally
  */
 export function RootLayoutExample({ children }: { children: React.ReactNode }) {
-  return (
-    <ContextualAIProvider enabled={true}>
-      {children}
-    </ContextualAIProvider>
-  )
+  return <ContextualAIProvider enabled={true}>{children}</ContextualAIProvider>
 }
 
 /**
@@ -45,8 +41,8 @@ export function CustomSuggestionsExample({ children }: { children: React.ReactNo
           action: () => {
             // Custom action
             console.log('Opening custom targeting AI')
-          }
-        }
+          },
+        },
       }}
     >
       {children}
@@ -109,19 +105,21 @@ export function MetricsDashboardExample() {
     viewCount++
     trackAction('view_metric', {
       repeatCount: viewCount,
-      metricId
+      metricId,
     })
   }
 
   const handleRefresh = () => {
     trackAction('refresh_dashboard', {
-      repeatCount: ++viewCount
+      repeatCount: ++viewCount,
     })
   }
 
   return (
     <div>
-      <button type="button" onClick={handleRefresh}>새로고침</button>
+      <button type="button" onClick={handleRefresh}>
+        새로고침
+      </button>
       {/* Dashboard content */}
     </div>
   )
@@ -179,16 +177,13 @@ export function CopyEditorExample() {
     trackAction('edit_copy', {
       repeatCount: editCount,
       valueChanged: value !== lastValue,
-      duration: Date.now() // Track time spent
+      duration: Date.now(), // Track time spent
     })
     lastValue = value
   }
 
   return (
-    <textarea
-      placeholder="광고 문구 입력"
-      onChange={(e) => handleCopyChange(e.target.value)}
-    />
+    <textarea placeholder="광고 문구 입력" onChange={(e) => handleCopyChange(e.target.value)} />
   )
 }
 
@@ -223,7 +218,7 @@ export function SuggestionStatsExample() {
       shown: stats.shown,
       accepted: stats.accepted,
       dismissed: stats.dismissed,
-      acceptanceRate: `${(stats.acceptanceRate * 100).toFixed(1)}%`
+      acceptanceRate: `${(stats.acceptanceRate * 100).toFixed(1)}%`,
     })
   }
 
@@ -251,7 +246,7 @@ export function ConditionalSuggestionExample() {
       confidence: context?.confidence,
       shouldSuggest: suggest,
       reason,
-      canShowNow: canShow
+      canShowNow: canShow,
     })
   }
 
@@ -298,10 +293,7 @@ export function DashboardWithContextualAI() {
 
       <div className="reports">
         {['weekly', 'monthly'].map((reportId) => (
-          <button type="button"
-            key={reportId}
-            onClick={() => handleViewReport(reportId)}
-          >
+          <button type="button" key={reportId} onClick={() => handleViewReport(reportId)}>
             {reportId} 보고서
           </button>
         ))}
@@ -325,7 +317,7 @@ export function ErrorRecoveryExample() {
       // Track error
       trackAction('api_error', {
         errorOccurred: true,
-        errorType: 'network'
+        errorType: 'network',
       })
 
       // Show recovery suggestion
@@ -346,25 +338,24 @@ export function ErrorRecoveryExample() {
 export function ABTestSuggestionsExample({ children }: { children: React.ReactNode }) {
   const variant: 'A' | 'B' = 'A'
 
-  const customSuggestions = variant === 'A'
-    ? {
-        creating_campaign: {
-          text: 'AI 추천으로 시작하세요', // Variant A
-          context: '캠페인 생성',
-          action: () => console.log('Variant A')
+  const customSuggestions =
+    variant === 'A'
+      ? {
+          creating_campaign: {
+            text: 'AI 추천으로 시작하세요', // Variant A
+            context: '캠페인 생성',
+            action: () => console.log('Variant A'),
+          },
         }
-      }
-    : {
-        creating_campaign: {
-          text: '스마트 타겟팅을 경험해보세요', // Variant B
-          context: '캠페인 생성',
-          action: () => console.log('Variant B')
+      : {
+          creating_campaign: {
+            text: '스마트 타겟팅을 경험해보세요', // Variant B
+            context: '캠페인 생성',
+            action: () => console.log('Variant B'),
+          },
         }
-      }
 
   return (
-    <ContextualAIProvider customSuggestions={customSuggestions}>
-      {children}
-    </ContextualAIProvider>
+    <ContextualAIProvider customSuggestions={customSuggestions}>{children}</ContextualAIProvider>
   )
 }

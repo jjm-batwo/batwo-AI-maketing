@@ -5,8 +5,24 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Check, X } from 'lucide-react'
 
 interface RefundRequest {
@@ -109,20 +125,33 @@ export function RefundActions({ request }: { request: RefundRequest }) {
             <div className="rounded-lg bg-muted p-4">
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div className="text-muted-foreground">결제 금액</div>
-                <div className="font-medium">{formatCurrency(request.amount, request.currency)}</div>
+                <div className="font-medium">
+                  {formatCurrency(request.amount, request.currency)}
+                </div>
                 <div className="text-muted-foreground">환불 사유</div>
                 <div>{request.refundReason || '-'}</div>
               </div>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">환불 금액</label>
-              <Input type="number" value={refundAmount} onChange={(e) => setRefundAmount(e.target.value)} max={request.amount} />
-              <p className="text-xs text-muted-foreground">최대 {formatCurrency(request.amount, request.currency)}까지 환불 가능</p>
+              <Input
+                type="number"
+                value={refundAmount}
+                onChange={(e) => setRefundAmount(e.target.value)}
+                max={request.amount}
+              />
+              <p className="text-xs text-muted-foreground">
+                최대 {formatCurrency(request.amount, request.currency)}까지 환불 가능
+              </p>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setApproveDialog(false)} disabled={processing}>취소</Button>
-            <Button onClick={handleApprove} disabled={processing}>{processing ? '처리 중...' : '환불 승인'}</Button>
+            <Button variant="outline" onClick={() => setApproveDialog(false)} disabled={processing}>
+              취소
+            </Button>
+            <Button onClick={handleApprove} disabled={processing}>
+              {processing ? '처리 중...' : '환불 승인'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -137,19 +166,28 @@ export function RefundActions({ request }: { request: RefundRequest }) {
             <div className="rounded-lg bg-muted p-4">
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div className="text-muted-foreground">결제 금액</div>
-                <div className="font-medium">{formatCurrency(request.amount, request.currency)}</div>
+                <div className="font-medium">
+                  {formatCurrency(request.amount, request.currency)}
+                </div>
                 <div className="text-muted-foreground">환불 사유</div>
                 <div>{request.refundReason || '-'}</div>
               </div>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">거절 사유 (선택)</label>
-              <Textarea value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} placeholder="거절 사유를 입력해주세요..." rows={3} />
+              <Textarea
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                placeholder="거절 사유를 입력해주세요..."
+                rows={3}
+              />
             </div>
           </div>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={processing}>취소</AlertDialogCancel>
-            <AlertDialogAction onClick={handleReject} disabled={processing}>{processing ? '처리 중...' : '환불 거절'}</AlertDialogAction>
+            <AlertDialogAction onClick={handleReject} disabled={processing}>
+              {processing ? '처리 중...' : '환불 거절'}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -1,5 +1,9 @@
 import { z } from 'zod'
-import type { AgentTool, AgentContext, ToolExecutionResult } from '@application/ports/IConversationalAgent'
+import type {
+  AgentTool,
+  AgentContext,
+  ToolExecutionResult,
+} from '@application/ports/IConversationalAgent'
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
 
@@ -15,7 +19,8 @@ export function createGetBudgetRecommendationTool(
 ): AgentTool<Params> {
   return {
     name: 'getBudgetRecommendation',
-    description: '캠페인별 예산 재분배를 추천합니다. ROAS 기반으로 효율적인 예산 배분을 제안합니다.',
+    description:
+      '캠페인별 예산 재분배를 추천합니다. ROAS 기반으로 효율적인 예산 배분을 제안합니다.',
     parameters: paramsSchema,
     requiresConfirmation: false,
 
@@ -34,7 +39,13 @@ export function createGetBudgetRecommendationTool(
       const now = new Date()
       const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
 
-      const campaignPerformance: { id: string; name: string; currentBudget: number; roas: number; spend: number }[] = []
+      const campaignPerformance: {
+        id: string
+        name: string
+        currentBudget: number
+        roas: number
+        spend: number
+      }[] = []
 
       for (const campaign of activeCampaigns) {
         const agg = await kpiRepository.aggregateByCampaignId(campaign.id, weekAgo, now)
@@ -48,25 +59,31 @@ export function createGetBudgetRecommendationTool(
         })
       }
 
-      const totalCurrentBudget = params.totalBudget ?? campaignPerformance.reduce((sum, c) => sum + c.currentBudget, 0)
+      const totalCurrentBudget =
+        params.totalBudget ?? campaignPerformance.reduce((sum, c) => sum + c.currentBudget, 0)
       const totalRoas = campaignPerformance.reduce((sum, c) => sum + c.roas, 0)
 
-      const recommendations = campaignPerformance.map((c) => {
-        const roasWeight = totalRoas > 0 ? c.roas / totalRoas : 1 / campaignPerformance.length
-        const recommendedBudget = Math.round(totalCurrentBudget * roasWeight)
-        const change = recommendedBudget - c.currentBudget
-        return {
-          campaignId: c.id,
-          campaignName: c.name,
-          currentBudget: c.currentBudget,
-          recommendedBudget,
-          change,
-          roas: c.roas,
-        }
-      }).sort((a, b) => b.roas - a.roas)
+      const recommendations = campaignPerformance
+        .map((c) => {
+          const roasWeight = totalRoas > 0 ? c.roas / totalRoas : 1 / campaignPerformance.length
+          const recommendedBudget = Math.round(totalCurrentBudget * roasWeight)
+          const change = recommendedBudget - c.currentBudget
+          return {
+            campaignId: c.id,
+            campaignName: c.name,
+            currentBudget: c.currentBudget,
+            recommendedBudget,
+            change,
+            roas: c.roas,
+          }
+        })
+        .sort((a, b) => b.roas - a.roas)
 
       const lines = recommendations.map((r) => {
-        const changeStr = r.change >= 0 ? `+₩${r.change.toLocaleString('ko-KR')}` : `-₩${Math.abs(r.change).toLocaleString('ko-KR')}`
+        const changeStr =
+          r.change >= 0
+            ? `+₩${r.change.toLocaleString('ko-KR')}`
+            : `-₩${Math.abs(r.change).toLocaleString('ko-KR')}`
         return `- ${r.campaignName}: ₩${r.currentBudget.toLocaleString('ko-KR')} → ₩${r.recommendedBudget.toLocaleString('ko-KR')} (${changeStr}) [ROAS: ${r.roas.toFixed(2)}x]`
       })
 

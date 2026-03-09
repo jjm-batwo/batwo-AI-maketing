@@ -15,9 +15,9 @@ export const ALL_POWER_WORDS: string[] = Object.values(KOREAN_POWER_WORDS).flat(
 
 // Korean text utility: count Korean characters (Hangul syllables U+AC00-U+D7AF)
 export function countKoreanCharacters(text: string): number {
-  return Array.from(text).filter(ch => {
+  return Array.from(text).filter((ch) => {
     const code = ch.charCodeAt(0)
-    return code >= 0xAC00 && code <= 0xD7AF
+    return code >= 0xac00 && code <= 0xd7af
   }).length
 }
 
@@ -25,7 +25,7 @@ export function countKoreanCharacters(text: string): number {
 // Korean doesn't reliably space-delimit words, so we count character groups
 export function countKoreanWords(text: string): number {
   // Split by whitespace and filter empty strings
-  return text.split(/\s+/).filter(s => s.length > 0).length
+  return text.split(/\s+/).filter((s) => s.length > 0).length
 }
 
 // Find power words present in text

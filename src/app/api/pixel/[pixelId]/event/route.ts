@@ -70,8 +70,12 @@ export async function POST(request: NextRequest, context: RouteContext) {
         eventId: parsedEvent.eventId,
         eventTime: parsedEvent.eventTime,
         eventSourceUrl: parsedEvent.eventSourceUrl,
-        userData: parsedEvent.userData ? JSON.parse(JSON.stringify(parsedEvent.userData)) : undefined,
-        customData: parsedEvent.customData ? JSON.parse(JSON.stringify(parsedEvent.customData)) : undefined,
+        userData: parsedEvent.userData
+          ? JSON.parse(JSON.stringify(parsedEvent.userData))
+          : undefined,
+        customData: parsedEvent.customData
+          ? JSON.parse(JSON.stringify(parsedEvent.customData))
+          : undefined,
         sentToMeta: false,
       },
     })

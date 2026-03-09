@@ -267,10 +267,7 @@ export interface IAdLibraryClient {
  * AIService에서 구현하는 경쟁사 분석 메서드
  */
 export interface ICompetitorAIService {
-  analyzeCompetitorTrends(input: {
-    ads: CompetitorAd[]
-    industry?: string
-  }): Promise<{
+  analyzeCompetitorTrends(input: { ads: CompetitorAd[]; industry?: string }): Promise<{
     popularHooks: string[]
     commonOffers: string[]
     formatDistribution: { format: string; percentage: number }[]

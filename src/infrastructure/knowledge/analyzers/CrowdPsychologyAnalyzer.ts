@@ -93,10 +93,13 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
     return parts.join(' ')
   }
 
-  private analyzeSocialProof(fullText: string, powerWords: ReturnType<typeof findPowerWords>): ScoringFactor {
+  private analyzeSocialProof(
+    fullText: string,
+    powerWords: ReturnType<typeof findPowerWords>
+  ): ScoringFactor {
     let score = 0
-    const socialWords = powerWords.filter(pw => pw.category === 'social')
-    const socialTriggerCount = this.SOCIAL_PROOF_TRIGGERS.filter(trigger =>
+    const socialWords = powerWords.filter((pw) => pw.category === 'social')
+    const socialTriggerCount = this.SOCIAL_PROOF_TRIGGERS.filter((trigger) =>
       fullText.includes(trigger)
     ).length
 
@@ -117,15 +120,15 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
 
     const explanation =
       socialTriggerCount > 0
-        ? `${socialTriggerCount}개의 사회적 증거 트리거 발견 (${this.SOCIAL_PROOF_TRIGGERS.filter(t =>
-            fullText.includes(t)
+        ? `${socialTriggerCount}개의 사회적 증거 트리거 발견 (${this.SOCIAL_PROOF_TRIGGERS.filter(
+            (t) => fullText.includes(t)
           ).join(', ')})`
         : '사회적 증거 트리거 미발견. "인기", "베스트", "리뷰 N개" 등 추가 권장'
 
     return {
       name: 'socialProofPresence',
       score,
-      weight: 0.30,
+      weight: 0.3,
       explanation,
       citation: {
         id: 'cialdini-2009',
@@ -140,10 +143,15 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
     }
   }
 
-  private analyzeFOMO(fullText: string, powerWords: ReturnType<typeof findPowerWords>): ScoringFactor {
+  private analyzeFOMO(
+    fullText: string,
+    powerWords: ReturnType<typeof findPowerWords>
+  ): ScoringFactor {
     let score = 0
-    const urgencyWords = powerWords.filter(pw => pw.category === 'urgency')
-    const fomoTriggerCount = this.FOMO_TRIGGERS.filter(trigger => fullText.includes(trigger)).length
+    const urgencyWords = powerWords.filter((pw) => pw.category === 'urgency')
+    const fomoTriggerCount = this.FOMO_TRIGGERS.filter((trigger) =>
+      fullText.includes(trigger)
+    ).length
 
     if (fomoTriggerCount > 0) {
       score = Math.min(100, 40 + fomoTriggerCount * 15)
@@ -160,9 +168,9 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
 
     const explanation =
       fomoTriggerCount > 0
-        ? `${fomoTriggerCount}개의 FOMO 트리거 발견 (${this.FOMO_TRIGGERS.filter(t => fullText.includes(t)).join(
-            ', '
-          )}). FOMO는 구매 전환율을 평균 62% 증가시킴`
+        ? `${fomoTriggerCount}개의 FOMO 트리거 발견 (${this.FOMO_TRIGGERS.filter((t) =>
+            fullText.includes(t)
+          ).join(', ')}). FOMO는 구매 전환율을 평균 62% 증가시킴`
         : 'FOMO 트리거 미발견. "한정", "마감임박", "오늘만" 등 긴급성 강조 권장'
 
     return {
@@ -173,7 +181,8 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
       citation: {
         id: 'przybylski-2013',
         domain: this.domain,
-        source: 'Przybylski, A. K., et al. (2013). Motivational, emotional, and behavioral correlates of FOMO',
+        source:
+          'Przybylski, A. K., et al. (2013). Motivational, emotional, and behavioral correlates of FOMO',
         finding: '소비자의 62%가 FOMO 메시지에 의해 구매 결정에 영향을 받음',
         applicability: '한국 모바일 사용자는 특히 시간 제한 오퍼에 높은 반응률 (CTR +35%)',
         confidenceLevel: 'high',
@@ -210,12 +219,13 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
     return {
       name: 'bandwagonSignals',
       score,
-      weight: 0.20,
+      weight: 0.2,
       explanation,
       citation: {
         id: 'leibenstein-1950',
         domain: this.domain,
-        source: 'Leibenstein, H. (1950). Bandwagon, Snob, and Veblen Effects in the Theory of Consumers\' Demand',
+        source:
+          "Leibenstein, H. (1950). Bandwagon, Snob, and Veblen Effects in the Theory of Consumers' Demand",
         finding: '소비자는 다른 사람들이 선택한 제품에 더 높은 가치를 부여 (밴드왜건 효과)',
         applicability: '한국 온라인 쇼핑에서 "N명이 구매" 표시 시 전환율 28% 증가',
         confidenceLevel: 'high',
@@ -229,7 +239,7 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
     let score = 0
     const herdKeywords = ['트렌드', '화제', '핫딜', '대세', '유행', '품절임박', '실시간']
 
-    const herdCount = herdKeywords.filter(keyword => fullText.includes(keyword)).length
+    const herdCount = herdKeywords.filter((keyword) => fullText.includes(keyword)).length
 
     if (herdCount > 0) {
       score = Math.min(100, 35 + herdCount * 15)
@@ -238,7 +248,7 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
     const explanation =
       herdCount > 0
         ? `${herdCount}개의 군집 행동 키워드 발견 (${herdKeywords
-            .filter(k => fullText.includes(k))
+            .filter((k) => fullText.includes(k))
             .join(', ')}). 다수를 따르는 심리 자극`
         : '군집 행동 키워드 부재. "트렌드", "화제", "핫딜" 등 추가 권장'
 
@@ -251,7 +261,8 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
         id: 'banerjee-1992',
         domain: this.domain,
         source: 'Banerjee, A. V. (1992). A Simple Model of Herd Behavior',
-        finding: '개인은 자신의 정보보다 집단의 행동을 따르는 경향 (정보 비대칭 상황에서 특히 강함)',
+        finding:
+          '개인은 자신의 정보보다 집단의 행동을 따르는 경향 (정보 비대칭 상황에서 특히 강함)',
         applicability: '신제품이나 낯선 브랜드일수록 군집 행동 신호가 효과적',
         confidenceLevel: 'high',
         year: 1992,
@@ -262,7 +273,12 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
 
   private analyzeInformationCascade(fullText: string): ScoringFactor {
     let score = 0
-    const cascadePatterns = [/[가-힣]+[도도]\s*선택/, /~[도도]\s*믿고/, /함께\s*선택/, /누구나\s*선택/]
+    const cascadePatterns = [
+      /[가-힣]+[도도]\s*선택/,
+      /~[도도]\s*믿고/,
+      /함께\s*선택/,
+      /누구나\s*선택/,
+    ]
 
     let cascadeCount = 0
     for (const pattern of cascadePatterns) {
@@ -282,12 +298,13 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
     return {
       name: 'informationCascade',
       score,
-      weight: 0.10,
+      weight: 0.1,
       explanation,
       citation: {
         id: 'bikhchandani-1992',
         domain: this.domain,
-        source: 'Bikhchandani, S., Hirshleifer, D., & Welch, I. (1992). A Theory of Fads, Fashion, Custom, and Cultural Change',
+        source:
+          'Bikhchandani, S., Hirshleifer, D., & Welch, I. (1992). A Theory of Fads, Fashion, Custom, and Cultural Change',
         finding: '정보 캐스케이드: 앞선 사람들의 선택이 뒤따르는 사람들의 결정에 순차적으로 영향',
         applicability: '전문가→유명인→일반 소비자 순서의 증거 제시가 가장 효과적',
         confidenceLevel: 'medium',
@@ -320,7 +337,8 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
       {
         id: 'przybylski-2013',
         domain: this.domain,
-        source: 'Przybylski, A. K., et al. (2013). Motivational, emotional, and behavioral correlates of FOMO',
+        source:
+          'Przybylski, A. K., et al. (2013). Motivational, emotional, and behavioral correlates of FOMO',
         finding: '소비자의 62%가 FOMO 메시지에 의해 구매 결정에 영향을 받음',
         applicability: '한국 모바일 사용자는 특히 시간 제한 오퍼에 높은 반응률 (CTR +35%)',
         confidenceLevel: 'high',
@@ -330,7 +348,8 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
       {
         id: 'leibenstein-1950',
         domain: this.domain,
-        source: 'Leibenstein, H. (1950). Bandwagon, Snob, and Veblen Effects in the Theory of Consumers\' Demand',
+        source:
+          "Leibenstein, H. (1950). Bandwagon, Snob, and Veblen Effects in the Theory of Consumers' Demand",
         finding: '소비자는 다른 사람들이 선택한 제품에 더 높은 가치를 부여 (밴드왜건 효과)',
         applicability: '한국 온라인 쇼핑에서 "N명이 구매" 표시 시 전환율 28% 증가',
         confidenceLevel: 'high',
@@ -341,7 +360,8 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
         id: 'banerjee-1992',
         domain: this.domain,
         source: 'Banerjee, A. V. (1992). A Simple Model of Herd Behavior',
-        finding: '개인은 자신의 정보보다 집단의 행동을 따르는 경향 (정보 비대칭 상황에서 특히 강함)',
+        finding:
+          '개인은 자신의 정보보다 집단의 행동을 따르는 경향 (정보 비대칭 상황에서 특히 강함)',
         applicability: '신제품이나 낯선 브랜드일수록 군집 행동 신호가 효과적',
         confidenceLevel: 'high',
         year: 1992,
@@ -361,11 +381,14 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
     ]
   }
 
-  private generateRecommendations(factors: ScoringFactor[], _fullText: string): DomainRecommendation[] {
+  private generateRecommendations(
+    factors: ScoringFactor[],
+    _fullText: string
+  ): DomainRecommendation[] {
     const recommendations: DomainRecommendation[] = []
 
     // Social Proof
-    const socialProofFactor = factors.find(f => f.name === 'socialProofPresence')
+    const socialProofFactor = factors.find((f) => f.name === 'socialProofPresence')
     if (socialProofFactor && socialProofFactor.score < 60) {
       recommendations.push({
         domain: this.domain,
@@ -391,7 +414,7 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
     }
 
     // FOMO
-    const fomoFactor = factors.find(f => f.name === 'fomoTriggers')
+    const fomoFactor = factors.find((f) => f.name === 'fomoTriggers')
     if (fomoFactor && fomoFactor.score < 60) {
       recommendations.push({
         domain: this.domain,
@@ -405,7 +428,8 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
           {
             id: 'przybylski-2013',
             domain: this.domain,
-            source: 'Przybylski, A. K., et al. (2013). Motivational, emotional, and behavioral correlates of FOMO',
+            source:
+              'Przybylski, A. K., et al. (2013). Motivational, emotional, and behavioral correlates of FOMO',
             finding: '소비자의 62%가 FOMO 메시지에 의해 구매 결정에 영향을 받음',
             applicability: '한국 모바일 사용자는 특히 시간 제한 오퍼에 높은 반응률 (CTR +35%)',
             confidenceLevel: 'high',
@@ -417,7 +441,7 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
     }
 
     // Bandwagon
-    const bandwagonFactor = factors.find(f => f.name === 'bandwagonSignals')
+    const bandwagonFactor = factors.find((f) => f.name === 'bandwagonSignals')
     if (bandwagonFactor && bandwagonFactor.score < 50) {
       recommendations.push({
         domain: this.domain,
@@ -432,7 +456,7 @@ export class CrowdPsychologyAnalyzer implements DomainAnalyzer {
             id: 'leibenstein-1950',
             domain: this.domain,
             source:
-              'Leibenstein, H. (1950). Bandwagon, Snob, and Veblen Effects in the Theory of Consumers\' Demand',
+              "Leibenstein, H. (1950). Bandwagon, Snob, and Veblen Effects in the Theory of Consumers' Demand",
             finding: '소비자는 다른 사람들이 선택한 제품에 더 높은 가치를 부여 (밴드왜건 효과)',
             applicability: '한국 온라인 쇼핑에서 "N명이 구매" 표시 시 전환율 28% 증가',
             confidenceLevel: 'high',

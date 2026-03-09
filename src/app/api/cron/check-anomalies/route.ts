@@ -45,9 +45,7 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    console.log(
-      `[Anomaly Cron] Found ${usersWithCampaigns.length} users with campaigns`
-    )
+    console.log(`[Anomaly Cron] Found ${usersWithCampaigns.length} users with campaigns`)
 
     // Initialize services
     const anomalyDetectionService = new AnomalyDetectionService(
@@ -76,9 +74,7 @@ export async function GET(request: NextRequest) {
         // Detect anomalies
         const anomalies = await anomalyDetectionService.detectAnomalies(user.id)
 
-        console.log(
-          `[Anomaly Cron] Detected ${anomalies.length} anomalies for user ${user.id}`
-        )
+        console.log(`[Anomaly Cron] Detected ${anomalies.length} anomalies for user ${user.id}`)
 
         if (anomalies.length > 0) {
           results.totalAnomaliesDetected += anomalies.length
@@ -91,9 +87,7 @@ export async function GET(request: NextRequest) {
             anomalies,
           })
 
-          console.log(
-            `[Anomaly Cron] Sent ${alertResult.sent.length} alerts to user ${user.id}`
-          )
+          console.log(`[Anomaly Cron] Sent ${alertResult.sent.length} alerts to user ${user.id}`)
 
           results.totalAlertsSent += alertResult.sent.length
 
@@ -104,12 +98,8 @@ export async function GET(request: NextRequest) {
 
         results.usersProcessed++
       } catch (error) {
-        const message =
-          error instanceof Error ? error.message : 'Unknown error'
-        console.error(
-          `[Anomaly Cron] Failed to process user ${user.id}:`,
-          message
-        )
+        const message = error instanceof Error ? error.message : 'Unknown error'
+        console.error(`[Anomaly Cron] Failed to process user ${user.id}:`, message)
         results.errors.push(`User ${user.id}: ${message}`)
       }
     }

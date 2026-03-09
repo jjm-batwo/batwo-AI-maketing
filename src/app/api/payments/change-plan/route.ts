@@ -20,24 +20,19 @@ export async function POST(request: Request) {
 
     // Validate new plan
     if (!newPlan || !Object.values(SubscriptionPlan).includes(newPlan as SubscriptionPlan)) {
-      return NextResponse.json(
-        { error: '유효하지 않은 플랜입니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: '유효하지 않은 플랜입니다' }, { status: 400 })
     }
 
     // Validate new billing period
-    if (!newBillingPeriod || !Object.values(BillingPeriod).includes(newBillingPeriod as BillingPeriod)) {
-      return NextResponse.json(
-        { error: '유효하지 않은 결제 주기입니다' },
-        { status: 400 }
-      )
+    if (
+      !newBillingPeriod ||
+      !Object.values(BillingPeriod).includes(newBillingPeriod as BillingPeriod)
+    ) {
+      return NextResponse.json({ error: '유효하지 않은 결제 주기입니다' }, { status: 400 })
     }
 
     // Execute use case
-    const changePlanUseCase = container.resolve<ChangePlanUseCase>(
-      DI_TOKENS.ChangePlanUseCase
-    )
+    const changePlanUseCase = container.resolve<ChangePlanUseCase>(DI_TOKENS.ChangePlanUseCase)
 
     const result = await changePlanUseCase.execute({
       userId: user.id,
@@ -49,19 +44,13 @@ export async function POST(request: Request) {
   } catch (error) {
     // Handle PaymentError specifically
     if (error instanceof PaymentError) {
-      return NextResponse.json(
-        { error: error.message, code: error.code },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: error.message, code: error.code }, { status: 400 })
     }
 
     // Log unexpected errors
     console.error('Change plan error:', error)
 
     // Generic error response
-    return NextResponse.json(
-      { error: '플랜 변경 중 오류가 발생했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '플랜 변경 중 오류가 발생했습니다' }, { status: 500 })
   }
 }

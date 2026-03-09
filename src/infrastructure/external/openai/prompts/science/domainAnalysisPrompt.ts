@@ -45,6 +45,21 @@ export function buildDomainAnalysisPrompt(input: {
 - 헤드라인 품질 (길이, 훅)
 - SUCCESs 프레임워크 적용
 - CTA 심리적 효과`,
+
+    creative_diversity: `크리에이티브 다양성 관점에서 (Meta Andromeda/Lattice 관점) 분석하세요:
+- Entity ID 중복 최소화 여부
+- 시각적 이질성 (텍스트나 배치 변경이 아닌 본질적 시각적 차이)
+- 피로도 가중 가능성`,
+
+    campaign_structure: `캠페인 파편화 관점에서 (Advantage+ 기준) 분석하세요:
+- 캠페인/광고세트의 적절한 통합 여부
+- 예산이 충분한 데이터를 수집할 만큼 집중되어 있는지
+- 계정 내 옥션 자기잠식(Cannibalization) 위험도`,
+
+    tracking_health: `트래킹 건전성 관점에서 분석하세요:
+- EMQ(Event Match Quality) 점수 향상 가능성
+- CAPI(Conversions API) 및 사용자 파라미터 수집 여부
+- 쿠키리스 시대 대비 상태`,
   }
 
   const contextParts: string[] = []

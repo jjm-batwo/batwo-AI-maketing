@@ -21,9 +21,7 @@ export default function InsightsDemoPage() {
     <div className="container mx-auto py-8 space-y-8">
       <div>
         <h1 className="text-3xl font-bold mb-2">AI Insights Demo</h1>
-        <p className="text-muted-foreground">
-          Real-time anomaly detection and trend analysis
-        </p>
+        <p className="text-muted-foreground">Real-time anomaly detection and trend analysis</p>
       </div>
 
       {/* Default industry */}

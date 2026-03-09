@@ -66,9 +66,7 @@ export function PartialSuccessUI({
   const hasFailures = stats.failed > 0
   const hasFallbacks = stats.fallback > 0
 
-  const displayResults = showSuccessful
-    ? results
-    : results.filter((r) => r.status !== 'success')
+  const displayResults = showSuccessful ? results : results.filter((r) => r.status !== 'success')
 
   return (
     <div className={cn('space-y-4', className)}>
@@ -79,9 +77,7 @@ export function PartialSuccessUI({
           <span className="text-green-600">
             성공 {stats.success}/{stats.total}
           </span>
-          {hasFallbacks && (
-            <span className="text-amber-600">대체 {stats.fallback}</span>
-          )}
+          {hasFallbacks && <span className="text-amber-600">대체 {stats.fallback}</span>}
           {hasFailures && <span className="text-red-600">실패 {stats.failed}</span>}
         </div>
       </div>
@@ -142,19 +138,16 @@ export function PartialSuccessUI({
                       </span>
                     </div>
                     {result.value && (
-                      <p className="mt-1 text-sm text-gray-700 break-words">
-                        {result.value}
-                      </p>
+                      <p className="mt-1 text-sm text-gray-700 break-words">{result.value}</p>
                     )}
-                    {result.error && (
-                      <p className="mt-1 text-xs text-red-600">{result.error}</p>
-                    )}
+                    {result.error && <p className="mt-1 text-xs text-red-600">{result.error}</p>}
                   </div>
                 </div>
 
                 {/* Retry Button for Failed Items */}
                 {result.status === 'failed' && onRetryFailed && (
-                  <button type="button"
+                  <button
+                    type="button"
                     onClick={() => onRetryFailed(result.field)}
                     className={cn(
                       'flex items-center gap-1 px-3 py-1.5 text-sm rounded-md',
@@ -175,11 +168,10 @@ export function PartialSuccessUI({
       {/* Action Footer */}
       {hasFailures && onRetryFailed && (
         <div className="flex items-center justify-end pt-2 border-t">
-          <button type="button"
+          <button
+            type="button"
             onClick={() => {
-              results
-                .filter((r) => r.status === 'failed')
-                .forEach((r) => onRetryFailed(r.field))
+              results.filter((r) => r.status === 'failed').forEach((r) => onRetryFailed(r.field))
             }}
             className={cn(
               'flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md',

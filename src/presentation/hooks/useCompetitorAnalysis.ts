@@ -49,11 +49,7 @@ async function fetchCompetitorAnalysis(
   return json.data
 }
 
-export function useCompetitorSearch(
-  keywords: string,
-  countries?: string,
-  industry?: string
-) {
+export function useCompetitorSearch(keywords: string, countries?: string, industry?: string) {
   const resolvedCountries = countries ?? 'KR'
 
   return useQuery({
