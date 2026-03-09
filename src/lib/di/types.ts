@@ -80,6 +80,7 @@ export const DI_TOKENS = {
   // Pixel Use Cases
   ListUserPixelsUseCase: Symbol.for('ListUserPixelsUseCase'),
   SelectPixelUseCase: Symbol.for('SelectPixelUseCase'),
+  GetTrackingHealthUseCase: Symbol.for('GetTrackingHealthUseCase'),
 
   // Payment
   BillingKeyRepository: Symbol.for('BillingKeyRepository'),
