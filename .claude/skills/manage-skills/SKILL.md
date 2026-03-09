@@ -38,6 +38,8 @@ argument-hint: "[선택사항: 특정 스킬 이름 또는 집중할 영역]"
 | `verify-token-encryption` | DB accessToken 암복호화 적용 일관성 검증 | `src/app/api/meta/**`, `src/application/use-cases/**`, `src/application/utils/TokenEncryption.ts`, `src/infrastructure/database/repositories/**` |
 | `verify-ui-components` | UI 컴포넌트 일관성, 접근성, 성능 패턴 검증 (랜딩/대시보드/캠페인/채팅/최적화/픽셀/온보딩/감사 포함) | `src/presentation/components/landing/**`, `src/presentation/components/dashboard/**`, `src/presentation/components/campaign/**`, `src/presentation/components/chat/**`, `src/presentation/components/optimization/**`, `src/presentation/components/pixel/**`, `src/presentation/components/onboarding/**`, `src/presentation/components/audit/**`, `src/presentation/hooks/**`, `src/presentation/utils/**`, `src/app/(dashboard)/campaigns/**/*Client.tsx` |
 | `verify-audit-security` | 감사 보고서 HMAC 서명/검증 일관성 검증 | `src/lib/security/**`, `src/app/api/audit/**` |
+| `verify-chat-intents` | ChatIntent 열거형이 프롬프트 제어 분기 및 UI 질문에 올바르게 매핑되어 있는지 검증 | `src/domain/value-objects/ChatIntent.ts`, `src/application/services/ConversationalAgentService.ts`, `src/application/services/GuideQuestionService.ts` |
+| `verify-domain-analyzers` | 도메인 분석기 클래스의 존재성과 레지스트리 확인 및 가중치 합 1.0 검증 | `src/domain/value-objects/MarketingScience.ts`, `src/infrastructure/knowledge/analyzers/**`, `src/infrastructure/knowledge/KnowledgeBaseService.ts` |
 
 ## 워크플로우
 
