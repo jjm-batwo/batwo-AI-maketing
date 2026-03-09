@@ -62,8 +62,9 @@ export class PrismaKnowledgeBaseRepository implements IKnowledgeBaseRepository {
     }
 
     async deleteBySource(source: string): Promise<void> {
-        await this.prisma.knowledgeDocument.deleteMany({
-            where: { source },
-        })
+        await this.prisma.$executeRawUnsafe(
+            'DELETE FROM knowledge_documents WHERE source = $1',
+            source
+        )
     }
 }

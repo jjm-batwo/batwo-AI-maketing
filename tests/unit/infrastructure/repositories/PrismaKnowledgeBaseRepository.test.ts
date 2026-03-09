@@ -158,21 +158,18 @@ describe('PrismaKnowledgeBaseRepository', () => {
     // ─────────────────────── deleteBySource ───────────────────────
     describe('deleteBySource', () => {
         it('should_delete_all_documents_by_source', async () => {
-            ; (mockPrisma.knowledgeDocument.deleteMany as ReturnType<typeof vi.fn>).mockResolvedValue({
-                count: 5,
-            })
+            ; (mockPrisma.$executeRawUnsafe as ReturnType<typeof vi.fn>).mockResolvedValue(5)
 
             await repo.deleteBySource('meta_policy_2026')
 
-            expect(mockPrisma.knowledgeDocument.deleteMany).toHaveBeenCalledWith({
-                where: { source: 'meta_policy_2026' },
-            })
+            expect(mockPrisma.$executeRawUnsafe).toHaveBeenCalledWith(
+                'DELETE FROM knowledge_documents WHERE source = $1',
+                'meta_policy_2026'
+            )
         })
 
         it('should_not_throw_when_no_documents_found', async () => {
-            ; (mockPrisma.knowledgeDocument.deleteMany as ReturnType<typeof vi.fn>).mockResolvedValue({
-                count: 0,
-            })
+            ; (mockPrisma.$executeRawUnsafe as ReturnType<typeof vi.fn>).mockResolvedValue(0)
 
             await expect(repo.deleteBySource('nonexistent')).resolves.not.toThrow()
         })
