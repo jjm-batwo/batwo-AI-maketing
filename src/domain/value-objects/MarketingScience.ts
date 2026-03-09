@@ -16,6 +16,10 @@ export type KnowledgeDomain =
   | 'meta_best_practices'
   | 'color_psychology'
   | 'copywriting_psychology'
+  // 2026 Meta Trinity 기반 신규 도메인
+  | 'creative_diversity'
+  | 'campaign_structure'
+  | 'tracking_health'
 
 export const ALL_KNOWLEDGE_DOMAINS: readonly KnowledgeDomain[] = [
   'neuromarketing',
@@ -24,6 +28,9 @@ export const ALL_KNOWLEDGE_DOMAINS: readonly KnowledgeDomain[] = [
   'meta_best_practices',
   'color_psychology',
   'copywriting_psychology',
+  'creative_diversity',
+  'campaign_structure',
+  'tracking_health',
 ] as const
 
 // --- Grade Boundaries (SINGLE SOURCE OF TRUTH) ---
@@ -99,12 +106,16 @@ export interface CompositeScore {
 
 // --- Default Domain Weights ---
 export const DEFAULT_DOMAIN_WEIGHTS: Record<KnowledgeDomain, number> = {
-  neuromarketing: 0.20,
-  marketing_psychology: 0.20,
-  crowd_psychology: 0.15,
+  neuromarketing: 0.15,
+  marketing_psychology: 0.15,
+  crowd_psychology: 0.10,
   meta_best_practices: 0.20,
-  color_psychology: 0.10,
-  copywriting_psychology: 0.15,
+  color_psychology: 0.05,
+  copywriting_psychology: 0.10,
+  // 2026 기반 신규 도메인 가중치 배분
+  creative_diversity: 0.20,
+  campaign_structure: 0.15,
+  tracking_health: 0.10,
 }
 
 // --- Pure Scoring Utilities ---

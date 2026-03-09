@@ -22,12 +22,15 @@ import { CrowdPsychologyAnalyzer } from './analyzers/CrowdPsychologyAnalyzer'
 import { MetaBestPracticesAnalyzer } from './analyzers/MetaBestPracticesAnalyzer'
 import { ColorPsychologyAnalyzer } from './analyzers/ColorPsychologyAnalyzer'
 import { CopywritingPsychologyAnalyzer } from './analyzers/CopywritingPsychologyAnalyzer'
+import { CreativeDiversityAnalyzer } from './analyzers/CreativeDiversityAnalyzer'
+import { CampaignStructureAnalyzer } from './analyzers/CampaignStructureAnalyzer'
+import { TrackingHealthAnalyzer } from './analyzers/TrackingHealthAnalyzer'
 
 /**
  * Knowledge Base Service - Orchestrates all domain analyzers
  *
  * Implements IKnowledgeBaseService port from application layer.
- * Coordinates 6 domain analyzers and aggregates results into composite scores.
+ * Coordinates 9 domain analyzers (including 2026 Meta Trinity) and aggregates results into composite scores.
  *
  * Handles partial failures gracefully:
  * - Logs warnings for failed analyzers
@@ -44,6 +47,10 @@ export class KnowledgeBaseService implements IKnowledgeBaseService {
       new MetaBestPracticesAnalyzer(),
       new ColorPsychologyAnalyzer(),
       new CopywritingPsychologyAnalyzer(),
+      // 2026 Meta Trinity 최신화 도메인
+      new CreativeDiversityAnalyzer(),
+      new CampaignStructureAnalyzer(),
+      new TrackingHealthAnalyzer(),
     ]
   }
 
@@ -183,6 +190,10 @@ export class KnowledgeBaseService implements IKnowledgeBaseService {
       meta_best_practices: 'Meta 베스트 프랙티스',
       color_psychology: '색채 심리학',
       copywriting_psychology: '카피라이팅 심리학',
+      // 2026 Meta Trinity 기반 신규 도메인
+      creative_diversity: '크리에이티브 다양성',
+      campaign_structure: '캠페인 구조 파편화',
+      tracking_health: '트래킹 건전성',
     }
     return names[domain]
   }

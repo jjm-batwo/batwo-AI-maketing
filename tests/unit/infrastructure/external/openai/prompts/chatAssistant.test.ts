@@ -9,6 +9,11 @@ import {
     CHAT_ASSISTANT_SYSTEM_PROMPT,
     ROAS_IMPROVEMENT_TEMPLATE,
     SCALING_TEMPLATE,
+    CREATIVE_FATIGUE_TEMPLATE,
+    LEARNING_PHASE_TEMPLATE,
+    STRUCTURE_OPTIMIZATION_TEMPLATE,
+    LEAD_QUALITY_TEMPLATE,
+    TRACKING_HEALTH_TEMPLATE,
     QUERY_PATTERNS,
     buildQueryClassificationPrompt,
 } from '@infrastructure/external/openai/prompts/chatAssistant'
@@ -233,3 +238,63 @@ describe('QUERY_PATTERNS — 2026 신규 패턴', () => {
         )
     })
 })
+
+// ============================================================================
+// Phase 4: 신규 진단 응답 템플릿 검증 (2026 Meta Trinity)
+// ============================================================================
+
+describe('CREATIVE_FATIGUE_TEMPLATE — 광고 피로도 진단', () => {
+    it('빈도 3.5회와 19% CPA 상승 페널티를 언급해야 한다', () => {
+        expect(CREATIVE_FATIGUE_TEMPLATE.message).toMatch(/3\.5회/)
+        expect(CREATIVE_FATIGUE_TEMPLATE.message).toMatch(/19%/)
+    })
+
+    it('Entity ID 시각적 다양성을 권고해야 한다', () => {
+        expect(CREATIVE_FATIGUE_TEMPLATE.message).toMatch(/Entity\s*ID/)
+        expect(CREATIVE_FATIGUE_TEMPLATE.message).toMatch(/시각적/)
+    })
+})
+
+describe('LEARNING_PHASE_TEMPLATE — 학습 단계 진단', () => {
+    it('주 50회 전환 데이터 조건을 명시해야 한다', () => {
+        expect(LEARNING_PHASE_TEMPLATE.message).toMatch(/50회/)
+    })
+
+    it('캠페인 구조 통합 및 예산 집중을 권고해야 한다', () => {
+        expect(LEARNING_PHASE_TEMPLATE.message).toMatch(/통합/)
+        expect(LEARNING_PHASE_TEMPLATE.message).toMatch(/집중/)
+    })
+})
+
+describe('STRUCTURE_OPTIMIZATION_TEMPLATE — 캠페인 구조 진단', () => {
+    it('Advantage+ 캠페인 통합을 언급해야 한다', () => {
+        expect(STRUCTURE_OPTIMIZATION_TEMPLATE.message).toMatch(/Advantage\+?/)
+    })
+
+    it('CPA 절감을 강조해야 한다', () => {
+        expect(STRUCTURE_OPTIMIZATION_TEMPLATE.message).toMatch(/CPA/)
+    })
+})
+
+describe('LEAD_QUALITY_TEMPLATE — 리드 품질 진단', () => {
+    it('설문 마찰(Friction) 수준 추가를 권고해야 한다', () => {
+        expect(LEAD_QUALITY_TEMPLATE.message).toMatch(/마찰|Friction/i)
+    })
+
+    it('인증 절차 추가를 언급해야 한다', () => {
+        expect(LEAD_QUALITY_TEMPLATE.message).toMatch(/인증/)
+    })
+})
+
+describe('TRACKING_HEALTH_TEMPLATE — 전환 추적 건전성', () => {
+    it('Pixel과 CAPI 하이브리드를 권고해야 한다', () => {
+        expect(TRACKING_HEALTH_TEMPLATE.message).toMatch(/Pixel/)
+        expect(TRACKING_HEALTH_TEMPLATE.message).toMatch(/CAPI/)
+    })
+
+    it('EMQ 점수 기준(6.0)을 명시해야 한다', () => {
+        expect(TRACKING_HEALTH_TEMPLATE.message).toMatch(/EMQ/)
+        expect(TRACKING_HEALTH_TEMPLATE.message).toMatch(/6\.0/)
+    })
+})
+
