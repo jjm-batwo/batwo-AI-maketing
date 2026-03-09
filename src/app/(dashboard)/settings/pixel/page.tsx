@@ -29,6 +29,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { PixelStatus } from '@/presentation/components/pixel/PixelStatus'
+import { HybridTrackingCard } from '@/presentation/components/pixel/HybridTrackingCard'
 import { UniversalScriptCopy } from '@/presentation/components/pixel/UniversalScriptCopy'
 
 interface Pixel {
@@ -244,6 +245,9 @@ export default function PixelSettingsPage() {
                 </CardHeader>
                 <CardContent>
                   <PixelStatus pixelId={selectedPixel.id} />
+                  <div className="mt-6">
+                    <HybridTrackingCard pixelId={selectedPixel.id} />
+                  </div>
                 </CardContent>
               </Card>
 

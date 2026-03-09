@@ -793,18 +793,8 @@ container.register(
       container.resolve(DI_TOKENS.MetaPixelService),
       {
         async getCAPIStatsByPixelId(pixelId: string) {
-          const events = await prisma.conversionEvent.groupBy({
-            by: ['metaResponseId'],
-            where: { pixelId },
-            _count: true,
-          })
-          let sent = 0, failed = 0, expired = 0
-          for (const e of events) {
-            if (e.metaResponseId === 'EXPIRED') expired += e._count
-            else if (e.metaResponseId === 'FAILED') failed += e._count
-            else if (e.metaResponseId && e.metaResponseId !== 'RETRY_1' && e.metaResponseId !== 'RETRY_2' && e.metaResponseId !== 'RETRY_3') sent += e._count
-          }
-          return { sent, failed, expired }
+          const repo = container.resolve<IConversionEventRepository>(DI_TOKENS.ConversionEventRepository)
+          return repo.countByPixelIdGrouped(pixelId)
         },
       },
       {

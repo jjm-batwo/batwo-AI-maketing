@@ -13,7 +13,7 @@ const DEFAULT_BATCH_LIMIT = 1000
  * sentToMeta=false인 이벤트를 조회하고 전송 결과를 업데이트한다.
  */
 export class PrismaConversionEventRepository implements IConversionEventRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaClient) { }
 
   async findUnsentEvents(limit: number = DEFAULT_BATCH_LIMIT): Promise<ConversionEvent[]> {
     const records = await this.prisma.conversionEvent.findMany({
@@ -127,5 +127,37 @@ export class PrismaConversionEventRepository implements IConversionEventReposito
     const num = parseInt(current.replace('RETRY_', ''), 10)
     if (isNaN(num)) return 'RETRY_1'
     return `RETRY_${num + 1}`
+  }
+
+  /**
+   * 특정 픽셀의 CAPI 이벤트 전송 통계 (sent, expired, failed) 조회
+   */
+  async countByPixelIdGrouped(pixelId: string): Promise<{ sent: number; failed: number; expired: number }> {
+    const events = await this.prisma.conversionEvent.groupBy({
+      by: ['metaResponseId'],
+      where: { pixelId },
+      _count: true,
+    })
+
+    let sent = 0
+    let failed = 0
+    let expired = 0
+
+    for (const e of events) {
+      if (e.metaResponseId === 'EXPIRED') {
+        expired += e._count
+      } else if (e.metaResponseId === 'FAILED') {
+        failed += e._count
+      } else if (
+        e.metaResponseId &&
+        e.metaResponseId !== 'RETRY_1' &&
+        e.metaResponseId !== 'RETRY_2' &&
+        e.metaResponseId !== 'RETRY_3'
+      ) {
+        sent += e._count
+      }
+    }
+
+    return { sent, failed, expired }
   }
 }
