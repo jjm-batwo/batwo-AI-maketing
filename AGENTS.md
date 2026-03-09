@@ -954,6 +954,24 @@ export const useNewEntityStore = create<NewEntityStore>((set) => ({
 - Keep stores small and focused
 - Export custom hooks with `use*` prefix
 
+### 8. RAG System & Knowledge Base Architecture
+
+**Location**: `src/application/tools/queries/`, `src/infrastructure/knowledge/`, `prisma/seeds/marketing-knowledge/`
+
+The **Retrieval-Augmented Generation (RAG)** system enhances the AI agent with specific 2026 Meta Ads algorithm logic (Lattice, GEM, Andromeda, Entity ID, etc.) and diagnostic resolutions.
+
+**Core Components:**
+1. **Knowledge Ingestion (`KnowledgeIngestionService.ts`)**: Parses markdown files, chunks text, generates embeddings via `fetch`-based `OpenAIEmbeddingService`, and upserts to PostgreSQL `pgvector`.
+2. **Knowledge Base Repository (`PrismaKnowledgeBaseRepository.ts`)**: Performs cosine distance vector searches using `pgvector` operators (`<=>`).
+3. **Agent Search Tool (`searchKnowledgeBase.tool.ts`)**: 18th Tool available to the `ConversationalAgentService` which allows the AI to query context based on the user's intent classified as `KNOWLEDGE_QUERY`.
+4. **Seed Files (`prisma/seeds/marketing-knowledge/*.md`)**: Source of truth for marketing guidelines. Must conform to the `00-topic.md` filename and `# Title` H1 standard (Verified by `verify-knowledge-documents` skill).
+
+**Workflow**:
+```bash
+# Seed the knowledge base into the database
+npm run seed:knowledge
+```
+
 ---
 
 ## Testing Guide
