@@ -33,6 +33,32 @@ const GUIDE_QUESTION_TEMPLATES: Record<ChatIntent, string[]> = {
     '예산 최적화 제안을 받으시겠어요?',
     '예산 한도를 조정하시겠어요?',
   ],
+  // 2026 Meta Trinity 기반 신규 인텐트
+  [ChatIntent.CREATIVE_FATIGUE]: [
+    '현재 소재의 노출 빈도가 얼마인지 확인할까요?',
+    'Entity ID 다양성 현황을 분석할까요?',
+    '소재 리프레시 일정을 잡아볼까요?',
+  ],
+  [ChatIntent.LEARNING_PHASE]: [
+    '주간 전환 수가 50회 이상인지 확인할까요?',
+    '캠페인 구조 통합이 필요한 상태인지 분석할까요?',
+    '일일 예산이 학습 단계 통과에 충분한지 확인할까요?',
+  ],
+  [ChatIntent.STRUCTURE_OPTIMIZATION]: [
+    '현재 캠페인/광고세트 수를 확인할까요?',
+    'Advantage+ 구조로의 전환을 검토할까요?',
+    '예산 파편화 상태를 진단할까요?',
+  ],
+  [ChatIntent.LEAD_QUALITY]: [
+    '리드 폼의 마찰(Friction) 수준을 점검할까요?',
+    '리드 품질 개선을 위한 필터 설정을 안내할까요?',
+    '허수 고객 비율을 분석할까요?',
+  ],
+  [ChatIntent.TRACKING_HEALTH]: [
+    'EMQ 점수 현황을 확인할까요?',
+    'CAPI 설정 상태를 점검할까요?',
+    '하이브리드 트래킹 건전성을 진단할까요?',
+  ],
   [ChatIntent.GENERAL]: [
     '캠페인을 만들어 볼까요?',
     '성과 분석이 필요하신가요?',
