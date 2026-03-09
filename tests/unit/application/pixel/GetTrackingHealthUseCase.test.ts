@@ -1,11 +1,10 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import {
     GetTrackingHealthUseCase,
 } from '@application/use-cases/pixel/GetTrackingHealthUseCase'
 import { MockMetaPixelRepository } from '@tests/mocks/repositories/MockMetaPixelRepository'
 import { MetaPixel, PixelSetupMethod } from '@domain/entities/MetaPixel'
 import type { IMetaPixelService, MetaPixelStats } from '@application/ports/IMetaPixelService'
-import type { TrackingHealthDTO } from '@application/dto/pixel/TrackingHealthDTO'
 import type { TrackingHealthSuggestion } from '@application/dto/pixel/TrackingHealthDTO'
 import { MATCH_RATE_THRESHOLDS } from '@application/dto/pixel/TrackingHealthDTO'
 
