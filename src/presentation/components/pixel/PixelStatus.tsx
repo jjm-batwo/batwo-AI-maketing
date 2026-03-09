@@ -1,8 +1,9 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { CheckCircle, AlertCircle, Clock, Activity } from 'lucide-react'
+import { CheckCircle, AlertCircle, Clock, Activity, Info, AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { MatchRateBar } from './MatchRateBar'
 
 interface PixelStatusData {
   pixelId: string
@@ -27,6 +28,32 @@ async function fetchPixelStatus(pixelId: string): Promise<PixelStatusData> {
   const response = await fetch(`/api/pixel/${pixelId}/status`)
   if (!response.ok) {
     throw new Error('Failed to fetch pixel status')
+  }
+  return response.json()
+}
+
+export interface TrackingHealthDTO {
+  pixelId: string
+  metaPixelId: string
+  healthStatus: 'healthy' | 'warning' | 'critical' | 'unknown'
+  matchRate: number | null
+  matchedEventCount: number
+  unmatchedEventCount: number
+  capiEventsSent: number
+  capiEventsFailed: number
+  capiEventsExpired: number
+  suggestions: Array<{
+    key: string
+    message: string
+    severity: 'info' | 'warn' | 'error'
+  }>
+  lastCheckedAt: string
+}
+
+async function fetchTrackingHealth(pixelId: string): Promise<TrackingHealthDTO> {
+  const response = await fetch(`/api/pixel/${pixelId}/health`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch tracking health')
   }
   return response.json()
 }
@@ -91,6 +118,12 @@ export function PixelStatus({ pixelId, compact = false }: PixelStatusProps) {
     refetchInterval: 30000, // Refresh every 30 seconds
   })
 
+  const { data: health } = useQuery({
+    queryKey: ['trackingHealth', pixelId],
+    queryFn: () => fetchTrackingHealth(pixelId),
+    refetchInterval: 60000, // Refresh every 60 seconds
+  })
+
   if (isLoading) {
     return (
       <div
@@ -126,14 +159,17 @@ export function PixelStatus({ pixelId, compact = false }: PixelStatusProps) {
     return (
       <div
         data-testid="pixel-status"
-        className="compact flex items-center gap-2"
+        className="compact flex flex-col gap-2"
         role="status"
       >
-        <div
-          data-testid="status-indicator"
-          className={cn('h-2 w-2 rounded-full', color)}
-        />
-        <span className={cn('text-sm', textColor)}>{label}</span>
+        <div className="flex items-center gap-2">
+          <div
+            data-testid="status-indicator"
+            className={cn('h-2 w-2 rounded-full', color)}
+          />
+          <span className={cn('text-sm', textColor)}>{label}</span>
+        </div>
+        {health && <MatchRateBar matchRate={health.matchRate} compact />}
       </div>
     )
   }
@@ -185,6 +221,31 @@ export function PixelStatus({ pixelId, compact = false }: PixelStatusProps) {
           )}
         </div>
       </div>
+
+      {health && (
+        <div className="mt-4">
+          <MatchRateBar matchRate={health.matchRate} />
+        </div>
+      )}
+
+      {health?.suggestions && health.suggestions.length > 0 && (
+        <div className="mt-4 flex flex-col gap-2">
+          {health.suggestions.map((suggestion) => {
+            const isError = suggestion.severity === 'error'
+            const isWarn = suggestion.severity === 'warn'
+            const bannerBg = isError ? 'bg-red-50 border-red-200' : isWarn ? 'bg-yellow-50 border-yellow-200' : 'bg-blue-50 border-blue-200'
+            const bannerTextColor = isError ? 'text-red-800' : isWarn ? 'text-yellow-800' : 'text-blue-800'
+            const IconComponent = isError ? AlertCircle : isWarn ? AlertTriangle : Info
+
+            return (
+              <div key={suggestion.key} className={cn('flex gap-2 rounded-lg border p-3', bannerBg)}>
+                <IconComponent className={cn('mt-0.5 h-4 w-4 shrink-0', bannerTextColor)} />
+                <p className={cn('text-sm', bannerTextColor)}>{suggestion.message}</p>
+              </div>
+            )
+          })}
+        </div>
+      )}
 
       {!status.hasReceivedEvents && (
         <div className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50 p-3">
