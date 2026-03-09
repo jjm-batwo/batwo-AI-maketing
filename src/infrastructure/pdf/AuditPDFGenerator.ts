@@ -256,21 +256,13 @@ function AuditPDFDocument({ report }: AuditPDFDocumentProps) {
             View,
             { style: styles.summaryRow },
             React.createElement(Text, { style: styles.summaryLabel }, '전체 캠페인'),
-            React.createElement(
-              Text,
-              { style: styles.summaryValue },
-              `${report.totalCampaigns}개`
-            )
+            React.createElement(Text, { style: styles.summaryValue }, `${report.totalCampaigns}개`)
           ),
           React.createElement(
             View,
             { style: styles.summaryRow },
             React.createElement(Text, { style: styles.summaryLabel }, '활성 캠페인'),
-            React.createElement(
-              Text,
-              { style: styles.summaryValue },
-              `${report.activeCampaigns}개`
-            )
+            React.createElement(Text, { style: styles.summaryValue }, `${report.activeCampaigns}개`)
           ),
           React.createElement(
             View,
@@ -289,10 +281,7 @@ function AuditPDFDocument({ report }: AuditPDFDocumentProps) {
             React.createElement(
               Text,
               { style: { ...styles.summaryValue, color: '#059669' } },
-              formatAmount(
-                report.estimatedImprovement.amount,
-                report.estimatedImprovement.currency
-              )
+              formatAmount(report.estimatedImprovement.amount, report.estimatedImprovement.currency)
             )
           )
         )
@@ -362,11 +351,7 @@ function AuditPDFDocument({ report }: AuditPDFDocumentProps) {
                           },
                           getPriorityLabel(rec.priority)
                         ),
-                        React.createElement(
-                          Text,
-                          { style: styles.recommendationText },
-                          rec.message
-                        )
+                        React.createElement(Text, { style: styles.recommendationText }, rec.message)
                       ),
                       React.createElement(
                         Text,
@@ -392,8 +377,9 @@ function AuditPDFDocument({ report }: AuditPDFDocumentProps) {
         ),
         React.createElement(
           Text,
-          { style: styles.footerText, render: ({ pageNumber, totalPages }) =>
-            `${pageNumber} / ${totalPages}`
+          {
+            style: styles.footerText,
+            render: ({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`,
           },
           ''
         )

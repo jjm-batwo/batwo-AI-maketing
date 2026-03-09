@@ -51,9 +51,7 @@ export class MemoryCacheService implements ICacheService {
   async deletePattern(pattern: string): Promise<void> {
     // Convert Redis pattern to RegExp
     // * becomes .*, ? becomes .
-    const regexPattern = pattern
-      .replace(/\*/g, '.*')
-      .replace(/\?/g, '.')
+    const regexPattern = pattern.replace(/\*/g, '.*').replace(/\?/g, '.')
     const regex = new RegExp(`^${regexPattern}$`)
 
     const keysToDelete: string[] = []

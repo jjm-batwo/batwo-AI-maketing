@@ -11,9 +11,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const alertService = container.resolve<ProactiveAlertService>(
-      DI_TOKENS.ProactiveAlertService
-    )
+    const alertService = container.resolve<ProactiveAlertService>(DI_TOKENS.ProactiveAlertService)
 
     const totalResult = {
       created: 0,

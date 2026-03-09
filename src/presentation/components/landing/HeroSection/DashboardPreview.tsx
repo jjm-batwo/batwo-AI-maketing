@@ -36,10 +36,7 @@ export const DashboardPreview = memo(function DashboardPreview() {
           <MiniChart data={data.chart} activeTab={activeTab} />
 
           {/* AI Insight Badge */}
-          <AIInsight
-            title={data.insight.title}
-            content={data.insight.content}
-          />
+          <AIInsight title={data.insight.title} content={data.insight.content} />
         </div>
       </div>
     </div>
@@ -60,8 +57,14 @@ const DashboardHeader = memo(function DashboardHeader({ title, subtitle }: Dashb
       </div>
       <div className="flex items-center gap-1 text-xs font-medium text-green-600 bg-green-500/10 px-2 py-1 rounded-full">
         <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" aria-hidden="true"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" aria-hidden="true"></span>
+          <span
+            className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"
+            aria-hidden="true"
+          ></span>
+          <span
+            className="relative inline-flex rounded-full h-2 w-2 bg-green-500"
+            aria-hidden="true"
+          ></span>
         </span>
         <span aria-label="실시간 데이터 업데이트 중">Live</span>
       </div>

@@ -20,14 +20,17 @@ interface PlatformSelectorProps {
 // 카페24 아이콘 (간단한 SVG)
 function Cafe24Icon() {
   return (
-    <svg
-      viewBox="0 0 40 40"
-      fill="none"
-      className="h-8 w-8"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 40 40" fill="none" className="h-8 w-8" aria-hidden="true">
       <rect width="40" height="40" rx="8" fill="#FF6B35" />
-      <text x="50%" y="55%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="14" fontWeight="bold">
+      <text
+        x="50%"
+        y="55%"
+        dominantBaseline="middle"
+        textAnchor="middle"
+        fill="white"
+        fontSize="14"
+        fontWeight="bold"
+      >
         C24
       </text>
     </svg>
@@ -37,12 +40,7 @@ function Cafe24Icon() {
 // 자체몰 아이콘
 function CustomSiteIcon() {
   return (
-    <svg
-      viewBox="0 0 40 40"
-      fill="none"
-      className="h-8 w-8"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 40 40" fill="none" className="h-8 w-8" aria-hidden="true">
       <rect width="40" height="40" rx="8" fill="#6366F1" />
       <path
         d="M10 28 L20 12 L30 28 M15 24 L25 24"
@@ -58,14 +56,17 @@ function CustomSiteIcon() {
 // 네이버 아이콘
 function NaverIcon() {
   return (
-    <svg
-      viewBox="0 0 40 40"
-      fill="none"
-      className="h-8 w-8"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 40 40" fill="none" className="h-8 w-8" aria-hidden="true">
       <rect width="40" height="40" rx="8" fill="#03C75A" />
-      <text x="50%" y="55%" dominantBaseline="middle" textAnchor="middle" fill="white" fontSize="14" fontWeight="bold">
+      <text
+        x="50%"
+        y="55%"
+        dominantBaseline="middle"
+        textAnchor="middle"
+        fill="white"
+        fontSize="14"
+        fontWeight="bold"
+      >
         N
       </text>
     </svg>
@@ -76,7 +77,8 @@ const PLATFORM_CARDS: PlatformCard[] = [
   {
     platform: EcommercePlatform.CAFE24,
     title: '카페24',
-    description: '카페24 쇼핑몰에 픽셀을 자동으로 설치합니다. OAuth 연동 후 스크립트 태그가 자동 삽입됩니다.',
+    description:
+      '카페24 쇼핑몰에 픽셀을 자동으로 설치합니다. OAuth 연동 후 스크립트 태그가 자동 삽입됩니다.',
     badge: '자동 설치',
     badgeVariant: 'auto',
     icon: <Cafe24Icon />,
@@ -84,7 +86,8 @@ const PLATFORM_CARDS: PlatformCard[] = [
   {
     platform: EcommercePlatform.CUSTOM,
     title: '자체몰 (커스텀)',
-    description: '직접 운영하는 웹사이트에 스크립트를 수동으로 설치합니다. HTML에 코드를 붙여넣기만 하면 됩니다.',
+    description:
+      '직접 운영하는 웹사이트에 스크립트를 수동으로 설치합니다. HTML에 코드를 붙여넣기만 하면 됩니다.',
     badge: '수동 설치',
     badgeVariant: 'manual',
     icon: <CustomSiteIcon />,
@@ -102,11 +105,7 @@ const PLATFORM_CARDS: PlatformCard[] = [
 export function PlatformSelector({ onSelect, selectedPlatform }: PlatformSelectorProps) {
   return (
     <div className="space-y-3">
-      <ul
-        role="list"
-        aria-label="플랫폼 선택"
-        className="space-y-3"
-      >
+      <ul role="list" aria-label="플랫폼 선택" className="space-y-3">
         {PLATFORM_CARDS.map((card) => {
           const isSelected = card.platform === selectedPlatform
 
@@ -133,9 +132,7 @@ export function PlatformSelector({ onSelect, selectedPlatform }: PlatformSelecto
                 aria-pressed={isSelected}
               >
                 {/* 플랫폼 아이콘 */}
-                <div className="mt-0.5 shrink-0">
-                  {card.icon}
-                </div>
+                <div className="mt-0.5 shrink-0">{card.icon}</div>
 
                 {/* 텍스트 영역 */}
                 <div className="min-w-0 flex-1">
@@ -161,9 +158,7 @@ export function PlatformSelector({ onSelect, selectedPlatform }: PlatformSelecto
                 <div
                   className={cn(
                     'mt-1 h-4 w-4 shrink-0 rounded-full border-2 transition-colors',
-                    isSelected
-                      ? 'border-primary bg-primary'
-                      : 'border-border bg-transparent'
+                    isSelected ? 'border-primary bg-primary' : 'border-border bg-transparent'
                   )}
                   aria-hidden="true"
                 />

@@ -51,10 +51,7 @@ export async function withSpan<T>(
  * @param key 속성 키
  * @param value 속성 값
  */
-export function setSpanAttribute(
-  key: string,
-  value: string | number | boolean
-): void {
+export function setSpanAttribute(key: string, value: string | number | boolean): void {
   const span = trace.getSpan(context.active())
   if (span) {
     span.setAttribute(key, value)

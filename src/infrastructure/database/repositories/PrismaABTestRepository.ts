@@ -130,10 +130,10 @@ export class PrismaABTestRepository implements IABTestRepository {
     if (filters.startDateFrom || filters.startDateTo) {
       where.startDate = {}
       if (filters.startDateFrom) {
-        (where.startDate as Record<string, Date>).gte = filters.startDateFrom
+        ;(where.startDate as Record<string, Date>).gte = filters.startDateFrom
       }
       if (filters.startDateTo) {
-        (where.startDate as Record<string, Date>).lte = filters.startDateTo
+        ;(where.startDate as Record<string, Date>).lte = filters.startDateTo
       }
     }
 

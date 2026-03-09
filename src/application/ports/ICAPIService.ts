@@ -1,8 +1,4 @@
-import type {
-  CAPIEventFormat,
-  UserData,
-  CustomData,
-} from '@domain/entities/ConversionEvent'
+import type { CAPIEventFormat, UserData, CustomData } from '@domain/entities/ConversionEvent'
 
 /**
  * Conversions API (CAPI) Service Port
@@ -34,20 +30,12 @@ export interface ICAPIService {
   /**
    * Send a single conversion event to Meta CAPI
    */
-  sendEvent(
-    accessToken: string,
-    pixelId: string,
-    event: CAPIEventInput
-  ): Promise<CAPIResponse>
+  sendEvent(accessToken: string, pixelId: string, event: CAPIEventInput): Promise<CAPIResponse>
 
   /**
    * Send multiple conversion events to Meta CAPI (batch, max 1000)
    */
-  sendEvents(
-    accessToken: string,
-    pixelId: string,
-    events: CAPIEventInput[]
-  ): Promise<CAPIResponse>
+  sendEvents(accessToken: string, pixelId: string, events: CAPIEventInput[]): Promise<CAPIResponse>
 
   /**
    * Send a test event to verify CAPI integration

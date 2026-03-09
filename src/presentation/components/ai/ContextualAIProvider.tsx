@@ -6,7 +6,7 @@ import {
   getContextDetectionEngine,
   getAISuggestionTiming,
   type UserContext,
-  type ContextSignal
+  type ContextSignal,
 } from '@/application/services'
 import { AISuggestionBubble } from './AISuggestionBubble'
 
@@ -39,7 +39,7 @@ export interface ContextualAIProviderProps {
 export function ContextualAIProvider({
   children,
   enabled = true,
-  customSuggestions
+  customSuggestions,
 }: ContextualAIProviderProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -139,28 +139,28 @@ function getSuggestionForContext(
     creating_campaign: {
       text: 'AI가 타겟팅과 예산을 추천해 드릴까요?',
       context: '캠페인 생성 중',
-      action: () => router.push('/ai/targeting')
+      action: () => router.push('/ai/targeting'),
     },
     analyzing_metrics: {
       text: '성과 데이터를 AI가 심층 분석해 드릴까요?',
       context: '메트릭 분석 중',
-      action: () => router.push('/ai/analysis')
+      action: () => router.push('/ai/analysis'),
     },
     writing_copy: {
       text: 'AI가 더 효과적인 광고 문구를 제안해 드릴까요?',
       context: '광고 문구 작성 중',
-      action: () => router.push('/ai/copywriting')
+      action: () => router.push('/ai/copywriting'),
     },
     reviewing_performance: {
       text: '주간 성과를 AI가 요약해 드릴까요?',
       context: '성과 검토 중',
-      action: () => router.push('/reports/weekly')
+      action: () => router.push('/reports/weekly'),
     },
     stuck_on_task: {
       text: '도움이 필요하신가요? AI 어시스턴트에게 물어보세요.',
       context: '작업 진행 중',
-      action: () => router.push('/ai/chat')
-    }
+      action: () => router.push('/ai/chat'),
+    },
   }
 
   return defaultSuggestions[contextType] || null
@@ -187,7 +187,7 @@ export function useContextTracking() {
   return {
     trackAction,
     getCurrentContext,
-    shouldSuggestAI
+    shouldSuggestAI,
   }
 }
 
@@ -202,7 +202,7 @@ export function useSuggestionTiming() {
     recordSuggestion: () => timing.recordSuggestion(),
     recordResponse: (accepted: boolean) => timing.recordResponse(accepted),
     getStats: () => timing.getStats(),
-    getTimeUntilNextSuggestion: () => timing.getTimeUntilNextSuggestion()
+    getTimeUntilNextSuggestion: () => timing.getTimeUntilNextSuggestion(),
   }
 }
 
@@ -230,6 +230,6 @@ export function useManualSuggestion() {
   return {
     isShowing,
     showSuggestion,
-    hideSuggestion
+    hideSuggestion,
   }
 }

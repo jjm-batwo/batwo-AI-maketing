@@ -88,17 +88,11 @@ export async function GET(
     const campaign = await campaignRepo.findById(campaignId)
 
     if (!campaign) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     if (campaign.userId !== user.id) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     // Check quota
@@ -219,7 +213,15 @@ export async function GET(
     if (includeBenchmark && industry) {
       const benchmarkService = getCompetitorBenchmarkService()
       const benchmarkReport = benchmarkService.generateReport(
-        { ctr, cvr, cpa, roas, cpc, spend: latestKPI.spend.amount, revenue: latestKPI.revenue?.amount || 0 },
+        {
+          ctr,
+          cvr,
+          cpa,
+          roas,
+          cpc,
+          spend: latestKPI.spend.amount,
+          revenue: latestKPI.revenue?.amount || 0,
+        },
         industry
       )
 
@@ -227,7 +229,15 @@ export async function GET(
         overallScore: benchmarkReport.overallScore,
         overallGrade: benchmarkReport.overallGrade,
         summary: benchmarkService.getPerformanceSummary(
-          { ctr, cvr, cpa, roas, cpc, spend: latestKPI.spend.amount, revenue: latestKPI.revenue?.amount || 0 },
+          {
+            ctr,
+            cvr,
+            cpa,
+            roas,
+            cpc,
+            spend: latestKPI.spend.amount,
+            revenue: latestKPI.revenue?.amount || 0,
+          },
           industry
         ),
       }
@@ -243,9 +253,6 @@ export async function GET(
     return NextResponse.json(response)
   } catch (error) {
     console.error('Failed to generate optimization suggestions:', error)
-    return NextResponse.json(
-      { message: 'AI 최적화 제안 생성에 실패했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'AI 최적화 제안 생성에 실패했습니다' }, { status: 500 })
   }
 }

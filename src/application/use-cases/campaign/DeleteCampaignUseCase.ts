@@ -27,7 +27,9 @@ export class DeleteCampaignUseCase {
   async execute(
     campaignId: string,
     userId: string
-  ): Promise<Result<void, ValidationError | NotFoundError | ForbiddenError | ExternalServiceError>> {
+  ): Promise<
+    Result<void, ValidationError | NotFoundError | ForbiddenError | ExternalServiceError>
+  > {
     // Validate input
     if (!campaignId || campaignId.trim() === '') {
       return failure(ValidationError.missingField('campaignId'))
@@ -40,7 +42,11 @@ export class DeleteCampaignUseCase {
     // Fetch campaign
     const campaign = await tryCatch(
       () => this.campaignRepository.findById(campaignId),
-      (error: unknown) => ExternalServiceError.database('fetch campaign', error instanceof Error ? error.message : undefined)
+      (error: unknown) =>
+        ExternalServiceError.database(
+          'fetch campaign',
+          error instanceof Error ? error.message : undefined
+        )
     )
 
     if (!campaign.ok) {
@@ -60,7 +66,11 @@ export class DeleteCampaignUseCase {
     // Delete campaign
     const deleteResult = await tryCatch(
       () => this.campaignRepository.delete(campaignId),
-      (error: unknown) => ExternalServiceError.database('delete campaign', error instanceof Error ? error.message : undefined)
+      (error: unknown) =>
+        ExternalServiceError.database(
+          'delete campaign',
+          error instanceof Error ? error.message : undefined
+        )
     )
 
     if (!deleteResult.ok) {
@@ -91,7 +101,10 @@ export class DeleteCampaignUseCase {
     try {
       campaign = await this.campaignRepository.findById(campaignId)
     } catch (error) {
-      throw ExternalServiceError.database('fetch campaign', error instanceof Error ? error.message : undefined)
+      throw ExternalServiceError.database(
+        'fetch campaign',
+        error instanceof Error ? error.message : undefined
+      )
     }
 
     // Check if campaign exists
@@ -108,7 +121,10 @@ export class DeleteCampaignUseCase {
     try {
       await this.campaignRepository.delete(campaignId)
     } catch (error) {
-      throw ExternalServiceError.database('delete campaign', error instanceof Error ? error.message : undefined)
+      throw ExternalServiceError.database(
+        'delete campaign',
+        error instanceof Error ? error.message : undefined
+      )
     }
   }
 }

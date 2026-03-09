@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { TrackingScriptService } from '@infrastructure/external/tracking/TrackingScriptService'
 
-const APP_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'https://batwo.ai'
+const APP_BASE_URL =
+  process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || 'https://batwo.ai'
 
 /**
  * GET /api/pixel/[pixelId]/snippet
@@ -42,9 +43,6 @@ export async function GET(
     })
   } catch (error) {
     console.error('Failed to generate snippet:', error)
-    return NextResponse.json(
-      { error: 'Failed to generate script snippet' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to generate script snippet' }, { status: 500 })
   }
 }

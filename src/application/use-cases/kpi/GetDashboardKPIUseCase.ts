@@ -9,25 +9,17 @@ import {
   DateRangePreset,
 } from '@application/dto/kpi/DashboardKPIDTO'
 
-function getDateRangeFromPreset(
-  preset: DateRangePreset
-): { startDate: Date; endDate: Date } {
+function getDateRangeFromPreset(preset: DateRangePreset): { startDate: Date; endDate: Date } {
   const now = new Date()
 
   // Use UTC to match how dates are stored in database
-  const endDate = new Date(Date.UTC(
-    now.getUTCFullYear(),
-    now.getUTCMonth(),
-    now.getUTCDate(),
-    23, 59, 59, 999
-  ))
+  const endDate = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999)
+  )
 
-  const startDate = new Date(Date.UTC(
-    now.getUTCFullYear(),
-    now.getUTCMonth(),
-    now.getUTCDate(),
-    0, 0, 0, 0
-  ))
+  const startDate = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0)
+  )
 
   switch (preset) {
     case 'today':
@@ -59,9 +51,7 @@ function getDateRangeFromPreset(
   return { startDate, endDate }
 }
 
-function getPreviousPeriodRange(
-  preset: DateRangePreset
-): { startDate: Date; endDate: Date } {
+function getPreviousPeriodRange(preset: DateRangePreset): { startDate: Date; endDate: Date } {
   const current = getDateRangeFromPreset(preset)
   const duration = current.endDate.getTime() - current.startDate.getTime()
 
@@ -143,10 +133,7 @@ export class GetDashboardKPIUseCase {
           conversions: aggregated.totalConversions,
           spend: aggregated.totalSpend,
           revenue: aggregated.totalRevenue,
-          roas:
-            aggregated.totalSpend > 0
-              ? aggregated.totalRevenue / aggregated.totalSpend
-              : 0,
+          roas: aggregated.totalSpend > 0 ? aggregated.totalRevenue / aggregated.totalSpend : 0,
           ctr:
             aggregated.totalImpressions > 0
               ? (aggregated.totalClicks / aggregated.totalImpressions) * 100
@@ -290,14 +277,9 @@ export class GetDashboardKPIUseCase {
       return ((current - previous) / previous) * 100
     }
 
-    const currentRoas =
-      currentMetrics.spend > 0
-        ? currentMetrics.revenue / currentMetrics.spend
-        : 0
+    const currentRoas = currentMetrics.spend > 0 ? currentMetrics.revenue / currentMetrics.spend : 0
     const previousRoas =
-      previousMetrics.spend > 0
-        ? previousMetrics.revenue / previousMetrics.spend
-        : 0
+      previousMetrics.spend > 0 ? previousMetrics.revenue / previousMetrics.spend : 0
 
     const currentCtr =
       currentMetrics.impressions > 0
@@ -309,16 +291,10 @@ export class GetDashboardKPIUseCase {
         : 0
 
     return {
-      impressionsChange: calcChange(
-        currentMetrics.impressions,
-        previousMetrics.impressions
-      ),
+      impressionsChange: calcChange(currentMetrics.impressions, previousMetrics.impressions),
       clicksChange: calcChange(currentMetrics.clicks, previousMetrics.clicks),
       linkClicksChange: calcChange(currentMetrics.linkClicks, previousMetrics.linkClicks),
-      conversionsChange: calcChange(
-        currentMetrics.conversions,
-        previousMetrics.conversions
-      ),
+      conversionsChange: calcChange(currentMetrics.conversions, previousMetrics.conversions),
       spendChange: calcChange(currentMetrics.spend, previousMetrics.spend),
       revenueChange: calcChange(currentMetrics.revenue, previousMetrics.revenue),
       roasChange: currentRoas - previousRoas,

@@ -4,10 +4,7 @@
  * 다가오는 마케팅 시즌/이벤트 알림 및 준비사항 제공
  */
 
-import {
-  getUpcomingEvents,
-  type MarketingEvent,
-} from '@/lib/constants/koreanMarketingCalendar'
+import { getUpcomingEvents, type MarketingEvent } from '@/lib/constants/koreanMarketingCalendar'
 
 export interface UpcomingEvent {
   name: string
@@ -78,7 +75,9 @@ export class TrendAlertService {
    */
   getWeeklyOpportunityDigest(userId: string, industry: string): TrendAlert {
     const upcomingEvents = this.getUpcomingEvents(14, industry)
-    const urgentEvents = upcomingEvents.filter((e) => e.urgency === 'critical' || e.urgency === 'high')
+    const urgentEvents = upcomingEvents.filter(
+      (e) => e.urgency === 'critical' || e.urgency === 'high'
+    )
 
     // 최고 기회 선정 (가장 가까우면서 impact가 큰 이벤트)
     const topOpportunity = this.selectTopOpportunity(upcomingEvents)
@@ -90,7 +89,9 @@ export class TrendAlertService {
       events: upcomingEvents,
       weeklyDigest: {
         summary: this.generateWeeklySummary(upcomingEvents, industry),
-        topOpportunity: topOpportunity ? `${topOpportunity.name} (${topOpportunity.daysUntil}일 후)` : '이번 주 특별 이벤트 없음',
+        topOpportunity: topOpportunity
+          ? `${topOpportunity.name} (${topOpportunity.daysUntil}일 후)`
+          : '이번 주 특별 이벤트 없음',
         actionItems,
         urgentCount: urgentEvents.length,
       },
@@ -110,7 +111,10 @@ export class TrendAlertService {
   /**
    * 긴급도 계산
    */
-  private calculateUrgency(daysUntil: number, optimalPrepDays: number): 'critical' | 'high' | 'medium' | 'low' {
+  private calculateUrgency(
+    daysUntil: number,
+    optimalPrepDays: number
+  ): 'critical' | 'high' | 'medium' | 'low' {
     if (daysUntil <= 3) return 'critical'
     if (daysUntil <= 7) return 'high'
     if (daysUntil <= optimalPrepDays) return 'medium'
@@ -176,7 +180,9 @@ export class TrendAlertService {
       return `향후 2주간 ${this.getIndustryNameKo(industry)} 업종에 특별한 마케팅 이벤트가 없습니다. 일상적인 캠페인 최적화에 집중하세요.`
     }
 
-    const urgentCount = events.filter((e) => e.urgency === 'critical' || e.urgency === 'high').length
+    const urgentCount = events.filter(
+      (e) => e.urgency === 'critical' || e.urgency === 'high'
+    ).length
     const eventNames = events.slice(0, 3).map((e) => e.name)
 
     if (urgentCount > 0) {
@@ -195,7 +201,9 @@ export class TrendAlertService {
     // 긴급 이벤트
     const criticalEvents = events.filter((e) => e.urgency === 'critical')
     if (criticalEvents.length > 0) {
-      items.push(`🔥 긴급: ${criticalEvents[0].name} 캠페인 즉시 시작 (${criticalEvents[0].daysUntil}일 남음)`)
+      items.push(
+        `🔥 긴급: ${criticalEvents[0].name} 캠페인 즉시 시작 (${criticalEvents[0].daysUntil}일 남음)`
+      )
     }
 
     // 준비 기간 이벤트
@@ -207,7 +215,9 @@ export class TrendAlertService {
     // 예산 계획
     const highImpactEvents = events.filter((e) => e.budgetRecommendation.includes('30%'))
     if (highImpactEvents.length > 0) {
-      items.push(`💰 ${highImpactEvents[0].name} 예산 확보: ${highImpactEvents[0].budgetRecommendation}`)
+      items.push(
+        `💰 ${highImpactEvents[0].name} 예산 확보: ${highImpactEvents[0].budgetRecommendation}`
+      )
     }
 
     // 일반 알림

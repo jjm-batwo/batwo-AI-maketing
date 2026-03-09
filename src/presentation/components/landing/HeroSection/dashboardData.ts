@@ -33,7 +33,8 @@ export const DASHBOARD_DATA: Record<DashboardTab, DashboardData> = {
     chart: [35, 55, 40, 70, 50, 85, 60],
     insight: {
       title: 'AI 최적화 제안',
-      content: '20대 여성 타겟의 전환율이 상승세입니다. 예산을 15% 증액하면 ROAS가 4.2x로 개선될 것으로 예측됩니다.',
+      content:
+        '20대 여성 타겟의 전환율이 상승세입니다. 예산을 15% 증액하면 ROAS가 4.2x로 개선될 것으로 예측됩니다.',
     },
   },
   campaign: {
@@ -47,7 +48,8 @@ export const DASHBOARD_DATA: Record<DashboardTab, DashboardData> = {
     chart: [60, 45, 75, 50, 80, 55, 90],
     insight: {
       title: '캠페인 자동 튜닝',
-      content: '성과가 낮은 A그룹 소재를 일시중지하고 성과가 높은 B그룹으로 예산을 자동 재배분했습니다.',
+      content:
+        '성과가 낮은 A그룹 소재를 일시중지하고 성과가 높은 B그룹으로 예산을 자동 재배분했습니다.',
     },
   },
   report: {
@@ -61,7 +63,8 @@ export const DASHBOARD_DATA: Record<DashboardTab, DashboardData> = {
     chart: [40, 60, 50, 80, 70, 90, 85],
     insight: {
       title: '마켓 인사이트',
-      content: '최근 경쟁사 광고 노출이 감소했습니다. 지금이 공격적으로 노출을 늘려 시장 점유율을 확보할 최적기입니다.',
+      content:
+        '최근 경쟁사 광고 노출이 감소했습니다. 지금이 공격적으로 노출을 늘려 시장 점유율을 확보할 최적기입니다.',
     },
   },
 }

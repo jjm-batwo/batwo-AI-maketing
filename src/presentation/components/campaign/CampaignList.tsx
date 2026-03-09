@@ -41,9 +41,12 @@ export const CampaignList = memo(function CampaignList({
   const [showFilter, setShowFilter] = useState(false)
   const [statusFilter, setStatusFilter] = useState<string>('ALL')
 
-  const handleStatusChange = useCallback((id: string, status: string) => {
-    onStatusChange?.(id, status)
-  }, [onStatusChange])
+  const handleStatusChange = useCallback(
+    (id: string, status: string) => {
+      onStatusChange?.(id, status)
+    },
+    [onStatusChange]
+  )
 
   const filteredCampaigns = campaigns.filter((campaign) => {
     if (statusFilter === 'ALL') return true
@@ -54,10 +57,7 @@ export const CampaignList = memo(function CampaignList({
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div
-            key={i}
-            className="h-48 animate-pulse rounded-lg bg-muted"
-          />
+          <div key={i} className="h-48 animate-pulse rounded-lg bg-muted" />
         ))}
       </div>
     )
@@ -67,11 +67,7 @@ export const CampaignList = memo(function CampaignList({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowFilter(!showFilter)}
-          >
+          <Button variant="outline" size="sm" onClick={() => setShowFilter(!showFilter)}>
             <Filter className="mr-1 h-4 w-4" />
             {t('campaigns.filter')}
           </Button>
@@ -107,9 +103,7 @@ export const CampaignList = memo(function CampaignList({
       {filteredCampaigns.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
           <h3 className="text-lg font-semibold">{t('campaigns.empty.title')}</h3>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {t('campaigns.empty.description')}
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">{t('campaigns.empty.description')}</p>
           <Button asChild className="mt-4" disabled={quotaRemaining === 0}>
             <Link href="/campaigns/new">
               <Plus className="mr-1 h-4 w-4" />
@@ -120,11 +114,7 @@ export const CampaignList = memo(function CampaignList({
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredCampaigns.map((campaign) => (
-            <CampaignCard
-              key={campaign.id}
-              {...campaign}
-              onStatusChange={handleStatusChange}
-            />
+            <CampaignCard key={campaign.id} {...campaign} onStatusChange={handleStatusChange} />
           ))}
         </div>
       )}

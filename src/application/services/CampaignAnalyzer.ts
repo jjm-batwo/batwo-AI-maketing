@@ -137,10 +137,7 @@ export class CampaignAnalyzer {
   /**
    * 성과 등급 결정
    */
-  private determineGrade(
-    ctrRatio: number,
-    cvrRatio: number
-  ): AnalysisResult['performanceGrade'] {
+  private determineGrade(ctrRatio: number, cvrRatio: number): AnalysisResult['performanceGrade'] {
     const avgRatio = (ctrRatio + cvrRatio) / 2
 
     if (avgRatio >= GRADE_THRESHOLDS.excellent) return 'excellent'
@@ -315,10 +312,7 @@ export class CampaignAnalyzer {
   /**
    * ROAS 인사이트 생성
    */
-  private createROASInsight(
-    metrics: CampaignMetrics,
-    industry: Industry
-  ): OptimizationInsight {
+  private createROASInsight(metrics: CampaignMetrics, industry: Industry): OptimizationInsight {
     const targetROAS = this.getTargetROAS(industry)
 
     return {

@@ -1,5 +1,9 @@
 import { z } from 'zod'
-import type { AgentTool, AgentContext, ToolExecutionResult } from '@application/ports/IConversationalAgent'
+import type {
+  AgentTool,
+  AgentContext,
+  ToolExecutionResult,
+} from '@application/ports/IConversationalAgent'
 import type { GetCampaignUseCase } from '@application/use-cases/campaign/GetCampaignUseCase'
 
 const STATUS_LABELS: Record<string, string> = {
@@ -57,7 +61,9 @@ export function createGetCampaignDetailTool(
         `- 시작일: ${campaign.startDate}`,
         campaign.endDate ? `- 종료일: ${campaign.endDate}` : null,
         campaign.metaCampaignId ? `- Meta 연동: 완료` : `- Meta 연동: 미연동`,
-      ].filter(Boolean).join('\n')
+      ]
+        .filter(Boolean)
+        .join('\n')
 
       return { success: true, data: campaign, formattedMessage }
     },

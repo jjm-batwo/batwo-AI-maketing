@@ -42,6 +42,7 @@ if (suggest) {
 ```
 
 **Detected Contexts:**
+
 - `creating_campaign` - User is creating a new campaign
 - `analyzing_metrics` - User is viewing metrics/dashboard
 - `writing_copy` - User is editing ad copy
@@ -76,11 +77,12 @@ const stats = timing.getStats()
 timing.updateConfig({
   minTimeBetweenSuggestions: 10 * 60 * 1000, // 10 minutes
   maxSuggestionsPerSession: 5,
-  contextThreshold: 0.7
+  contextThreshold: 0.7,
 })
 ```
 
 **Adaptive Learning:**
+
 - High acceptance rate (>70%) → Suggest more frequently
 - High dismissal rate (>70%) → Suggest less frequently
 - Recent dismissals → Increase wait time
@@ -158,10 +160,7 @@ import {
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import {
-  getContextDetectionEngine,
-  getAISuggestionTiming
-} from '@/application/services'
+import { getContextDetectionEngine, getAISuggestionTiming } from '@/application/services'
 import { AISuggestionBubble } from '@/presentation/components/ai'
 
 export function ContextualAIProvider({ children }: { children: React.ReactNode }) {
@@ -190,23 +189,23 @@ export function ContextualAIProvider({ children }: { children: React.ReactNode }
         creating_campaign: {
           text: 'AI가 타겟팅을 추천해 드릴까요?',
           context: '캠페인 생성 중',
-          action: () => router.push('/ai/targeting')
+          action: () => router.push('/ai/targeting'),
         },
         analyzing_metrics: {
           text: '성과 데이터를 AI가 분석해 드릴까요?',
           context: '메트릭 분석 중',
-          action: () => router.push('/ai/analysis')
+          action: () => router.push('/ai/analysis'),
         },
         writing_copy: {
           text: 'AI가 더 나은 카피를 제안해 드릴까요?',
           context: '광고 문구 작성 중',
-          action: () => router.push('/ai/copywriting')
+          action: () => router.push('/ai/copywriting'),
         },
         stuck_on_task: {
           text: '도움이 필요하신가요? AI에게 물어보세요.',
           context: '작업 진행 중',
-          action: () => router.push('/ai/help')
-        }
+          action: () => router.push('/ai/help'),
+        },
       }
 
       const suggestionData = suggestions[context.type as keyof typeof suggestions]
@@ -257,7 +256,7 @@ useEffect(() => {
 
   return () => {
     engine.trackAction('exit_campaign_creator', {
-      duration: Date.now() - startTime
+      duration: Date.now() - startTime,
     })
   }
 }, [])
@@ -267,7 +266,7 @@ const handleCopyChange = (value: string) => {
   const engine = getContextDetectionEngine()
   engine.trackAction('edit_copy', {
     valueChanged: value !== previousValue,
-    repeatCount: editCount++
+    repeatCount: editCount++,
   })
 }
 
@@ -275,7 +274,7 @@ const handleCopyChange = (value: string) => {
 const handleError = (error: Error) => {
   const engine = getContextDetectionEngine()
   engine.trackAction('error_occurred', {
-    errorOccurred: true
+    errorOccurred: true,
   })
 }
 ```
@@ -302,9 +301,9 @@ const history = engine.getHistory()
 const timing = getAISuggestionTiming()
 
 timing.updateConfig({
-  minTimeBetweenSuggestions: 5 * 60 * 1000,  // 5 minutes
-  maxSuggestionsPerSession: 3,                // Max 3 per session
-  contextThreshold: 0.6                       // Min 60% confidence
+  minTimeBetweenSuggestions: 5 * 60 * 1000, // 5 minutes
+  maxSuggestionsPerSession: 3, // Max 3 per session
+  contextThreshold: 0.6, // Min 60% confidence
 })
 
 // Export session data for analytics
@@ -361,10 +360,7 @@ const sessionData = timing.exportSessionData()
 ## Testing
 
 ```typescript
-import {
-  ContextDetectionEngine,
-  AISuggestionTiming
-} from '@/application/services'
+import { ContextDetectionEngine, AISuggestionTiming } from '@/application/services'
 
 describe('Contextual AI Suggestions', () => {
   it('detects campaign creation context', () => {
@@ -380,14 +376,14 @@ describe('Contextual AI Suggestions', () => {
 
   it('respects timing limits', () => {
     const timing = new AISuggestionTiming({
-      minTimeBetweenSuggestions: 1000
+      minTimeBetweenSuggestions: 1000,
     })
 
     timing.recordSuggestion()
     expect(timing.canSuggestNow()).toBe(false)
 
     // Wait for delay
-    await new Promise(resolve => setTimeout(resolve, 1100))
+    await new Promise((resolve) => setTimeout(resolve, 1100))
     expect(timing.canSuggestNow()).toBe(true)
   })
 })

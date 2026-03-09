@@ -1,10 +1,6 @@
 import { auth } from './auth'
 import { NextResponse } from 'next/server'
-import {
-  GlobalRole,
-  isAdmin,
-  isSuperAdmin,
-} from '@domain/value-objects/GlobalRole'
+import { GlobalRole, isAdmin, isSuperAdmin } from '@domain/value-objects/GlobalRole'
 
 export interface AdminAuthResult {
   authorized: boolean

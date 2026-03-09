@@ -294,7 +294,8 @@ export class TargetingRecommendationService {
         currentState: '현재 타겟 관심사 범위 협소',
         recommendation: '관련 관심사 카테고리를 2-3개 추가하세요',
         expectedImpact: '노출 기회 증가 및 빈도수 분산',
-        rationale: '관심사 범위를 확장하면 더 많은 잠재고객에게 도달하고 광고 피로도를 낮출 수 있습니다.',
+        rationale:
+          '관심사 범위를 확장하면 더 많은 잠재고객에게 도달하고 광고 피로도를 낮출 수 있습니다.',
       })
     } else if (saturation.saturationLevel === 'moderate') {
       // Moderate 포화도 - 모니터링 또는 점진적 확장
@@ -355,7 +356,8 @@ export class TargetingRecommendationService {
         currentState: '현재 주요 도시 중심 타겟팅',
         recommendation: '중소 도시나 인접 지역으로 지역 타겟을 확장하세요',
         expectedImpact: '신규 지역 잠재고객 발굴',
-        rationale: '주요 도시에서 포화 상태라면 인접 지역으로 확장하여 신규 수요를 찾을 수 있습니다.',
+        rationale:
+          '주요 도시에서 포화 상태라면 인접 지역으로 확장하여 신규 수요를 찾을 수 있습니다.',
       })
     }
 

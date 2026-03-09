@@ -14,7 +14,7 @@ import {
   MessageCircle,
   Share2,
   TrendingUp,
-  ChevronRight
+  ChevronRight,
 } from 'lucide-react'
 import Image from 'next/image'
 
@@ -138,7 +138,13 @@ export default function MetaPagesPage() {
         <p className="text-muted-foreground mt-1">
           연결된 Facebook 페이지의 참여 지표를 확인하세요
         </p>
-        {showApiSource && <ApiSourceBadge endpoint="GET /me/accounts" permission="pages_show_list" className="mt-2" />}
+        {showApiSource && (
+          <ApiSourceBadge
+            endpoint="GET /me/accounts"
+            permission="pages_show_list"
+            className="mt-2"
+          />
+        )}
       </div>
 
       {error && (
@@ -159,7 +165,7 @@ export default function MetaPagesPage() {
               </p>
               <Button
                 className="mt-4"
-                onClick={() => window.location.href = '/settings/meta-connect'}
+                onClick={() => (window.location.href = '/settings/meta-connect')}
               >
                 Meta 계정 연결하기
               </Button>
@@ -292,13 +298,8 @@ export default function MetaPagesPage() {
                     <CardContent>
                       <div className="space-y-3">
                         {insights.recentPosts.map((post) => (
-                          <div
-                            key={post.id}
-                            className="rounded-lg border p-3 text-sm"
-                          >
-                            <p className="text-muted-foreground truncate">
-                              {post.message}
-                            </p>
+                          <div key={post.id} className="rounded-lg border p-3 text-sm">
+                            <p className="text-muted-foreground truncate">{post.message}</p>
                             <div className="mt-2 flex items-center gap-4 text-xs text-muted-foreground">
                               <span className="flex items-center gap-1">
                                 <ThumbsUp className="h-3 w-3" />

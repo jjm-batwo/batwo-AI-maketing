@@ -8,10 +8,7 @@ import { createBudgetAlertSchema, updateBudgetAlertSchema, validateBody } from '
  * GET /api/campaigns/[id]/budget-alert
  * 캠페인의 예산 알림 설정 조회
  */
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
@@ -23,27 +20,18 @@ export async function GET(
     const campaign = await campaignRepo.findById(id)
 
     if (!campaign) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     if (campaign.userId !== user.id) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     const budgetAlertService = getBudgetAlertService()
     const alert = await budgetAlertService.getAlert(id)
 
     if (!alert) {
-      return NextResponse.json(
-        { message: '예산 알림 설정이 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '예산 알림 설정이 없습니다' }, { status: 404 })
     }
 
     return NextResponse.json({
@@ -54,10 +42,7 @@ export async function GET(
     })
   } catch (error) {
     console.error('Failed to get budget alert:', error)
-    return NextResponse.json(
-      { message: '예산 알림 설정 조회에 실패했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: '예산 알림 설정 조회에 실패했습니다' }, { status: 500 })
   }
 }
 
@@ -65,10 +50,7 @@ export async function GET(
  * POST /api/campaigns/[id]/budget-alert
  * 캠페인의 예산 알림 설정 생성
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
@@ -86,17 +68,11 @@ export async function POST(
     const campaign = await campaignRepo.findById(id)
 
     if (!campaign) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     if (campaign.userId !== user.id) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     const budgetAlertService = getBudgetAlertService()
@@ -115,17 +91,11 @@ export async function POST(
     })
   } catch (error) {
     if (error instanceof Error && error.message.includes('이미')) {
-      return NextResponse.json(
-        { message: error.message },
-        { status: 409 }
-      )
+      return NextResponse.json({ message: error.message }, { status: 409 })
     }
 
     console.error('Failed to create budget alert:', error)
-    return NextResponse.json(
-      { message: '예산 알림 설정 생성에 실패했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: '예산 알림 설정 생성에 실패했습니다' }, { status: 500 })
   }
 }
 
@@ -133,10 +103,7 @@ export async function POST(
  * PATCH /api/campaigns/[id]/budget-alert
  * 캠페인의 예산 알림 설정 수정
  */
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
@@ -154,17 +121,11 @@ export async function PATCH(
     const campaign = await campaignRepo.findById(id)
 
     if (!campaign) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     if (campaign.userId !== user.id) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     const budgetAlertService = getBudgetAlertService()
@@ -190,17 +151,11 @@ export async function PATCH(
     })
   } catch (error) {
     if (error instanceof Error && error.message.includes('찾을 수 없습니다')) {
-      return NextResponse.json(
-        { message: error.message },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: error.message }, { status: 404 })
     }
 
     console.error('Failed to update budget alert:', error)
-    return NextResponse.json(
-      { message: '예산 알림 설정 수정에 실패했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: '예산 알림 설정 수정에 실패했습니다' }, { status: 500 })
   }
 }
 
@@ -223,17 +178,11 @@ export async function DELETE(
     const campaign = await campaignRepo.findById(id)
 
     if (!campaign) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     if (campaign.userId !== user.id) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     const budgetAlertService = getBudgetAlertService()
@@ -245,9 +194,6 @@ export async function DELETE(
     return new NextResponse(null, { status: 204 })
   } catch (error) {
     console.error('Failed to delete budget alert:', error)
-    return NextResponse.json(
-      { message: '예산 알림 설정 삭제에 실패했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: '예산 알림 설정 삭제에 실패했습니다' }, { status: 500 })
   }
 }

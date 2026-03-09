@@ -33,23 +33,21 @@ export const DonutChart = memo(function DonutChart({
   const center = size / 2
 
   const arcs = useMemo(() => {
-    return segments
-      .reduce<{
-        offset: number
-        arcs: Array<DonutSegment & { dashLength: number; dashOffset: number; percentage: number }>
-      }>(
-        (acc, segment) => {
-          const percentage = total > 0 ? segment.value / total : 0
-          const dashLength = percentage * circumference
-          const dashOffset = -acc.offset
-          return {
-            offset: acc.offset + dashLength,
-            arcs: [...acc.arcs, { ...segment, dashLength, dashOffset, percentage }],
-          }
-        },
-        { offset: 0, arcs: [] }
-      )
-      .arcs
+    return segments.reduce<{
+      offset: number
+      arcs: Array<DonutSegment & { dashLength: number; dashOffset: number; percentage: number }>
+    }>(
+      (acc, segment) => {
+        const percentage = total > 0 ? segment.value / total : 0
+        const dashLength = percentage * circumference
+        const dashOffset = -acc.offset
+        return {
+          offset: acc.offset + dashLength,
+          arcs: [...acc.arcs, { ...segment, dashLength, dashOffset, percentage }],
+        }
+      },
+      { offset: 0, arcs: [] }
+    ).arcs
   }, [segments, total, circumference])
 
   return (
@@ -87,12 +85,8 @@ export const DonutChart = memo(function DonutChart({
         {/* Center text */}
         {(centerLabel || centerValue !== undefined) && (
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            {centerValue !== undefined && (
-              <span className="text-lg font-bold">{centerValue}</span>
-            )}
-            {centerLabel && (
-              <span className="text-xs text-muted-foreground">{centerLabel}</span>
-            )}
+            {centerValue !== undefined && <span className="text-lg font-bold">{centerValue}</span>}
+            {centerLabel && <span className="text-xs text-muted-foreground">{centerLabel}</span>}
           </div>
         )}
       </div>
@@ -100,10 +94,7 @@ export const DonutChart = memo(function DonutChart({
       <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
         {segments.map((segment, i) => (
           <div key={i} className="flex items-center gap-1.5 text-xs">
-            <span
-              className="h-2.5 w-2.5 rounded-full"
-              style={{ backgroundColor: segment.color }}
-            />
+            <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: segment.color }} />
             <span className="text-muted-foreground">{segment.label}</span>
             <span className="font-medium">{segment.value}</span>
           </div>

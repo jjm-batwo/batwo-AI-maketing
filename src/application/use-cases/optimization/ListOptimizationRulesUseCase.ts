@@ -16,16 +16,14 @@ export interface ListOptimizationRulesDTO {
 }
 
 export class ListOptimizationRulesUseCase {
-  constructor(
-    private readonly ruleRepository: IOptimizationRuleRepository
-  ) {}
+  constructor(private readonly ruleRepository: IOptimizationRuleRepository) {}
 
   async execute(dto: ListOptimizationRulesDTO): Promise<OptimizationRuleResponseDTO[]> {
     let rules
     if (dto.campaignId) {
       rules = await this.ruleRepository.findByCampaignId(dto.campaignId)
       // 요청한 userId의 규칙만 필터링
-      rules = rules.filter(r => r.userId === dto.userId)
+      rules = rules.filter((r) => r.userId === dto.userId)
     } else {
       rules = await this.ruleRepository.findByUserId(dto.userId)
     }

@@ -23,7 +23,9 @@ export class BudgetAlert {
   readonly createdAt: Date
   readonly updatedAt: Date
 
-  private constructor(props: Required<Omit<BudgetAlertProps, 'alertedAt'>> & { alertedAt: Date | null }) {
+  private constructor(
+    props: Required<Omit<BudgetAlertProps, 'alertedAt'>> & { alertedAt: Date | null }
+  ) {
     this.id = props.id
     this.campaignId = props.campaignId
     this.thresholdPercent = props.thresholdPercent

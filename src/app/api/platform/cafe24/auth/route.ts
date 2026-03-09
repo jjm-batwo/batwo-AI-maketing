@@ -19,17 +19,11 @@ export async function GET(request: NextRequest) {
   const pixelId = searchParams.get('pixelId')
 
   if (!pixelId) {
-    return NextResponse.json(
-      { error: '픽셀 ID가 필요합니다' },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: '픽셀 ID가 필요합니다' }, { status: 400 })
   }
 
   if (!CAFE24_CLIENT_ID || !CAFE24_CLIENT_SECRET) {
-    return NextResponse.json(
-      { error: '카페24 API 설정이 되어있지 않습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '카페24 API 설정이 되어있지 않습니다' }, { status: 500 })
   }
 
   try {
@@ -44,15 +38,13 @@ export async function GET(request: NextRequest) {
       })
     ).toString('base64url')
 
-    const redirectUri = CAFE24_REDIRECT_URI || `${process.env.NEXTAUTH_URL}/api/platform/cafe24/callback`
+    const redirectUri =
+      CAFE24_REDIRECT_URI || `${process.env.NEXTAUTH_URL}/api/platform/cafe24/callback`
     const authUrl = adapter.getAuthUrl(redirectUri, state)
 
     return NextResponse.json({ authUrl })
   } catch (error) {
     console.error('Cafe24 auth URL generation error:', error)
-    return NextResponse.json(
-      { error: '인증 URL 생성 중 오류가 발생했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '인증 URL 생성 중 오류가 발생했습니다' }, { status: 500 })
   }
 }

@@ -1,9 +1,6 @@
 import { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import { CampaignStatus } from '@domain/value-objects/CampaignStatus'
-import {
-  CampaignListDTO,
-  toCampaignDTO,
-} from '@application/dto/campaign/CampaignDTO'
+import { CampaignListDTO, toCampaignDTO } from '@application/dto/campaign/CampaignDTO'
 
 export interface ListCampaignsInput {
   userId: string

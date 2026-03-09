@@ -5,7 +5,18 @@ import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { AlertCircle, CheckCircle, Link2, Unlink, Loader2, RefreshCw, BarChart3, Zap, Building2, Users } from 'lucide-react'
+import {
+  AlertCircle,
+  CheckCircle,
+  Link2,
+  Unlink,
+  Loader2,
+  RefreshCw,
+  BarChart3,
+  Zap,
+  Building2,
+  Users,
+} from 'lucide-react'
 
 interface MetaAdAccount {
   id: string
@@ -33,7 +44,10 @@ function MetaConnectContent() {
   const [isDisconnecting, setIsDisconnecting] = useState(false)
   const [isSyncing, setIsSyncing] = useState(false)
   const [isSelecting, setIsSelecting] = useState(false)
-  const [syncMessage, setSyncMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
+  const [syncMessage, setSyncMessage] = useState<{
+    type: 'success' | 'error'
+    text: string
+  } | null>(null)
   const [sessionExpired, setSessionExpired] = useState(false)
 
   const mode = searchParams.get('mode')
@@ -102,7 +116,9 @@ function MetaConnectContent() {
     setIsConnecting(true)
     const appId = process.env.NEXT_PUBLIC_META_APP_ID
     const redirectUri = encodeURIComponent(`${window.location.origin}/api/meta/callback`)
-    const scope = encodeURIComponent('ads_management,ads_read,business_management,pages_show_list,pages_read_engagement')
+    const scope = encodeURIComponent(
+      'ads_management,ads_read,business_management,pages_show_list,pages_read_engagement'
+    )
 
     window.location.href = `https://www.facebook.com/v25.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code`
   }
@@ -134,19 +150,25 @@ function MetaConnectContent() {
       if (response.ok) {
         setSyncMessage({
           type: 'success',
-          text: data.message || t('metaConnect.syncSuccess', { created: data.created, updated: data.updated, archived: data.archived })
+          text:
+            data.message ||
+            t('metaConnect.syncSuccess', {
+              created: data.created,
+              updated: data.updated,
+              archived: data.archived,
+            }),
         })
       } else {
         setSyncMessage({
           type: 'error',
-          text: data.error || t('metaConnect.errors.syncFailed')
+          text: data.error || t('metaConnect.errors.syncFailed'),
         })
       }
     } catch (err) {
       console.error('Failed to sync campaigns:', err)
       setSyncMessage({
         type: 'error',
-        text: t('metaConnect.errors.syncError')
+        text: t('metaConnect.errors.syncError'),
       })
     } finally {
       setIsSyncing(false)
@@ -215,11 +237,13 @@ function MetaConnectContent() {
       )}
 
       {syncMessage && (
-        <div className={`mb-6 flex items-center gap-2 rounded-lg border p-4 ${
-          syncMessage.type === 'success'
-            ? 'border-green-500/20 bg-green-500/10 text-green-700 dark:text-green-400'
-            : 'border-red-500/20 bg-red-500/10 text-red-700 dark:text-red-400'
-        }`}>
+        <div
+          className={`mb-6 flex items-center gap-2 rounded-lg border p-4 ${
+            syncMessage.type === 'success'
+              ? 'border-green-500/20 bg-green-500/10 text-green-700 dark:text-green-400'
+              : 'border-red-500/20 bg-red-500/10 text-red-700 dark:text-red-400'
+          }`}
+        >
           {syncMessage.type === 'success' ? (
             <CheckCircle className="h-5 w-5" />
           ) : (
@@ -235,13 +259,11 @@ function MetaConnectContent() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <svg className="h-6 w-6" viewBox="0 0 24 24" fill="#1877F2">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
               </svg>
               {t('metaConnect.selectCardTitle')}
             </CardTitle>
-            <CardDescription>
-              {t('metaConnect.selectCardDescription')}
-            </CardDescription>
+            <CardDescription>{t('metaConnect.selectCardDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -254,8 +276,12 @@ function MetaConnectContent() {
                   <AlertCircle className="h-6 w-6 text-orange-600" />
                 </div>
                 <div>
-                  <p className="font-medium text-foreground">{t('metaConnect.sessionExpired.title')}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{t('metaConnect.sessionExpired.description')}</p>
+                  <p className="font-medium text-foreground">
+                    {t('metaConnect.sessionExpired.title')}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {t('metaConnect.sessionExpired.description')}
+                  </p>
                 </div>
                 <Button
                   onClick={handleConnect}
@@ -338,13 +364,11 @@ function MetaConnectContent() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <svg className="h-6 w-6" viewBox="0 0 24 24" fill="#1877F2">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
               </svg>
               {t('metaConnect.cardTitle')}
             </CardTitle>
-            <CardDescription>
-              {t('metaConnect.cardDescription')}
-            </CardDescription>
+            <CardDescription>{t('metaConnect.cardDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -352,140 +376,161 @@ function MetaConnectContent() {
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
             ) : isConnected ? (
-            <div className="space-y-4">
-              <div className="rounded-lg border bg-muted/50 p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">{accounts[0].businessName || t('metaConnect.cardTitle')}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {t('metaConnect.accountId')}: {accounts[0].metaAccountId}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {t('metaConnect.connectedDate')}: {new Date(accounts[0].createdAt).toLocaleDateString('ko-KR')}
-                    </p>
+              <div className="space-y-4">
+                <div className="rounded-lg border bg-muted/50 p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">
+                        {accounts[0].businessName || t('metaConnect.cardTitle')}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {t('metaConnect.accountId')}: {accounts[0].metaAccountId}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {t('metaConnect.connectedDate')}:{' '}
+                        {new Date(accounts[0].createdAt).toLocaleDateString('ko-KR')}
+                      </p>
+                    </div>
+                    <CheckCircle className="h-6 w-6 text-green-500" />
                   </div>
-                  <CheckCircle className="h-6 w-6 text-green-500" />
                 </div>
+
+                <Button
+                  variant="outline"
+                  onClick={handleSync}
+                  disabled={isSyncing}
+                  className="w-full"
+                >
+                  {isSyncing ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {t('metaConnect.syncing')}
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                      {t('metaConnect.syncButton')}
+                    </>
+                  )}
+                </Button>
+
+                <Button
+                  variant="destructive"
+                  onClick={handleDisconnect}
+                  disabled={isDisconnecting}
+                  className="w-full"
+                >
+                  {isDisconnecting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {t('metaConnect.disconnecting')}
+                    </>
+                  ) : (
+                    <>
+                      <Unlink className="mr-2 h-4 w-4" />
+                      {t('metaConnect.disconnectButton')}
+                    </>
+                  )}
+                </Button>
               </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="rounded-lg border border-dashed p-6 text-center">
+                  <Link2 className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <p className="mt-2 text-sm text-muted-foreground">{t('metaConnect.noAccount')}</p>
+                </div>
 
-              <Button
-                variant="outline"
-                onClick={handleSync}
-                disabled={isSyncing}
-                className="w-full"
-              >
-                {isSyncing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('metaConnect.syncing')}
-                  </>
-                ) : (
-                  <>
-                    <RefreshCw className="mr-2 h-4 w-4" />
-                    {t('metaConnect.syncButton')}
-                  </>
-                )}
-              </Button>
+                {/* Why Connect Section - Permission Explanations */}
+                <div className="rounded-lg border bg-gradient-to-br from-primary/5 to-primary/10 p-4">
+                  <h3 className="mb-3 font-semibold text-foreground">
+                    {t('metaConnect.whyConnect.title')}
+                  </h3>
+                  <p className="mb-4 text-sm text-muted-foreground">
+                    {t('metaConnect.whyConnect.description')}
+                  </p>
+                  <div className="grid gap-3">
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/15">
+                        <BarChart3 className="h-4 w-4 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground text-sm">
+                          {t('metaConnect.whyConnect.permissions.adsRead.title')}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {t('metaConnect.whyConnect.permissions.adsRead.description')}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-500/15">
+                        <Zap className="h-4 w-4 text-purple-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground text-sm">
+                          {t('metaConnect.whyConnect.permissions.adsManagement.title')}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {t('metaConnect.whyConnect.permissions.adsManagement.description')}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-500/15">
+                        <Building2 className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground text-sm">
+                          {t('metaConnect.whyConnect.permissions.businessManagement.title')}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {t('metaConnect.whyConnect.permissions.businessManagement.description')}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-500/15">
+                        <Users className="h-4 w-4 text-orange-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground text-sm">
+                          {t('metaConnect.whyConnect.permissions.pagesAccess.title')}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {t('metaConnect.whyConnect.permissions.pagesAccess.description')}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-              <Button
-                variant="destructive"
-                onClick={handleDisconnect}
-                disabled={isDisconnecting}
-                className="w-full"
-              >
-                {isDisconnecting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('metaConnect.disconnecting')}
-                  </>
-                ) : (
-                  <>
-                    <Unlink className="mr-2 h-4 w-4" />
-                    {t('metaConnect.disconnectButton')}
-                  </>
-                )}
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="rounded-lg border border-dashed p-6 text-center">
-                <Link2 className="mx-auto h-12 w-12 text-muted-foreground" />
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {t('metaConnect.noAccount')}
+                <Button
+                  onClick={handleConnect}
+                  disabled={isConnecting}
+                  className="w-full bg-[#1877F2] hover:bg-[#1877F2]/90"
+                >
+                  {isConnecting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {t('metaConnect.connecting')}
+                    </>
+                  ) : (
+                    <>
+                      <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                      </svg>
+                      {t('metaConnect.connectButton')}
+                    </>
+                  )}
+                </Button>
+
+                <p className="text-center text-xs text-muted-foreground">
+                  {t('metaConnect.connectNote')}
                 </p>
               </div>
-
-              {/* Why Connect Section - Permission Explanations */}
-              <div className="rounded-lg border bg-gradient-to-br from-primary/5 to-primary/10 p-4">
-                <h3 className="mb-3 font-semibold text-foreground">{t('metaConnect.whyConnect.title')}</h3>
-                <p className="mb-4 text-sm text-muted-foreground">{t('metaConnect.whyConnect.description')}</p>
-                <div className="grid gap-3">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/15">
-                      <BarChart3 className="h-4 w-4 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground text-sm">{t('metaConnect.whyConnect.permissions.adsRead.title')}</p>
-                      <p className="text-xs text-muted-foreground">{t('metaConnect.whyConnect.permissions.adsRead.description')}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-purple-500/15">
-                      <Zap className="h-4 w-4 text-purple-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground text-sm">{t('metaConnect.whyConnect.permissions.adsManagement.title')}</p>
-                      <p className="text-xs text-muted-foreground">{t('metaConnect.whyConnect.permissions.adsManagement.description')}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-500/15">
-                      <Building2 className="h-4 w-4 text-green-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground text-sm">{t('metaConnect.whyConnect.permissions.businessManagement.title')}</p>
-                      <p className="text-xs text-muted-foreground">{t('metaConnect.whyConnect.permissions.businessManagement.description')}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-500/15">
-                      <Users className="h-4 w-4 text-orange-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground text-sm">{t('metaConnect.whyConnect.permissions.pagesAccess.title')}</p>
-                      <p className="text-xs text-muted-foreground">{t('metaConnect.whyConnect.permissions.pagesAccess.description')}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <Button
-                onClick={handleConnect}
-                disabled={isConnecting}
-                className="w-full bg-[#1877F2] hover:bg-[#1877F2]/90"
-              >
-                {isConnecting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('metaConnect.connecting')}
-                  </>
-                ) : (
-                  <>
-                    <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                    </svg>
-                    {t('metaConnect.connectButton')}
-                  </>
-                )}
-              </Button>
-
-              <p className="text-center text-xs text-muted-foreground">
-                {t('metaConnect.connectNote')}
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            )}
+          </CardContent>
+        </Card>
       )}
 
       {/* 연결 후 사용 가능한 기능 (선택 모드가 아닐 때만 표시) */}

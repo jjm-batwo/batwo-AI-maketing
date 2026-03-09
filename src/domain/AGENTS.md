@@ -79,23 +79,25 @@ src/domain/
 
 ## Key Files Reference
 
-| File | Purpose | Key Exports | Notes |
-|------|---------|------------|-------|
-| **Campaign.ts** | Marketing campaign aggregate root | `Campaign`, `CampaignProps`, `TargetAudience` | State machine with validation; immutable commands |
-| **Report.ts** | Analytics report generation | `Report`, `ReportType`, `AIInsight` | Supports daily/weekly/monthly; AI insights |
-| **MetaPixel.ts** | Meta Pixel tracking setup | `MetaPixel`, `PixelSetupMethod` | Validates pixel ID format (15-16 digits) |
-| **Subscription.ts** | Billing & subscription management | `Subscription`, `SubscriptionStatus` | Status transitions: TRIALING → ACTIVE → CANCELLED/EXPIRED |
-| **Money.ts** | Currency-aware monetary value | `Money`, `Currency` type | Multi-currency support; prevents mixed operations |
-| **DateRange.ts** | Date range with duration | `DateRange` | Duration calculation in days/hours |
-| **CampaignStatus.ts** | Campaign state machine | `CampaignStatus`, `canTransition`, helpers | Transition rules: DRAFT → PENDING_REVIEW → ACTIVE → PAUSED/COMPLETED |
-| **DomainError.ts** | Base error class | `DomainError` | All domain errors extend this |
+| File                  | Purpose                           | Key Exports                                   | Notes                                                                |
+| --------------------- | --------------------------------- | --------------------------------------------- | -------------------------------------------------------------------- |
+| **Campaign.ts**       | Marketing campaign aggregate root | `Campaign`, `CampaignProps`, `TargetAudience` | State machine with validation; immutable commands                    |
+| **Report.ts**         | Analytics report generation       | `Report`, `ReportType`, `AIInsight`           | Supports daily/weekly/monthly; AI insights                           |
+| **MetaPixel.ts**      | Meta Pixel tracking setup         | `MetaPixel`, `PixelSetupMethod`               | Validates pixel ID format (15-16 digits)                             |
+| **Subscription.ts**   | Billing & subscription management | `Subscription`, `SubscriptionStatus`          | Status transitions: TRIALING → ACTIVE → CANCELLED/EXPIRED            |
+| **Money.ts**          | Currency-aware monetary value     | `Money`, `Currency` type                      | Multi-currency support; prevents mixed operations                    |
+| **DateRange.ts**      | Date range with duration          | `DateRange`                                   | Duration calculation in days/hours                                   |
+| **CampaignStatus.ts** | Campaign state machine            | `CampaignStatus`, `canTransition`, helpers    | Transition rules: DRAFT → PENDING_REVIEW → ACTIVE → PAUSED/COMPLETED |
+| **DomainError.ts**    | Base error class                  | `DomainError`                                 | All domain errors extend this                                        |
 
 ## Subdirectories Detail
 
 ### entities/
+
 Rich domain objects with encapsulated state, invariant enforcement, and business logic.
 
 **Patterns**:
+
 - Private constructor + static factory methods (`create()`, `restore()`)
 - Immutable: all commands return new instances
 - Validation in static methods or constructor
@@ -105,15 +107,18 @@ Rich domain objects with encapsulated state, invariant enforcement, and business
 - `toJSON()` for serialization
 
 **Examples**:
+
 - `Campaign`: Status transitions with validation; budget calculations
 - `Report`: Type-specific factories (weekly, daily); metrics aggregation
 - `Subscription`: Complex state machine; renewal logic
 - `MetaPixel`: Pixel ID format validation; activation/deactivation
 
 ### value-objects/
+
 Immutable objects representing domain concepts without identity.
 
 **Patterns**:
+
 - Private constructor + static factory (`create()`)
 - No public setters; all mutations return new instances
 - Rich behavior (formatting, calculations, comparisons)
@@ -121,30 +126,36 @@ Immutable objects representing domain concepts without identity.
 - `toJSON()` for serialization
 
 **Examples**:
+
 - `Money`: Handles KRW rounding vs decimal currencies; prevents cross-currency operations
 - `DateRange`: Duration in days; supports open-ended ranges
 - `CampaignStatus`: State machine transitions + helper functions
 - `SubscriptionStatus`: State transition rules
 
 ### errors/
+
 Custom exception hierarchy for domain-specific failures.
 
 **Patterns**:
+
 - All extend `DomainError` base class
 - Unique error code per class (e.g., `INVALID_CAMPAIGN`)
 - Static factory methods for common scenarios
 - Include contextual information in messages
 
 **Usage**:
+
 ```typescript
 throw InvalidCampaignError.nameTooLong(255)
 throw InvalidPixelError.invalidMetaPixelIdFormat()
 ```
 
 ### repositories/
+
 Interface contracts (ports) for data persistence - implementation in infrastructure layer.
 
 **Patterns**:
+
 - Interface only - no implementation
 - Methods return domain entities, not DTOs
 - Pagination support via `PaginationOptions` & `PaginatedResult<T>`
@@ -152,11 +163,15 @@ Interface contracts (ports) for data persistence - implementation in infrastruct
 - No pagination for simple lookups
 
 **Example Interface**:
+
 ```typescript
 interface ICampaignRepository {
   save(campaign: Campaign): Promise<Campaign>
   findById(id: string): Promise<Campaign | null>
-  findByFilters(filters: CampaignFilters, pagination?: PaginationOptions): Promise<PaginatedResult<Campaign>>
+  findByFilters(
+    filters: CampaignFilters,
+    pagination?: PaginationOptions
+  ): Promise<PaginatedResult<Campaign>>
   update(campaign: Campaign): Promise<Campaign>
   delete(id: string): Promise<void>
   existsByNameAndUserId(name: string, userId: string, excludeId?: string): Promise<boolean>
@@ -197,6 +212,7 @@ private static validateName(name: string): void {
 ### Entity Development Rules
 
 1. **Private Constructor + Static Factories**
+
    ```typescript
    private constructor(...properties) {}
    static create(props: CreateProps): Entity { ... }
@@ -230,6 +246,7 @@ private static validateName(name: string): void {
    - Mutations return new instances
 
 2. **Factory Method Pattern**
+
    ```typescript
    static create(amount: number, currency: Currency = 'KRW'): Money {
      // Validation
@@ -250,6 +267,7 @@ private static validateName(name: string): void {
 ### Error Development Rules
 
 1. **Extend DomainError**
+
    ```typescript
    export class InvalidCampaignError extends DomainError {
      readonly code = 'INVALID_CAMPAIGN'
@@ -257,6 +275,7 @@ private static validateName(name: string): void {
    ```
 
 2. **Static Factory Methods**
+
    ```typescript
    static nameTooLong(max: number): InvalidCampaignError {
      return new InvalidCampaignError(`Name cannot exceed ${max} characters`)
@@ -278,12 +297,14 @@ private static validateName(name: string): void {
 ### Testing Requirements
 
 **Coverage Targets**:
+
 - Entities: ≥95%
 - Value Objects: ≥95%
 - Errors: ≥85%
 - Total Domain: ≥95%
 
 **Test Organization**:
+
 ```
 tests/unit/domain/
 ├── entities/
@@ -300,6 +321,7 @@ tests/unit/domain/
 ```
 
 **Test Structure - TDD with Vitest**:
+
 ```typescript
 import { describe, it, expect } from 'vitest'
 import { Campaign } from '@/domain/entities/Campaign'
@@ -314,7 +336,7 @@ describe('Campaign', () => {
         name: 'Q1 Sales Campaign',
         objective: CampaignObjective.SALES,
         dailyBudget: Money.create(10000),
-        startDate: new Date('2024-02-01')
+        startDate: new Date('2024-02-01'),
       })
 
       expect(campaign.name).toBe('Q1 Sales Campaign')
@@ -323,29 +345,33 @@ describe('Campaign', () => {
     })
 
     it('should throw InvalidCampaignError when name is empty', () => {
-      expect(() => Campaign.create({
-        userId: 'user-1',
-        name: '',
-        objective: CampaignObjective.SALES,
-        dailyBudget: Money.create(10000),
-        startDate: new Date('2024-02-01')
-      })).toThrow(InvalidCampaignError)
+      expect(() =>
+        Campaign.create({
+          userId: 'user-1',
+          name: '',
+          objective: CampaignObjective.SALES,
+          dailyBudget: Money.create(10000),
+          startDate: new Date('2024-02-01'),
+        })
+      ).toThrow(InvalidCampaignError)
     })
 
     it('should throw InvalidCampaignError when budget is zero', () => {
-      expect(() => Campaign.create({
-        userId: 'user-1',
-        name: 'Campaign',
-        objective: CampaignObjective.SALES,
-        dailyBudget: Money.create(0),
-        startDate: new Date('2024-02-01')
-      })).toThrow(InvalidCampaignError)
+      expect(() =>
+        Campaign.create({
+          userId: 'user-1',
+          name: 'Campaign',
+          objective: CampaignObjective.SALES,
+          dailyBudget: Money.create(0),
+          startDate: new Date('2024-02-01'),
+        })
+      ).toThrow(InvalidCampaignError)
     })
   })
 
   describe('changeStatus()', () => {
     it('should transition from DRAFT to PENDING_REVIEW', () => {
-      const campaign = Campaign.create({...props})
+      const campaign = Campaign.create({ ...props })
       const updated = campaign.changeStatus(CampaignStatus.PENDING_REVIEW)
 
       expect(updated.status).toBe(CampaignStatus.PENDING_REVIEW)
@@ -354,11 +380,10 @@ describe('Campaign', () => {
     })
 
     it('should throw error for invalid transitions', () => {
-      const campaign = Campaign.create({...props})
+      const campaign = Campaign.create({ ...props })
       const active = campaign.changeStatus(CampaignStatus.ACTIVE)
 
-      expect(() => active.changeStatus(CampaignStatus.DRAFT))
-        .toThrow(InvalidCampaignError)
+      expect(() => active.changeStatus(CampaignStatus.DRAFT)).toThrow(InvalidCampaignError)
     })
   })
 })
@@ -380,15 +405,16 @@ import { type ICampaignRepository } from '../repositories/ICampaignRepository'
 
 ```typescript
 // FORBIDDEN - creates external dependencies
-import { prisma } from '@/infrastructure/database'  // ❌ Infrastructure
-import { OpenAI } from 'openai'                      // ❌ External service
-import { NextRequest } from 'next/server'            // ❌ Framework
-import { useSelector } from 'react-redux'            // ❌ UI library
+import { prisma } from '@/infrastructure/database' // ❌ Infrastructure
+import { OpenAI } from 'openai' // ❌ External service
+import { NextRequest } from 'next/server' // ❌ Framework
+import { useSelector } from 'react-redux' // ❌ UI library
 ```
 
 ## Common Patterns
 
 ### Status Machine Pattern
+
 ```typescript
 export enum CampaignStatus {
   DRAFT = 'DRAFT',
@@ -419,6 +445,7 @@ changeStatus(newStatus: CampaignStatus): Campaign {
 ```
 
 ### Value Object Arithmetic
+
 ```typescript
 class Money {
   add(other: Money): Money {
@@ -437,11 +464,12 @@ class Money {
 
 // Usage:
 const dailyBudget = Money.create(10000, 'KRW')
-const weeklyBudget = dailyBudget.multiply(7)  // 70000 KRW
-const totalBudget = dailyBudget.add(dailyBudget)  // 20000 KRW
+const weeklyBudget = dailyBudget.multiply(7) // 70000 KRW
+const totalBudget = dailyBudget.add(dailyBudget) // 20000 KRW
 ```
 
 ### Defensive Copying
+
 ```typescript
 class Campaign {
   get targetAudience(): TargetAudience | undefined {
@@ -494,7 +522,9 @@ class Campaign {
    ```typescript
    export class MyError extends DomainError {
      readonly code = 'MY_ERROR_CODE'
-     constructor(message: string) { super(message) }
+     constructor(message: string) {
+       super(message)
+     }
      static scenario(): MyError {
        return new MyError('Description of scenario')
      }

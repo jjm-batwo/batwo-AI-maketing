@@ -17,7 +17,7 @@ import {
   TDDValidationInput,
   TDDValidationResult,
   TDDHistoryEntry,
-} from '@/domain/services/ai-team-command-types';
+} from '@/domain/services/ai-team-command-types'
 
 /**
  * 단계별 가이드 설정
@@ -44,8 +44,7 @@ const STAGE_GUIDES: Record<TDDStage, { instructions: string; checklist: string[]
     ],
   },
   REFACTOR: {
-    instructions:
-      '🔵 REFACTOR 단계: 코드를 정리하고 개선합니다. 테스트가 계속 통과해야 합니다.',
+    instructions: '🔵 REFACTOR 단계: 코드를 정리하고 개선합니다. 테스트가 계속 통과해야 합니다.',
     checklist: [
       '중복 코드 제거',
       '명확한 변수/함수 이름 사용',
@@ -57,27 +56,27 @@ const STAGE_GUIDES: Record<TDDStage, { instructions: string; checklist: string[]
     instructions: '✅ COMPLETE: TDD 사이클이 완료되었습니다.',
     checklist: ['코드 리뷰 요청', '문서 업데이트', 'PR 생성 준비'],
   },
-};
+}
 
 /**
  * 단계 순서 정의
  */
-const STAGE_ORDER: TDDStage[] = ['RED', 'GREEN', 'REFACTOR', 'COMPLETE'];
+const STAGE_ORDER: TDDStage[] = ['RED', 'GREEN', 'REFACTOR', 'COMPLETE']
 
 /**
  * TDD 워크플로우 러너
  */
 export class TDDWorkflowRunner {
-  private workflows: Map<string, TDDWorkflowState> = new Map();
-  private histories: Map<string, TDDHistoryEntry[]> = new Map();
-  private idCounter = 0;
+  private workflows: Map<string, TDDWorkflowState> = new Map()
+  private histories: Map<string, TDDHistoryEntry[]> = new Map()
+  private idCounter = 0
 
   /**
    * 새 워크플로우 생성
    */
   createWorkflow(featureDescription: string): TDDWorkflowState {
-    const id = `tdd-${++this.idCounter}-${Date.now()}`;
-    const now = new Date();
+    const id = `tdd-${++this.idCounter}-${Date.now()}`
+    const now = new Date()
 
     const workflow: TDDWorkflowState = {
       id,
@@ -87,86 +86,83 @@ export class TDDWorkflowRunner {
       progress: 0,
       createdAt: now,
       updatedAt: now,
-    };
+    }
 
-    this.workflows.set(id, workflow);
-    this.histories.set(id, [{ stage: 'RED', timestamp: now }]);
+    this.workflows.set(id, workflow)
+    this.histories.set(id, [{ stage: 'RED', timestamp: now }])
 
-    return workflow;
+    return workflow
   }
 
   /**
    * 다음 단계로 전환
    */
   advanceStage(workflowId: string): TDDStageTransitionResult {
-    const workflow = this.workflows.get(workflowId);
+    const workflow = this.workflows.get(workflowId)
 
     if (!workflow) {
       return {
         success: false,
         error: `워크플로우를 찾을 수 없습니다: ${workflowId}`,
-      };
+      }
     }
 
-    const currentIndex = STAGE_ORDER.indexOf(workflow.currentStage);
-    const nextIndex = currentIndex + 1;
+    const currentIndex = STAGE_ORDER.indexOf(workflow.currentStage)
+    const nextIndex = currentIndex + 1
 
     if (nextIndex >= STAGE_ORDER.length) {
       return {
         success: false,
         error: '이미 완료된 워크플로우입니다.',
-      };
+      }
     }
 
-    const nextStage = STAGE_ORDER[nextIndex];
-    const now = new Date();
+    const nextStage = STAGE_ORDER[nextIndex]
+    const now = new Date()
 
-    workflow.currentStage = nextStage;
-    workflow.progress = Math.round((nextIndex / (STAGE_ORDER.length - 1)) * 100);
-    workflow.updatedAt = now;
+    workflow.currentStage = nextStage
+    workflow.progress = Math.round((nextIndex / (STAGE_ORDER.length - 1)) * 100)
+    workflow.updatedAt = now
 
     // 이력 추가
-    const history = this.histories.get(workflowId) || [];
-    history.push({ stage: nextStage, timestamp: now });
+    const history = this.histories.get(workflowId) || []
+    history.push({ stage: nextStage, timestamp: now })
 
     return {
       success: true,
       workflow: { ...workflow },
-    };
+    }
   }
 
   /**
    * 단계별 가이드 조회
    */
   getStageGuide(workflowId: string): TDDStageGuide {
-    const workflow = this.workflows.get(workflowId);
-    const stage = workflow?.currentStage || 'RED';
-    const guide = STAGE_GUIDES[stage];
+    const workflow = this.workflows.get(workflowId)
+    const stage = workflow?.currentStage || 'RED'
+    const guide = STAGE_GUIDES[stage]
 
     return {
       stage,
       instructions: guide.instructions,
       checklist: guide.checklist,
-    };
+    }
   }
 
   /**
    * 단계 검증
    */
-  async validateStage(
-    workflowId: string,
-    input: TDDValidationInput
-  ): Promise<TDDValidationResult> {
-    const workflow = this.workflows.get(workflowId);
+  async validateStage(workflowId: string, input: TDDValidationInput): Promise<TDDValidationResult> {
+    const workflow = this.workflows.get(workflowId)
 
     if (!workflow) {
       return {
         canAdvance: false,
         errors: ['워크플로우를 찾을 수 없습니다.'],
-      };
+      }
     }
 
-    const { currentStage } = workflow;
+    const { currentStage } = workflow
 
     // RED 단계: 테스트가 실패해야 함
     if (currentStage === 'RED') {
@@ -174,17 +170,17 @@ export class TDDWorkflowRunner {
         return {
           canAdvance: false,
           warning: 'RED 단계에서는 테스트가 존재해야 합니다.',
-        };
+        }
       }
 
       if (input.testsPassing) {
         return {
           canAdvance: false,
           warning: 'RED 단계에서는 테스트가 실패해야 합니다. 실패하는 테스트를 먼저 작성하세요.',
-        };
+        }
       }
 
-      return { canAdvance: true };
+      return { canAdvance: true }
     }
 
     // GREEN 단계: 테스트가 통과해야 함
@@ -193,10 +189,10 @@ export class TDDWorkflowRunner {
         return {
           canAdvance: false,
           errors: ['GREEN 단계에서는 테스트가 통과해야 합니다.'],
-        };
+        }
       }
 
-      return { canAdvance: true };
+      return { canAdvance: true }
     }
 
     // REFACTOR 단계: 테스트가 여전히 통과해야 함
@@ -205,28 +201,28 @@ export class TDDWorkflowRunner {
         return {
           canAdvance: false,
           errors: ['REFACTOR 단계에서도 테스트가 통과해야 합니다.'],
-        };
+        }
       }
 
-      return { canAdvance: true };
+      return { canAdvance: true }
     }
 
     // COMPLETE 단계
-    return { canAdvance: false };
+    return { canAdvance: false }
   }
 
   /**
    * 워크플로우 상태 조회
    */
   getWorkflowStatus(workflowId: string): TDDWorkflowState | undefined {
-    const workflow = this.workflows.get(workflowId);
-    return workflow ? { ...workflow } : undefined;
+    const workflow = this.workflows.get(workflowId)
+    return workflow ? { ...workflow } : undefined
   }
 
   /**
    * 워크플로우 이력 조회
    */
   getWorkflowHistory(workflowId: string): TDDHistoryEntry[] {
-    return this.histories.get(workflowId) || [];
+    return this.histories.get(workflowId) || []
   }
 }

@@ -1,8 +1,5 @@
 import { NextResponse } from 'next/server'
-import {
-  requireAdmin,
-  handleAdminAuth,
-} from '@/infrastructure/auth/adminMiddleware'
+import { requireAdmin, handleAdminAuth } from '@/infrastructure/auth/adminMiddleware'
 import {
   getUserRepository,
   getSubscriptionRepository,
@@ -48,12 +45,13 @@ export async function GET() {
     ])
 
     // 캠페인 통계 (COUNT 쿼리로 최적화)
-    const [totalCampaigns, activeCampaigns, pausedCampaigns, completedCampaigns] = await Promise.all([
-      prisma.campaign.count(),
-      prisma.campaign.count({ where: { status: 'ACTIVE' } }),
-      prisma.campaign.count({ where: { status: 'PAUSED' } }),
-      prisma.campaign.count({ where: { status: 'COMPLETED' } }),
-    ])
+    const [totalCampaigns, activeCampaigns, pausedCampaigns, completedCampaigns] =
+      await Promise.all([
+        prisma.campaign.count(),
+        prisma.campaign.count({ where: { status: 'ACTIVE' } }),
+        prisma.campaign.count({ where: { status: 'PAUSED' } }),
+        prisma.campaign.count({ where: { status: 'COMPLETED' } }),
+      ])
 
     return NextResponse.json({
       users: {
@@ -98,9 +96,6 @@ export async function GET() {
     })
   } catch (error) {
     console.error('Admin dashboard error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch dashboard data' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch dashboard data' }, { status: 500 })
   }
 }

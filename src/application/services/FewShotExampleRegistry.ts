@@ -18,7 +18,8 @@ export class FewShotExampleRegistry implements IFewShotExampleRegistry {
         [
           {
             role: 'user',
-            content: 'Meta 광고 캠페인을 새로 만들고 싶어요. 일일 예산은 5만원이고 패션 상품을 홍보하려고 해요.',
+            content:
+              'Meta 광고 캠페인을 새로 만들고 싶어요. 일일 예산은 5만원이고 패션 상품을 홍보하려고 해요.',
             category: ChatIntent.CAMPAIGN_CREATION,
           },
           {

@@ -4,13 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
-import {
-  LayoutDashboard,
-  Megaphone,
-  FileText,
-  Users,
-  PieChart,
-} from 'lucide-react'
+import { LayoutDashboard, Megaphone, FileText, Users, PieChart } from 'lucide-react'
 import { AccountPopover } from './AccountPopover'
 
 export function Sidebar() {
@@ -73,14 +67,17 @@ export function Sidebar() {
             >
               <item.icon
                 className={cn(
-                  "h-5 w-5 transition-transform duration-300 group-hover:scale-110",
-                  isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                  'h-5 w-5 transition-transform duration-300 group-hover:scale-110',
+                  isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
                 )}
                 aria-hidden="true"
               />
               <span className="relative">{item.name}</span>
               {isActive && (
-                <div className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary" aria-hidden="true" />
+                <div
+                  className="absolute right-3 w-1.5 h-1.5 rounded-full bg-primary"
+                  aria-hidden="true"
+                />
               )}
             </Link>
           )

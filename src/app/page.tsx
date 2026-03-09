@@ -14,27 +14,32 @@ import {
 
 // 스크롤 아래 섹션은 lazy load로 초기 성능 최적화
 const HowItWorksSection = dynamic(
-  () => import('@/presentation/components/landing').then(mod => ({ default: mod.HowItWorksSection })),
+  () =>
+    import('@/presentation/components/landing').then((mod) => ({ default: mod.HowItWorksSection })),
   { ssr: true }
 )
 
 const TestimonialsSection = dynamic(
-  () => import('@/presentation/components/landing').then(mod => ({ default: mod.TestimonialsSection })),
+  () =>
+    import('@/presentation/components/landing').then((mod) => ({
+      default: mod.TestimonialsSection,
+    })),
   { ssr: true }
 )
 
 const PricingSection = dynamic(
-  () => import('@/presentation/components/landing').then(mod => ({ default: mod.PricingSection })),
+  () =>
+    import('@/presentation/components/landing').then((mod) => ({ default: mod.PricingSection })),
   { ssr: true }
 )
 
 const FAQSection = dynamic(
-  () => import('@/presentation/components/landing').then(mod => ({ default: mod.FAQSection })),
+  () => import('@/presentation/components/landing').then((mod) => ({ default: mod.FAQSection })),
   { ssr: true }
 )
 
 const CTASection = dynamic(
-  () => import('@/presentation/components/landing').then(mod => ({ default: mod.CTASection })),
+  () => import('@/presentation/components/landing').then((mod) => ({ default: mod.CTASection })),
   { ssr: true }
 )
 

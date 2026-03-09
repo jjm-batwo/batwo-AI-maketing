@@ -13,10 +13,10 @@ export async function POST(request: NextRequest) {
 
     // 입력 검증
     if (!messageId || typeof messageId !== 'string') {
-      return new Response(
-        JSON.stringify({ error: 'messageId는 필수입니다' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      )
+      return new Response(JSON.stringify({ error: 'messageId는 필수입니다' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
     }
 
     if (rating !== 'positive' && rating !== 'negative') {
@@ -27,10 +27,10 @@ export async function POST(request: NextRequest) {
     }
 
     if (comment !== undefined && typeof comment !== 'string') {
-      return new Response(
-        JSON.stringify({ error: 'comment는 문자열이어야 합니다' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } }
-      )
+      return new Response(JSON.stringify({ error: 'comment는 문자열이어야 합니다' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      })
     }
 
     // 세션이 있으면 userId 사용, 없으면 anonymous
@@ -55,10 +55,10 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return new Response(
-      JSON.stringify({ id: created.id, messageId, rating }),
-      { status: 201, headers: { 'Content-Type': 'application/json' } }
-    )
+    return new Response(JSON.stringify({ id: created.id, messageId, rating }), {
+      status: 201,
+      headers: { 'Content-Type': 'application/json' },
+    })
   } catch (error) {
     return new Response(
       JSON.stringify({

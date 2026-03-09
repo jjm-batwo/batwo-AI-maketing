@@ -16,19 +16,19 @@ import {
   AgentType,
   TDDWorkflow,
   TDDStage,
-} from '@/domain/services/ai-team-command-types';
+} from '@/domain/services/ai-team-command-types'
 
 /**
  * 명령어-에이전트 라우팅 설정
  */
 interface RouteConfig {
-  agentType: AgentType;
-  action: string;
-  requiresApproval?: boolean;
-  approvalReason?: string;
-  requiresFeaturePlanner?: boolean;
-  enableTDD?: boolean;
-  enableArchitectureValidation?: boolean;
+  agentType: AgentType
+  action: string
+  requiresApproval?: boolean
+  approvalReason?: string
+  requiresFeaturePlanner?: boolean
+  enableTDD?: boolean
+  enableArchitectureValidation?: boolean
 }
 
 /**
@@ -108,7 +108,7 @@ const ROUTE_TABLE: Record<CommandType, RouteConfig> = {
     agentType: 'pm',
     action: 'handleUnknown',
   },
-};
+}
 
 /**
  * PM Agent 조율 클래스
@@ -124,16 +124,16 @@ export class PMAgentCoordinator {
       return {
         success: false,
         error: commandResult.error,
-      };
+      }
     }
 
-    const routeConfig = ROUTE_TABLE[commandResult.commandType];
+    const routeConfig = ROUTE_TABLE[commandResult.commandType]
 
     if (!routeConfig) {
       return {
         success: false,
         error: `라우팅 설정을 찾을 수 없습니다: ${commandResult.commandType}`,
-      };
+      }
     }
 
     const result: CommandRoutingResult = {
@@ -141,41 +141,41 @@ export class PMAgentCoordinator {
       agentType: routeConfig.agentType,
       action: routeConfig.action,
       parameters: commandResult.parameters,
-    };
+    }
 
     // 승인 필요 여부
     if (routeConfig.requiresApproval) {
-      result.requiresApproval = true;
-      result.approvalReason = routeConfig.approvalReason;
+      result.requiresApproval = true
+      result.approvalReason = routeConfig.approvalReason
     }
 
     // Feature Planner 필요 여부
     if (routeConfig.requiresFeaturePlanner) {
-      result.requiresFeaturePlanner = true;
+      result.requiresFeaturePlanner = true
     }
 
     // TDD 워크플로우 설정
     if (routeConfig.enableTDD) {
-      result.tddWorkflow = this.createTDDWorkflow();
+      result.tddWorkflow = this.createTDDWorkflow()
     }
 
     // 아키텍처 검증 활성화
     if (routeConfig.enableArchitectureValidation) {
-      result.architectureValidation = true;
+      result.architectureValidation = true
     }
 
-    return result;
+    return result
   }
 
   /**
    * TDD 워크플로우 생성
    */
   private createTDDWorkflow(): TDDWorkflow {
-    const stages: TDDStage[] = ['RED', 'GREEN', 'REFACTOR'];
+    const stages: TDDStage[] = ['RED', 'GREEN', 'REFACTOR']
 
     return {
       stages,
       currentStage: 'RED',
-    };
+    }
   }
 }

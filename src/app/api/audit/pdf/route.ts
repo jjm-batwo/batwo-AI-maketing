@@ -45,10 +45,7 @@ export async function POST(request: NextRequest) {
 
   const validation = pdfRequestSchema.safeParse(body)
   if (!validation.success) {
-    return NextResponse.json(
-      { message: validation.error.issues[0].message },
-      { status: 400 }
-    )
+    return NextResponse.json({ message: validation.error.issues[0].message }, { status: 400 })
   }
 
   const { report, signature, accountName } = validation.data
@@ -61,10 +58,7 @@ export async function POST(request: NextRequest) {
   try {
     const pdfBuffer = await generateAuditPDF(report)
 
-    const analyzedDate = new Date(report.analyzedAt)
-      .toISOString()
-      .split('T')[0]
-      .replace(/-/g, '')
+    const analyzedDate = new Date(report.analyzedAt).toISOString().split('T')[0].replace(/-/g, '')
     const safeName = (accountName || '').replace(/[^a-zA-Z0-9가-힣_-]/g, '_').slice(0, 30)
     const filename = safeName
       ? `바투_광고계정진단_${safeName}_${analyzedDate}.pdf`
@@ -81,9 +75,6 @@ export async function POST(request: NextRequest) {
     })
   } catch (err) {
     console.error('[AUDIT PDF] PDF 생성 오류:', err instanceof Error ? err.message : err)
-    return NextResponse.json(
-      { message: 'PDF 생성 중 오류가 발생했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'PDF 생성 중 오류가 발생했습니다' }, { status: 500 })
   }
 }

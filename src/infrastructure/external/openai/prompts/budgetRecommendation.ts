@@ -73,21 +73,23 @@ Your role is to provide personalized budget recommendations based on industry, b
  * 예산 추천 사용자 프롬프트 빌더 (API 인터페이스 호환)
  */
 export function buildBudgetRecommendationPrompt(
-  input: BuildBudgetRecommendationPromptInput | {
-    industry: Industry
-    businessScale: BusinessScale
-    averageOrderValue?: number
-    monthlyMarketingBudget?: number
-    marginRate?: number
-    existingCampaignData?: ExistingCampaignData
-    calculatedBudget: {
-      min: number
-      recommended: number
-      max: number
-    }
-    calculatedTargetROAS: number
-    calculatedTargetCPA: number
-  }
+  input:
+    | BuildBudgetRecommendationPromptInput
+    | {
+        industry: Industry
+        businessScale: BusinessScale
+        averageOrderValue?: number
+        monthlyMarketingBudget?: number
+        marginRate?: number
+        existingCampaignData?: ExistingCampaignData
+        calculatedBudget: {
+          min: number
+          recommended: number
+          max: number
+        }
+        calculatedTargetROAS: number
+        calculatedTargetCPA: number
+      }
 ): string {
   // Normalize input to BuildBudgetRecommendationPromptInput
   // Check if input has existingCampaignData property (from API) or existingData (from internal)
@@ -125,9 +127,7 @@ export function buildBudgetRecommendationPrompt(
 /**
  * Internal prompt builder
  */
-function buildPromptInternal(
-  input: BuildBudgetRecommendationPromptInput
-): string {
+function buildPromptInternal(input: BuildBudgetRecommendationPromptInput): string {
   const {
     industry,
     businessScale,
@@ -209,11 +209,15 @@ ${monthlyMarketingBudget ? `- 월 마케팅 예산: ₩${monthlyMarketingBudget.
   ],
   "warnings": [
     "주의사항 (있을 경우)"
-  ]${existingData ? `,
+  ]${
+    existingData
+      ? `,
   "comparison": {
     "currentVsRecommended": "현재 vs 권장 예산 비교 분석",
     "potentialImpact": "예상 효과"
-  }` : ''}
+  }`
+      : ''
+  }
 }
 
 한국어로 응답하고, 데이터에 기반한 실용적인 조언을 제공해주세요.`

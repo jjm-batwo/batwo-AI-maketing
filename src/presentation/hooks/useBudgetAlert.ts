@@ -173,6 +173,10 @@ export function useBudgetAlertMutations() {
     isToggling: toggleAlert.isPending,
     toggleError: toggleAlert.error,
 
-    isLoading: createAlert.isPending || updateAlert.isPending || deleteAlert.isPending || toggleAlert.isPending,
+    isLoading:
+      createAlert.isPending ||
+      updateAlert.isPending ||
+      deleteAlert.isPending ||
+      toggleAlert.isPending,
   }
 }

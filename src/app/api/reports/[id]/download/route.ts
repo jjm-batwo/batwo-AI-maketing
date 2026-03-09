@@ -7,10 +7,7 @@ import { toReportDTO } from '@application/dto/report/ReportDTO'
  * GET /api/reports/[id]/download
  * PDF 형식으로 리포트 다운로드
  */
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
@@ -22,26 +19,17 @@ export async function GET(
     const report = await reportRepo.findById(id)
 
     if (!report) {
-      return NextResponse.json(
-        { message: '리포트를 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '리포트를 찾을 수 없습니다' }, { status: 404 })
     }
 
     // Verify ownership
     if (report.userId !== user.id) {
-      return NextResponse.json(
-        { message: '리포트를 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '리포트를 찾을 수 없습니다' }, { status: 404 })
     }
 
     // Check if report is generated
     if (report.status === 'DRAFT') {
-      return NextResponse.json(
-        { message: '리포트가 아직 생성되지 않았습니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ message: '리포트가 아직 생성되지 않았습니다' }, { status: 400 })
     }
 
     // Generate PDF
@@ -59,9 +47,6 @@ export async function GET(
     })
   } catch (error) {
     console.error('Failed to download report:', error)
-    return NextResponse.json(
-      { message: '리포트 다운로드에 실패했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: '리포트 다운로드에 실패했습니다' }, { status: 500 })
   }
 }

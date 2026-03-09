@@ -31,9 +31,7 @@ export async function withRetry<T>(
         break
       }
 
-      const shouldRetry = opts.shouldRetry
-        ? opts.shouldRetry(lastError, attempt)
-        : true
+      const shouldRetry = opts.shouldRetry ? opts.shouldRetry(lastError, attempt) : true
 
       if (!shouldRetry) {
         break

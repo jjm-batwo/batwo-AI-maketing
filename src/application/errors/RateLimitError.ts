@@ -56,12 +56,9 @@ export class RateLimitError extends AppError {
    * Create error for concurrent operations
    */
   static concurrentOperations(maxConcurrent: number): RateLimitError {
-    return new RateLimitError(
-      `Maximum concurrent operations exceeded. Limit: ${maxConcurrent}`,
-      {
-        limit: maxConcurrent,
-      }
-    )
+    return new RateLimitError(`Maximum concurrent operations exceeded. Limit: ${maxConcurrent}`, {
+      limit: maxConcurrent,
+    })
   }
 
   /**

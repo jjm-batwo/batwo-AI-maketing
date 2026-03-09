@@ -78,9 +78,7 @@ export function UserRoleDialog({ userId, userName, userEmail, currentRole }: Use
         <DialogContent>
           <DialogHeader>
             <DialogTitle>역할 변경</DialogTitle>
-            <DialogDescription>
-              {userName || userEmail}님의 역할을 변경합니다.
-            </DialogDescription>
+            <DialogDescription>{userName || userEmail}님의 역할을 변경합니다.</DialogDescription>
           </DialogHeader>
           <div className="py-4">
             <Select value={selectedRole} onValueChange={setSelectedRole}>

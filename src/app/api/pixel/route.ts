@@ -68,9 +68,7 @@ export async function POST(request: NextRequest) {
 
     const { metaPixelId, name, setupMethod } = validation.data
 
-    const selectPixelUseCase = container.resolve<SelectPixelUseCase>(
-      DI_TOKENS.SelectPixelUseCase
-    )
+    const selectPixelUseCase = container.resolve<SelectPixelUseCase>(DI_TOKENS.SelectPixelUseCase)
 
     const pixel = await selectPixelUseCase.execute({
       userId: session.user.id,

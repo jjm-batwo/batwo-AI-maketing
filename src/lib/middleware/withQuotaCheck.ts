@@ -64,11 +64,7 @@ export function withQuotaCheck<T = unknown>(
         return NextResponse.json(
           {
             error: 'QuotaExceeded',
-            message: getQuotaExceededMessage(
-              error.usageType,
-              error.limit,
-              error.period
-            ),
+            message: getQuotaExceededMessage(error.usageType, error.limit, error.period),
             usageType: error.usageType,
             limit: error.limit,
             period: error.period,

@@ -17,7 +17,7 @@ export async function GET() {
     // 사용자의 Meta 토큰 조회
     const metaAccount = await prisma.metaAdAccount.findFirst({
       where: { userId: user.id },
-      select: { accessToken: true }
+      select: { accessToken: true },
     })
 
     if (!metaAccount?.accessToken) {
@@ -33,9 +33,6 @@ export async function GET() {
     return NextResponse.json({ pages })
   } catch (error) {
     console.error('Failed to fetch Meta pages:', error)
-    return NextResponse.json(
-      { message: 'Failed to fetch Meta pages', pages: [] },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to fetch Meta pages', pages: [] }, { status: 500 })
   }
 }

@@ -73,8 +73,7 @@ export function useCampaignMutations() {
   })
 
   const pauseMutation = useMutation({
-    mutationFn: (campaignId: string) =>
-      changeCampaignStatus({ campaignId, action: 'pause' }),
+    mutationFn: (campaignId: string) => changeCampaignStatus({ campaignId, action: 'pause' }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['campaigns'] })
       queryClient.invalidateQueries({ queryKey: ['campaign', data.id] })
@@ -82,8 +81,7 @@ export function useCampaignMutations() {
   })
 
   const resumeMutation = useMutation({
-    mutationFn: (campaignId: string) =>
-      changeCampaignStatus({ campaignId, action: 'resume' }),
+    mutationFn: (campaignId: string) => changeCampaignStatus({ campaignId, action: 'resume' }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['campaigns'] })
       queryClient.invalidateQueries({ queryKey: ['campaign', data.id] })

@@ -13,10 +13,7 @@ interface ErrorBoundaryProps {
   fallback?: React.ComponentType<{ error: Error; reset: () => void }>
 }
 
-export class ErrorBoundary extends React.Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
+export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props)
     this.state = { hasError: false }
@@ -51,9 +48,7 @@ export class ErrorBoundary extends React.Component<
               일시적인 오류가 발생했습니다. 페이지를 새로고침해주세요.
             </p>
             <div className="flex gap-4 justify-center">
-              <Button
-                onClick={() => this.setState({ hasError: false, error: undefined })}
-              >
+              <Button onClick={() => this.setState({ hasError: false, error: undefined })}>
                 다시 시도
               </Button>
               <Button variant="outline" onClick={() => window.location.reload()}>

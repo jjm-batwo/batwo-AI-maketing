@@ -62,7 +62,10 @@ export class PerplexityResearchService implements IResearchService {
       this.setCache(cacheKey, result)
       return result
     } catch (error) {
-      console.warn('[PerplexityResearchService] Research failed:', error instanceof Error ? error.message : String(error))
+      console.warn(
+        '[PerplexityResearchService] Research failed:',
+        error instanceof Error ? error.message : String(error)
+      )
       return this.createEmptyResult()
     }
   }
@@ -95,7 +98,10 @@ export class PerplexityResearchService implements IResearchService {
       this.setCache(cacheKey, result)
       return result
     } catch (error) {
-      console.warn('[PerplexityResearchService] Market trends failed:', error instanceof Error ? error.message : String(error))
+      console.warn(
+        '[PerplexityResearchService] Market trends failed:',
+        error instanceof Error ? error.message : String(error)
+      )
       return { ...this.createEmptyResult(), trends: [] }
     }
   }
@@ -125,7 +131,10 @@ export class PerplexityResearchService implements IResearchService {
       this.setCache(cacheKey, result)
       return result
     } catch (error) {
-      console.warn('[PerplexityResearchService] Competitor intelligence failed:', error instanceof Error ? error.message : String(error))
+      console.warn(
+        '[PerplexityResearchService] Competitor intelligence failed:',
+        error instanceof Error ? error.message : String(error)
+      )
       return { ...this.createEmptyResult(), insights: [] }
     }
   }
@@ -136,7 +145,7 @@ export class PerplexityResearchService implements IResearchService {
     const response = await fetch(`${this.baseUrl}/chat/completions`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -144,7 +153,8 @@ export class PerplexityResearchService implements IResearchService {
         messages: [
           {
             role: 'system',
-            content: 'You are a marketing research analyst. Provide concise, factual findings with clear structure. Use numbered points for findings.',
+            content:
+              'You are a marketing research analyst. Provide concise, factual findings with clear structure. Use numbered points for findings.',
           },
           {
             role: 'user',
@@ -192,7 +202,7 @@ export class PerplexityResearchService implements IResearchService {
     if (!content) return []
 
     // Extract numbered items or bullet points
-    const lines = content.split('\n').filter(line => line.trim())
+    const lines = content.split('\n').filter((line) => line.trim())
     const findings: string[] = []
 
     for (const line of lines) {
@@ -206,7 +216,7 @@ export class PerplexityResearchService implements IResearchService {
 
     // If no structured findings found, split into sentences
     if (findings.length === 0 && content.length > 0) {
-      const sentences = content.split(/[.!?。]\s*/).filter(s => s.trim().length > 10)
+      const sentences = content.split(/[.!?。]\s*/).filter((s) => s.trim().length > 10)
       return sentences.slice(0, 5)
     }
 
@@ -229,7 +239,7 @@ export class PerplexityResearchService implements IResearchService {
 
   private extractTrends(content: string): MarketTrend[] {
     const findings = this.extractFindings(content)
-    return findings.slice(0, 5).map(finding => {
+    return findings.slice(0, 5).map((finding) => {
       const direction = this.detectTrendDirection(finding)
       return {
         topic: finding.slice(0, 50),
@@ -241,12 +251,32 @@ export class PerplexityResearchService implements IResearchService {
   }
 
   private detectTrendDirection(text: string): 'rising' | 'falling' | 'stable' {
-    const risingWords = ['증가', '상승', '성장', '확대', 'growing', 'rising', 'increasing', '인기', '급등', '활성화']
-    const fallingWords = ['감소', '하락', '축소', 'declining', 'falling', 'decreasing', '둔화', '위축']
+    const risingWords = [
+      '증가',
+      '상승',
+      '성장',
+      '확대',
+      'growing',
+      'rising',
+      'increasing',
+      '인기',
+      '급등',
+      '활성화',
+    ]
+    const fallingWords = [
+      '감소',
+      '하락',
+      '축소',
+      'declining',
+      'falling',
+      'decreasing',
+      '둔화',
+      '위축',
+    ]
 
     const lowerText = text.toLowerCase()
-    const risingCount = risingWords.filter(w => lowerText.includes(w)).length
-    const fallingCount = fallingWords.filter(w => lowerText.includes(w)).length
+    const risingCount = risingWords.filter((w) => lowerText.includes(w)).length
+    const fallingCount = fallingWords.filter((w) => lowerText.includes(w)).length
 
     if (risingCount > fallingCount) return 'rising'
     if (fallingCount > risingCount) return 'falling'
@@ -267,7 +297,7 @@ export class PerplexityResearchService implements IResearchService {
 
     const topicWords = topic.toLowerCase().split(/\s+/)
     const contentLower = content.toLowerCase()
-    const matchCount = topicWords.filter(w => contentLower.includes(w)).length
+    const matchCount = topicWords.filter((w) => contentLower.includes(w)).length
 
     return Math.min(matchCount / Math.max(topicWords.length, 1), 1)
   }

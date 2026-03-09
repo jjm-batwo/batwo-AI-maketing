@@ -16,9 +16,6 @@ export async function GET() {
     return NextResponse.json(report)
   } catch (error) {
     console.error('절감 금액 조회 실패:', error)
-    return NextResponse.json(
-      { message: '절감 금액을 불러오지 못했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: '절감 금액을 불러오지 못했습니다' }, { status: 500 })
   }
 }

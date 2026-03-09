@@ -2,9 +2,7 @@ import type { IPaymentLogRepository } from '@domain/repositories/IPaymentLogRepo
 import type { PaymentHistoryItemDTO } from '@application/dto/payment/PaymentDTOs'
 
 export class GetPaymentHistoryUseCase {
-  constructor(
-    private readonly paymentLogRepo: IPaymentLogRepository
-  ) {}
+  constructor(private readonly paymentLogRepo: IPaymentLogRepository) {}
 
   async execute(userId: string, limit = 50): Promise<PaymentHistoryItemDTO[]> {
     const logs = await this.paymentLogRepo.findByUserId(userId, limit)

@@ -24,7 +24,7 @@ export const StreamingText = memo(function StreamingText({
   text,
   isLoading = false,
   className = '',
-  cursorClassName = ''
+  cursorClassName = '',
 }: StreamingTextProps) {
   return (
     <span className={`inline-block ${className}`}>
@@ -34,16 +34,18 @@ export const StreamingText = memo(function StreamingText({
           className={`inline-block w-0.5 h-5 ml-1 bg-primary animate-pulse ${cursorClassName}`}
           aria-hidden="true"
           style={{
-            animation: 'blink 1s ease-in-out infinite'
+            animation: 'blink 1s ease-in-out infinite',
           }}
         />
       )}
       <style jsx>{`
         @keyframes blink {
-          0%, 49% {
+          0%,
+          49% {
             opacity: 1;
           }
-          50%, 100% {
+          50%,
+          100% {
             opacity: 0;
           }
         }

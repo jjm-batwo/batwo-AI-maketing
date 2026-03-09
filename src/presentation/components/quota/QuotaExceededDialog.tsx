@@ -34,12 +34,7 @@ const quotaResetMessages: Record<QuotaType, string> = {
   AI_KPI_INSIGHT: '내일 자정에 초기화됩니다',
 }
 
-export function QuotaExceededDialog({
-  open,
-  onClose,
-  onUpgrade,
-  type,
-}: QuotaExceededDialogProps) {
+export function QuotaExceededDialog({ open, onClose, onUpgrade, type }: QuotaExceededDialogProps) {
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent className="sm:max-w-md">
@@ -51,9 +46,7 @@ export function QuotaExceededDialog({
           <DialogDescription className="text-center">
             {quotaMessages[type]}
             <br />
-            <span className="text-muted-foreground">
-              {quotaResetMessages[type]}
-            </span>
+            <span className="text-muted-foreground">{quotaResetMessages[type]}</span>
           </DialogDescription>
         </DialogHeader>
 

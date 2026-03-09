@@ -13,7 +13,13 @@ interface SectionContainerProps {
  * 랜딩/대시보드 섹션 래퍼 공통 컴포넌트
  * 일관된 패딩, 최대 너비, 타이틀 레이아웃을 제공
  */
-export function SectionContainer({ children, title, description, className, id }: SectionContainerProps) {
+export function SectionContainer({
+  children,
+  title,
+  description,
+  className,
+  id,
+}: SectionContainerProps) {
   return (
     <section id={id} className={cn('py-20 md:py-32', className)}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

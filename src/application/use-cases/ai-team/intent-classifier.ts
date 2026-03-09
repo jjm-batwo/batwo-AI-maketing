@@ -12,7 +12,7 @@ import {
   ConfidenceThresholds,
   DEFAULT_CONFIDENCE_THRESHOLDS,
   ReportType,
-} from '@/domain/services/ai-team-command-types';
+} from '@/domain/services/ai-team-command-types'
 
 /**
  * 슬래시 명령어 매핑 (기존 호환성)
@@ -54,7 +54,7 @@ const SLASH_COMMAND_MAP: Record<string, CommandType> = {
   reject: CommandType.REJECT,
   rollback: CommandType.ROLLBACK,
   help: CommandType.HELP,
-};
+}
 
 /**
  * 기본 의도 패턴 정의
@@ -64,7 +64,18 @@ const DEFAULT_INTENT_PATTERNS: IntentPattern[] = [
   {
     commandType: CommandType.STATUS,
     keywords: ['상태', '현황', '현재', '지금', '어때', '상황', '봐줘'],
-    phrases: ['어떻게 돼', '상황이 어때', '진행 상황', '빌드 상태', '상태 봐', '현황 알려', '상태 확인', '좀 봐줘', '이거 봐', '봐줘'],
+    phrases: [
+      '어떻게 돼',
+      '상황이 어때',
+      '진행 상황',
+      '빌드 상태',
+      '상태 봐',
+      '현황 알려',
+      '상태 확인',
+      '좀 봐줘',
+      '이거 봐',
+      '봐줘',
+    ],
     contextClues: ['시스템', '프로젝트', '전체', '빌드'],
     weight: 1.0,
   },
@@ -83,7 +94,18 @@ const DEFAULT_INTENT_PATTERNS: IntentPattern[] = [
   {
     commandType: CommandType.BUG_REPORT,
     keywords: ['버그', '오류', '에러', '안돼', '안됨', '문제', '고장', '안되', '안 돼'],
-    phrases: ['안 돼요', '동작 안해', '에러 나요', '오류 발생', '문제 있어', '안 보여', '작동 안해', '버그 있', '문제가 생', '오류가'],
+    phrases: [
+      '안 돼요',
+      '동작 안해',
+      '에러 나요',
+      '오류 발생',
+      '문제 있어',
+      '안 보여',
+      '작동 안해',
+      '버그 있',
+      '문제가 생',
+      '오류가',
+    ],
     negativeKeywords: ['수정 완료', '고쳤'],
     contextClues: ['클릭', '버튼', '페이지', '로딩'],
     weight: 1.5, // 긴급성으로 인해 높은 가중치
@@ -103,7 +125,15 @@ const DEFAULT_INTENT_PATTERNS: IntentPattern[] = [
   {
     commandType: CommandType.DEPLOY,
     keywords: ['배포', '릴리즈', '출시', '프로덕션', '라이브', '서버'],
-    phrases: ['배포해줘', '릴리즈해줘', '릴리즈 진행', '프로덕션에 올려', '라이브로', '서버에 올려', '서버에 배포'],
+    phrases: [
+      '배포해줘',
+      '릴리즈해줘',
+      '릴리즈 진행',
+      '프로덕션에 올려',
+      '라이브로',
+      '서버에 올려',
+      '서버에 배포',
+    ],
     contextClues: ['운영', '환경', '버전'],
     weight: 1.0,
   },
@@ -188,7 +218,7 @@ const DEFAULT_INTENT_PATTERNS: IntentPattern[] = [
     contextClues: ['최근', '코드', '파일'],
     weight: 1.0,
   },
-];
+]
 
 /**
  * 명령어 설명 (확인 질문용)
@@ -208,58 +238,55 @@ const COMMAND_DESCRIPTIONS: Partial<Record<CommandType, string>> = {
   [CommandType.REJECT]: '거부를 진행',
   [CommandType.QUALITY]: '품질 정보를 확인',
   [CommandType.CHANGELOG]: '변경 내역을 확인',
-};
+}
 
 /**
  * 자연어 의도 분류기
  */
 export class IntentClassifier {
-  private readonly patterns: IntentPattern[];
-  private readonly thresholds: ConfidenceThresholds;
+  private readonly patterns: IntentPattern[]
+  private readonly thresholds: ConfidenceThresholds
 
-  constructor(
-    patterns?: IntentPattern[],
-    thresholds?: ConfidenceThresholds
-  ) {
-    this.patterns = patterns ?? DEFAULT_INTENT_PATTERNS;
-    this.thresholds = thresholds ?? DEFAULT_CONFIDENCE_THRESHOLDS;
+  constructor(patterns?: IntentPattern[], thresholds?: ConfidenceThresholds) {
+    this.patterns = patterns ?? DEFAULT_INTENT_PATTERNS
+    this.thresholds = thresholds ?? DEFAULT_CONFIDENCE_THRESHOLDS
   }
 
   /**
    * 사용자 입력을 분류하여 의도 반환
    */
   classify(input: string): IntentClassificationResult {
-    const trimmedInput = input.trim();
+    const trimmedInput = input.trim()
 
     // 빈 입력 처리
     if (!trimmedInput) {
-      return this.createUnknownResult(input, 0);
+      return this.createUnknownResult(input, 0)
     }
 
     // 슬래시 명령어 우선 처리 (100% 신뢰도)
     if (trimmedInput.startsWith('/')) {
-      return this.handleSlashCommand(trimmedInput);
+      return this.handleSlashCommand(trimmedInput)
     }
 
     // 자연어 분류
-    return this.classifyNaturalLanguage(trimmedInput);
+    return this.classifyNaturalLanguage(trimmedInput)
   }
 
   /**
    * 슬래시 명령어 처리
    */
   private handleSlashCommand(input: string): IntentClassificationResult {
-    const withoutSlash = input.slice(1);
-    const parts = withoutSlash.split(/\s+/);
-    const commandName = parts[0].toLowerCase();
+    const withoutSlash = input.slice(1)
+    const parts = withoutSlash.split(/\s+/)
+    const commandName = parts[0].toLowerCase()
 
-    const commandType = SLASH_COMMAND_MAP[commandName];
+    const commandType = SLASH_COMMAND_MAP[commandName]
 
     if (!commandType) {
-      return this.createUnknownResult(input, 0);
+      return this.createUnknownResult(input, 0)
     }
 
-    const parameters = this.extractSlashParameters(commandType, parts.slice(1));
+    const parameters = this.extractSlashParameters(commandType, parts.slice(1))
 
     return {
       commandType,
@@ -268,7 +295,7 @@ export class IntentClassifier {
       requiresConfirmation: false,
       originalInput: input,
       parameters,
-    };
+    }
   }
 
   /**
@@ -280,11 +307,11 @@ export class IntentClassifier {
   ): CommandParameters | undefined {
     switch (commandType) {
       case CommandType.REPORT:
-        return this.extractReportParameters(args);
+        return this.extractReportParameters(args)
       case CommandType.FIX:
-        return this.extractFixParameters(args);
+        return this.extractFixParameters(args)
       default:
-        return undefined;
+        return undefined
     }
   }
 
@@ -299,35 +326,35 @@ export class IntentClassifier {
       daily: 'daily',
       weekly: 'weekly',
       monthly: 'monthly',
-    };
-    const reportTypeArg = args[0]?.toLowerCase();
-    const reportType = reportTypeMap[reportTypeArg] || 'daily';
-    return { reportType };
+    }
+    const reportTypeArg = args[0]?.toLowerCase()
+    const reportType = reportTypeMap[reportTypeArg] || 'daily'
+    return { reportType }
   }
 
   /**
    * 수정 명령어 파라미터 추출
    */
   private extractFixParameters(args: string[]): CommandParameters {
-    const issueArg = args[0];
+    const issueArg = args[0]
     if (issueArg && issueArg.startsWith('#')) {
-      const issueNumber = parseInt(issueArg.slice(1), 10);
+      const issueNumber = parseInt(issueArg.slice(1), 10)
       if (!isNaN(issueNumber)) {
-        return { issueNumber };
+        return { issueNumber }
       }
     }
-    return {};
+    return {}
   }
 
   /**
    * 자연어 분류
    */
   private classifyNaturalLanguage(input: string): IntentClassificationResult {
-    const normalizedInput = this.normalizeInput(input);
-    const scores = this.calculateScores(normalizedInput);
-    const topResult = this.selectBestMatch(scores);
+    const normalizedInput = this.normalizeInput(input)
+    const scores = this.calculateScores(normalizedInput)
+    const topResult = this.selectBestMatch(scores)
 
-    const requiresConfirmation = topResult.score < this.thresholds.high;
+    const requiresConfirmation = topResult.score < this.thresholds.high
 
     return {
       commandType: topResult.commandType,
@@ -339,7 +366,7 @@ export class IntentClassifier {
         : undefined,
       originalInput: input,
       parameters: this.extractNaturalParameters(input, topResult.commandType),
-    };
+    }
   }
 
   /**
@@ -349,105 +376,103 @@ export class IntentClassifier {
     return input
       .toLowerCase()
       .replace(/[?!.,]/g, '')
-      .trim();
+      .trim()
   }
 
   /**
    * 토큰화
    */
   private tokenize(input: string): string[] {
-    return input.split(/\s+/).filter(Boolean);
+    return input.split(/\s+/).filter(Boolean)
   }
 
   /**
    * 각 패턴별 점수 계산
    */
   private calculateScores(input: string): Map<CommandType, IntentScoreResult> {
-    const scores = new Map<CommandType, IntentScoreResult>();
-    const tokens = this.tokenize(input);
+    const scores = new Map<CommandType, IntentScoreResult>()
+    const tokens = this.tokenize(input)
 
     for (const pattern of this.patterns) {
-      let score = 0;
-      const matchedPatterns: string[] = [];
+      let score = 0
+      const matchedPatterns: string[] = []
 
       // 1. 키워드 매칭 (가중치: 0.3)
       for (const keyword of pattern.keywords) {
         if (tokens.includes(keyword) || input.includes(keyword)) {
-          score += 0.3;
-          matchedPatterns.push(`keyword:${keyword}`);
+          score += 0.3
+          matchedPatterns.push(`keyword:${keyword}`)
         }
       }
 
       // 2. 구문 매칭 (가중치: 0.5)
       for (const phrase of pattern.phrases) {
         if (input.includes(phrase)) {
-          score += 0.5;
-          matchedPatterns.push(`phrase:${phrase}`);
+          score += 0.5
+          matchedPatterns.push(`phrase:${phrase}`)
         }
       }
 
       // 3. 맥락 단서 매칭 (가중치: 0.1)
       for (const clue of pattern.contextClues ?? []) {
         if (input.includes(clue)) {
-          score += 0.1;
-          matchedPatterns.push(`context:${clue}`);
+          score += 0.1
+          matchedPatterns.push(`context:${clue}`)
         }
       }
 
       // 4. 제외 키워드 페널티 (가중치: -0.4)
       for (const negative of pattern.negativeKeywords ?? []) {
         if (tokens.includes(negative) || input.includes(negative)) {
-          score -= 0.4;
-          matchedPatterns.push(`negative:${negative}`);
+          score -= 0.4
+          matchedPatterns.push(`negative:${negative}`)
         }
       }
 
       // 가중치 적용 및 정규화
-      score = Math.min(1.0, Math.max(0, score * pattern.weight));
+      score = Math.min(1.0, Math.max(0, score * pattern.weight))
 
       scores.set(pattern.commandType, {
         commandType: pattern.commandType,
         score,
         matchedPatterns,
-      });
+      })
     }
 
-    return scores;
+    return scores
   }
 
   /**
    * 최고 점수 선택
    */
-  private selectBestMatch(
-    scores: Map<CommandType, IntentScoreResult>
-  ): IntentScoreResult {
+  private selectBestMatch(scores: Map<CommandType, IntentScoreResult>): IntentScoreResult {
     let bestResult: IntentScoreResult = {
       commandType: CommandType.UNKNOWN,
       score: 0,
       matchedPatterns: [],
-    };
+    }
 
     for (const result of scores.values()) {
       if (result.score > bestResult.score) {
-        bestResult = result;
+        bestResult = result
       }
     }
 
-    return bestResult;
+    return bestResult
   }
 
   /**
    * 확인 질문 생성
    */
   private generateConfirmationQuestion(result: IntentScoreResult): string {
-    const description = COMMAND_DESCRIPTIONS[result.commandType];
-    const confidencePercent = Math.round(result.score * 100);
+    const description = COMMAND_DESCRIPTIONS[result.commandType]
+    const confidencePercent = Math.round(result.score * 100)
 
     if (result.score < this.thresholds.medium) {
-      return `의도를 정확히 파악하기 어렵습니다. "${description}"하시려는 건가요? (예/아니오)`;
+      return `의도를 정확히 파악하기 어렵습니다. "${description}"하시려는 건가요? (예/아니오)`
     }
 
-    return `"${description}"하시려는 것으로 이해했습니다 (확신도: ${confidencePercent}%). 맞나요? (예/아니오)`;
+    return `"${description}"하시려는 것으로 이해했습니다 (확신도: ${confidencePercent}%). 맞나요? (예/아니오)`
   }
 
   /**
@@ -460,19 +485,16 @@ export class IntentClassifier {
     switch (commandType) {
       case CommandType.FEATURE_REQUEST:
       case CommandType.BUG_REPORT:
-        return { description: input };
+        return { description: input }
       default:
-        return undefined;
+        return undefined
     }
   }
 
   /**
    * UNKNOWN 결과 생성
    */
-  private createUnknownResult(
-    input: string,
-    confidence: number
-  ): IntentClassificationResult {
+  private createUnknownResult(input: string, confidence: number): IntentClassificationResult {
     return {
       commandType: CommandType.UNKNOWN,
       confidence,
@@ -480,6 +502,6 @@ export class IntentClassifier {
       requiresConfirmation: true,
       suggestedQuestion: '어떤 작업을 원하시나요? 다시 말씀해 주세요.',
       originalInput: input,
-    };
+    }
   }
 }

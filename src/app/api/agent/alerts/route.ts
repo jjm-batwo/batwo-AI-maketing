@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     const unreadCount = await repo.countUnread(user.id!)
 
     return NextResponse.json({
-      alerts: alerts.map(a => ({
+      alerts: alerts.map((a) => ({
         id: a.id,
         type: a.type,
         severity: a.severity,

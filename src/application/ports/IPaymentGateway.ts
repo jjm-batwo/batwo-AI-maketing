@@ -2,7 +2,7 @@ export interface BillingKeyResult {
   billingKey: string
   customerKey: string
   cardCompany: string
-  cardNumber: string  // masked
+  cardNumber: string // masked
   method: string
   authenticatedAt: string
 }

@@ -90,9 +90,7 @@ export class CopywritingPsychologyAnalyzer implements DomainAnalyzer {
       readabilityFactor,
     ]
 
-    const totalScore = Math.round(
-      factors.reduce((sum, f) => sum + f.score * f.weight, 0)
-    )
+    const totalScore = Math.round(factors.reduce((sum, f) => sum + f.score * f.weight, 0))
 
     // --- Citations ---
 
@@ -101,8 +99,9 @@ export class CopywritingPsychologyAnalyzer implements DomainAnalyzer {
         id: 'bly2020',
         domain: 'copywriting_psychology',
         source: 'Bly, R. W. (2020)',
-        finding: 'The Copywriter\'s Handbook: Power words increase persuasiveness',
-        applicability: 'Power word density of 0.15-0.25 (2-3 per sentence) is optimal for conversion copy.',
+        finding: "The Copywriter's Handbook: Power words increase persuasiveness",
+        applicability:
+          'Power word density of 0.15-0.25 (2-3 per sentence) is optimal for conversion copy.',
         confidenceLevel: 'high',
         year: 2020,
         category: 'Power Words',
@@ -112,7 +111,8 @@ export class CopywritingPsychologyAnalyzer implements DomainAnalyzer {
         domain: 'copywriting_psychology',
         source: 'Heath, C., & Heath, D. (2007)',
         finding: 'Made to Stick: SUCCESs Framework for memorable messages',
-        applicability: 'Messages with Simple, Unexpected, Concrete, Credible, Emotional, Story elements are 10x more memorable.',
+        applicability:
+          'Messages with Simple, Unexpected, Concrete, Credible, Emotional, Story elements are 10x more memorable.',
         confidenceLevel: 'high',
         year: 2007,
         category: 'SUCCESs Framework',
@@ -122,7 +122,8 @@ export class CopywritingPsychologyAnalyzer implements DomainAnalyzer {
         domain: 'copywriting_psychology',
         source: 'Nielsen, J. (2006)',
         finding: 'F-Shaped Pattern for Reading Web Content',
-        applicability: 'Users scan in F-pattern. Headlines and first 2 sentences critical. Scanability improves comprehension by 47%.',
+        applicability:
+          'Users scan in F-pattern. Headlines and first 2 sentences critical. Scanability improves comprehension by 47%.',
         confidenceLevel: 'high',
         year: 2006,
         category: 'Readability',
@@ -132,7 +133,8 @@ export class CopywritingPsychologyAnalyzer implements DomainAnalyzer {
         domain: 'copywriting_psychology',
         source: 'Cialdini, R. B. (2021)',
         finding: 'Influence: The Psychology of Persuasion',
-        applicability: 'First-person framing ("내 쿠폰") activates endowment effect, increasing perceived value by 30%.',
+        applicability:
+          'First-person framing ("내 쿠폰") activates endowment effect, increasing perceived value by 30%.',
         confidenceLevel: 'high',
         year: 2021,
         category: 'CTA Psychology',
@@ -193,8 +195,8 @@ function scorePowerWordDensity(text: string): ScoringFactor {
     density >= 0.15 && density <= 0.25
       ? `파워 워드 밀도 최적 (${(density * 100).toFixed(1)}%). ${powerWordCount}개/${wordCount}단어.`
       : density > 0.25
-      ? `파워 워드 과다 (${(density * 100).toFixed(1)}%). 스팸으로 인식될 위험. 줄이세요.`
-      : `파워 워드 부족 (${(density * 100).toFixed(1)}%). 설득력 향상 필요. 목표: 15-25%.`
+        ? `파워 워드 과다 (${(density * 100).toFixed(1)}%). 스팸으로 인식될 위험. 줄이세요.`
+        : `파워 워드 부족 (${(density * 100).toFixed(1)}%). 설득력 향상 필요. 목표: 15-25%.`
 
   return {
     name: 'Power Word Density',
@@ -295,28 +297,28 @@ function scoreSuccessFramework(text: string, headline: string): ScoringFactor {
 
   // Concrete: specific details, tangible descriptions
   const concretePatterns = ['예를 들어', '실제로', '구체적으로', '바로', '직접']
-  if (concretePatterns.some(p => text.includes(p)) || /\d+/.test(text)) {
+  if (concretePatterns.some((p) => text.includes(p)) || /\d+/.test(text)) {
     score++
     foundElements.push('Concrete')
   }
 
   // Credible: trust words, certifications, expert mentions
   const trustWords = KOREAN_POWER_WORDS.trust
-  if (trustWords.some(w => text.includes(w))) {
+  if (trustWords.some((w) => text.includes(w))) {
     score++
     foundElements.push('Credible')
   }
 
   // Emotional: emotion words
   const emotionWords = KOREAN_POWER_WORDS.emotion
-  if (emotionWords.some(w => text.includes(w))) {
+  if (emotionWords.some((w) => text.includes(w))) {
     score++
     foundElements.push('Emotional')
   }
 
   // Stories: narrative markers
   const storyMarkers = ['이야기', '경험', '사례', '후기', '고객', '변화', '전', '후']
-  if (storyMarkers.some(m => text.includes(m))) {
+  if (storyMarkers.some((m) => text.includes(m))) {
     score++
     foundElements.push('Stories')
   }
@@ -324,15 +326,15 @@ function scoreSuccessFramework(text: string, headline: string): ScoringFactor {
   const finalScore = Math.round((score / maxScore) * 100)
 
   const missing = ['Simple', 'Unexpected', 'Concrete', 'Credible', 'Emotional', 'Stories'].filter(
-    e => !foundElements.includes(e)
+    (e) => !foundElements.includes(e)
   )
 
   const explanation =
     score >= 5
       ? `SUCCESs 프레임워크 ${score}/6 요소 충족. 매우 효과적.`
       : score >= 3
-      ? `SUCCESs ${score}/6 요소 충족. 개선 여지: ${missing.slice(0, 2).join(', ')}`
-      : `SUCCESs 부족 (${score}/6). 누락: ${missing.slice(0, 3).join(', ')}`
+        ? `SUCCESs ${score}/6 요소 충족. 개선 여지: ${missing.slice(0, 2).join(', ')}`
+        : `SUCCESs 부족 (${score}/6). 누락: ${missing.slice(0, 3).join(', ')}`
 
   return {
     name: 'SUCCESs Framework',
@@ -365,26 +367,26 @@ function scoreCtaStrength(cta: string): ScoringFactor {
   let score = 50 // Base
 
   // First person (endowment effect)
-  const hasFirstPerson = CTA_FIRST_PERSON_KEYWORDS.some(k => cta.includes(k))
+  const hasFirstPerson = CTA_FIRST_PERSON_KEYWORDS.some((k) => cta.includes(k))
   if (hasFirstPerson) {
     score += 20
   }
 
   // Strong patterns
-  const strongMatch = STRONG_CTA_PATTERNS.some(p => cta.includes(p))
+  const strongMatch = STRONG_CTA_PATTERNS.some((p) => cta.includes(p))
   if (strongMatch) {
     score += 15
   }
 
   // Weak patterns (penalty)
-  const weakMatch = WEAK_CTA_PATTERNS.some(p => cta.includes(p))
+  const weakMatch = WEAK_CTA_PATTERNS.some((p) => cta.includes(p))
   if (weakMatch) {
     score -= 15
   }
 
   // Specificity (numbers, urgency, benefit)
-  const hasUrgency = ['지금', '오늘', '바로', '즉시'].some(u => cta.includes(u))
-  const hasBenefit = ['무료', '할인', '혜택', '증정'].some(b => cta.includes(b))
+  const hasUrgency = ['지금', '오늘', '바로', '즉시'].some((u) => cta.includes(u))
+  const hasBenefit = ['무료', '할인', '혜택', '증정'].some((b) => cta.includes(b))
   if (hasUrgency) score += 10
   if (hasBenefit) score += 10
 
@@ -421,7 +423,7 @@ function scoreCtaStrength(cta: string): ScoringFactor {
 
 function scoreReadability(text: string): ScoringFactor {
   const charCount = Array.from(text).length
-  const sentences = text.split(/[.!?]/).filter(s => s.trim().length > 0)
+  const sentences = text.split(/[.!?]/).filter((s) => s.trim().length > 0)
   const sentenceCount = sentences.length
 
   let score = 70 // Base
@@ -457,8 +459,8 @@ function scoreReadability(text: string): ScoringFactor {
     charCount > 300
       ? `텍스트 과다 (${charCount}자). 광고는 50-200자 권장. 스캔 가능성 낮음.`
       : charCount < 50
-      ? `텍스트 부족 (${charCount}자). 메시지 전달 미흡.`
-      : `가독성 양호 (${charCount}자, 문장 ${sentenceCount}개, 평균 ${avgSentenceChars.toFixed(1)}자/문장).`
+        ? `텍스트 부족 (${charCount}자). 메시지 전달 미흡.`
+        : `가독성 양호 (${charCount}자, 문장 ${sentenceCount}개, 평균 ${avgSentenceChars.toFixed(1)}자/문장).`
 
   return {
     name: 'Readability',
@@ -509,7 +511,7 @@ function generateRecommendations(
   }
 
   // Headline issue
-  const headlineFactor = factors.find(f => f.name === 'Headline Quality')
+  const headlineFactor = factors.find((f) => f.name === 'Headline Quality')
   if (headlineFactor && headlineFactor.score < 60) {
     const currentLength = Array.from(content.headline).length
     recommendations.push({
@@ -524,7 +526,7 @@ function generateRecommendations(
   }
 
   // Power word issue
-  const powerWordFactor = factors.find(f => f.name === 'Power Word Density')
+  const powerWordFactor = factors.find((f) => f.name === 'Power Word Density')
   if (powerWordFactor && powerWordFactor.score < 60) {
     const currentDensity = calculatePowerWordDensity(content.combinedText)
     const wordCount = countKoreanWords(content.combinedText)
@@ -533,16 +535,17 @@ function generateRecommendations(
       domain: 'copywriting_psychology',
       priority: 'high',
       recommendation: `파워 워드 밀도 개선: 현재 ${(currentDensity * 100).toFixed(1)}% → 목표 15-25%. ${targetPowerWords}개 정도 추가 권장. 카테고리: 긴급성(지금, 오늘만), 무료(무료, 증정), 신뢰(보장, 인증).`,
-      scientificBasis: 'Bly (2020): Power word density of 15-25% increases persuasiveness without spam perception.',
+      scientificBasis:
+        'Bly (2020): Power word density of 15-25% increases persuasiveness without spam perception.',
       expectedImpact: '설득력 +25%, CVR +15%',
       citations: [citations[0]],
     })
   }
 
   // CTA issue
-  const ctaFactor = factors.find(f => f.name === 'CTA Strength')
+  const ctaFactor = factors.find((f) => f.name === 'CTA Strength')
   if (ctaFactor && ctaFactor.score < 70) {
-    const hasFirstPerson = CTA_FIRST_PERSON_KEYWORDS.some(k => content.callToAction.includes(k))
+    const hasFirstPerson = CTA_FIRST_PERSON_KEYWORDS.some((k) => content.callToAction.includes(k))
     recommendations.push({
       domain: 'copywriting_psychology',
       priority: 'high',
@@ -557,21 +560,22 @@ function generateRecommendations(
   }
 
   // SUCCESs issue
-  const successFactor = factors.find(f => f.name === 'SUCCESs Framework')
+  const successFactor = factors.find((f) => f.name === 'SUCCESs Framework')
   if (successFactor && successFactor.score < 60) {
     recommendations.push({
       domain: 'copywriting_psychology',
       priority: 'medium',
       recommendation:
         'SUCCESs 프레임워크 요소 보강: Simple(간결), Unexpected(숫자/통계), Concrete(구체적 묘사), Credible(인증/후기), Emotional(감성어), Stories(고객 사례).',
-      scientificBasis: 'Heath & Heath (2007): Messages with SUCCESs elements are 10x more memorable.',
+      scientificBasis:
+        'Heath & Heath (2007): Messages with SUCCESs elements are 10x more memorable.',
       expectedImpact: '메시지 기억률 +300%, 공유율 +150%',
       citations: [citations[1]],
     })
   }
 
   // Readability issue
-  const readabilityFactor = factors.find(f => f.name === 'Readability')
+  const readabilityFactor = factors.find((f) => f.name === 'Readability')
   if (readabilityFactor && readabilityFactor.score < 60) {
     const charCount = Array.from(content.combinedText).length
     recommendations.push({

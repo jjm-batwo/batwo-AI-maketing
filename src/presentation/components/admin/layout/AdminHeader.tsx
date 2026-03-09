@@ -19,16 +19,14 @@ import { GlobalRole } from '@domain/value-objects/GlobalRole'
 export function AdminHeader() {
   const { data: session } = useSession()
 
-  const userInitials = session?.user?.name
-    ?.split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase() || 'AD'
+  const userInitials =
+    session?.user?.name
+      ?.split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase() || 'AD'
 
-  const roleLabel =
-    session?.user?.globalRole === GlobalRole.SUPER_ADMIN
-      ? 'Super Admin'
-      : 'Admin'
+  const roleLabel = session?.user?.globalRole === GlobalRole.SUPER_ADMIN ? 'Super Admin' : 'Admin'
 
   return (
     <header className="fixed left-64 right-0 top-0 z-30 flex h-16 items-center justify-between border-b bg-background px-6">
@@ -65,12 +63,8 @@ export function AdminHeader() {
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  {session?.user?.name || 'Admin'}
-                </p>
-                <p className="text-xs leading-none text-muted-foreground">
-                  {session?.user?.email}
-                </p>
+                <p className="text-sm font-medium leading-none">{session?.user?.name || 'Admin'}</p>
+                <p className="text-xs leading-none text-muted-foreground">{session?.user?.email}</p>
                 <span className="mt-1 inline-flex w-fit rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
                   {roleLabel}
                 </span>
@@ -79,8 +73,7 @@ export function AdminHeader() {
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href="/settings">
-                <User className="mr-2 h-4 w-4" />
-                내 프로필
+                <User className="mr-2 h-4 w-4" />내 프로필
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />

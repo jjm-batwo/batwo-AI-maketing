@@ -41,9 +41,7 @@ export function useFeedback(): UseFeedbackReturn {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}))
-        throw new Error(
-          (data as { error?: string }).error ?? '피드백 제출에 실패했습니다'
-        )
+        throw new Error((data as { error?: string }).error ?? '피드백 제출에 실패했습니다')
       }
 
       setIsSubmitted(true)

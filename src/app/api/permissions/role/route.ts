@@ -14,10 +14,7 @@ export async function GET(req: NextRequest) {
   const session = await auth()
 
   if (!session?.user?.id) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    )
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   const teamId = req.nextUrl.searchParams.get('teamId')
@@ -29,9 +26,7 @@ export async function GET(req: NextRequest) {
     )
   }
 
-  const permissionService = container.resolve<IPermissionService>(
-    DI_TOKENS.PermissionService
-  )
+  const permissionService = container.resolve<IPermissionService>(DI_TOKENS.PermissionService)
 
   const role = await permissionService.getUserRole(session.user.id, teamId)
 

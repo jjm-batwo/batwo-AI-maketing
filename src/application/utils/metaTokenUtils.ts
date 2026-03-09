@@ -16,10 +16,7 @@ export function isTokenExpired(tokenExpiry: Date | null): boolean {
 /**
  * 토큰이 곧 만료되는지 확인 (기본 24시간 전)
  */
-export function isTokenExpiringSoon(
-  tokenExpiry: Date | null,
-  hoursBeforeExpiry = 24
-): boolean {
+export function isTokenExpiringSoon(tokenExpiry: Date | null, hoursBeforeExpiry = 24): boolean {
   if (!tokenExpiry) return false
   const threshold = new Date(Date.now() + hoursBeforeExpiry * 60 * 60 * 1000)
   return tokenExpiry < threshold

@@ -39,10 +39,7 @@ export function ABTestList({ campaignId }: ABTestListProps) {
     return (
       <div className="space-y-4">
         {Array.from({ length: 2 }).map((_, i) => (
-          <div
-            key={i}
-            className="h-64 animate-pulse rounded-lg bg-muted"
-          />
+          <div key={i} className="h-64 animate-pulse rounded-lg bg-muted" />
         ))}
       </div>
     )
@@ -58,8 +55,7 @@ export function ABTestList({ campaignId }: ABTestListProps) {
           A/B 테스트
         </h3>
         <Button onClick={() => setShowCreateDialog(true)} size="sm">
-          <Plus className="h-4 w-4 mr-1" />
-          새 테스트
+          <Plus className="h-4 w-4 mr-1" />새 테스트
         </Button>
       </div>
 
@@ -72,13 +68,8 @@ export function ABTestList({ campaignId }: ABTestListProps) {
             <br />
             최적의 성과를 찾아보세요.
           </p>
-          <Button
-            onClick={() => setShowCreateDialog(true)}
-            className="mt-4"
-            size="sm"
-          >
-            <Plus className="h-4 w-4 mr-1" />
-            첫 테스트 만들기
+          <Button onClick={() => setShowCreateDialog(true)} className="mt-4" size="sm">
+            <Plus className="h-4 w-4 mr-1" />첫 테스트 만들기
           </Button>
         </div>
       ) : (

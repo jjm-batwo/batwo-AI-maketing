@@ -75,8 +75,8 @@ export function toOptimizationRuleDTO(rule: OptimizationRule): OptimizationRuleR
     userId: rule.userId,
     name: rule.name,
     ruleType: rule.ruleType,
-    conditions: rule.conditions.map(c => c.toJSON()),
-    actions: rule.actions.map(a => ({
+    conditions: rule.conditions.map((c) => c.toJSON()),
+    actions: rule.actions.map((a) => ({
       type: a.type,
       params: a.params as Record<string, unknown>,
     })),

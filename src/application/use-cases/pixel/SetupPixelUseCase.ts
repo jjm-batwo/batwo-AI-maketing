@@ -98,9 +98,7 @@ export class SetupPixelUseCase {
     }
 
     const setupMethod =
-      setupMode === SetupMode.PLATFORM_API
-        ? PixelSetupMethod.PLATFORM_API
-        : PixelSetupMethod.MANUAL
+      setupMode === SetupMode.PLATFORM_API ? PixelSetupMethod.PLATFORM_API : PixelSetupMethod.MANUAL
 
     const pixel = MetaPixel.create({
       userId,

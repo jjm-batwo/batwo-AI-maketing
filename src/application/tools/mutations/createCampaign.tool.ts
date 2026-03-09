@@ -1,29 +1,37 @@
 import { z } from 'zod'
-import type { AgentTool, AgentContext, ToolExecutionResult } from '@application/ports/IConversationalAgent'
+import type {
+  AgentTool,
+  AgentContext,
+  ToolExecutionResult,
+} from '@application/ports/IConversationalAgent'
 import type { CreateCampaignUseCase } from '@application/use-cases/campaign/CreateCampaignUseCase'
 import { CampaignObjective } from '@domain/value-objects/CampaignObjective'
 
 const paramsSchema = z.object({
   name: z.string().min(1).describe('캠페인 이름'),
-  objective: z.enum([
-    'AWARENESS',
-    'TRAFFIC',
-    'ENGAGEMENT',
-    'LEADS',
-    'APP_PROMOTION',
-    'SALES',
-    'CONVERSIONS',
-  ] as const).describe('캠페인 목적'),
+  objective: z
+    .enum([
+      'AWARENESS',
+      'TRAFFIC',
+      'ENGAGEMENT',
+      'LEADS',
+      'APP_PROMOTION',
+      'SALES',
+      'CONVERSIONS',
+    ] as const)
+    .describe('캠페인 목적'),
   dailyBudget: z.number().min(5000).describe('일일 예산 (원)'),
   startDate: z.string().optional().describe('시작일 (YYYY-MM-DD)'),
   endDate: z.string().optional().describe('종료일 (YYYY-MM-DD)'),
-  targetAudience: z.object({
-    ageMin: z.number().optional(),
-    ageMax: z.number().optional(),
-    genders: z.array(z.enum(['male', 'female'])).optional(),
-    locations: z.array(z.string()).optional(),
-    interests: z.array(z.string()).optional(),
-  }).optional(),
+  targetAudience: z
+    .object({
+      ageMin: z.number().optional(),
+      ageMax: z.number().optional(),
+      genders: z.array(z.enum(['male', 'female'])).optional(),
+      locations: z.array(z.string()).optional(),
+      interests: z.array(z.string()).optional(),
+    })
+    .optional(),
 })
 
 type Params = z.infer<typeof paramsSchema>
@@ -81,7 +89,10 @@ export function createCreateCampaignTool(
       return {
         summary: `${OBJECTIVE_LABELS[params.objective] ?? ''} 캠페인을 일일 예산 ₩${params.dailyBudget.toLocaleString('ko-KR')}으로 생성합니다`,
         details,
-        warnings: ['Meta 광고 계정에 실제 캠페인이 생성됩니다', '예산이 즉시 소진되기 시작할 수 있습니다'],
+        warnings: [
+          'Meta 광고 계정에 실제 캠페인이 생성됩니다',
+          '예산이 즉시 소진되기 시작할 수 있습니다',
+        ],
       }
     },
   }

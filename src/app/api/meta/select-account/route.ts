@@ -17,10 +17,7 @@ export async function POST(request: NextRequest) {
     const { sessionId, accountId } = body
 
     if (!sessionId || !accountId) {
-      return NextResponse.json(
-        { error: '필수 파라미터가 누락되었습니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: '필수 파라미터가 누락되었습니다' }, { status: 400 })
     }
 
     // 캐시에서 OAuth 데이터 조회 (DB 기반)
@@ -37,10 +34,7 @@ export async function POST(request: NextRequest) {
     const selectedAccount = oauthData.accounts.find((acc) => acc.id === accountId)
 
     if (!selectedAccount) {
-      return NextResponse.json(
-        { error: '유효하지 않은 계정입니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: '유효하지 않은 계정입니다' }, { status: 400 })
     }
 
     // DB에 저장 (기존 계정이 있으면 업데이트)
@@ -61,9 +55,7 @@ export async function POST(request: NextRequest) {
           where: { id: existingAccount.id },
           data: {
             accessToken: encryptedToken,
-            tokenExpiry: new Date(
-              Date.now() + oauthData.tokenExpiry * 1000
-            ),
+            tokenExpiry: new Date(Date.now() + oauthData.tokenExpiry * 1000),
           },
         })
       } else {
@@ -74,9 +66,7 @@ export async function POST(request: NextRequest) {
             metaAccountId: selectedAccount.id,
             businessName: selectedAccount.name,
             accessToken: encryptedToken,
-            tokenExpiry: new Date(
-              Date.now() + oauthData.tokenExpiry * 1000
-            ),
+            tokenExpiry: new Date(Date.now() + oauthData.tokenExpiry * 1000),
           },
         })
       }
@@ -89,10 +79,7 @@ export async function POST(request: NextRequest) {
     await oauthCache.delete(sessionId)
 
     if (!dbSuccess) {
-      return NextResponse.json(
-        { error: '데이터베이스 저장에 실패했습니다' },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: '데이터베이스 저장에 실패했습니다' }, { status: 500 })
     }
 
     return NextResponse.json({
@@ -104,9 +91,6 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('Select account error:', error)
-    return NextResponse.json(
-      { error: '계정 선택 중 오류가 발생했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '계정 선택 중 오류가 발생했습니다' }, { status: 500 })
   }
 }

@@ -2,7 +2,15 @@
 
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { Facebook, CheckCircle2, ExternalLink, BarChart3, Zap, Building2, Users } from 'lucide-react'
+import {
+  Facebook,
+  CheckCircle2,
+  ExternalLink,
+  BarChart3,
+  Zap,
+  Building2,
+  Users,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
 
@@ -49,13 +57,9 @@ export function MetaConnectStep() {
         <Facebook className="h-8 w-8 text-blue-600" />
       </div>
 
-      <h2 className="mb-2 text-2xl font-bold text-gray-900">
-        {t('title')}
-      </h2>
+      <h2 className="mb-2 text-2xl font-bold text-gray-900">{t('title')}</h2>
 
-      <p className="mb-6 text-gray-600">
-        {t('description')}
-      </p>
+      <p className="mb-6 text-gray-600">{t('description')}</p>
 
       {isMetaConnected ? (
         <div className="flex flex-col items-center gap-4">
@@ -63,9 +67,7 @@ export function MetaConnectStep() {
             <CheckCircle2 className="h-5 w-5" />
             <span className="font-medium">{t('connected')}</span>
           </div>
-          <p className="text-sm text-gray-500">
-            {t('connectedNext')}
-          </p>
+          <p className="text-sm text-gray-500">{t('connectedNext')}</p>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-6 w-full">
@@ -75,7 +77,9 @@ export function MetaConnectStep() {
             <div className="grid gap-3">
               {permissions.map((perm, index) => (
                 <div key={index} className="flex items-start gap-3 text-left">
-                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${perm.bg}`}>
+                  <div
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${perm.bg}`}
+                  >
                     <perm.icon className={`h-4 w-4 ${perm.color}`} />
                   </div>
                   <div>
@@ -95,9 +99,7 @@ export function MetaConnectStep() {
             </Link>
           </Button>
 
-          <p className="text-sm text-gray-500">
-            {t('connectLater')}
-          </p>
+          <p className="text-sm text-gray-500">{t('connectLater')}</p>
         </div>
       )}
     </div>

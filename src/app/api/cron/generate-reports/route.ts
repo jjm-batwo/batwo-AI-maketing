@@ -76,7 +76,10 @@ export async function GET(request: NextRequest) {
     const userCampaignsMap = new Map<string, string[]>()
     for (const user of usersWithCampaigns) {
       userEmailMap.set(user.id, user.email)
-      userCampaignsMap.set(user.id, user.campaigns.map((c) => c.id))
+      userCampaignsMap.set(
+        user.id,
+        user.campaigns.map((c) => c.id)
+      )
     }
 
     // Initialize scheduler service
@@ -91,7 +94,11 @@ export async function GET(request: NextRequest) {
     )
 
     // Run scheduled reports
-    const results = await schedulerService.runScheduledReports(userEmailMap, reportType, userCampaignsMap)
+    const results = await schedulerService.runScheduledReports(
+      userEmailMap,
+      reportType,
+      userCampaignsMap
+    )
 
     return NextResponse.json({
       success: true,

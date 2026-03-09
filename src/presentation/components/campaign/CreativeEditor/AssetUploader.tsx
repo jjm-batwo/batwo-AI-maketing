@@ -14,45 +14,55 @@ interface AssetUploaderProps {
 
 export function AssetUploader({ onUpload, isUploading = false }: AssetUploaderProps) {
   const { control, setValue } = useFormContext<ExtendedCampaignFormData>()
-  const watchedAssetIds = useWatch({ control, name: 'creative.assetIds', defaultValue: [] as string[] })
+  const watchedAssetIds = useWatch({
+    control,
+    name: 'creative.assetIds',
+    defaultValue: [] as string[],
+  })
   const assetIds = useMemo(() => watchedAssetIds, [watchedAssetIds])
   const [assets, setAssets] = useState<UploadedAsset[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
 
-  const handleFiles = useCallback(async (files: FileList | File[]) => {
-    setUploadError(null)
-    const fileArray = Array.from(files)
+  const handleFiles = useCallback(
+    async (files: FileList | File[]) => {
+      setUploadError(null)
+      const fileArray = Array.from(files)
 
-    for (const file of fileArray) {
-      // 파일 타입 검증
-      if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
-        setUploadError('이미지 또는 동영상 파일만 업로드할 수 있습니다')
-        continue
-      }
-      // 파일 크기 검증 (30MB)
-      if (file.size > 30 * 1024 * 1024) {
-        setUploadError('파일 크기는 30MB 이하여야 합니다')
-        continue
-      }
+      for (const file of fileArray) {
+        // 파일 타입 검증
+        if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+          setUploadError('이미지 또는 동영상 파일만 업로드할 수 있습니다')
+          continue
+        }
+        // 파일 크기 검증 (30MB)
+        if (file.size > 30 * 1024 * 1024) {
+          setUploadError('파일 크기는 30MB 이하여야 합니다')
+          continue
+        }
 
-      try {
-        const uploaded = await onUpload(file)
-        setAssets(prev => [...prev, uploaded])
-        setValue('creative.assetIds', [...assetIds, uploaded.id])
-      } catch {
-        setUploadError('파일 업로드에 실패했습니다')
+        try {
+          const uploaded = await onUpload(file)
+          setAssets((prev) => [...prev, uploaded])
+          setValue('creative.assetIds', [...assetIds, uploaded.id])
+        } catch {
+          setUploadError('파일 업로드에 실패했습니다')
+        }
       }
-    }
-  }, [onUpload, assetIds, setValue])
+    },
+    [onUpload, assetIds, setValue]
+  )
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-    if (e.dataTransfer.files.length > 0) {
-      handleFiles(e.dataTransfer.files)
-    }
-  }, [handleFiles])
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault()
+      setIsDragging(false)
+      if (e.dataTransfer.files.length > 0) {
+        handleFiles(e.dataTransfer.files)
+      }
+    },
+    [handleFiles]
+  )
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -63,16 +73,25 @@ export function AssetUploader({ onUpload, isUploading = false }: AssetUploaderPr
     setIsDragging(false)
   }, [])
 
-  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      handleFiles(e.target.files)
-    }
-  }, [handleFiles])
+  const handleFileInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) {
+        handleFiles(e.target.files)
+      }
+    },
+    [handleFiles]
+  )
 
-  const removeAsset = useCallback((assetId: string) => {
-    setAssets(prev => prev.filter(a => a.id !== assetId))
-    setValue('creative.assetIds', assetIds.filter(id => id !== assetId))
-  }, [assetIds, setValue])
+  const removeAsset = useCallback(
+    (assetId: string) => {
+      setAssets((prev) => prev.filter((a) => a.id !== assetId))
+      setValue(
+        'creative.assetIds',
+        assetIds.filter((id) => id !== assetId)
+      )
+    },
+    [assetIds, setValue]
+  )
 
   return (
     <div className="space-y-4">
@@ -88,13 +107,9 @@ export function AssetUploader({ onUpload, isUploading = false }: AssetUploaderPr
         )}
       >
         <Upload className="mb-3 h-10 w-10 text-gray-400" />
-        <p className="text-sm font-medium text-gray-700">
-          이미지 또는 동영상을 드래그하거나
-        </p>
+        <p className="text-sm font-medium text-gray-700">이미지 또는 동영상을 드래그하거나</p>
         <label className="mt-2 cursor-pointer">
-          <span className="text-sm font-medium text-primary hover:underline">
-            파일 선택
-          </span>
+          <span className="text-sm font-medium text-primary hover:underline">파일 선택</span>
           <input
             type="file"
             className="hidden"
@@ -104,9 +119,7 @@ export function AssetUploader({ onUpload, isUploading = false }: AssetUploaderPr
             disabled={isUploading}
           />
         </label>
-        <p className="mt-2 text-xs text-muted-foreground">
-          JPG, PNG, MP4 (최대 30MB)
-        </p>
+        <p className="mt-2 text-xs text-muted-foreground">JPG, PNG, MP4 (최대 30MB)</p>
       </div>
 
       {/* 업로드 중 표시 */}
@@ -118,9 +131,7 @@ export function AssetUploader({ onUpload, isUploading = false }: AssetUploaderPr
       )}
 
       {/* 에러 메시지 */}
-      {uploadError && (
-        <p className="text-sm text-red-500">{uploadError}</p>
-      )}
+      {uploadError && <p className="text-sm text-red-500">{uploadError}</p>}
 
       {/* 업로드된 에셋 미리보기 */}
       {assets.length > 0 && (

@@ -126,7 +126,7 @@ export const KOREAN_SEASONAL_EVENTS: SeasonalEvent[] = [
 
 // Get current or upcoming seasonal events
 export function getCurrentSeasonalEvents(month: number, day: number): SeasonalEvent[] {
-  return KOREAN_SEASONAL_EVENTS.filter(event => {
+  return KOREAN_SEASONAL_EVENTS.filter((event) => {
     if (event.month !== month) return false
     if (!event.dayRange) return true
     return day >= event.dayRange[0] && day <= event.dayRange[1]
@@ -135,7 +135,5 @@ export function getCurrentSeasonalEvents(month: number, day: number): SeasonalEv
 
 // Get seasonal events relevant to an industry
 export function getIndustrySeasonalEvents(industry: string): SeasonalEvent[] {
-  return KOREAN_SEASONAL_EVENTS.filter(event =>
-    event.topIndustries.includes(industry)
-  )
+  return KOREAN_SEASONAL_EVENTS.filter((event) => event.topIndustries.includes(industry))
 }

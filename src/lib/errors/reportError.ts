@@ -59,10 +59,7 @@ export interface ErrorContext {
  * }
  * ```
  */
-export function reportError(
-  error: unknown,
-  context: ErrorContext = {}
-): string {
+export function reportError(error: unknown, context: ErrorContext = {}): string {
   const {
     component,
     action,
@@ -74,8 +71,7 @@ export function reportError(
   } = context
 
   // 에러 정규화
-  const normalizedError =
-    error instanceof Error ? error : new Error(String(error))
+  const normalizedError = error instanceof Error ? error : new Error(String(error))
 
   // Sentry 스코프 설정
   withScope((scope) => {
@@ -216,11 +212,7 @@ export function reportMessage(
 /**
  * 사용자 컨텍스트 설정
  */
-export function setUserContext(user: {
-  id: string
-  email?: string
-  name?: string
-}): void {
+export function setUserContext(user: { id: string; email?: string; name?: string }): void {
   setUser({
     id: user.id,
     email: user.email,

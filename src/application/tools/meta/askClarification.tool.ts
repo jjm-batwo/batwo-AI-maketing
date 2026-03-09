@@ -11,7 +11,8 @@ type Params = z.infer<typeof paramsSchema>
 export function createAskClarificationTool(): AgentTool<Params> {
   return {
     name: 'askClarification',
-    description: '사용자에게 추가 정보를 요청합니다. 작업 수행에 필요한 정보가 부족할 때 사용합니다.',
+    description:
+      '사용자에게 추가 정보를 요청합니다. 작업 수행에 필요한 정보가 부족할 때 사용합니다.',
     parameters: paramsSchema,
     requiresConfirmation: false,
 

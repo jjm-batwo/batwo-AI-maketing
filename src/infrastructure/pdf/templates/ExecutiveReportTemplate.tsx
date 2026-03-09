@@ -1,7 +1,13 @@
 import React from 'react'
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
 import type { ReportDTO } from '@application/dto/report/ReportDTO'
-import { baseStyles, formatNumber, formatCurrency, formatDate, formatPercent } from './BaseReportTemplate'
+import {
+  baseStyles,
+  formatNumber,
+  formatCurrency,
+  formatDate,
+  formatPercent,
+} from './BaseReportTemplate'
 
 // ========================================
 // Executive Report Specific Styles
@@ -176,7 +182,12 @@ export function ExecutiveReportTemplate({ report }: ExecutiveReportTemplateProps
           <View style={styles.kpiCard}>
             <Text style={styles.kpiLabel}>총 매출</Text>
             <Text style={styles.kpiValue}>{formatCurrency(summaryMetrics.totalRevenue)}</Text>
-            <Text style={[styles.kpiChange, revenueChange > 0 ? styles.kpiIncrease : styles.kpiDecrease]}>
+            <Text
+              style={[
+                styles.kpiChange,
+                revenueChange > 0 ? styles.kpiIncrease : styles.kpiDecrease,
+              ]}
+            >
               {revenueChange > 0 ? '▲' : '▼'} {formatPercent(Math.abs(revenueChange), 1)} 전기 대비
             </Text>
           </View>
@@ -184,7 +195,9 @@ export function ExecutiveReportTemplate({ report }: ExecutiveReportTemplateProps
           <View style={styles.kpiCard}>
             <Text style={styles.kpiLabel}>ROAS</Text>
             <Text style={styles.kpiValue}>{summaryMetrics.overallROAS.toFixed(2)}x</Text>
-            <Text style={[styles.kpiChange, roasChange > 0 ? styles.kpiIncrease : styles.kpiDecrease]}>
+            <Text
+              style={[styles.kpiChange, roasChange > 0 ? styles.kpiIncrease : styles.kpiDecrease]}
+            >
               {roasChange > 0 ? '▲' : '▼'} {formatPercent(Math.abs(roasChange), 1)} 전기 대비
             </Text>
           </View>
@@ -200,9 +213,7 @@ export function ExecutiveReportTemplate({ report }: ExecutiveReportTemplateProps
           <View style={styles.kpiCard}>
             <Text style={styles.kpiLabel}>총 광고비</Text>
             <Text style={styles.kpiValue}>{formatCurrency(summaryMetrics.totalSpend)}</Text>
-            <Text style={styles.kpiChange}>
-              예산 대비 {formatPercent(95, 0)} 집행
-            </Text>
+            <Text style={styles.kpiChange}>예산 대비 {formatPercent(95, 0)} 집행</Text>
           </View>
         </View>
 
@@ -210,11 +221,18 @@ export function ExecutiveReportTemplate({ report }: ExecutiveReportTemplateProps
         <View style={styles.summaryBox}>
           <Text style={styles.summaryTitle}>핵심 요약</Text>
           <Text style={styles.summaryText}>
-            해당 기간 동안 <Text style={styles.highlightNumber}>{formatCurrency(summaryMetrics.totalRevenue)}</Text>의 매출을 달성했으며,
-            광고 수익률(ROAS)은 <Text style={styles.highlightNumber}>{summaryMetrics.overallROAS.toFixed(2)}x</Text>를 기록했습니다.
+            해당 기간 동안{' '}
+            <Text style={styles.highlightNumber}>
+              {formatCurrency(summaryMetrics.totalRevenue)}
+            </Text>
+            의 매출을 달성했으며, 광고 수익률(ROAS)은{' '}
+            <Text style={styles.highlightNumber}>{summaryMetrics.overallROAS.toFixed(2)}x</Text>를
+            기록했습니다.
             {'\n\n'}
-            전환율 <Text style={styles.highlightNumber}>{formatPercent(summaryMetrics.averageCVR)}</Text>,
-            클릭률 <Text style={styles.highlightNumber}>{formatPercent(summaryMetrics.averageCTR)}</Text>로
+            전환율{' '}
+            <Text style={styles.highlightNumber}>{formatPercent(summaryMetrics.averageCVR)}</Text>,
+            클릭률{' '}
+            <Text style={styles.highlightNumber}>{formatPercent(summaryMetrics.averageCTR)}</Text>로
             효율적인 캠페인 운영이 이루어졌습니다.
           </Text>
         </View>
@@ -235,7 +253,8 @@ export function ExecutiveReportTemplate({ report }: ExecutiveReportTemplateProps
               <View style={styles.insightItem}>
                 <View style={styles.insightBullet} />
                 <Text style={styles.insightText}>
-                  <Text style={{ fontWeight: 'bold' }}>성과 우수:</Text> 전반적으로 안정적인 캠페인 성과를 보이고 있습니다.
+                  <Text style={{ fontWeight: 'bold' }}>성과 우수:</Text> 전반적으로 안정적인 캠페인
+                  성과를 보이고 있습니다.
                 </Text>
               </View>
             )}

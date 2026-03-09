@@ -9,10 +9,7 @@ import { safeDecryptToken } from '@application/utils/TokenEncryption'
  * 페이지 참여 데이터 조회
  * 권한: pages_read_engagement
  */
-export async function GET(
-  _request: NextRequest,
-  context: { params: Promise<{ pageId: string }> }
-) {
+export async function GET(_request: NextRequest, context: { params: Promise<{ pageId: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
@@ -22,14 +19,11 @@ export async function GET(
     // 사용자의 Meta 토큰 조회
     const metaAccount = await prisma.metaAdAccount.findFirst({
       where: { userId: user.id },
-      select: { accessToken: true }
+      select: { accessToken: true },
     })
 
     if (!metaAccount?.accessToken) {
-      return NextResponse.json(
-        { message: 'Meta 계정이 연결되어 있지 않습니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ message: 'Meta 계정이 연결되어 있지 않습니다' }, { status: 400 })
     }
 
     const client = new MetaPagesClient(safeDecryptToken(metaAccount.accessToken))
@@ -47,7 +41,7 @@ export async function GET(
     // 참여 데이터 조회
     const [engagement, posts] = await Promise.all([
       client.getEngagementSummary(pageId, page.access_token),
-      client.getPagePosts(pageId, page.access_token, 5)
+      client.getPagePosts(pageId, page.access_token, 5),
     ])
 
     return NextResponse.json({
@@ -57,23 +51,20 @@ export async function GET(
         category: page.category,
         fanCount: page.fan_count,
         followersCount: page.followers_count,
-        picture: page.picture?.data?.url
+        picture: page.picture?.data?.url,
       },
       engagement,
-      recentPosts: posts.map(post => ({
+      recentPosts: posts.map((post) => ({
         id: post.id,
         message: post.message?.substring(0, 100) || '(이미지 게시물)',
         createdTime: post.created_time,
         likes: post.likes?.summary?.total_count || 0,
         comments: post.comments?.summary?.total_count || 0,
-        shares: post.shares?.count || 0
-      }))
+        shares: post.shares?.count || 0,
+      })),
     })
   } catch (error) {
     console.error('Failed to fetch page insights:', error)
-    return NextResponse.json(
-      { message: 'Failed to fetch page insights' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to fetch page insights' }, { status: 500 })
   }
 }

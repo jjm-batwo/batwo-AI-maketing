@@ -1,10 +1,17 @@
 import { z } from 'zod'
-import type { AgentTool, AgentContext, ToolExecutionResult } from '@application/ports/IConversationalAgent'
+import type {
+  AgentTool,
+  AgentContext,
+  ToolExecutionResult,
+} from '@application/ports/IConversationalAgent'
 import type { ListCampaignsUseCase } from '@application/use-cases/campaign/ListCampaignsUseCase'
 import type { CampaignStatus } from '@domain/value-objects/CampaignStatus'
 
 const paramsSchema = z.object({
-  status: z.enum(['DRAFT', 'ACTIVE', 'PAUSED', 'COMPLETED', 'ARCHIVED']).optional().describe('캠페인 상태 필터'),
+  status: z
+    .enum(['DRAFT', 'ACTIVE', 'PAUSED', 'COMPLETED', 'ARCHIVED'])
+    .optional()
+    .describe('캠페인 상태 필터'),
   page: z.number().optional().default(1).describe('페이지 번호'),
   limit: z.number().optional().default(10).describe('페이지 크기'),
 })
@@ -46,8 +53,9 @@ export function createListCampaignsTool(
         }
       }
 
-      const lines = result.data.map((c, i) =>
-        `${i + 1}. **${c.name}** (${STATUS_LABELS[c.status] ?? c.status}) - 일일 예산: ₩${c.dailyBudget.toLocaleString('ko-KR')}`
+      const lines = result.data.map(
+        (c, i) =>
+          `${i + 1}. **${c.name}** (${STATUS_LABELS[c.status] ?? c.status}) - 일일 예산: ₩${c.dailyBudget.toLocaleString('ko-KR')}`
       )
 
       const formattedMessage = [

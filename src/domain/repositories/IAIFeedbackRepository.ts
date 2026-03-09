@@ -60,12 +60,7 @@ export interface IAIFeedbackRepository {
   /**
    * Get all feedback with pagination
    */
-  findAll(options: {
-    page: number
-    limit: number
-    feature?: string
-    userId?: string
-  }): Promise<{
+  findAll(options: { page: number; limit: number; feature?: string; userId?: string }): Promise<{
     data: AIFeedback[]
     total: number
     page: number

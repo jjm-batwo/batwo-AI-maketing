@@ -17,9 +17,7 @@ export function useKeyboardNavigation(
     if (!container) return
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      const articles = Array.from(
-        container.querySelectorAll<HTMLElement>('[role="article"]')
-      )
+      const articles = Array.from(container.querySelectorAll<HTMLElement>('[role="article"]'))
       if (articles.length === 0) return
 
       const currentIndex = articles.indexOf(document.activeElement as HTMLElement)

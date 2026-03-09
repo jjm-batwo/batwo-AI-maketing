@@ -15,7 +15,9 @@ export interface CompetitorTrackingResponseDTO {
   createdAt: string
 }
 
-export function toCompetitorTrackingDTO(tracking: CompetitorTracking): CompetitorTrackingResponseDTO {
+export function toCompetitorTrackingDTO(
+  tracking: CompetitorTracking
+): CompetitorTrackingResponseDTO {
   return {
     id: tracking.id,
     pageId: tracking.pageId,

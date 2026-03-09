@@ -1,5 +1,9 @@
 import { PrismaClient, InvoiceStatus as PrismaStatus, Prisma } from '@/generated/prisma'
-import { IInvoiceRepository, InvoiceFilters, PaymentStats } from '@domain/repositories/IInvoiceRepository'
+import {
+  IInvoiceRepository,
+  InvoiceFilters,
+  PaymentStats,
+} from '@domain/repositories/IInvoiceRepository'
 import { PaginatedResult } from '@domain/repositories/ICampaignRepository'
 import { Invoice } from '@domain/entities/Invoice'
 import { InvoiceStatus } from '@domain/value-objects/InvoiceStatus'
@@ -210,19 +214,14 @@ export class PrismaInvoiceRepository implements IInvoiceRepository {
     const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
     const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0)
 
-    const [
-      totalRevenue,
-      revenueThisMonth,
-      revenueLastMonth,
-      byStatus,
-      refundedThisMonth,
-    ] = await Promise.all([
-      this.sumPaidAmount(fromDate || toDate ? { from: fromDate, to: toDate } : undefined),
-      this.sumPaidAmount({ from: startOfThisMonth }),
-      this.sumPaidAmount({ from: startOfLastMonth, to: endOfLastMonth }),
-      this.countByStatus(),
-      this.sumRefundedAmount({ from: startOfThisMonth }),
-    ])
+    const [totalRevenue, revenueThisMonth, revenueLastMonth, byStatus, refundedThisMonth] =
+      await Promise.all([
+        this.sumPaidAmount(fromDate || toDate ? { from: fromDate, to: toDate } : undefined),
+        this.sumPaidAmount({ from: startOfThisMonth }),
+        this.sumPaidAmount({ from: startOfLastMonth, to: endOfLastMonth }),
+        this.countByStatus(),
+        this.sumRefundedAmount({ from: startOfThisMonth }),
+      ])
 
     const refundedAmount = await this.sumRefundedAmount(
       fromDate || toDate ? { from: fromDate, to: toDate } : undefined

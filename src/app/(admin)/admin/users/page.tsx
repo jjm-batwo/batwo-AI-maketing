@@ -6,10 +6,7 @@ export const metadata: Metadata = {
   title: '회원 관리 | 바투',
   description: '서비스 사용자를 관리하세요',
 }
-import {
-  Card,
-  CardContent,
-} from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -26,14 +23,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import {
-  MoreHorizontal,
-  ChevronLeft,
-  ChevronRight,
-  Eye,
-  Edit,
-  UserCog,
-} from 'lucide-react'
+import { MoreHorizontal, ChevronLeft, ChevronRight, Eye, Edit, UserCog } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import Link from 'next/link'
@@ -80,7 +70,9 @@ function getRoleBadgeVariant(role: string): 'default' | 'secondary' | 'destructi
   }
 }
 
-function getStatusBadgeVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
+function getStatusBadgeVariant(
+  status: string
+): 'default' | 'secondary' | 'destructive' | 'outline' {
   switch (status) {
     case 'ACTIVE':
       return 'default'
@@ -120,9 +112,12 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
   queryParams.set('page', page.toString())
   queryParams.set('limit', limit.toString())
   if (params.search) queryParams.set('search', params.search)
-  if (params.globalRole && params.globalRole !== 'all') queryParams.set('globalRole', params.globalRole)
-  if (params.subscriptionPlan && params.subscriptionPlan !== 'all') queryParams.set('subscriptionPlan', params.subscriptionPlan)
-  if (params.subscriptionStatus && params.subscriptionStatus !== 'all') queryParams.set('subscriptionStatus', params.subscriptionStatus)
+  if (params.globalRole && params.globalRole !== 'all')
+    queryParams.set('globalRole', params.globalRole)
+  if (params.subscriptionPlan && params.subscriptionPlan !== 'all')
+    queryParams.set('subscriptionPlan', params.subscriptionPlan)
+  if (params.subscriptionStatus && params.subscriptionStatus !== 'all')
+    queryParams.set('subscriptionStatus', params.subscriptionStatus)
 
   const data = await fetchUsers(queryParams)
 
@@ -143,9 +138,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">회원 관리</h1>
-        <p className="text-sm text-muted-foreground">
-          총 {data.total.toLocaleString()}명
-        </p>
+        <p className="text-sm text-muted-foreground">총 {data.total.toLocaleString()}명</p>
       </div>
 
       <UsersFilterBar />
@@ -181,20 +174,30 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
                     </TableCell>
                     <TableCell>
                       <Badge variant={getRoleBadgeVariant(user.globalRole)}>
-                        {user.globalRole === 'SUPER_ADMIN' ? '최고 관리자' :
-                         user.globalRole === 'ADMIN' ? '관리자' : '사용자'}
+                        {user.globalRole === 'SUPER_ADMIN'
+                          ? '최고 관리자'
+                          : user.globalRole === 'ADMIN'
+                            ? '관리자'
+                            : '사용자'}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       {user.subscription ? (
                         <div className="flex flex-col gap-1">
                           <Badge variant="outline">{user.subscription.plan}</Badge>
-                          <Badge variant={getStatusBadgeVariant(user.subscription.status)} className="text-xs">
-                            {user.subscription.status === 'ACTIVE' ? '활성' :
-                             user.subscription.status === 'TRIALING' ? '체험' :
-                             user.subscription.status === 'PAST_DUE' ? '연체' :
-                             user.subscription.status === 'CANCELLED' ? '취소됨' :
-                             user.subscription.status}
+                          <Badge
+                            variant={getStatusBadgeVariant(user.subscription.status)}
+                            className="text-xs"
+                          >
+                            {user.subscription.status === 'ACTIVE'
+                              ? '활성'
+                              : user.subscription.status === 'TRIALING'
+                                ? '체험'
+                                : user.subscription.status === 'PAST_DUE'
+                                  ? '연체'
+                                  : user.subscription.status === 'CANCELLED'
+                                    ? '취소됨'
+                                    : user.subscription.status}
                           </Badge>
                         </div>
                       ) : (
@@ -257,18 +260,15 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
           {data.totalPages > 1 && (
             <div className="mt-4 flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
-                {data.total}개 중 {(page - 1) * limit + 1}-
-                {Math.min(page * limit, data.total)}개 표시
+                {data.total}개 중 {(page - 1) * limit + 1}-{Math.min(page * limit, data.total)}개
+                표시
               </p>
               <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  disabled={page <= 1}
-                  asChild={page > 1}
-                >
+                <Button variant="outline" size="icon" disabled={page <= 1} asChild={page > 1}>
                   {page > 1 ? (
-                    <Link href={`/admin/users?${new URLSearchParams({ ...params, page: (page - 1).toString() }).toString()}`}>
+                    <Link
+                      href={`/admin/users?${new URLSearchParams({ ...params, page: (page - 1).toString() }).toString()}`}
+                    >
                       <ChevronLeft className="h-4 w-4" />
                     </Link>
                   ) : (
@@ -285,7 +285,9 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
                   asChild={page < data.totalPages}
                 >
                   {page < data.totalPages ? (
-                    <Link href={`/admin/users?${new URLSearchParams({ ...params, page: (page + 1).toString() }).toString()}`}>
+                    <Link
+                      href={`/admin/users?${new URLSearchParams({ ...params, page: (page + 1).toString() }).toString()}`}
+                    >
                       <ChevronRight className="h-4 w-4" />
                     </Link>
                   ) : (

@@ -4,7 +4,12 @@ import { Suspense, lazy, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ApiSourceBadge } from '@/presentation/components/common/ApiSourceBadge'
 import Link from 'next/link'
-import { KPICard, KPIChart, SavingsWidget, OptimizationTimeline } from '@/presentation/components/dashboard'
+import {
+  KPICard,
+  KPIChart,
+  SavingsWidget,
+  OptimizationTimeline,
+} from '@/presentation/components/dashboard'
 import { DonutChart } from '@/presentation/components/dashboard/DonutChart'
 import type { CampaignMetricColumn } from '@/presentation/components/dashboard/CampaignSummaryTable'
 import {

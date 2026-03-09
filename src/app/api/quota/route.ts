@@ -56,9 +56,6 @@ export async function GET() {
     return NextResponse.json(response)
   } catch (error) {
     console.error('Failed to fetch quota:', error)
-    return NextResponse.json(
-      { message: 'Failed to fetch quota' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to fetch quota' }, { status: 500 })
   }
 }

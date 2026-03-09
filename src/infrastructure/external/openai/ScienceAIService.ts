@@ -13,7 +13,10 @@ import type {
   CreativeVariant,
 } from '@application/ports/IAIService'
 import { formatScienceContextBlock } from './prompts/science'
-import { MarketingIntelligenceService, ScienceBackedResult } from '@application/services/MarketingIntelligenceService'
+import {
+  MarketingIntelligenceService,
+  ScienceBackedResult,
+} from '@application/services/MarketingIntelligenceService'
 
 /**
  * ScienceAIService - Decorator Pattern
@@ -39,9 +42,7 @@ export class ScienceAIService implements IAIService {
     return this.inner.generateCampaignOptimization(enriched)
   }
 
-  async generateReportInsights(
-    input: GenerateReportInsightInput
-  ): Promise<ReportInsight> {
+  async generateReportInsights(input: GenerateReportInsightInput): Promise<ReportInsight> {
     // Report insights don't benefit from science context (they're data-driven)
     return this.inner.generateReportInsights(input)
   }
@@ -58,9 +59,7 @@ export class ScienceAIService implements IAIService {
     return this.inner.generateBudgetRecommendation(input)
   }
 
-  async generateCreativeVariants(
-    input: GenerateCreativeVariantsInput
-  ): Promise<CreativeVariant[]> {
+  async generateCreativeVariants(input: GenerateCreativeVariantsInput): Promise<CreativeVariant[]> {
     const enriched = this.intelligence.enrichCreativeInput(input)
     return this.inner.generateCreativeVariants(enriched)
   }

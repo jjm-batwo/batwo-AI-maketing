@@ -47,9 +47,7 @@ export function toReportDTO(report: Report): ReportDTO {
     campaignIds: report.campaignIds,
     dateRange: {
       startDate: report.dateRange.startDate.toISOString(),
-      endDate:
-        report.dateRange.endDate?.toISOString() ??
-        report.dateRange.startDate.toISOString(),
+      endDate: report.dateRange.endDate?.toISOString() ?? report.dateRange.startDate.toISOString(),
     },
     sections: report.sections,
     aiInsights: report.aiInsights,

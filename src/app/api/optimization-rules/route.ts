@@ -32,10 +32,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ rules })
   } catch (error) {
     console.error('최적화 규칙 목록 조회 실패:', error)
-    return NextResponse.json(
-      { message: '최적화 규칙 목록을 불러오지 못했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: '최적화 규칙 목록을 불러오지 못했습니다' }, { status: 500 })
   }
 }
 
@@ -59,9 +56,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result, { status: 201 })
   } catch (error) {
     console.error('최적화 규칙 생성 실패:', error)
-    return NextResponse.json(
-      { message: '최적화 규칙을 생성하지 못했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: '최적화 규칙을 생성하지 못했습니다' }, { status: 500 })
   }
 }

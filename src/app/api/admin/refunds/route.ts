@@ -1,8 +1,5 @@
 import { NextResponse } from 'next/server'
-import {
-  requireAdmin,
-  handleAdminAuth,
-} from '@/infrastructure/auth/adminMiddleware'
+import { requireAdmin, handleAdminAuth } from '@/infrastructure/auth/adminMiddleware'
 import { getInvoiceRepository } from '@/lib/di/container'
 import { Invoice } from '@domain/entities/Invoice'
 
@@ -31,9 +28,6 @@ export async function GET() {
     })
   } catch (error) {
     console.error('Admin refunds list error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch refunds' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch refunds' }, { status: 500 })
   }
 }

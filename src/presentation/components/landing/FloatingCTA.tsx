@@ -69,7 +69,8 @@ export function FloatingCTA() {
             </div>
 
             {/* Dismiss button */}
-            <button type="button"
+            <button
+              type="button"
               onClick={handleDismiss}
               className="p-2 text-slate-400 hover:text-slate-600 transition-colors rounded-full hover:bg-slate-100"
               aria-label="닫기"

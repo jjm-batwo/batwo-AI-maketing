@@ -28,11 +28,8 @@ export class AuditAdAccountUseCase {
     // 2. 각 캠페인의 인사이트(최근 30일) 병렬 배치 조회 (배치 크기 5)
     const settledResults = await batchSettled(
       campaigns,
-      (campaign) => this.metaAdsService.getCampaignInsights(
-        dto.accessToken,
-        campaign.id,
-        'last_30d'
-      ),
+      (campaign) =>
+        this.metaAdsService.getCampaignInsights(dto.accessToken, campaign.id, 'last_30d'),
       5
     )
 
@@ -65,16 +62,16 @@ export class AuditAdAccountUseCase {
     const auditScore = AuditScore.evaluate(campaignInsights)
 
     // 5. DTO 변환
-    const activeCampaigns = campaigns.filter(c => c.status === 'ACTIVE').length
+    const activeCampaigns = campaigns.filter((c) => c.status === 'ACTIVE').length
 
     return {
       overall: auditScore.overall,
       grade: auditScore.grade,
-      categories: auditScore.categories.map(cat => ({
+      categories: auditScore.categories.map((cat) => ({
         name: cat.name,
         score: cat.score,
-        findings: cat.findings.map(f => ({ type: f.type, message: f.message })),
-        recommendations: cat.recommendations.map(r => ({
+        findings: cat.findings.map((f) => ({ type: f.type, message: f.message })),
+        recommendations: cat.recommendations.map((r) => ({
           priority: r.priority,
           message: r.message,
           estimatedImpact: r.estimatedImpact,

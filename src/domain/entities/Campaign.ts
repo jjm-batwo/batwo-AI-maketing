@@ -62,7 +62,7 @@ export class Campaign extends AggregateRoot {
     private readonly _createdAt: Date,
     private readonly _updatedAt: Date,
     private readonly _buyingType: string = 'AUCTION',
-    private readonly _advantageConfig: AdvantageConfig | undefined = undefined,
+    private readonly _advantageConfig: AdvantageConfig | undefined = undefined
   ) {
     super()
   }
@@ -89,7 +89,7 @@ export class Campaign extends AggregateRoot {
       now,
       now,
       props.buyingType ?? 'AUCTION',
-      props.advantageConfig,
+      props.advantageConfig
     )
 
     // Raise domain event
@@ -124,7 +124,7 @@ export class Campaign extends AggregateRoot {
       props.createdAt,
       props.updatedAt,
       props.buyingType ?? 'AUCTION',
-      props.advantageConfig,
+      props.advantageConfig
     )
   }
 
@@ -240,7 +240,7 @@ export class Campaign extends AggregateRoot {
       this._createdAt,
       new Date(),
       this._buyingType,
-      this._advantageConfig,
+      this._advantageConfig
     )
 
     // Raise domain event
@@ -280,7 +280,7 @@ export class Campaign extends AggregateRoot {
       this._createdAt,
       new Date(),
       this._buyingType,
-      this._advantageConfig,
+      this._advantageConfig
     )
 
     // Raise domain event
@@ -363,7 +363,7 @@ export class Campaign extends AggregateRoot {
       this._createdAt,
       new Date(),
       this._buyingType,
-      this._advantageConfig,
+      this._advantageConfig
     )
   }
 
@@ -386,7 +386,7 @@ export class Campaign extends AggregateRoot {
       this._createdAt,
       new Date(),
       this._buyingType,
-      this._advantageConfig,
+      this._advantageConfig
     )
   }
 

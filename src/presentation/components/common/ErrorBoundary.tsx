@@ -32,7 +32,7 @@ export class ErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error to error reporting service
     console.error('ErrorBoundary caught an error:', error, errorInfo)
-    
+
     // Call optional error handler
     this.props.onError?.(error, errorInfo)
   }
@@ -61,9 +61,7 @@ export class ErrorBoundary extends Component<Props, State> {
               <Button onClick={this.handleReset} variant="outline">
                 다시 시도
               </Button>
-              <Button onClick={() => window.location.href = '/'}>
-                홈으로 이동
-              </Button>
+              <Button onClick={() => (window.location.href = '/')}>홈으로 이동</Button>
             </div>
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className="mt-6 text-left">

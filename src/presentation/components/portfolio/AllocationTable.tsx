@@ -55,8 +55,8 @@ export function AllocationTable({ allocations }: AllocationTableProps) {
                   row.changePercent > 0
                     ? 'text-green-600 dark:text-green-400'
                     : row.changePercent < 0
-                    ? 'text-red-600 dark:text-red-400'
-                    : 'text-muted-foreground'
+                      ? 'text-red-600 dark:text-red-400'
+                      : 'text-muted-foreground'
                 )}
               >
                 {formatPercent(row.changePercent)}

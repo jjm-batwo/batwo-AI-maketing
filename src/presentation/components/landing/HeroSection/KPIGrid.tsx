@@ -62,8 +62,8 @@ const KPICard = memo(function KPICard({ kpi, index }: KPICardProps) {
             kpi.trend.includes('↑')
               ? 'text-green-600 font-medium'
               : kpi.trend.includes('↓')
-              ? 'text-destructive font-medium'
-              : 'font-medium'
+                ? 'text-destructive font-medium'
+                : 'font-medium'
           }
         >
           {kpi.trend}

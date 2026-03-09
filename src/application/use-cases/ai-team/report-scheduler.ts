@@ -12,62 +12,62 @@
 /**
  * 보고서 타입
  */
-export type ReportType = 'daily' | 'weekly' | 'incident' | 'tdd-compliance';
+export type ReportType = 'daily' | 'weekly' | 'incident' | 'tdd-compliance'
 
 /**
  * 스케줄 타입
  */
-export type ScheduleType = 'daily' | 'weekly';
+export type ScheduleType = 'daily' | 'weekly'
 
 /**
  * 트리거 타입
  */
-export type TriggerType = 'manual' | 'scheduled' | 'event';
+export type TriggerType = 'manual' | 'scheduled' | 'event'
 
 /**
  * 스케줄 설정
  */
 export interface ScheduleConfig {
-  type: ScheduleType;
-  time: string; // HH:mm 형식
-  timezone: string;
-  dayOfWeek?: number; // 0-6 (일-토), weekly 타입에서만 사용
-  notifyTargets?: string[];
+  type: ScheduleType
+  time: string // HH:mm 형식
+  timezone: string
+  dayOfWeek?: number // 0-6 (일-토), weekly 타입에서만 사용
+  notifyTargets?: string[]
 }
 
 /**
  * 스케줄된 보고서
  */
 export interface ScheduledReport {
-  id: string;
-  type: ScheduleType;
-  time: string;
-  timezone: string;
-  dayOfWeek?: number;
-  enabled: boolean;
-  notifyTargets?: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  id: string
+  type: ScheduleType
+  time: string
+  timezone: string
+  dayOfWeek?: number
+  enabled: boolean
+  notifyTargets?: string[]
+  createdAt: Date
+  updatedAt: Date
 }
 
 /**
  * 보고서 트리거
  */
 export interface ReportTrigger {
-  type: TriggerType;
-  reportType: ReportType;
-  eventData?: Record<string, unknown>;
+  type: TriggerType
+  reportType: ReportType
+  eventData?: Record<string, unknown>
 }
 
 /**
  * 트리거된 보고서
  */
 export interface TriggeredReport {
-  id: string;
-  reportType: ReportType;
-  triggerType: TriggerType;
-  triggeredAt: Date;
-  eventData?: Record<string, unknown>;
+  id: string
+  reportType: ReportType
+  triggerType: TriggerType
+  triggeredAt: Date
+  eventData?: Record<string, unknown>
 }
 
 /**
@@ -81,23 +81,23 @@ const DAY_OF_WEEK_KOREAN: Record<number, string> = {
   4: '목요일',
   5: '금요일',
   6: '토요일',
-};
+}
 
 /**
  * 보고서 스케줄러
  */
 export class ReportScheduler {
-  private schedules: Map<string, ScheduledReport> = new Map();
-  private history: TriggeredReport[] = [];
-  private scheduleCounter = 0;
-  private reportCounter = 0;
+  private schedules: Map<string, ScheduledReport> = new Map()
+  private history: TriggeredReport[] = []
+  private scheduleCounter = 0
+  private reportCounter = 0
 
   /**
    * 일일 보고서 스케줄링
    */
   scheduleDailyReport(config: ScheduleConfig): ScheduledReport {
-    const id = this.generateScheduleId();
-    const now = new Date();
+    const id = this.generateScheduleId()
+    const now = new Date()
 
     const schedule: ScheduledReport = {
       id,
@@ -108,18 +108,18 @@ export class ReportScheduler {
       notifyTargets: config.notifyTargets,
       createdAt: now,
       updatedAt: now,
-    };
+    }
 
-    this.schedules.set(id, schedule);
-    return schedule;
+    this.schedules.set(id, schedule)
+    return schedule
   }
 
   /**
    * 주간 보고서 스케줄링
    */
   scheduleWeeklyReport(config: ScheduleConfig): ScheduledReport {
-    const id = this.generateScheduleId();
-    const now = new Date();
+    const id = this.generateScheduleId()
+    const now = new Date()
 
     const schedule: ScheduledReport = {
       id,
@@ -131,76 +131,76 @@ export class ReportScheduler {
       notifyTargets: config.notifyTargets,
       createdAt: now,
       updatedAt: now,
-    };
+    }
 
-    this.schedules.set(id, schedule);
-    return schedule;
+    this.schedules.set(id, schedule)
+    return schedule
   }
 
   /**
    * 스케줄 비활성화
    */
   disableSchedule(scheduleId: string): ScheduledReport {
-    const schedule = this.schedules.get(scheduleId);
+    const schedule = this.schedules.get(scheduleId)
     if (!schedule) {
-      throw new Error(`Schedule not found: ${scheduleId}`);
+      throw new Error(`Schedule not found: ${scheduleId}`)
     }
 
-    schedule.enabled = false;
-    schedule.updatedAt = new Date();
-    this.schedules.set(scheduleId, schedule);
-    return schedule;
+    schedule.enabled = false
+    schedule.updatedAt = new Date()
+    this.schedules.set(scheduleId, schedule)
+    return schedule
   }
 
   /**
    * 스케줄 활성화
    */
   enableSchedule(scheduleId: string): ScheduledReport {
-    const schedule = this.schedules.get(scheduleId);
+    const schedule = this.schedules.get(scheduleId)
     if (!schedule) {
-      throw new Error(`Schedule not found: ${scheduleId}`);
+      throw new Error(`Schedule not found: ${scheduleId}`)
     }
 
-    schedule.enabled = true;
-    schedule.updatedAt = new Date();
-    this.schedules.set(scheduleId, schedule);
-    return schedule;
+    schedule.enabled = true
+    schedule.updatedAt = new Date()
+    this.schedules.set(scheduleId, schedule)
+    return schedule
   }
 
   /**
    * 다음 실행 시간 계산
    */
   getNextRunTime(scheduleId: string): Date | undefined {
-    const schedule = this.schedules.get(scheduleId);
+    const schedule = this.schedules.get(scheduleId)
     if (!schedule) {
-      return undefined;
+      return undefined
     }
 
-    const now = new Date();
-    const [hours, minutes] = schedule.time.split(':').map(Number);
+    const now = new Date()
+    const [hours, minutes] = schedule.time.split(':').map(Number)
 
     if (schedule.type === 'daily') {
-      return this.calculateNextDailyRun(now, hours, minutes);
+      return this.calculateNextDailyRun(now, hours, minutes)
     } else if (schedule.type === 'weekly' && schedule.dayOfWeek !== undefined) {
-      return this.calculateNextWeeklyRun(now, schedule.dayOfWeek, hours, minutes);
+      return this.calculateNextWeeklyRun(now, schedule.dayOfWeek, hours, minutes)
     }
 
-    return undefined;
+    return undefined
   }
 
   /**
    * 다음 일일 실행 시간 계산
    */
   private calculateNextDailyRun(now: Date, hours: number, minutes: number): Date {
-    const nextRun = new Date(now);
-    nextRun.setHours(hours, minutes, 0, 0);
+    const nextRun = new Date(now)
+    nextRun.setHours(hours, minutes, 0, 0)
 
     // 이미 지난 시간이면 다음 날로
     if (nextRun <= now) {
-      nextRun.setDate(nextRun.getDate() + 1);
+      nextRun.setDate(nextRun.getDate() + 1)
     }
 
-    return nextRun;
+    return nextRun
   }
 
   /**
@@ -212,26 +212,26 @@ export class ReportScheduler {
     hours: number,
     minutes: number
   ): Date {
-    const nextRun = new Date(now);
-    const currentDay = now.getDay();
+    const nextRun = new Date(now)
+    const currentDay = now.getDay()
 
     // 목표 요일까지 남은 일수 계산
-    let daysUntilTarget = targetDay - currentDay;
+    let daysUntilTarget = targetDay - currentDay
     if (daysUntilTarget <= 0) {
-      daysUntilTarget += 7;
+      daysUntilTarget += 7
     }
 
-    nextRun.setDate(nextRun.getDate() + daysUntilTarget);
-    nextRun.setHours(hours, minutes, 0, 0);
+    nextRun.setDate(nextRun.getDate() + daysUntilTarget)
+    nextRun.setHours(hours, minutes, 0, 0)
 
-    return nextRun;
+    return nextRun
   }
 
   /**
    * 보고서 트리거
    */
   triggerReport(trigger: ReportTrigger): TriggeredReport {
-    const id = this.generateReportId();
+    const id = this.generateReportId()
 
     const triggered: TriggeredReport = {
       id,
@@ -239,115 +239,115 @@ export class ReportScheduler {
       triggerType: trigger.type,
       triggeredAt: new Date(),
       eventData: trigger.eventData,
-    };
+    }
 
-    this.history.push(triggered);
-    return triggered;
+    this.history.push(triggered)
+    return triggered
   }
 
   /**
    * 활성 스케줄 조회
    */
   getActiveSchedules(): ScheduledReport[] {
-    return Array.from(this.schedules.values()).filter((s) => s.enabled);
+    return Array.from(this.schedules.values()).filter((s) => s.enabled)
   }
 
   /**
    * 스케줄 삭제
    */
   deleteSchedule(scheduleId: string): boolean {
-    return this.schedules.delete(scheduleId);
+    return this.schedules.delete(scheduleId)
   }
 
   /**
    * 스케줄 시간 업데이트
    */
   updateScheduleTime(scheduleId: string, newTime: string): ScheduledReport {
-    const schedule = this.schedules.get(scheduleId);
+    const schedule = this.schedules.get(scheduleId)
     if (!schedule) {
-      throw new Error(`Schedule not found: ${scheduleId}`);
+      throw new Error(`Schedule not found: ${scheduleId}`)
     }
 
-    schedule.time = newTime;
-    schedule.updatedAt = new Date();
-    this.schedules.set(scheduleId, schedule);
-    return schedule;
+    schedule.time = newTime
+    schedule.updatedAt = new Date()
+    this.schedules.set(scheduleId, schedule)
+    return schedule
   }
 
   /**
    * 보고서 히스토리 조회
    */
   getReportHistory(): TriggeredReport[] {
-    return [...this.history];
+    return [...this.history]
   }
 
   /**
    * 기간별 보고서 히스토리 조회
    */
   getReportHistoryByDateRange(start: Date, end: Date): TriggeredReport[] {
-    return this.history.filter((r) => r.triggeredAt >= start && r.triggeredAt <= end);
+    return this.history.filter((r) => r.triggeredAt >= start && r.triggeredAt <= end)
   }
 
   /**
    * 타입별 보고서 히스토리 조회
    */
   getReportHistoryByType(reportType: ReportType): TriggeredReport[] {
-    return this.history.filter((r) => r.reportType === reportType);
+    return this.history.filter((r) => r.reportType === reportType)
   }
 
   /**
    * 알림 대상 추가
    */
   addNotifyTarget(scheduleId: string, target: string): ScheduledReport {
-    const schedule = this.schedules.get(scheduleId);
+    const schedule = this.schedules.get(scheduleId)
     if (!schedule) {
-      throw new Error(`Schedule not found: ${scheduleId}`);
+      throw new Error(`Schedule not found: ${scheduleId}`)
     }
 
-    schedule.notifyTargets = schedule.notifyTargets || [];
+    schedule.notifyTargets = schedule.notifyTargets || []
     if (!schedule.notifyTargets.includes(target)) {
-      schedule.notifyTargets.push(target);
+      schedule.notifyTargets.push(target)
     }
-    schedule.updatedAt = new Date();
-    this.schedules.set(scheduleId, schedule);
-    return schedule;
+    schedule.updatedAt = new Date()
+    this.schedules.set(scheduleId, schedule)
+    return schedule
   }
 
   /**
    * 알림 대상 제거
    */
   removeNotifyTarget(scheduleId: string, target: string): ScheduledReport {
-    const schedule = this.schedules.get(scheduleId);
+    const schedule = this.schedules.get(scheduleId)
     if (!schedule) {
-      throw new Error(`Schedule not found: ${scheduleId}`);
+      throw new Error(`Schedule not found: ${scheduleId}`)
     }
 
-    schedule.notifyTargets = (schedule.notifyTargets || []).filter((t) => t !== target);
-    schedule.updatedAt = new Date();
-    this.schedules.set(scheduleId, schedule);
-    return schedule;
+    schedule.notifyTargets = (schedule.notifyTargets || []).filter((t) => t !== target)
+    schedule.updatedAt = new Date()
+    this.schedules.set(scheduleId, schedule)
+    return schedule
   }
 
   /**
    * 요일 한국어 변환
    */
   getDayOfWeekKorean(dayOfWeek: number): string {
-    return DAY_OF_WEEK_KOREAN[dayOfWeek] || '';
+    return DAY_OF_WEEK_KOREAN[dayOfWeek] || ''
   }
 
   /**
    * 스케줄 ID 생성
    */
   private generateScheduleId(): string {
-    this.scheduleCounter++;
-    return `schedule-${this.scheduleCounter}`;
+    this.scheduleCounter++
+    return `schedule-${this.scheduleCounter}`
   }
 
   /**
    * 보고서 ID 생성
    */
   private generateReportId(): string {
-    this.reportCounter++;
-    return `report-${this.reportCounter}`;
+    this.reportCounter++
+    return `report-${this.reportCounter}`
   }
 }

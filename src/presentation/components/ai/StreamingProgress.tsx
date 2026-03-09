@@ -24,17 +24,22 @@ export const StreamingProgress = memo(function StreamingProgress({
   stage,
   progress,
   stages = ['분석', '생성', '최적화'],
-  className = ''
+  className = '',
 }: StreamingProgressProps) {
-  const currentStageIndex = stages.findIndex((s) =>
-    s.toLowerCase() === stage.toLowerCase() ||
-    stage.toLowerCase().includes(s.toLowerCase())
+  const currentStageIndex = stages.findIndex(
+    (s) => s.toLowerCase() === stage.toLowerCase() || stage.toLowerCase().includes(s.toLowerCase())
   )
 
   const normalizedProgress = Math.min(100, Math.max(0, progress))
 
   return (
-    <div className={`w-full space-y-4 ${className}`} role="progressbar" aria-valuenow={normalizedProgress} aria-valuemin={0} aria-valuemax={100}>
+    <div
+      className={`w-full space-y-4 ${className}`}
+      role="progressbar"
+      aria-valuenow={normalizedProgress}
+      aria-valuemin={0}
+      aria-valuemax={100}
+    >
       {/* Stage Steps */}
       {stages.length > 0 && (
         <div className="flex justify-between items-center">
@@ -43,17 +48,16 @@ export const StreamingProgress = memo(function StreamingProgress({
             const isCompleted = currentStageIndex > index
 
             return (
-              <div
-                key={stageName}
-                className="flex flex-col items-center gap-2 flex-1"
-              >
+              <div key={stageName} className="flex flex-col items-center gap-2 flex-1">
                 {/* Step Indicator */}
                 <div className="flex items-center w-full">
                   {/* Line Before (except first) */}
                   {index > 0 && (
-                    <div className={`h-0.5 flex-1 transition-colors duration-500 ${
-                      isCompleted ? 'bg-primary' : 'bg-muted'
-                    }`} />
+                    <div
+                      className={`h-0.5 flex-1 transition-colors duration-500 ${
+                        isCompleted ? 'bg-primary' : 'bg-muted'
+                      }`}
+                    />
                   )}
 
                   {/* Dot */}
@@ -62,8 +66,8 @@ export const StreamingProgress = memo(function StreamingProgress({
                       isActive
                         ? 'bg-primary ring-4 ring-primary/20 scale-110'
                         : isCompleted
-                        ? 'bg-primary'
-                        : 'bg-muted'
+                          ? 'bg-primary'
+                          : 'bg-muted'
                     }`}
                     aria-current={isActive ? 'step' : undefined}
                   >
@@ -87,9 +91,11 @@ export const StreamingProgress = memo(function StreamingProgress({
 
                   {/* Line After (except last) */}
                   {index < stages.length - 1 && (
-                    <div className={`h-0.5 flex-1 transition-colors duration-500 ${
-                      isCompleted ? 'bg-primary' : 'bg-muted'
-                    }`} />
+                    <div
+                      className={`h-0.5 flex-1 transition-colors duration-500 ${
+                        isCompleted ? 'bg-primary' : 'bg-muted'
+                      }`}
+                    />
                   )}
                 </div>
 
@@ -99,8 +105,8 @@ export const StreamingProgress = memo(function StreamingProgress({
                     isActive
                       ? 'text-primary'
                       : isCompleted
-                      ? 'text-foreground'
-                      : 'text-muted-foreground'
+                        ? 'text-foreground'
+                        : 'text-muted-foreground'
                   }`}
                 >
                   {stageName}
@@ -122,7 +128,7 @@ export const StreamingProgress = memo(function StreamingProgress({
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"
             style={{
               animation: 'shimmer 2s infinite',
-              backgroundSize: '200% 100%'
+              backgroundSize: '200% 100%',
             }}
           />
         </div>

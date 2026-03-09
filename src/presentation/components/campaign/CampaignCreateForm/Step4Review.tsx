@@ -36,9 +36,7 @@ export function Step4Review() {
         </div>
         <div className="flex justify-between p-4">
           <span className="text-muted-foreground">캠페인 목표</span>
-          <span className="font-medium">
-            {objectiveLabels[formData.objective]}
-          </span>
+          <span className="font-medium">{objectiveLabels[formData.objective]}</span>
         </div>
         <div className="flex justify-between p-4">
           <span className="text-muted-foreground">타겟 연령</span>
@@ -48,21 +46,15 @@ export function Step4Review() {
         </div>
         <div className="flex justify-between p-4">
           <span className="text-muted-foreground">타겟 성별</span>
-          <span className="font-medium">
-            {genderLabels[formData.targetAudience.gender]}
-          </span>
+          <span className="font-medium">{genderLabels[formData.targetAudience.gender]}</span>
         </div>
         <div className="flex justify-between p-4">
           <span className="text-muted-foreground">타겟 지역</span>
-          <span className="font-medium">
-            {formData.targetAudience.locations.join(', ')}
-          </span>
+          <span className="font-medium">{formData.targetAudience.locations.join(', ')}</span>
         </div>
         <div className="flex justify-between p-4">
           <span className="text-muted-foreground">일일 예산</span>
-          <span className="font-medium">
-            {formData.dailyBudget.toLocaleString()}원
-          </span>
+          <span className="font-medium">{formData.dailyBudget.toLocaleString()}원</span>
         </div>
         <div className="flex justify-between p-4">
           <span className="text-muted-foreground">시작일</span>
@@ -78,7 +70,8 @@ export function Step4Review() {
 
       <div className="rounded-lg bg-blue-50 p-4">
         <p className="text-sm text-blue-800">
-          <Rocket className="h-4 w-4 inline" /> 캠페인 생성 후 Meta 광고 계정에 연결하면 바로 광고가 시작됩니다.
+          <Rocket className="h-4 w-4 inline" /> 캠페인 생성 후 Meta 광고 계정에 연결하면 바로 광고가
+          시작됩니다.
         </p>
       </div>
     </div>

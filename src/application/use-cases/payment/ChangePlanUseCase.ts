@@ -9,7 +9,10 @@ import { PaymentError } from '@domain/errors/PaymentError'
 import { PLAN_CONFIGS, isFreePlan } from '@domain/value-objects/SubscriptionPlan'
 import { getBillingAmount } from '@domain/value-objects/BillingPeriod'
 import { decryptBillingKey } from '@application/utils/BillingKeyEncryption'
-import type { ChangePlanRequestDTO, SubscriptionResultDTO } from '@application/dto/payment/PaymentDTOs'
+import type {
+  ChangePlanRequestDTO,
+  SubscriptionResultDTO,
+} from '@application/dto/payment/PaymentDTOs'
 
 export class ChangePlanUseCase {
   constructor(
@@ -46,7 +49,11 @@ export class ChangePlanUseCase {
 
     // 4. Calculate prorated amount
     const newPlanConfig = PLAN_CONFIGS[newPlan]
-    const newAmount = getBillingAmount(newPlanConfig.price, newPlanConfig.annualPrice, newBillingPeriod)
+    const newAmount = getBillingAmount(
+      newPlanConfig.price,
+      newPlanConfig.annualPrice,
+      newBillingPeriod
+    )
 
     const oldPlanConfig = PLAN_CONFIGS[subscription.plan]
     const oldAmount = getBillingAmount(

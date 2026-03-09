@@ -1,5 +1,9 @@
 import type { IKnowledgeBaseService, AnalysisInput } from '@application/ports/IKnowledgeBaseService'
-import type { GenerateAdCopyInput, GenerateOptimizationInput, GenerateCreativeVariantsInput } from '@application/ports/IAIService'
+import type {
+  GenerateAdCopyInput,
+  GenerateOptimizationInput,
+  GenerateCreativeVariantsInput,
+} from '@application/ports/IAIService'
 import type { CompositeScore } from '@domain/value-objects/MarketingScience'
 import type { IResearchService, ResearchResult } from '@application/ports/IResearchService'
 
@@ -12,7 +16,7 @@ export interface ScienceBackedResult<T> {
 export class MarketingIntelligenceService {
   constructor(
     private readonly knowledgeBase: IKnowledgeBaseService,
-    private readonly researchService?: IResearchService,
+    private readonly researchService?: IResearchService
   ) {}
 
   /**
@@ -101,11 +105,7 @@ export class MarketingIntelligenceService {
   private appendResearchContext(baseContext: string, research: ResearchResult): string {
     if (research.findings.length === 0) return baseContext
 
-    const researchLines: string[] = [
-      '',
-      '=== 최신 리서치 인사이트 ===',
-      '',
-    ]
+    const researchLines: string[] = ['', '=== 최신 리서치 인사이트 ===', '']
 
     for (let i = 0; i < Math.min(5, research.findings.length); i++) {
       researchLines.push(`${i + 1}. ${research.findings[i]}`)

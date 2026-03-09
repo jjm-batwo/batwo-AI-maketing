@@ -51,27 +51,11 @@ export {
   type ConversionEventProps,
   type CreateConversionEventProps,
 } from './ConversionEvent'
-export {
-  Subscription,
-  type SubscriptionProps,
-  type CreateSubscriptionProps,
-} from './Subscription'
-export {
-  Invoice,
-  type InvoiceProps,
-  type CreateInvoiceProps,
-} from './Invoice'
-export {
-  TeamRoleEntity,
-  type TeamRoleName,
-  type TeamRoleProps,
-} from './TeamRole'
+export { Subscription, type SubscriptionProps, type CreateSubscriptionProps } from './Subscription'
+export { Invoice, type InvoiceProps, type CreateInvoiceProps } from './Invoice'
+export { TeamRoleEntity, type TeamRoleName, type TeamRoleProps } from './TeamRole'
 
-export {
-  OptimizationRule,
-  type OptimizationRuleProps,
-  type RuleType,
-} from './OptimizationRule'
+export { OptimizationRule, type OptimizationRuleProps, type RuleType } from './OptimizationRule'
 
 // Re-export domain events for convenience
 export * from '../events'

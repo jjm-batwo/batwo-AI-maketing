@@ -1,10 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
-import { getAIService, getQuotaService, getCopyLearningService, getStreamingAIService } from '@/lib/di/container'
+import {
+  getAIService,
+  getQuotaService,
+  getCopyLearningService,
+  getStreamingAIService,
+} from '@/lib/di/container'
 import type { GenerateAdCopyInput } from '@application/ports/IAIService'
-import type { Industry, CopyHookType } from '@infrastructure/external/openai/prompts/adCopyGeneration'
+import type {
+  Industry,
+  CopyHookType,
+} from '@infrastructure/external/openai/prompts/adCopyGeneration'
 import { INDUSTRY_BENCHMARKS } from '@infrastructure/external/openai/prompts/adCopyGeneration'
-import { checkRateLimit, getClientIp, addRateLimitHeaders, rateLimitExceededResponse } from '@/lib/middleware/rateLimit'
+import {
+  checkRateLimit,
+  getClientIp,
+  addRateLimitHeaders,
+  rateLimitExceededResponse,
+} from '@/lib/middleware/rateLimit'
 
 const VALID_TONES = ['professional', 'casual', 'playful', 'urgent'] as const
 const VALID_OBJECTIVES = ['awareness', 'consideration', 'conversion'] as const
@@ -275,7 +288,7 @@ async function handleStreamingCopyResponse(
   const headers = new Headers({
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive',
+    Connection: 'keep-alive',
   })
 
   if (rateLimitResult) {

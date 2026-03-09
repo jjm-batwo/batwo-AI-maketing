@@ -13,12 +13,7 @@ export interface FacebookStatusResponse {
 }
 
 export interface FacebookSDK {
-  init: (params: {
-    appId: string
-    cookie: boolean
-    xfbml: boolean
-    version: string
-  }) => void
+  init: (params: { appId: string; cookie: boolean; xfbml: boolean; version: string }) => void
   getLoginStatus: (callback: (response: FacebookStatusResponse) => void) => void
   login: (callback: (response: FacebookStatusResponse) => void, options?: { scope: string }) => void
   AppEvents: {

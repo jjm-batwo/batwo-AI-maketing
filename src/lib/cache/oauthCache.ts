@@ -118,11 +118,13 @@ class OAuthCache {
    */
   async delete(sessionId: string): Promise<void> {
     try {
-      await prisma.oAuthSession.delete({
-        where: { id: sessionId },
-      }).catch(() => {
-        // 이미 삭제된 경우 무시
-      })
+      await prisma.oAuthSession
+        .delete({
+          where: { id: sessionId },
+        })
+        .catch(() => {
+          // 이미 삭제된 경우 무시
+        })
     } catch (err) {
       console.error('[OAUTH CACHE] Failed to delete session:', err)
     }
@@ -187,7 +189,10 @@ export const oauthCache = new OAuthCache()
 
 // 주기적인 정리 작업 (5분마다) - 서버 사이드에서만
 if (typeof window === 'undefined') {
-  setInterval(() => {
-    oauthCache.cleanup()
-  }, 5 * 60 * 1000)
+  setInterval(
+    () => {
+      oauthCache.cleanup()
+    },
+    5 * 60 * 1000
+  )
 }

@@ -76,10 +76,7 @@ export function CitationCard({ source, finding, applicability, className }: Cita
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Badge
-                  variant="outline"
-                  className={cn('font-semibold border', config.color)}
-                >
+                <Badge variant="outline" className={cn('font-semibold border', config.color)}>
                   {config.label}
                 </Badge>
               </TooltipTrigger>
@@ -90,9 +87,7 @@ export function CitationCard({ source, finding, applicability, className }: Cita
           </TooltipProvider>
         </div>
 
-        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-3">
-          {finding}
-        </p>
+        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-3">{finding}</p>
 
         <div className="relative h-1.5 bg-gray-200/50 dark:bg-gray-700/30 rounded-full overflow-hidden">
           <div
@@ -153,7 +148,10 @@ export function CitationList({
         )}
       >
         <CardContent className="p-8 text-center">
-          <Sparkles className="h-12 w-12 mx-auto mb-3 text-gray-400 dark:text-gray-600" aria-hidden="true" />
+          <Sparkles
+            className="h-12 w-12 mx-auto mb-3 text-gray-400 dark:text-gray-600"
+            aria-hidden="true"
+          />
           <p className="text-sm text-gray-600 dark:text-gray-400">인용 정보가 없습니다</p>
         </CardContent>
       </Card>
@@ -168,9 +166,7 @@ export function CitationList({
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <BookOpen className="h-5 w-5 text-violet-600 dark:text-violet-400" aria-hidden="true" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            과학적 근거
-          </h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">과학적 근거</h3>
         </div>
         <Badge
           variant="outline"
@@ -192,7 +188,8 @@ export function CitationList({
       </div>
 
       {hasMore && (
-        <button type="button"
+        <button
+          type="button"
           onClick={() => setIsExpanded(!isExpanded)}
           className={cn(
             'w-full py-3 rounded-xl',

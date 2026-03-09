@@ -30,25 +30,22 @@ export {
   AISuggestionBubble,
   CompactAISuggestion,
   TooltipAISuggestion,
-  useSuggestionState
+  useSuggestionState,
 } from './AISuggestionBubble'
 export type {
   AISuggestionBubbleProps,
   CompactAISuggestionProps,
   TooltipAISuggestionProps,
-  UseSuggestionStateProps
+  UseSuggestionStateProps,
 } from './AISuggestionBubble'
 
 export {
   ContextualAIProvider,
   useContextTracking,
   useSuggestionTiming,
-  useManualSuggestion
+  useManualSuggestion,
 } from './ContextualAIProvider'
-export type {
-  ContextualAIProviderProps,
-  SuggestionMapping
-} from './ContextualAIProvider'
+export type { ContextualAIProviderProps, SuggestionMapping } from './ContextualAIProvider'
 
 // Feature Discovery & Onboarding Components
 export { AIFeatureTour } from './AIFeatureTour'

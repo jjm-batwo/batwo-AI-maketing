@@ -114,9 +114,7 @@ export const CAMPAIGN_TEMPLATES: Record<CampaignTemplateId, CampaignTemplate> = 
   },
 }
 
-export function getCampaignTemplate(
-  id: CampaignTemplateId
-): CampaignTemplate | undefined {
+export function getCampaignTemplate(id: CampaignTemplateId): CampaignTemplate | undefined {
   return CAMPAIGN_TEMPLATES[id]
 }
 

@@ -1,7 +1,4 @@
-import type {
-  AIConfig,
-  GenerateCreativeVariantsInput,
-} from '@application/ports/IAIService'
+import type { AIConfig, GenerateCreativeVariantsInput } from '@application/ports/IAIService'
 
 /**
  * 크리에이티브 A/B 테스트 변형 생성 시스템 프롬프트
@@ -71,9 +68,7 @@ JSON 배열로 3개의 변형을 제공하세요:
 /**
  * 크리에이티브 변형 생성 프롬프트 빌더
  */
-export function buildCreativeTestDesignPrompt(
-  input: GenerateCreativeVariantsInput
-): string {
+export function buildCreativeTestDesignPrompt(input: GenerateCreativeVariantsInput): string {
   const elementNames: Record<string, string> = {
     headline: '헤드라인',
     primary_text: '본문 텍스트',

@@ -154,7 +154,7 @@ export class OptimizationRule {
    * @param dailyBudget spend_pace 조건에 필요한 일 예산 (선택)
    */
   evaluate(kpi: KPI, dailyBudget?: number): boolean {
-    return this.conditions.every(condition => condition.evaluate(kpi, dailyBudget))
+    return this.conditions.every((condition) => condition.evaluate(kpi, dailyBudget))
   }
 
   /**

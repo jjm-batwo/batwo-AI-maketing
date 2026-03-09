@@ -21,7 +21,7 @@ export class ActionConfirmationService {
     private readonly pendingActionRepo: IPendingActionRepository,
     private readonly conversationRepo: IConversationRepository,
     private readonly toolRegistry: IToolRegistry,
-    private readonly buildAgentContext: (userId: string) => Promise<AgentContext>,
+    private readonly buildAgentContext: (userId: string) => Promise<AgentContext>
   ) {}
 
   /**

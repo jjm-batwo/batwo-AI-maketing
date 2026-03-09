@@ -8,9 +8,7 @@ export class InvalidInvoiceError extends DomainError {
   }
 
   static invalidStatusTransition(from: string, to: string): InvalidInvoiceError {
-    return new InvalidInvoiceError(
-      `Cannot transition invoice from ${from} to ${to}`
-    )
+    return new InvalidInvoiceError(`Cannot transition invoice from ${from} to ${to}`)
   }
 
   static invalidAmount(): InvalidInvoiceError {

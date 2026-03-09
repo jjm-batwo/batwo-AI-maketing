@@ -27,12 +27,7 @@ export const QUERY_PATTERNS = {
   // 캠페인 확장/스케일링
   scaling: {
     keywords: ['확장', '스케일', '늘리', '증액', '키우'],
-    considerations: [
-      '타겟 오디언스 포화도',
-      '현재 ROAS 안정성',
-      '광고 피로도',
-      '시장 경쟁 상황',
-    ],
+    considerations: ['타겟 오디언스 포화도', '현재 ROAS 안정성', '광고 피로도', '시장 경쟁 상황'],
   },
 
   // 예산 배분
@@ -77,14 +72,7 @@ export const QUERY_PATTERNS = {
   // 시즌/트렌드
   seasonal: {
     keywords: ['시즌', '트렌드', '계절', '이벤트', '시기'],
-    events: [
-      '설날',
-      '밸런타인',
-      '화이트데이',
-      '블랙프라이데이',
-      '크리스마스',
-      '연말',
-    ],
+    events: ['설날', '밸런타인', '화이트데이', '블랙프라이데이', '크리스마스', '연말'],
   },
 
   // 2026 Meta Trinity 기반 신규 패턴
@@ -203,25 +191,24 @@ export function buildChatContextPrompt(context: {
   const campaignList =
     context.campaigns.length > 0
       ? context.campaigns
-        .map(
-          (c) =>
-            `- ${c.name} (${c.status}): ROAS ${c.roas.toFixed(2)}x, 지출 ₩${c.spend.toLocaleString('ko-KR')}, 전환 ${c.conversions}개`
-        )
-        .join('\n')
+          .map(
+            (c) =>
+              `- ${c.name} (${c.status}): ROAS ${c.roas.toFixed(2)}x, 지출 ₩${c.spend.toLocaleString('ko-KR')}, 전환 ${c.conversions}개`
+          )
+          .join('\n')
       : '- 활성 캠페인 없음'
 
   const anomalyList =
     context.recentAnomalies.length > 0
       ? context.recentAnomalies
-        .map(
-          (a) =>
-            `- ${a.campaignName}: ${a.metric} ${a.change > 0 ? '+' : ''}${a.change.toFixed(1)}x (${a.severity})`
-        )
-        .join('\n')
+          .map(
+            (a) =>
+              `- ${a.campaignName}: ${a.metric} ${a.change > 0 ? '+' : ''}${a.change.toFixed(1)}x (${a.severity})`
+          )
+          .join('\n')
       : '- 특이사항 없음'
 
-  const overallRoas =
-    context.totalSpend > 0 ? context.totalRevenue / context.totalSpend : 0
+  const overallRoas = context.totalSpend > 0 ? context.totalRevenue / context.totalSpend : 0
 
   return `
 **사용자 캠페인 현황:**

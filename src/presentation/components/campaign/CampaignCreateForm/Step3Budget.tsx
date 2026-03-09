@@ -25,8 +25,7 @@ export function Step3Budget() {
     if (!startDate || !dailyBudget) return 0
     if (!endDate) return dailyBudget
     const days = Math.ceil(
-      (new Date(endDate).getTime() - new Date(startDate).getTime()) /
-        (1000 * 60 * 60 * 24)
+      (new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)
     )
     return dailyBudget * Math.max(days, 1)
   }
@@ -41,10 +40,7 @@ export function Step3Budget() {
   return (
     <div className="space-y-6">
       {/* 예산 추천 컴포넌트 */}
-      <BudgetRecommender
-        onBudgetSelect={handleBudgetSelect}
-        selectedBudget={dailyBudget}
-      />
+      <BudgetRecommender onBudgetSelect={handleBudgetSelect} selectedBudget={dailyBudget} />
 
       {/* 일일 예산 직접 입력 */}
       <div className="space-y-2">
@@ -67,9 +63,7 @@ export function Step3Budget() {
           />
           <span className="text-muted-foreground">원</span>
         </div>
-        {errors.dailyBudget && (
-          <p className="text-sm text-red-500">{errors.dailyBudget.message}</p>
-        )}
+        {errors.dailyBudget && <p className="text-sm text-red-500">{errors.dailyBudget.message}</p>}
         <p className="text-xs text-muted-foreground">
           최소 일일 예산: {formatBudget(MINIMUM_DAILY_BUDGET)}
         </p>
@@ -90,9 +84,7 @@ export function Step3Budget() {
         <div className="space-y-2">
           <Label htmlFor="endDate">종료일 (선택)</Label>
           <Input id="endDate" type="date" {...register('endDate')} />
-          <p className="text-xs text-muted-foreground">
-            비워두면 무기한 진행
-          </p>
+          <p className="text-xs text-muted-foreground">비워두면 무기한 진행</p>
         </div>
       </div>
 
@@ -100,9 +92,7 @@ export function Step3Budget() {
       <div className="rounded-lg bg-gray-50 p-4">
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">예상 총 예산</span>
-          <span className="text-lg font-semibold">
-            {totalBudget.toLocaleString()}원
-          </span>
+          <span className="text-lg font-semibold">{totalBudget.toLocaleString()}원</span>
         </div>
         {!endDate && (
           <p className="mt-1 text-xs text-muted-foreground">
@@ -114,8 +104,8 @@ export function Step3Budget() {
       {/* 참고 사항 */}
       <div className="rounded-lg bg-yellow-50 p-4">
         <p className="text-sm text-yellow-800">
-          <AlertTriangle className="h-4 w-4 inline text-amber-500" /> <strong>참고</strong>: 실제 지출은 Meta의 입찰 시스템에 따라
-          일일 예산과 약간 다를 수 있습니다.
+          <AlertTriangle className="h-4 w-4 inline text-amber-500" /> <strong>참고</strong>: 실제
+          지출은 Meta의 입찰 시스템에 따라 일일 예산과 약간 다를 수 있습니다.
         </p>
       </div>
     </div>

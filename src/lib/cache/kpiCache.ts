@@ -111,6 +111,10 @@ export const getCached = <T>(key: string): T | null => kpiCache.getCached<T>(key
 export const setCache = <T>(key: string, data: T, ttlSeconds: number): void =>
   kpiCache.setCache(key, data, ttlSeconds)
 export const invalidateCache = (pattern: string): void => kpiCache.invalidateCache(pattern)
-export const generateKPIKey = (userId: string, period: string, comparison: boolean, breakdown: boolean): string =>
-  kpiCache.generateKPIKey(userId, period, comparison, breakdown)
+export const generateKPIKey = (
+  userId: string,
+  period: string,
+  comparison: boolean,
+  breakdown: boolean
+): string => kpiCache.generateKPIKey(userId, period, comparison, breakdown)
 export const getUserPattern = (userId: string): string => kpiCache.getUserPattern(userId)

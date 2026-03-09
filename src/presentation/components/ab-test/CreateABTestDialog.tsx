@@ -28,11 +28,7 @@ interface VariantInput {
   isControl: boolean
 }
 
-export function CreateABTestDialog({
-  campaignId,
-  open,
-  onOpenChange,
-}: CreateABTestDialogProps) {
+export function CreateABTestDialog({ campaignId, open, onOpenChange }: CreateABTestDialogProps) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [variants, setVariants] = useState<VariantInput[]>([
@@ -68,14 +64,19 @@ export function CreateABTestDialog({
     const newPercent = Math.floor(100 / updatedVariants.length)
     const normalizedVariants = updatedVariants.map((v, i) => ({
       ...v,
-      trafficPercent: i === updatedVariants.length - 1
-        ? 100 - newPercent * (updatedVariants.length - 1)
-        : newPercent,
+      trafficPercent:
+        i === updatedVariants.length - 1
+          ? 100 - newPercent * (updatedVariants.length - 1)
+          : newPercent,
     }))
     setVariants(normalizedVariants)
   }
 
-  const handleVariantChange = (index: number, field: keyof VariantInput, value: string | number | boolean) => {
+  const handleVariantChange = (
+    index: number,
+    field: keyof VariantInput,
+    value: string | number | boolean
+  ) => {
     const updated = [...variants]
     updated[index] = { ...updated[index], [field]: value }
 
@@ -88,9 +89,10 @@ export function CreateABTestDialog({
         const otherIndexes = updated.map((_, i) => i).filter((i) => i !== index)
         const adjustment = Math.floor(diff / otherIndexes.length)
         otherIndexes.forEach((i, idx) => {
-          updated[i].trafficPercent += idx === otherIndexes.length - 1
-            ? diff - adjustment * (otherIndexes.length - 1)
-            : adjustment
+          updated[i].trafficPercent +=
+            idx === otherIndexes.length - 1
+              ? diff - adjustment * (otherIndexes.length - 1)
+              : adjustment
         })
       }
     }
@@ -141,8 +143,7 @@ export function CreateABTestDialog({
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <FlaskConical className="h-5 w-5 text-purple-600" />
-            새 A/B 테스트 만들기
+            <FlaskConical className="h-5 w-5 text-purple-600" />새 A/B 테스트 만들기
           </DialogTitle>
         </DialogHeader>
 
@@ -164,7 +165,9 @@ export function CreateABTestDialog({
               <Textarea
                 id="description"
                 value={description}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setDescription(e.target.value)
+                }
                 placeholder="테스트 목적과 가설을 설명하세요"
                 rows={2}
               />
@@ -189,19 +192,14 @@ export function CreateABTestDialog({
 
             <div className="space-y-3">
               {variants.map((variant, index) => (
-                <div
-                  key={index}
-                  className="p-4 border rounded-lg bg-gray-50 space-y-3"
-                >
+                <div key={index} className="p-4 border rounded-lg bg-gray-50 space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium">
                         {variant.isControl ? '컨트롤 그룹' : `변형 그룹 ${index}`}
                       </span>
                       {variant.isControl && (
-                        <span className="text-xs px-2 py-0.5 bg-muted rounded">
-                          기준
-                        </span>
+                        <span className="text-xs px-2 py-0.5 bg-muted rounded">기준</span>
                       )}
                     </div>
                     {!variant.isControl && variants.length > 2 && (
@@ -222,9 +220,7 @@ export function CreateABTestDialog({
                       <Label className="text-xs">이름</Label>
                       <Input
                         value={variant.name}
-                        onChange={(e) =>
-                          handleVariantChange(index, 'name', e.target.value)
-                        }
+                        onChange={(e) => handleVariantChange(index, 'name', e.target.value)}
                         placeholder="변형 이름"
                         className="h-9"
                       />
@@ -233,9 +229,7 @@ export function CreateABTestDialog({
                       <Label className="text-xs">설명</Label>
                       <Input
                         value={variant.description}
-                        onChange={(e) =>
-                          handleVariantChange(index, 'description', e.target.value)
-                        }
+                        onChange={(e) => handleVariantChange(index, 'description', e.target.value)}
                         placeholder="변형 설명"
                         className="h-9"
                       />
@@ -301,17 +295,10 @@ export function CreateABTestDialog({
           </div>
 
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               취소
             </Button>
-            <Button
-              type="submit"
-              disabled={!isValid || createABTest.isPending}
-            >
+            <Button type="submit" disabled={!isValid || createABTest.isPending}>
               {createABTest.isPending ? '생성 중...' : '테스트 생성'}
             </Button>
           </DialogFooter>

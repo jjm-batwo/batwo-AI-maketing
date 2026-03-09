@@ -12,7 +12,8 @@ export default function NewCampaignPage() {
   const router = useRouter()
   const { clearFormDraft, guideRecommendation, clearGuideRecommendation } = useCampaignStore()
   const { addToast, openChatPanel } = useUIStore()
-  const { isQuotaExceededDialogOpen, closeQuotaExceededDialog, openQuotaExceededDialog } = useQuotaStore()
+  const { isQuotaExceededDialogOpen, closeQuotaExceededDialog, openQuotaExceededDialog } =
+    useQuotaStore()
 
   const wizard = useCreateCampaignWizard()
   const uploadAsset = useUploadAsset()
@@ -23,7 +24,8 @@ export default function NewCampaignPage() {
     ? {
         objective: guideRecommendation.formData.objective as ExtendedCampaignFormData['objective'],
         dailyBudget: guideRecommendation.formData.dailyBudget,
-        campaignMode: guideRecommendation.formData.campaignMode as ExtendedCampaignFormData['campaignMode'],
+        campaignMode: guideRecommendation.formData
+          .campaignMode as ExtendedCampaignFormData['campaignMode'],
       }
     : undefined
 
@@ -55,7 +57,7 @@ export default function NewCampaignPage() {
   }
 
   const handleUploadAsset = async (file: File) => {
-    const type = file.type.startsWith('video/') ? 'VIDEO' as const : 'IMAGE' as const
+    const type = file.type.startsWith('video/') ? ('VIDEO' as const) : ('IMAGE' as const)
     return uploadAsset.mutateAsync({ file, type })
   }
 
@@ -68,9 +70,7 @@ export default function NewCampaignPage() {
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
         <h1 className="text-2xl font-bold">새 캠페인 만들기</h1>
-        <p className="text-muted-foreground">
-          단계별로 캠페인 정보를 입력해주세요
-        </p>
+        <p className="text-muted-foreground">단계별로 캠페인 정보를 입력해주세요</p>
       </div>
 
       {!guideRecommendation && (

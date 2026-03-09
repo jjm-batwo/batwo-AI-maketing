@@ -1,7 +1,10 @@
 import type { ICompetitorTrackingRepository } from '@domain/repositories/ICompetitorTrackingRepository'
 import type { CreateCompetitorTrackingDTO } from '@application/dto/competitor/CompetitorTrackingDTO'
 import { CompetitorTracking } from '@domain/entities/CompetitorTracking'
-import { toCompetitorTrackingDTO, type CompetitorTrackingResponseDTO } from '@application/dto/competitor/CompetitorTrackingDTO'
+import {
+  toCompetitorTrackingDTO,
+  type CompetitorTrackingResponseDTO,
+} from '@application/dto/competitor/CompetitorTrackingDTO'
 
 export class TrackCompetitorUseCase {
   constructor(private readonly repository: ICompetitorTrackingRepository) {}

@@ -66,11 +66,7 @@ export interface IPlatformAdapter {
   /**
    * Remove tracking script from store
    */
-  removeTrackingScript(
-    storeId: string,
-    accessToken: string,
-    scriptTagId: string
-  ): Promise<void>
+  removeTrackingScript(storeId: string, accessToken: string, scriptTagId: string): Promise<void>
 
   /**
    * Register webhooks for order events (for CAPI)
@@ -84,11 +80,7 @@ export interface IPlatformAdapter {
   /**
    * Unregister webhooks
    */
-  unregisterWebhooks(
-    storeId: string,
-    accessToken: string,
-    webhookId: string
-  ): Promise<void>
+  unregisterWebhooks(storeId: string, accessToken: string, webhookId: string): Promise<void>
 
   /**
    * Get store information

@@ -128,7 +128,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       let memberPermissions: TeamPermission[] | undefined
       if (permissions && Array.isArray(permissions)) {
         const validPermissions = DEFAULT_ROLE_PERMISSIONS[role]
-        const invalidPerms = permissions.filter((p: string) => !validPermissions.includes(p as TeamPermission))
+        const invalidPerms = permissions.filter(
+          (p: string) => !validPermissions.includes(p as TeamPermission)
+        )
         if (invalidPerms.length > 0) {
           return NextResponse.json(
             { error: `Invalid permissions for role ${role}: ${invalidPerms.join(', ')}` },
@@ -151,17 +153,20 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       // Save the new member
       await teamRepository.addMember(newMember)
 
-      return NextResponse.json({
-        member: {
-          id: newMember.id,
-          email: newMember.email,
-          name: newMember.name,
-          role: newMember.role,
-          permissions: newMember.permissions,
-          invitedAt: newMember.invitedAt,
-          isPending: newMember.isPending,
+      return NextResponse.json(
+        {
+          member: {
+            id: newMember.id,
+            email: newMember.email,
+            name: newMember.name,
+            role: newMember.role,
+            permissions: newMember.permissions,
+            invitedAt: newMember.invitedAt,
+            isPending: newMember.isPending,
+          },
         },
-      }, { status: 201 })
+        { status: 201 }
+      )
     } catch (error) {
       if (error instanceof Error) {
         return NextResponse.json({ error: error.message }, { status: 400 })

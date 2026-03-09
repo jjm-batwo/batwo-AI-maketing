@@ -13,7 +13,9 @@ export interface ResumeCampaignDTO {
 
 export class ResumeCampaignError extends Error {
   constructor(campaignId: string, currentStatus: CampaignStatus) {
-    super(`Cannot resume campaign "${campaignId}" with status "${currentStatus}". Only PAUSED or ACTIVE campaigns can be resumed.`)
+    super(
+      `Cannot resume campaign "${campaignId}" with status "${currentStatus}". Only PAUSED or ACTIVE campaigns can be resumed.`
+    )
     this.name = 'ResumeCampaignError'
   }
 }

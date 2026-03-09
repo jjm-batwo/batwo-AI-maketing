@@ -105,22 +105,19 @@ export class AIService implements IAIService {
     const finalMaxTokens = config?.maxTokens ?? 2000
     const finalTopP = config?.topP ?? 1
 
-    const response = await this.requestWithRetry<ChatCompletionResponse>(
-      '/chat/completions',
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          model: finalModel,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userPrompt },
-          ],
-          temperature: finalTemperature,
-          max_tokens: finalMaxTokens,
-          top_p: finalTopP,
-        }),
-      }
-    )
+    const response = await this.requestWithRetry<ChatCompletionResponse>('/chat/completions', {
+      method: 'POST',
+      body: JSON.stringify({
+        model: finalModel,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
+        temperature: finalTemperature,
+        max_tokens: finalMaxTokens,
+        top_p: finalTopP,
+      }),
+    })
 
     const content = response.choices[0]?.message?.content
     if (!content) {
@@ -130,10 +127,7 @@ export class AIService implements IAIService {
     return content
   }
 
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
+  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${OPENAI_API_BASE}${endpoint}`
     const headers = {
       Authorization: `Bearer ${this.apiKey}`,
@@ -156,10 +150,7 @@ export class AIService implements IAIService {
     return data as T
   }
 
-  private async requestWithRetry<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
+  private async requestWithRetry<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     return withRetry(() => this.request<T>(endpoint, options), {
       maxAttempts: 3,
       initialDelayMs: 100,
@@ -209,9 +200,7 @@ export class AIService implements IAIService {
     )
   }
 
-  async generateReportInsights(
-    input: GenerateReportInsightInput
-  ): Promise<ReportInsight> {
+  async generateReportInsights(input: GenerateReportInsightInput): Promise<ReportInsight> {
     return withSpan(
       'openai.generateReportInsights',
       async () => {
@@ -236,11 +225,7 @@ export class AIService implements IAIService {
       'openai.generateAdCopy',
       async () => {
         const prompt = buildAdCopyPrompt(input)
-        const response = await this.chatCompletion(
-          AD_COPY_SYSTEM_PROMPT,
-          prompt,
-          AD_COPY_AI_CONFIG
-        )
+        const response = await this.chatCompletion(AD_COPY_SYSTEM_PROMPT, prompt, AD_COPY_AI_CONFIG)
 
         return this.parseJsonResponse<AdCopyVariant[]>(response)
       },
@@ -273,9 +258,7 @@ export class AIService implements IAIService {
     )
   }
 
-  async generateCreativeVariants(
-    input: GenerateCreativeVariantsInput
-  ): Promise<CreativeVariant[]> {
+  async generateCreativeVariants(input: GenerateCreativeVariantsInput): Promise<CreativeVariant[]> {
     const prompt = buildCreativeTestDesignPrompt(input)
     const response = await this.chatCompletion(
       CREATIVE_TEST_DESIGN_SYSTEM_PROMPT,
@@ -286,10 +269,7 @@ export class AIService implements IAIService {
     return this.parseJsonResponse<CreativeVariant[]>(response)
   }
 
-  async analyzeCompetitorTrends(input: {
-    ads: CompetitorAd[]
-    industry?: string
-  }): Promise<{
+  async analyzeCompetitorTrends(input: { ads: CompetitorAd[]; industry?: string }): Promise<{
     popularHooks: string[]
     commonOffers: string[]
     formatDistribution: { format: string; percentage: number }[]

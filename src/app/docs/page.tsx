@@ -7,17 +7,16 @@ const SwaggerUI =
   process.env.NODE_ENV === 'production'
     ? () => null
     : dynamic(
-        () => import('swagger-ui-react').then((mod) => {
-          // CSS를 동적으로 로드 (dev/staging에서만)
-          import('swagger-ui-react/swagger-ui.css')
-          return mod
-        }),
+        () =>
+          import('swagger-ui-react').then((mod) => {
+            // CSS를 동적으로 로드 (dev/staging에서만)
+            import('swagger-ui-react/swagger-ui.css')
+            return mod
+          }),
         {
           ssr: false,
           loading: () => (
-            <div className="p-8 text-center text-muted-foreground">
-              API 문서 로딩 중...
-            </div>
+            <div className="p-8 text-center text-muted-foreground">API 문서 로딩 중...</div>
           ),
         }
       )
@@ -46,9 +45,7 @@ export default function ApiDocsPage() {
       <div className="container mx-auto py-8">
         <div className="mb-6">
           <h1 className="text-3xl font-bold mb-2">바투 AI 마케팅 API 문서</h1>
-          <p className="text-muted-foreground">
-            OpenAPI 3.0 스펙 기반 REST API 문서입니다.
-          </p>
+          <p className="text-muted-foreground">OpenAPI 3.0 스펙 기반 REST API 문서입니다.</p>
           <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-lg">
             <p className="text-sm text-amber-800 dark:text-amber-200">
               <strong>주의:</strong> 이 페이지는 개발/스테이징 환경에서만 접근 가능합니다.

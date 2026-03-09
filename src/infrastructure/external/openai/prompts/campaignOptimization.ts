@@ -188,8 +188,12 @@ ${scienceContext}
 - 이달의 이벤트: ${seasonContext.events.join(', ') || '특별 이벤트 없음'}`
 
   // CVR 및 CPC 계산
-  const cvr = currentMetrics.cvr ?? (currentMetrics.clicks > 0 ? (currentMetrics.conversions / currentMetrics.clicks) * 100 : 0)
-  const cpc = currentMetrics.cpc ?? (currentMetrics.clicks > 0 ? currentMetrics.spend / currentMetrics.clicks : 0)
+  const cvr =
+    currentMetrics.cvr ??
+    (currentMetrics.clicks > 0 ? (currentMetrics.conversions / currentMetrics.clicks) * 100 : 0)
+  const cpc =
+    currentMetrics.cpc ??
+    (currentMetrics.clicks > 0 ? currentMetrics.spend / currentMetrics.clicks : 0)
 
   return `다음 캠페인 성과를 분석하고 한국 시장에 맞는 최적화 제안을 제공하세요.
 

@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
-import {
-  requireAdmin,
-  handleAdminAuth,
-} from '@/infrastructure/auth/adminMiddleware'
+import { requireAdmin, handleAdminAuth } from '@/infrastructure/auth/adminMiddleware'
 import { prisma } from '@/lib/prisma'
-import { startOfMonth, endOfMonth, subMonths, startOfWeek, endOfWeek, subWeeks, format, eachDayOfInterval } from 'date-fns'
+import {
+  startOfMonth,
+  endOfMonth,
+  subMonths,
+  startOfWeek,
+  endOfWeek,
+  subWeeks,
+  format,
+  eachDayOfInterval,
+} from 'date-fns'
 
 // 서비스 분석 데이터 조회 (관리자용)
 export async function GET(request: NextRequest) {
@@ -125,9 +131,9 @@ export async function GET(request: NextRequest) {
     const days = eachDayOfInterval({ start: twoWeeksAgo, end: now })
     const signupsByDay = days.map((day) => {
       const dayStr = format(day, 'yyyy-MM-dd')
-      const count = dailySignups.filter(
-        (s) => format(new Date(s.createdAt), 'yyyy-MM-dd') === dayStr
-      ).reduce((sum, s) => sum + s._count.id, 0)
+      const count = dailySignups
+        .filter((s) => format(new Date(s.createdAt), 'yyyy-MM-dd') === dayStr)
+        .reduce((sum, s) => sum + s._count.id, 0)
       return {
         date: dayStr,
         label: format(day, 'MM/dd'),
@@ -147,9 +153,9 @@ export async function GET(request: NextRequest) {
 
     const revenueByDay = days.map((day) => {
       const dayStr = format(day, 'yyyy-MM-dd')
-      const sum = dailyRevenue.filter(
-        (r) => r.paidAt && format(new Date(r.paidAt), 'yyyy-MM-dd') === dayStr
-      ).reduce((total, r) => total + (r._sum.amount || 0), 0)
+      const sum = dailyRevenue
+        .filter((r) => r.paidAt && format(new Date(r.paidAt), 'yyyy-MM-dd') === dayStr)
+        .reduce((total, r) => total + (r._sum.amount || 0), 0)
       return {
         date: dayStr,
         label: format(day, 'MM/dd'),
@@ -165,7 +171,9 @@ export async function GET(request: NextRequest) {
 
     // 성장률 계산
     const revenueGrowth = previousRevenue._sum.amount
-      ? ((currentRevenue._sum.amount || 0) - previousRevenue._sum.amount) / previousRevenue._sum.amount * 100
+      ? (((currentRevenue._sum.amount || 0) - previousRevenue._sum.amount) /
+          previousRevenue._sum.amount) *
+        100
       : 0
     const userGrowth = previousNewUsers
       ? ((newUsers - previousNewUsers) / previousNewUsers) * 100
@@ -202,9 +210,6 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     console.error('Admin analytics error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch analytics' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch analytics' }, { status: 500 })
   }
 }

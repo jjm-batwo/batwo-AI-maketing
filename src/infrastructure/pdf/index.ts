@@ -34,7 +34,15 @@ export type {
 } from './types'
 
 // Template exports
-export { BaseReportTemplate, baseStyles, formatNumber, formatCurrency, formatPercent, formatDate, formatDateShort } from './templates/BaseReportTemplate'
+export {
+  BaseReportTemplate,
+  baseStyles,
+  formatNumber,
+  formatCurrency,
+  formatPercent,
+  formatDate,
+  formatDateShort,
+} from './templates/BaseReportTemplate'
 export { DailyReportTemplate } from './templates/DailyReportTemplate'
 export { WeeklyReportTemplate } from './templates/WeeklyReportTemplate'
 export { MonthlyReportTemplate } from './templates/MonthlyReportTemplate'

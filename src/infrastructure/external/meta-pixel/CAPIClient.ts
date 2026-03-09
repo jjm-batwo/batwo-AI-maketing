@@ -33,9 +33,7 @@ export class CAPIClient implements ICAPIService {
   private readonly mockMode = process.env.META_MOCK_MODE === 'true'
 
   private hashSHA256(value: string): string {
-    return createHash('sha256')
-      .update(value.toLowerCase().trim())
-      .digest('hex')
+    return createHash('sha256').update(value.toLowerCase().trim()).digest('hex')
   }
 
   private hashUserData(
@@ -201,14 +199,10 @@ export class CAPIClient implements ICAPIService {
       body.test_event_code = testEventCode
     }
 
-    const response = await this.request<MetaApiCAPIResponse>(
-      accessToken,
-      `/${pixelId}/events`,
-      {
-        method: 'POST',
-        body: JSON.stringify(body),
-      }
-    )
+    const response = await this.request<MetaApiCAPIResponse>(accessToken, `/${pixelId}/events`, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    })
 
     return {
       eventsReceived: response.events_received,
@@ -229,12 +223,7 @@ export class CAPIClient implements ICAPIService {
     }
 
     try {
-      const response = await this.sendBatch(
-        accessToken,
-        pixelId,
-        [event],
-        testEventCode
-      )
+      const response = await this.sendBatch(accessToken, pixelId, [event], testEventCode)
 
       return {
         success: response.eventsReceived > 0,

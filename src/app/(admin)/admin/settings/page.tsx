@@ -9,7 +9,14 @@ export const metadata: Metadata = {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Settings, Shield, Zap, Users, Info } from 'lucide-react'
 
 interface QuotaLimit {
@@ -30,7 +37,11 @@ interface PlanConfig {
 
 function formatCurrency(amount: number): string {
   if (amount === -1) return '맞춤'
-  return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW', maximumFractionDigits: 0 }).format(amount)
+  return new Intl.NumberFormat('ko-KR', {
+    style: 'currency',
+    currency: 'KRW',
+    maximumFractionDigits: 0,
+  }).format(amount)
 }
 
 function formatLimit(value: number): string {
@@ -39,10 +50,16 @@ function formatLimit(value: number): string {
 
 async function fetchData(baseUrl: string, cookieHeader: string) {
   const [settingsRes, adminsRes] = await Promise.all([
-    fetch(`${baseUrl}/api/admin/settings`, { headers: { Cookie: cookieHeader }, cache: 'no-store' }),
-    fetch(`${baseUrl}/api/admin/settings/admins`, { headers: { Cookie: cookieHeader }, cache: 'no-store' }),
+    fetch(`${baseUrl}/api/admin/settings`, {
+      headers: { Cookie: cookieHeader },
+      cache: 'no-store',
+    }),
+    fetch(`${baseUrl}/api/admin/settings/admins`, {
+      headers: { Cookie: cookieHeader },
+      cache: 'no-store',
+    }),
   ])
-  
+
   return {
     settings: settingsRes.ok ? await settingsRes.json() : null,
     admins: adminsRes.ok ? await adminsRes.json() : null,
@@ -60,7 +77,9 @@ export default async function AdminSettingsPage() {
         <h1 className="text-2xl font-bold">관리자 설정</h1>
         <Card>
           <CardContent className="pt-6">
-            <p className="text-destructive">데이터를 불러오는데 실패했습니다. Super Admin 권한이 필요합니다.</p>
+            <p className="text-destructive">
+              데이터를 불러오는데 실패했습니다. Super Admin 권한이 필요합니다.
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -72,7 +91,9 @@ export default async function AdminSettingsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">관리자 설정</h1>
-          <p className="text-sm text-muted-foreground">시스템 설정 및 관리자 권한을 관리합니다. (Super Admin 전용)</p>
+          <p className="text-sm text-muted-foreground">
+            시스템 설정 및 관리자 권한을 관리합니다. (Super Admin 전용)
+          </p>
         </div>
       </div>
 
@@ -92,7 +113,9 @@ export default async function AdminSettingsPage() {
                 점검 모드
               </div>
               <div className="mt-2">
-                <Badge variant={settings.systemSettings.maintenanceMode ? 'destructive' : 'secondary'}>
+                <Badge
+                  variant={settings.systemSettings.maintenanceMode ? 'destructive' : 'secondary'}
+                >
                   {settings.systemSettings.maintenanceMode ? '활성화' : '비활성화'}
                 </Badge>
               </div>
@@ -110,10 +133,11 @@ export default async function AdminSettingsPage() {
 
             <div className="rounded-lg border p-4">
               <div className="flex items-center gap-2 text-sm font-medium">
-                <Users className="h-4 w-4 text-muted-foreground" />
-                팀 최대 인원
+                <Users className="h-4 w-4 text-muted-foreground" />팀 최대 인원
               </div>
-              <div className="mt-2 text-2xl font-bold">{settings.systemSettings.maxTeamMembers}명</div>
+              <div className="mt-2 text-2xl font-bold">
+                {settings.systemSettings.maxTeamMembers}명
+              </div>
               <p className="mt-2 text-xs text-muted-foreground">팀당 최대 멤버 수</p>
             </div>
           </div>
@@ -145,7 +169,9 @@ export default async function AdminSettingsPage() {
 
           <Alert className="mt-4">
             <Info className="h-4 w-4" />
-            <AlertDescription>사용량 제한은 코드에서 관리됩니다. 변경이 필요한 경우 개발팀에 문의하세요.</AlertDescription>
+            <AlertDescription>
+              사용량 제한은 코드에서 관리됩니다. 변경이 필요한 경우 개발팀에 문의하세요.
+            </AlertDescription>
           </Alert>
         </CardContent>
       </Card>
@@ -170,7 +196,9 @@ export default async function AdminSettingsPage() {
               {settings.planConfigs.map((plan: PlanConfig) => (
                 <TableRow key={plan.plan}>
                   <TableCell className="font-medium">
-                    <Badge variant={plan.plan === 'FREE' ? 'secondary' : 'default'}>{plan.label}</Badge>
+                    <Badge variant={plan.plan === 'FREE' ? 'secondary' : 'default'}>
+                      {plan.label}
+                    </Badge>
                   </TableCell>
                   <TableCell>{formatCurrency(plan.price)}</TableCell>
                   <TableCell>{formatLimit(plan.campaignsPerWeek)}</TableCell>

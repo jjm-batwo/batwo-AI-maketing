@@ -3,13 +3,7 @@ import {
   TeamMember as PrismaTeamMember,
   TeamRole as PrismaTeamRole,
 } from '@/generated/prisma'
-import {
-  Team,
-  TeamMember,
-  TeamMemberProps,
-  TeamRole,
-  TeamPermission,
-} from '@/domain/entities/Team'
+import { Team, TeamMember, TeamMemberProps, TeamRole, TeamPermission } from '@/domain/entities/Team'
 
 type PrismaTeamWithMembers = PrismaTeam & {
   members: PrismaTeamMember[]
@@ -66,10 +60,9 @@ export class TeamMapper {
   /**
    * Map Domain TeamMember to Prisma create/update data
    */
-  static mapMemberToPrismaCreate(member: TeamMember): Omit<
-    PrismaTeamMember,
-    'team' | 'createdAt' | 'updatedAt'
-  > {
+  static mapMemberToPrismaCreate(
+    member: TeamMember
+  ): Omit<PrismaTeamMember, 'team' | 'createdAt' | 'updatedAt'> {
     return {
       id: member.id,
       teamId: member.teamId,
@@ -124,9 +117,7 @@ export class TeamMapper {
   /**
    * Map Domain Team to Prisma update data (excludes members - they're handled separately)
    */
-  static toPrismaUpdate(
-    team: Team
-  ): Omit<PrismaTeam, 'members' | 'createdAt' | 'id'> {
+  static toPrismaUpdate(team: Team): Omit<PrismaTeam, 'members' | 'createdAt' | 'id'> {
     return {
       name: team.name,
       description: team.description || null,

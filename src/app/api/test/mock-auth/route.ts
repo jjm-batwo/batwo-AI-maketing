@@ -52,9 +52,7 @@ export async function GET() {
     // NextAuth 세션 쿠키 설정
     const cookieStore = await cookies()
     const secureCookie = process.env.NODE_ENV === 'production'
-    const cookieName = secureCookie
-      ? '__Secure-authjs.session-token'
-      : 'authjs.session-token'
+    const cookieName = secureCookie ? '__Secure-authjs.session-token' : 'authjs.session-token'
 
     // NextAuth JWT 토큰 생성 - NextAuth와 동일한 시크릿 사용
     // NextAuth는 AUTH_SECRET을 우선 사용하고, 없으면 NEXTAUTH_SECRET 사용
@@ -94,10 +92,7 @@ export async function GET() {
     })
   } catch (error) {
     console.error('[Mock Auth] Error creating mock session:', error)
-    return NextResponse.json(
-      { error: 'Failed to create mock session' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to create mock session' }, { status: 500 })
   }
 }
 
@@ -112,9 +107,7 @@ export async function DELETE() {
   try {
     const cookieStore = await cookies()
     const secureCookie = process.env.NODE_ENV === 'production'
-    const cookieName = secureCookie
-      ? '__Secure-authjs.session-token'
-      : 'authjs.session-token'
+    const cookieName = secureCookie ? '__Secure-authjs.session-token' : 'authjs.session-token'
 
     cookieStore.delete(cookieName)
 
@@ -124,9 +117,6 @@ export async function DELETE() {
     })
   } catch (error) {
     console.error('[Mock Auth] Error deleting mock session:', error)
-    return NextResponse.json(
-      { error: 'Failed to delete mock session' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to delete mock session' }, { status: 500 })
   }
 }

@@ -27,7 +27,14 @@ const KEYWORD_MAP: Record<Exclude<ChatIntent, ChatIntent.GENERAL>, string[]> = {
   [ChatIntent.BUDGET_OPTIMIZATION]: ['예산', 'budget', '최적화', 'optimize'],
   // 2026 Meta Trinity 기반 신규 인텐트
   [ChatIntent.CREATIVE_FATIGUE]: ['피로도', '피로', '반복', '빈도', 'fatigue', '노출 빈도'],
-  [ChatIntent.LEARNING_PHASE]: ['학습', '학습단계', '소진', '예산이 안', '노출이 안', 'learning phase'],
+  [ChatIntent.LEARNING_PHASE]: [
+    '학습',
+    '학습단계',
+    '소진',
+    '예산이 안',
+    '노출이 안',
+    'learning phase',
+  ],
   [ChatIntent.STRUCTURE_OPTIMIZATION]: ['구조', '통합', '파편', '세트 개수', '캠페인 수', '단순화'],
   [ChatIntent.LEAD_QUALITY]: ['리드', '허수', '품질', '연락', '부재', 'lead quality'],
   [ChatIntent.TRACKING_HEALTH]: ['capi', 'emq', '추적', '전환 추적', '이벤트', '트래킹'],
@@ -69,7 +76,7 @@ export class IntentClassifier {
   static readonly CONFIDENCE_MEDIUM = 0.5
   static readonly CONFIDENCE_LOW = 0.3
 
-  private constructor() { }
+  private constructor() {}
 
   static create(): IntentClassifier {
     return new IntentClassifier()

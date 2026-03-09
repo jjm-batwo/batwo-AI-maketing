@@ -38,9 +38,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (!code || !state) {
-    return NextResponse.redirect(
-      new URL('/settings/pixel?error=인증 코드가 없습니다', request.url)
-    )
+    return NextResponse.redirect(new URL('/settings/pixel?error=인증 코드가 없습니다', request.url))
   }
 
   // Decode and verify state
@@ -62,7 +60,8 @@ export async function GET(request: NextRequest) {
 
   try {
     const adapter = new Cafe24Adapter(CAFE24_CLIENT_ID, CAFE24_CLIENT_SECRET)
-    const redirectUri = CAFE24_REDIRECT_URI || `${process.env.NEXTAUTH_URL}/api/platform/cafe24/callback`
+    const redirectUri =
+      CAFE24_REDIRECT_URI || `${process.env.NEXTAUTH_URL}/api/platform/cafe24/callback`
 
     // Exchange code for tokens
     const tokens = await adapter.exchangeToken(code, redirectUri)
@@ -83,9 +82,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Calculate token expiry
-    const tokenExpiry = tokens.expiresIn
-      ? new Date(Date.now() + tokens.expiresIn * 1000)
-      : null
+    const tokenExpiry = tokens.expiresIn ? new Date(Date.now() + tokens.expiresIn * 1000) : null
 
     // Create or update platform integration
     if (pixel.platformIntegration) {
@@ -124,7 +121,10 @@ export async function GET(request: NextRequest) {
     })
 
     return NextResponse.redirect(
-      new URL(`/settings/pixel?success=cafe24&store=${encodeURIComponent(storeInfo.storeName)}`, request.url)
+      new URL(
+        `/settings/pixel?success=cafe24&store=${encodeURIComponent(storeInfo.storeName)}`,
+        request.url
+      )
     )
   } catch (error) {
     console.error('Cafe24 OAuth callback error:', error)

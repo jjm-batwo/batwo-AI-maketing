@@ -21,11 +21,7 @@ export interface IKPIRepository {
   saveMany(kpis: KPI[]): Promise<KPI[]>
   findById(id: string): Promise<KPI | null>
   findByCampaignId(campaignId: string): Promise<KPI[]>
-  findByCampaignIdAndDateRange(
-    campaignId: string,
-    startDate: Date,
-    endDate: Date
-  ): Promise<KPI[]>
+  findByCampaignIdAndDateRange(campaignId: string, startDate: Date, endDate: Date): Promise<KPI[]>
   findLatestByCampaignId(campaignId: string): Promise<KPI | null>
   findByFilters(filters: KPIFilters): Promise<KPI[]>
   aggregateByCampaignId(
@@ -44,14 +40,19 @@ export interface IKPIRepository {
     campaignIds: string[],
     startDate: Date,
     endDate: Date
-  ): Promise<Map<string, {
-    totalImpressions: number
-    totalClicks: number
-    totalLinkClicks: number
-    totalConversions: number
-    totalSpend: number
-    totalRevenue: number
-  }>>
+  ): Promise<
+    Map<
+      string,
+      {
+        totalImpressions: number
+        totalClicks: number
+        totalLinkClicks: number
+        totalConversions: number
+        totalSpend: number
+        totalRevenue: number
+      }
+    >
+  >
   getDailyAggregates(
     campaignIds: string[],
     startDate: Date,

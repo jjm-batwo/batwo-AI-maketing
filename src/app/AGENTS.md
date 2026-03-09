@@ -234,150 +234,162 @@ src/app/
 
 ## Key Files
 
-| File | Purpose | Notes |
-|------|---------|-------|
-| `layout.tsx` | Root layout with fonts, providers, SEO metadata | Uses Geist font, includes Vercel Analytics & Speed Insights |
-| `page.tsx` | Landing page (/) - redirects logged-in users to /campaigns | Server component with auth check |
-| `providers.tsx` | Client-side context providers | SessionProvider, QueryClient, ErrorBoundary |
-| `error.tsx` | Global error boundary with Sentry integration | Shows error details in dev mode, feedback form in prod |
-| `global-error.tsx` | Root-level error handler | Catches errors in root layout |
-| `not-found.tsx` | 404 page | Custom not-found UI |
-| `middleware.ts` | Minimal middleware (auth redirects in layouts instead) | Turbopack compatibility workaround |
-| `sitemap.ts` | Dynamic sitemap generation | SEO optimization |
-| `robots.ts` | robots.txt configuration | Crawl rules for search engines |
-| `opengraph-image.tsx` | Dynamic OG image for social sharing | Per-route OG image generation |
-| `twitter-image.tsx` | Dynamic Twitter card image | Social sharing optimization |
+| File                  | Purpose                                                    | Notes                                                       |
+| --------------------- | ---------------------------------------------------------- | ----------------------------------------------------------- |
+| `layout.tsx`          | Root layout with fonts, providers, SEO metadata            | Uses Geist font, includes Vercel Analytics & Speed Insights |
+| `page.tsx`            | Landing page (/) - redirects logged-in users to /campaigns | Server component with auth check                            |
+| `providers.tsx`       | Client-side context providers                              | SessionProvider, QueryClient, ErrorBoundary                 |
+| `error.tsx`           | Global error boundary with Sentry integration              | Shows error details in dev mode, feedback form in prod      |
+| `global-error.tsx`    | Root-level error handler                                   | Catches errors in root layout                               |
+| `not-found.tsx`       | 404 page                                                   | Custom not-found UI                                         |
+| `middleware.ts`       | Minimal middleware (auth redirects in layouts instead)     | Turbopack compatibility workaround                          |
+| `sitemap.ts`          | Dynamic sitemap generation                                 | SEO optimization                                            |
+| `robots.ts`           | robots.txt configuration                                   | Crawl rules for search engines                              |
+| `opengraph-image.tsx` | Dynamic OG image for social sharing                        | Per-route OG image generation                               |
+| `twitter-image.tsx`   | Dynamic Twitter card image                                 | Social sharing optimization                                 |
 
 ## Route Groups
 
-| Group | Purpose | Auth Required | Route Pattern |
-|-------|---------|---------------|---------------|
-| `(auth)` | Authentication pages | No (redirects if logged in) | `/login`, `/register` |
-| `(dashboard)` | Main app interface | Yes | `/campaigns`, `/reports`, `/settings`, `/dashboard` |
-| `(admin)` | Admin panel | Yes (admin role) | `/admin/users`, `/admin/payments`, `/admin/analytics` |
-| `(legal)` | Legal pages | No | `/privacy`, `/terms` |
-| (root) | Public pages & API | Varies | `/`, `/api/*` |
+| Group         | Purpose              | Auth Required               | Route Pattern                                         |
+| ------------- | -------------------- | --------------------------- | ----------------------------------------------------- |
+| `(auth)`      | Authentication pages | No (redirects if logged in) | `/login`, `/register`                                 |
+| `(dashboard)` | Main app interface   | Yes                         | `/campaigns`, `/reports`, `/settings`, `/dashboard`   |
+| `(admin)`     | Admin panel          | Yes (admin role)            | `/admin/users`, `/admin/payments`, `/admin/analytics` |
+| `(legal)`     | Legal pages          | No                          | `/privacy`, `/terms`                                  |
+| (root)        | Public pages & API   | Varies                      | `/`, `/api/*`                                         |
 
 ## API Endpoint Categories
 
 ### Authentication (`/api/auth/*`)
-| Endpoint | Method | Purpose | Auth |
-|----------|--------|---------|------|
-| `[...nextauth]` | - | NextAuth.js v5 provider routes | - |
-| `debug` | GET | Auth diagnostics (dev only) | No |
+
+| Endpoint        | Method | Purpose                        | Auth |
+| --------------- | ------ | ------------------------------ | ---- |
+| `[...nextauth]` | -      | NextAuth.js v5 provider routes | -    |
+| `debug`         | GET    | Auth diagnostics (dev only)    | No   |
 
 ### Campaigns (`/api/campaigns/*`)
-| Endpoint | Method | Purpose | Auth |
-|----------|--------|---------|------|
-| `GET` | GET | List user's campaigns (paginated) | Required |
-| `POST` | POST | Create new campaign | Required |
-| `[id]` | GET/PATCH/DELETE | Get/update/delete specific campaign | Required |
-| `[id]/status` | GET | Get campaign's current Meta status | Required |
-| `[id]/kpi` | GET | Get campaign KPIs from Meta | Required |
-| `[id]/budget-status` | GET | Check budget remaining | Required |
-| `[id]/budget-alert` | POST | Set/trigger budget alert | Required |
-| `budget-recommendation` | GET | Get AI budget recommendations | Required |
+
+| Endpoint                | Method           | Purpose                             | Auth     |
+| ----------------------- | ---------------- | ----------------------------------- | -------- |
+| `GET`                   | GET              | List user's campaigns (paginated)   | Required |
+| `POST`                  | POST             | Create new campaign                 | Required |
+| `[id]`                  | GET/PATCH/DELETE | Get/update/delete specific campaign | Required |
+| `[id]/status`           | GET              | Get campaign's current Meta status  | Required |
+| `[id]/kpi`              | GET              | Get campaign KPIs from Meta         | Required |
+| `[id]/budget-status`    | GET              | Check budget remaining              | Required |
+| `[id]/budget-alert`     | POST             | Set/trigger budget alert            | Required |
+| `budget-recommendation` | GET              | Get AI budget recommendations       | Required |
 
 ### Reports (`/api/reports/*`)
-| Endpoint | Method | Purpose | Auth |
-|----------|--------|---------|------|
-| `GET` | GET | List user's weekly reports | Required |
-| `POST` | POST | Generate new report | Required |
-| `[id]` | GET/DELETE | Get/delete report | Required |
-| `[id]/download` | GET | Download report as PDF | Required |
-| `[id]/send` | POST | Send report via email | Required |
-| `[id]/share` | GET | Get public share link | Public |
-| `sample` | GET | Get sample report data | No |
-| `sample/download` | GET | Download sample report PDF | No |
+
+| Endpoint          | Method     | Purpose                    | Auth     |
+| ----------------- | ---------- | -------------------------- | -------- |
+| `GET`             | GET        | List user's weekly reports | Required |
+| `POST`            | POST       | Generate new report        | Required |
+| `[id]`            | GET/DELETE | Get/delete report          | Required |
+| `[id]/download`   | GET        | Download report as PDF     | Required |
+| `[id]/send`       | POST       | Send report via email      | Required |
+| `[id]/share`      | GET        | Get public share link      | Public   |
+| `sample`          | GET        | Get sample report data     | No       |
+| `sample/download` | GET        | Download sample report PDF | No       |
 
 ### Meta Integration (`/api/meta/*`)
-| Endpoint | Method | Purpose | Auth |
-|----------|--------|---------|------|
-| `accounts` | GET | List user's Meta Ads accounts | Required |
-| `pages` | GET | List user's Meta Pages | Required |
-| `pages/[pageId]/insights` | GET | Get page analytics | Required |
-| `callback` | POST | Meta OAuth callback handler | No |
+
+| Endpoint                  | Method | Purpose                       | Auth     |
+| ------------------------- | ------ | ----------------------------- | -------- |
+| `accounts`                | GET    | List user's Meta Ads accounts | Required |
+| `pages`                   | GET    | List user's Meta Pages        | Required |
+| `pages/[pageId]/insights` | GET    | Get page analytics            | Required |
+| `callback`                | POST   | Meta OAuth callback handler   | No       |
 
 ### Pixel Tracking (`/api/pixel/*`)
-| Endpoint | Method | Purpose | Auth |
-|----------|--------|---------|------|
-| `GET` | GET | List user's pixels (paginated) | Required |
-| `POST` | POST | Create new pixel | Required |
-| `[pixelId]` | GET/PATCH/DELETE | Get/update/delete pixel | Required |
-| `[pixelId]/status` | GET | Get pixel tracking status | Required |
-| `[pixelId]/tracker.js` | GET | Dynamic tracking script (returns JS) | Public |
-| `[pixelId]/event` | POST | Client-side event tracking | Public |
-| `[pixelId]/snippet` | GET | Installation snippet HTML | Public |
+
+| Endpoint               | Method           | Purpose                              | Auth     |
+| ---------------------- | ---------------- | ------------------------------------ | -------- |
+| `GET`                  | GET              | List user's pixels (paginated)       | Required |
+| `POST`                 | POST             | Create new pixel                     | Required |
+| `[pixelId]`            | GET/PATCH/DELETE | Get/update/delete pixel              | Required |
+| `[pixelId]/status`     | GET              | Get pixel tracking status            | Required |
+| `[pixelId]/tracker.js` | GET              | Dynamic tracking script (returns JS) | Public   |
+| `[pixelId]/event`      | POST             | Client-side event tracking           | Public   |
+| `[pixelId]/snippet`    | GET              | Installation snippet HTML            | Public   |
 
 ### Platform Integration (`/api/platform/*`)
-| Endpoint | Method | Purpose | Auth |
-|----------|--------|---------|------|
-| `cafe24/auth` | GET | Get Cafe24 OAuth URL | Required |
-| `cafe24/callback` | POST | Cafe24 OAuth callback | No |
-| `cafe24/inject` | POST | Inject pixel into Cafe24 store | Required |
-| `cafe24/disconnect` | POST | Disconnect Cafe24 integration | Required |
+
+| Endpoint            | Method | Purpose                        | Auth     |
+| ------------------- | ------ | ------------------------------ | -------- |
+| `cafe24/auth`       | GET    | Get Cafe24 OAuth URL           | Required |
+| `cafe24/callback`   | POST   | Cafe24 OAuth callback          | No       |
+| `cafe24/inject`     | POST   | Inject pixel into Cafe24 store | Required |
+| `cafe24/disconnect` | POST   | Disconnect Cafe24 integration  | Required |
 
 ### AI Services (`/api/ai/*`)
-| Endpoint | Method | Purpose | Auth |
-|----------|--------|---------|------|
-| `copy` | POST | Generate AI ad copy (uses OpenAI) | Required |
-| `anomalies` | POST | Detect campaign anomalies | Required |
-| `optimization/[campaignId]` | GET | Get optimization suggestions | Required |
+
+| Endpoint                    | Method | Purpose                           | Auth     |
+| --------------------------- | ------ | --------------------------------- | -------- |
+| `copy`                      | POST   | Generate AI ad copy (uses OpenAI) | Required |
+| `anomalies`                 | POST   | Detect campaign anomalies         | Required |
+| `optimization/[campaignId]` | GET    | Get optimization suggestions      | Required |
 
 ### Admin APIs (`/api/admin/*`)
-| Endpoint | Method | Purpose | Auth |
-|----------|--------|---------|------|
-| `dashboard` | GET | Admin dashboard metrics | Admin only |
-| `users` | GET/POST | List/create users | Admin only |
-| `users/[id]` | GET/PATCH/DELETE | Manage user | Admin only |
-| `payments` | GET | List payments | Admin only |
-| `payments/stats` | GET | Payment statistics | Admin only |
-| `refunds` | GET/POST | Manage refunds | Admin only |
-| `refunds/[id]` | GET/PATCH | Refund details | Admin only |
-| `analytics` | GET | System analytics | Admin only |
-| `settings` | GET/PATCH | Admin settings | Admin only |
-| `settings/admins` | GET/POST | Manage admin users | Admin only |
+
+| Endpoint          | Method           | Purpose                 | Auth       |
+| ----------------- | ---------------- | ----------------------- | ---------- |
+| `dashboard`       | GET              | Admin dashboard metrics | Admin only |
+| `users`           | GET/POST         | List/create users       | Admin only |
+| `users/[id]`      | GET/PATCH/DELETE | Manage user             | Admin only |
+| `payments`        | GET              | List payments           | Admin only |
+| `payments/stats`  | GET              | Payment statistics      | Admin only |
+| `refunds`         | GET/POST         | Manage refunds          | Admin only |
+| `refunds/[id]`    | GET/PATCH        | Refund details          | Admin only |
+| `analytics`       | GET              | System analytics        | Admin only |
+| `settings`        | GET/PATCH        | Admin settings          | Admin only |
+| `settings/admins` | GET/POST         | Manage admin users      | Admin only |
 
 ### Team Management (`/api/teams/*`)
-| Endpoint | Method | Purpose | Auth |
-|----------|--------|---------|------|
-| `GET` | GET | List user's teams | Required |
-| `POST` | POST | Create team | Required |
-| `[id]` | GET/PATCH | Get/update team | Required |
-| `[id]/members` | GET/POST | List/add members | Required |
-| `[id]/members/[memberId]` | DELETE | Remove member | Required |
+
+| Endpoint                  | Method    | Purpose           | Auth     |
+| ------------------------- | --------- | ----------------- | -------- |
+| `GET`                     | GET       | List user's teams | Required |
+| `POST`                    | POST      | Create team       | Required |
+| `[id]`                    | GET/PATCH | Get/update team   | Required |
+| `[id]/members`            | GET/POST  | List/add members  | Required |
+| `[id]/members/[memberId]` | DELETE    | Remove member     | Required |
 
 ### Scheduled Jobs (`/api/cron/*`)
-| Endpoint | Method | Purpose | Auth |
-|----------|--------|---------|------|
-| `generate-reports` | POST | Generate weekly reports | Cron token |
-| `meta-warmup` | POST | Warm up Meta API connections | Cron token |
+
+| Endpoint           | Method | Purpose                      | Auth       |
+| ------------------ | ------ | ---------------------------- | ---------- |
+| `generate-reports` | POST   | Generate weekly reports      | Cron token |
+| `meta-warmup`      | POST   | Warm up Meta API connections | Cron token |
 
 ### Internal (`/api/internal/*`)
-| Endpoint | Method | Purpose | Auth |
-|----------|--------|---------|------|
-| `meta-stats` | POST | Sync Meta campaign statistics | Required |
-| `meta-warmup` | POST | Manual Meta warmup trigger | Required |
+
+| Endpoint      | Method | Purpose                       | Auth     |
+| ------------- | ------ | ----------------------------- | -------- |
+| `meta-stats`  | POST   | Sync Meta campaign statistics | Required |
+| `meta-warmup` | POST   | Manual Meta warmup trigger    | Required |
 
 ### Utilities
-| Endpoint | Method | Purpose | Auth |
-|----------|--------|---------|------|
-| `health` | GET | Health check endpoint | No |
-| `quota` | GET | Get user's API quota usage | Required |
-| `alerts` | GET | Get user's alerts | Required |
-| `ab-tests` | GET/POST | A/B test management | Required |
-| `ab-tests/[id]` | GET/PATCH | A/B test details | Required |
-| `dashboard/kpi` | GET | Dashboard KPI data | Required |
+
+| Endpoint        | Method    | Purpose                    | Auth     |
+| --------------- | --------- | -------------------------- | -------- |
+| `health`        | GET       | Health check endpoint      | No       |
+| `quota`         | GET       | Get user's API quota usage | Required |
+| `alerts`        | GET       | Get user's alerts          | Required |
+| `ab-tests`      | GET/POST  | A/B test management        | Required |
+| `ab-tests/[id]` | GET/PATCH | A/B test details           | Required |
+| `dashboard/kpi` | GET       | Dashboard KPI data         | Required |
 
 ## Subdirectories Reference
 
-| Subdirectory | Type | Contains | Agent Focus |
-|--------------|------|----------|------------|
-| `(admin)/` | Route Group | Admin pages & layouts | executor-high, security-reviewer |
-| `(auth)/` | Route Group | Login, registration, auth layouts | executor, security-reviewer |
-| `(dashboard)/` | Route Group | Main app pages, settings, reports | executor, designer |
-| `(legal)/` | Route Group | Privacy policy, terms of service | writer |
-| `api/` | API Routes | All RESTful endpoints (50+ routes) | executor, architect |
+| Subdirectory   | Type        | Contains                           | Agent Focus                      |
+| -------------- | ----------- | ---------------------------------- | -------------------------------- |
+| `(admin)/`     | Route Group | Admin pages & layouts              | executor-high, security-reviewer |
+| `(auth)/`      | Route Group | Login, registration, auth layouts  | executor, security-reviewer      |
+| `(dashboard)/` | Route Group | Main app pages, settings, reports  | executor, designer               |
+| `(legal)/`     | Route Group | Privacy policy, terms of service   | writer                           |
+| `api/`         | API Routes  | All RESTful endpoints (50+ routes) | executor, architect              |
 
 ## AI Agent Instructions
 
@@ -396,6 +408,7 @@ src/app/
 9. **Rate Limiting**: Apply quota checks via DI container if needed
 
 **Pattern for GET list endpoints:**
+
 ```typescript
 export async function GET(request: NextRequest) {
   const user = await getAuthenticatedUser()
@@ -411,6 +424,7 @@ export async function GET(request: NextRequest) {
 ```
 
 **Pattern for POST/create endpoints:**
+
 ```typescript
 export async function POST(request: NextRequest) {
   const user = await getAuthenticatedUser()
@@ -420,10 +434,7 @@ export async function POST(request: NextRequest) {
 
   // Validate input
   if (!body.requiredField) {
-    return NextResponse.json(
-      { message: 'Required field missing' },
-      { status: 400 }
-    )
+    return NextResponse.json({ message: 'Required field missing' }, { status: 400 })
   }
 
   // Create resource using DI container
@@ -447,6 +458,7 @@ export async function POST(request: NextRequest) {
 7. **Route Groups**: Use `(groupName)` syntax for organizing routes without affecting URLs
 
 **Pattern for protected page:**
+
 ```typescript
 export const metadata: Metadata = getMetadata({ path: '/campaigns' })
 
@@ -560,6 +572,7 @@ The DI container (`container.resolve()`) provides dependencies at the route leve
 ### Error Response Standards
 
 All error responses follow:
+
 ```typescript
 {
   message: "Human-readable error message",
@@ -571,6 +584,7 @@ All error responses follow:
 ### Success Response Standards
 
 List responses:
+
 ```typescript
 {
   data: [...],
@@ -582,6 +596,7 @@ List responses:
 ```
 
 Single resource responses:
+
 ```typescript
 {
   id: string,
@@ -600,14 +615,14 @@ Single resource responses:
 
 ## Common Development Tasks
 
-| Task | Location | Pattern |
-|------|----------|---------|
-| Add new API endpoint | `src/app/api/[resource]/route.ts` | See Route Handler Development section |
-| Create new page | `src/app/(group)/route/page.tsx` | See Page Development section |
-| Modify layout | `src/app/(group)/layout.tsx` | See Layout Development section |
-| Handle errors | `src/app/error.tsx` or `src/app/api/*/route.ts` try/catch | See Error Handling section |
-| Add authentication | Route handler or page server component | Use `await auth()` from @/infrastructure/auth |
-| Protected admin route | `src/app/(admin)/admin/*/page.tsx` | Check `session?.user?.role === 'ADMIN'` |
+| Task                  | Location                                                  | Pattern                                       |
+| --------------------- | --------------------------------------------------------- | --------------------------------------------- |
+| Add new API endpoint  | `src/app/api/[resource]/route.ts`                         | See Route Handler Development section         |
+| Create new page       | `src/app/(group)/route/page.tsx`                          | See Page Development section                  |
+| Modify layout         | `src/app/(group)/layout.tsx`                              | See Layout Development section                |
+| Handle errors         | `src/app/error.tsx` or `src/app/api/*/route.ts` try/catch | See Error Handling section                    |
+| Add authentication    | Route handler or page server component                    | Use `await auth()` from @/infrastructure/auth |
+| Protected admin route | `src/app/(admin)/admin/*/page.tsx`                        | Check `session?.user?.role === 'ADMIN'`       |
 
 ## Configuration
 
@@ -624,6 +639,7 @@ Single resource responses:
 **Status**: Workaround implemented
 
 Next.js 16.1.1 + Turbopack combination causes middleware to not execute properly. Solution:
+
 - Auth redirects implemented directly in page layouts (see `(auth)/layout.tsx`, `page.tsx`)
 - Middleware kept minimal (just `NextResponse.next()`)
 - When issue is fixed, migrate redirects back to middleware
@@ -633,6 +649,7 @@ Next.js 16.1.1 + Turbopack combination causes middleware to not execute properly
 **Status**: Fixed (recent commits)
 
 When database is unavailable:
+
 - Auth fails gracefully
 - PrismaAdapter disabled automatically
 - Health endpoint returns status
@@ -665,4 +682,3 @@ See recent commits: `69bdfad`, `f040c9b`, `ece2e52`
 - **Speed Insights**: Performance monitoring
 - **Console Logs**: Used in development and for errors
 - **Structured Logging**: Recommended for production API routes
-

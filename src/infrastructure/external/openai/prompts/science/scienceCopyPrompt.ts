@@ -14,12 +14,12 @@ export function buildScienceAdCopyPrompt(input: {
   knowledgeContext: string
 }): string {
   const weakDomains = input.scienceScore.domainScores
-    .filter(ds => ds.score < 60)
-    .map(ds => `- ${ds.domain}: ${ds.score}점 (${ds.grade})`)
+    .filter((ds) => ds.score < 60)
+    .map((ds) => `- ${ds.domain}: ${ds.score}점 (${ds.grade})`)
 
   const topRecs = input.scienceScore.topRecommendations
     .slice(0, 3)
-    .map(r => `- [${r.priority}] ${r.recommendation} (근거: ${r.scientificBasis})`)
+    .map((r) => `- [${r.priority}] ${r.recommendation} (근거: ${r.scientificBasis})`)
 
   return `## 과학 기반 광고 카피 생성
 

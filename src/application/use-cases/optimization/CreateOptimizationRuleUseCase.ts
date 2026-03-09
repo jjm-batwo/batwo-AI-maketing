@@ -19,22 +19,16 @@ import {
 export type { CreateOptimizationRuleDTO }
 
 export class CreateOptimizationRuleUseCase {
-  constructor(
-    private readonly ruleRepository: IOptimizationRuleRepository
-  ) {}
+  constructor(private readonly ruleRepository: IOptimizationRuleRepository) {}
 
   async execute(dto: CreateOptimizationRuleDTO): Promise<OptimizationRuleResponseDTO> {
     // 조건 값 객체 변환
-    const conditions = dto.conditions.map(c =>
-      RuleCondition.create(
-        c.metric as ConditionMetric,
-        c.operator as ConditionOperator,
-        c.value
-      )
+    const conditions = dto.conditions.map((c) =>
+      RuleCondition.create(c.metric as ConditionMetric, c.operator as ConditionOperator, c.value)
     )
 
     // 액션 값 객체 변환
-    const actions = dto.actions.map(a =>
+    const actions = dto.actions.map((a) =>
       RuleAction.create(a.type as ActionType, {
         percentage: a.params?.percentage,
         notifyChannel: a.params?.notifyChannel as NotifyChannel | undefined,

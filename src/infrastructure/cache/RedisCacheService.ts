@@ -91,10 +91,13 @@ export class RedisCacheService implements ICacheService {
       await new Promise<void>((resolve, reject) => {
         stream.on('end', () => {
           if (deleteCount > 0) {
-            pipeline.exec().then(() => {
-              console.log(`[Redis] Deleted ${deleteCount} keys matching pattern: ${pattern}`)
-              resolve()
-            }).catch(reject)
+            pipeline
+              .exec()
+              .then(() => {
+                console.log(`[Redis] Deleted ${deleteCount} keys matching pattern: ${pattern}`)
+                resolve()
+              })
+              .catch(reject)
           } else {
             resolve()
           }

@@ -251,7 +251,7 @@ async function handleStreamingResponse(
   const headers = new Headers({
     'Content-Type': 'text/event-stream',
     'Cache-Control': 'no-cache',
-    'Connection': 'keep-alive',
+    Connection: 'keep-alive',
   })
 
   if (rateLimitResult) {

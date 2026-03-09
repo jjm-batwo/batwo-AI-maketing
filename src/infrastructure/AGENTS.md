@@ -7,6 +7,7 @@
 The infrastructure layer implements the **adapter and port patterns** from clean architecture. It contains concrete implementations of external service integrations (Meta Ads, OpenAI, Café24) and database access patterns via Prisma.
 
 This layer has NO business logic. It only:
+
 - Adapts external APIs to internal ports/interfaces
 - Maps Prisma models to domain entities
 - Handles external service errors and retries
@@ -41,75 +42,75 @@ src/infrastructure/
 
 ## Key Files
 
-| File | Purpose | Implements Port |
-|------|---------|-----------------|
-| **Auth** |
-| `auth/auth.ts` | NextAuth.js initialization with Google/Kakao/Facebook providers | - |
-| `auth/auth.config.ts` | Auth configuration (callbacks, jwt strategy) | - |
-| `auth/adminMiddleware.ts` | Role-based access control middleware | - |
-| **Database** |
-| `database/index.ts` | Repository exports | - |
-| `database/repositories/PrismaCampaignRepository.ts` | Campaign persistence | `ICampaignRepository` |
-| `database/repositories/PrismaReportRepository.ts` | Report persistence | `IReportRepository` |
-| `database/repositories/PrismaKPIRepository.ts` | KPI persistence | `IKPIRepository` |
-| `database/repositories/PrismaUserRepository.ts` | User persistence | `IUserRepository` |
-| `database/repositories/PrismaBudgetAlertRepository.ts` | Budget alert persistence | `IBudgetAlertRepository` |
-| `database/repositories/PrismaSubscriptionRepository.ts` | Subscription persistence | `ISubscriptionRepository` |
-| `database/repositories/PrismaInvoiceRepository.ts` | Invoice persistence | `IInvoiceRepository` |
-| `database/repositories/PrismaTeamRepository.ts` | Team persistence | `ITeamRepository` |
-| `database/repositories/PrismaABTestRepository.ts` | A/B test persistence | `IABTestRepository` |
-| `database/repositories/PrismaUsageLogRepository.ts` | Usage log persistence | `IUsageLogRepository` |
-| `database/mappers/CampaignMapper.ts` | Prisma ↔ Domain entity conversion | - |
-| `database/mappers/ReportMapper.ts` | Prisma ↔ Domain entity conversion | - |
-| `database/mappers/KPIMapper.ts` | Prisma ↔ Domain entity conversion | - |
-| `database/mappers/index.ts` | Mapper exports | - |
-| **External Errors** |
-| `external/errors/ExternalServiceError.ts` | Base + specialized error types | - |
-| **Meta Ads** |
-| `external/meta-ads/MetaAdsClient.ts` | Meta Ads Graph API client | `IMetaAdsService` |
-| `external/meta-ads/MetaAdsWarmupClient.ts` | Campaign warmup logic | - |
-| `external/meta-ads/MetaApiLogRepository.ts` | API call logging for debugging | - |
-| `external/meta-ads/index.ts` | Exports | - |
-| **Meta Pixel** |
-| `external/meta-pixel/MetaPixelClient.ts` | Pixel configuration client | `IMetaPixelService` |
-| `external/meta-pixel/CAPIClient.ts` | Conversions API (CAPI) client | `ICAPIService` |
-| `external/meta-pixel/index.ts` | Exports | - |
-| **Meta Pages** |
-| `external/meta-pages/MetaPagesClient.ts` | Meta Pages API client | `IMetaPagesService` |
-| `external/meta-pages/index.ts` | Exports | - |
-| **OpenAI** |
-| `external/openai/AIService.ts` | OpenAI chat completions client | `IAIService` |
-| `external/openai/prompts/adCopyGeneration.ts` | Ad copy generation prompts | - |
-| `external/openai/prompts/reportInsight.ts` | Report insight generation prompts | - |
-| `external/openai/prompts/campaignOptimization.ts` | Campaign optimization prompts | - |
-| `external/openai/prompts/budgetRecommendation.ts` | Budget recommendation prompts | - |
-| `external/openai/prompts/index.ts` | Prompt exports | - |
-| `external/openai/index.ts` | Exports | - |
-| **Platforms** |
-| `external/platforms/cafe24/Cafe24Adapter.ts` | Café24 OAuth & API integration | `IPlatformAdapter` |
-| `external/platforms/cafe24/index.ts` | Exports | - |
-| **Tracking** |
-| `external/tracking/TrackingScriptService.ts` | Dynamic pixel tracking script generation | - |
-| **Email** |
-| `email/EmailService.ts` | Email delivery via Resend | `IEmailService` |
-| `email/templates/WeeklyReportEmailTemplate.ts` | HTML email template for reports | - |
-| `email/index.ts` | Exports | - |
-| **PDF** |
-| `pdf/ReportPDFGenerator.ts` | PDF report generation via @react-pdf/renderer | `IReportPDFGenerator` |
-| `pdf/templates/WeeklyReportTemplate.tsx` | React component PDF template | - |
-| `pdf/index.ts` | Exports | - |
+| File                                                    | Purpose                                                         | Implements Port           |
+| ------------------------------------------------------- | --------------------------------------------------------------- | ------------------------- |
+| **Auth**                                                |
+| `auth/auth.ts`                                          | NextAuth.js initialization with Google/Kakao/Facebook providers | -                         |
+| `auth/auth.config.ts`                                   | Auth configuration (callbacks, jwt strategy)                    | -                         |
+| `auth/adminMiddleware.ts`                               | Role-based access control middleware                            | -                         |
+| **Database**                                            |
+| `database/index.ts`                                     | Repository exports                                              | -                         |
+| `database/repositories/PrismaCampaignRepository.ts`     | Campaign persistence                                            | `ICampaignRepository`     |
+| `database/repositories/PrismaReportRepository.ts`       | Report persistence                                              | `IReportRepository`       |
+| `database/repositories/PrismaKPIRepository.ts`          | KPI persistence                                                 | `IKPIRepository`          |
+| `database/repositories/PrismaUserRepository.ts`         | User persistence                                                | `IUserRepository`         |
+| `database/repositories/PrismaBudgetAlertRepository.ts`  | Budget alert persistence                                        | `IBudgetAlertRepository`  |
+| `database/repositories/PrismaSubscriptionRepository.ts` | Subscription persistence                                        | `ISubscriptionRepository` |
+| `database/repositories/PrismaInvoiceRepository.ts`      | Invoice persistence                                             | `IInvoiceRepository`      |
+| `database/repositories/PrismaTeamRepository.ts`         | Team persistence                                                | `ITeamRepository`         |
+| `database/repositories/PrismaABTestRepository.ts`       | A/B test persistence                                            | `IABTestRepository`       |
+| `database/repositories/PrismaUsageLogRepository.ts`     | Usage log persistence                                           | `IUsageLogRepository`     |
+| `database/mappers/CampaignMapper.ts`                    | Prisma ↔ Domain entity conversion                               | -                         |
+| `database/mappers/ReportMapper.ts`                      | Prisma ↔ Domain entity conversion                               | -                         |
+| `database/mappers/KPIMapper.ts`                         | Prisma ↔ Domain entity conversion                               | -                         |
+| `database/mappers/index.ts`                             | Mapper exports                                                  | -                         |
+| **External Errors**                                     |
+| `external/errors/ExternalServiceError.ts`               | Base + specialized error types                                  | -                         |
+| **Meta Ads**                                            |
+| `external/meta-ads/MetaAdsClient.ts`                    | Meta Ads Graph API client                                       | `IMetaAdsService`         |
+| `external/meta-ads/MetaAdsWarmupClient.ts`              | Campaign warmup logic                                           | -                         |
+| `external/meta-ads/MetaApiLogRepository.ts`             | API call logging for debugging                                  | -                         |
+| `external/meta-ads/index.ts`                            | Exports                                                         | -                         |
+| **Meta Pixel**                                          |
+| `external/meta-pixel/MetaPixelClient.ts`                | Pixel configuration client                                      | `IMetaPixelService`       |
+| `external/meta-pixel/CAPIClient.ts`                     | Conversions API (CAPI) client                                   | `ICAPIService`            |
+| `external/meta-pixel/index.ts`                          | Exports                                                         | -                         |
+| **Meta Pages**                                          |
+| `external/meta-pages/MetaPagesClient.ts`                | Meta Pages API client                                           | `IMetaPagesService`       |
+| `external/meta-pages/index.ts`                          | Exports                                                         | -                         |
+| **OpenAI**                                              |
+| `external/openai/AIService.ts`                          | OpenAI chat completions client                                  | `IAIService`              |
+| `external/openai/prompts/adCopyGeneration.ts`           | Ad copy generation prompts                                      | -                         |
+| `external/openai/prompts/reportInsight.ts`              | Report insight generation prompts                               | -                         |
+| `external/openai/prompts/campaignOptimization.ts`       | Campaign optimization prompts                                   | -                         |
+| `external/openai/prompts/budgetRecommendation.ts`       | Budget recommendation prompts                                   | -                         |
+| `external/openai/prompts/index.ts`                      | Prompt exports                                                  | -                         |
+| `external/openai/index.ts`                              | Exports                                                         | -                         |
+| **Platforms**                                           |
+| `external/platforms/cafe24/Cafe24Adapter.ts`            | Café24 OAuth & API integration                                  | `IPlatformAdapter`        |
+| `external/platforms/cafe24/index.ts`                    | Exports                                                         | -                         |
+| **Tracking**                                            |
+| `external/tracking/TrackingScriptService.ts`            | Dynamic pixel tracking script generation                        | -                         |
+| **Email**                                               |
+| `email/EmailService.ts`                                 | Email delivery via Resend                                       | `IEmailService`           |
+| `email/templates/WeeklyReportEmailTemplate.ts`          | HTML email template for reports                                 | -                         |
+| `email/index.ts`                                        | Exports                                                         | -                         |
+| **PDF**                                                 |
+| `pdf/ReportPDFGenerator.ts`                             | PDF report generation via @react-pdf/renderer                   | `IReportPDFGenerator`     |
+| `pdf/templates/WeeklyReportTemplate.tsx`                | React component PDF template                                    | -                         |
+| `pdf/index.ts`                                          | Exports                                                         | -                         |
 
 ---
 
 ## Subdirectories
 
-| Directory | Responsibility | Key Exports |
-|-----------|-----------------|-------------|
-| **auth** | Authentication & authorization | `auth`, `signIn`, `signOut`, `authConfig`, `requireAdmin` |
-| **database** | Data persistence via Prisma | All repository implementations |
-| **external** | Third-party service integrations | All service clients, error classes |
-| **email** | Email delivery service | `EmailService` |
-| **pdf** | PDF generation for reports | `ReportPDFGenerator` |
+| Directory    | Responsibility                   | Key Exports                                               |
+| ------------ | -------------------------------- | --------------------------------------------------------- |
+| **auth**     | Authentication & authorization   | `auth`, `signIn`, `signOut`, `authConfig`, `requireAdmin` |
+| **database** | Data persistence via Prisma      | All repository implementations                            |
+| **external** | Third-party service integrations | All service clients, error classes                        |
+| **email**    | Email delivery service           | `EmailService`                                            |
+| **pdf**      | PDF generation for reports       | `ReportPDFGenerator`                                      |
 
 ---
 
@@ -118,6 +119,7 @@ src/infrastructure/
 ### When to Edit This Layer
 
 Edit infrastructure when:
+
 - Adding a new external service integration (Meta Pixel, Stripe, etc.)
 - Modifying database queries or persistence logic
 - Updating error handling for external APIs
@@ -125,6 +127,7 @@ Edit infrastructure when:
 - Changing authentication configuration
 
 **DO NOT** edit infrastructure for:
+
 - Business logic (belongs in domain/)
 - Use cases (belongs in application/)
 - React components (belongs in presentation/)
@@ -160,6 +163,7 @@ export class PrismaXxxRepository implements IXxxRepository {
 ```
 
 **Key Rules**:
+
 - Never expose Prisma types to application/domain
 - Always map Prisma models ↔ domain entities
 - Implement ALL methods from the port interface
@@ -176,20 +180,14 @@ import { IXxxService } from '@application/ports/IXxxService'
 import { withRetry } from '@lib/utils/retry'
 
 export class XxxClient implements IXxxService {
-  private async requestWithRetry<T>(
-    endpoint: string,
-    options: RequestInit
-  ): Promise<T> {
-    return withRetry(
-      () => this.request<T>(endpoint, options),
-      { maxAttempts: 3, shouldRetry: isTransientError }
-    )
+  private async requestWithRetry<T>(endpoint: string, options: RequestInit): Promise<T> {
+    return withRetry(() => this.request<T>(endpoint, options), {
+      maxAttempts: 3,
+      shouldRetry: isTransientError,
+    })
   }
 
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit
-  ): Promise<T> {
+  private async request<T>(endpoint: string, options: RequestInit): Promise<T> {
     const response = await fetch(url, options)
     if (!response.ok) {
       throw this.mapError(response)
@@ -211,6 +209,7 @@ export class XxxClient implements IXxxService {
 ```
 
 **Key Rules**:
+
 - Always use `withRetry` for network calls
 - Map external API errors to our error hierarchy
 - Never expose external API types to application/domain
@@ -244,6 +243,7 @@ shouldRetry: (error) => {
 ```
 
 **Error Recovery**:
+
 - Transient errors (500, 502, 503, timeout) → retry with exponential backoff
 - Rate limits (429) → retry with longer backoff
 - Auth errors (401, 403) → fail fast, let handler re-authenticate
@@ -258,7 +258,7 @@ Authentication is configured in `auth/auth.ts`:
 providers: [
   Google({ clientId, clientSecret }),
   Kakao({ clientId, clientSecret }),
-  Facebook({ clientId, clientSecret })  // Meta login
+  Facebook({ clientId, clientSecret }), // Meta login
 ]
 
 // Middleware
@@ -294,25 +294,25 @@ npm run type-check
 
 ### External Libraries
 
-| Package | Purpose | Used By |
-|---------|---------|---------|
-| `next-auth` v5 | OAuth authentication | `auth/` |
-| `@auth/prisma-adapter` | NextAuth + Prisma integration | `auth/` |
-| `@prisma/client` v7 | Database ORM | `database/` |
-| `resend` | Email delivery API | `email/` |
-| `@react-pdf/renderer` | PDF generation | `pdf/` |
-| `openai` SDK or `fetch` | OpenAI chat completions | `external/openai/` |
+| Package                 | Purpose                       | Used By            |
+| ----------------------- | ----------------------------- | ------------------ |
+| `next-auth` v5          | OAuth authentication          | `auth/`            |
+| `@auth/prisma-adapter`  | NextAuth + Prisma integration | `auth/`            |
+| `@prisma/client` v7     | Database ORM                  | `database/`        |
+| `resend`                | Email delivery API            | `email/`           |
+| `@react-pdf/renderer`   | PDF generation                | `pdf/`             |
+| `openai` SDK or `fetch` | OpenAI chat completions       | `external/openai/` |
 
 ### Internal Dependencies
 
-| Layer | Used By |
-|-------|---------|
-| `src/domain/entities/` | All repositories and mappers |
-| `src/domain/repositories/` | All ports used by repos |
-| `src/application/ports/` | All service clients implement ports |
-| `src/application/dto/` | Mappers convert to/from DTOs |
-| `@lib/utils/retry` | All network clients use retry logic |
-| `@lib/prisma` | All database code |
+| Layer                      | Used By                             |
+| -------------------------- | ----------------------------------- |
+| `src/domain/entities/`     | All repositories and mappers        |
+| `src/domain/repositories/` | All ports used by repos             |
+| `src/application/ports/`   | All service clients implement ports |
+| `src/application/dto/`     | Mappers convert to/from DTOs        |
+| `@lib/utils/retry`         | All network clients use retry logic |
+| `@lib/prisma`              | All database code                   |
 
 ---
 
@@ -349,11 +349,13 @@ Use in retry logic and handlers.
 ### Update authentication
 
 Edit `auth/auth.ts`:
+
 - Add new OAuth provider
 - Modify session/JWT strategy
 - Add auth event handlers
 
 Edit `auth/auth.config.ts`:
+
 - Modify callbacks (authorize, session, etc.)
 - Change token configuration
 
@@ -371,6 +373,7 @@ npm test -- external/
 ```
 
 Key test patterns:
+
 - Mock Prisma client for repositories
 - Mock fetch for external clients
 - Test error mapping and retry logic
@@ -484,6 +487,7 @@ This enables easy testing and configuration.
 ### No Business Logic
 
 Infrastructure layer MUST NOT contain:
+
 - Campaign optimization logic
 - Report analysis logic
 - Budget calculation
@@ -494,6 +498,7 @@ These belong in the application layer (use cases) or domain layer.
 ### Adapter Pattern
 
 Each external service has:
+
 - **Port** (interface in `src/application/ports/`)
 - **Adapter** (implementation in `src/infrastructure/external/`)
 - **Error mapping** (in `external/errors/`)

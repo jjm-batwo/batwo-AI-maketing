@@ -1,4 +1,8 @@
-import { SubscriptionPlan, PLAN_CONFIGS, type PlanConfig } from '@domain/value-objects/SubscriptionPlan'
+import {
+  SubscriptionPlan,
+  PLAN_CONFIGS,
+  type PlanConfig,
+} from '@domain/value-objects/SubscriptionPlan'
 
 export interface PricingTier {
   plan: SubscriptionPlan
@@ -20,7 +24,10 @@ export function formatPrice(price: number): string {
 
 export const FEATURE_COMPARISON: { text: string; plans: Record<SubscriptionPlan, boolean> }[] = [
   { text: '캠페인 관리', plans: { FREE: true, STARTER: true, PRO: true, ENTERPRISE: true } },
-  { text: 'AI 카피 생성 (기본)', plans: { FREE: true, STARTER: true, PRO: true, ENTERPRISE: true } },
+  {
+    text: 'AI 카피 생성 (기본)',
+    plans: { FREE: true, STARTER: true, PRO: true, ENTERPRISE: true },
+  },
   { text: 'KPI 대시보드', plans: { FREE: true, STARTER: true, PRO: true, ENTERPRISE: true } },
   { text: '주간 보고서', plans: { FREE: true, STARTER: true, PRO: true, ENTERPRISE: true } },
   { text: '프리미엄 AI 카피', plans: { FREE: false, STARTER: true, PRO: true, ENTERPRISE: true } },
@@ -30,7 +37,10 @@ export const FEATURE_COMPARISON: { text: string; plans: Record<SubscriptionPlan,
   { text: '이상 탐지 알림', plans: { FREE: false, STARTER: false, PRO: true, ENTERPRISE: true } },
   { text: 'API 액세스', plans: { FREE: false, STARTER: false, PRO: true, ENTERPRISE: true } },
   { text: 'Slack 연동', plans: { FREE: false, STARTER: false, PRO: true, ENTERPRISE: true } },
-  { text: '전담 계정 관리자', plans: { FREE: false, STARTER: false, PRO: false, ENTERPRISE: true } },
+  {
+    text: '전담 계정 관리자',
+    plans: { FREE: false, STARTER: false, PRO: false, ENTERPRISE: true },
+  },
   { text: 'SLA 보장', plans: { FREE: false, STARTER: false, PRO: false, ENTERPRISE: true } },
   { text: '화이트라벨', plans: { FREE: false, STARTER: false, PRO: false, ENTERPRISE: true } },
 ]

@@ -1,5 +1,9 @@
 import { z } from 'zod'
-import type { AgentTool, AgentContext, ToolExecutionResult } from '@application/ports/IConversationalAgent'
+import type {
+  AgentTool,
+  AgentContext,
+  ToolExecutionResult,
+} from '@application/ports/IConversationalAgent'
 import type { UpdateCampaignUseCase } from '@application/use-cases/campaign/UpdateCampaignUseCase'
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 
@@ -47,7 +51,11 @@ export function createUpdateCampaignBudgetTool(
       const details = [
         { label: '캠페인', value: campaign?.name ?? params.campaignId },
         { label: '현재 예산', value: `₩${currentBudget.toLocaleString('ko-KR')}` },
-        { label: '변경 예산', value: `₩${params.dailyBudget.toLocaleString('ko-KR')}`, changed: true },
+        {
+          label: '변경 예산',
+          value: `₩${params.dailyBudget.toLocaleString('ko-KR')}`,
+          changed: true,
+        },
       ]
       if (params.name) {
         details.push({ label: '이름 변경', value: params.name, changed: true })

@@ -90,18 +90,13 @@ export function UniversalScriptCopy({
       <div className="rounded-lg border bg-muted/50 p-4">
         <h4 className="font-medium">설치 방법</h4>
         <ol className="mt-2 list-inside list-decimal space-y-2 text-sm text-muted-foreground">
+          <li>위의 스크립트 코드를 복사합니다.</li>
           <li>
-            위의 스크립트 코드를 복사합니다.
+            웹사이트의 HTML 파일을 열어 <code className="rounded bg-muted px-1">&lt;head&gt;</code>{' '}
+            태그 안에 붙여넣습니다.
           </li>
-          <li>
-            웹사이트의 HTML 파일을 열어 <code className="rounded bg-muted px-1">&lt;head&gt;</code> 태그 안에 붙여넣습니다.
-          </li>
-          <li>
-            웹사이트의 모든 페이지에 위 스크립트를 추가해주세요.
-          </li>
-          <li>
-            설치 후 페이지 새로고침 시 자동으로 PageView 이벤트가 전송됩니다.
-          </li>
+          <li>웹사이트의 모든 페이지에 위 스크립트를 추가해주세요.</li>
+          <li>설치 후 페이지 새로고침 시 자동으로 PageView 이벤트가 전송됩니다.</li>
         </ol>
       </div>
 
@@ -110,7 +105,9 @@ export function UniversalScriptCopy({
         <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-blue-800">
           <li>스크립트는 비동기(async)로 로드되어 페이지 로딩 속도에 영향을 주지 않습니다.</li>
           <li>설치 후 약 5-10분 정도 후에 이벤트 수신이 시작됩니다.</li>
-          <li>Meta 픽셀 ID: <code className="rounded bg-blue-100 px-1">{pixel.metaPixelId}</code></li>
+          <li>
+            Meta 픽셀 ID: <code className="rounded bg-blue-100 px-1">{pixel.metaPixelId}</code>
+          </li>
         </ul>
       </div>
     </div>

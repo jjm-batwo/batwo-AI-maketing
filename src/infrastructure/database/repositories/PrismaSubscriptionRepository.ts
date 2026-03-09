@@ -1,4 +1,9 @@
-import { PrismaClient, SubscriptionStatus as PrismaStatus, SubscriptionPlan as PrismaPlan, Prisma } from '@/generated/prisma'
+import {
+  PrismaClient,
+  SubscriptionStatus as PrismaStatus,
+  SubscriptionPlan as PrismaPlan,
+  Prisma,
+} from '@/generated/prisma'
 import {
   ISubscriptionRepository,
   SubscriptionFilters,

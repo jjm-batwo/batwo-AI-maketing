@@ -132,8 +132,8 @@ export function ReportDetail({
                   insight.type === 'POSITIVE'
                     ? 'bg-green-50 text-green-800'
                     : insight.type === 'NEGATIVE'
-                    ? 'bg-red-50 text-red-800'
-                    : 'bg-blue-50 text-blue-800'
+                      ? 'bg-red-50 text-red-800'
+                      : 'bg-blue-50 text-blue-800'
                 }`}
               >
                 <p className="text-sm">{insight.message}</p>

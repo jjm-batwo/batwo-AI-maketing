@@ -25,13 +25,23 @@ const modes = [
 const objectives = [
   { value: 'TRAFFIC', label: '트래픽', icon: MousePointerClick, description: '웹사이트 방문 유도' },
   { value: 'CONVERSIONS', label: '전환', icon: Target, description: '구매, 가입 등 행동 유도' },
-  { value: 'BRAND_AWARENESS', label: '브랜드 인지도', icon: Eye, description: '브랜드 노출 최대화' },
+  {
+    value: 'BRAND_AWARENESS',
+    label: '브랜드 인지도',
+    icon: Eye,
+    description: '브랜드 노출 최대화',
+  },
   { value: 'REACH', label: '도달', icon: Users, description: '최대한 많은 사람에게 노출' },
   { value: 'ENGAGEMENT', label: '참여', icon: Heart, description: '좋아요, 댓글, 공유 유도' },
 ] as const
 
 export function StepCampaignType() {
-  const { register, watch, setValue, formState: { errors } } = useFormContext<ExtendedCampaignFormData>()
+  const {
+    register,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useFormContext<ExtendedCampaignFormData>()
   const selectedMode = watch('campaignMode')
   const selectedObjective = watch('objective')
 
@@ -57,7 +67,11 @@ export function StepCampaignType() {
                 )}
               >
                 <Icon className={cn('h-8 w-8', isSelected ? 'text-primary' : 'text-gray-400')} />
-                <span className={cn('font-semibold', isSelected ? 'text-primary' : 'text-gray-700')}>{mode.label}</span>
+                <span
+                  className={cn('font-semibold', isSelected ? 'text-primary' : 'text-gray-700')}
+                >
+                  {mode.label}
+                </span>
                 <span className="text-xs text-muted-foreground">{mode.description}</span>
               </button>
             )
@@ -99,7 +113,14 @@ export function StepCampaignType() {
                 )}
               >
                 <Icon className={cn('h-6 w-6', isSelected ? 'text-primary' : 'text-gray-500')} />
-                <span className={cn('text-sm font-medium', isSelected ? 'text-primary' : 'text-gray-700')}>{obj.label}</span>
+                <span
+                  className={cn(
+                    'text-sm font-medium',
+                    isSelected ? 'text-primary' : 'text-gray-700'
+                  )}
+                >
+                  {obj.label}
+                </span>
                 <span className="text-xs text-muted-foreground">{obj.description}</span>
               </button>
             )

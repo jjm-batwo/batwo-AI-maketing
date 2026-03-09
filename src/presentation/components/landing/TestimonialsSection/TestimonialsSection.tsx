@@ -54,11 +54,7 @@ export const TestimonialsSection = memo(function TestimonialsSection() {
           </div>
 
           {/* Column 3 — hidden on mobile/tablet */}
-          <div
-            className="hidden lg:block"
-            role="listitem"
-            aria-label="고객 후기 세번째 열"
-          >
+          <div className="hidden lg:block" role="listitem" aria-label="고객 후기 세번째 열">
             {col3.map((t) => (
               <TestimonialCard key={t.id} testimonial={t} />
             ))}

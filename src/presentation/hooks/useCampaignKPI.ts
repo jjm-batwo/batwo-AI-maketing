@@ -55,13 +55,8 @@ export interface CampaignKPIResponse {
 
 const CAMPAIGN_KPI_QUERY_KEY = ['campaign-kpi'] as const
 
-async function fetchCampaignKPI(
-  campaignId: string,
-  period: string
-): Promise<CampaignKPIResponse> {
-  const response = await fetch(
-    `/api/campaigns/${campaignId}/kpi?period=${period}`
-  )
+async function fetchCampaignKPI(campaignId: string, period: string): Promise<CampaignKPIResponse> {
+  const response = await fetch(`/api/campaigns/${campaignId}/kpi?period=${period}`)
   if (!response.ok) {
     throw new Error('Failed to fetch campaign KPI')
   }

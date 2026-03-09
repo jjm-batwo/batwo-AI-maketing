@@ -144,9 +144,7 @@ export default function AuditSharedPage() {
         {/* 공유 배너 */}
         <div className="rounded-lg border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground flex items-center gap-2">
           <span aria-hidden="true">🔗</span>
-          <span>
-            공유된 진단 결과입니다. 링크 유효 기간: {expiresDate}까지
-          </span>
+          <span>공유된 진단 결과입니다. 링크 유효 기간: {expiresDate}까지</span>
         </div>
 
         {/* 제목 */}
@@ -173,9 +171,7 @@ export default function AuditSharedPage() {
 
         {/* 바이럴 CTA */}
         <div className="text-center py-6 border-t border-border">
-          <p className="text-sm text-muted-foreground mb-3">
-            내 광고 계정도 무료로 진단해보세요
-          </p>
+          <p className="text-sm text-muted-foreground mb-3">내 광고 계정도 무료로 진단해보세요</p>
           <Link
             href="/"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold hover:from-amber-600 hover:to-orange-600 transition-all shadow-sm hover:shadow-md"

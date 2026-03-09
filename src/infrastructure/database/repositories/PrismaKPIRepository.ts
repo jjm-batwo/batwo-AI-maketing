@@ -167,14 +167,19 @@ export class PrismaKPIRepository implements IKPIRepository {
     campaignIds: string[],
     startDate: Date,
     endDate: Date
-  ): Promise<Map<string, {
-    totalImpressions: number
-    totalClicks: number
-    totalLinkClicks: number
-    totalConversions: number
-    totalSpend: number
-    totalRevenue: number
-  }>> {
+  ): Promise<
+    Map<
+      string,
+      {
+        totalImpressions: number
+        totalClicks: number
+        totalLinkClicks: number
+        totalConversions: number
+        totalSpend: number
+        totalRevenue: number
+      }
+    >
+  > {
     if (campaignIds.length === 0) {
       return new Map()
     }
@@ -198,14 +203,17 @@ export class PrismaKPIRepository implements IKPIRepository {
       },
     })
 
-    const map = new Map<string, {
-      totalImpressions: number
-      totalClicks: number
-      totalLinkClicks: number
-      totalConversions: number
-      totalSpend: number
-      totalRevenue: number
-    }>()
+    const map = new Map<
+      string,
+      {
+        totalImpressions: number
+        totalClicks: number
+        totalLinkClicks: number
+        totalConversions: number
+        totalSpend: number
+        totalRevenue: number
+      }
+    >()
 
     for (const r of results) {
       map.set(r.campaignId, {
@@ -309,10 +317,10 @@ export class PrismaKPIRepository implements IKPIRepository {
     if (filters.dateFrom || filters.dateTo) {
       where.date = {}
       if (filters.dateFrom) {
-        (where.date as Record<string, Date>).gte = filters.dateFrom
+        ;(where.date as Record<string, Date>).gte = filters.dateFrom
       }
       if (filters.dateTo) {
-        (where.date as Record<string, Date>).lte = filters.dateTo
+        ;(where.date as Record<string, Date>).lte = filters.dateTo
       }
     }
 

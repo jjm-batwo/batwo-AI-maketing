@@ -2,13 +2,29 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS } from '@/lib/di/container'
 import { ListCampaignsUseCase } from '@application/use-cases/campaign/ListCampaignsUseCase'
-import { CreateCampaignUseCase, DuplicateCampaignNameError } from '@application/use-cases/campaign/CreateCampaignUseCase'
-import { CreateAdvantageCampaignUseCase, InvalidAdvantageConfigError } from '@application/use-cases/campaign/CreateAdvantageCampaignUseCase'
+import {
+  CreateCampaignUseCase,
+  DuplicateCampaignNameError,
+} from '@application/use-cases/campaign/CreateCampaignUseCase'
+import {
+  CreateAdvantageCampaignUseCase,
+  InvalidAdvantageConfigError,
+} from '@application/use-cases/campaign/CreateAdvantageCampaignUseCase'
 import { CampaignObjective } from '@domain/value-objects/CampaignObjective'
-import { campaignQuerySchema, createCampaignSchema, validateQuery, validateBody } from '@/lib/validations'
+import {
+  campaignQuerySchema,
+  createCampaignSchema,
+  validateQuery,
+  validateBody,
+} from '@/lib/validations'
 import { invalidateCache, getUserPattern } from '@/lib/cache/kpiCache'
 import { revalidateTag } from 'next/cache'
-import { checkRateLimit, getClientIp, addRateLimitHeaders, rateLimitExceededResponse } from '@/lib/middleware/rateLimit'
+import {
+  checkRateLimit,
+  getClientIp,
+  addRateLimitHeaders,
+  rateLimitExceededResponse,
+} from '@/lib/middleware/rateLimit'
 
 export async function GET(request: NextRequest) {
   const user = await getAuthenticatedUser()
@@ -23,9 +39,7 @@ export async function GET(request: NextRequest) {
 
     const { page, pageSize, status } = validation.data
 
-    const listCampaigns = container.resolve<ListCampaignsUseCase>(
-      DI_TOKENS.ListCampaignsUseCase
-    )
+    const listCampaigns = container.resolve<ListCampaignsUseCase>(DI_TOKENS.ListCampaignsUseCase)
 
     const result = await listCampaigns.execute({
       userId: user.id,
@@ -42,10 +56,7 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     console.error('Failed to fetch campaigns:', error)
-    return NextResponse.json(
-      { message: 'Failed to fetch campaigns' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to fetch campaigns' }, { status: 500 })
   }
 }
 
@@ -109,22 +120,13 @@ export async function POST(request: NextRequest) {
     console.error('Failed to create campaign:', error)
 
     if (error instanceof DuplicateCampaignNameError) {
-      return NextResponse.json(
-        { message: error.message },
-        { status: 409 }
-      )
+      return NextResponse.json({ message: error.message }, { status: 409 })
     }
 
     if (error instanceof InvalidAdvantageConfigError) {
-      return NextResponse.json(
-        { message: error.message },
-        { status: 400 }
-      )
+      return NextResponse.json({ message: error.message }, { status: 400 })
     }
 
-    return NextResponse.json(
-      { message: 'Failed to create campaign' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to create campaign' }, { status: 500 })
   }
 }
