@@ -160,6 +160,7 @@ import { RefreshMetaTokenUseCase } from '@application/use-cases/token/RefreshMet
 import { PrismaConversionEventRepository } from '@infrastructure/database/repositories/PrismaConversionEventRepository'
 import type { IConversionEventRepository } from '@domain/repositories/IConversionEventRepository'
 import { SendCAPIEventsUseCase } from '@application/use-cases/pixel/SendCAPIEventsUseCase'
+import { GetTrackingHealthUseCase } from '@application/use-cases/pixel/GetTrackingHealthUseCase'
 
 import { PrismaCompetitorTrackingRepository } from '@infrastructure/database/repositories/PrismaCompetitorTrackingRepository'
 import type { ICompetitorTrackingRepository } from '@domain/repositories/ICompetitorTrackingRepository'
@@ -780,6 +781,30 @@ container.register(
   () => new SelectPixelUseCase(container.resolve(DI_TOKENS.MetaPixelRepository))
 )
 
+// GetTrackingHealth Use Case (Transient)
+container.register(
+  DI_TOKENS.GetTrackingHealthUseCase,
+  () =>
+    new GetTrackingHealthUseCase(
+      container.resolve(DI_TOKENS.MetaPixelRepository),
+      container.resolve(DI_TOKENS.MetaPixelService),
+      {
+        async getCAPIStatsByPixelId(pixelId: string) {
+          const repo = container.resolve<IConversionEventRepository>(
+            DI_TOKENS.ConversionEventRepository
+          )
+          return repo.countByPixelIdGrouped(pixelId)
+        },
+      },
+      {
+        async getAccessTokenByUserId(userId: string) {
+          const account = await prisma.metaAdAccount.findUnique({ where: { userId } })
+          return account?.accessToken ? safeDecryptToken(account.accessToken) : null
+        },
+      }
+    )
+)
+
 // Payment Use Cases
 container.register(
   DI_TOKENS.IssueBillingKeyUseCase,
@@ -1023,6 +1048,10 @@ export function getListUserPixelsUseCase(): ListUserPixelsUseCase {
 
 export function getSelectPixelUseCase(): SelectPixelUseCase {
   return container.resolve(DI_TOKENS.SelectPixelUseCase)
+}
+
+export function getGetTrackingHealthUseCase(): GetTrackingHealthUseCase {
+  return container.resolve(DI_TOKENS.GetTrackingHealthUseCase)
 }
 
 export function getSyncCampaignsUseCase(): SyncCampaignsUseCase {

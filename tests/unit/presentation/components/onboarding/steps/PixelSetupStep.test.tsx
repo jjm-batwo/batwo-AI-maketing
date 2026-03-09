@@ -35,8 +35,9 @@ const mockTranslations: Record<string, Record<string, string>> = {
     'benefits.title': '픽셀 설치 효과',
     'benefits.item1': '웹사이트 방문자 행동 추적',
     'benefits.item2': '광고 성과 측정',
-    'benefits.item3': '고객 재방문 추적',
+    'benefits.item3': '리타겟팅 오디언스 생성',
     'benefits.item4': '더 정확한 타겟팅',
+    'benefits.item5': '이메일/전화번호를 함께 전송하면 광고 성과가 향상됩니다',
     'selectPlatform': '쇼핑몰 플랫폼을 선택하세요',
   },
   'pixel': {
@@ -84,7 +85,7 @@ describe('PixelSetupStep', () => {
 
   describe('rendering', () => {
     it('should render step title', () => {
-      vi.mocked(fetch).mockImplementation(() => new Promise(() => {}))
+      vi.mocked(fetch).mockImplementation(() => new Promise(() => { }))
 
       render(<PixelSetupStep />, {
         wrapper: createQueryClientWrapper(),
@@ -96,7 +97,7 @@ describe('PixelSetupStep', () => {
     })
 
     it('should render step description', () => {
-      vi.mocked(fetch).mockImplementation(() => new Promise(() => {}))
+      vi.mocked(fetch).mockImplementation(() => new Promise(() => { }))
 
       render(<PixelSetupStep />, {
         wrapper: createQueryClientWrapper(),
@@ -128,7 +129,7 @@ describe('PixelSetupStep', () => {
 
   describe('pixel benefits section', () => {
     it('should show pixel benefits list', () => {
-      vi.mocked(fetch).mockImplementation(() => new Promise(() => {}))
+      vi.mocked(fetch).mockImplementation(() => new Promise(() => { }))
 
       render(<PixelSetupStep />, {
         wrapper: createQueryClientWrapper(),
@@ -140,7 +141,7 @@ describe('PixelSetupStep', () => {
     })
 
     it('should show skip message', () => {
-      vi.mocked(fetch).mockImplementation(() => new Promise(() => {}))
+      vi.mocked(fetch).mockImplementation(() => new Promise(() => { }))
 
       render(<PixelSetupStep />, {
         wrapper: createQueryClientWrapper(),
@@ -153,7 +154,7 @@ describe('PixelSetupStep', () => {
 
   describe('accessibility', () => {
     it('should have proper heading hierarchy', () => {
-      vi.mocked(fetch).mockImplementation(() => new Promise(() => {}))
+      vi.mocked(fetch).mockImplementation(() => new Promise(() => { }))
 
       render(<PixelSetupStep />, {
         wrapper: createQueryClientWrapper(),

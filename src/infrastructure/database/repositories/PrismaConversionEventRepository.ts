@@ -131,4 +131,38 @@ export class PrismaConversionEventRepository implements IConversionEventReposito
     if (isNaN(num)) return 'RETRY_1'
     return `RETRY_${num + 1}`
   }
+
+  /**
+   * 특정 픽셀의 CAPI 이벤트 전송 통계 (sent, expired, failed) 조회
+   */
+  async countByPixelIdGrouped(
+    pixelId: string
+  ): Promise<{ sent: number; failed: number; expired: number }> {
+    const events = await this.prisma.conversionEvent.groupBy({
+      by: ['metaResponseId'],
+      where: { pixelId },
+      _count: true,
+    })
+
+    let sent = 0
+    let failed = 0
+    let expired = 0
+
+    for (const e of events) {
+      if (e.metaResponseId === 'EXPIRED') {
+        expired += e._count
+      } else if (e.metaResponseId === 'FAILED') {
+        failed += e._count
+      } else if (
+        e.metaResponseId &&
+        e.metaResponseId !== 'RETRY_1' &&
+        e.metaResponseId !== 'RETRY_2' &&
+        e.metaResponseId !== 'RETRY_3'
+      ) {
+        sent += e._count
+      }
+    }
+
+    return { sent, failed, expired }
+  }
 }

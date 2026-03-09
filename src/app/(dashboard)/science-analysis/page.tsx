@@ -52,18 +52,18 @@ export default function ScienceAnalysisPage() {
 
   const [scoreInput, setScoreInput] = useState<
     | {
-        content?: {
-          headline?: string
-          primaryText?: string
-          description?: string
-          callToAction?: string
-        }
-        context?: {
-          industry?: string
-          targetAudience?: string
-          objective?: 'awareness' | 'consideration' | 'conversion'
-        }
+      content?: {
+        headline?: string
+        primaryText?: string
+        description?: string
+        callToAction?: string
       }
+      context?: {
+        industry?: string
+        targetAudience?: string
+        objective?: 'awareness' | 'consideration' | 'conversion'
+      }
+    }
     | undefined
   >(undefined)
   const { data: scoreData, isLoading, error } = useScienceScore(scoreInput)
@@ -376,30 +376,32 @@ export default function ScienceAnalysisPage() {
                       <CardTitle>주요 개선 제안</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                      {scoreData.score.topRecommendations.slice(0, 3).map(
-                        (
-                          rec: {
-                            domain: string
-                            priority: 'critical' | 'high' | 'medium' | 'low'
-                            recommendation: string
-                            impact: string
-                            evidence: string[]
-                          },
-                          index: number
-                        ) => (
-                          <RecommendationCard
-                            key={index}
-                            recommendation={rec.recommendation}
-                            priority={
-                              rec.priority === 'critical'
-                                ? 'high'
-                                : (rec.priority as 'high' | 'medium' | 'low')
-                            }
-                            domain={rec.domain}
-                            citationCount={rec.evidence?.length || 0}
-                          />
-                        )
-                      )}
+                      {scoreData.score.topRecommendations
+                        .slice(0, 3)
+                        .map(
+                          (
+                            rec: {
+                              domain: string
+                              priority: 'critical' | 'high' | 'medium' | 'low'
+                              recommendation: string
+                              impact: string
+                              evidence: string[]
+                            },
+                            index: number
+                          ) => (
+                            <RecommendationCard
+                              key={index}
+                              recommendation={rec.recommendation}
+                              priority={
+                                rec.priority === 'critical'
+                                  ? 'high'
+                                  : (rec.priority as 'high' | 'medium' | 'low')
+                              }
+                              domain={rec.domain}
+                              citationCount={rec.evidence?.length || 0}
+                            />
+                          )
+                        )}
                     </CardContent>
                   </Card>
                 )}

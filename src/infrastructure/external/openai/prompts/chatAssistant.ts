@@ -191,21 +191,21 @@ export function buildChatContextPrompt(context: {
   const campaignList =
     context.campaigns.length > 0
       ? context.campaigns
-          .map(
-            (c) =>
-              `- ${c.name} (${c.status}): ROAS ${c.roas.toFixed(2)}x, 지출 ₩${c.spend.toLocaleString('ko-KR')}, 전환 ${c.conversions}개`
-          )
-          .join('\n')
+        .map(
+          (c) =>
+            `- ${c.name} (${c.status}): ROAS ${c.roas.toFixed(2)}x, 지출 ₩${c.spend.toLocaleString('ko-KR')}, 전환 ${c.conversions}개`
+        )
+        .join('\n')
       : '- 활성 캠페인 없음'
 
   const anomalyList =
     context.recentAnomalies.length > 0
       ? context.recentAnomalies
-          .map(
-            (a) =>
-              `- ${a.campaignName}: ${a.metric} ${a.change > 0 ? '+' : ''}${a.change.toFixed(1)}x (${a.severity})`
-          )
-          .join('\n')
+        .map(
+          (a) =>
+            `- ${a.campaignName}: ${a.metric} ${a.change > 0 ? '+' : ''}${a.change.toFixed(1)}x (${a.severity})`
+        )
+        .join('\n')
       : '- 특이사항 없음'
 
   const overallRoas = context.totalSpend > 0 ? context.totalRevenue / context.totalSpend : 0

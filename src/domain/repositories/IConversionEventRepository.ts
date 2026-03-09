@@ -48,4 +48,10 @@ export interface IConversionEventRepository {
    * @param pixelIds 조회할 픽셀 ID 목록
    */
   findPixelTokenMappings(pixelIds: string[]): Promise<PixelTokenMapping[]>
+
+  /**
+   * 특정 픽셀의 CAPI 이벤트 전송 통계 (sent, expired, failed) 조회
+   * @param pixelId 픽셀 ID
+   */
+  countByPixelIdGrouped(pixelId: string): Promise<{ sent: number; failed: number; expired: number }>
 }

@@ -144,6 +144,7 @@ export function PixelSetupStep() {
           <li>• {t('benefits.item2')}</li>
           <li>• {t('benefits.item3')}</li>
           <li>• {t('benefits.item4')}</li>
+          <li>• {t('benefits.item5')}</li>
         </ul>
       </div>
 
