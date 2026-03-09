@@ -23,7 +23,8 @@ const AI_FEATURE_TOUR_STEPS: TourStep[] = [
     id: 'copy-generation',
     target: '[data-tour="copy-generation"]',
     title: 'AI 광고 카피 생성',
-    description: '과학적 마케팅 원칙을 기반으로 고품질 광고 카피를 자동으로 생성합니다. 타겟 고객에 맞춘 메시지를 만들어보세요.',
+    description:
+      '과학적 마케팅 원칙을 기반으로 고품질 광고 카피를 자동으로 생성합니다. 타겟 고객에 맞춘 메시지를 만들어보세요.',
     feature: 'AI 카피 생성',
     position: 'bottom',
   },
@@ -31,7 +32,8 @@ const AI_FEATURE_TOUR_STEPS: TourStep[] = [
     id: 'analysis',
     target: '[data-tour="analysis"]',
     title: 'AI 캠페인 분석',
-    description: '캠페인 성과를 AI가 자동으로 분석하고 개선 방향을 제시합니다. 데이터 기반 의사결정을 지원합니다.',
+    description:
+      '캠페인 성과를 AI가 자동으로 분석하고 개선 방향을 제시합니다. 데이터 기반 의사결정을 지원합니다.',
     feature: 'AI 분석',
     position: 'left',
   },
@@ -39,7 +41,8 @@ const AI_FEATURE_TOUR_STEPS: TourStep[] = [
     id: 'insights',
     target: '[data-tour="insights"]',
     title: 'AI 인사이트',
-    description: '데이터에서 숨겨진 패턴과 기회를 자동으로 발견합니다. 매일 새로운 인사이트를 확인하세요.',
+    description:
+      '데이터에서 숨겨진 패턴과 기회를 자동으로 발견합니다. 매일 새로운 인사이트를 확인하세요.',
     feature: 'AI 인사이트',
     position: 'right',
   },
@@ -47,7 +50,8 @@ const AI_FEATURE_TOUR_STEPS: TourStep[] = [
     id: 'chat',
     target: '[data-tour="chat"]',
     title: 'AI 마케팅 어시스턴트',
-    description: '마케팅 전략에 대해 AI와 대화하며 아이디어를 얻으세요. 24/7 마케팅 자문이 가능합니다.',
+    description:
+      '마케팅 전략에 대해 AI와 대화하며 아이디어를 얻으세요. 24/7 마케팅 자문이 가능합니다.',
     feature: 'AI 채팅',
     position: 'top',
   },
@@ -84,9 +88,9 @@ export function FeatureOnboardingExample() {
     AI_FEATURE_TOUR_STEPS.forEach((step) => {
       const featureMap: Record<string, AIFeatureType> = {
         'copy-generation': 'copy_generation',
-        'analysis': 'analysis',
-        'insights': 'insights',
-        'chat': 'chat',
+        analysis: 'analysis',
+        insights: 'insights',
+        chat: 'chat',
       }
       const feature = featureMap[step.id]
       if (feature) {
@@ -104,7 +108,8 @@ export function FeatureOnboardingExample() {
         <p className="text-gray-600 dark:text-gray-400">
           사용자가 AI 기능을 자연스럽게 발견하고 학습할 수 있도록 돕습니다.
         </p>
-        <button type="button"
+        <button
+          type="button"
           onClick={() => setIsTourOpen(true)}
           className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
         >
@@ -192,9 +197,7 @@ export function FeatureOnboardingExample() {
                 />
               )}
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              숨겨진 패턴과 기회 자동 발견
-            </p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">숨겨진 패턴과 기회 자동 발견</p>
           </div>
         </div>
 
@@ -263,14 +266,20 @@ export function FeatureOnboardingExample() {
 
       {/* Implementation notes */}
       <div className="mt-12 p-6 bg-gray-50 dark:bg-gray-800 rounded-xl">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-          구현 노트
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">구현 노트</h2>
         <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-          <li>• <strong>AIFeatureTour:</strong> 단계별 가이드 투어로 여러 기능을 순차적으로 소개</li>
-          <li>• <strong>FirstUseGuide:</strong> 특정 기능을 처음 사용할 때 상세 설명 제공</li>
-          <li>• <strong>FeatureDiscoveryHint:</strong> 새로운 기능을 부드럽게 알림</li>
-          <li>• <strong>useFeatureDiscovery:</strong> 발견 상태를 로컬스토리지에 저장하여 영구 보존</li>
+          <li>
+            • <strong>AIFeatureTour:</strong> 단계별 가이드 투어로 여러 기능을 순차적으로 소개
+          </li>
+          <li>
+            • <strong>FirstUseGuide:</strong> 특정 기능을 처음 사용할 때 상세 설명 제공
+          </li>
+          <li>
+            • <strong>FeatureDiscoveryHint:</strong> 새로운 기능을 부드럽게 알림
+          </li>
+          <li>
+            • <strong>useFeatureDiscovery:</strong> 발견 상태를 로컬스토리지에 저장하여 영구 보존
+          </li>
         </ul>
       </div>
     </div>

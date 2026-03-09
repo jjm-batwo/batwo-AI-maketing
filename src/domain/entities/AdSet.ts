@@ -1,5 +1,9 @@
 import { Money } from '../value-objects/Money'
-import { AdSetStatus, canAdSetTransition, isAdSetTerminalStatus } from '../value-objects/AdSetStatus'
+import {
+  AdSetStatus,
+  canAdSetTransition,
+  isAdSetTerminalStatus,
+} from '../value-objects/AdSetStatus'
 import { BillingEvent } from '../value-objects/BillingEvent'
 import { OptimizationGoal } from '../value-objects/OptimizationGoal'
 import { BidStrategy } from '../value-objects/BidStrategy'
@@ -140,16 +144,36 @@ export class AdSet {
   }
 
   // Getters
-  get id(): string { return this._id }
-  get campaignId(): string { return this._campaignId }
-  get name(): string { return this._name }
-  get status(): AdSetStatus { return this._status }
-  get dailyBudget(): Money | undefined { return this._dailyBudget }
-  get lifetimeBudget(): Money | undefined { return this._lifetimeBudget }
-  get currency(): string { return this._currency }
-  get billingEvent(): BillingEvent { return this._billingEvent }
-  get optimizationGoal(): OptimizationGoal { return this._optimizationGoal }
-  get bidStrategy(): BidStrategy { return this._bidStrategy }
+  get id(): string {
+    return this._id
+  }
+  get campaignId(): string {
+    return this._campaignId
+  }
+  get name(): string {
+    return this._name
+  }
+  get status(): AdSetStatus {
+    return this._status
+  }
+  get dailyBudget(): Money | undefined {
+    return this._dailyBudget
+  }
+  get lifetimeBudget(): Money | undefined {
+    return this._lifetimeBudget
+  }
+  get currency(): string {
+    return this._currency
+  }
+  get billingEvent(): BillingEvent {
+    return this._billingEvent
+  }
+  get optimizationGoal(): OptimizationGoal {
+    return this._optimizationGoal
+  }
+  get bidStrategy(): BidStrategy {
+    return this._bidStrategy
+  }
   get targeting(): Record<string, unknown> | undefined {
     return this._targeting ? { ...this._targeting } : undefined
   }
@@ -159,13 +183,21 @@ export class AdSet {
   get schedule(): Record<string, unknown> | undefined {
     return this._schedule ? { ...this._schedule } : undefined
   }
-  get startDate(): Date { return new Date(this._startDate) }
+  get startDate(): Date {
+    return new Date(this._startDate)
+  }
   get endDate(): Date | undefined {
     return this._endDate ? new Date(this._endDate) : undefined
   }
-  get metaAdSetId(): string | undefined { return this._metaAdSetId }
-  get createdAt(): Date { return new Date(this._createdAt) }
-  get updatedAt(): Date { return new Date(this._updatedAt) }
+  get metaAdSetId(): string | undefined {
+    return this._metaAdSetId
+  }
+  get createdAt(): Date {
+    return new Date(this._createdAt)
+  }
+  get updatedAt(): Date {
+    return new Date(this._updatedAt)
+  }
 
   // 상태 변경
   changeStatus(newStatus: AdSetStatus): AdSet {
@@ -177,41 +209,80 @@ export class AdSet {
     }
 
     return new AdSet(
-      this._id, this._campaignId, this._name, newStatus,
-      this._dailyBudget, this._lifetimeBudget, this._currency,
-      this._billingEvent, this._optimizationGoal, this._bidStrategy,
-      this._targeting, this._placements, this._schedule,
-      this._startDate, this._endDate, this._metaAdSetId,
-      this._createdAt, new Date()
+      this._id,
+      this._campaignId,
+      this._name,
+      newStatus,
+      this._dailyBudget,
+      this._lifetimeBudget,
+      this._currency,
+      this._billingEvent,
+      this._optimizationGoal,
+      this._bidStrategy,
+      this._targeting,
+      this._placements,
+      this._schedule,
+      this._startDate,
+      this._endDate,
+      this._metaAdSetId,
+      this._createdAt,
+      new Date()
     )
   }
 
   // 예산 변경
-  updateBudget(props: { dailyBudget?: Money | undefined; lifetimeBudget?: Money | undefined }): AdSet {
+  updateBudget(props: {
+    dailyBudget?: Money | undefined
+    lifetimeBudget?: Money | undefined
+  }): AdSet {
     const newDaily = 'dailyBudget' in props ? props.dailyBudget : this._dailyBudget
     const newLifetime = 'lifetimeBudget' in props ? props.lifetimeBudget : this._lifetimeBudget
 
     AdSet.validateBudget(newDaily, newLifetime)
 
     return new AdSet(
-      this._id, this._campaignId, this._name, this._status,
-      newDaily, newLifetime, this._currency,
-      this._billingEvent, this._optimizationGoal, this._bidStrategy,
-      this._targeting, this._placements, this._schedule,
-      this._startDate, this._endDate, this._metaAdSetId,
-      this._createdAt, new Date()
+      this._id,
+      this._campaignId,
+      this._name,
+      this._status,
+      newDaily,
+      newLifetime,
+      this._currency,
+      this._billingEvent,
+      this._optimizationGoal,
+      this._bidStrategy,
+      this._targeting,
+      this._placements,
+      this._schedule,
+      this._startDate,
+      this._endDate,
+      this._metaAdSetId,
+      this._createdAt,
+      new Date()
     )
   }
 
   // 타겟팅 변경
   updateTargeting(targeting: Record<string, unknown>): AdSet {
     return new AdSet(
-      this._id, this._campaignId, this._name, this._status,
-      this._dailyBudget, this._lifetimeBudget, this._currency,
-      this._billingEvent, this._optimizationGoal, this._bidStrategy,
-      targeting, this._placements, this._schedule,
-      this._startDate, this._endDate, this._metaAdSetId,
-      this._createdAt, new Date()
+      this._id,
+      this._campaignId,
+      this._name,
+      this._status,
+      this._dailyBudget,
+      this._lifetimeBudget,
+      this._currency,
+      this._billingEvent,
+      this._optimizationGoal,
+      this._bidStrategy,
+      targeting,
+      this._placements,
+      this._schedule,
+      this._startDate,
+      this._endDate,
+      this._metaAdSetId,
+      this._createdAt,
+      new Date()
     )
   }
 

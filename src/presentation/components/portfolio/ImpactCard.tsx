@@ -24,7 +24,11 @@ function scoreLabel(score: number): string {
   return '개선 필요'
 }
 
-export function ImpactCard({ expectedImpact, efficiencyScore, diversificationScore }: ImpactCardProps) {
+export function ImpactCard({
+  expectedImpact,
+  efficiencyScore,
+  diversificationScore,
+}: ImpactCardProps) {
   const improvement = expectedImpact.improvement
 
   return (
@@ -57,11 +61,12 @@ export function ImpactCard({ expectedImpact, efficiencyScore, diversificationSco
                 improvement > 0
                   ? 'text-green-600 dark:text-green-400'
                   : improvement < 0
-                  ? 'text-red-600 dark:text-red-400'
-                  : 'text-muted-foreground'
+                    ? 'text-red-600 dark:text-red-400'
+                    : 'text-muted-foreground'
               )}
             >
-              {improvement > 0 ? '+' : ''}{improvement.toFixed(1)}%
+              {improvement > 0 ? '+' : ''}
+              {improvement.toFixed(1)}%
             </p>
           </div>
         </div>

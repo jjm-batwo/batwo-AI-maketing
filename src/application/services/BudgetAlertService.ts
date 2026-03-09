@@ -104,10 +104,7 @@ export class BudgetAlertService {
    * @param dailyBudget 일일 예산 (원)
    * @returns 예산 상태 결과
    */
-  async checkBudgetStatus(
-    campaignId: string,
-    dailyBudget: number
-  ): Promise<BudgetStatusResult> {
+  async checkBudgetStatus(campaignId: string, dailyBudget: number): Promise<BudgetStatusResult> {
     const alert = await this.budgetAlertRepo.findByCampaignId(campaignId)
 
     // 오늘 날짜 기준 누적 지출액 조회

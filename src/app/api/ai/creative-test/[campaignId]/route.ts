@@ -32,17 +32,11 @@ export async function GET(
     const campaign = await campaignRepo.findById(campaignId)
 
     if (!campaign) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     if (campaign.userId !== user.id) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     // Check quota
@@ -67,8 +61,7 @@ export async function GET(
     )
 
     // Generate test recommendation
-    const recommendation =
-      await testRecommendationService.designTest(campaignId)
+    const recommendation = await testRecommendationService.designTest(campaignId)
 
     // Log usage only on success
     await quotaService.logUsage(user.id, 'AI_ANALYSIS')
@@ -90,26 +83,19 @@ export async function GET(
     // Handle specific error cases
     if (error instanceof Error) {
       if (error.message === 'Campaign not found') {
-        return NextResponse.json(
-          { message: '캠페인을 찾을 수 없습니다' },
-          { status: 404 }
-        )
+        return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
       }
 
       if (error.message === 'No KPI data available for campaign') {
         return NextResponse.json(
           {
-            message:
-              '캠페인의 KPI 데이터가 없습니다. 먼저 KPI 동기화를 진행해주세요.',
+            message: '캠페인의 KPI 데이터가 없습니다. 먼저 KPI 동기화를 진행해주세요.',
           },
           { status: 400 }
         )
       }
     }
 
-    return NextResponse.json(
-      { message: 'A/B 테스트 설계 생성에 실패했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'A/B 테스트 설계 생성에 실패했습니다' }, { status: 500 })
   }
 }

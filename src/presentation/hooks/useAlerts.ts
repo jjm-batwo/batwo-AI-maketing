@@ -85,27 +85,33 @@ export function useAlerts(pollingInterval = 60000): UseAlertsReturn {
     return () => clearInterval(interval)
   }, [fetchAlerts, pollingInterval])
 
-  const dismissAlert = useCallback(async (id: string) => {
-    await fetch(`/api/agent/alerts/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'DISMISSED' }),
-    })
-    setAlerts((prev) => prev.filter((a) => a.id !== id))
-    setUnreadCount((prev) => Math.max(0, prev - 1))
-    setUnreadAlertCount(Math.max(0, unreadCount - 1))
-  }, [unreadCount, setUnreadAlertCount])
+  const dismissAlert = useCallback(
+    async (id: string) => {
+      await fetch(`/api/agent/alerts/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'DISMISSED' }),
+      })
+      setAlerts((prev) => prev.filter((a) => a.id !== id))
+      setUnreadCount((prev) => Math.max(0, prev - 1))
+      setUnreadAlertCount(Math.max(0, unreadCount - 1))
+    },
+    [unreadCount, setUnreadAlertCount]
+  )
 
-  const markAsRead = useCallback(async (id: string) => {
-    await fetch(`/api/agent/alerts/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'READ' }),
-    })
-    setAlerts((prev) => prev.filter((a) => a.id !== id))
-    setUnreadCount((prev) => Math.max(0, prev - 1))
-    setUnreadAlertCount(Math.max(0, unreadCount - 1))
-  }, [unreadCount, setUnreadAlertCount])
+  const markAsRead = useCallback(
+    async (id: string) => {
+      await fetch(`/api/agent/alerts/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'READ' }),
+      })
+      setAlerts((prev) => prev.filter((a) => a.id !== id))
+      setUnreadCount((prev) => Math.max(0, prev - 1))
+      setUnreadAlertCount(Math.max(0, unreadCount - 1))
+    },
+    [unreadCount, setUnreadAlertCount]
+  )
 
   return {
     alerts,

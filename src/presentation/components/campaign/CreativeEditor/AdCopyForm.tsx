@@ -4,7 +4,13 @@ import { useFormContext } from 'react-hook-form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import type { ExtendedCampaignFormData } from '../CampaignCreateForm/types'
 
 const ctaOptions = [
@@ -18,7 +24,12 @@ const ctaOptions = [
 ]
 
 export function AdCopyForm() {
-  const { register, watch, setValue, formState: { errors } } = useFormContext<ExtendedCampaignFormData>()
+  const {
+    register,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useFormContext<ExtendedCampaignFormData>()
 
   return (
     <div className="space-y-4">
@@ -76,14 +87,21 @@ export function AdCopyForm() {
         <Label>CTA 버튼</Label>
         <Select
           value={watch('creative.callToAction')}
-          onValueChange={(value) => setValue('creative.callToAction', value as ExtendedCampaignFormData['creative']['callToAction'])}
+          onValueChange={(value) =>
+            setValue(
+              'creative.callToAction',
+              value as ExtendedCampaignFormData['creative']['callToAction']
+            )
+          }
         >
           <SelectTrigger>
             <SelectValue placeholder="CTA 버튼을 선택하세요" />
           </SelectTrigger>
           <SelectContent>
             {ctaOptions.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+              <SelectItem key={opt.value} value={opt.value}>
+                {opt.label}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>

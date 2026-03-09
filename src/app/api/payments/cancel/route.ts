@@ -29,17 +29,11 @@ export async function POST(request: Request) {
       const message = error.message
 
       if (message.includes('구독을 찾을 수 없습니다')) {
-        return NextResponse.json(
-          { error: message },
-          { status: 404 }
-        )
+        return NextResponse.json({ error: message }, { status: 404 })
       }
 
       if (message.includes('이미 취소된 구독입니다')) {
-        return NextResponse.json(
-          { error: message },
-          { status: 409 }
-        )
+        return NextResponse.json({ error: message }, { status: 409 })
       }
     }
 
@@ -47,9 +41,6 @@ export async function POST(request: Request) {
     console.error('Cancel subscription error:', error)
 
     // Generic error response
-    return NextResponse.json(
-      { error: '구독 취소 중 오류가 발생했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '구독 취소 중 오류가 발생했습니다' }, { status: 500 })
   }
 }

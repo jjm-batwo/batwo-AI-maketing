@@ -50,7 +50,8 @@ export function FeatureDiscoveryHint({
       >
         <Sparkles className="w-3 h-3" />
         <span>NEW</span>
-        <button type="button"
+        <button
+          type="button"
           onClick={handleDismiss}
           className="ml-1 hover:bg-purple-500/20 rounded-full p-0.5 transition-colors"
           aria-label="닫기"
@@ -75,7 +76,8 @@ export function FeatureDiscoveryHint({
         <div className="flex items-start gap-2">
           <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
           <p className="flex-1">{hint}</p>
-          <button type="button"
+          <button
+            type="button"
             onClick={handleDismiss}
             className="hover:bg-gray-100 dark:hover:bg-gray-700 rounded p-0.5 transition-colors"
             aria-label="닫기"
@@ -113,7 +115,8 @@ export function FeatureDiscoveryHint({
         </p>
         <p className="text-sm text-gray-600 dark:text-gray-400">{hint}</p>
       </div>
-      <button type="button"
+      <button
+        type="button"
         onClick={handleDismiss}
         className="flex-shrink-0 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded p-1 transition-colors"
         aria-label="닫기"

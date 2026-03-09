@@ -67,7 +67,8 @@ export function GuideQuestionCard({
           const isDisabled = (isAnswered || selected !== null) && !isSelected
 
           return (
-            <button type="button"
+            <button
+              type="button"
               key={option.value}
               onClick={() => handleSelect(option)}
               disabled={isAnswered || selected !== null}

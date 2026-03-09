@@ -74,14 +74,30 @@ export class Ad {
   }
 
   // Getters
-  get id(): string { return this._id }
-  get adSetId(): string { return this._adSetId }
-  get name(): string { return this._name }
-  get status(): AdStatus { return this._status }
-  get creativeId(): string { return this._creativeId }
-  get metaAdId(): string | undefined { return this._metaAdId }
-  get createdAt(): Date { return new Date(this._createdAt) }
-  get updatedAt(): Date { return new Date(this._updatedAt) }
+  get id(): string {
+    return this._id
+  }
+  get adSetId(): string {
+    return this._adSetId
+  }
+  get name(): string {
+    return this._name
+  }
+  get status(): AdStatus {
+    return this._status
+  }
+  get creativeId(): string {
+    return this._creativeId
+  }
+  get metaAdId(): string | undefined {
+    return this._metaAdId
+  }
+  get createdAt(): Date {
+    return new Date(this._createdAt)
+  }
+  get updatedAt(): Date {
+    return new Date(this._updatedAt)
+  }
 
   // 크리에이티브 변경 - 새 인스턴스 반환
   changeCreative(creativeId: string): Ad {

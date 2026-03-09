@@ -13,7 +13,9 @@ import { DuplicateCampaignNameError } from './CreateCampaignUseCase'
 // Advantage+ 캠페인은 3개 레버가 모두 활성화되어야 함
 export class InvalidAdvantageConfigError extends Error {
   constructor() {
-    super('Advantage+ campaign requires all three levers to be enabled: advantageBudget, advantageAudience, advantagePlacement')
+    super(
+      'Advantage+ campaign requires all three levers to be enabled: advantageBudget, advantageAudience, advantagePlacement'
+    )
     this.name = 'InvalidAdvantageConfigError'
   }
 }
@@ -43,10 +45,7 @@ export class CreateAdvantageCampaignUseCase {
     }
 
     // 중복 이름 체크
-    const exists = await this.campaignRepository.existsByNameAndUserId(
-      dto.name,
-      dto.userId
-    )
+    const exists = await this.campaignRepository.existsByNameAndUserId(dto.name, dto.userId)
     if (exists) {
       throw new DuplicateCampaignNameError(dto.name)
     }
@@ -83,7 +82,10 @@ export class CreateAdvantageCampaignUseCase {
         )
         finalCampaign = campaign.setMetaCampaignId(metaCampaign.id)
       } catch (error) {
-        console.warn('[CreateAdvantageCampaign] Meta API sync failed:', error instanceof Error ? error.message : error)
+        console.warn(
+          '[CreateAdvantageCampaign] Meta API sync failed:',
+          error instanceof Error ? error.message : error
+        )
       }
     }
 

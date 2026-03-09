@@ -1,7 +1,13 @@
 import React from 'react'
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
 import type { ReportDTO } from '@application/dto/report/ReportDTO'
-import { baseStyles, formatNumber, formatCurrency, formatDate, formatPercent } from './BaseReportTemplate'
+import {
+  baseStyles,
+  formatNumber,
+  formatCurrency,
+  formatDate,
+  formatPercent,
+} from './BaseReportTemplate'
 import { MetricCard } from '../components/MetricCard'
 import { BarChart } from '../components/BarChart'
 import { InsightCard } from '../components/InsightCard'
@@ -144,7 +150,10 @@ export function MonthlyReportTemplate({ report }: MonthlyReportTemplateProps) {
   const weeksInMonth = Math.ceil(sections.length / 4)
   const weeklyData = Array.from({ length: Math.min(weeksInMonth, 4) }, (_, i) => ({
     week: i + 1,
-    sections: sections.slice(i * Math.ceil(sections.length / 4), (i + 1) * Math.ceil(sections.length / 4)),
+    sections: sections.slice(
+      i * Math.ceil(sections.length / 4),
+      (i + 1) * Math.ceil(sections.length / 4)
+    ),
   }))
 
   return (
@@ -163,17 +172,16 @@ export function MonthlyReportTemplate({ report }: MonthlyReportTemplateProps) {
         <View style={styles.executiveSummary}>
           <Text style={styles.sectionTitle}>경영진 요약</Text>
           <Text style={{ fontSize: 11, color: '#475569', lineHeight: 1.6, marginBottom: 12 }}>
-            {new Date(dateRange.startDate).toLocaleDateString('ko-KR', { month: 'long' })} 한 달간 총{' '}
-            {formatCurrency(summaryMetrics.totalRevenue)}의 매출을 달성했으며, ROAS{' '}
+            {new Date(dateRange.startDate).toLocaleDateString('ko-KR', { month: 'long' })} 한 달간
+            총 {formatCurrency(summaryMetrics.totalRevenue)}의 매출을 달성했으며, ROAS{' '}
             {summaryMetrics.overallROAS.toFixed(2)}x로 목표 대비{' '}
             {goalAchievement.roas > 100 ? '초과' : '미달'} 달성했습니다.
           </Text>
           <Text style={{ fontSize: 10, color: '#64748b', lineHeight: 1.5 }}>
             • 총 전환: {formatNumber(summaryMetrics.totalConversions)}건 (목표 대비{' '}
-            {formatPercent(goalAchievement.conversions - 100, 1)}){'\n'}
-            • 총 지출: {formatCurrency(summaryMetrics.totalSpend)} (예산 대비{' '}
-            {formatPercent(goalAchievement.spend - 100, 1)}){'\n'}
-            • 활성 캠페인: {sections.length}개
+            {formatPercent(goalAchievement.conversions - 100, 1)}){'\n'}• 총 지출:{' '}
+            {formatCurrency(summaryMetrics.totalSpend)} (예산 대비{' '}
+            {formatPercent(goalAchievement.spend - 100, 1)}){'\n'}• 활성 캠페인: {sections.length}개
           </Text>
         </View>
 
@@ -181,23 +189,11 @@ export function MonthlyReportTemplate({ report }: MonthlyReportTemplateProps) {
         <View style={styles.summarySection}>
           <Text style={styles.sectionTitle}>월간 성과</Text>
           <View style={styles.metricsGrid}>
-            <MetricCard
-              label="총 노출"
-              value={formatNumber(summaryMetrics.totalImpressions)}
-            />
-            <MetricCard
-              label="총 클릭"
-              value={formatNumber(summaryMetrics.totalClicks)}
-            />
-            <MetricCard
-              label="총 전환"
-              value={formatNumber(summaryMetrics.totalConversions)}
-            />
+            <MetricCard label="총 노출" value={formatNumber(summaryMetrics.totalImpressions)} />
+            <MetricCard label="총 클릭" value={formatNumber(summaryMetrics.totalClicks)} />
+            <MetricCard label="총 전환" value={formatNumber(summaryMetrics.totalConversions)} />
             <MetricCard label="총 지출" value={formatCurrency(summaryMetrics.totalSpend)} />
-            <MetricCard
-              label="총 매출"
-              value={formatCurrency(summaryMetrics.totalRevenue)}
-            />
+            <MetricCard label="총 매출" value={formatCurrency(summaryMetrics.totalRevenue)} />
             <MetricCard label="ROAS" value={`${summaryMetrics.overallROAS.toFixed(2)}x`} />
             <MetricCard label="평균 CTR" value={formatPercent(summaryMetrics.averageCTR)} />
             <MetricCard label="평균 CVR" value={formatPercent(summaryMetrics.averageCVR)} />
@@ -206,9 +202,7 @@ export function MonthlyReportTemplate({ report }: MonthlyReportTemplateProps) {
 
         {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            생성일: {new Date().toLocaleDateString('ko-KR')}
-          </Text>
+          <Text style={styles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
           <Text style={styles.footerText}>바투 AI 마케팅 | 월간 보고서 (1/3)</Text>
         </View>
       </Page>
@@ -249,10 +243,7 @@ export function MonthlyReportTemplate({ report }: MonthlyReportTemplateProps) {
             <Text style={styles.goalLabel}>ROAS 목표</Text>
             <View style={styles.goalBar}>
               <View
-                style={[
-                  styles.goalProgress,
-                  { width: `${Math.min(goalAchievement.roas, 100)}%` },
-                ]}
+                style={[styles.goalProgress, { width: `${Math.min(goalAchievement.roas, 100)}%` }]}
               />
             </View>
             <Text style={styles.goalValue}>{formatPercent(goalAchievement.roas, 0)}</Text>
@@ -303,9 +294,7 @@ export function MonthlyReportTemplate({ report }: MonthlyReportTemplateProps) {
                   </View>
                   <View style={styles.weekMetric}>
                     <Text style={styles.weekMetricLabel}>클릭</Text>
-                    <Text style={styles.weekMetricValue}>
-                      {formatNumber(weekMetrics.clicks)}
-                    </Text>
+                    <Text style={styles.weekMetricValue}>{formatNumber(weekMetrics.clicks)}</Text>
                   </View>
                   <View style={styles.weekMetric}>
                     <Text style={styles.weekMetricLabel}>전환</Text>
@@ -315,9 +304,7 @@ export function MonthlyReportTemplate({ report }: MonthlyReportTemplateProps) {
                   </View>
                   <View style={styles.weekMetric}>
                     <Text style={styles.weekMetricLabel}>지출</Text>
-                    <Text style={styles.weekMetricValue}>
-                      {formatCurrency(weekMetrics.spend)}
-                    </Text>
+                    <Text style={styles.weekMetricValue}>{formatCurrency(weekMetrics.spend)}</Text>
                   </View>
                 </View>
               </View>
@@ -327,9 +314,7 @@ export function MonthlyReportTemplate({ report }: MonthlyReportTemplateProps) {
 
         {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            생성일: {new Date().toLocaleDateString('ko-KR')}
-          </Text>
+          <Text style={styles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
           <Text style={styles.footerText}>바투 AI 마케팅 | 월간 보고서 (2/3)</Text>
         </View>
       </Page>
@@ -339,16 +324,17 @@ export function MonthlyReportTemplate({ report }: MonthlyReportTemplateProps) {
         <Page size="A4" style={styles.page}>
           <View style={{ marginBottom: 24 }}>
             <Text style={styles.sectionTitle}>AI 월간 인사이트</Text>
-            {aiInsights.flatMap((i) => i.insights || []).slice(0, 6).map((insight, index) => (
-              <InsightCard key={index} insight={insight} />
-            ))}
+            {aiInsights
+              .flatMap((i) => i.insights || [])
+              .slice(0, 6)
+              .map((insight, index) => (
+                <InsightCard key={index} insight={insight} />
+              ))}
           </View>
 
           {/* Footer */}
           <View style={styles.footer}>
-            <Text style={styles.footerText}>
-              생성일: {new Date().toLocaleDateString('ko-KR')}
-            </Text>
+            <Text style={styles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
             <Text style={styles.footerText}>바투 AI 마케팅 | 월간 보고서 (3/3)</Text>
           </View>
         </Page>

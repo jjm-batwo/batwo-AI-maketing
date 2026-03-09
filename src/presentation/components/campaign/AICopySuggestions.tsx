@@ -13,7 +13,11 @@ import {
 } from '@/components/ui/select'
 import { Sparkles, Copy, Check, RefreshCw, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useAICopy, type GenerateCopyInput, type AdCopyVariant } from '@/presentation/hooks/useAICopy'
+import {
+  useAICopy,
+  type GenerateCopyInput,
+  type AdCopyVariant,
+} from '@/presentation/hooks/useAICopy'
 
 interface AICopySuggestionsProps {
   productName: string
@@ -44,18 +48,12 @@ export function AICopySuggestions({
   className,
 }: AICopySuggestionsProps) {
   const [selectedTone, setSelectedTone] = useState<GenerateCopyInput['tone']>('professional')
-  const [selectedObjective, setSelectedObjective] = useState<GenerateCopyInput['objective']>('conversion')
+  const [selectedObjective, setSelectedObjective] =
+    useState<GenerateCopyInput['objective']>('conversion')
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
 
-  const {
-    generateCopy,
-    variants,
-    remainingQuota,
-    isLoading,
-    isError,
-    error,
-  } = useAICopy()
+  const { generateCopy, variants, remainingQuota, isLoading, isError, error } = useAICopy()
 
   const canGenerate = productName && productDescription && targetAudience
 
@@ -134,11 +132,7 @@ export function AICopySuggestions({
             </SelectContent>
           </Select>
 
-          <Button
-            onClick={handleGenerate}
-            disabled={!canGenerate || isLoading}
-            size="sm"
-          >
+          <Button onClick={handleGenerate} disabled={!canGenerate || isLoading} size="sm">
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -194,14 +188,10 @@ export function AICopySuggestions({
                       <Badge variant="secondary" className="mb-1 text-xs">
                         본문
                       </Badge>
-                      <p className="text-sm text-muted-foreground">
-                        {variant.primaryText}
-                      </p>
+                      <p className="text-sm text-muted-foreground">{variant.primaryText}</p>
                     </div>
                     <div className="flex items-center gap-4 text-sm">
-                      <span className="text-muted-foreground">
-                        설명: {variant.description}
-                      </span>
+                      <span className="text-muted-foreground">설명: {variant.description}</span>
                       <Badge variant="outline">{variant.callToAction}</Badge>
                     </div>
                   </div>

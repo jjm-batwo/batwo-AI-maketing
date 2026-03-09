@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { MetaAdsWarmupClient, WarmupSummary } from '@/infrastructure/external/meta-ads/MetaAdsWarmupClient'
+import {
+  MetaAdsWarmupClient,
+  WarmupSummary,
+} from '@/infrastructure/external/meta-ads/MetaAdsWarmupClient'
 
 // Vercel Cron 또는 내부 API 호출만 허용
 function isAuthorized(request: NextRequest): boolean {
@@ -20,7 +23,10 @@ function isAuthorized(request: NextRequest): boolean {
 }
 
 // DB 로깅을 위한 동적 import (DB 연결 실패 시에도 웜업은 동작)
-async function tryLogToDatabase(summary: WarmupSummary, adAccountId: string): Promise<{
+async function tryLogToDatabase(
+  summary: WarmupSummary,
+  adAccountId: string
+): Promise<{
   logged: boolean
   reviewStatus?: {
     passed: boolean
@@ -34,7 +40,8 @@ async function tryLogToDatabase(summary: WarmupSummary, adAccountId: string): Pr
 }> {
   try {
     const { prisma } = await import('@/lib/prisma')
-    const { MetaApiLogRepository } = await import('@/infrastructure/external/meta-ads/MetaApiLogRepository')
+    const { MetaApiLogRepository } =
+      await import('@/infrastructure/external/meta-ads/MetaApiLogRepository')
 
     const logRepository = new MetaApiLogRepository(prisma)
 
@@ -54,10 +61,13 @@ async function tryLogToDatabase(summary: WarmupSummary, adAccountId: string): Pr
     const reviewStatus = await logRepository.checkAppReviewStatus()
     return { logged: true, reviewStatus }
   } catch (error) {
-    console.warn('[meta-warmup] DB logging failed:', error instanceof Error ? error.message : 'Unknown error')
+    console.warn(
+      '[meta-warmup] DB logging failed:',
+      error instanceof Error ? error.message : 'Unknown error'
+    )
     return {
       logged: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : 'Unknown error',
     }
   }
 }
@@ -65,10 +75,7 @@ async function tryLogToDatabase(summary: WarmupSummary, adAccountId: string): Pr
 export async function POST(request: NextRequest) {
   // 인증 확인
   if (!isAuthorized(request)) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    )
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   // 환경 변수 확인
@@ -76,24 +83,18 @@ export async function POST(request: NextRequest) {
   const adAccountId = process.env.META_AD_ACCOUNT_ID // batowcompany 계정
 
   if (!accessToken) {
-    return NextResponse.json(
-      { error: 'META_ACCESS_TOKEN not configured' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'META_ACCESS_TOKEN not configured' }, { status: 500 })
   }
 
   if (!adAccountId) {
-    return NextResponse.json(
-      { error: 'META_AD_ACCOUNT_ID not configured' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'META_AD_ACCOUNT_ID not configured' }, { status: 500 })
   }
 
   try {
     // Warmup 클라이언트 실행 (DB 없이 동작)
     const warmupClient = new MetaAdsWarmupClient()
     const summary = await warmupClient.runWarmupSequence(accessToken, adAccountId, {
-      maxCampaigns: 50,  // 앱 검수를 위해 최대화
+      maxCampaigns: 50, // 앱 검수를 위해 최대화
       maxAdSets: 30,
       maxAds: 30,
     })
@@ -132,15 +133,13 @@ export async function POST(request: NextRequest) {
 // GET: 현재 상태만 확인 (warmup 실행 없이)
 export async function GET(request: NextRequest) {
   if (!isAuthorized(request)) {
-    return NextResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 }
-    )
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   try {
     const { prisma } = await import('@/lib/prisma')
-    const { MetaApiLogRepository } = await import('@/infrastructure/external/meta-ads/MetaApiLogRepository')
+    const { MetaApiLogRepository } =
+      await import('@/infrastructure/external/meta-ads/MetaApiLogRepository')
 
     const logRepository = new MetaApiLogRepository(prisma)
     const reviewStatus = await logRepository.checkAppReviewStatus()

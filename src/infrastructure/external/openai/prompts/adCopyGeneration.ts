@@ -25,8 +25,7 @@ export const INDUSTRY_COPY_EXAMPLES: Record<
     {
       hook: 'urgency',
       headline: '오늘 자정까지 50% 특가',
-      primaryText:
-        '연중 최저가! 지금 놓치면 1년 기다려야 해요. 이미 2,847명이 구매했어요.',
+      primaryText: '연중 최저가! 지금 놓치면 1년 기다려야 해요. 이미 2,847명이 구매했어요.',
       description: '무료배송 + 추가 10% 쿠폰',
       cta: '지금 구매하기',
       performance: { ctr: 2.1, cvr: 4.2 },
@@ -34,8 +33,7 @@ export const INDUSTRY_COPY_EXAMPLES: Record<
     {
       hook: 'benefit',
       headline: '첫 구매 30% + 무료배송',
-      primaryText:
-        '신규 고객님을 위한 특별 혜택! 가입만 해도 5천원 쿠폰이 즉시 지급됩니다.',
+      primaryText: '신규 고객님을 위한 특별 혜택! 가입만 해도 5천원 쿠폰이 즉시 지급됩니다.',
       description: '오늘 가입 시 추가 혜택',
       cta: '혜택 받기',
       performance: { ctr: 1.8, cvr: 3.5 },
@@ -43,8 +41,7 @@ export const INDUSTRY_COPY_EXAMPLES: Record<
     {
       hook: 'fear_of_missing',
       headline: '품절임박 🔥 마지막 50개',
-      primaryText:
-        '재입고 미정! 올해 가장 많이 팔린 인기템. 지금 아니면 구하기 어려워요.',
+      primaryText: '재입고 미정! 올해 가장 많이 팔린 인기템. 지금 아니면 구하기 어려워요.',
       description: '리뷰 4.9점 베스트셀러',
       cta: '바로 구매',
       performance: { ctr: 2.3, cvr: 3.8 },
@@ -54,8 +51,7 @@ export const INDUSTRY_COPY_EXAMPLES: Record<
     {
       hook: 'curiosity',
       headline: '줄서서 먹는 그 맛집, 집에서',
-      primaryText:
-        '웨이팅 2시간 맛집 셰프가 직접 만든 밀키트. 15분이면 레스토랑 그 맛 그대로!',
+      primaryText: '웨이팅 2시간 맛집 셰프가 직접 만든 밀키트. 15분이면 레스토랑 그 맛 그대로!',
       description: '첫 주문 40% 할인',
       cta: '맛보기',
       performance: { ctr: 2.4, cvr: 4.1 },
@@ -63,8 +59,7 @@ export const INDUSTRY_COPY_EXAMPLES: Record<
     {
       hook: 'social_proof',
       headline: '10만 명이 선택한 맛',
-      primaryText:
-        '리뷰 평점 4.9점! "이 가격에 이 맛?" 재구매율 78%의 비결을 직접 확인하세요.',
+      primaryText: '리뷰 평점 4.9점! "이 가격에 이 맛?" 재구매율 78%의 비결을 직접 확인하세요.',
       description: '무료 배송 + 사은품',
       cta: '주문하기',
       performance: { ctr: 2.0, cvr: 3.6 },
@@ -74,8 +69,7 @@ export const INDUSTRY_COPY_EXAMPLES: Record<
     {
       hook: 'authority',
       headline: '피부과 전문의가 만든 세럼',
-      primaryText:
-        '임상 테스트 완료! 2주 만에 피부 톤 개선 93%. 민감성 피부도 안심하세요.',
+      primaryText: '임상 테스트 완료! 2주 만에 피부 톤 개선 93%. 민감성 피부도 안심하세요.',
       description: '지금 구매 시 미니어처 증정',
       cta: '자세히 보기',
       performance: { ctr: 1.9, cvr: 3.2 },
@@ -83,8 +77,7 @@ export const INDUSTRY_COPY_EXAMPLES: Record<
     {
       hook: 'social_proof',
       headline: '인플루언서들의 픽 🏆',
-      primaryText:
-        '뷰티 유튜버 100명 중 87명이 추천! "이건 진짜 효과 있어요" 직접 써보세요.',
+      primaryText: '뷰티 유튜버 100명 중 87명이 추천! "이건 진짜 효과 있어요" 직접 써보세요.',
       description: '7일 무료 체험',
       cta: '체험하기',
       performance: { ctr: 2.2, cvr: 2.8 },
@@ -94,8 +87,7 @@ export const INDUSTRY_COPY_EXAMPLES: Record<
     {
       hook: 'fear_of_missing',
       headline: '한정 수량 100개 오픈',
-      primaryText:
-        '인스타 핫템! 예약 오픈 10분 만에 품절됐던 그 아이템이 드디어 재입고.',
+      primaryText: '인스타 핫템! 예약 오픈 10분 만에 품절됐던 그 아이템이 드디어 재입고.',
       description: '무료 반품 보장',
       cta: '지금 구매',
       performance: { ctr: 2.1, cvr: 2.9 },
@@ -103,8 +95,7 @@ export const INDUSTRY_COPY_EXAMPLES: Record<
     {
       hook: 'curiosity',
       headline: '연예인 공항패션의 비밀',
-      primaryText:
-        '스타일리스트가 공개하는 세련된 코디 비법. 이 한 벌로 5가지 룩 완성!',
+      primaryText: '스타일리스트가 공개하는 세련된 코디 비법. 이 한 벌로 5가지 룩 완성!',
       description: '신규 가입 20% 할인',
       cta: '스타일 보기',
       performance: { ctr: 1.7, cvr: 2.4 },
@@ -114,8 +105,7 @@ export const INDUSTRY_COPY_EXAMPLES: Record<
     {
       hook: 'authority',
       headline: '합격률 94% 강의 공개',
-      primaryText:
-        '전 수강생 15,000명 중 14,100명 합격! 검증된 커리큘럼으로 단기 합격하세요.',
+      primaryText: '전 수강생 15,000명 중 14,100명 합격! 검증된 커리큘럼으로 단기 합격하세요.',
       description: '7일 무료 수강 + 교재 증정',
       cta: '무료 체험',
       performance: { ctr: 1.4, cvr: 2.8 },
@@ -134,8 +124,7 @@ export const INDUSTRY_COPY_EXAMPLES: Record<
     {
       hook: 'benefit',
       headline: '무료 방문 견적 + 10% 할인',
-      primaryText:
-        '전문가가 직접 방문해 정확한 견적을 드려요. 타사 대비 평균 15% 저렴합니다.',
+      primaryText: '전문가가 직접 방문해 정확한 견적을 드려요. 타사 대비 평균 15% 저렴합니다.',
       description: '24시간 예약 가능',
       cta: '견적 요청',
       performance: { ctr: 1.3, cvr: 3.1 },
@@ -183,8 +172,7 @@ export const INDUSTRY_COPY_EXAMPLES: Record<
     {
       hook: 'emotional',
       headline: '가족 건강, 미리 챙기세요',
-      primaryText:
-        '부모님께 드리기 좋은 건강 선물. 국내산 원료만 사용해 안심하고 드실 수 있어요.',
+      primaryText: '부모님께 드리기 좋은 건강 선물. 국내산 원료만 사용해 안심하고 드실 수 있어요.',
       description: '선물 포장 무료',
       cta: '선물하기',
       performance: { ctr: 1.3, cvr: 2.6 },
@@ -275,20 +263,13 @@ function getIndustryContext(industry?: Industry): string {
  * 훅 타입별 가이드라인
  */
 const HOOK_GUIDELINES: Record<CopyHookType, string> = {
-  benefit:
-    '혜택/가치를 직접적으로 전달. 고객이 얻는 구체적 이점 명시. 숫자/비율 활용.',
-  urgency:
-    '긴급성/희소성 강조. 기한, 수량 제한 명시. "오늘만", "마감임박" 등 활용.',
-  social_proof:
-    '사회적 증거 활용. 구매자 수, 리뷰 점수, 추천인 언급. "~명이 선택" 패턴.',
-  curiosity:
-    '호기심 유발. 질문형, 비밀 공개, 반전 등 활용. 클릭 유도하는 미완결 문장.',
-  fear_of_missing:
-    'FOMO 자극. 놓치면 후회할 것 같은 느낌. "다시 안 옴", "품절임박" 등.',
-  authority:
-    '권위/전문성 강조. 전문가 추천, 인증, 수상 경력, 경력/실적 언급.',
-  emotional:
-    '감정적 연결. 공감, 스토리텔링, 가치관 호소. 브랜드 철학이나 의미 전달.',
+  benefit: '혜택/가치를 직접적으로 전달. 고객이 얻는 구체적 이점 명시. 숫자/비율 활용.',
+  urgency: '긴급성/희소성 강조. 기한, 수량 제한 명시. "오늘만", "마감임박" 등 활용.',
+  social_proof: '사회적 증거 활용. 구매자 수, 리뷰 점수, 추천인 언급. "~명이 선택" 패턴.',
+  curiosity: '호기심 유발. 질문형, 비밀 공개, 반전 등 활용. 클릭 유도하는 미완결 문장.',
+  fear_of_missing: 'FOMO 자극. 놓치면 후회할 것 같은 느낌. "다시 안 옴", "품절임박" 등.',
+  authority: '권위/전문성 강조. 전문가 추천, 인증, 수상 경력, 경력/실적 언급.',
+  emotional: '감정적 연결. 공감, 스토리텔링, 가치관 호소. 브랜드 철학이나 의미 전달.',
 }
 
 /**
@@ -317,9 +298,7 @@ function getABTestingInstructions(
       ? preferredHooks
       : (['benefit', 'urgency', 'social_proof'] as CopyHookType[])
 
-  const hookGuides = hooks
-    .map((hook) => `- ${hook}: ${HOOK_GUIDELINES[hook]}`)
-    .join('\n')
+  const hookGuides = hooks.map((hook) => `- ${hook}: ${HOOK_GUIDELINES[hook]}`).join('\n')
 
   return `
 ## A/B 테스트 변형 생성
@@ -353,16 +332,11 @@ export function buildAdCopyPrompt(input: GenerateAdCopyInput): string {
     competitorContext,
   } = enhancedInput
 
-  const keywordsText = keywords?.length
-    ? `포함할 키워드: ${keywords.join(', ')}`
-    : ''
+  const keywordsText = keywords?.length ? `포함할 키워드: ${keywords.join(', ')}` : ''
 
   const seasonalContext = getSeasonalContext()
   const industryContext = getIndustryContext(industry)
-  const abTestingInstructions = getABTestingInstructions(
-    preferredHooks,
-    includeABVariants
-  )
+  const abTestingInstructions = getABTestingInstructions(preferredHooks, includeABVariants)
 
   const competitorSection = competitorContext
     ? `

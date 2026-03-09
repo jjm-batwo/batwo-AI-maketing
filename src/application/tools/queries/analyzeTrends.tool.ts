@@ -1,11 +1,18 @@
 import { z } from 'zod'
-import type { AgentTool, AgentContext, ToolExecutionResult } from '@application/ports/IConversationalAgent'
+import type {
+  AgentTool,
+  AgentContext,
+  ToolExecutionResult,
+} from '@application/ports/IConversationalAgent'
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
 
 const paramsSchema = z.object({
   period: z.enum(['7d', '14d', '30d']).default('7d').describe('분석 기간'),
-  metric: z.enum(['spend', 'revenue', 'roas', 'ctr', 'conversions']).default('roas').describe('분석할 지표'),
+  metric: z
+    .enum(['spend', 'revenue', 'roas', 'ctr', 'conversions'])
+    .default('roas')
+    .describe('분석할 지표'),
 })
 
 type Params = z.infer<typeof paramsSchema>
@@ -72,11 +79,14 @@ export function createAnalyzeTrendsTool(
       const values = trendData.map((d) => d[metricKey] as number)
       const firstHalf = values.slice(0, Math.floor(values.length / 2))
       const secondHalf = values.slice(Math.floor(values.length / 2))
-      const firstAvg = firstHalf.length > 0 ? firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length : 0
-      const secondAvg = secondHalf.length > 0 ? secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length : 0
+      const firstAvg =
+        firstHalf.length > 0 ? firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length : 0
+      const secondAvg =
+        secondHalf.length > 0 ? secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length : 0
 
-      const trendDirection = secondAvg > firstAvg * 1.05 ? '상승' : secondAvg < firstAvg * 0.95 ? '하락' : '보합'
-      const changeRate = firstAvg > 0 ? ((secondAvg - firstAvg) / firstAvg * 100).toFixed(1) : '0'
+      const trendDirection =
+        secondAvg > firstAvg * 1.05 ? '상승' : secondAvg < firstAvg * 0.95 ? '하락' : '보합'
+      const changeRate = firstAvg > 0 ? (((secondAvg - firstAvg) / firstAvg) * 100).toFixed(1) : '0'
 
       const formattedMessage = [
         `📈 최근 ${params.period} ${METRIC_LABELS[metricKey]} 추세 분석:`,

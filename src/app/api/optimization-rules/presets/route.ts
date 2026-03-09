@@ -12,10 +12,7 @@ export async function GET(request: NextRequest) {
     const campaignId = searchParams.get('campaignId')
 
     if (!campaignId) {
-      return NextResponse.json(
-        { message: 'campaignId는 필수입니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ message: 'campaignId는 필수입니다' }, { status: 400 })
     }
 
     const presets = OptimizationRule.ecommercePresets(campaignId, user.id)

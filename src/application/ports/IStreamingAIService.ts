@@ -18,9 +18,7 @@ export interface IStreamingAIService {
   /**
    * 광고 카피 스트리밍 생성
    */
-  streamAdCopy(
-    input: GenerateAdCopyInput
-  ): AsyncIterable<AdCopyStreamChunk>
+  streamAdCopy(input: GenerateAdCopyInput): AsyncIterable<AdCopyStreamChunk>
 }
 
 /**

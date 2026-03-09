@@ -114,9 +114,7 @@ export function CampaignEditForm({
   return (
     <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
       {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800">
-          {error}
-        </div>
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800">{error}</div>
       )}
 
       {isCompleted && (
@@ -140,7 +138,9 @@ export function CampaignEditForm({
           </div>
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">상태</span>
-            <span className="font-medium">{statusLabels[initialData.status] || initialData.status}</span>
+            <span className="font-medium">
+              {statusLabels[initialData.status] || initialData.status}
+            </span>
           </div>
         </CardContent>
       </Card>
@@ -161,9 +161,7 @@ export function CampaignEditForm({
                 validate: (value) => value.trim() !== '' || '캠페인 이름을 입력해주세요',
               })}
             />
-            {errors.name && (
-              <p className="text-sm text-red-500">{errors.name.message}</p>
-            )}
+            {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
           </div>
 
           <div className="space-y-2">
@@ -189,21 +187,11 @@ export function CampaignEditForm({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="startDate">시작일</Label>
-              <Input
-                id="startDate"
-                type="date"
-                disabled={isCompleted}
-                {...register('startDate')}
-              />
+              <Input id="startDate" type="date" disabled={isCompleted} {...register('startDate')} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="endDate">종료일 (선택)</Label>
-              <Input
-                id="endDate"
-                type="date"
-                disabled={isCompleted}
-                {...register('endDate')}
-              />
+              <Input id="endDate" type="date" disabled={isCompleted} {...register('endDate')} />
             </div>
           </div>
         </CardContent>
@@ -244,7 +232,9 @@ export function CampaignEditForm({
                   type="button"
                   disabled={isCompleted}
                   onClick={() =>
-                    setValue('targetAudience.gender', gender.id as 'ALL' | 'MALE' | 'FEMALE', { shouldDirty: true })
+                    setValue('targetAudience.gender', gender.id as 'ALL' | 'MALE' | 'FEMALE', {
+                      shouldDirty: true,
+                    })
                   }
                   className={cn(
                     'rounded-lg border px-4 py-2 text-sm transition-all',
@@ -277,7 +267,9 @@ export function CampaignEditForm({
                         { shouldDirty: true }
                       )
                     } else {
-                      setValue('targetAudience.locations', [...current, location.id], { shouldDirty: true })
+                      setValue('targetAudience.locations', [...current, location.id], {
+                        shouldDirty: true,
+                      })
                     }
                   }}
                   className={cn(

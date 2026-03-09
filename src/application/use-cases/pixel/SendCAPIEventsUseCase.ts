@@ -63,7 +63,8 @@ export class SendCAPIEventsUseCase {
 
     // 3. 고유 pixelId 수집 → Repository를 통해 픽셀/토큰 매핑 조회
     const uniquePixelIds = [...new Set(activeEvents.map((e) => e.pixelId))]
-    const pixelMappings = await this.conversionEventRepository.findPixelTokenMappings(uniquePixelIds)
+    const pixelMappings =
+      await this.conversionEventRepository.findPixelTokenMappings(uniquePixelIds)
     // pixelId → { metaPixelId, accessToken } 매핑
     const mappingByPixelId = new Map(pixelMappings.map((m) => [m.pixelId, m]))
 
@@ -105,12 +106,7 @@ export class SendCAPIEventsUseCase {
 
       // 정상 이벤트 → Meta CAPI 전송
       if (sendable.length > 0) {
-        await this.sendEventsForPixel(
-          mapping.metaPixelId,
-          mapping.accessToken,
-          sendable,
-          result
-        )
+        await this.sendEventsForPixel(mapping.metaPixelId, mapping.accessToken, sendable, result)
       }
     }
 

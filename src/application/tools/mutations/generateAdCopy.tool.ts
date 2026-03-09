@@ -4,7 +4,10 @@ import type { AgentTool, ToolExecutionResult } from '@application/ports/IConvers
 const paramsSchema = z.object({
   product: z.string().describe('광고할 상품/서비스 이름'),
   targetAudience: z.string().optional().describe('타겟 고객층 설명'),
-  tone: z.enum(['formal', 'casual', 'urgent', 'friendly']).default('casual').describe('카피 톤앤매너'),
+  tone: z
+    .enum(['formal', 'casual', 'urgent', 'friendly'])
+    .default('casual')
+    .describe('카피 톤앤매너'),
   emphasis: z.string().optional().describe('강조할 포인트 (할인, 신상품, 한정판 등)'),
   count: z.number().min(1).max(5).default(3).describe('생성할 카피 수'),
 })

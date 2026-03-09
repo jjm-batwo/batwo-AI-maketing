@@ -4,13 +4,7 @@ import {
   ReportStatus as PrismaReportStatus,
   Prisma,
 } from '@/generated/prisma'
-import {
-  Report,
-  ReportType,
-  ReportStatus,
-  ReportSection,
-  AIInsight,
-} from '@domain/entities/Report'
+import { Report, ReportType, ReportStatus, ReportSection, AIInsight } from '@domain/entities/Report'
 import { DateRange } from '@domain/value-objects/DateRange'
 
 type InputJsonValue = Prisma.InputJsonValue
@@ -25,8 +19,8 @@ export class ReportMapper {
       userId: prisma.userId,
       campaignIds: prisma.campaignIds,
       dateRange,
-      sections: (prisma.sections as unknown) as ReportSection[],
-      aiInsights: (prisma.aiInsights as unknown) as AIInsight[],
+      sections: prisma.sections as unknown as ReportSection[],
+      aiInsights: prisma.aiInsights as unknown as AIInsight[],
       status: prisma.status as ReportStatus,
       generatedAt: prisma.generatedAt ?? undefined,
       sentAt: prisma.sentAt ?? undefined,

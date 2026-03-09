@@ -14,12 +14,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import {
   type Industry,
   type BusinessScale,
@@ -34,7 +29,16 @@ import {
   getAllBusinessScales,
 } from '@domain/value-objects/BudgetRecommendation'
 import { BudgetRecommendationService } from '@application/services/BudgetRecommendationService'
-import { Info, TrendingUp, AlertCircle, CheckCircle, Sparkles, Pin, Coins, Lightbulb } from 'lucide-react'
+import {
+  Info,
+  TrendingUp,
+  AlertCircle,
+  CheckCircle,
+  Sparkles,
+  Pin,
+  Coins,
+  Lightbulb,
+} from 'lucide-react'
 
 interface BudgetRecommenderProps {
   onBudgetSelect: (budget: number) => void
@@ -67,11 +71,12 @@ export function BudgetRecommender({
       industry,
       businessScale,
       monthlyMarketingBudget: monthlyBudget ? parseInt(monthlyBudget, 10) : undefined,
-      averageOrderValue: useMetaAOV && existingCampaignData
-        ? existingCampaignData.avgAOV
-        : averageOrderValue
-          ? parseInt(averageOrderValue, 10)
-          : undefined,
+      averageOrderValue:
+        useMetaAOV && existingCampaignData
+          ? existingCampaignData.avgAOV
+          : averageOrderValue
+            ? parseInt(averageOrderValue, 10)
+            : undefined,
       existingCampaignData: existingCampaignData,
     })
   }, [
@@ -162,9 +167,7 @@ export function BudgetRecommender({
             <div className="flex items-start gap-2">
               <TrendingUp className="mt-0.5 h-4 w-4 text-blue-600" />
               <div className="flex-1">
-                <p className="text-sm font-medium text-blue-800">
-                  기존 광고 성과 (최근 30일)
-                </p>
+                <p className="text-sm font-medium text-blue-800">기존 광고 성과 (최근 30일)</p>
                 <div className="mt-2 grid grid-cols-2 gap-2 text-sm text-blue-700">
                   <div>평균 일일 지출: {formatBudget(existingCampaignData.avgDailySpend)}</div>
                   <div>평균 ROAS: {formatROAS(existingCampaignData.avgROAS)}</div>
@@ -201,9 +204,10 @@ export function BudgetRecommender({
             <Input
               id="aov"
               type="number"
-              placeholder={useMetaAOV && existingCampaignData
-                ? existingCampaignData.avgAOV.toString()
-                : INDUSTRY_BUDGET_BENCHMARKS[industry].defaultAOV.toString()
+              placeholder={
+                useMetaAOV && existingCampaignData
+                  ? existingCampaignData.avgAOV.toString()
+                  : INDUSTRY_BUDGET_BENCHMARKS[industry].defaultAOV.toString()
               }
               value={useMetaAOV && existingCampaignData ? '' : averageOrderValue}
               onChange={(e) => setAverageOrderValue(e.target.value)}
@@ -257,10 +261,10 @@ export function BudgetRecommender({
             {/* 목표 ROAS */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium"><Pin className="h-4 w-4 inline" /> 목표 ROAS</span>
-                <Badge variant="secondary">
-                  {formatROAS(recommendation.targetROAS)}
-                </Badge>
+                <span className="text-sm font-medium">
+                  <Pin className="h-4 w-4 inline" /> 목표 ROAS
+                </span>
+                <Badge variant="secondary">{formatROAS(recommendation.targetROAS)}</Badge>
               </div>
               <span className="text-xs text-muted-foreground">
                 객단가 {formatBudget(recommendation.aovUsed)} 기준
@@ -270,7 +274,9 @@ export function BudgetRecommender({
             {/* 예산 추천 */}
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-sm font-medium"><Coins className="h-4 w-4 inline" /> 추천 일일 예산</span>
+                <span className="text-sm font-medium">
+                  <Coins className="h-4 w-4 inline" /> 추천 일일 예산
+                </span>
                 <Badge
                   variant={
                     recommendation.source === 'existing_data'
@@ -291,34 +297,48 @@ export function BudgetRecommender({
               {/* 예산 옵션 버튼들 */}
               <div className="grid grid-cols-3 gap-2">
                 <Button
-                  variant={selectedBudget === recommendation.dailyBudget.min ? 'default' : 'outline'}
+                  variant={
+                    selectedBudget === recommendation.dailyBudget.min ? 'default' : 'outline'
+                  }
                   size="sm"
                   onClick={() => handleBudgetOptionSelect(recommendation.dailyBudget.min)}
                   disabled={disabled}
                   className="flex-col h-auto py-2"
                 >
                   <span className="text-xs text-muted-foreground">최소</span>
-                  <span className="font-semibold">{formatBudget(recommendation.dailyBudget.min)}</span>
+                  <span className="font-semibold">
+                    {formatBudget(recommendation.dailyBudget.min)}
+                  </span>
                 </Button>
                 <Button
-                  variant={selectedBudget === recommendation.dailyBudget.recommended ? 'default' : 'outline'}
+                  variant={
+                    selectedBudget === recommendation.dailyBudget.recommended
+                      ? 'default'
+                      : 'outline'
+                  }
                   size="sm"
                   onClick={() => handleBudgetOptionSelect(recommendation.dailyBudget.recommended)}
                   disabled={disabled}
                   className="flex-col h-auto py-2 border-primary"
                 >
                   <span className="text-xs text-primary">권장</span>
-                  <span className="font-semibold">{formatBudget(recommendation.dailyBudget.recommended)}</span>
+                  <span className="font-semibold">
+                    {formatBudget(recommendation.dailyBudget.recommended)}
+                  </span>
                 </Button>
                 <Button
-                  variant={selectedBudget === recommendation.dailyBudget.max ? 'default' : 'outline'}
+                  variant={
+                    selectedBudget === recommendation.dailyBudget.max ? 'default' : 'outline'
+                  }
                   size="sm"
                   onClick={() => handleBudgetOptionSelect(recommendation.dailyBudget.max)}
                   disabled={disabled}
                   className="flex-col h-auto py-2"
                 >
                   <span className="text-xs text-muted-foreground">최대</span>
-                  <span className="font-semibold">{formatBudget(recommendation.dailyBudget.max)}</span>
+                  <span className="font-semibold">
+                    {formatBudget(recommendation.dailyBudget.max)}
+                  </span>
                 </Button>
               </div>
             </div>
@@ -341,9 +361,7 @@ export function BudgetRecommender({
                 <p className="font-medium text-foreground">
                   {recommendation.comparison.currentVsRecommended}
                 </p>
-                <p className="text-muted-foreground">
-                  {recommendation.comparison.potentialImpact}
-                </p>
+                <p className="text-muted-foreground">{recommendation.comparison.potentialImpact}</p>
               </div>
             )}
 
@@ -367,11 +385,7 @@ export function BudgetRecommender({
 
         {/* 권장 예산 적용 버튼 */}
         {recommendation && !selectedBudget && (
-          <Button
-            onClick={handleApplyRecommendation}
-            className="w-full"
-            disabled={disabled}
-          >
+          <Button onClick={handleApplyRecommendation} className="w-full" disabled={disabled}>
             권장 예산 적용하기
           </Button>
         )}

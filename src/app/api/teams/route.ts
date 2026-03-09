@@ -61,11 +61,17 @@ export async function POST(request: NextRequest) {
     }
 
     if (name.length > 100) {
-      return NextResponse.json({ error: 'Team name must be 100 characters or less' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Team name must be 100 characters or less' },
+        { status: 400 }
+      )
     }
 
     if (description && description.length > 500) {
-      return NextResponse.json({ error: 'Description must be 500 characters or less' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Description must be 500 characters or less' },
+        { status: 400 }
+      )
     }
 
     const teamRepository = getTeamRepository()
@@ -92,20 +98,23 @@ export async function POST(request: NextRequest) {
     const savedTeam = await teamRepository.save(team)
     const owner = savedTeam.getOwner()
 
-    return NextResponse.json({
-      team: {
-        id: savedTeam.id,
-        name: savedTeam.name,
-        description: savedTeam.description,
-        ownerId: savedTeam.ownerId,
-        memberCount: savedTeam.memberCount,
-        maxMembers: savedTeam.maxMembers,
-        role: owner.role,
-        permissions: owner.permissions,
-        createdAt: savedTeam.createdAt,
-        updatedAt: savedTeam.updatedAt,
+    return NextResponse.json(
+      {
+        team: {
+          id: savedTeam.id,
+          name: savedTeam.name,
+          description: savedTeam.description,
+          ownerId: savedTeam.ownerId,
+          memberCount: savedTeam.memberCount,
+          maxMembers: savedTeam.maxMembers,
+          role: owner.role,
+          permissions: owner.permissions,
+          createdAt: savedTeam.createdAt,
+          updatedAt: savedTeam.updatedAt,
+        },
       },
-    }, { status: 201 })
+      { status: 201 }
+    )
   } catch (error) {
     console.error('Failed to create team:', error)
     return NextResponse.json({ error: 'Failed to create team' }, { status: 500 })

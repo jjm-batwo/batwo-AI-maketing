@@ -52,7 +52,7 @@ export class KnowledgeBaseService implements IKnowledgeBaseService {
   }
 
   analyzeSpecific(input: AnalysisInput, domains: KnowledgeDomain[]): AnalysisOutput {
-    const selectedAnalyzers = this.analyzers.filter(a => domains.includes(a.domain))
+    const selectedAnalyzers = this.analyzers.filter((a) => domains.includes(a.domain))
     return this.runAnalysis(input, selectedAnalyzers)
   }
 
@@ -64,7 +64,7 @@ export class KnowledgeBaseService implements IKnowledgeBaseService {
   getRecommendations(input: AnalysisInput): DomainRecommendation[] {
     const output = this.analyzeAll(input)
     return rankRecommendations(
-      output.compositeScore.domainScores.flatMap(ds => ds.recommendations)
+      output.compositeScore.domainScores.flatMap((ds) => ds.recommendations)
     )
   }
 
@@ -92,11 +92,7 @@ export class KnowledgeBaseService implements IKnowledgeBaseService {
 
     // Validate minimum required domains
     if (domainScores.length < MIN_REQUIRED_DOMAINS) {
-      throw new InsufficientAnalysisError(
-        domainScores.length,
-        MIN_REQUIRED_DOMAINS,
-        failedDomains
-      )
+      throw new InsufficientAnalysisError(domainScores.length, MIN_REQUIRED_DOMAINS, failedDomains)
     }
 
     // Build composite score
@@ -124,7 +120,9 @@ export class KnowledgeBaseService implements IKnowledgeBaseService {
     const lines: string[] = []
 
     // Header
-    lines.push(`=== 마케팅 사이언스 분석 (등급: ${composite.grade}, 점수: ${composite.overall}/100) ===\n`)
+    lines.push(
+      `=== 마케팅 사이언스 분석 (등급: ${composite.grade}, 점수: ${composite.overall}/100) ===\n`
+    )
 
     // Domain scores
     for (const ds of composite.domainScores) {
@@ -134,7 +132,7 @@ export class KnowledgeBaseService implements IKnowledgeBaseService {
       // Top finding (highest weighted factor)
       if (ds.factors.length > 0) {
         const topFactor = ds.factors.reduce((prev, curr) =>
-          (curr.score * curr.weight) > (prev.score * prev.weight) ? curr : prev
+          curr.score * curr.weight > prev.score * prev.weight ? curr : prev
         )
         lines.push(`- ${topFactor.name} (${topFactor.score}점): ${topFactor.explanation}`)
         if (topFactor.citation) {
@@ -151,9 +149,7 @@ export class KnowledgeBaseService implements IKnowledgeBaseService {
       for (let i = 0; i < Math.min(5, composite.topRecommendations.length); i++) {
         const rec = composite.topRecommendations[i]
         const domainName = this.getDomainNameKorean(rec.domain)
-        lines.push(
-          `${i + 1}. [${rec.priority}] ${rec.recommendation} - ${domainName}`
-        )
+        lines.push(`${i + 1}. [${rec.priority}] ${rec.recommendation} - ${domainName}`)
         if (rec.citations.length > 0) {
           const citation = rec.citations[0]
           lines.push(`   근거: ${citation.source}`)
@@ -165,7 +161,7 @@ export class KnowledgeBaseService implements IKnowledgeBaseService {
     // Failed domains warning
     if (composite.failedDomains.length > 0) {
       lines.push(
-        `경고: 다음 도메인 분석 실패 - ${composite.failedDomains.map(d => this.getDomainNameKorean(d)).join(', ')}`
+        `경고: 다음 도메인 분석 실패 - ${composite.failedDomains.map((d) => this.getDomainNameKorean(d)).join(', ')}`
       )
     }
 

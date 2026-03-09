@@ -1,10 +1,11 @@
-import {
-  IUsageLogRepository,
-  UsageType,
-} from '@domain/repositories/IUsageLogRepository'
+import { IUsageLogRepository, UsageType } from '@domain/repositories/IUsageLogRepository'
 import { IUserRepository } from '@domain/repositories/IUserRepository'
 import { ISubscriptionRepository } from '@domain/repositories/ISubscriptionRepository'
-import { QuotaStatusDTO, QuotaLimits, FullQuotaStatusDTO } from '@application/dto/quota/QuotaStatusDTO'
+import {
+  QuotaStatusDTO,
+  QuotaLimits,
+  FullQuotaStatusDTO,
+} from '@application/dto/quota/QuotaStatusDTO'
 import { QuotaExceededError } from '@domain/errors'
 import { SubscriptionPlan, PLAN_CONFIGS } from '@domain/value-objects/SubscriptionPlan'
 
@@ -73,11 +74,7 @@ export class QuotaService {
     // 0 means feature not available
     if (limit.count === 0) return false
 
-    const count = await this.usageLogRepository.countByPeriod(
-      userId,
-      type,
-      limit.period
-    )
+    const count = await this.usageLogRepository.countByPeriod(userId, type, limit.period)
     return count < limit.count
   }
 
@@ -94,11 +91,7 @@ export class QuotaService {
       UsageType,
       (typeof limits)[UsageType],
     ][]) {
-      const used = await this.usageLogRepository.countByPeriod(
-        userId,
-        type,
-        limit.period
-      )
+      const used = await this.usageLogRepository.countByPeriod(userId, type, limit.period)
       result[type] = {
         used,
         limit: limit.count,

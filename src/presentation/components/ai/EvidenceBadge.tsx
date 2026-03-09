@@ -2,12 +2,7 @@
 
 import { BookOpen, AlertCircle, CheckCircle2, TrendingUp } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
 interface EvidenceBadgeProps {
@@ -65,7 +60,9 @@ export function EvidenceBadge({
             <span>{label}</span>
             {citationCount !== undefined && citationCount > 0 && (
               <>
-                <span className="mx-0.5" aria-hidden="true">·</span>
+                <span className="mx-0.5" aria-hidden="true">
+                  ·
+                </span>
                 <BookOpen className="h-3 w-3" aria-hidden="true" />
                 <span className="font-semibold">{citationCount}</span>
               </>
@@ -117,20 +114,13 @@ export function RecommendationCard({
 
   return (
     <div
-      className={cn(
-        'rounded-lg border border-l-4 bg-card p-4 space-y-2',
-        borderClass,
-        className
-      )}
+      className={cn('rounded-lg border border-l-4 bg-card p-4 space-y-2', borderClass, className)}
     >
       <div className="flex items-start justify-between gap-2">
         <p className="text-sm leading-relaxed flex-1">{recommendation}</p>
       </div>
       <div className="flex items-center gap-2 flex-wrap">
-        <Badge
-          variant="outline"
-          className={cn('text-xs px-2 py-0.5 font-medium', textClass)}
-        >
+        <Badge variant="outline" className={cn('text-xs px-2 py-0.5 font-medium', textClass)}>
           우선순위: {priorityLabel}
         </Badge>
         <EvidenceBadge

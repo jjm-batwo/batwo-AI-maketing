@@ -13,10 +13,7 @@ interface Params {
   id: string
 }
 
-export async function GET(
-  request: NextRequest,
-  context: { params: Promise<Params> }
-) {
+export async function GET(request: NextRequest, context: { params: Promise<Params> }) {
   const authResult = await requireAdmin()
   const authError = handleAdminAuth(authResult)
   if (authError) return authError
@@ -27,26 +24,17 @@ export async function GET(
     const user = await userRepository.findByIdWithFullDetails(id)
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
     return NextResponse.json(user)
   } catch (error) {
     console.error('Admin user detail error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch user' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 })
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  context: { params: Promise<Params> }
-) {
+export async function PATCH(request: NextRequest, context: { params: Promise<Params> }) {
   const authResult = await requireAdmin()
   const authError = handleAdminAuth(authResult)
   if (authError) return authError
@@ -64,10 +52,7 @@ export async function PATCH(
     // 사용자 존재 확인
     const existingUser = await userRepository.findById(id)
     if (!existingUser) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
     // 역할 변경인 경우 권한 검증
@@ -75,7 +60,7 @@ export async function PATCH(
       // 관리자 역할 관리 권한 검증
       if (!canManageRole(authResult.globalRole, existingUser.globalRole)) {
         return NextResponse.json(
-          { error: 'You do not have permission to modify this user\'s role' },
+          { error: "You do not have permission to modify this user's role" },
           { status: 403 }
         )
       }
@@ -104,9 +89,6 @@ export async function PATCH(
     return NextResponse.json(updatedUser)
   } catch (error) {
     console.error('Admin user update error:', error)
-    return NextResponse.json(
-      { error: 'Failed to update user' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to update user' }, { status: 500 })
   }
 }

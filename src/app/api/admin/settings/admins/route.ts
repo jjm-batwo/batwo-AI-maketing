@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { revalidateTag } from 'next/cache'
-import {
-  requireSuperAdmin,
-  handleAdminAuth,
-} from '@/infrastructure/auth/adminMiddleware'
+import { requireSuperAdmin, handleAdminAuth } from '@/infrastructure/auth/adminMiddleware'
 import { prisma } from '@/lib/prisma'
 import { GlobalRole, canManageRole } from '@domain/value-objects/GlobalRole'
 
@@ -28,10 +25,7 @@ export async function GET() {
         createdAt: true,
         image: true,
       },
-      orderBy: [
-        { globalRole: 'desc' },
-        { createdAt: 'asc' },
-      ],
+      orderBy: [{ globalRole: 'desc' }, { createdAt: 'asc' }],
     })
 
     return NextResponse.json({
@@ -43,10 +37,7 @@ export async function GET() {
     })
   } catch (error) {
     console.error('Admin list error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch admin list' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch admin list' }, { status: 500 })
   }
 }
 
@@ -61,18 +52,12 @@ export async function POST(request: NextRequest) {
     const { userId, action } = body // action: 'promote' | 'demote' | 'remove'
 
     if (!userId || !action) {
-      return NextResponse.json(
-        { error: 'userId and action are required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'userId and action are required' }, { status: 400 })
     }
 
     // 자기 자신은 변경 불가
     if (userId === authResult.userId) {
-      return NextResponse.json(
-        { error: 'Cannot modify your own role' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Cannot modify your own role' }, { status: 400 })
     }
 
     const targetUser = await prisma.user.findUnique({
@@ -81,20 +66,14 @@ export async function POST(request: NextRequest) {
     })
 
     if (!targetUser) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
     const targetRole = targetUser.globalRole as GlobalRole
 
     // 권한 검증
     if (!canManageRole(authResult.globalRole, targetRole)) {
-      return NextResponse.json(
-        { error: 'Cannot modify this user\'s role' },
-        { status: 403 }
-      )
+      return NextResponse.json({ error: "Cannot modify this user's role" }, { status: 403 })
     }
 
     let newRole: GlobalRole
@@ -105,10 +84,7 @@ export async function POST(request: NextRequest) {
         if (targetRole === GlobalRole.USER) {
           newRole = GlobalRole.ADMIN
         } else {
-          return NextResponse.json(
-            { error: 'User is already an admin' },
-            { status: 400 }
-          )
+          return NextResponse.json({ error: 'User is already an admin' }, { status: 400 })
         }
         break
 
@@ -117,10 +93,7 @@ export async function POST(request: NextRequest) {
         if (targetRole === GlobalRole.ADMIN) {
           newRole = GlobalRole.USER
         } else {
-          return NextResponse.json(
-            { error: 'Cannot demote this user' },
-            { status: 400 }
-          )
+          return NextResponse.json({ error: 'Cannot demote this user' }, { status: 400 })
         }
         break
 
@@ -137,10 +110,7 @@ export async function POST(request: NextRequest) {
         break
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        )
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
     }
 
     const updatedUser = await prisma.user.update({
@@ -163,9 +133,6 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     console.error('Admin role update error:', error)
-    return NextResponse.json(
-      { error: 'Failed to update user role' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to update user role' }, { status: 500 })
   }
 }

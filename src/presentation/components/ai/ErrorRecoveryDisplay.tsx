@@ -86,7 +86,8 @@ export function ErrorRecoveryDisplay({
         </div>
 
         {onDismiss && (
-          <button type="button"
+          <button
+            type="button"
             onClick={onDismiss}
             className="p-1 hover:bg-white/50 rounded-md transition-colors flex-shrink-0"
             aria-label="닫기"
@@ -102,7 +103,8 @@ export function ErrorRecoveryDisplay({
 
         {/* Recommended Option */}
         {recommendedOption && (
-          <button type="button"
+          <button
+            type="button"
             onClick={recommendedOption.action}
             className={cn(
               'w-full text-left p-3 rounded-lg border-2',
@@ -118,17 +120,13 @@ export function ErrorRecoveryDisplay({
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-900">
-                      {recommendedOption.label}
-                    </span>
+                    <span className="font-medium text-gray-900">{recommendedOption.label}</span>
                     <span className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
                       <Star className="h-3 w-3" />
                       추천
                     </span>
                   </div>
-                  <p className="mt-1 text-sm text-gray-600">
-                    {recommendedOption.description}
-                  </p>
+                  <p className="mt-1 text-sm text-gray-600">{recommendedOption.description}</p>
                 </div>
               </div>
               <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-colors flex-shrink-0" />
@@ -140,7 +138,8 @@ export function ErrorRecoveryDisplay({
         {otherOptions.length > 0 && (
           <div className="space-y-2">
             {otherOptions.map((option) => (
-              <button type="button"
+              <button
+                type="button"
                 key={option.id}
                 onClick={option.action}
                 className={cn(
@@ -152,9 +151,7 @@ export function ErrorRecoveryDisplay({
               >
                 <div className="flex items-start gap-3">
                   <div className="flex items-center gap-2 flex-1">
-                    {option.icon && (
-                      <option.icon className="h-5 w-5 text-gray-600 flex-shrink-0" />
-                    )}
+                    {option.icon && <option.icon className="h-5 w-5 text-gray-600 flex-shrink-0" />}
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-gray-900">{option.label}</p>
                       <p className="mt-1 text-sm text-gray-600">{option.description}</p>

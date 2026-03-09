@@ -2,12 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {
@@ -48,8 +43,12 @@ export function UsersFilterBar() {
 
   const [search, setSearch] = useState(searchParams.get('search') || '')
   const [globalRole, setGlobalRole] = useState(searchParams.get('globalRole') || 'all')
-  const [subscriptionPlan, setSubscriptionPlan] = useState(searchParams.get('subscriptionPlan') || 'all')
-  const [subscriptionStatus, setSubscriptionStatus] = useState(searchParams.get('subscriptionStatus') || 'all')
+  const [subscriptionPlan, setSubscriptionPlan] = useState(
+    searchParams.get('subscriptionPlan') || 'all'
+  )
+  const [subscriptionStatus, setSubscriptionStatus] = useState(
+    searchParams.get('subscriptionStatus') || 'all'
+  )
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()

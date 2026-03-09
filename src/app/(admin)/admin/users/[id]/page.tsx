@@ -7,13 +7,7 @@ export const metadata: Metadata = {
   title: '회원 상세 | 바투',
   description: '회원 상세 정보를 확인하세요',
 }
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -88,7 +82,9 @@ function getRoleBadgeVariant(role: string): 'default' | 'secondary' | 'destructi
   }
 }
 
-function getStatusBadgeVariant(status: string): 'default' | 'secondary' | 'destructive' | 'outline' {
+function getStatusBadgeVariant(
+  status: string
+): 'default' | 'secondary' | 'destructive' | 'outline' {
   switch (status) {
     case 'ACTIVE':
     case 'PAID':
@@ -183,8 +179,11 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
             <p className="text-muted-foreground">{user.email}</p>
           </div>
           <Badge variant={getRoleBadgeVariant(user.globalRole)} className="ml-2">
-            {user.globalRole === 'SUPER_ADMIN' ? '최고 관리자' :
-             user.globalRole === 'ADMIN' ? '관리자' : '사용자'}
+            {user.globalRole === 'SUPER_ADMIN'
+              ? '최고 관리자'
+              : user.globalRole === 'ADMIN'
+                ? '관리자'
+                : '사용자'}
           </Badge>
         </div>
         <UserRoleDialog
@@ -214,8 +213,7 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
             캠페인
           </TabsTrigger>
           <TabsTrigger value="teams">
-            <Users className="mr-2 h-4 w-4" />
-            팀
+            <Users className="mr-2 h-4 w-4" />팀
           </TabsTrigger>
         </TabsList>
 
@@ -278,11 +276,15 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">상태</span>
                       <Badge variant={getStatusBadgeVariant(user.subscription.status)}>
-                        {user.subscription.status === 'ACTIVE' ? '활성' :
-                         user.subscription.status === 'TRIALING' ? '체험' :
-                         user.subscription.status === 'PAST_DUE' ? '연체' :
-                         user.subscription.status === 'CANCELLED' ? '취소됨' :
-                         user.subscription.status}
+                        {user.subscription.status === 'ACTIVE'
+                          ? '활성'
+                          : user.subscription.status === 'TRIALING'
+                            ? '체험'
+                            : user.subscription.status === 'PAST_DUE'
+                              ? '연체'
+                              : user.subscription.status === 'CANCELLED'
+                                ? '취소됨'
+                                : user.subscription.status}
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between">
@@ -346,11 +348,15 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                         </p>
                       </div>
                       <Badge variant={getStatusBadgeVariant(invoice.status)}>
-                        {invoice.status === 'PAID' ? '결제완료' :
-                         invoice.status === 'PENDING' ? '대기' :
-                         invoice.status === 'FAILED' ? '실패' :
-                         invoice.status === 'REFUNDED' ? '환불' :
-                         invoice.status}
+                        {invoice.status === 'PAID'
+                          ? '결제완료'
+                          : invoice.status === 'PENDING'
+                            ? '대기'
+                            : invoice.status === 'FAILED'
+                              ? '실패'
+                              : invoice.status === 'REFUNDED'
+                                ? '환불'
+                                : invoice.status}
                       </Badge>
                     </div>
                   ))}
@@ -383,10 +389,13 @@ export default async function AdminUserDetailPage({ params }: PageProps) {
                         </p>
                       </div>
                       <Badge variant={getStatusBadgeVariant(campaign.status)}>
-                        {campaign.status === 'ACTIVE' ? '활성' :
-                         campaign.status === 'PAUSED' ? '일시정지' :
-                         campaign.status === 'COMPLETED' ? '종료' :
-                         campaign.status}
+                        {campaign.status === 'ACTIVE'
+                          ? '활성'
+                          : campaign.status === 'PAUSED'
+                            ? '일시정지'
+                            : campaign.status === 'COMPLETED'
+                              ? '종료'
+                              : campaign.status}
                       </Badge>
                     </div>
                   ))}

@@ -28,7 +28,10 @@ export interface AgentTool<TParams = unknown, TResult = unknown> {
   parameters: z.ZodSchema<TParams>
   requiresConfirmation: boolean
   execute: (params: TParams, context: AgentContext) => Promise<ToolExecutionResult<TResult>>
-  buildConfirmation?: (params: TParams, context: AgentContext) => Promise<{
+  buildConfirmation?: (
+    params: TParams,
+    context: AgentContext
+  ) => Promise<{
     summary: string
     details: { label: string; value: string; changed?: boolean }[]
     warnings: string[]

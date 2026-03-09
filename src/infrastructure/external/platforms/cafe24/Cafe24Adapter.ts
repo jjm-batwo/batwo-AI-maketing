@@ -97,13 +97,17 @@ export class Cafe24Adapter implements IPlatformAdapter {
       client_secret: this.clientSecret,
     })
 
-    const response = await fetchWithTimeout(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+    const response = await fetchWithTimeout(
+      url,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body.toString(),
       },
-      body: body.toString(),
-    }, CAFE24_API_TIMEOUT_MS)
+      CAFE24_API_TIMEOUT_MS
+    )
 
     const data = await response.json()
 
@@ -135,13 +139,17 @@ export class Cafe24Adapter implements IPlatformAdapter {
       client_secret: this.clientSecret,
     })
 
-    const response = await fetchWithTimeout(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+    const response = await fetchWithTimeout(
+      url,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body.toString(),
       },
-      body: body.toString(),
-    }, CAFE24_API_TIMEOUT_MS)
+      CAFE24_API_TIMEOUT_MS
+    )
 
     const data = await response.json()
 
@@ -173,18 +181,22 @@ export class Cafe24Adapter implements IPlatformAdapter {
     // Generate the tracking script URL
     const scriptSrc = `https://batwo.ai/api/pixel/${pixelId}/tracker.js`
 
-    const response = await fetchWithTimeout(url, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
+    const response = await fetchWithTimeout(
+      url,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          shop_no: 1,
+          src: scriptSrc,
+          display_location: ['ALL'],
+        }),
       },
-      body: JSON.stringify({
-        shop_no: 1,
-        src: scriptSrc,
-        display_location: ['ALL'],
-      }),
-    }, CAFE24_API_TIMEOUT_MS)
+      CAFE24_API_TIMEOUT_MS
+    )
 
     const data = await response.json()
 
@@ -212,13 +224,17 @@ export class Cafe24Adapter implements IPlatformAdapter {
   ): Promise<void> {
     const url = `${CAFE24_API_BASE}/${storeId}/api/v2/admin/scripttags/${scriptTagId}`
 
-    const response = await fetchWithTimeout(url, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
+    const response = await fetchWithTimeout(
+      url,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
       },
-    }, CAFE24_API_TIMEOUT_MS)
+      CAFE24_API_TIMEOUT_MS
+    )
 
     if (!response.ok) {
       const data = await response.json()
@@ -238,18 +254,22 @@ export class Cafe24Adapter implements IPlatformAdapter {
   ): Promise<WebhookRegistrationResult> {
     const url = `${CAFE24_API_BASE}/${storeId}/api/v2/admin/webhooks`
 
-    const response = await fetchWithTimeout(url, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
+    const response = await fetchWithTimeout(
+      url,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          shop_no: 1,
+          event: 'order',
+          url: webhookUrl,
+        }),
       },
-      body: JSON.stringify({
-        shop_no: 1,
-        event: 'order',
-        url: webhookUrl,
-      }),
-    }, CAFE24_API_TIMEOUT_MS)
+      CAFE24_API_TIMEOUT_MS
+    )
 
     const data = await response.json()
 
@@ -270,20 +290,20 @@ export class Cafe24Adapter implements IPlatformAdapter {
     }
   }
 
-  async unregisterWebhooks(
-    storeId: string,
-    accessToken: string,
-    webhookId: string
-  ): Promise<void> {
+  async unregisterWebhooks(storeId: string, accessToken: string, webhookId: string): Promise<void> {
     const url = `${CAFE24_API_BASE}/${storeId}/api/v2/admin/webhooks/${webhookId}`
 
-    const response = await fetchWithTimeout(url, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
+    const response = await fetchWithTimeout(
+      url,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
       },
-    }, CAFE24_API_TIMEOUT_MS)
+      CAFE24_API_TIMEOUT_MS
+    )
 
     if (!response.ok) {
       const data = await response.json()
@@ -299,13 +319,17 @@ export class Cafe24Adapter implements IPlatformAdapter {
   async getStoreInfo(accessToken: string): Promise<StoreInfo> {
     const url = `${CAFE24_API_BASE}/api/v2/admin/store`
 
-    const response = await fetchWithTimeout(url, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
+    const response = await fetchWithTimeout(
+      url,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
       },
-    }, CAFE24_API_TIMEOUT_MS)
+      CAFE24_API_TIMEOUT_MS
+    )
 
     const data = await response.json()
 

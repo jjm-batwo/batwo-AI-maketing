@@ -31,7 +31,7 @@ interface SuggestionRecord {
 const DEFAULT_CONFIG: SuggestionConfig = {
   minTimeBetweenSuggestions: 5 * 60 * 1000, // 5 minutes
   maxSuggestionsPerSession: 3,
-  contextThreshold: 0.6
+  contextThreshold: 0.6,
 }
 
 export class AISuggestionTiming {
@@ -84,7 +84,7 @@ export class AISuggestionTiming {
   recordSuggestion(): void {
     this.suggestions.push({
       timestamp: new Date(),
-      accepted: null
+      accepted: null,
     })
     this.lastSuggestionTime = new Date()
   }
@@ -97,7 +97,7 @@ export class AISuggestionTiming {
     const pendingSuggestion = this.suggestions
       .slice()
       .reverse()
-      .find(s => s.accepted === null)
+      .find((s) => s.accepted === null)
 
     if (pendingSuggestion) {
       pendingSuggestion.accepted = accepted
@@ -130,10 +130,7 @@ export class AISuggestionTiming {
    * Get count of recent dismissals
    */
   private getRecentDismissals(count: number): number {
-    return this.suggestions
-      .slice(-count)
-      .filter(s => s.accepted === false)
-      .length
+    return this.suggestions.slice(-count).filter((s) => s.accepted === false).length
   }
 
   /**
@@ -141,15 +138,15 @@ export class AISuggestionTiming {
    */
   getStats(): SuggestionStats {
     const shown = this.suggestions.length
-    const responded = this.suggestions.filter(s => s.accepted !== null)
-    const accepted = responded.filter(s => s.accepted === true).length
-    const dismissed = responded.filter(s => s.accepted === false).length
+    const responded = this.suggestions.filter((s) => s.accepted !== null)
+    const accepted = responded.filter((s) => s.accepted === true).length
+    const dismissed = responded.filter((s) => s.accepted === false).length
 
     return {
       shown,
       accepted,
       dismissed,
-      acceptanceRate: responded.length > 0 ? accepted / responded.length : 0
+      acceptanceRate: responded.length > 0 ? accepted / responded.length : 0,
     }
   }
 
@@ -206,10 +203,10 @@ export class AISuggestionTiming {
       config: this.config,
       stats: this.getStats(),
       sessionDuration: this.getSessionDuration(),
-      suggestions: this.suggestions.map(s => ({
+      suggestions: this.suggestions.map((s) => ({
         timestamp: s.timestamp.toISOString(),
-        accepted: s.accepted
-      }))
+        accepted: s.accepted,
+      })),
     }
   }
 

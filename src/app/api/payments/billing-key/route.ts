@@ -45,10 +45,7 @@ export async function DELETE() {
   const billingKey = await billingKeyRepository.findActiveByUserId(user.id)
 
   if (!billingKey) {
-    return NextResponse.json(
-      { error: '등록된 결제 수단이 없습니다' },
-      { status: 404 }
-    )
+    return NextResponse.json({ error: '등록된 결제 수단이 없습니다' }, { status: 404 })
   }
 
   await billingKeyRepository.deactivate(billingKey.id)

@@ -31,8 +31,8 @@ interface CampaignCreateFormProps {
   submitStage?: WizardSubmitStage
   onUploadAsset?: (file: File) => Promise<UploadedAsset>
   isUploading?: boolean
-  initialData?: Partial<ExtendedCampaignFormData>  // AI 가이드 추천 데이터
-  fromGuide?: boolean  // AI 가이드에서 왔는지 여부
+  initialData?: Partial<ExtendedCampaignFormData> // AI 가이드 추천 데이터
+  fromGuide?: boolean // AI 가이드에서 왔는지 여부
 }
 
 export function CampaignCreateForm({
@@ -139,7 +139,8 @@ export function CampaignCreateForm({
   }
 
   const isLastStep = activeStep === totalSteps
-  const isSubmitInProgress = submitStage !== 'idle' && submitStage !== 'done' && submitStage !== 'error'
+  const isSubmitInProgress =
+    submitStage !== 'idle' && submitStage !== 'done' && submitStage !== 'error'
 
   return (
     <FormProvider {...methods}>
@@ -165,7 +166,9 @@ export function CampaignCreateForm({
             {fromGuide && (
               <div className="mb-4 flex items-center gap-2 rounded-lg bg-green-50 dark:bg-green-950/30 p-4 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800">
                 <Sparkles className="h-5 w-5 shrink-0" />
-                <span className="text-sm">AI가 추천한 설정이 적용되었습니다. 필요하면 각 단계에서 수정할 수 있어요.</span>
+                <span className="text-sm">
+                  AI가 추천한 설정이 적용되었습니다. 필요하면 각 단계에서 수정할 수 있어요.
+                </span>
               </div>
             )}
             {quotaExceeded && isLastStep && (
@@ -183,7 +186,12 @@ export function CampaignCreateForm({
             </Button>
             <div className="flex gap-2">
               {activeStep > 1 && (
-                <Button type="button" variant="outline" onClick={handleBack} disabled={isSubmitInProgress}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleBack}
+                  disabled={isSubmitInProgress}
+                >
                   이전
                 </Button>
               )}

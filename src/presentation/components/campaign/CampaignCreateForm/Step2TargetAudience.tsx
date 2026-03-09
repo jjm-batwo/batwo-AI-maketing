@@ -13,17 +13,7 @@ const genderOptions = [
   { value: 'FEMALE', label: '여성' },
 ] as const
 
-const locationOptions = [
-  '대한민국',
-  '서울',
-  '경기',
-  '부산',
-  '대구',
-  '인천',
-  '광주',
-  '대전',
-  '울산',
-]
+const locationOptions = ['대한민국', '서울', '경기', '부산', '대구', '인천', '광주', '대전', '울산']
 
 export function Step2TargetAudience() {
   const { register, watch, setValue } = useFormContext<CampaignFormData>()
@@ -114,8 +104,8 @@ export function Step2TargetAudience() {
 
       <div className="rounded-lg bg-blue-50 p-4">
         <p className="text-sm text-blue-800">
-          <Lightbulb className="h-4 w-4 inline text-amber-500" /> <strong>AI 추천</strong>: 타겟 설정을 건너뛰시면 Meta의 Advantage+
-          타겟팅이 자동으로 최적의 오디언스를 찾아드립니다.
+          <Lightbulb className="h-4 w-4 inline text-amber-500" /> <strong>AI 추천</strong>: 타겟
+          설정을 건너뛰시면 Meta의 Advantage+ 타겟팅이 자동으로 최적의 오디언스를 찾아드립니다.
         </p>
       </div>
     </div>

@@ -69,9 +69,7 @@ function SuggestionCard({ suggestion }: { suggestion: OptimizationSuggestion }) 
             </Badge>
           </div>
           <p className="font-medium">{suggestion.suggestion}</p>
-          <p className="text-sm opacity-80">
-            예상 효과: {suggestion.expectedImpact}
-          </p>
+          <p className="text-sm opacity-80">예상 효과: {suggestion.expectedImpact}</p>
           {expanded && (
             <div className="mt-3 pt-3 border-t border-current/20">
               <p className="text-sm opacity-70">
@@ -132,11 +130,7 @@ export function OptimizationPanel({ campaignId, className }: OptimizationPanelPr
       <CardContent className="space-y-4">
         {/* Analysis Button */}
         <div className="flex items-center justify-between">
-          <Button
-            onClick={handleAnalyze}
-            disabled={isLoading || isFetching}
-            size="sm"
-          >
+          <Button onClick={handleAnalyze} disabled={isLoading || isFetching} size="sm">
             {isLoading || isFetching ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -171,7 +165,8 @@ export function OptimizationPanel({ campaignId, className }: OptimizationPanelPr
         {/* Empty State */}
         {!enabled && suggestions.length === 0 && !isError && (
           <p className="text-sm text-muted-foreground">
-            &quot;최적화 분석&quot; 버튼을 클릭하면 AI가 캠페인 성과를 분석하고 개선 방안을 제안합니다.
+            &quot;최적화 분석&quot; 버튼을 클릭하면 AI가 캠페인 성과를 분석하고 개선 방안을
+            제안합니다.
           </p>
         )}
 

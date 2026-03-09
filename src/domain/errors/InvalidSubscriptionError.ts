@@ -8,9 +8,7 @@ export class InvalidSubscriptionError extends DomainError {
   }
 
   static invalidStatusTransition(from: string, to: string): InvalidSubscriptionError {
-    return new InvalidSubscriptionError(
-      `Cannot transition subscription from ${from} to ${to}`
-    )
+    return new InvalidSubscriptionError(`Cannot transition subscription from ${from} to ${to}`)
   }
 
   static alreadyCancelled(): InvalidSubscriptionError {
@@ -30,8 +28,6 @@ export class InvalidSubscriptionError extends DomainError {
   }
 
   static invalidPlanChange(from: string, to: string): InvalidSubscriptionError {
-    return new InvalidSubscriptionError(
-      `Cannot change plan from ${from} to ${to}`
-    )
+    return new InvalidSubscriptionError(`Cannot change plan from ${from} to ${to}`)
   }
 }

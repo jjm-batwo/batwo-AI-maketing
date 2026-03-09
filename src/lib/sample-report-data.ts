@@ -4,7 +4,12 @@
  * 가상의 "플로라 뷰티" 쇼핑몰 데이터로 웹 프리뷰 및 PDF 생성에 사용됩니다.
  */
 
-import { ReportType, type ReportSection, type AIInsight, type ReportSummaryMetrics } from '@domain/entities/Report'
+import {
+  ReportType,
+  type ReportSection,
+  type AIInsight,
+  type ReportSummaryMetrics,
+} from '@domain/entities/Report'
 import type { ReportDTO } from '@application/dto/report/ReportDTO'
 
 // 예시 캠페인 섹션 데이터

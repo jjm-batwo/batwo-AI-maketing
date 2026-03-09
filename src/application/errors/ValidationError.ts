@@ -46,9 +46,12 @@ export class ValidationError extends AppError {
    * Create validation error for business rule violation
    */
   static businessRule(rule: string, details?: string): ValidationError {
-    return new ValidationError(`Business rule violation: ${rule}${details ? ` - ${details}` : ''}`, {
-      rule,
-      details,
-    })
+    return new ValidationError(
+      `Business rule violation: ${rule}${details ? ` - ${details}` : ''}`,
+      {
+        rule,
+        details,
+      }
+    )
   }
 }

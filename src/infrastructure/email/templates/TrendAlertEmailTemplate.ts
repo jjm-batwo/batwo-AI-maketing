@@ -43,10 +43,7 @@ function getUrgencyLabel(urgency: string): string {
   }
 }
 
-export function TrendAlertEmailTemplate({
-  userName,
-  digest,
-}: TrendAlertEmailProps): string {
+export function TrendAlertEmailTemplate({ userName, digest }: TrendAlertEmailProps): string {
   const { events, weeklyDigest } = digest
 
   return `
@@ -81,7 +78,10 @@ export function TrendAlertEmailTemplate({
           </tr>
 
           <!-- Top Opportunity -->
-          ${weeklyDigest.topOpportunity && weeklyDigest.topOpportunity !== '이번 주 특별 이벤트 없음' ? `
+          ${
+            weeklyDigest.topOpportunity &&
+            weeklyDigest.topOpportunity !== '이번 주 특별 이벤트 없음'
+              ? `
           <tr>
             <td style="padding: 0 40px 24px;">
               <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius: 8px; overflow: hidden;">
@@ -94,15 +94,21 @@ export function TrendAlertEmailTemplate({
               </table>
             </td>
           </tr>
-          ` : ''}
+          `
+              : ''
+          }
 
           <!-- Action Items -->
-          ${weeklyDigest.actionItems.length > 0 ? `
+          ${
+            weeklyDigest.actionItems.length > 0
+              ? `
           <tr>
             <td style="padding: 0 40px 32px;">
               <h3 style="margin: 0 0 16px; color: #475569; font-size: 16px; font-weight: 600;">🎯 이번 주 해야 할 일</h3>
               <table width="100%" cellpadding="0" cellspacing="0">
-                ${weeklyDigest.actionItems.map((item, index) => `
+                ${weeklyDigest.actionItems
+                  .map(
+                    (item, index) => `
                 <tr>
                   <td style="padding: ${index > 0 ? '12px 0 0' : '0'};">
                     <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; border-radius: 6px; border-left: 3px solid #2563eb;">
@@ -114,19 +120,27 @@ export function TrendAlertEmailTemplate({
                     </table>
                   </td>
                 </tr>
-                `).join('')}
+                `
+                  )
+                  .join('')}
               </table>
             </td>
           </tr>
-          ` : ''}
+          `
+              : ''
+          }
 
           <!-- Upcoming Events -->
-          ${events.length > 0 ? `
+          ${
+            events.length > 0
+              ? `
           <tr>
             <td style="padding: 0 40px 32px;">
               <h3 style="margin: 0 0 16px; color: #475569; font-size: 16px; font-weight: 600;">📅 다가오는 이벤트 (2주 내)</h3>
               <table width="100%" cellpadding="0" cellspacing="0">
-                ${events.map((event, index) => `
+                ${events
+                  .map(
+                    (event, index) => `
                 <tr>
                   <td style="padding: ${index > 0 ? '16px 0 0' : '0'};">
                     <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f8fafc; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0;">
@@ -153,7 +167,9 @@ export function TrendAlertEmailTemplate({
                           </p>
 
                           <!-- Budget Recommendation -->
-                          ${event.isPrepPhase ? `
+                          ${
+                            event.isPrepPhase
+                              ? `
                           <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 12px; background-color: #dbeafe; border-radius: 6px;">
                             <tr>
                               <td style="padding: 12px;">
@@ -163,27 +179,40 @@ export function TrendAlertEmailTemplate({
                               </td>
                             </tr>
                           </table>
-                          ` : ''}
+                          `
+                              : ''
+                          }
 
                           <!-- Preparation Checklist (only for urgent events) -->
-                          ${event.urgency === 'critical' || event.urgency === 'high' ? `
+                          ${
+                            event.urgency === 'critical' || event.urgency === 'high'
+                              ? `
                           <div style="margin-top: 16px;">
                             <p style="margin: 0 0 8px; color: #334155; font-size: 13px; font-weight: 600;">✅ 준비사항:</p>
                             <ul style="margin: 0; padding-left: 20px; color: #475569; font-size: 13px; line-height: 1.8;">
-                              ${event.preparationChecklist.slice(0, 3).map(item => `<li>${item}</li>`).join('')}
+                              ${event.preparationChecklist
+                                .slice(0, 3)
+                                .map((item) => `<li>${item}</li>`)
+                                .join('')}
                             </ul>
                           </div>
-                          ` : ''}
+                          `
+                              : ''
+                          }
                         </td>
                       </tr>
                     </table>
                   </td>
                 </tr>
-                `).join('')}
+                `
+                  )
+                  .join('')}
               </table>
             </td>
           </tr>
-          ` : ''}
+          `
+              : ''
+          }
 
           <!-- CTA Section -->
           <tr>

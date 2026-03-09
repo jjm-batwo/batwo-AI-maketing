@@ -12,13 +12,9 @@ export function WelcomeStep() {
         <Sparkles className="h-8 w-8 text-primary" />
       </div>
 
-      <h2 className="mb-2 text-2xl font-bold text-gray-900">
-        {t('title')}
-      </h2>
+      <h2 className="mb-2 text-2xl font-bold text-gray-900">{t('title')}</h2>
 
-      <p className="mb-8 text-gray-600">
-        {t('description')}
-      </p>
+      <p className="mb-8 text-gray-600">{t('description')}</p>
 
       <div className="grid w-full gap-4">
         <div className="flex items-start gap-4 rounded-lg border p-4 text-left">
@@ -27,9 +23,7 @@ export function WelcomeStep() {
           </div>
           <div>
             <h3 className="font-medium text-gray-900">{t('feature1.title')}</h3>
-            <p className="text-sm text-gray-500">
-              {t('feature1.description')}
-            </p>
+            <p className="text-sm text-gray-500">{t('feature1.description')}</p>
           </div>
         </div>
 
@@ -39,9 +33,7 @@ export function WelcomeStep() {
           </div>
           <div>
             <h3 className="font-medium text-gray-900">{t('feature2.title')}</h3>
-            <p className="text-sm text-gray-500">
-              {t('feature2.description')}
-            </p>
+            <p className="text-sm text-gray-500">{t('feature2.description')}</p>
           </div>
         </div>
       </div>

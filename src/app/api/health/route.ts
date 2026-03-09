@@ -125,17 +125,9 @@ function checkMemory(): CheckResult {
  * 환경변수 체크
  */
 function checkEnvironment(): CheckResult {
-  const requiredVars = [
-    'DATABASE_URL',
-    'NEXTAUTH_SECRET',
-    'NEXTAUTH_URL',
-  ]
+  const requiredVars = ['DATABASE_URL', 'NEXTAUTH_SECRET', 'NEXTAUTH_URL']
 
-  const optionalVars = [
-    'SENTRY_DSN',
-    'OPENAI_API_KEY',
-    'META_APP_ID',
-  ]
+  const optionalVars = ['SENTRY_DSN', 'OPENAI_API_KEY', 'META_APP_ID']
 
   const missingRequired = requiredVars.filter((v) => !process.env[v])
   const missingOptional = optionalVars.filter((v) => !process.env[v])

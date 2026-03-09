@@ -111,8 +111,7 @@ export class AnomalyAlertService {
           sent.push(anomaly)
           this.recordAlert(anomaly)
         } catch (error) {
-          const message =
-            error instanceof Error ? error.message : 'Unknown error'
+          const message = error instanceof Error ? error.message : 'Unknown error'
           errors.push(`Failed to send alert for ${anomaly.id}: ${message}`)
           skipped.push(anomaly)
         }
@@ -157,16 +156,12 @@ export class AnomalyAlertService {
   /**
    * Generate email HTML
    */
-  private generateEmailHTML(params: {
-    userName: string
-    anomaly: Anomaly
-  }): string {
+  private generateEmailHTML(params: { userName: string; anomaly: Anomaly }): string {
     const { userName, anomaly } = params
 
     const severityColor = this.getSeverityColor(anomaly.severity)
     const severityLabel = this.getSeverityLabel(anomaly.severity)
-    const changeDirection =
-      anomaly.changePercent >= 0 ? '상승' : '하락'
+    const changeDirection = anomaly.changePercent >= 0 ? '상승' : '하락'
     const changeAbs = Math.abs(anomaly.changePercent).toFixed(1)
 
     const recommendations = anomaly.recommendations
@@ -258,7 +253,9 @@ export class AnomalyAlertService {
               ${marketContextSection}
 
               <!-- Recommendations -->
-              ${recommendations ? `
+              ${
+                recommendations
+                  ? `
               <div style="margin-top: 24px;">
                 <h3 style="margin: 0 0 12px; color: #111827; font-size: 16px; font-weight: 600;">
                   💡 권장 조치
@@ -267,7 +264,9 @@ export class AnomalyAlertService {
                   ${recommendations}
                 </ul>
               </div>
-              ` : ''}
+              `
+                  : ''
+              }
 
               <!-- Detection Details -->
               <div style="margin-top: 24px; padding: 16px; background-color: #f9fafb; border-radius: 4px;">
@@ -318,13 +317,9 @@ export class AnomalyAlertService {
 
     // Clean up old history
     const cutoffTime = new Date()
-    cutoffTime.setHours(
-      cutoffTime.getHours() - this.config.deduplicationWindowHours
-    )
+    cutoffTime.setHours(cutoffTime.getHours() - this.config.deduplicationWindowHours)
 
-    const recentHistory = campaignHistory.filter(
-      (record) => record.timestamp > cutoffTime
-    )
+    const recentHistory = campaignHistory.filter((record) => record.timestamp > cutoffTime)
 
     // Update history
     this.alertHistory.set(anomaly.campaignId, recentHistory)
@@ -332,9 +327,7 @@ export class AnomalyAlertService {
     // Check rate limit (per campaign per day)
     const oneDayAgo = new Date()
     oneDayAgo.setHours(oneDayAgo.getHours() - 24)
-    const alertsInLastDay = recentHistory.filter(
-      (record) => record.timestamp > oneDayAgo
-    ).length
+    const alertsInLastDay = recentHistory.filter((record) => record.timestamp > oneDayAgo).length
 
     if (alertsInLastDay >= this.config.maxAlertsPerCampaignPerDay) {
       return true // Rate limit exceeded
@@ -342,9 +335,7 @@ export class AnomalyAlertService {
 
     // Check deduplication (same campaign + metric within window)
     const isDuplicate = recentHistory.some(
-      (record) =>
-        record.campaignId === anomaly.campaignId &&
-        record.metric === anomaly.metric
+      (record) => record.campaignId === anomaly.campaignId && record.metric === anomaly.metric
     )
 
     return isDuplicate
@@ -389,10 +380,7 @@ export class AnomalyAlertService {
   /**
    * Format metric value for display
    */
-  private formatMetricValue(
-    metric: string,
-    value: number
-  ): string {
+  private formatMetricValue(metric: string, value: number): string {
     switch (metric) {
       case 'spend':
       case 'cpa':
@@ -464,9 +452,7 @@ export class AnomalyAlertService {
   /**
    * Get trend label
    */
-  private getTrendLabel(
-    trend: 'increasing' | 'decreasing' | 'stable' | 'volatile'
-  ): string {
+  private getTrendLabel(trend: 'increasing' | 'decreasing' | 'stable' | 'volatile'): string {
     const labels = {
       increasing: '상승세',
       decreasing: '하락세',

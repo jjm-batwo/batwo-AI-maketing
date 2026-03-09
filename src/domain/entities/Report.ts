@@ -25,7 +25,14 @@ export interface ReportSection {
 }
 
 export interface InsightItem {
-  type: 'performance' | 'trend' | 'comparison' | 'anomaly' | 'recommendation' | 'forecast' | 'benchmark'
+  type:
+    | 'performance'
+    | 'trend'
+    | 'comparison'
+    | 'anomaly'
+    | 'recommendation'
+    | 'forecast'
+    | 'benchmark'
   title: string
   description: string
   importance: 'critical' | 'high' | 'medium' | 'low'

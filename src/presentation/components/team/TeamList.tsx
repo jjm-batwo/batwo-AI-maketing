@@ -151,8 +151,7 @@ function TeamCard({ team, onDelete }: TeamCardProps) {
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
               <Link href={`/settings/teams/${team.id}`}>
-                <Settings className="mr-2 h-4 w-4" />
-                팀 설정
+                <Settings className="mr-2 h-4 w-4" />팀 설정
               </Link>
             </DropdownMenuItem>
             {team.isOwner && (
@@ -160,8 +159,7 @@ function TeamCard({ team, onDelete }: TeamCardProps) {
                 className="text-destructive focus:text-destructive"
                 onClick={() => onDelete(team)}
               >
-                <Trash2 className="mr-2 h-4 w-4" />
-                팀 삭제
+                <Trash2 className="mr-2 h-4 w-4" />팀 삭제
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>
@@ -243,13 +241,10 @@ export function TeamList() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">내 팀</h2>
-          <p className="text-muted-foreground">
-            팀을 만들어 멤버들과 함께 캠페인을 관리하세요.
-          </p>
+          <p className="text-muted-foreground">팀을 만들어 멤버들과 함께 캠페인을 관리하세요.</p>
         </div>
         <Button onClick={() => setCreateDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          새 팀 만들기
+          <Plus className="mr-2 h-4 w-4" />새 팀 만들기
         </Button>
       </div>
 
@@ -268,8 +263,7 @@ export function TeamList() {
               새 팀을 만들어 멤버들과 함께 캠페인을 관리해보세요.
             </p>
             <Button onClick={() => setCreateDialogOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              첫 번째 팀 만들기
+              <Plus className="mr-2 h-4 w-4" />첫 번째 팀 만들기
             </Button>
           </CardContent>
         </Card>

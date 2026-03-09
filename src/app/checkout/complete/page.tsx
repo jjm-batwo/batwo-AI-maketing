@@ -81,9 +81,9 @@ function CheckoutCompleteContent() {
 
   const getPlanName = (plan: string) => {
     const planNames: Record<string, string> = {
-      'starter': '스타터',
-      'professional': '프로페셔널',
-      'enterprise': '엔터프라이즈'
+      starter: '스타터',
+      professional: '프로페셔널',
+      enterprise: '엔터프라이즈',
     }
     return planNames[plan] || plan
   }
@@ -160,9 +160,7 @@ function CheckoutCompleteContent() {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-sm text-red-800">
-            문제가 지속되면 고객 지원팀에 문의해주세요.
-          </p>
+          <p className="text-sm text-red-800">문제가 지속되면 고객 지원팀에 문의해주세요.</p>
         </div>
 
         <Button asChild variant="outline" size="lg" className="w-full">
@@ -176,13 +174,15 @@ function CheckoutCompleteContent() {
 export default function CheckoutCompletePage() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <Suspense fallback={
-        <Card className="w-full max-w-md">
-          <CardContent className="flex flex-col items-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </CardContent>
-        </Card>
-      }>
+      <Suspense
+        fallback={
+          <Card className="w-full max-w-md">
+            <CardContent className="flex flex-col items-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </CardContent>
+          </Card>
+        }
+      >
         <CheckoutCompleteContent />
       </Suspense>
     </div>

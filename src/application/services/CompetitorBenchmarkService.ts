@@ -242,7 +242,13 @@ export class CompetitorBenchmarkService {
    */
   compare(performance: CampaignPerformance, industry: Industry): BenchmarkComparison[] {
     const benchmark = DETAILED_BENCHMARKS[industry]
-    const metrics: Array<'ctr' | 'cvr' | 'cpa' | 'roas' | 'cpc'> = ['ctr', 'cvr', 'cpa', 'roas', 'cpc']
+    const metrics: Array<'ctr' | 'cvr' | 'cpa' | 'roas' | 'cpc'> = [
+      'ctr',
+      'cvr',
+      'cpa',
+      'roas',
+      'cpc',
+    ]
 
     return metrics.map((metric) => {
       const current = performance[metric]
@@ -375,14 +381,18 @@ export class CompetitorBenchmarkService {
     if (isLowerBetter) {
       // CPA, CPC: 낮을수록 좋음
       if (value <= benchmark.top10) return 95
-      if (value <= benchmark.avg) return 50 + ((benchmark.avg - value) / (benchmark.avg - benchmark.top10)) * 45
-      if (value <= benchmark.max) return 10 + ((benchmark.max - value) / (benchmark.max - benchmark.avg)) * 40
+      if (value <= benchmark.avg)
+        return 50 + ((benchmark.avg - value) / (benchmark.avg - benchmark.top10)) * 45
+      if (value <= benchmark.max)
+        return 10 + ((benchmark.max - value) / (benchmark.max - benchmark.avg)) * 40
       return 5
     } else {
       // CTR, CVR, ROAS: 높을수록 좋음
       if (value >= benchmark.top10) return 95
-      if (value >= benchmark.avg) return 50 + ((value - benchmark.avg) / (benchmark.top10 - benchmark.avg)) * 45
-      if (value >= benchmark.min) return 10 + ((value - benchmark.min) / (benchmark.avg - benchmark.min)) * 40
+      if (value >= benchmark.avg)
+        return 50 + ((value - benchmark.avg) / (benchmark.top10 - benchmark.avg)) * 45
+      if (value >= benchmark.min)
+        return 10 + ((value - benchmark.min) / (benchmark.avg - benchmark.min)) * 40
       return 5
     }
   }
@@ -423,7 +433,9 @@ export class CompetitorBenchmarkService {
     return 'low'
   }
 
-  private estimateEffort(metric: 'ctr' | 'cvr' | 'cpa' | 'roas' | 'cpc'): 'low' | 'medium' | 'high' {
+  private estimateEffort(
+    metric: 'ctr' | 'cvr' | 'cpa' | 'roas' | 'cpc'
+  ): 'low' | 'medium' | 'high' {
     const effortMap: Record<typeof metric, 'low' | 'medium' | 'high'> = {
       ctr: 'low', // 크리에이티브 변경으로 빠른 개선 가능
       cpc: 'low', // 입찰 조정으로 빠른 개선 가능
@@ -479,9 +491,13 @@ export class CompetitorBenchmarkService {
 
     for (const c of comparisons) {
       if (c.percentile >= 70) {
-        strengths.push(`${c.metric.toUpperCase()} ${c.statusKo} (상위 ${Math.round(100 - c.percentile)}%)`)
+        strengths.push(
+          `${c.metric.toUpperCase()} ${c.statusKo} (상위 ${Math.round(100 - c.percentile)}%)`
+        )
       } else if (c.percentile < 30) {
-        weaknesses.push(`${c.metric.toUpperCase()} ${c.statusKo} (하위 ${Math.round(c.percentile)}%)`)
+        weaknesses.push(
+          `${c.metric.toUpperCase()} ${c.statusKo} (하위 ${Math.round(c.percentile)}%)`
+        )
       }
     }
 
@@ -491,7 +507,9 @@ export class CompetitorBenchmarkService {
     const seasonMultiplier = benchmark.seasonalMultipliers[currentSeason]
 
     if (seasonMultiplier >= 1.1) {
-      opportunities.push(`현재 시즌(${this.getSeasonKo(currentSeason)}) 성수기 - 광고 효율 상승 기대`)
+      opportunities.push(
+        `현재 시즌(${this.getSeasonKo(currentSeason)}) 성수기 - 광고 효율 상승 기대`
+      )
     }
 
     opportunities.push(`피크 타임(${benchmark.peakHours.join(', ')}시) 집중 운영 권장`)
@@ -575,7 +593,10 @@ export class CompetitorBenchmarkService {
     return recommendations[metric] || []
   }
 
-  private getQuickWins(metric: 'ctr' | 'cvr' | 'cpa' | 'roas' | 'cpc', _industry: Industry): string[] {
+  private getQuickWins(
+    metric: 'ctr' | 'cvr' | 'cpa' | 'roas' | 'cpc',
+    _industry: Industry
+  ): string[] {
     const quickWins: Record<typeof metric, string[]> = {
       ctr: ['눈에 띄는 CTA 버튼 색상 변경', '숫자/할인율 강조 문구 추가'],
       cvr: ['긴급성 메시지 추가 (재고 한정, 시간 제한)', '리뷰/평점 노출 강화'],

@@ -32,9 +32,7 @@ const ConfidenceIndicator = memo(function ConfidenceIndicator({
 }) {
   const percentage = Math.round(confidence * 100)
   const color =
-    confidence >= 0.8 ? 'bg-green-500' :
-    confidence >= 0.6 ? 'bg-yellow-500' :
-    'bg-gray-400'
+    confidence >= 0.8 ? 'bg-green-500' : confidence >= 0.6 ? 'bg-yellow-500' : 'bg-gray-400'
 
   return (
     <div className="flex items-center gap-2">
@@ -52,11 +50,7 @@ const ConfidenceIndicator = memo(function ConfidenceIndicator({
 /**
  * Anomaly Card
  */
-const AnomalyCard = memo(function AnomalyCard({
-  anomaly,
-}: {
-  anomaly: AnomalyInsightDTO
-}) {
+const AnomalyCard = memo(function AnomalyCard({ anomaly }: { anomaly: AnomalyInsightDTO }) {
   const severityColors = {
     high: 'border-red-500 bg-red-50 dark:bg-red-950/20',
     medium: 'border-yellow-500 bg-yellow-50 dark:bg-yellow-950/20',
@@ -85,9 +79,7 @@ const AnomalyCard = memo(function AnomalyCard({
         <div className="flex items-center gap-2">
           <AlertTriangle className={`w-5 h-5 ${severityTextColors[anomaly.severity]}`} />
           <div>
-            <div className="font-semibold text-sm capitalize">
-              {anomaly.metric}
-            </div>
+            <div className="font-semibold text-sm capitalize">{anomaly.metric}</div>
             <div className={`text-xs ${severityTextColors[anomaly.severity]}`}>
               심각도: {severityLabels[anomaly.severity]}
             </div>
@@ -102,8 +94,7 @@ const AnomalyCard = memo(function AnomalyCard({
       {/* Value and Range */}
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
         <div>
-          <span className="font-medium">현재:</span>{' '}
-          {anomaly.value.toLocaleString()}
+          <span className="font-medium">현재:</span> {anomaly.value.toLocaleString()}
         </div>
         <div>
           <span className="font-medium">예상 범위:</span>{' '}
@@ -152,9 +143,7 @@ const TrendCard = memo(function TrendCard({ trend }: { trend: TrendInsightDTO })
         <div className="flex items-center gap-2">
           <Icon className={`w-5 h-5 ${directionColors[trend.direction]}`} />
           <div>
-            <div className="font-semibold text-sm capitalize">
-              {trend.metric}
-            </div>
+            <div className="font-semibold text-sm capitalize">{trend.metric}</div>
             <div className={`text-xs ${directionColors[trend.direction]}`}>
               {directionLabels[trend.direction]}
               {trend.changePercent > 0 && ` (+${trend.changePercent}%)`}
@@ -216,7 +205,8 @@ export const AIInsights = memo(function AIInsights({
       <div className={`space-y-4 ${className}`}>
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">AI 인사이트</h3>
-          <button type="button"
+          <button
+            type="button"
             onClick={refetch}
             className="p-2 hover:bg-muted rounded-lg transition-colors"
             aria-label="다시 로드"
@@ -238,7 +228,8 @@ export const AIInsights = memo(function AIInsights({
       <div className={`space-y-4 ${className}`}>
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold">AI 인사이트</h3>
-          <button type="button"
+          <button
+            type="button"
             onClick={refetch}
             className="p-2 hover:bg-muted rounded-lg transition-colors"
             aria-label="다시 로드"
@@ -259,7 +250,8 @@ export const AIInsights = memo(function AIInsights({
       {/* Header */}
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">AI 인사이트</h3>
-        <button type="button"
+        <button
+          type="button"
           onClick={refetch}
           className="p-2 hover:bg-muted rounded-lg transition-colors"
           aria-label="다시 로드"

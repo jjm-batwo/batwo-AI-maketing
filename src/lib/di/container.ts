@@ -509,21 +509,18 @@ container.registerSingleton<IInsightHistoryRepository>(
   () => new PrismaInsightHistoryRepository(prisma)
 )
 
-container.registerSingleton(
-  DI_TOKENS.KPIInsightsService,
-  () => {
-    const service = new KPIInsightsService(
-      container.resolve(DI_TOKENS.KPIRepository),
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve<IAIService>(DI_TOKENS.AIService),
-      container.resolve<ICacheService>(DI_TOKENS.CacheService)
-    )
-    service.setInsightHistoryRepository(
-      container.resolve<IInsightHistoryRepository>(DI_TOKENS.InsightHistoryRepository)
-    )
-    return service
-  }
-)
+container.registerSingleton(DI_TOKENS.KPIInsightsService, () => {
+  const service = new KPIInsightsService(
+    container.resolve(DI_TOKENS.KPIRepository),
+    container.resolve(DI_TOKENS.CampaignRepository),
+    container.resolve<IAIService>(DI_TOKENS.AIService),
+    container.resolve<ICacheService>(DI_TOKENS.CacheService)
+  )
+  service.setInsightHistoryRepository(
+    container.resolve<IInsightHistoryRepository>(DI_TOKENS.InsightHistoryRepository)
+  )
+  return service
+})
 
 // Register Infrastructure Services (Singletons)
 container.registerSingleton<IReportPDFGenerator>(
@@ -793,7 +790,9 @@ container.register(
       container.resolve(DI_TOKENS.MetaPixelService),
       {
         async getCAPIStatsByPixelId(pixelId: string) {
-          const repo = container.resolve<IConversionEventRepository>(DI_TOKENS.ConversionEventRepository)
+          const repo = container.resolve<IConversionEventRepository>(
+            DI_TOKENS.ConversionEventRepository
+          )
           return repo.countByPixelIdGrouped(pixelId)
         },
       },

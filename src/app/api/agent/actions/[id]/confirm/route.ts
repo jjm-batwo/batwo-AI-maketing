@@ -3,10 +3,7 @@ import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS } from '@/lib/di/container'
 import { ActionConfirmationService } from '@/application/services/ActionConfirmationService'
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
@@ -20,9 +17,7 @@ export async function POST(
     return NextResponse.json(result)
   } catch (error) {
     const message = error instanceof Error ? error.message : '확인 처리 중 오류가 발생했습니다'
-    const status = message.includes('not found') ? 404
-      : message.includes('expired') ? 410
-      : 500
+    const status = message.includes('not found') ? 404 : message.includes('expired') ? 410 : 500
     return NextResponse.json({ success: false, message }, { status })
   }
 }

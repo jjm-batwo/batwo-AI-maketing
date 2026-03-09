@@ -79,9 +79,7 @@ export class ForecastingService {
     data: { date: string; [key: string]: number | string }[],
     metric: string
   ): number[] {
-    return data
-      .map((d) => d[metric])
-      .filter((v) => typeof v === 'number' && !isNaN(v)) as number[]
+    return data.map((d) => d[metric]).filter((v) => typeof v === 'number' && !isNaN(v)) as number[]
   }
 
   /**
@@ -261,10 +259,7 @@ export class ForecastingService {
   /**
    * Detect trend direction
    */
-  private static detectTrend(
-    data: number[],
-    metric: string
-  ): 'improving' | 'declining' | 'stable' {
+  private static detectTrend(data: number[], metric: string): 'improving' | 'declining' | 'stable' {
     if (data.length < 3) return 'stable'
 
     const { slope } = linearRegression(data)

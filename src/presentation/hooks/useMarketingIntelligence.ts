@@ -187,7 +187,9 @@ async function fetchScienceCopy(input: ScienceCopyInput): Promise<ScienceCopyRes
   })
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Failed to generate science-backed copy' }))
+    const error = await response
+      .json()
+      .catch(() => ({ message: 'Failed to generate science-backed copy' }))
     throw new Error(error.message || 'Failed to generate science-backed copy')
   }
 
@@ -202,14 +204,18 @@ async function fetchScienceOptimize(input: ScienceOptimizeInput): Promise<Scienc
   })
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Failed to generate optimization suggestions' }))
+    const error = await response
+      .json()
+      .catch(() => ({ message: 'Failed to generate optimization suggestions' }))
     throw new Error(error.message || 'Failed to generate optimization suggestions')
   }
 
   return response.json()
 }
 
-async function fetchScienceAnalyze(input: ScienceScoreInput & { includeResearch?: boolean }): Promise<ScienceAnalyzeResponse> {
+async function fetchScienceAnalyze(
+  input: ScienceScoreInput & { includeResearch?: boolean }
+): Promise<ScienceAnalyzeResponse> {
   const response = await fetch('/api/ai/science-analyze', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -217,7 +223,9 @@ async function fetchScienceAnalyze(input: ScienceScoreInput & { includeResearch?
   })
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Failed to perform science analysis' }))
+    const error = await response
+      .json()
+      .catch(() => ({ message: 'Failed to perform science analysis' }))
     throw new Error(error.message || 'Failed to perform science analysis')
   }
 

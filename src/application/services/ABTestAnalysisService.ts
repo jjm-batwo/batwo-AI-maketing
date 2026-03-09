@@ -13,7 +13,10 @@ import type {
   StopTestRecommendation,
   VariantMetrics,
 } from '@application/ports/IABTestAnalysisService'
-import { StatisticalSignificance, type SignificanceLevel } from '@domain/value-objects/StatisticalSignificance'
+import {
+  StatisticalSignificance,
+  type SignificanceLevel,
+} from '@domain/value-objects/StatisticalSignificance'
 
 export class ABTestAnalysisService implements IABTestAnalysisService {
   constructor(private readonly abTestRepository: IABTestRepository) {}
@@ -44,18 +47,22 @@ export class ABTestAnalysisService implements IABTestAnalysisService {
       variantId: control.id,
       impressions: control.impressions,
       conversions: control.conversions,
-      conversionRate: control.impressions > 0 ? (control.conversions / control.impressions) * 100 : 0,
+      conversionRate:
+        control.impressions > 0 ? (control.conversions / control.impressions) * 100 : 0,
       revenue: control.revenue.amount,
-      revenuePerConversion: control.conversions > 0 ? control.revenue.amount / control.conversions : 0,
+      revenuePerConversion:
+        control.conversions > 0 ? control.revenue.amount / control.conversions : 0,
     }
 
     const treatmentMetrics: VariantMetrics = {
       variantId: treatment.id,
       impressions: treatment.impressions,
       conversions: treatment.conversions,
-      conversionRate: treatment.impressions > 0 ? (treatment.conversions / treatment.impressions) * 100 : 0,
+      conversionRate:
+        treatment.impressions > 0 ? (treatment.conversions / treatment.impressions) * 100 : 0,
       revenue: treatment.revenue.amount,
-      revenuePerConversion: treatment.conversions > 0 ? treatment.revenue.amount / treatment.conversions : 0,
+      revenuePerConversion:
+        treatment.conversions > 0 ? treatment.revenue.amount / treatment.conversions : 0,
     }
 
     // Calculate required sample size
@@ -169,7 +176,8 @@ export class ABTestAnalysisService implements IABTestAnalysisService {
     if (isWellOversampled) {
       return {
         shouldStop: true,
-        reason: 'Collected sufficient samples (2x required) with no significant difference. Variants are likely equivalent. Safe to stop and use either variant.',
+        reason:
+          'Collected sufficient samples (2x required) with no significant difference. Variants are likely equivalent. Safe to stop and use either variant.',
       }
     }
 

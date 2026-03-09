@@ -128,7 +128,8 @@ function getInitialFormData(
         type: a.type,
         params: {
           percentage: a.params?.percentage != null ? String(a.params.percentage) : undefined,
-          notifyChannel: a.params?.notifyChannel != null ? String(a.params.notifyChannel) : undefined,
+          notifyChannel:
+            a.params?.notifyChannel != null ? String(a.params.notifyChannel) : undefined,
         },
       })),
       cooldownMinutes: editingRule.cooldownMinutes,
@@ -290,19 +291,14 @@ export function OptimizationRuleForm({
                   ))}
                 </SelectContent>
               </Select>
-              {errors.campaignId && (
-                <p className="text-xs text-destructive">{errors.campaignId}</p>
-              )}
+              {errors.campaignId && <p className="text-xs text-destructive">{errors.campaignId}</p>}
             </div>
           )}
 
           {/* 규칙 유형 */}
           <div className="space-y-1.5">
             <Label>규칙 유형</Label>
-            <Select
-              value={formData.ruleType}
-              onValueChange={(v) => updateField('ruleType', v)}
-            >
+            <Select value={formData.ruleType} onValueChange={(v) => updateField('ruleType', v)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -333,9 +329,7 @@ export function OptimizationRuleForm({
                 조건 추가
               </Button>
             </div>
-            {errors.conditions && (
-              <p className="text-xs text-destructive">{errors.conditions}</p>
-            )}
+            {errors.conditions && <p className="text-xs text-destructive">{errors.conditions}</p>}
             <div className="space-y-2">
               {formData.conditions.map((condition, index) => (
                 <div
@@ -417,10 +411,7 @@ export function OptimizationRuleForm({
                   key={index}
                   className="space-y-2 rounded-lg border border-border/50 bg-muted/30 p-3"
                 >
-                  <Select
-                    value={action.type}
-                    onValueChange={(v) => updateAction(index, 'type', v)}
-                  >
+                  <Select value={action.type} onValueChange={(v) => updateAction(index, 'type', v)}>
                     <SelectTrigger className="h-8 text-xs">
                       <SelectValue />
                     </SelectTrigger>

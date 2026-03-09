@@ -592,22 +592,30 @@ export class KoreanMarketCalendar {
 
     // 연말 쇼핑 시즌 (12월)
     if (month === 12) {
-      events.push(this.createMarketEvent('NEW_YEAR_SHOPPING', 'seasonal', SEASONAL_PATTERNS.NEW_YEAR_SHOPPING))
+      events.push(
+        this.createMarketEvent('NEW_YEAR_SHOPPING', 'seasonal', SEASONAL_PATTERNS.NEW_YEAR_SHOPPING)
+      )
     }
 
     // 여름휴가 시즌 (7-8월)
     if (month === 7 || month === 8) {
-      events.push(this.createMarketEvent('SUMMER_VACATION', 'seasonal', SEASONAL_PATTERNS.SUMMER_VACATION))
+      events.push(
+        this.createMarketEvent('SUMMER_VACATION', 'seasonal', SEASONAL_PATTERNS.SUMMER_VACATION)
+      )
     }
 
     // 신학기 시즌 (2-3월)
     if (month === 2 || month === 3) {
-      events.push(this.createMarketEvent('BACK_TO_SCHOOL', 'seasonal', SEASONAL_PATTERNS.BACK_TO_SCHOOL))
+      events.push(
+        this.createMarketEvent('BACK_TO_SCHOOL', 'seasonal', SEASONAL_PATTERNS.BACK_TO_SCHOOL)
+      )
     }
 
     // 연말정산 시즌 (1월)
     if (month === 1) {
-      events.push(this.createMarketEvent('YEAR_END_TAX', 'seasonal', SEASONAL_PATTERNS.YEAR_END_TAX))
+      events.push(
+        this.createMarketEvent('YEAR_END_TAX', 'seasonal', SEASONAL_PATTERNS.YEAR_END_TAX)
+      )
     }
 
     return events

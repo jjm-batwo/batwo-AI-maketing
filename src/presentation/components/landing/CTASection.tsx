@@ -32,9 +32,13 @@ export function CTASection() {
           aria-label="주요 혜택"
         >
           <li>신용카드 불필요</li>
-          <li className="hidden sm:inline" aria-hidden="true">&bull;</li>
+          <li className="hidden sm:inline" aria-hidden="true">
+            &bull;
+          </li>
           <li>5분 설정</li>
-          <li className="hidden sm:inline" aria-hidden="true">&bull;</li>
+          <li className="hidden sm:inline" aria-hidden="true">
+            &bull;
+          </li>
           <li>언제든 취소</li>
         </ul>
       </div>

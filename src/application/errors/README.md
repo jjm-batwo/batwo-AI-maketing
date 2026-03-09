@@ -37,16 +37,16 @@ try {
 
 ## Error Types
 
-| Error Class | Status Code | When to Use |
-|-------------|-------------|-------------|
-| `ValidationError` | 400 | Invalid input, business rule violation |
-| `UnauthorizedError` | 401 | Missing or invalid authentication |
-| `ForbiddenError` | 403 | Insufficient permissions |
-| `NotFoundError` | 404 | Resource doesn't exist |
-| `ConflictError` | 409 | State conflict, duplicate resource |
-| `RateLimitError` | 429 | Rate limit exceeded |
-| `InternalError` | 500 | Unexpected internal error |
-| `ExternalServiceError` | 502 | External service failure |
+| Error Class            | Status Code | When to Use                            |
+| ---------------------- | ----------- | -------------------------------------- |
+| `ValidationError`      | 400         | Invalid input, business rule violation |
+| `UnauthorizedError`    | 401         | Missing or invalid authentication      |
+| `ForbiddenError`       | 403         | Insufficient permissions               |
+| `NotFoundError`        | 404         | Resource doesn't exist                 |
+| `ConflictError`        | 409         | State conflict, duplicate resource     |
+| `RateLimitError`       | 429         | Rate limit exceeded                    |
+| `InternalError`        | 500         | Unexpected internal error              |
+| `ExternalServiceError` | 502         | External service failure               |
 
 ## Result Pattern (Optional)
 

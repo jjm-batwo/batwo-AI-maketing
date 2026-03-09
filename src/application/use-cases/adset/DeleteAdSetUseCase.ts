@@ -8,9 +8,7 @@ export class AdSetNotFoundError extends Error {
 }
 
 export class DeleteAdSetUseCase {
-  constructor(
-    private readonly adSetRepository: IAdSetRepository
-  ) {}
+  constructor(private readonly adSetRepository: IAdSetRepository) {}
 
   async execute(id: string): Promise<void> {
     const adSet = await this.adSetRepository.findById(id)

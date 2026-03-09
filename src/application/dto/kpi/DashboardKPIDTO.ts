@@ -1,10 +1,24 @@
-export type DateRangePreset = 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d' | 'this_month' | 'last_month'
+export type DateRangePreset =
+  | 'today'
+  | 'yesterday'
+  | 'last_7d'
+  | 'last_30d'
+  | 'last_90d'
+  | 'this_month'
+  | 'last_month'
 
 export interface GetDashboardKPIDTO {
   userId: string
   dateRange: DateRangePreset
   campaignIds?: string[]
-  objective?: 'AWARENESS' | 'TRAFFIC' | 'ENGAGEMENT' | 'LEADS' | 'APP_PROMOTION' | 'SALES' | 'CONVERSIONS'
+  objective?:
+    | 'AWARENESS'
+    | 'TRAFFIC'
+    | 'ENGAGEMENT'
+    | 'LEADS'
+    | 'APP_PROMOTION'
+    | 'SALES'
+    | 'CONVERSIONS'
   includeComparison?: boolean
   includeBreakdown?: boolean
   includeChartData?: boolean

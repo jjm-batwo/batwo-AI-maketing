@@ -3,11 +3,7 @@ import { redirect } from 'next/navigation'
 import { canAccessAdminPanel, GlobalRole } from '@domain/value-objects/GlobalRole'
 import { AdminSidebar, AdminHeader } from '@/presentation/components/admin/layout'
 
-export default async function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth()
 
   // 인증 확인

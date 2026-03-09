@@ -5,7 +5,7 @@ export interface Testimonial {
   company: string
   avatarColor: string
   content: string
-  highlight: string   // substring of content to be highlighted in primary color
+  highlight: string // substring of content to be highlighted in primary color
   rating: number
 }
 
@@ -18,7 +18,8 @@ export const TESTIMONIALS: Testimonial[] = [
     avatarColor: 'bg-indigo-500',
     content:
       '바투 도입 이후 광고 관리에 들이던 시간이 70% 줄었어요. AI가 알아서 최적화해주니 다른 업무에 집중할 수 있게 되었고 ROAS도 45% 향상됐습니다.',
-    highlight: 'AI가 알아서 최적화해주니 다른 업무에 집중할 수 있게 되었고 ROAS도 45% 향상됐습니다.',
+    highlight:
+      'AI가 알아서 최적화해주니 다른 업무에 집중할 수 있게 되었고 ROAS도 45% 향상됐습니다.',
     rating: 5,
   },
   {

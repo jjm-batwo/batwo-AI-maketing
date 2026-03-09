@@ -31,7 +31,7 @@ export default async function CampaignEditPage({ params }: CampaignEditPageProps
   try {
     const res = await fetch(`${baseUrl}/api/campaigns/${campaignId}`, {
       headers: { Cookie: cookieStore.toString() },
-      next: { revalidate: 60, tags: ['campaigns'] }
+      next: { revalidate: 60, tags: ['campaigns'] },
     })
 
     if (!res.ok) {

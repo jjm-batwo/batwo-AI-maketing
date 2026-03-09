@@ -78,11 +78,9 @@ export default function SampleReportPage() {
           <p className="text-muted-foreground">
             {report.dateRange.startDate} ~ {report.dateRange.endDate}
           </p>
-          <p className="text-sm text-amber-600 mt-1">
-            * 이 보고서는 예시 데이터로 생성되었습니다
-          </p>
+          <p className="text-sm text-amber-600 mt-1">* 이 보고서는 예시 데이터로 생성되었습니다</p>
         </div>
-        <SampleReportActions 
+        <SampleReportActions
           startDate={report.dateRange.startDate}
           endDate={report.dateRange.endDate}
         />

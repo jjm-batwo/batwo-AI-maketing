@@ -79,7 +79,11 @@ export default function PixelSettingsPage() {
   const [newPixelId, setNewPixelId] = useState('')
   const [createError, setCreateError] = useState<string | null>(null)
 
-  const { data: pixels, isLoading, error } = useQuery({
+  const {
+    data: pixels,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['pixels'],
     queryFn: fetchPixels,
   })
@@ -128,7 +132,13 @@ export default function PixelSettingsPage() {
         <p className="text-muted-foreground mt-1">
           Meta 픽셀을 설치하여 웹사이트 전환을 추적하세요
         </p>
-        {showApiSource && <ApiSourceBadge endpoint="GET /{business-id}/pixels" permission="business_management" className="mt-2" />}
+        {showApiSource && (
+          <ApiSourceBadge
+            endpoint="GET /{business-id}/pixels"
+            permission="business_management"
+            className="mt-2"
+          />
+        )}
       </div>
 
       {error && (
@@ -144,8 +154,7 @@ export default function PixelSettingsPage() {
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">픽셀 목록</h2>
             <Button size="sm" onClick={() => setIsCreateDialogOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              새 픽셀 등록
+              <Plus className="mr-2 h-4 w-4" />새 픽셀 등록
             </Button>
           </div>
 
@@ -158,12 +167,8 @@ export default function PixelSettingsPage() {
                   <p className="mt-2 text-sm text-muted-foreground">
                     Meta 픽셀을 등록하면 웹사이트 전환을 추적할 수 있습니다
                   </p>
-                  <Button
-                    className="mt-4"
-                    onClick={() => setIsCreateDialogOpen(true)}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    첫 픽셀 등록하기
+                  <Button className="mt-4" onClick={() => setIsCreateDialogOpen(true)}>
+                    <Plus className="mr-2 h-4 w-4" />첫 픽셀 등록하기
                   </Button>
                 </div>
               </CardContent>

@@ -34,9 +34,7 @@ export const FAQSection = memo(function FAQSection() {
                 <AccordionTrigger className="text-left focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-md">
                   {item.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  {item.answer}
-                </AccordionContent>
+                <AccordionContent className="text-muted-foreground">{item.answer}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>

@@ -70,13 +70,9 @@ export function AdPreview() {
                   })()}
                 </p>
               )}
-              <p className="truncate text-sm font-semibold">
-                {creative?.headline || '헤드라인'}
-              </p>
+              <p className="truncate text-sm font-semibold">{creative?.headline || '헤드라인'}</p>
               {creative?.description && (
-                <p className="truncate text-xs text-muted-foreground">
-                  {creative.description}
-                </p>
+                <p className="truncate text-xs text-muted-foreground">{creative.description}</p>
               )}
             </div>
             {creative?.callToAction && (

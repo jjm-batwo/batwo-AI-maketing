@@ -13,20 +13,17 @@ import { Money } from '@/domain/value-objects/Money'
 const eventDispatcher = new InMemoryEventDispatcher()
 
 // 핸들러 등록
-eventDispatcher.register(
-  CampaignCreatedEvent.EVENT_TYPE,
-  async (event: CampaignCreatedEvent) => {
-    console.log('New campaign created!')
-    console.log('Campaign ID:', event.aggregateId)
-    console.log('User ID:', event.userId)
-    console.log('Name:', event.name)
-    console.log('Budget:', event.dailyBudget.amount, event.dailyBudget.currency)
+eventDispatcher.register(CampaignCreatedEvent.EVENT_TYPE, async (event: CampaignCreatedEvent) => {
+  console.log('New campaign created!')
+  console.log('Campaign ID:', event.aggregateId)
+  console.log('User ID:', event.userId)
+  console.log('Name:', event.name)
+  console.log('Budget:', event.dailyBudget.amount, event.dailyBudget.currency)
 
-    // 실제 비즈니스 로직
-    // await sendWelcomeEmail(event.userId)
-    // await setupAnalyticsTracking(event.aggregateId)
-  }
-)
+  // 실제 비즈니스 로직
+  // await sendWelcomeEmail(event.userId)
+  // await setupAnalyticsTracking(event.aggregateId)
+})
 
 // Campaign 생성
 const campaign = Campaign.create({
@@ -133,41 +130,35 @@ import { Report, ReportType, ReportGeneratedEvent, ReportEmailSentEvent } from '
 import { DateRange } from '@/domain/value-objects/DateRange'
 
 // Report 생성 완료 핸들러
-eventDispatcher.register(
-  ReportGeneratedEvent.EVENT_TYPE,
-  async (event: ReportGeneratedEvent) => {
-    console.log('Report generated!')
-    console.log('Report ID:', event.aggregateId)
-    console.log('Type:', event.reportType)
-    console.log('Sections:', event.sectionCount)
-    console.log('Insights:', event.insightCount)
+eventDispatcher.register(ReportGeneratedEvent.EVENT_TYPE, async (event: ReportGeneratedEvent) => {
+  console.log('Report generated!')
+  console.log('Report ID:', event.aggregateId)
+  console.log('Type:', event.reportType)
+  console.log('Sections:', event.sectionCount)
+  console.log('Insights:', event.insightCount)
 
-    // 실제 비즈니스 로직
-    // 1. PDF 생성
-    // await generatePdfReport(event.aggregateId)
+  // 실제 비즈니스 로직
+  // 1. PDF 생성
+  // await generatePdfReport(event.aggregateId)
 
-    // 2. 사용자에게 이메일 발송
-    // const user = await userRepository.findById(event.userId)
-    // await emailService.sendReportEmail(user.email, event.aggregateId)
-  }
-)
+  // 2. 사용자에게 이메일 발송
+  // const user = await userRepository.findById(event.userId)
+  // await emailService.sendReportEmail(user.email, event.aggregateId)
+})
 
 // Report 이메일 발송 핸들러
-eventDispatcher.register(
-  ReportEmailSentEvent.EVENT_TYPE,
-  async (event: ReportEmailSentEvent) => {
-    console.log('Report email sent!')
-    console.log('Report ID:', event.aggregateId)
-    console.log('Recipient:', event.recipientEmail)
-    console.log('Provider:', event.emailProvider)
+eventDispatcher.register(ReportEmailSentEvent.EVENT_TYPE, async (event: ReportEmailSentEvent) => {
+  console.log('Report email sent!')
+  console.log('Report ID:', event.aggregateId)
+  console.log('Recipient:', event.recipientEmail)
+  console.log('Provider:', event.emailProvider)
 
-    // 실제 비즈니스 로직
-    // await analytics.track('report_email_sent', {
-    //   reportId: event.aggregateId,
-    //   reportType: event.reportType,
-    // })
-  }
-)
+  // 실제 비즈니스 로직
+  // await analytics.track('report_email_sent', {
+  //   reportId: event.aggregateId,
+  //   reportType: event.reportType,
+  // })
+})
 
 // Report 생성
 const report = Report.createWeekly({
@@ -254,34 +245,23 @@ export class CreateCampaignUseCase {
 
 ```typescript
 // 같은 이벤트에 여러 핸들러 등록 가능
-eventDispatcher.register(
-  CampaignCreatedEvent.EVENT_TYPE,
-  async (event) => {
-    // 핸들러 1: 환영 이메일 발송
-    await sendWelcomeEmail(event.userId, event.name)
-  }
-)
+eventDispatcher.register(CampaignCreatedEvent.EVENT_TYPE, async (event) => {
+  // 핸들러 1: 환영 이메일 발송
+  await sendWelcomeEmail(event.userId, event.name)
+})
 
-eventDispatcher.register(
-  CampaignCreatedEvent.EVENT_TYPE,
-  async (event) => {
-    // 핸들러 2: Analytics 추적
-    await analytics.track('campaign_created', {
-      campaignId: event.aggregateId,
-      objective: event.objective,
-    })
-  }
-)
+eventDispatcher.register(CampaignCreatedEvent.EVENT_TYPE, async (event) => {
+  // 핸들러 2: Analytics 추적
+  await analytics.track('campaign_created', {
+    campaignId: event.aggregateId,
+    objective: event.objective,
+  })
+})
 
-eventDispatcher.register(
-  CampaignCreatedEvent.EVENT_TYPE,
-  async (event) => {
-    // 핸들러 3: Slack 알림
-    await slack.sendMessage(
-      `새 캠페인이 생성되었습니다: ${event.name}`
-    )
-  }
-)
+eventDispatcher.register(CampaignCreatedEvent.EVENT_TYPE, async (event) => {
+  // 핸들러 3: Slack 알림
+  await slack.sendMessage(`새 캠페인이 생성되었습니다: ${event.name}`)
+})
 
 // 모든 핸들러가 병렬로 실행됨
 ```
@@ -365,10 +345,7 @@ describe('Domain Events', () => {
       startDate: new Date('2025-03-01'),
     })
 
-    await eventDispatcher.dispatchAll([
-      ...campaign1.domainEvents,
-      ...campaign2.domainEvents,
-    ])
+    await eventDispatcher.dispatchAll([...campaign1.domainEvents, ...campaign2.domainEvents])
 
     // Assert
     expect(handler).toHaveBeenCalledTimes(2)
@@ -401,22 +378,19 @@ export function setupEventHandlers(
   const { emailService, metaAdsClient, analytics, logger } = dependencies
 
   // Campaign Created
-  eventDispatcher.register(
-    CampaignCreatedEvent.EVENT_TYPE,
-    async (event: CampaignCreatedEvent) => {
-      try {
-        await Promise.all([
-          emailService.sendCampaignCreatedEmail(event.userId, event.name),
-          analytics.track('campaign_created', {
-            campaignId: event.aggregateId,
-            objective: event.objective,
-          }),
-        ])
-      } catch (error) {
-        logger.error('Error handling CampaignCreatedEvent', { error, event })
-      }
+  eventDispatcher.register(CampaignCreatedEvent.EVENT_TYPE, async (event: CampaignCreatedEvent) => {
+    try {
+      await Promise.all([
+        emailService.sendCampaignCreatedEmail(event.userId, event.name),
+        analytics.track('campaign_created', {
+          campaignId: event.aggregateId,
+          objective: event.objective,
+        }),
+      ])
+    } catch (error) {
+      logger.error('Error handling CampaignCreatedEvent', { error, event })
     }
-  )
+  })
 
   // Campaign Status Changed
   eventDispatcher.register(
@@ -431,11 +405,7 @@ export function setupEventHandlers(
           }
         }
 
-        await emailService.sendStatusChangeEmail(
-          event.userId,
-          event.aggregateId,
-          event.newStatus
-        )
+        await emailService.sendStatusChangeEmail(event.userId, event.aggregateId, event.newStatus)
       } catch (error) {
         logger.error('Error handling CampaignStatusChangedEvent', { error, event })
       }
@@ -443,19 +413,16 @@ export function setupEventHandlers(
   )
 
   // Report Generated
-  eventDispatcher.register(
-    ReportGeneratedEvent.EVENT_TYPE,
-    async (event: ReportGeneratedEvent) => {
-      try {
-        // PDF 생성 및 이메일 발송은 별도 UseCase에서 처리
-        logger.info('Report generated', {
-          reportId: event.aggregateId,
-          type: event.reportType,
-        })
-      } catch (error) {
-        logger.error('Error handling ReportGeneratedEvent', { error, event })
-      }
+  eventDispatcher.register(ReportGeneratedEvent.EVENT_TYPE, async (event: ReportGeneratedEvent) => {
+    try {
+      // PDF 생성 및 이메일 발송은 별도 UseCase에서 처리
+      logger.info('Report generated', {
+        reportId: event.aggregateId,
+        type: event.reportType,
+      })
+    } catch (error) {
+      logger.error('Error handling ReportGeneratedEvent', { error, event })
     }
-  )
+  })
 }
 ```

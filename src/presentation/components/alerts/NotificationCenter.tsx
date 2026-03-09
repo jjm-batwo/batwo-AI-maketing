@@ -4,13 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useAlerts, Alert, AnomalySeverity } from '@/presentation/hooks/useAlerts'
 import { Button } from '@/components/ui/button'
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
@@ -119,10 +113,7 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
           {isLoading ? (
             <div className="space-y-3">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-24 animate-pulse rounded-lg bg-muted"
-                />
+                <div key={i} className="h-24 animate-pulse rounded-lg bg-muted" />
               ))}
             </div>
           ) : alerts.length === 0 ? (
@@ -170,8 +161,10 @@ function AlertItem({ alert, onNavigate, locale }: AlertItemProps) {
 
   const formatValue = (value: number, metric: string) => {
     if (metric === 'ROAS') return value.toFixed(2)
-    if (metric === 'CTR' || metric === t('notifications.metrics.conversionRate')) return `${value.toFixed(2)}%`
-    if (metric === 'CPA' || metric === t('notifications.metrics.spend')) return `${value.toLocaleString()}${t('currency.suffix')}`
+    if (metric === 'CTR' || metric === t('notifications.metrics.conversionRate'))
+      return `${value.toFixed(2)}%`
+    if (metric === 'CPA' || metric === t('notifications.metrics.spend'))
+      return `${value.toLocaleString()}${t('currency.suffix')}`
     return value.toLocaleString()
   }
 
@@ -209,30 +202,38 @@ function AlertItem({ alert, onNavigate, locale }: AlertItemProps) {
             </Badge>
             <span className="text-xs text-muted-foreground">{timeAgo}</span>
           </div>
-          <h4 className="mt-1 font-medium text-sm truncate">
-            {alert.campaignName}
-          </h4>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {alert.message}
-          </p>
+          <h4 className="mt-1 font-medium text-sm truncate">{alert.campaignName}</h4>
+          <p className="mt-1 text-sm text-muted-foreground">{alert.message}</p>
           <div className="mt-2 flex items-center gap-4 text-xs">
             <span className="text-muted-foreground">
-              {t('notifications.metrics.previous')}: {formatValue(alert.previousValue, alert.metric)}
+              {t('notifications.metrics.previous')}:{' '}
+              {formatValue(alert.previousValue, alert.metric)}
             </span>
             <ArrowRight className="h-3 w-3 text-muted-foreground" />
-            <span className={cn(
-              alert.changePercent > 0 && alert.metric === 'ROAS' && 'text-green-600',
-              alert.changePercent < 0 && alert.metric === 'ROAS' && 'text-red-600',
-              alert.changePercent > 0 && alert.metric !== 'ROAS' && alert.type !== 'drop' && 'text-red-600',
-              alert.changePercent < 0 && alert.metric !== 'ROAS' && alert.type === 'drop' && 'text-red-600',
-            )}>
+            <span
+              className={cn(
+                alert.changePercent > 0 && alert.metric === 'ROAS' && 'text-green-600',
+                alert.changePercent < 0 && alert.metric === 'ROAS' && 'text-red-600',
+                alert.changePercent > 0 &&
+                  alert.metric !== 'ROAS' &&
+                  alert.type !== 'drop' &&
+                  'text-red-600',
+                alert.changePercent < 0 &&
+                  alert.metric !== 'ROAS' &&
+                  alert.type === 'drop' &&
+                  'text-red-600'
+              )}
+            >
               {t('notifications.metrics.current')}: {formatValue(alert.currentValue, alert.metric)}
             </span>
-            <span className={cn(
-              'font-medium',
-              alert.changePercent > 0 ? 'text-green-600' : 'text-red-600'
-            )}>
-              ({alert.changePercent > 0 ? '+' : ''}{alert.changePercent.toFixed(1)}%)
+            <span
+              className={cn(
+                'font-medium',
+                alert.changePercent > 0 ? 'text-green-600' : 'text-red-600'
+              )}
+            >
+              ({alert.changePercent > 0 ? '+' : ''}
+              {alert.changePercent.toFixed(1)}%)
             </span>
           </div>
         </div>

@@ -96,10 +96,7 @@ export class MetaPixelClient implements IMetaPixelService {
     return (response?.data || []).map((pixel) => this.mapPixelResponse(pixel))
   }
 
-  async getAdAccountPixel(
-    accessToken: string,
-    adAccountId: string
-  ): Promise<MetaPixelData | null> {
+  async getAdAccountPixel(accessToken: string, adAccountId: string): Promise<MetaPixelData | null> {
     const fields = 'pixel{id,name,is_unavailable,creation_time}'
     const response = await this.request<MetaApiAdAccountPixelResponse>(
       accessToken,
@@ -113,11 +110,7 @@ export class MetaPixelClient implements IMetaPixelService {
     return this.mapPixelResponse(response.pixel)
   }
 
-  async createPixel(
-    accessToken: string,
-    businessId: string,
-    name: string
-  ): Promise<MetaPixelData> {
+  async createPixel(accessToken: string, businessId: string, name: string): Promise<MetaPixelData> {
     const response = await this.request<MetaApiPixelResponse>(
       accessToken,
       `/${businessId}/adspixels`,
@@ -135,10 +128,7 @@ export class MetaPixelClient implements IMetaPixelService {
     }
   }
 
-  async getPixel(
-    accessToken: string,
-    pixelId: string
-  ): Promise<MetaPixelData | null> {
+  async getPixel(accessToken: string, pixelId: string): Promise<MetaPixelData | null> {
     const fields = 'id,name,last_fired_time,is_unavailable,creation_time'
     const response = await this.request<MetaApiPixelResponse | null>(
       accessToken,
@@ -152,14 +142,8 @@ export class MetaPixelClient implements IMetaPixelService {
     return this.mapPixelResponse(response)
   }
 
-  async getPixelStats(
-    accessToken: string,
-    pixelId: string
-  ): Promise<MetaPixelStats | null> {
-    const response = await this.request<MetaApiPixelStatsResponse>(
-      accessToken,
-      `/${pixelId}/stats`
-    )
+  async getPixelStats(accessToken: string, pixelId: string): Promise<MetaPixelStats | null> {
+    const response = await this.request<MetaApiPixelStatsResponse>(accessToken, `/${pixelId}/stats`)
 
     if (!response?.data || response.data.length === 0) {
       return null

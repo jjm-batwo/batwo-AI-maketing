@@ -4,19 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
-import {
-  LayoutDashboard,
-  Megaphone,
-  FileText,
-  Users,
-  PieChart,
-} from 'lucide-react'
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { LayoutDashboard, Megaphone, FileText, Users, PieChart } from 'lucide-react'
 import { useUIStore } from '@presentation/stores/uiStore'
 import { AccountPopover } from './AccountPopover'
 
@@ -38,11 +27,7 @@ export function MobileSidebar() {
       <SheetContent side="left" className="w-60 p-0">
         <SheetHeader className="border-b px-6 py-4">
           <SheetTitle asChild>
-            <Link
-              href="/"
-              className="flex items-center gap-2"
-              onClick={closeMobileMenu}
-            >
+            <Link href="/" className="flex items-center gap-2" onClick={closeMobileMenu}>
               <span className="text-xl font-bold text-primary">{t('brand.name')}</span>
               <span className="rounded bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                 Beta
@@ -53,8 +38,7 @@ export function MobileSidebar() {
 
         <nav className="flex-1 space-y-1 p-4">
           {navigation.map((item) => {
-            const isActive =
-              pathname === item.href || pathname.startsWith(item.href + '/')
+            const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
 
             return (
               <Link

@@ -32,11 +32,15 @@ type PrismaOptimizationRule = {
 }
 
 function toDomain(record: PrismaOptimizationRule): OptimizationRule {
-  const conditions = (record.conditions as { metric: string; operator: string; value: number }[]).map(
-    c => RuleCondition.create(c.metric as ConditionMetric, c.operator as ConditionOperator, c.value)
+  const conditions = (
+    record.conditions as { metric: string; operator: string; value: number }[]
+  ).map((c) =>
+    RuleCondition.create(c.metric as ConditionMetric, c.operator as ConditionOperator, c.value)
   )
-  const actions = (record.actions as { type: string; params?: { percentage?: number; notifyChannel?: string } }[]).map(
-    a => RuleAction.create(a.type as ActionType, {
+  const actions = (
+    record.actions as { type: string; params?: { percentage?: number; notifyChannel?: string } }[]
+  ).map((a) =>
+    RuleAction.create(a.type as ActionType, {
       percentage: a.params?.percentage,
       notifyChannel: a.params?.notifyChannel as NotifyChannel | undefined,
     })
@@ -66,8 +70,8 @@ function toCreateData(rule: OptimizationRule) {
     userId: rule.userId,
     name: rule.name,
     ruleType: rule.ruleType,
-    conditions: rule.conditions.map(c => c.toJSON()) as unknown as JsonValue,
-    actions: rule.actions.map(a => a.toJSON()) as unknown as JsonValue,
+    conditions: rule.conditions.map((c) => c.toJSON()) as unknown as JsonValue,
+    actions: rule.actions.map((a) => a.toJSON()) as unknown as JsonValue,
     isEnabled: rule.isEnabled,
     lastTriggeredAt: rule.lastTriggeredAt,
     triggerCount: rule.triggerCount,
@@ -113,7 +117,7 @@ export class PrismaOptimizationRuleRepository implements IOptimizationRuleReposi
       where: { campaignId },
       orderBy: { createdAt: 'desc' },
     })
-    return records.map(r => toDomain(r as PrismaOptimizationRule))
+    return records.map((r) => toDomain(r as PrismaOptimizationRule))
   }
 
   async findByUserId(userId: string): Promise<OptimizationRule[]> {
@@ -121,7 +125,7 @@ export class PrismaOptimizationRuleRepository implements IOptimizationRuleReposi
       where: { userId },
       orderBy: { createdAt: 'desc' },
     })
-    return records.map(r => toDomain(r as PrismaOptimizationRule))
+    return records.map((r) => toDomain(r as PrismaOptimizationRule))
   }
 
   async findEnabledRules(): Promise<OptimizationRule[]> {
@@ -129,7 +133,7 @@ export class PrismaOptimizationRuleRepository implements IOptimizationRuleReposi
       where: { isEnabled: true },
       orderBy: { createdAt: 'asc' },
     })
-    return records.map(r => toDomain(r as PrismaOptimizationRule))
+    return records.map((r) => toDomain(r as PrismaOptimizationRule))
   }
 
   async findEnabledByCampaignId(campaignId: string): Promise<OptimizationRule[]> {
@@ -137,7 +141,7 @@ export class PrismaOptimizationRuleRepository implements IOptimizationRuleReposi
       where: { campaignId, isEnabled: true },
       orderBy: { createdAt: 'asc' },
     })
-    return records.map(r => toDomain(r as PrismaOptimizationRule))
+    return records.map((r) => toDomain(r as PrismaOptimizationRule))
   }
 
   async delete(id: string): Promise<void> {

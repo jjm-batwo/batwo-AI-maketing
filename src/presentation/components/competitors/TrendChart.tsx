@@ -23,13 +23,7 @@ const formatLabels: Record<string, string> = {
   instant_experience: '인스턴트 경험',
 }
 
-const BAR_COLORS = [
-  'bg-blue-500',
-  'bg-violet-500',
-  'bg-emerald-500',
-  'bg-amber-500',
-  'bg-rose-500',
-]
+const BAR_COLORS = ['bg-blue-500', 'bg-violet-500', 'bg-emerald-500', 'bg-amber-500', 'bg-rose-500']
 
 export function TrendChart({ formatDistribution, popularHooks, commonOffers }: TrendChartProps) {
   return (

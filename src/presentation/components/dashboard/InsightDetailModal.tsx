@@ -104,10 +104,10 @@ export function InsightDetailModal({ insight, open, onOpenChange }: InsightDetai
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 {priorityCfg && (
-  <Badge className={cn('text-[10px] px-1.5 py-0', priorityCfg.className)}>
-    {priorityCfg.label}
-  </Badge>
-)}
+                  <Badge className={cn('text-[10px] px-1.5 py-0', priorityCfg.className)}>
+                    {priorityCfg.label}
+                  </Badge>
+                )}
                 {insight.campaignName && (
                   <span className="text-xs text-muted-foreground truncate max-w-[200px]">
                     {insight.campaignName}

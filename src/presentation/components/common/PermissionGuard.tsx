@@ -73,11 +73,7 @@ export function withPermission<P extends object>(
     const teamId = options?.getTeamId?.(props)
 
     return (
-      <PermissionGuard
-        permission={permission}
-        teamId={teamId}
-        fallback={options?.fallback}
-      >
+      <PermissionGuard permission={permission} teamId={teamId} fallback={options?.fallback}>
         <WrappedComponent {...props} />
       </PermissionGuard>
     )

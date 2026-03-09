@@ -11,9 +11,19 @@ import { AdPreview } from '../CreativeEditor/AdPreview'
 import type { ExtendedCampaignFormData, UploadedAsset } from './types'
 
 const formatOptions = [
-  { value: 'SINGLE_IMAGE', label: '단일 이미지', icon: ImageIcon, description: '하나의 이미지로 광고' },
+  {
+    value: 'SINGLE_IMAGE',
+    label: '단일 이미지',
+    icon: ImageIcon,
+    description: '하나의 이미지로 광고',
+  },
   { value: 'SINGLE_VIDEO', label: '단일 동영상', icon: Film, description: '동영상으로 광고' },
-  { value: 'CAROUSEL', label: '캐러셀', icon: LayoutGrid, description: '여러 이미지/동영상 슬라이드' },
+  {
+    value: 'CAROUSEL',
+    label: '캐러셀',
+    icon: LayoutGrid,
+    description: '여러 이미지/동영상 슬라이드',
+  },
 ] as const
 
 interface StepCreativeProps {
@@ -25,18 +35,21 @@ export function StepCreative({ onUploadAsset, isUploading }: StepCreativeProps) 
   const { watch, setValue } = useFormContext<ExtendedCampaignFormData>()
   const selectedFormat = watch('creative.format')
 
-  const handleUpload = useCallback(async (file: File): Promise<UploadedAsset> => {
-    if (onUploadAsset) {
-      return onUploadAsset(file)
-    }
-    // 폴백: 로컬 미리보기용 더미 에셋
-    return {
-      id: crypto.randomUUID(),
-      fileName: file.name,
-      blobUrl: URL.createObjectURL(file),
-      type: file.type.startsWith('video/') ? 'VIDEO' : 'IMAGE',
-    }
-  }, [onUploadAsset])
+  const handleUpload = useCallback(
+    async (file: File): Promise<UploadedAsset> => {
+      if (onUploadAsset) {
+        return onUploadAsset(file)
+      }
+      // 폴백: 로컬 미리보기용 더미 에셋
+      return {
+        id: crypto.randomUUID(),
+        fileName: file.name,
+        blobUrl: URL.createObjectURL(file),
+        type: file.type.startsWith('video/') ? 'VIDEO' : 'IMAGE',
+      }
+    },
+    [onUploadAsset]
+  )
 
   return (
     <div className="space-y-6">
@@ -51,7 +64,12 @@ export function StepCreative({ onUploadAsset, isUploading }: StepCreativeProps) 
               <button
                 key={format.value}
                 type="button"
-                onClick={() => setValue('creative.format', format.value as ExtendedCampaignFormData['creative']['format'])}
+                onClick={() =>
+                  setValue(
+                    'creative.format',
+                    format.value as ExtendedCampaignFormData['creative']['format']
+                  )
+                }
                 className={cn(
                   'flex flex-col items-center gap-2 rounded-lg border p-4 text-center transition-all',
                   isSelected
@@ -60,7 +78,14 @@ export function StepCreative({ onUploadAsset, isUploading }: StepCreativeProps) 
                 )}
               >
                 <Icon className={cn('h-6 w-6', isSelected ? 'text-primary' : 'text-gray-400')} />
-                <span className={cn('text-sm font-medium', isSelected ? 'text-primary' : 'text-gray-700')}>{format.label}</span>
+                <span
+                  className={cn(
+                    'text-sm font-medium',
+                    isSelected ? 'text-primary' : 'text-gray-700'
+                  )}
+                >
+                  {format.label}
+                </span>
                 <span className="text-xs text-muted-foreground">{format.description}</span>
               </button>
             )

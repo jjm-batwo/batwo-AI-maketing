@@ -13,8 +13,9 @@ interface HeroContentProps {
 export const HeroContent = memo(function HeroContent({ isVisible }: HeroContentProps) {
   return (
     <div
-      className={`text-center flex flex-col items-center ${isVisible ? 'animate-slide-in-left' : 'opacity-0'
-        }`}
+      className={`text-center flex flex-col items-center ${
+        isVisible ? 'animate-slide-in-left' : 'opacity-0'
+      }`}
     >
       {/* Badge — reference style: two-part pill with colored left segment */}
       <div
@@ -42,7 +43,8 @@ export const HeroContent = memo(function HeroContent({ isVisible }: HeroContentP
       </h1>
 
       <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-xl mx-auto leading-relaxed">
-        복잡한 메타 광고 설정을 AI가 1분 만에 완료합니다. <br />대화형 AI로 캠페인 생성부터 성과 분석까지.
+        복잡한 메타 광고 설정을 AI가 1분 만에 완료합니다. <br />
+        대화형 AI로 캠페인 생성부터 성과 분석까지.
       </p>
 
       {/* CTA Buttons */}
@@ -84,7 +86,10 @@ const CTAButtons = memo(function CTAButtons() {
             aria-label="14일 무료 체험 시작하기 - 회원가입 페이지로 이동"
           >
             14일 무료로 시작하기
-            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+            <ArrowRight
+              className="h-4 w-4 group-hover:translate-x-1 transition-transform"
+              aria-hidden="true"
+            />
           </Link>
         </Button>
         {/* 보조 버튼: backdrop-blur 제거, border 단순화 */}
@@ -94,17 +99,12 @@ const CTAButtons = memo(function CTAButtons() {
           asChild
           className="h-12 px-6 lg:h-14 lg:px-8 xl:h-16 xl:px-10 text-sm lg:text-base bg-transparent border hover:bg-muted/50 transition-all w-full sm:w-auto"
         >
-          <Link
-            href="#how-it-works"
-            aria-label="서비스 소개 영상 보기 - 하단 섹션으로 이동"
-          >
+          <Link href="#how-it-works" aria-label="서비스 소개 영상 보기 - 하단 섹션으로 이동">
             서비스 소개 영상
           </Link>
         </Button>
       </div>
-      <p className="text-xs text-muted-foreground text-center">
-        신용카드 불필요 · 1분 안에 시작
-      </p>
+      <p className="text-xs text-muted-foreground text-center">신용카드 불필요 · 1분 안에 시작</p>
       {/* 무료 광고 진단 CTA */}
       <FreeAuditButton />
     </div>

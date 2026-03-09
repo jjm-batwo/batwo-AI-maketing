@@ -3,10 +3,7 @@ import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS } from '@/lib/di/container'
 import type { IConversationRepository } from '@/domain/repositories/IConversationRepository'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 

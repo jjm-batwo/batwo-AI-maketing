@@ -39,7 +39,10 @@ function KPISummaryCard({ data }: { data: KPISummaryData }) {
   const metrics = data?.metrics ?? []
 
   return (
-    <div data-testid="kpi-summary-card" className="mx-4 my-2 rounded-xl border border-border bg-background overflow-hidden">
+    <div
+      data-testid="kpi-summary-card"
+      className="mx-4 my-2 rounded-xl border border-border bg-background overflow-hidden"
+    >
       <div className="flex items-center gap-2 px-4 py-2.5 bg-muted/50 border-b border-border">
         <BarChart3 className="h-4 w-4 text-primary" />
         <span className="text-xs font-medium text-foreground">
@@ -100,7 +103,10 @@ function CampaignListCard({ data }: { data: CampaignListData }) {
   const campaigns = data?.campaigns ?? []
 
   return (
-    <div data-testid="campaign-list-card" className="mx-4 my-2 rounded-xl border border-border bg-background overflow-hidden">
+    <div
+      data-testid="campaign-list-card"
+      className="mx-4 my-2 rounded-xl border border-border bg-background overflow-hidden"
+    >
       <div className="flex items-center justify-between px-4 py-2.5 bg-muted/50 border-b border-border">
         <span className="text-xs font-medium text-foreground">캠페인 목록</span>
         {data?.total !== undefined && (
@@ -112,18 +118,12 @@ function CampaignListCard({ data }: { data: CampaignListData }) {
           <div key={index} className="flex items-center justify-between px-4 py-2.5">
             <div>
               <div className="text-xs font-medium text-foreground">{campaign.name}</div>
-              <div className="text-[10px] text-muted-foreground mt-0.5">
-                {campaign.status}
-              </div>
+              <div className="text-[10px] text-muted-foreground mt-0.5">{campaign.status}</div>
             </div>
             <div className="text-right">
-              {campaign.spend && (
-                <div className="text-xs text-foreground">{campaign.spend}</div>
-              )}
+              {campaign.spend && <div className="text-xs text-foreground">{campaign.spend}</div>}
               {campaign.roas && (
-                <div className="text-[10px] text-muted-foreground">
-                  ROAS {campaign.roas}
-                </div>
+                <div className="text-[10px] text-muted-foreground">ROAS {campaign.roas}</div>
               )}
             </div>
           </div>
@@ -146,9 +146,7 @@ function GenericDataCard({ cardType, data }: { cardType: string; data: unknown }
   return (
     <div className="mx-4 my-2 rounded-xl border border-border bg-muted/30 px-4 py-3">
       <div className="text-xs text-muted-foreground mb-1">{cardType}</div>
-      <pre className="text-xs text-foreground overflow-x-auto">
-        {JSON.stringify(data, null, 2)}
-      </pre>
+      <pre className="text-xs text-foreground overflow-x-auto">{JSON.stringify(data, null, 2)}</pre>
     </div>
   )
 }

@@ -21,10 +21,7 @@ export async function DELETE(request: NextRequest) {
   const pixelId = searchParams.get('pixelId')
 
   if (!pixelId) {
-    return NextResponse.json(
-      { error: '픽셀 ID가 필요합니다' },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: '픽셀 ID가 필요합니다' }, { status: 400 })
   }
 
   try {
@@ -38,17 +35,11 @@ export async function DELETE(request: NextRequest) {
     })
 
     if (!pixel) {
-      return NextResponse.json(
-        { error: '픽셀을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: '픽셀을 찾을 수 없습니다' }, { status: 404 })
     }
 
     if (!pixel.platformIntegration) {
-      return NextResponse.json(
-        { error: '플랫폼 연동이 되어있지 않습니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: '플랫폼 연동이 되어있지 않습니다' }, { status: 400 })
     }
 
     const integration = pixel.platformIntegration
@@ -109,9 +100,6 @@ export async function DELETE(request: NextRequest) {
   } catch (error) {
     console.error('Cafe24 disconnect error:', error)
     const errorMessage = error instanceof Error ? error.message : '연동 해제 중 오류가 발생했습니다'
-    return NextResponse.json(
-      { error: errorMessage },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }

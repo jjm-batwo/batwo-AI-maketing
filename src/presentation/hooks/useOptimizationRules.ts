@@ -59,9 +59,7 @@ const OPTIMIZATION_RULES_QUERY_KEY = ['optimization-rules'] as const
 // Fetch 함수
 // ============================================================================
 
-async function fetchOptimizationRules(
-  campaignId: string
-): Promise<OptimizationRulesResponse> {
+async function fetchOptimizationRules(campaignId: string): Promise<OptimizationRulesResponse> {
   const response = await fetch(`/api/optimization-rules?campaignId=${campaignId}`)
   if (!response.ok) {
     const error = await response.json()
@@ -131,9 +129,7 @@ async function toggleOptimizationRule(input: {
 async function fetchOptimizationRulePresets(
   campaignId: string
 ): Promise<OptimizationRulePresetsResponse> {
-  const response = await fetch(
-    `/api/optimization-rules/presets?campaignId=${campaignId}`
-  )
+  const response = await fetch(`/api/optimization-rules/presets?campaignId=${campaignId}`)
   if (!response.ok) {
     const error = await response.json()
     throw new Error(error.message || '최적화 규칙 프리셋 조회 실패')

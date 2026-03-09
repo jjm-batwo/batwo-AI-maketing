@@ -25,9 +25,7 @@ export class IssueBillingKeyUseCase {
     try {
       tossResult = await this.paymentGateway.issueBillingKey(authKey, customerKey)
     } catch (error) {
-      throw PaymentError.billingKeyIssueFailed(
-        error instanceof Error ? error.message : undefined
-      )
+      throw PaymentError.billingKeyIssueFailed(error instanceof Error ? error.message : undefined)
     }
 
     // 3. Encrypt and save billing key

@@ -37,8 +37,7 @@ export class GetFeedbackAnalyticsUseCase {
       this.feedbackRepository.findRecentNegative(limit),
     ])
 
-    const positiveRate =
-      counts.total > 0 ? Math.round((counts.positive / counts.total) * 100) : 0
+    const positiveRate = counts.total > 0 ? Math.round((counts.positive / counts.total) * 100) : 0
 
     return {
       summary: {

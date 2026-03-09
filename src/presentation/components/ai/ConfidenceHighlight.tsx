@@ -2,12 +2,7 @@
 
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 export interface SentenceConfidence {
   text: string
@@ -59,8 +54,7 @@ export function ConfidenceHighlight({
         level: 'low',
         label: '낮음',
         // Red highlight
-        background:
-          'bg-red-50/80 dark:bg-red-500/10 hover:bg-red-100/80 dark:hover:bg-red-500/20',
+        background: 'bg-red-50/80 dark:bg-red-500/10 hover:bg-red-100/80 dark:hover:bg-red-500/20',
         border: 'border-b-2 border-red-500/30 hover:border-red-500/60',
         text: 'text-red-900 dark:text-red-100',
       }
@@ -92,10 +86,7 @@ export function ConfidenceHighlight({
                   role={isInteractive ? 'button' : undefined}
                   tabIndex={isInteractive ? 0 : undefined}
                   onKeyDown={(e) => {
-                    if (
-                      isInteractive &&
-                      (e.key === 'Enter' || e.key === ' ')
-                    ) {
+                    if (isInteractive && (e.key === 'Enter' || e.key === ' ')) {
                       e.preventDefault()
                       onSentenceClick?.(sentence)
                     }
@@ -113,9 +104,7 @@ export function ConfidenceHighlight({
                 <TooltipContent className="max-w-sm">
                   <div className="space-y-1.5">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-semibold">
-                        신뢰도: {sentence.confidence}%
-                      </span>
+                      <span className="text-xs font-semibold">신뢰도: {sentence.confidence}%</span>
                       <span
                         className={cn(
                           'text-xs px-1.5 py-0.5 rounded',
@@ -123,22 +112,17 @@ export function ConfidenceHighlight({
                             'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300',
                           style.level === 'medium' &&
                             'bg-amber-500/20 text-amber-700 dark:text-amber-300',
-                          style.level === 'low' &&
-                            'bg-red-500/20 text-red-700 dark:text-red-300'
+                          style.level === 'low' && 'bg-red-500/20 text-red-700 dark:text-red-300'
                         )}
                       >
                         {style.label}
                       </span>
                     </div>
                     {sentence.evidence && (
-                      <p className="text-xs text-muted-foreground">
-                        {sentence.evidence}
-                      </p>
+                      <p className="text-xs text-muted-foreground">{sentence.evidence}</p>
                     )}
                     {isInteractive && (
-                      <p className="text-xs text-muted-foreground italic">
-                        클릭하여 자세히 보기
-                      </p>
+                      <p className="text-xs text-muted-foreground italic">클릭하여 자세히 보기</p>
                     )}
                   </div>
                 </TooltipContent>

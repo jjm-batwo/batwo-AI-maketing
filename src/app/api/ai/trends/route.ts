@@ -8,7 +8,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { TrendAlertService } from '@/application/services/TrendAlertService'
-import { checkRateLimit, getClientIp, addRateLimitHeaders, rateLimitExceededResponse } from '@/lib/middleware/rateLimit'
+import {
+  checkRateLimit,
+  getClientIp,
+  addRateLimitHeaders,
+  rateLimitExceededResponse,
+} from '@/lib/middleware/rateLimit'
 
 const trendAlertService = new TrendAlertService()
 
@@ -43,10 +48,22 @@ export async function GET(request: NextRequest) {
 
     // 유효성 검사
     if (lookahead < 1 || lookahead > 90) {
-      return NextResponse.json({ error: 'lookahead must be between 1 and 90 days' }, { status: 400 })
+      return NextResponse.json(
+        { error: 'lookahead must be between 1 and 90 days' },
+        { status: 400 }
+      )
     }
 
-    const validIndustries = ['ecommerce', 'food_beverage', 'beauty', 'fashion', 'education', 'service', 'saas', 'health']
+    const validIndustries = [
+      'ecommerce',
+      'food_beverage',
+      'beauty',
+      'fashion',
+      'education',
+      'service',
+      'saas',
+      'health',
+    ]
     if (industry && !validIndustries.includes(industry)) {
       return NextResponse.json(
         { error: `industry must be one of: ${validIndustries.join(', ')}` },
@@ -76,9 +93,6 @@ export async function GET(request: NextRequest) {
     return addRateLimitHeaders(response, rateLimitResult)
   } catch (error) {
     console.error('Trend alert error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch trend alerts' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch trend alerts' }, { status: 500 })
   }
 }

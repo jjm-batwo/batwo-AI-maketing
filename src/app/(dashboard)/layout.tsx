@@ -4,11 +4,7 @@ import { redirect } from 'next/navigation'
 import { MainLayout } from '@/presentation/components/common/Layout'
 import { FacebookSDK } from '@/presentation/components/common/FacebookSDK'
 
-export default async function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getAuthenticatedUser()
 
   if (!user) {

@@ -3,7 +3,12 @@
  * 빌링(자동결제) 연동 전용
  */
 
-import type { BillingKeyResult, ChargeResult, CancelResult, PaymentDetail } from '@application/ports/IPaymentGateway'
+import type {
+  BillingKeyResult,
+  ChargeResult,
+  CancelResult,
+  PaymentDetail,
+} from '@application/ports/IPaymentGateway'
 export type { BillingKeyResult, ChargeResult, CancelResult, PaymentDetail }
 
 export class TossPaymentsClient {

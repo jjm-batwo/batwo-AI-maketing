@@ -104,11 +104,7 @@ export class PrismaCampaignRepository implements ICampaignRepository {
     })
   }
 
-  async existsByNameAndUserId(
-    name: string,
-    userId: string,
-    excludeId?: string
-  ): Promise<boolean> {
+  async existsByNameAndUserId(name: string, userId: string, excludeId?: string): Promise<boolean> {
     const campaign = await this.prisma.campaign.findFirst({
       where: {
         name,
@@ -129,7 +125,7 @@ export class PrismaCampaignRepository implements ICampaignRepository {
 
     if (filters.status) {
       if (Array.isArray(filters.status)) {
-        where.status = { in: filters.status.map(s => s as PrismaStatus) }
+        where.status = { in: filters.status.map((s) => s as PrismaStatus) }
       } else {
         where.status = filters.status as PrismaStatus
       }
@@ -138,10 +134,10 @@ export class PrismaCampaignRepository implements ICampaignRepository {
     if (filters.startDateFrom || filters.startDateTo) {
       where.startDate = {}
       if (filters.startDateFrom) {
-        (where.startDate as Record<string, Date>).gte = filters.startDateFrom
+        ;(where.startDate as Record<string, Date>).gte = filters.startDateFrom
       }
       if (filters.startDateTo) {
-        (where.startDate as Record<string, Date>).lte = filters.startDateTo
+        ;(where.startDate as Record<string, Date>).lte = filters.startDateTo
       }
     }
 

@@ -23,10 +23,7 @@ export class CreateCampaignUseCase {
 
   async execute(dto: CreateCampaignDTO): Promise<CampaignDTO> {
     // Check for duplicate name
-    const exists = await this.campaignRepository.existsByNameAndUserId(
-      dto.name,
-      dto.userId
-    )
+    const exists = await this.campaignRepository.existsByNameAndUserId(dto.name, dto.userId)
     if (exists) {
       throw new DuplicateCampaignNameError(dto.name)
     }
@@ -78,7 +75,10 @@ export class CreateCampaignUseCase {
         finalCampaign = campaign.setMetaCampaignId(metaCampaign.id)
       } catch (error) {
         // In mock mode or on Meta API failure, save campaign without Meta sync
-        console.warn('[CreateCampaign] Meta API sync failed, saving campaign without metaCampaignId:', error instanceof Error ? error.message : error)
+        console.warn(
+          '[CreateCampaign] Meta API sync failed, saving campaign without metaCampaignId:',
+          error instanceof Error ? error.message : error
+        )
         // Continue - campaign will be saved to DB without metaCampaignId
       }
     }

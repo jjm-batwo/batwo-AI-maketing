@@ -88,41 +88,42 @@ export async function GET(
     })
 
     if (kpiSnapshots.length === 0) {
-      return NextResponse.json(
-        { message: '예측을 위한 충분한 데이터가 없습니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ message: '예측을 위한 충분한 데이터가 없습니다' }, { status: 400 })
     }
 
     // Transform data and calculate derived metrics
-    const historicalData = kpiSnapshots.map((snapshot: {
-      date: Date
-      impressions: number
-      clicks: number
-      conversions: number
-      spend: Decimal
-      revenue: Decimal
-    }) => {
-      const spend = typeof snapshot.spend === 'object' && 'toNumber' in snapshot.spend
-        ? snapshot.spend.toNumber()
-        : Number(snapshot.spend)
-      const revenue = typeof snapshot.revenue === 'object' && 'toNumber' in snapshot.revenue
-        ? snapshot.revenue.toNumber()
-        : Number(snapshot.revenue)
-      const impressions = snapshot.impressions
-      const clicks = snapshot.clicks
-      const conversions = snapshot.conversions
+    const historicalData = kpiSnapshots.map(
+      (snapshot: {
+        date: Date
+        impressions: number
+        clicks: number
+        conversions: number
+        spend: Decimal
+        revenue: Decimal
+      }) => {
+        const spend =
+          typeof snapshot.spend === 'object' && 'toNumber' in snapshot.spend
+            ? snapshot.spend.toNumber()
+            : Number(snapshot.spend)
+        const revenue =
+          typeof snapshot.revenue === 'object' && 'toNumber' in snapshot.revenue
+            ? snapshot.revenue.toNumber()
+            : Number(snapshot.revenue)
+        const impressions = snapshot.impressions
+        const clicks = snapshot.clicks
+        const conversions = snapshot.conversions
 
-      return {
-        date: snapshot.date.toISOString().split('T')[0],
-        spend,
-        revenue,
-        roas: spend > 0 ? revenue / spend : 0,
-        cpa: conversions > 0 ? spend / conversions : 0,
-        ctr: impressions > 0 ? (clicks / impressions) * 100 : 0,
-        cvr: clicks > 0 ? (conversions / clicks) * 100 : 0,
+        return {
+          date: snapshot.date.toISOString().split('T')[0],
+          spend,
+          revenue,
+          roas: spend > 0 ? revenue / spend : 0,
+          cpa: conversions > 0 ? spend / conversions : 0,
+          ctr: impressions > 0 ? (clicks / impressions) * 100 : 0,
+          cvr: clicks > 0 ? (conversions / clicks) * 100 : 0,
+        }
       }
-    })
+    )
 
     // Generate forecasts
     const forecasts = ForecastingService.generateForecast({

@@ -1,5 +1,8 @@
 import type { PrismaClient } from '@/generated/prisma'
-import type { IConversionEventRepository, PixelTokenMapping } from '@domain/repositories/IConversionEventRepository'
+import type {
+  IConversionEventRepository,
+  PixelTokenMapping,
+} from '@domain/repositories/IConversionEventRepository'
 import { ConversionEvent } from '@domain/entities/ConversionEvent'
 import type { UserData, CustomData } from '@domain/entities/ConversionEvent'
 import { safeDecryptToken } from '@application/utils/TokenEncryption'
@@ -13,7 +16,7 @@ const DEFAULT_BATCH_LIMIT = 1000
  * sentToMeta=false인 이벤트를 조회하고 전송 결과를 업데이트한다.
  */
 export class PrismaConversionEventRepository implements IConversionEventRepository {
-  constructor(private readonly prisma: PrismaClient) { }
+  constructor(private readonly prisma: PrismaClient) {}
 
   async findUnsentEvents(limit: number = DEFAULT_BATCH_LIMIT): Promise<ConversionEvent[]> {
     const records = await this.prisma.conversionEvent.findMany({
@@ -132,7 +135,9 @@ export class PrismaConversionEventRepository implements IConversionEventReposito
   /**
    * 특정 픽셀의 CAPI 이벤트 전송 통계 (sent, expired, failed) 조회
    */
-  async countByPixelIdGrouped(pixelId: string): Promise<{ sent: number; failed: number; expired: number }> {
+  async countByPixelIdGrouped(
+    pixelId: string
+  ): Promise<{ sent: number; failed: number; expired: number }> {
     const events = await this.prisma.conversionEvent.groupBy({
       by: ['metaResponseId'],
       where: { pixelId },

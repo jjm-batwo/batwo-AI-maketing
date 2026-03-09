@@ -29,12 +29,8 @@ export function EmptyAuditResult({ analyzedAt }: EmptyAuditResultProps) {
           <h2 className="text-xl font-bold text-foreground">
             광고 계정에 캠페인이 없어 분석할 수 없습니다
           </h2>
-          <p className="text-sm text-muted-foreground">
-            캠페인을 생성한 후 다시 진단해보세요
-          </p>
-          <p className="text-xs text-muted-foreground">
-            분석 시도: {analyzedDate}
-          </p>
+          <p className="text-sm text-muted-foreground">캠페인을 생성한 후 다시 진단해보세요</p>
+          <p className="text-xs text-muted-foreground">분석 시도: {analyzedDate}</p>
         </div>
         <Link
           href="/"

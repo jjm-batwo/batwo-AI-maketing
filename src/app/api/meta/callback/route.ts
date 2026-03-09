@@ -32,7 +32,10 @@ export async function GET(request: NextRequest) {
   if (error) {
     console.error('Meta OAuth error:', error, errorDescription)
     return NextResponse.redirect(
-      new URL('/settings/meta-connect?error=' + encodeURIComponent(errorDescription || error), request.url)
+      new URL(
+        '/settings/meta-connect?error=' + encodeURIComponent(errorDescription || error),
+        request.url
+      )
     )
   }
 
@@ -56,9 +59,7 @@ export async function GET(request: NextRequest) {
         redirect_uri: `${process.env.NEXTAUTH_URL}/api/meta/callback`,
       })
 
-      const res = await fetch(
-        `${META_API_URL}/oauth/access_token?${params.toString()}`
-      )
+      const res = await fetch(`${META_API_URL}/oauth/access_token?${params.toString()}`)
       return res.json() as Promise<MetaTokenResponse>
     })
 
@@ -126,9 +127,7 @@ export async function GET(request: NextRequest) {
             where: { id: existingAccount.id },
             data: {
               accessToken: encryptedToken,
-              tokenExpiry: new Date(
-                Date.now() + singleAccountTokenExpiry * 1000
-              ),
+              tokenExpiry: new Date(Date.now() + singleAccountTokenExpiry * 1000),
             },
           })
         } else {
@@ -139,9 +138,7 @@ export async function GET(request: NextRequest) {
               metaAccountId: primaryAdAccount.id,
               businessName: primaryAdAccount.name,
               accessToken: encryptedToken,
-              tokenExpiry: new Date(
-                Date.now() + singleAccountTokenExpiry * 1000
-              ),
+              tokenExpiry: new Date(Date.now() + singleAccountTokenExpiry * 1000),
             },
           })
         }
@@ -182,7 +179,9 @@ export async function GET(request: NextRequest) {
       })
     } catch (cacheError) {
       console.error('[META CALLBACK] OAuth cache set failed:', cacheError)
-      throw new Error(`OAuth 세션 저장 실패: ${cacheError instanceof Error ? cacheError.message : 'Unknown'}`)
+      throw new Error(
+        `OAuth 세션 저장 실패: ${cacheError instanceof Error ? cacheError.message : 'Unknown'}`
+      )
     }
 
     const selectUrl = new URL('/settings/meta-connect', request.url)
@@ -199,9 +198,10 @@ export async function GET(request: NextRequest) {
     })
 
     // 에러 메시지를 URL에 포함 (디버깅용)
-    const errorMessage = error instanceof Error
-      ? encodeURIComponent(error.message)
-      : encodeURIComponent('연결 중 오류가 발생했습니다')
+    const errorMessage =
+      error instanceof Error
+        ? encodeURIComponent(error.message)
+        : encodeURIComponent('연결 중 오류가 발생했습니다')
 
     return NextResponse.redirect(
       new URL(`/settings/meta-connect?error=${errorMessage}`, request.url)

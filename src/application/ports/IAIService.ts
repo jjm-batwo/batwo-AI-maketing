@@ -31,7 +31,14 @@ export interface CampaignOptimizationSuggestion {
  * - forecast: 향후 예측
  * - benchmark: 업종 벤치마크 비교
  */
-export type InsightType = 'performance' | 'trend' | 'comparison' | 'anomaly' | 'recommendation' | 'forecast' | 'benchmark'
+export type InsightType =
+  | 'performance'
+  | 'trend'
+  | 'comparison'
+  | 'anomaly'
+  | 'recommendation'
+  | 'forecast'
+  | 'benchmark'
 
 /**
  * 상세 인사이트 항목
@@ -52,7 +59,7 @@ export interface ActionItem {
   category: 'budget' | 'creative' | 'targeting' | 'timing' | 'general'
   action: string
   expectedImpact: string
-  deadline?: string  // 권장 실행 시점 (예: "이번 주 내", "다음 월요일까지")
+  deadline?: string // 권장 실행 시점 (예: "이번 주 내", "다음 월요일까지")
 }
 
 /**
@@ -103,7 +110,15 @@ export interface AdCopyVariant {
 export interface GenerateOptimizationInput {
   campaignName: string
   objective: string
-  industry?: 'ecommerce' | 'food_beverage' | 'beauty' | 'fashion' | 'education' | 'service' | 'saas' | 'health'
+  industry?:
+    | 'ecommerce'
+    | 'food_beverage'
+    | 'beauty'
+    | 'fashion'
+    | 'education'
+    | 'service'
+    | 'saas'
+    | 'health'
   currentMetrics: {
     roas: number
     cpa: number
@@ -128,7 +143,15 @@ export interface GenerateOptimizationInput {
 export interface GenerateReportInsightInput {
   reportType: 'daily' | 'weekly' | 'monthly'
   /** 업종 (벤치마크 비교용) */
-  industry?: 'ecommerce' | 'food_beverage' | 'beauty' | 'fashion' | 'education' | 'service' | 'saas' | 'health'
+  industry?:
+    | 'ecommerce'
+    | 'food_beverage'
+    | 'beauty'
+    | 'fashion'
+    | 'education'
+    | 'service'
+    | 'saas'
+    | 'health'
   campaignSummaries: {
     name: string
     objective: string
@@ -170,7 +193,15 @@ export interface GenerateAdCopyInput {
 }
 
 export interface GenerateBudgetRecommendationInput {
-  industry: 'ecommerce' | 'food_beverage' | 'beauty' | 'fashion' | 'education' | 'service' | 'saas' | 'other'
+  industry:
+    | 'ecommerce'
+    | 'food_beverage'
+    | 'beauty'
+    | 'fashion'
+    | 'education'
+    | 'service'
+    | 'saas'
+    | 'other'
   businessScale: 'individual' | 'small' | 'medium' | 'large'
   averageOrderValue?: number
   monthlyMarketingBudget?: number
@@ -233,9 +264,7 @@ export interface IAIService {
     input: GenerateOptimizationInput
   ): Promise<CampaignOptimizationSuggestion[]>
 
-  generateReportInsights(
-    input: GenerateReportInsightInput
-  ): Promise<ReportInsight>
+  generateReportInsights(input: GenerateReportInsightInput): Promise<ReportInsight>
 
   generateAdCopy(input: GenerateAdCopyInput): Promise<AdCopyVariant[]>
 
@@ -243,13 +272,7 @@ export interface IAIService {
     input: GenerateBudgetRecommendationInput
   ): Promise<BudgetRecommendationResult>
 
-  generateCreativeVariants(
-    input: GenerateCreativeVariantsInput
-  ): Promise<CreativeVariant[]>
+  generateCreativeVariants(input: GenerateCreativeVariantsInput): Promise<CreativeVariant[]>
 
-  chatCompletion(
-    systemPrompt: string,
-    userPrompt: string,
-    config?: AIConfig
-  ): Promise<string>
+  chatCompletion(systemPrompt: string, userPrompt: string, config?: AIConfig): Promise<string>
 }

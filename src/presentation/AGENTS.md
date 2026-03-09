@@ -8,6 +8,7 @@
 ## Overview
 
 The presentation layer is the user-facing part of the application. It contains:
+
 - **React components** (shadcn/ui based) organized by feature domain
 - **Custom hooks** for data fetching, mutations, and side effects (TanStack Query)
 - **Zustand stores** for client-side state management
@@ -39,45 +40,45 @@ src/presentation/
 
 ## Key Files
 
-| File | Purpose | Type |
-|------|---------|------|
-| `components/landing/HeroSection.tsx` | Hero section with animated dashboard preview | Component |
-| `components/landing/FeaturesSection.tsx` | Feature highlights with icons | Component |
-| `components/landing/PricingSection.tsx` | Pricing plans and CTA | Component |
-| `components/dashboard/KPICard.tsx` | Reusable KPI metric card with trends | Component |
-| `components/dashboard/CampaignSummaryTable.tsx` | Campaign performance table | Component |
-| `components/campaign/CampaignCard.tsx` | Campaign card with status and actions | Component |
-| `components/campaign/CampaignCreateForm/` | Multi-step form (4 steps) | Component |
-| `components/campaign/AICopySuggestions.tsx` | AI-powered copy generation | Component |
-| `components/campaign/OptimizationPanel.tsx` | AI optimization recommendations | Component |
-| `components/onboarding/OnboardingWizard.tsx` | 4-step onboarding flow | Component |
-| `components/pixel/PixelSelector.tsx` | Meta pixel selection UI | Component |
-| `hooks/useCampaigns.ts` | Fetch/create/update campaigns (TanStack Query) | Hook |
-| `hooks/useDashboardKPI.ts` | Fetch dashboard KPI data | Hook |
-| `hooks/useReports.ts` | Report generation and retrieval | Hook |
-| `hooks/useQuota.ts` | MVP quota tracking | Hook |
-| `hooks/useAICopy.ts` | AI copy generation mutation | Hook |
-| `stores/campaignStore.ts` | Campaign filters, selection, form draft | Zustand |
-| `stores/uiStore.ts` | Global UI state (modals, sidebars) | Zustand |
-| `stores/quotaStore.ts` | MVP quota limits and usage | Zustand |
-| `stores/onboardingStore.ts` | Onboarding progress and completion | Zustand |
+| File                                            | Purpose                                        | Type      |
+| ----------------------------------------------- | ---------------------------------------------- | --------- |
+| `components/landing/HeroSection.tsx`            | Hero section with animated dashboard preview   | Component |
+| `components/landing/FeaturesSection.tsx`        | Feature highlights with icons                  | Component |
+| `components/landing/PricingSection.tsx`         | Pricing plans and CTA                          | Component |
+| `components/dashboard/KPICard.tsx`              | Reusable KPI metric card with trends           | Component |
+| `components/dashboard/CampaignSummaryTable.tsx` | Campaign performance table                     | Component |
+| `components/campaign/CampaignCard.tsx`          | Campaign card with status and actions          | Component |
+| `components/campaign/CampaignCreateForm/`       | Multi-step form (4 steps)                      | Component |
+| `components/campaign/AICopySuggestions.tsx`     | AI-powered copy generation                     | Component |
+| `components/campaign/OptimizationPanel.tsx`     | AI optimization recommendations                | Component |
+| `components/onboarding/OnboardingWizard.tsx`    | 4-step onboarding flow                         | Component |
+| `components/pixel/PixelSelector.tsx`            | Meta pixel selection UI                        | Component |
+| `hooks/useCampaigns.ts`                         | Fetch/create/update campaigns (TanStack Query) | Hook      |
+| `hooks/useDashboardKPI.ts`                      | Fetch dashboard KPI data                       | Hook      |
+| `hooks/useReports.ts`                           | Report generation and retrieval                | Hook      |
+| `hooks/useQuota.ts`                             | MVP quota tracking                             | Hook      |
+| `hooks/useAICopy.ts`                            | AI copy generation mutation                    | Hook      |
+| `stores/campaignStore.ts`                       | Campaign filters, selection, form draft        | Zustand   |
+| `stores/uiStore.ts`                             | Global UI state (modals, sidebars)             | Zustand   |
+| `stores/quotaStore.ts`                          | MVP quota limits and usage                     | Zustand   |
+| `stores/onboardingStore.ts`                     | Onboarding progress and completion             | Zustand   |
 
 ## Subdirectories Reference
 
-| Directory | Purpose | Key Files |
-|-----------|---------|-----------|
-| **components/admin/** | Admin dashboard components for system monitoring | `AdminHeader.tsx`, `AdminSidebar.tsx`, `AdminStatsCard.tsx` |
-| **components/alerts/** | Real-time notification system | `NotificationCenter.tsx` |
-| **components/ab-test/** | A/B testing UI and management | `ABTestCard.tsx`, `ABTestList.tsx`, `CreateABTestDialog.tsx` |
-| **components/campaign/** | Campaign creation, editing, and management | `CampaignCard.tsx`, `CampaignList.tsx`, `CampaignCreateForm/` (multi-step) |
-| **components/common/Layout/** | App layout shells | `MainLayout.tsx`, `Header.tsx`, `Sidebar.tsx`, `MobileSidebar.tsx` |
-| **components/dashboard/** | Real-time KPI dashboard | `KPICard.tsx`, `KPIChart.tsx`, `CampaignSummaryTable.tsx`, `AnomalyAlert.tsx`, `AIInsights.tsx` |
-| **components/landing/** | Public-facing landing page sections | `HeroSection.tsx`, `FeaturesSection.tsx`, `PricingSection.tsx`, `FAQSection.tsx` (10 sections) |
-| **components/onboarding/** | Multi-step user onboarding | `OnboardingWizard.tsx`, `steps/` (Welcome, MetaConnect, PixelSetup, Completion) |
-| **components/pixel/** | Meta pixel installation UI | `PixelSelector.tsx`, `PixelStatus.tsx`, `UniversalScriptCopy.tsx` |
-| **components/quota/** | MVP usage quota display | `QuotaStatusBadge.tsx`, `QuotaExceededDialog.tsx`, `UpgradeCTA.tsx` |
-| **components/report/** | Weekly/monthly report display | `ReportList.tsx`, `ReportDetail.tsx` |
-| **components/team/** | Team management and invitations | `TeamList.tsx`, `TeamMemberList.tsx`, `TeamSettings.tsx`, `InviteMemberDialog.tsx` |
+| Directory                     | Purpose                                          | Key Files                                                                                       |
+| ----------------------------- | ------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| **components/admin/**         | Admin dashboard components for system monitoring | `AdminHeader.tsx`, `AdminSidebar.tsx`, `AdminStatsCard.tsx`                                     |
+| **components/alerts/**        | Real-time notification system                    | `NotificationCenter.tsx`                                                                        |
+| **components/ab-test/**       | A/B testing UI and management                    | `ABTestCard.tsx`, `ABTestList.tsx`, `CreateABTestDialog.tsx`                                    |
+| **components/campaign/**      | Campaign creation, editing, and management       | `CampaignCard.tsx`, `CampaignList.tsx`, `CampaignCreateForm/` (multi-step)                      |
+| **components/common/Layout/** | App layout shells                                | `MainLayout.tsx`, `Header.tsx`, `Sidebar.tsx`, `MobileSidebar.tsx`                              |
+| **components/dashboard/**     | Real-time KPI dashboard                          | `KPICard.tsx`, `KPIChart.tsx`, `CampaignSummaryTable.tsx`, `AnomalyAlert.tsx`, `AIInsights.tsx` |
+| **components/landing/**       | Public-facing landing page sections              | `HeroSection.tsx`, `FeaturesSection.tsx`, `PricingSection.tsx`, `FAQSection.tsx` (10 sections)  |
+| **components/onboarding/**    | Multi-step user onboarding                       | `OnboardingWizard.tsx`, `steps/` (Welcome, MetaConnect, PixelSetup, Completion)                 |
+| **components/pixel/**         | Meta pixel installation UI                       | `PixelSelector.tsx`, `PixelStatus.tsx`, `UniversalScriptCopy.tsx`                               |
+| **components/quota/**         | MVP usage quota display                          | `QuotaStatusBadge.tsx`, `QuotaExceededDialog.tsx`, `UpgradeCTA.tsx`                             |
+| **components/report/**        | Weekly/monthly report display                    | `ReportList.tsx`, `ReportDetail.tsx`                                                            |
+| **components/team/**          | Team management and invitations                  | `TeamList.tsx`, `TeamMemberList.tsx`, `TeamSettings.tsx`, `InviteMemberDialog.tsx`              |
 
 ## Hooks Reference
 
@@ -118,6 +119,7 @@ useCampaignMutations()             // Batch campaign mutations
 ### Configuration
 
 All hooks use TanStack Query v5 with:
+
 - **Stale time:** 30 seconds (campaigns) to 5 minutes (dashboard)
 - **Cache:** Automatic invalidation on mutations
 - **Retry:** 3 retries with exponential backoff for failed requests
@@ -184,11 +186,11 @@ incrementQuota(type): void
 Onboarding completion tracking.
 
 ```typescript
-currentStep: number               // 1-4
-isComplete: boolean               // All steps done?
-stepsCompleted: Set<number>       // Completed step numbers
-skipStep(number)                  // Skip optional step
-completeStep(number)              // Mark step complete
+currentStep: number // 1-4
+isComplete: boolean // All steps done?
+stepsCompleted: Set<number> // Completed step numbers
+skipStep(number) // Skip optional step
+completeStep(number) // Mark step complete
 ```
 
 ## Component Patterns
@@ -201,7 +203,13 @@ All components use **shadcn/ui** primitives from `@/components/ui/`:
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 ```
 
 Radix UI primitives are wrapped with Tailwind CSS 4 for styling.
@@ -209,19 +217,21 @@ Radix UI primitives are wrapped with Tailwind CSS 4 for styling.
 ### Tailwind CSS 4
 
 Modern utility-first CSS with:
+
 - **Container queries** for responsive components
 - **CSS Variables** for theming (light/dark)
 - **Gradients** for visual polish (hero, cards)
 - **Animations** (fade-in, slide-up, pulse)
 
 ```typescript
-className="bg-gradient-to-r from-primary/20 to-transparent dark:from-primary/10"
-className="animate-slide-in-left group-hover:opacity-100 transition-all duration-300"
+className = 'bg-gradient-to-r from-primary/20 to-transparent dark:from-primary/10'
+className = 'animate-slide-in-left group-hover:opacity-100 transition-all duration-300'
 ```
 
 ### Accessibility (WCAG 2.1 AA)
 
 All components include:
+
 - **Semantic HTML** (`<button>`, `<nav>`, `<main>`)
 - **ARIA labels** for interactive elements
 - **Keyboard navigation** (Tab, Enter, Escape)
@@ -252,7 +262,11 @@ const schema = z.object({
 })
 
 export function Form() {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(schema),
   })
   // ...
@@ -372,26 +386,26 @@ export function useUpdateData() {
 
 ## Dependencies
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| **react** | 19.2.3 | UI framework with Server Components support |
-| **next** | 16.1.1 | Framework (App Router, Turbopack) |
-| **@tanstack/react-query** | 5.90.12 | Server state management (data fetching) |
-| **zustand** | 5.0.9 | Client state management (lightweight) |
-| **tailwindcss** | 4 | Utility CSS framework with CSS variables |
-| **@tailwindcss/postcss** | 4.1.18 | Tailwind PostCSS plugin |
-| **shadcn/ui** | (via git) | Radix UI + Tailwind component library |
-| **lucide-react** | 0.562.0 | Icon library (200+ icons) |
-| **react-hook-form** | 7.69.0 | Efficient form state management |
-| **@hookform/resolvers** | 5.2.2 | Zod schema validation for forms |
-| **zod** | 4.2.1 | Schema validation and type safety |
-| **date-fns** | 4.1.0 | Date manipulation (campaigns, reports) |
-| **@radix-ui/*** | Various | Accessible component primitives |
-| **class-variance-authority** | 0.7.1 | Composable component variants |
-| **clsx** | 2.1.1 | Conditional className utility |
-| **tailwind-merge** | 3.4.0 | Merge Tailwind classes safely |
-| **resend** | 6.6.0 | Email delivery for reports |
-| **@sentry/nextjs** | 10.32.1 | Error tracking and monitoring |
+| Package                      | Version   | Purpose                                     |
+| ---------------------------- | --------- | ------------------------------------------- |
+| **react**                    | 19.2.3    | UI framework with Server Components support |
+| **next**                     | 16.1.1    | Framework (App Router, Turbopack)           |
+| **@tanstack/react-query**    | 5.90.12   | Server state management (data fetching)     |
+| **zustand**                  | 5.0.9     | Client state management (lightweight)       |
+| **tailwindcss**              | 4         | Utility CSS framework with CSS variables    |
+| **@tailwindcss/postcss**     | 4.1.18    | Tailwind PostCSS plugin                     |
+| **shadcn/ui**                | (via git) | Radix UI + Tailwind component library       |
+| **lucide-react**             | 0.562.0   | Icon library (200+ icons)                   |
+| **react-hook-form**          | 7.69.0    | Efficient form state management             |
+| **@hookform/resolvers**      | 5.2.2     | Zod schema validation for forms             |
+| **zod**                      | 4.2.1     | Schema validation and type safety           |
+| **date-fns**                 | 4.1.0     | Date manipulation (campaigns, reports)      |
+| **@radix-ui/\***             | Various   | Accessible component primitives             |
+| **class-variance-authority** | 0.7.1     | Composable component variants               |
+| **clsx**                     | 2.1.1     | Conditional className utility               |
+| **tailwind-merge**           | 3.4.0     | Merge Tailwind classes safely               |
+| **resend**                   | 6.6.0     | Email delivery for reports                  |
+| **@sentry/nextjs**           | 10.32.1   | Error tracking and monitoring               |
 
 ## Testing
 
@@ -542,7 +556,7 @@ const onSuccess = () => {
 Ensure component is client-rendered for interactive state:
 
 ```typescript
-'use client'  // Add this at top of file
+'use client' // Add this at top of file
 
 import dynamic from 'next/dynamic'
 
@@ -581,13 +595,13 @@ export default function RootLayout({ children }) {
 
 ### Hook Naming
 
-- **File:** use*.ts (e.g., `useCampaigns.ts`, `useQuota.ts`)
+- **File:** use\*.ts (e.g., `useCampaigns.ts`, `useQuota.ts`)
 - **Export:** Named export (function name and hook)
 - **Location:** `src/presentation/hooks/`
 
 ### Store Naming
 
-- **File:** *Store.ts (e.g., `campaignStore.ts`, `uiStore.ts`)
+- **File:** \*Store.ts (e.g., `campaignStore.ts`, `uiStore.ts`)
 - **Export:** Named export (e.g., `useCampaignStore`)
 - **Location:** `src/presentation/stores/`
 
@@ -723,7 +737,9 @@ export const usePersistentStore = create<StoreState>()(
     }),
     {
       name: 'store-key',
-      partialize: (state) => ({ /* only these fields persist */ }),
+      partialize: (state) => ({
+        /* only these fields persist */
+      }),
     }
   )
 )

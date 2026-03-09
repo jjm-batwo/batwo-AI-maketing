@@ -56,10 +56,7 @@ async function fetchAnomalies(
   return response.json()
 }
 
-async function fetchTrends(
-  lookaheadDays = 14,
-  industry?: string
-): Promise<TrendAPIResponse> {
+async function fetchTrends(lookaheadDays = 14, industry?: string): Promise<TrendAPIResponse> {
   const params = new URLSearchParams()
   params.set('lookahead', String(lookaheadDays))
   if (industry) params.set('industry', industry)
@@ -88,9 +85,7 @@ async function fetchTrends(
  * @param options - Configuration options
  * @returns Combined insights with loading and error states
  */
-export function useAIInsights(
-  options: UseAIInsightsOptions = {}
-): AIInsightsResult {
+export function useAIInsights(options: UseAIInsightsOptions = {}): AIInsightsResult {
   const {
     enabled = true,
     refetchInterval = 0,
@@ -122,13 +117,9 @@ export function useAIInsights(
   })
 
   // Transform data
-  const anomalies = anomalyQuery.data
-    ? mapAnomalyResponse(anomalyQuery.data)
-    : []
+  const anomalies = anomalyQuery.data ? mapAnomalyResponse(anomalyQuery.data) : []
 
-  const trends = trendQuery.data
-    ? mapTrendResponse(trendQuery.data)
-    : []
+  const trends = trendQuery.data ? mapTrendResponse(trendQuery.data) : []
 
   // Combined loading and error states
   const isLoading = anomalyQuery.isLoading || trendQuery.isLoading

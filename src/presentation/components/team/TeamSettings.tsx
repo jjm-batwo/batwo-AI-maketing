@@ -265,12 +265,8 @@ export function TeamSettings({ teamId, userId }: TeamSettingsProps) {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Button
-                  variant="destructive"
-                  onClick={() => setDeleteDialogOpen(true)}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  팀 삭제
+                <Button variant="destructive" onClick={() => setDeleteDialogOpen(true)}>
+                  <Trash2 className="mr-2 h-4 w-4" />팀 삭제
                 </Button>
               </CardContent>
             </Card>
@@ -283,8 +279,8 @@ export function TeamSettings({ teamId, userId }: TeamSettingsProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>팀을 삭제하시겠습니까?</AlertDialogTitle>
             <AlertDialogDescription>
-              &quot;{team.name}&quot; 팀을 삭제하면 모든 팀 데이터가 영구적으로 삭제됩니다.
-              이 작업은 되돌릴 수 없습니다.
+              &quot;{team.name}&quot; 팀을 삭제하면 모든 팀 데이터가 영구적으로 삭제됩니다. 이
+              작업은 되돌릴 수 없습니다.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

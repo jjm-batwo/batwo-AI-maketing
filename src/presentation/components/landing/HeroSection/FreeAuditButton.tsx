@@ -23,7 +23,8 @@ export function FreeAuditButton() {
   }
 
   return (
-    <button type="button"
+    <button
+      type="button"
       onClick={handleClick}
       disabled={loading}
       className="group w-full max-w-md mx-auto flex items-center gap-4 px-5 py-4 rounded-2xl border border-amber-200 dark:border-amber-800 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-700 transition-all duration-300 disabled:opacity-60 cursor-pointer"
@@ -44,7 +45,10 @@ export function FreeAuditButton() {
           Meta 계정 연결로 무료 AI 진단 받기
         </p>
       </div>
-      <ArrowRight className="h-4 w-4 text-amber-500 dark:text-amber-400 shrink-0 group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true" />
+      <ArrowRight
+        className="h-4 w-4 text-amber-500 dark:text-amber-400 shrink-0 group-hover:translate-x-1 transition-transform duration-300"
+        aria-hidden="true"
+      />
     </button>
   )
 }

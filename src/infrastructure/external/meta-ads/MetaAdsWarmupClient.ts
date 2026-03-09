@@ -169,7 +169,10 @@ export class MetaAdsWarmupClient {
   /**
    * 캠페인 목록 조회
    */
-  async getCampaigns(accessToken: string, adAccountId: string): Promise<{ result: WarmupResult; campaigns: MetaCampaign[] }> {
+  async getCampaigns(
+    accessToken: string,
+    adAccountId: string
+  ): Promise<{ result: WarmupResult; campaigns: MetaCampaign[] }> {
     const { data, result } = await this.measureRequest<MetaListResponse<MetaCampaign>>(
       accessToken,
       `/${adAccountId}/campaigns?fields=id,name,status,objective&limit=100`,
@@ -181,7 +184,10 @@ export class MetaAdsWarmupClient {
   /**
    * 광고 세트 목록 조회
    */
-  async getAdSets(accessToken: string, adAccountId: string): Promise<{ result: WarmupResult; adsets: MetaAdSet[] }> {
+  async getAdSets(
+    accessToken: string,
+    adAccountId: string
+  ): Promise<{ result: WarmupResult; adsets: MetaAdSet[] }> {
     const { data, result } = await this.measureRequest<MetaListResponse<MetaAdSet>>(
       accessToken,
       `/${adAccountId}/adsets?fields=id,name,status&limit=100`,
@@ -193,7 +199,10 @@ export class MetaAdsWarmupClient {
   /**
    * 광고 목록 조회
    */
-  async getAds(accessToken: string, adAccountId: string): Promise<{ result: WarmupResult; ads: MetaAd[] }> {
+  async getAds(
+    accessToken: string,
+    adAccountId: string
+  ): Promise<{ result: WarmupResult; ads: MetaAd[] }> {
     const { data, result } = await this.measureRequest<MetaListResponse<MetaAd>>(
       accessToken,
       `/${adAccountId}/ads?fields=id,name,status&limit=100`,
@@ -359,10 +368,12 @@ export class MetaAdsWarmupClient {
     }
 
     const durationMs = Date.now() - startTime
-    const successfulCalls = this.results.filter(r => r.success).length
-    const failedCalls = this.results.filter(r => !r.success).length
+    const successfulCalls = this.results.filter((r) => r.success).length
+    const failedCalls = this.results.filter((r) => !r.success).length
 
-    console.log(`[Warmup] Completed: ${successfulCalls}/${this.results.length} successful (${durationMs}ms)`)
+    console.log(
+      `[Warmup] Completed: ${successfulCalls}/${this.results.length} successful (${durationMs}ms)`
+    )
 
     return {
       totalCalls: this.results.length,

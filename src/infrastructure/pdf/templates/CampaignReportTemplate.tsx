@@ -1,7 +1,13 @@
 import React from 'react'
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
 import type { ReportDTO } from '@application/dto/report/ReportDTO'
-import { baseStyles, formatNumber, formatCurrency, formatDate, formatPercent } from './BaseReportTemplate'
+import {
+  baseStyles,
+  formatNumber,
+  formatCurrency,
+  formatDate,
+  formatPercent,
+} from './BaseReportTemplate'
 import { MetricCard } from '../components/MetricCard'
 import { BarChart } from '../components/BarChart'
 
@@ -131,7 +137,9 @@ export function CampaignReportTemplate({ report }: CampaignReportTemplateProps) 
   const dayMs = 1000 * 60 * 60 * 24
   const daysInPeriod = Math.max(
     1,
-    Math.ceil((new Date(dateRange.endDate).getTime() - new Date(dateRange.startDate).getTime()) / dayMs)
+    Math.ceil(
+      (new Date(dateRange.endDate).getTime() - new Date(dateRange.startDate).getTime()) / dayMs
+    )
   )
   const dailyMetrics = Array.from({ length: Math.min(daysInPeriod, 7) }, (_, i) => {
     const date = new Date(dateRange.startDate)
@@ -151,9 +159,7 @@ export function CampaignReportTemplate({ report }: CampaignReportTemplateProps) 
   })
 
   // Extract recommendations
-  const recommendations = aiInsights
-    .flatMap((i) => i.recommendations || [])
-    .slice(0, 5)
+  const recommendations = aiInsights.flatMap((i) => i.recommendations || []).slice(0, 5)
 
   return (
     <Document>
@@ -170,30 +176,16 @@ export function CampaignReportTemplate({ report }: CampaignReportTemplateProps) 
         {/* Campaign Info */}
         <View style={styles.campaignHeader}>
           <Text style={styles.campaignName}>{campaignName}</Text>
-          <Text style={styles.campaignStatus}>
-            활성 상태 | {daysInPeriod}일간 운영
-          </Text>
+          <Text style={styles.campaignStatus}>활성 상태 | {daysInPeriod}일간 운영</Text>
         </View>
 
         {/* Summary Metrics */}
         <View style={styles.metricsGrid}>
-          <MetricCard
-            label="총 노출"
-            value={formatNumber(summaryMetrics.totalImpressions)}
-          />
-          <MetricCard
-            label="총 클릭"
-            value={formatNumber(summaryMetrics.totalClicks)}
-          />
-          <MetricCard
-            label="총 전환"
-            value={formatNumber(summaryMetrics.totalConversions)}
-          />
+          <MetricCard label="총 노출" value={formatNumber(summaryMetrics.totalImpressions)} />
+          <MetricCard label="총 클릭" value={formatNumber(summaryMetrics.totalClicks)} />
+          <MetricCard label="총 전환" value={formatNumber(summaryMetrics.totalConversions)} />
           <MetricCard label="총 지출" value={formatCurrency(summaryMetrics.totalSpend)} />
-          <MetricCard
-            label="총 매출"
-            value={formatCurrency(summaryMetrics.totalRevenue)}
-          />
+          <MetricCard label="총 매출" value={formatCurrency(summaryMetrics.totalRevenue)} />
           <MetricCard label="ROAS" value={`${summaryMetrics.overallROAS.toFixed(2)}x`} />
           <MetricCard label="CTR" value={formatPercent(summaryMetrics.averageCTR)} />
           <MetricCard label="CVR" value={formatPercent(summaryMetrics.averageCVR)} />
@@ -223,9 +215,7 @@ export function CampaignReportTemplate({ report }: CampaignReportTemplateProps) 
 
         {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            생성일: {new Date().toLocaleDateString('ko-KR')}
-          </Text>
+          <Text style={styles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
           <Text style={styles.footerText}>바투 AI 마케팅 | 캠페인 보고서 (1/2)</Text>
         </View>
       </Page>
@@ -285,18 +275,16 @@ export function CampaignReportTemplate({ report }: CampaignReportTemplateProps) 
           <View style={styles.targetingSection}>
             <Text style={styles.targetingTitle}>타겟팅 설정</Text>
             <Text style={styles.targetingDetail}>
-              • 캠페인 목표: 전환 최적화{'\n'}
-              • 예산: 일 {formatCurrency(summaryMetrics.totalSpend / daysInPeriod)}{'\n'}
-              • 성과: ROAS {summaryMetrics.overallROAS.toFixed(2)}x
+              • 캠페인 목표: 전환 최적화{'\n'}• 예산: 일{' '}
+              {formatCurrency(summaryMetrics.totalSpend / daysInPeriod)}
+              {'\n'}• 성과: ROAS {summaryMetrics.overallROAS.toFixed(2)}x
             </Text>
           </View>
         )}
 
         {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            생성일: {new Date().toLocaleDateString('ko-KR')}
-          </Text>
+          <Text style={styles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
           <Text style={styles.footerText}>바투 AI 마케팅 | 캠페인 보고서 (2/2)</Text>
         </View>
       </Page>

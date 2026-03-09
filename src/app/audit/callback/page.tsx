@@ -63,7 +63,11 @@ function AnalyzingProgress() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 px-4" role="status" aria-live="polite">
+    <div
+      className="flex flex-col items-center justify-center min-h-[60vh] gap-6 px-4"
+      role="status"
+      aria-live="polite"
+    >
       {/* 스피너 */}
       <div
         className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin"
@@ -122,7 +126,11 @@ function AnalyzingProgress() {
 // Suspense fallback용 간단 스피너 (분석 전 초기 로딩)
 function LoadingSpinner() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6" role="status" aria-live="polite">
+    <div
+      className="flex flex-col items-center justify-center min-h-[60vh] gap-6"
+      role="status"
+      aria-live="polite"
+    >
       <div
         className="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin"
         aria-hidden="true"
@@ -137,9 +145,14 @@ function LoadingSpinner() {
 
 function ErrorView({ message, onRetry }: { message: string; onRetry: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center px-4" role="alert">
+    <div
+      className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center px-4"
+      role="alert"
+    >
       <div className="flex items-center justify-center w-16 h-16 rounded-full bg-destructive/10">
-        <span className="text-2xl" aria-hidden="true">✕</span>
+        <span className="text-2xl" aria-hidden="true">
+          ✕
+        </span>
       </div>
       <div className="space-y-2 max-w-md">
         <h2 className="text-xl font-bold text-foreground">분석에 실패했습니다</h2>
@@ -203,7 +216,7 @@ function AuditCallbackContent() {
     if (!report) return
     setPdfLoading(true)
     try {
-      const accountName = accounts.find(a => a.id === selectedAccountId)?.name
+      const accountName = accounts.find((a) => a.id === selectedAccountId)?.name
       const res = await fetch('/api/audit/pdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -214,10 +227,7 @@ function AuditCallbackContent() {
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      const analyzedDate = new Date(report.analyzedAt)
-        .toISOString()
-        .split('T')[0]
-        .replace(/-/g, '')
+      const analyzedDate = new Date(report.analyzedAt).toISOString().split('T')[0].replace(/-/g, '')
       const safeName = accountName?.replace(/[^a-zA-Z0-9가-힣_-]/g, '_').slice(0, 30) || ''
       a.download = safeName
         ? `바투_광고계정진단_${safeName}_${analyzedDate}.pdf`
@@ -233,32 +243,35 @@ function AuditCallbackContent() {
     }
   }
 
-  const analyze = useCallback(async (adAccountId: string) => {
-    if (!sessionId || analyzedRef.current) return
-    analyzedRef.current = true
-    setPhase('analyzing')
-    setError(null)
-    try {
-      const res = await fetch('/api/audit/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId, adAccountId }),
-      })
-      if (!res.ok) {
+  const analyze = useCallback(
+    async (adAccountId: string) => {
+      if (!sessionId || analyzedRef.current) return
+      analyzedRef.current = true
+      setPhase('analyzing')
+      setError(null)
+      try {
+        const res = await fetch('/api/audit/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId, adAccountId }),
+        })
+        if (!res.ok) {
+          const data = await res.json()
+          throw new Error(data.message || '분석에 실패했습니다')
+        }
+        // analyze 응답에서 signature를 분리 — report에는 포함하지 않음
         const data = await res.json()
-        throw new Error(data.message || '분석에 실패했습니다')
+        const { signature: sig, ...reportData } = data
+        setSignature(sig)
+        setReport(reportData)
+        setPhase('result')
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다')
+        setPhase('error')
       }
-      // analyze 응답에서 signature를 분리 — report에는 포함하지 않음
-      const data = await res.json()
-      const { signature: sig, ...reportData } = data
-      setSignature(sig)
-      setReport(reportData)
-      setPhase('result')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다')
-      setPhase('error')
-    }
-  }, [sessionId])
+    },
+    [sessionId]
+  )
 
   // 계정 목록 조회 및 자동 선택 로직
   useEffect(() => {
@@ -307,15 +320,21 @@ function AuditCallbackContent() {
   useEffect(() => {
     if (phase !== 'select') return
 
-    const warningTimer = setTimeout(() => {
-      toast.warning('세션이 3분 후 만료됩니다. 계정을 선택해주세요.', { duration: 10000 })
-    }, 12 * 60 * 1000)
+    const warningTimer = setTimeout(
+      () => {
+        toast.warning('세션이 3분 후 만료됩니다. 계정을 선택해주세요.', { duration: 10000 })
+      },
+      12 * 60 * 1000
+    )
 
-    const expiryTimer = setTimeout(() => {
-      toast.error('세션이 만료되었습니다. 다시 시도해주세요.', { duration: Infinity })
-      setError('세션이 만료되었습니다. 처음부터 다시 시도해주세요.')
-      setPhase('error')
-    }, 15 * 60 * 1000)
+    const expiryTimer = setTimeout(
+      () => {
+        toast.error('세션이 만료되었습니다. 다시 시도해주세요.', { duration: Infinity })
+        setError('세션이 만료되었습니다. 처음부터 다시 시도해주세요.')
+        setPhase('error')
+      },
+      15 * 60 * 1000
+    )
 
     return () => {
       clearTimeout(warningTimer)

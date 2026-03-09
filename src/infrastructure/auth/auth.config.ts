@@ -39,8 +39,8 @@ export const authConfig = {
         nextUrl.pathname.startsWith('/campaigns') ||
         nextUrl.pathname.startsWith('/reports') ||
         nextUrl.pathname.startsWith('/settings')
-      const isOnAuth = nextUrl.pathname.startsWith('/login') ||
-        nextUrl.pathname.startsWith('/register')
+      const isOnAuth =
+        nextUrl.pathname.startsWith('/login') || nextUrl.pathname.startsWith('/register')
       const isOnAdmin = nextUrl.pathname.startsWith('/admin')
 
       if (process.env.NODE_ENV === 'development') {

@@ -21,7 +21,7 @@ interface SkeletonAIProps {
 export const SkeletonAI = memo(function SkeletonAI({
   type = 'text',
   lines = 3,
-  className = ''
+  className = '',
 }: SkeletonAIProps) {
   if (type === 'card') {
     return (
@@ -69,11 +69,7 @@ export const SkeletonAI = memo(function SkeletonAI({
 
   if (type === 'list') {
     return (
-      <div
-        className={`space-y-3 ${className}`}
-        role="status"
-        aria-label="AI 목록 로딩 중"
-      >
+      <div className={`space-y-3 ${className}`} role="status" aria-label="AI 목록 로딩 중">
         {Array.from({ length: lines }).map((_, index) => (
           <div
             key={index}
@@ -113,18 +109,17 @@ export const SkeletonAI = memo(function SkeletonAI({
 
   // Default: text skeleton
   return (
-    <div
-      className={`space-y-3 ${className}`}
-      role="status"
-      aria-label="AI 텍스트 로딩 중"
-    >
+    <div className={`space-y-3 ${className}`} role="status" aria-label="AI 텍스트 로딩 중">
       {Array.from({ length: lines }).map((_, index) => {
         // Vary the width for a more natural look
         const widthClass =
-          index === lines - 1 ? 'w-3/4' :
-          index % 3 === 0 ? 'w-full' :
-          index % 3 === 1 ? 'w-11/12' :
-          'w-5/6'
+          index === lines - 1
+            ? 'w-3/4'
+            : index % 3 === 0
+              ? 'w-full'
+              : index % 3 === 1
+                ? 'w-11/12'
+                : 'w-5/6'
 
         return (
           <div

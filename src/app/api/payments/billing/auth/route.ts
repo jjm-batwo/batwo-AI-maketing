@@ -22,25 +22,16 @@ export async function POST(request: NextRequest) {
 
     // 3. 플랜 검증
     if (!plan || !Object.values(SubscriptionPlan).includes(plan as SubscriptionPlan)) {
-      return NextResponse.json(
-        { error: '유효하지 않은 플랜입니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: '유효하지 않은 플랜입니다' }, { status: 400 })
     }
 
     if (isFreePlan(plan as SubscriptionPlan)) {
-      return NextResponse.json(
-        { error: '무료 플랜은 결제가 필요하지 않습니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: '무료 플랜은 결제가 필요하지 않습니다' }, { status: 400 })
     }
 
     // 4. 결제 주기 검증
     if (!billingPeriod || !Object.values(BillingPeriod).includes(billingPeriod as BillingPeriod)) {
-      return NextResponse.json(
-        { error: '유효하지 않은 결제 주기입니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: '유효하지 않은 결제 주기입니다' }, { status: 400 })
     }
 
     const planEnum = plan as SubscriptionPlan

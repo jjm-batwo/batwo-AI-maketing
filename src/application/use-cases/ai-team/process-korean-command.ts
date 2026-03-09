@@ -11,9 +11,9 @@ import {
   CommandResult,
   IntentClassificationResult,
   DEFAULT_CONFIDENCE_THRESHOLDS,
-} from '@/domain/services/ai-team-command-types';
-import { AITeamPort } from '@/application/ports/ai-team-port';
-import { IntentClassifier } from './intent-classifier';
+} from '@/domain/services/ai-team-command-types'
+import { AITeamPort } from '@/application/ports/ai-team-port'
+import { IntentClassifier } from './intent-classifier'
 
 /**
  * 한국어 명령어 처리 유스케이스
@@ -23,13 +23,13 @@ import { IntentClassifier } from './intent-classifier';
  * - 자연어: "캠페인 필터링 기능 추가해줘", "현재 상태 어때?", "테스트 돌려줘"
  */
 export class ProcessKoreanCommandUseCase {
-  private readonly intentClassifier: IntentClassifier;
+  private readonly intentClassifier: IntentClassifier
 
   constructor(
     private readonly aiTeamPort: AITeamPort,
     intentClassifier?: IntentClassifier
   ) {
-    this.intentClassifier = intentClassifier ?? new IntentClassifier();
+    this.intentClassifier = intentClassifier ?? new IntentClassifier()
   }
 
   /**
@@ -43,20 +43,20 @@ export class ProcessKoreanCommandUseCase {
         success: false,
         commandType: CommandType.UNKNOWN,
         error: '명령어를 입력해주세요.',
-      };
+      }
     }
 
     // 의도 분류
-    const classification = this.intentClassifier.classify(input);
+    const classification = this.intentClassifier.classify(input)
 
     // 분류 불가
     if (classification.commandType === CommandType.UNKNOWN) {
-      return this.handleUnknownIntent(classification);
+      return this.handleUnknownIntent(classification)
     }
 
     // 확인 필요한 경우 (낮은 신뢰도)
     if (classification.requiresConfirmation) {
-      return this.handleConfirmationRequired(classification);
+      return this.handleConfirmationRequired(classification)
     }
 
     // 정상 처리
@@ -65,15 +65,13 @@ export class ProcessKoreanCommandUseCase {
       commandType: classification.commandType,
       parameters: classification.parameters,
       message: this.getSuccessMessage(classification),
-    };
+    }
   }
 
   /**
    * 알 수 없는 의도 처리
    */
-  private handleUnknownIntent(
-    classification: IntentClassificationResult
-  ): CommandResult {
+  private handleUnknownIntent(classification: IntentClassificationResult): CommandResult {
     return {
       success: false,
       commandType: CommandType.UNKNOWN,
@@ -82,16 +80,14 @@ export class ProcessKoreanCommandUseCase {
         suggestedQuestion: classification.suggestedQuestion,
         originalInput: classification.originalInput,
       },
-    };
+    }
   }
 
   /**
    * 확인이 필요한 의도 처리
    */
-  private handleConfirmationRequired(
-    classification: IntentClassificationResult
-  ): CommandResult {
-    const confidencePercent = Math.round(classification.confidence * 100);
+  private handleConfirmationRequired(classification: IntentClassificationResult): CommandResult {
+    const confidencePercent = Math.round(classification.confidence * 100)
 
     return {
       success: true,
@@ -105,15 +101,13 @@ export class ProcessKoreanCommandUseCase {
         matchedPatterns: classification.matchedPatterns,
         originalInput: classification.originalInput,
       },
-    };
+    }
   }
 
   /**
    * 성공 메시지 생성
    */
-  private getSuccessMessage(
-    classification: IntentClassificationResult
-  ): string {
+  private getSuccessMessage(classification: IntentClassificationResult): string {
     const messages: Partial<Record<CommandType, string>> = {
       [CommandType.STATUS]: '시스템 상태를 확인합니다.',
       [CommandType.FEATURE_REQUEST]: '기능 요청을 접수합니다.',
@@ -129,9 +123,9 @@ export class ProcessKoreanCommandUseCase {
       [CommandType.REJECT]: '거부를 진행합니다.',
       [CommandType.ROLLBACK]: '롤백을 준비합니다.',
       [CommandType.HELP]: '도움말을 표시합니다.',
-    };
+    }
 
-    return messages[classification.commandType] ?? '요청을 처리합니다.';
+    return messages[classification.commandType] ?? '요청을 처리합니다.'
   }
 
   /**
@@ -147,7 +141,7 @@ export class ProcessKoreanCommandUseCase {
         success: false,
         commandType: CommandType.UNKNOWN,
         message: '취소되었습니다. 다시 말씀해 주세요.',
-      };
+      }
     }
 
     return {
@@ -155,20 +149,20 @@ export class ProcessKoreanCommandUseCase {
       commandType: previousClassification.commandType,
       parameters: previousClassification.parameters,
       message: this.getSuccessMessage(previousClassification),
-    };
+    }
   }
 
   /**
    * 분류 결과만 반환 (테스트/디버깅용)
    */
   classifyOnly(input: string): IntentClassificationResult {
-    return this.intentClassifier.classify(input);
+    return this.intentClassifier.classify(input)
   }
 
   /**
    * 신뢰도 임계값 확인
    */
   getConfidenceThresholds() {
-    return DEFAULT_CONFIDENCE_THRESHOLDS;
+    return DEFAULT_CONFIDENCE_THRESHOLDS
   }
 }

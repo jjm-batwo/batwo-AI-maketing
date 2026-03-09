@@ -11,16 +11,7 @@ import { useAIStream } from './useAIStream'
 export function AIStreamExample() {
   const [prompt, setPrompt] = useState('')
 
-  const {
-    text,
-    isLoading,
-    error,
-    stage,
-    progress,
-    stream,
-    stop,
-    reset,
-  } = useAIStream({
+  const { text, isLoading, error, stage, progress, stream, stop, reset } = useAIStream({
     onStart: () => console.log('Stream started'),
     onToken: (token) => console.log('Token:', token),
     onComplete: (fullText) => console.log('Stream complete:', fullText),

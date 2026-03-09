@@ -322,9 +322,10 @@ function EmptyState({
       })
     : []
 
-  const finalSuggestions = insightSuggestions.length > 0
-    ? [...insightSuggestions, suggestions[2] ?? suggestions[0]]
-    : suggestions
+  const finalSuggestions =
+    insightSuggestions.length > 0
+      ? [...insightSuggestions, suggestions[2] ?? suggestions[0]]
+      : suggestions
 
   const insightIconMap = {
     warning: AlertTriangle,
@@ -334,10 +335,13 @@ function EmptyState({
   }
 
   const insightColorMap = {
-    warning: 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950/30 dark:border-amber-800 dark:text-amber-300',
-    opportunity: 'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-950/30 dark:border-blue-800 dark:text-blue-300',
+    warning:
+      'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-950/30 dark:border-amber-800 dark:text-amber-300',
+    opportunity:
+      'bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-950/30 dark:border-blue-800 dark:text-blue-300',
     tip: 'bg-purple-50 border-purple-200 text-purple-700 dark:bg-purple-950/30 dark:border-purple-800 dark:text-purple-300',
-    success: 'bg-green-50 border-green-200 text-green-700 dark:bg-green-950/30 dark:border-green-800 dark:text-green-300',
+    success:
+      'bg-green-50 border-green-200 text-green-700 dark:bg-green-950/30 dark:border-green-800 dark:text-green-300',
   }
 
   return (
@@ -354,13 +358,16 @@ function EmptyState({
           {insights.slice(0, 2).map((insight, index) => {
             const Icon = insightIconMap[insight.type]
             return (
-              <button type="button"
+              <button
+                type="button"
                 key={index}
-                onClick={() => onSuggestion(
-                  insight.type === 'warning'
-                    ? `${insight.title} 원인을 분석해줘`
-                    : `${insight.title}에 대해 자세히 알려줘`
-                )}
+                onClick={() =>
+                  onSuggestion(
+                    insight.type === 'warning'
+                      ? `${insight.title} 원인을 분석해줘`
+                      : `${insight.title}에 대해 자세히 알려줘`
+                  )
+                }
                 className={cn(
                   'w-full text-left rounded-xl px-4 py-3 border transition-all',
                   'hover:shadow-sm hover:scale-[1.01]',
@@ -371,8 +378,11 @@ function EmptyState({
                   <Icon className="h-4 w-4 mt-0.5 shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold leading-tight">{insight.title}</p>
-                    <p className="text-[11px] opacity-80 mt-0.5 line-clamp-2">{insight.description}</p>
-                    {(insight.currentValue !== undefined || insight.changePercent !== undefined) && (
+                    <p className="text-[11px] opacity-80 mt-0.5 line-clamp-2">
+                      {insight.description}
+                    </p>
+                    {(insight.currentValue !== undefined ||
+                      insight.changePercent !== undefined) && (
                       <div className="flex items-center gap-2 mt-1.5">
                         {insight.currentValue !== undefined && (
                           <span className="text-xs font-bold">
@@ -380,17 +390,22 @@ function EmptyState({
                               ? `${insight.currentValue.toFixed(2)}%`
                               : insight.metric === 'roas'
                                 ? `${insight.currentValue.toFixed(2)}x`
-                                : insight.metric === 'spend' || insight.metric === 'revenue' || insight.metric === 'cpa'
+                                : insight.metric === 'spend' ||
+                                    insight.metric === 'revenue' ||
+                                    insight.metric === 'cpa'
                                   ? `${insight.currentValue.toLocaleString()}원`
                                   : insight.currentValue.toLocaleString()}
                           </span>
                         )}
                         {insight.changePercent !== undefined && (
-                          <span className={cn(
-                            'text-[11px] font-medium',
-                            insight.changePercent >= 0 ? 'text-green-600' : 'text-red-600'
-                          )}>
-                            {insight.changePercent >= 0 ? '↑' : '↓'}{Math.abs(insight.changePercent).toFixed(1)}%
+                          <span
+                            className={cn(
+                              'text-[11px] font-medium',
+                              insight.changePercent >= 0 ? 'text-green-600' : 'text-red-600'
+                            )}
+                          >
+                            {insight.changePercent >= 0 ? '↑' : '↓'}
+                            {Math.abs(insight.changePercent).toFixed(1)}%
                           </span>
                         )}
                       </div>
@@ -409,7 +424,8 @@ function EmptyState({
       {/* 제안 질문 */}
       <div className="w-full space-y-2">
         {finalSuggestions.map((suggestion, index) => (
-          <button type="button"
+          <button
+            type="button"
             key={index}
             onClick={() => onSuggestion(suggestion)}
             className={cn(

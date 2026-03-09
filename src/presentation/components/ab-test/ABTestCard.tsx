@@ -72,7 +72,9 @@ export function ABTestCard({
           {control && (
             <div className="p-3 bg-gray-50 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
-                <Badge variant="outline" className="text-xs">컨트롤</Badge>
+                <Badge variant="outline" className="text-xs">
+                  컨트롤
+                </Badge>
                 <span className="text-sm font-medium">{control.name}</span>
               </div>
               <div className="space-y-1 text-sm">
@@ -92,14 +94,18 @@ export function ABTestCard({
             </div>
           )}
           {treatment && (
-            <div className={cn(
-              'p-3 rounded-lg',
-              statisticalResult.winner?.id === treatment.id
-                ? 'bg-green-50 border border-green-200'
-                : 'bg-gray-50'
-            )}>
+            <div
+              className={cn(
+                'p-3 rounded-lg',
+                statisticalResult.winner?.id === treatment.id
+                  ? 'bg-green-50 border border-green-200'
+                  : 'bg-gray-50'
+              )}
+            >
               <div className="flex items-center gap-2 mb-2">
-                <Badge variant="outline" className="text-xs bg-purple-50">변형</Badge>
+                <Badge variant="outline" className="text-xs bg-purple-50">
+                  변형
+                </Badge>
                 <span className="text-sm font-medium">{treatment.name}</span>
                 {statisticalResult.winner?.id === treatment.id && (
                   <Award className="h-4 w-4 text-green-600" />
@@ -116,9 +122,7 @@ export function ABTestCard({
                 </div>
                 <div className="flex justify-between font-medium">
                   <span className="text-muted-foreground">전환율</span>
-                  <span className={cn(
-                    statisticalResult.uplift > 0 && 'text-green-600'
-                  )}>
+                  <span className={cn(statisticalResult.uplift > 0 && 'text-green-600')}>
                     {treatment.conversionRate.toFixed(2)}%
                   </span>
                 </div>
@@ -131,7 +135,9 @@ export function ABTestCard({
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">샘플 수</span>
-            <span>{totalSamples.toLocaleString()} / {abTest.minimumSampleSize.toLocaleString()}</span>
+            <span>
+              {totalSamples.toLocaleString()} / {abTest.minimumSampleSize.toLocaleString()}
+            </span>
           </div>
           <Progress value={sampleProgress} className="h-2" />
         </div>
@@ -157,11 +163,14 @@ export function ABTestCard({
           {statisticalResult.uplift !== 0 && (
             <div className="text-right">
               <div className="text-sm text-muted-foreground">개선율</div>
-              <div className={cn(
-                'font-semibold',
-                statisticalResult.uplift > 0 ? 'text-green-600' : 'text-red-600'
-              )}>
-                {statisticalResult.uplift > 0 ? '+' : ''}{statisticalResult.uplift.toFixed(1)}%
+              <div
+                className={cn(
+                  'font-semibold',
+                  statisticalResult.uplift > 0 ? 'text-green-600' : 'text-red-600'
+                )}
+              >
+                {statisticalResult.uplift > 0 ? '+' : ''}
+                {statisticalResult.uplift.toFixed(1)}%
               </div>
             </div>
           )}

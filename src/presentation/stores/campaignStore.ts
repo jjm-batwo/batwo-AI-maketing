@@ -61,8 +61,6 @@ type ColumnKey =
   | 'conversions'
   | 'createdAt'
 
-
-
 // 기본 컬럼 순서 (드래그 정렬 가능)
 const defaultColumnOrder: ColumnKey[] = [
   'spend',
@@ -232,7 +230,6 @@ export const useCampaignStore = create<CampaignState>()(
       selectedAdSetForDrilldown: null,
       setSelectedAdSetForDrilldown: (id) => set({ selectedAdSetForDrilldown: id }),
 
-
       // Column presets (persisted)
       columnPresets: [],
       saveColumnPreset: (name) =>
@@ -273,8 +270,8 @@ export const useCampaignStore = create<CampaignState>()(
         columnPresets: state.columnPresets,
       }),
       merge: (persistedState: unknown, currentState: CampaignState) => {
-        const persisted = persistedState as Partial<CampaignState> || {}
-        
+        const persisted = (persistedState as Partial<CampaignState>) || {}
+
         // 저장된 visibleColumns에 누락된 새 컬럼을 기본값으로 병합
         const mergedVisibleColumns: Record<ColumnKey, boolean> = {
           ...currentState.visibleColumns,
@@ -284,7 +281,7 @@ export const useCampaignStore = create<CampaignState>()(
         // 저장된 columnOrder에 누락된 새 컬럼 추가
         const persistedOrder = persisted.columnOrder || []
         const currentOrder = currentState.columnOrder
-        const missingColumns = currentOrder.filter(col => !persistedOrder.includes(col))
+        const missingColumns = currentOrder.filter((col) => !persistedOrder.includes(col))
         const mergedColumnOrder = [...persistedOrder, ...missingColumns]
 
         return {

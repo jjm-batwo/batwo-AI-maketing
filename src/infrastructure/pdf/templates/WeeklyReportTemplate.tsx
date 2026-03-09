@@ -1,12 +1,5 @@
 import React from 'react'
-import {
-  Document,
-  Page,
-  Text,
-  View,
-  StyleSheet,
-  Font,
-} from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer'
 import type { ReportDTO } from '@application/dto/report/ReportDTO'
 import { BarChart } from '../components/BarChart'
 import { MetricCard } from '../components/MetricCard'
@@ -15,8 +8,7 @@ import { ActionItemCard } from '../components/ActionItemCard'
 import { PDF_FONT_FAMILY } from './BaseReportTemplate'
 
 const shouldUseRemotePdfFont =
-  process.env.NODE_ENV !== 'test' &&
-  process.env.DISABLE_REMOTE_PDF_FONT !== 'true'
+  process.env.NODE_ENV !== 'test' && process.env.DISABLE_REMOTE_PDF_FONT !== 'true'
 
 if (shouldUseRemotePdfFont) {
   // Noto Sans KR 폰트 등록 (한글 지원)
@@ -426,23 +418,11 @@ export function WeeklyReportTemplate({ report }: WeeklyReportTemplateProps) {
         <View style={styles.summarySection}>
           <Text style={styles.sectionTitle}>성과 요약</Text>
           <View style={styles.metricsGrid}>
-            <MetricCard
-              label="총 노출"
-              value={formatNumber(summaryMetrics.totalImpressions)}
-            />
-            <MetricCard
-              label="총 클릭"
-              value={formatNumber(summaryMetrics.totalClicks)}
-            />
-            <MetricCard
-              label="총 전환"
-              value={formatNumber(summaryMetrics.totalConversions)}
-            />
+            <MetricCard label="총 노출" value={formatNumber(summaryMetrics.totalImpressions)} />
+            <MetricCard label="총 클릭" value={formatNumber(summaryMetrics.totalClicks)} />
+            <MetricCard label="총 전환" value={formatNumber(summaryMetrics.totalConversions)} />
             <MetricCard label="총 지출" value={formatCurrency(summaryMetrics.totalSpend)} />
-            <MetricCard
-              label="총 매출"
-              value={formatCurrency(summaryMetrics.totalRevenue)}
-            />
+            <MetricCard label="총 매출" value={formatCurrency(summaryMetrics.totalRevenue)} />
             <MetricCard label="ROAS" value={`${summaryMetrics.overallROAS.toFixed(2)}x`} />
           </View>
         </View>
@@ -456,8 +436,7 @@ export function WeeklyReportTemplate({ report }: WeeklyReportTemplateProps) {
                 .filter((s) => s.metrics?.spend && s.metrics.revenue)
                 .map((s) => ({
                   label: s.title.substring(0, 15),
-                  value:
-                    s.metrics!.spend! > 0 ? s.metrics!.revenue! / s.metrics!.spend! : 0,
+                  value: s.metrics!.spend! > 0 ? s.metrics!.revenue! / s.metrics!.spend! : 0,
                   color: '#3b82f6',
                 }))
                 .slice(0, 5)}
@@ -512,9 +491,7 @@ export function WeeklyReportTemplate({ report }: WeeklyReportTemplateProps) {
 
         {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            생성일: {new Date().toLocaleDateString('ko-KR')}
-          </Text>
+          <Text style={styles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
           <Text style={styles.footerText}>바투 AI 마케팅</Text>
         </View>
       </Page>
@@ -574,9 +551,7 @@ export function WeeklyReportTemplate({ report }: WeeklyReportTemplateProps) {
 
                   return (
                     <View key={index} style={styles.tableRow}>
-                      <Text style={[styles.tableCell, { width: '25%' }]}>
-                        {forecast.metric}
-                      </Text>
+                      <Text style={[styles.tableCell, { width: '25%' }]}>{forecast.metric}</Text>
                       <Text style={[styles.tableCell, { width: '20%' }]}>
                         {formatNumber(forecast.current)}
                       </Text>
@@ -619,9 +594,7 @@ export function WeeklyReportTemplate({ report }: WeeklyReportTemplateProps) {
 
           {/* Footer */}
           <View style={styles.footer}>
-            <Text style={styles.footerText}>
-              생성일: {new Date().toLocaleDateString('ko-KR')}
-            </Text>
+            <Text style={styles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
             <Text style={styles.footerText}>바투 AI 마케팅</Text>
           </View>
         </Page>
@@ -651,9 +624,7 @@ export function WeeklyReportTemplate({ report }: WeeklyReportTemplateProps) {
 
           {/* Footer */}
           <View style={styles.footer}>
-            <Text style={styles.footerText}>
-              생성일: {new Date().toLocaleDateString('ko-KR')}
-            </Text>
+            <Text style={styles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
             <Text style={styles.footerText}>바투 AI 마케팅</Text>
           </View>
         </Page>

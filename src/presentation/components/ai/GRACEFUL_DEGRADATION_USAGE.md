@@ -21,7 +21,7 @@ import { AIFallbackManager } from '@/application/services'
 const fallbackManager = new AIFallbackManager({
   maxRetries: 2,
   timeoutMs: 30000,
-  enabledTiers: ['advanced', 'basic', 'template']
+  enabledTiers: ['advanced', 'basic', 'template'],
 })
 
 // AI 작업 실행 (자동 폴백)
@@ -30,7 +30,7 @@ const result = await fallbackManager.executeWithFallback(
   async () => {
     const response = await openai.chat.completions.create({
       model: 'gpt-4',
-      messages: [{ role: 'user', content: prompt }]
+      messages: [{ role: 'user', content: prompt }],
     })
     return parseAdvancedResponse(response)
   },
@@ -39,7 +39,7 @@ const result = await fallbackManager.executeWithFallback(
   async () => {
     const response = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: prompt }]
+      messages: [{ role: 'user', content: prompt }],
     })
     return parseBasicResponse(response)
   },
@@ -76,7 +76,7 @@ class CampaignCopyGenerator {
           headline: copy.headline,
           body: copy.body,
           cta: copy.cta,
-          personalized: true
+          personalized: true,
         }
       },
 
@@ -87,7 +87,7 @@ class CampaignCopyGenerator {
           headline: `${product} 특별 할인`,
           body: `지금 ${product}를 구매하세요`,
           cta: '자세히 보기',
-          personalized: false
+          personalized: false,
         }
       },
 
@@ -96,7 +96,7 @@ class CampaignCopyGenerator {
         headline: '특별 프로모션',
         body: '한정된 기간 동안 특별 혜택을 만나보세요',
         cta: '지금 확인',
-        personalized: false
+        personalized: false,
       })
     )
   }
@@ -117,8 +117,8 @@ console.log('마지막 확인:', health.lastChecks)
 
 // 수동으로 티어 제어
 fallbackManager.disableTier('advanced') // 유지보수 모드
-fallbackManager.enableTier('advanced')  // 재활성화
-fallbackManager.resetHealth()           // 전체 리셋
+fallbackManager.enableTier('advanced') // 재활성화
+fallbackManager.resetHealth() // 전체 리셋
 ```
 
 ## 2. PartialSuccessUI 사용법
@@ -133,29 +133,26 @@ function CampaignCreator() {
     {
       field: '헤드라인',
       value: '여름 시즌 특가 세일',
-      status: 'success'
+      status: 'success',
     },
     {
       field: '본문',
       value: null,
       status: 'failed',
-      error: 'AI 타임아웃'
+      error: 'AI 타임아웃',
     },
     {
       field: 'CTA',
       value: '지금 확인',
-      status: 'fallback'
-    }
+      status: 'fallback',
+    },
   ])
 
   const handleRetry = async (field: string) => {
     // 실패한 필드 재시도
     const newValue = await retryAIGeneration(field)
-    setResults(prev =>
-      prev.map(r => r.field === field
-        ? { ...r, value: newValue, status: 'success' }
-        : r
-      )
+    setResults((prev) =>
+      prev.map((r) => (r.field === field ? { ...r, value: newValue, status: 'success' } : r))
     )
   }
 
@@ -184,29 +181,30 @@ function LiveAIGeneration() {
       fields.map(async (field) => {
         try {
           const value = await generateField(field)
-          setResults(prev => [...prev, {
-            field,
-            value,
-            status: 'success'
-          }])
+          setResults((prev) => [
+            ...prev,
+            {
+              field,
+              value,
+              status: 'success',
+            },
+          ])
         } catch (error) {
-          setResults(prev => [...prev, {
-            field,
-            value: null,
-            status: 'failed',
-            error: error.message
-          }])
+          setResults((prev) => [
+            ...prev,
+            {
+              field,
+              value: null,
+              status: 'failed',
+              error: error.message,
+            },
+          ])
         }
       })
     )
   }, [])
 
-  return (
-    <PartialSuccessUI
-      results={results}
-      onRetryFailed={(field) => retryField(field)}
-    />
-  )
+  return <PartialSuccessUI results={results} onRetryFailed={(field) => retryField(field)} />
 }
 ```
 
@@ -226,22 +224,22 @@ function AIErrorHandler() {
       description: 'AI 분석을 처음부터 다시 실행합니다',
       action: () => retryAnalysis(),
       recommended: true,
-      icon: RefreshCw
+      icon: RefreshCw,
     },
     {
       id: 'template',
       label: '템플릿 사용',
       description: '미리 정의된 템플릿으로 계속 진행합니다',
       action: () => useTemplate(),
-      icon: FileText
+      icon: FileText,
     },
     {
       id: 'settings',
       label: '설정 변경',
       description: 'AI 설정을 조정하여 다시 시도합니다',
       action: () => openSettings(),
-      icon: Settings
-    }
+      icon: Settings,
+    },
   ]
 
   return (
@@ -268,14 +266,14 @@ function ContextualErrorRecovery({ context }: { context: 'campaign' | 'analysis'
             label: '임시 저장',
             description: '현재까지 입력한 내용을 임시 저장합니다',
             action: () => saveDraft(),
-            recommended: true
+            recommended: true,
           },
           {
             id: 'manual',
             label: '수동 입력',
             description: 'AI 없이 직접 입력하여 계속 진행합니다',
-            action: () => switchToManual()
-          }
+            action: () => switchToManual(),
+          },
         ]
 
       case 'analysis':
@@ -285,14 +283,14 @@ function ContextualErrorRecovery({ context }: { context: 'campaign' | 'analysis'
             label: '기본 분석',
             description: '상세 분석 없이 기본 지표만 확인합니다',
             action: () => showBasicMetrics(),
-            recommended: true
+            recommended: true,
           },
           {
             id: 'export',
             label: '데이터 내보내기',
             description: '원본 데이터를 다운로드하여 직접 분석합니다',
-            action: () => exportData()
-          }
+            action: () => exportData(),
+          },
         ]
 
       case 'report':
@@ -302,14 +300,14 @@ function ContextualErrorRecovery({ context }: { context: 'campaign' | 'analysis'
             label: '이전 보고서 보기',
             description: '가장 최근 성공한 보고서를 확인합니다',
             action: () => showPreviousReport(),
-            recommended: true
+            recommended: true,
           },
           {
             id: 'simple',
             label: '간단한 보고서',
             description: 'AI 없이 기본 요약 보고서를 생성합니다',
-            action: () => generateSimpleReport()
-          }
+            action: () => generateSimpleReport(),
+          },
         ]
     }
   }
@@ -334,7 +332,7 @@ import {
   PartialSuccessUI,
   ErrorRecoveryDisplay,
   PartialResult,
-  RecoveryOption
+  RecoveryOption,
 } from '@/application/services'
 
 function SmartCampaignGenerator() {
@@ -361,21 +359,21 @@ function SmartCampaignGenerator() {
         newResults.push({
           field: fieldNames[field],
           value: result.data,
-          status: result.tier === 'template' ? 'fallback' : 'success'
+          status: result.tier === 'template' ? 'fallback' : 'success',
         })
       } catch (error) {
         newResults.push({
           field: fieldNames[field],
           value: null,
           status: 'failed',
-          error: error.message
+          error: error.message,
         })
       }
     }
 
     setResults(newResults)
 
-    const hasFailures = newResults.some(r => r.status === 'failed')
+    const hasFailures = newResults.some((r) => r.status === 'failed')
     setStatus(hasFailures ? 'partial' : 'idle')
   }
 
@@ -385,14 +383,14 @@ function SmartCampaignGenerator() {
       label: '전체 재시도',
       description: '모든 필드를 처음부터 다시 생성합니다',
       action: () => generateCampaign(product),
-      recommended: true
+      recommended: true,
     },
     {
       id: 'manual',
       label: '수동 입력',
       description: '실패한 부분만 직접 입력합니다',
-      action: () => setManualMode(true)
-    }
+      action: () => setManualMode(true),
+    },
   ]
 
   return (
@@ -408,11 +406,7 @@ function SmartCampaignGenerator() {
       )}
 
       {status === 'error' && (
-        <ErrorRecoveryDisplay
-          error={error}
-          recoveryOptions={recoveryOptions}
-          severity="error"
-        />
+        <ErrorRecoveryDisplay error={error} recoveryOptions={recoveryOptions} severity="error" />
       )}
 
       {/* Health Monitor (개발 모드) */}
@@ -471,7 +465,7 @@ await generateWithTimeout(60000) // 실패하면 끝
 ```typescript
 // 여러 필드를 병렬로 생성하되, 각각 독립적으로 폴백
 const results = await Promise.all(
-  fields.map(field =>
+  fields.map((field) =>
     fallbackManager.executeWithFallback(
       () => generateAdvanced(field),
       () => generateBasic(field),
@@ -487,13 +481,13 @@ const results = await Promise.all(
 // 빠른 응답이 필요한 경우
 const quickFallback = new AIFallbackManager({
   timeoutMs: 10000, // 10초
-  maxRetries: 1
+  maxRetries: 1,
 })
 
 // 정확도가 중요한 경우
 const accurateFallback = new AIFallbackManager({
   timeoutMs: 60000, // 60초
-  maxRetries: 3
+  maxRetries: 3,
 })
 ```
 

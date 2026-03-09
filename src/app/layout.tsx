@@ -51,9 +51,7 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: getJsonLdScript('Organization') }}
         />
       </head>
-      <body
-        className={`${pretendard.variable} antialiased`}
-      >
+      <body className={`${pretendard.variable} antialiased`}>
         <NextIntlClientProvider messages={messages}>
           <Providers>{children}</Providers>
         </NextIntlClientProvider>

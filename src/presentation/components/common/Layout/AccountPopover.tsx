@@ -25,7 +25,9 @@ export function AccountPopover() {
             <User className="h-4 w-4 text-primary" />
           </div>
           <div className="flex-1 text-left min-w-0">
-            <p className="text-sm font-medium truncate">{session?.user?.name || t('common.user')}</p>
+            <p className="text-sm font-medium truncate">
+              {session?.user?.name || t('common.user')}
+            </p>
             {session?.user?.email && (
               <p className="text-xs text-muted-foreground truncate">{session.user.email}</p>
             )}
@@ -47,7 +49,10 @@ export function AccountPopover() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut({ callbackUrl: '/' })} className="text-red-600 cursor-pointer">
+        <DropdownMenuItem
+          onClick={() => signOut({ callbackUrl: '/' })}
+          className="text-red-600 cursor-pointer"
+        >
           <LogOut className="mr-2 h-4 w-4" />
           {t('navigation.logout')}
         </DropdownMenuItem>

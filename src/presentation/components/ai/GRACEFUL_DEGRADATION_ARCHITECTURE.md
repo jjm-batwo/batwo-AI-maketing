@@ -69,6 +69,7 @@
 ```
 
 **Key Features:**
+
 - Automatic tier selection based on health
 - Exponential backoff retry (1s, 2s, 4s)
 - Circuit breaker pattern (5 failures → disable tier)
@@ -97,6 +98,7 @@
 ```
 
 **Status Types:**
+
 - ✅ `success` - Green, completed successfully
 - ❌ `failed` - Red, failed with error
 - ⚠️ `fallback` - Amber, using fallback value
@@ -124,6 +126,7 @@
 ```
 
 **Severity Levels:**
+
 - 🔴 `error` - Red, critical failure
 - 🟡 `warning` - Amber, degraded service
 - 🔵 `info` - Blue, informational
@@ -256,9 +259,9 @@ Display PartialSuccessUI with retry options
 
 ```typescript
 interface TierHealth {
-  advanced: boolean          // Currently enabled?
+  advanced: boolean // Currently enabled?
   basic: boolean
-  lastAdvancedCheck: Date   // Last attempt timestamp
+  lastAdvancedCheck: Date // Last attempt timestamp
   lastBasicCheck: Date
   advancedFailCount: number // Consecutive failures
   basicFailCount: number
@@ -280,6 +283,7 @@ interface TierHealth {
 ### Custom Configurations
 
 **Quick Response (Low Latency)**
+
 ```typescript
 {
   maxRetries: 1,
@@ -289,6 +293,7 @@ interface TierHealth {
 ```
 
 **High Accuracy (Quality First)**
+
 ```typescript
 {
   maxRetries: 3,
@@ -298,6 +303,7 @@ interface TierHealth {
 ```
 
 **Template Only (Maintenance Mode)**
+
 ```typescript
 {
   maxRetries: 0,
@@ -334,12 +340,12 @@ interface TierHealth {
 
 ### Latency (best case → worst case)
 
-| Scenario | Time | Tier Used |
-|----------|------|-----------|
-| Advanced success | 2-5s | Advanced |
-| Basic fallback | 5-10s | Basic |
-| Template fallback | <100ms | Template |
-| Full retry (2x) | 60-90s | All tiers |
+| Scenario          | Time   | Tier Used |
+| ----------------- | ------ | --------- |
+| Advanced success  | 2-5s   | Advanced  |
+| Basic fallback    | 5-10s  | Basic     |
+| Template fallback | <100ms | Template  |
+| Full retry (2x)   | 60-90s | All tiers |
 
 ### Throughput
 

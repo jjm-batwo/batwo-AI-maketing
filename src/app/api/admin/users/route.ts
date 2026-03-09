@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import {
-  requireAdmin,
-  handleAdminAuth,
-} from '@/infrastructure/auth/adminMiddleware'
+import { requireAdmin, handleAdminAuth } from '@/infrastructure/auth/adminMiddleware'
 import { getUserRepository } from '@/lib/di/container'
 import { GlobalRole } from '@domain/value-objects/GlobalRole'
 import { SubscriptionPlan } from '@domain/value-objects/SubscriptionPlan'
@@ -23,7 +20,9 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get('search') || undefined
     const globalRole = searchParams.get('globalRole') as GlobalRole | undefined
     const subscriptionPlan = searchParams.get('subscriptionPlan') as SubscriptionPlan | undefined
-    const subscriptionStatus = searchParams.get('subscriptionStatus') as SubscriptionStatus | undefined
+    const subscriptionStatus = searchParams.get('subscriptionStatus') as
+      | SubscriptionStatus
+      | undefined
     const sortBy = searchParams.get('sortBy') as 'createdAt' | 'name' | 'email' | undefined
     const sortOrder = searchParams.get('sortOrder') as 'asc' | 'desc' | undefined
     const createdAtFrom = searchParams.get('createdAtFrom')
@@ -45,9 +44,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(result)
   } catch (error) {
     console.error('Admin users list error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch users' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 })
   }
 }

@@ -15,10 +15,12 @@ const ruleConditionSchema = z.object({
 
 const ruleActionSchema = z.object({
   type: actionTypeEnum,
-  params: z.object({
-    percentage: z.number().min(1).max(100).optional(),
-    notifyChannel: z.enum(['email', 'in_app', 'slack']).optional(),
-  }).optional(),
+  params: z
+    .object({
+      percentage: z.number().min(1).max(100).optional(),
+      notifyChannel: z.enum(['email', 'in_app', 'slack']).optional(),
+    })
+    .optional(),
 })
 
 export const createOptimizationRuleSchema = z.object({

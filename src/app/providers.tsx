@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, type ReactNode, lazy, Suspense } from 'react'
 
 const ReactQueryDevtools = lazy(() =>
-  import('@tanstack/react-query-devtools').then(mod => ({ default: mod.ReactQueryDevtools }))
+  import('@tanstack/react-query-devtools').then((mod) => ({ default: mod.ReactQueryDevtools }))
 )
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 

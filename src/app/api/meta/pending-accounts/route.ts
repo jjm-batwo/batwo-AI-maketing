@@ -15,10 +15,7 @@ export async function GET(request: NextRequest) {
     const sessionId = searchParams.get('session')
 
     if (!sessionId) {
-      return NextResponse.json(
-        { error: '세션 ID가 필요합니다' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: '세션 ID가 필요합니다' }, { status: 400 })
     }
 
     // 캐시에서 OAuth 데이터 조회 (DB 기반)
@@ -42,9 +39,6 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     console.error('Fetch pending accounts error:', error)
-    return NextResponse.json(
-      { error: '계정 목록 조회 중 오류가 발생했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '계정 목록 조회 중 오류가 발생했습니다' }, { status: 500 })
   }
 }

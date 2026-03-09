@@ -105,7 +105,7 @@ export class MetaPagesClient {
       'page_impressions',
       'page_post_engagements',
       'page_consumptions',
-      'page_views_total'
+      'page_views_total',
     ],
     period: 'day' | 'week' | 'days_28' = 'days_28'
   ): Promise<PageInsight[]> {
@@ -132,14 +132,16 @@ export class MetaPagesClient {
     pageId: string,
     pageAccessToken: string,
     limit: number = 10
-  ): Promise<Array<{
-    id: string
-    message?: string
-    created_time: string
-    likes?: { summary: { total_count: number } }
-    comments?: { summary: { total_count: number } }
-    shares?: { count: number }
-  }>> {
+  ): Promise<
+    Array<{
+      id: string
+      message?: string
+      created_time: string
+      likes?: { summary: { total_count: number } }
+      comments?: { summary: { total_count: number } }
+      shares?: { count: number }
+    }>
+  > {
     const fields = 'id,message,created_time,likes.summary(true),comments.summary(true),shares'
     const response = await fetchWithTimeout(
       `${META_API_BASE}/${pageId}/posts?fields=${fields}&limit=${limit}&access_token=${pageAccessToken}`,
@@ -160,10 +162,7 @@ export class MetaPagesClient {
    * 페이지 참여 요약 데이터 조회
    * 권한: pages_read_engagement
    */
-  async getEngagementSummary(
-    pageId: string,
-    pageAccessToken: string
-  ): Promise<PageEngagement> {
+  async getEngagementSummary(pageId: string, pageAccessToken: string): Promise<PageEngagement> {
     const insights = await this.getPageInsights(pageId, pageAccessToken)
 
     const engagement: PageEngagement = {
@@ -172,7 +171,7 @@ export class MetaPagesClient {
       page_impressions: 0,
       page_post_engagements: 0,
       page_consumptions: 0,
-      page_views_total: 0
+      page_views_total: 0,
     }
 
     insights.forEach((insight) => {

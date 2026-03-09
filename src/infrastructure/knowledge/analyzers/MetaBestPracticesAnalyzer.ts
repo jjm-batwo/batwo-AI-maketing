@@ -91,7 +91,8 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
         source: 'Meta for Business (2025). Andromeda Algorithm: Creative-First Targeting',
         finding:
           'Andromeda 알고리즘은 크리에이티브 다양성과 품질을 우선시. 비디오 포맷이 이미지 대비 평균 34% 높은 성과',
-        applicability: '한국 시장에서 Reels와 4:5 세로형 비디오가 가장 높은 참여율 (Instagram 95% 모바일)',
+        applicability:
+          '한국 시장에서 Reels와 4:5 세로형 비디오가 가장 높은 참여율 (Instagram 95% 모바일)',
         confidenceLevel: 'high',
         year: 2025,
         category: 'meta_algorithm',
@@ -112,7 +113,10 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
     } else if (headlineLength <= this.OPTIMAL_HEADLINE_LENGTH) {
       headlineScore = 100
     } else if (headlineLength <= this.MAX_HEADLINE_LENGTH) {
-      const penalty = ((headlineLength - this.OPTIMAL_HEADLINE_LENGTH) / (this.MAX_HEADLINE_LENGTH - this.OPTIMAL_HEADLINE_LENGTH)) * 30
+      const penalty =
+        ((headlineLength - this.OPTIMAL_HEADLINE_LENGTH) /
+          (this.MAX_HEADLINE_LENGTH - this.OPTIMAL_HEADLINE_LENGTH)) *
+        30
       headlineScore = 100 - penalty
     } else {
       headlineScore = 50
@@ -128,20 +132,21 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
       primaryTextScore = 100 - penalty
     }
 
-    const score = Math.round((headlineScore * 0.6 + primaryTextScore * 0.4))
+    const score = Math.round(headlineScore * 0.6 + primaryTextScore * 0.4)
 
     const explanation = `Headline: ${headlineLength}자 (최적 ${this.OPTIMAL_HEADLINE_LENGTH}자, ${headlineScore.toFixed(0)}점). Primary Text: ${primaryTextLength}자 (최적 ${this.OPTIMAL_PRIMARY_TEXT_LENGTH}자, ${primaryTextScore.toFixed(0)}점). Feed 최적화 길이 준수 여부 평가`
 
     return {
       name: 'contentLength',
       score,
-      weight: 0.20,
+      weight: 0.2,
       explanation,
       citation: {
         id: 'meta-feed-optimization-2024',
         domain: this.domain,
         source: 'Meta for Business (2024). Feed Ad Best Practices',
-        finding: 'Headline 27자, Primary Text 125자 이하가 모바일 피드에서 가장 높은 완독률과 CTR 기록',
+        finding:
+          'Headline 27자, Primary Text 125자 이하가 모바일 피드에서 가장 높은 완독률과 CTR 기록',
         applicability: '한국어는 글자당 정보 밀도가 높아 영어 대비 20% 짧은 길이 권장',
         confidenceLevel: 'high',
         year: 2024,
@@ -182,13 +187,14 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
     return {
       name: 'mobileFitness',
       score,
-      weight: 0.20,
+      weight: 0.2,
       explanation,
       citation: {
         id: 'meta-mobile-korea-2024',
         domain: this.domain,
         source: 'Meta Internal Data (2024). Korea Market Mobile Insights',
-        finding: '한국 Meta 광고 트래픽 95% 이상이 모바일. Instagram에서 15초 이하 세로형 비디오가 가장 높은 완료율',
+        finding:
+          '한국 Meta 광고 트래픽 95% 이상이 모바일. Instagram에서 15초 이하 세로형 비디오가 가장 높은 완료율',
         applicability: 'Reels 포맷과 4:5 세로형 비디오 권장. 가로형 비디오는 완료율 -45%',
         confidenceLevel: 'high',
         year: 2024,
@@ -199,7 +205,8 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
 
   private analyzeMetricsBenchmark(input: AnalysisInput): ScoringFactor {
     const industry = input.context?.industry || 'ecommerce'
-    const benchmark = EXTENDED_INDUSTRY_BENCHMARKS[industry] || EXTENDED_INDUSTRY_BENCHMARKS.ecommerce
+    const benchmark =
+      EXTENDED_INDUSTRY_BENCHMARKS[industry] || EXTENDED_INDUSTRY_BENCHMARKS.ecommerce
 
     const ctr = input.metrics?.ctr || 0
     const cvr = input.metrics?.cvr || 0
@@ -240,7 +247,7 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
     return {
       name: 'metricsBenchmark',
       score,
-      weight: 0.20,
+      weight: 0.2,
       explanation,
       citation: {
         id: 'meta-benchmarks-2024',
@@ -260,7 +267,7 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
     const format = input.creative?.format || 'image'
 
     const recommendedFormats = this.OBJECTIVE_FORMAT_MATCH[objective] || []
-    const isAligned = recommendedFormats.some(f => format.includes(f))
+    const isAligned = recommendedFormats.some((f) => format.includes(f))
 
     let score = 50
     if (isAligned) {
@@ -308,7 +315,8 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
         source: 'Meta for Business (2025). Andromeda Algorithm: Creative-First Targeting',
         finding:
           'Andromeda 알고리즘은 크리에이티브 다양성과 품질을 우선시. 비디오 포맷이 이미지 대비 평균 34% 높은 성과',
-        applicability: '한국 시장에서 Reels와 4:5 세로형 비디오가 가장 높은 참여율 (Instagram 95% 모바일)',
+        applicability:
+          '한국 시장에서 Reels와 4:5 세로형 비디오가 가장 높은 참여율 (Instagram 95% 모바일)',
         confidenceLevel: 'high',
         year: 2025,
         category: 'meta_algorithm',
@@ -317,7 +325,8 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
         id: 'meta-feed-optimization-2024',
         domain: this.domain,
         source: 'Meta for Business (2024). Feed Ad Best Practices',
-        finding: 'Headline 27자, Primary Text 125자 이하가 모바일 피드에서 가장 높은 완독률과 CTR 기록',
+        finding:
+          'Headline 27자, Primary Text 125자 이하가 모바일 피드에서 가장 높은 완독률과 CTR 기록',
         applicability: '한국어는 글자당 정보 밀도가 높아 영어 대비 20% 짧은 길이 권장',
         confidenceLevel: 'high',
         year: 2024,
@@ -327,7 +336,8 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
         id: 'meta-mobile-korea-2024',
         domain: this.domain,
         source: 'Meta Internal Data (2024). Korea Market Mobile Insights',
-        finding: '한국 Meta 광고 트래픽 95% 이상이 모바일. Instagram에서 15초 이하 세로형 비디오가 가장 높은 완료율',
+        finding:
+          '한국 Meta 광고 트래픽 95% 이상이 모바일. Instagram에서 15초 이하 세로형 비디오가 가장 높은 완료율',
         applicability: 'Reels 포맷과 4:5 세로형 비디오 권장. 가로형 비디오는 완료율 -45%',
         confidenceLevel: 'high',
         year: 2024,
@@ -358,7 +368,8 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
         id: 'meta-creative-diversity-2024',
         domain: this.domain,
         source: 'Meta for Business (2024). Creative Testing Framework',
-        finding: '광고 세트당 3-5개의 다양한 크리에이티브 권장. 테스트 예산 20%, 최소 7일 테스트 기간',
+        finding:
+          '광고 세트당 3-5개의 다양한 크리에이티브 권장. 테스트 예산 20%, 최소 7일 테스트 기간',
         applicability: '한국 시장에서 크리에이티브 다양성이 높을수록 CPA -32%, ROAS +28%',
         confidenceLevel: 'high',
         year: 2024,
@@ -367,11 +378,14 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
     ]
   }
 
-  private generateRecommendations(factors: ScoringFactor[], input: AnalysisInput): DomainRecommendation[] {
+  private generateRecommendations(
+    factors: ScoringFactor[],
+    input: AnalysisInput
+  ): DomainRecommendation[] {
     const recommendations: DomainRecommendation[] = []
 
     // Format Optimization
-    const formatFactor = factors.find(f => f.name === 'formatOptimization')
+    const formatFactor = factors.find((f) => f.name === 'formatOptimization')
     if (formatFactor && formatFactor.score < 85) {
       const currentFormat = input.creative?.format || 'image'
       recommendations.push({
@@ -391,7 +405,8 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
             source: 'Meta for Business (2025). Andromeda Algorithm: Creative-First Targeting',
             finding:
               'Andromeda 알고리즘은 크리에이티브 다양성과 품질을 우선시. 비디오 포맷이 이미지 대비 평균 34% 높은 성과',
-            applicability: '한국 시장에서 Reels와 4:5 세로형 비디오가 가장 높은 참여율 (Instagram 95% 모바일)',
+            applicability:
+              '한국 시장에서 Reels와 4:5 세로형 비디오가 가장 높은 참여율 (Instagram 95% 모바일)',
             confidenceLevel: 'high',
             year: 2025,
             category: 'meta_algorithm',
@@ -401,7 +416,7 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
     }
 
     // Content Length
-    const contentLengthFactor = factors.find(f => f.name === 'contentLength')
+    const contentLengthFactor = factors.find((f) => f.name === 'contentLength')
     if (contentLengthFactor && contentLengthFactor.score < 70) {
       const headline = input.content?.headline || ''
       const primaryText = input.content?.primaryText || ''
@@ -417,7 +432,8 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
             id: 'meta-feed-optimization-2024',
             domain: this.domain,
             source: 'Meta for Business (2024). Feed Ad Best Practices',
-            finding: 'Headline 27자, Primary Text 125자 이하가 모바일 피드에서 가장 높은 완독률과 CTR 기록',
+            finding:
+              'Headline 27자, Primary Text 125자 이하가 모바일 피드에서 가장 높은 완독률과 CTR 기록',
             applicability: '한국어는 글자당 정보 밀도가 높아 영어 대비 20% 짧은 길이 권장',
             confidenceLevel: 'high',
             year: 2024,
@@ -428,7 +444,7 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
     }
 
     // Mobile Fitness
-    const mobileFitnessFactor = factors.find(f => f.name === 'mobileFitness')
+    const mobileFitnessFactor = factors.find((f) => f.name === 'mobileFitness')
     if (mobileFitnessFactor && mobileFitnessFactor.score < 70) {
       const videoDuration = input.creative?.videoDuration || 0
       recommendations.push({
@@ -458,10 +474,11 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
     }
 
     // Metrics Benchmark
-    const metricsFactor = factors.find(f => f.name === 'metricsBenchmark')
+    const metricsFactor = factors.find((f) => f.name === 'metricsBenchmark')
     if (metricsFactor && metricsFactor.score < 80) {
       const industry = input.context?.industry || 'ecommerce'
-      const benchmark = EXTENDED_INDUSTRY_BENCHMARKS[industry] || EXTENDED_INDUSTRY_BENCHMARKS.ecommerce
+      const benchmark =
+        EXTENDED_INDUSTRY_BENCHMARKS[industry] || EXTENDED_INDUSTRY_BENCHMARKS.ecommerce
       recommendations.push({
         domain: this.domain,
         priority: 'medium',
@@ -474,7 +491,8 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
             id: 'meta-creative-diversity-2024',
             domain: this.domain,
             source: 'Meta for Business (2024). Creative Testing Framework',
-            finding: '광고 세트당 3-5개의 다양한 크리에이티브 권장. 테스트 예산 20%, 최소 7일 테스트 기간',
+            finding:
+              '광고 세트당 3-5개의 다양한 크리에이티브 권장. 테스트 예산 20%, 최소 7일 테스트 기간',
             applicability: '한국 시장에서 크리에이티브 다양성이 높을수록 CPA -32%, ROAS +28%',
             confidenceLevel: 'high',
             year: 2024,
@@ -485,7 +503,7 @@ export class MetaBestPracticesAnalyzer implements DomainAnalyzer {
     }
 
     // Objective Alignment
-    const objectiveAlignmentFactor = factors.find(f => f.name === 'objectiveAlignment')
+    const objectiveAlignmentFactor = factors.find((f) => f.name === 'objectiveAlignment')
     if (objectiveAlignmentFactor && objectiveAlignmentFactor.score < 80) {
       const objective = input.context?.objective || 'conversion'
       const recommendedFormats = this.OBJECTIVE_FORMAT_MATCH[objective] || []

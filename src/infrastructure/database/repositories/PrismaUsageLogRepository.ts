@@ -1,9 +1,5 @@
 import { PrismaClient } from '@/generated/prisma'
-import {
-  IUsageLogRepository,
-  UsageLog,
-  UsageType,
-} from '@domain/repositories/IUsageLogRepository'
+import { IUsageLogRepository, UsageLog, UsageType } from '@domain/repositories/IUsageLogRepository'
 import { UsageLogMapper } from '../mappers/UsageLogMapper'
 
 export class PrismaUsageLogRepository implements IUsageLogRepository {
@@ -15,11 +11,7 @@ export class PrismaUsageLogRepository implements IUsageLogRepository {
     })
   }
 
-  async countByPeriod(
-    userId: string,
-    type: UsageType,
-    period: 'day' | 'week'
-  ): Promise<number> {
+  async countByPeriod(userId: string, type: UsageType, period: 'day' | 'week'): Promise<number> {
     const now = new Date()
     let startDate: Date
 

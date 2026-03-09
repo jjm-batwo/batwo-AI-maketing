@@ -14,7 +14,7 @@ export class CalculateSavingsUseCase {
   constructor(
     private readonly ruleRepo: IOptimizationRuleRepository,
     private readonly campaignRepo: ICampaignRepository,
-    private readonly kpiRepo: IKPIRepository,
+    private readonly kpiRepo: IKPIRepository
   ) {}
 
   async execute(userId: string): Promise<SavingsReportDTO> {
@@ -22,7 +22,7 @@ export class CalculateSavingsUseCase {
     const rules = await this.ruleRepo.findByUserId(userId)
 
     // 트리거된 적 있는 규칙만 필터
-    const triggeredRules = rules.filter(r => r.triggerCount > 0)
+    const triggeredRules = rules.filter((r) => r.triggerCount > 0)
 
     if (triggeredRules.length === 0) {
       return this.emptyReport()

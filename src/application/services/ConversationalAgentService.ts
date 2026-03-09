@@ -1,4 +1,10 @@
-import { streamText, stepCountIs, type UserModelMessage, type AssistantModelMessage, type ToolModelMessage } from 'ai'
+import {
+  streamText,
+  stepCountIs,
+  type UserModelMessage,
+  type AssistantModelMessage,
+  type ToolModelMessage,
+} from 'ai'
 import { openai } from '@ai-sdk/openai'
 import type { IToolRegistry, AgentContext } from '@application/ports/IConversationalAgent'
 import type {
@@ -119,7 +125,11 @@ export class ConversationalAgentService {
 
             const history = await this.conversationRepo.getMessages(conversationId, { limit: 20 })
             const messages = this.toCoreMessages(history)
-            const systemPrompt = this.buildSystemPrompt(input.uiContext, input.message, input.insightsContext)
+            const systemPrompt = this.buildSystemPrompt(
+              input.uiContext,
+              input.message,
+              input.insightsContext
+            )
 
             return { conversationId, agentContext, messages, systemPrompt }
           }),
@@ -218,7 +228,10 @@ export class ConversationalAgentService {
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       if (message.includes('Circuit breaker OPEN')) {
-        yield { type: 'text', content: '일시적으로 서비스를 이용할 수 없습니다. 잠시 후 다시 시도해주세요.' }
+        yield {
+          type: 'text',
+          content: '일시적으로 서비스를 이용할 수 없습니다. 잠시 후 다시 시도해주세요.',
+        }
         yield { type: 'done' }
       } else {
         yield { type: 'error', error: message }
@@ -227,7 +240,6 @@ export class ConversationalAgentService {
     }
   }
 
-   
   private async *handleToolCall(
     part: { toolName: string; input: unknown },
     setupData: { conversationId: string; agentContext: AgentContext },
@@ -325,7 +337,6 @@ export class ConversationalAgentService {
     }
   }
 
-
   /**
    * 시스템 프롬프트 구성
    */
@@ -384,7 +395,9 @@ export class ConversationalAgentService {
 사용자 확인 없이 mutation 도구를 바로 실행하지 마세요.
 
 ${intentGuides}
-${insightsContext ? `
+${
+  insightsContext
+    ? `
 === 현재 대시보드 AI 인사이트 (실시간 데이터 — 최우선 참조) ===
 아래는 대시보드에서 실시간 감지된 인사이트입니다. 이 데이터는 Meta API에서 직접 가져온 최신 값이므로 도구 결과보다 우선합니다.
 
@@ -394,7 +407,9 @@ ${insightsContext ? `
 3. 도구 결과와 인사이트 수치가 다르면 인사이트 수치가 정확합니다 (도구는 로컬 DB 집계이므로 지연 가능)
 
 ${insightsContext}
-` : ''}
+`
+    : ''
+}
 사용 가능한 도구:
 ${toolDescriptions}`
   }
@@ -606,5 +621,4 @@ NEVER: 모호한 "상황에 따라 다릅니다" 답변`,
 
     return modelText
   }
-
 }

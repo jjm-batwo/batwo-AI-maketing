@@ -87,9 +87,9 @@ const result = await pdfReportService.generateReport('WEEKLY', report, options)
 ```typescript
 const templates = pdfReportService.getAvailableTemplates()
 
-templates.forEach(template => {
-  console.log(template.type)        // 'DAILY' | 'WEEKLY' | ...
-  console.log(template.name)        // '일간 성과 보고서'
+templates.forEach((template) => {
+  console.log(template.type) // 'DAILY' | 'WEEKLY' | ...
+  console.log(template.name) // '일간 성과 보고서'
   console.log(template.description) // '일별 KPI 요약, ...'
 })
 ```
@@ -110,12 +110,14 @@ if (!validation.valid) {
 ### 1. DailyReportTemplate (일간 보고서)
 
 **특징:**
+
 - 1페이지 간결한 형식
 - 전일 대비 변화율 표시
 - 주요 캠페인 성과 하이라이트
 - 오늘의 하이라이트 박스
 
 **섹션:**
+
 - 오늘의 성과 (8개 핵심 지표)
 - 전일 대비 변화 (4개 주요 지표)
 - 주요 캠페인 성과 (상위 5개 차트)
@@ -124,12 +126,14 @@ if (!validation.valid) {
 ### 2. WeeklyReportTemplate (주간 보고서)
 
 **특징:**
+
 - 2-3페이지 상세 분석
 - 종합 평가 및 등급
 - 캠페인별 ROAS 비교
 - AI 인사이트 및 액션 아이템
 
 **섹션:**
+
 - 종합 평가 (업계 벤치마크)
 - 성과 요약
 - 캠페인별 성과
@@ -141,12 +145,14 @@ if (!validation.valid) {
 ### 3. MonthlyReportTemplate (월간 보고서)
 
 **특징:**
+
 - 3페이지 심층 분석
 - 목표 달성률 진행 바
 - 주차별 성과 분해
 - 경영진 요약
 
 **섹션:**
+
 - 경영진 요약
 - 월간 성과
 - 목표 달성률 (진행 바)
@@ -157,12 +163,14 @@ if (!validation.valid) {
 ### 4. CampaignReportTemplate (캠페인 보고서)
 
 **특징:**
+
 - 2페이지 단일 캠페인 집중 분석
 - 일별 성과 추이
 - 일별 상세 타임라인
 - 최적화 제안
 
 **섹션:**
+
 - 캠페인 정보
 - 요약 지표 (9개)
 - 일별 성과 추이
@@ -173,12 +181,14 @@ if (!validation.valid) {
 ### 5. ExecutiveReportTemplate (경영진 보고서)
 
 **특징:**
+
 - 1페이지 요약
 - 핵심 KPI만 표시
 - 전기 대비 비교
 - 주요 인사이트만 3개
 
 **섹션:**
+
 - 핵심 KPI (2x2 그리드)
 - 핵심 요약
 - 주요 인사이트 (최대 3개)
@@ -189,18 +199,12 @@ if (!validation.valid) {
 // app/api/reports/[id]/pdf/route.ts
 import { pdfReportService } from '@infrastructure/pdf'
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: Request, { params }: { params: { id: string } }) {
   // 1. 보고서 데이터 조회
   const report = await getReportById(params.id)
 
   // 2. PDF 생성
-  const pdf = await pdfReportService.generateReport(
-    report.type,
-    toReportDTO(report)
-  )
+  const pdf = await pdfReportService.generateReport(report.type, toReportDTO(report))
 
   // 3. 응답 반환
   return new Response(pdf.buffer, {
@@ -274,13 +278,13 @@ import {
   formatDateShort,
 } from '@infrastructure/pdf'
 
-formatNumber(1234567)           // "1,234,567"
-formatCurrency(10000)           // "₩10,000"
-formatCurrency(10000, 'USD')    // "$10,000"
-formatPercent(12.3456)          // "12.35%"
-formatPercent(12.3456, 1)       // "12.3%"
-formatDate('2024-01-15')        // "2024년 1월 15일"
-formatDateShort('2024-01-15')   // "1월 15일"
+formatNumber(1234567) // "1,234,567"
+formatCurrency(10000) // "₩10,000"
+formatCurrency(10000, 'USD') // "$10,000"
+formatPercent(12.3456) // "12.35%"
+formatPercent(12.3456, 1) // "12.3%"
+formatDate('2024-01-15') // "2024년 1월 15일"
+formatDateShort('2024-01-15') // "1월 15일"
 ```
 
 ### 베이스 스타일 사용
@@ -331,14 +335,17 @@ npm run test:unit tests/unit/infrastructure/pdf/PDFReportService.test.ts
 ## 문제 해결
 
 ### 한글 깨짐
+
 - Noto Sans KR 폰트가 올바르게 로드되었는지 확인
 - CDN 접근이 가능한지 확인
 
 ### 생성 실패
+
 - `validateReportData()`로 데이터 검증
 - 필수 필드 확인 (dateRange, summaryMetrics, sections)
 
 ### 스타일 적용 안됨
+
 - @react-pdf/renderer의 StyleSheet 사용
 - 일반 CSS는 지원되지 않음
 

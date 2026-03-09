@@ -10,12 +10,12 @@ The **application layer** is the orchestration hub of the clean architecture. It
 
 ## Purpose
 
-| Domain | Role |
-|--------|------|
-| **Use Cases** | Implement specific business workflows (CreateCampaign, GenerateReport, SetupPixel, etc.) |
-| **DTOs** | Define request/response contracts with minimal knowledge of domain |
-| **Ports** | Abstract external service dependencies (Meta Ads, Email, AI, etc.) |
-| **Services** | Provide cross-cutting business logic (Budget recommendations, KPI analysis, Quota management) |
+| Domain        | Role                                                                                          |
+| ------------- | --------------------------------------------------------------------------------------------- |
+| **Use Cases** | Implement specific business workflows (CreateCampaign, GenerateReport, SetupPixel, etc.)      |
+| **DTOs**      | Define request/response contracts with minimal knowledge of domain                            |
+| **Ports**     | Abstract external service dependencies (Meta Ads, Email, AI, etc.)                            |
+| **Services**  | Provide cross-cutting business logic (Budget recommendations, KPI analysis, Quota management) |
 
 ## Directory Structure
 
@@ -67,44 +67,45 @@ src/application/
 
 ## Key Files Table
 
-| File | Purpose | Domain |
-|------|---------|--------|
-| `use-cases/campaign/*.ts` | Create, read, update, pause, resume campaigns | Campaign lifecycle |
-| `use-cases/report/GenerateWeeklyReportUseCase.ts` | Generate AI-powered weekly reports | Reporting |
-| `use-cases/kpi/SyncMetaInsightsUseCase.ts` | Sync insights from Meta Ads API | KPI management |
-| `use-cases/pixel/SetupPixelUseCase.ts` | Configure Meta Pixel tracking | Pixel setup |
-| `use-cases/pixel/SelectPixelUseCase.ts` | User selects/associates pixel | Pixel management |
-| `use-cases/admin/*.ts` | User management, payments, refunds | Admin operations |
-| `use-cases/ai-team/*` | Command routing, TDD workflows, approval management | AI team coordination |
-| `ports/IMetaAdsService.ts` | Contract with Meta Ads Graph API | Meta integration |
-| `ports/IMetaPixelService.ts` | Contract with Meta Pixel service | Pixel tracking |
-| `ports/IAIService.ts` | Contract with AI service (copy generation, analysis) | AI integration |
-| `dto/*` | Request/response DTOs for all domains | Data transfer |
-| `services/BudgetRecommendationService.ts` | Industry-based budget recommendations | Budget strategy |
-| `services/QuotaService.ts` | MVP usage limit enforcement | Quota management |
+| File                                              | Purpose                                              | Domain               |
+| ------------------------------------------------- | ---------------------------------------------------- | -------------------- |
+| `use-cases/campaign/*.ts`                         | Create, read, update, pause, resume campaigns        | Campaign lifecycle   |
+| `use-cases/report/GenerateWeeklyReportUseCase.ts` | Generate AI-powered weekly reports                   | Reporting            |
+| `use-cases/kpi/SyncMetaInsightsUseCase.ts`        | Sync insights from Meta Ads API                      | KPI management       |
+| `use-cases/pixel/SetupPixelUseCase.ts`            | Configure Meta Pixel tracking                        | Pixel setup          |
+| `use-cases/pixel/SelectPixelUseCase.ts`           | User selects/associates pixel                        | Pixel management     |
+| `use-cases/admin/*.ts`                            | User management, payments, refunds                   | Admin operations     |
+| `use-cases/ai-team/*`                             | Command routing, TDD workflows, approval management  | AI team coordination |
+| `ports/IMetaAdsService.ts`                        | Contract with Meta Ads Graph API                     | Meta integration     |
+| `ports/IMetaPixelService.ts`                      | Contract with Meta Pixel service                     | Pixel tracking       |
+| `ports/IAIService.ts`                             | Contract with AI service (copy generation, analysis) | AI integration       |
+| `dto/*`                                           | Request/response DTOs for all domains                | Data transfer        |
+| `services/BudgetRecommendationService.ts`         | Industry-based budget recommendations                | Budget strategy      |
+| `services/QuotaService.ts`                        | MVP usage limit enforcement                          | Quota management     |
 
 ## Subdirectories Table
 
-| Directory | Files | Purpose |
-|-----------|-------|---------|
-| **use-cases/campaign** | 6 files | Campaign CRUD + status management |
-| **use-cases/report** | 2 files | Report generation workflows |
-| **use-cases/kpi** | 2 files | KPI sync + dashboard queries |
-| **use-cases/pixel** | 4 files | Meta Pixel setup & management |
-| **use-cases/admin** | 5 files | Admin workflows (users, payments, refunds) |
-| **use-cases/ai-team** | 11 files | AI team command coordination & validation |
-| **dto/campaign** | 3 files | Campaign create/update/view DTOs |
-| **dto/report** | 1 file | Report response DTO |
-| **dto/kpi** | 1 file | KPI dashboard DTO |
-| **dto/quota** | 1 file | Usage quota status DTO |
-| **dto/pixel** | 1 file | Meta Pixel DTO |
-| **dto/admin** | 4 files | Admin dashboard, user list, payment DTOs |
-| **ports** | 6 files | External service contracts |
-| **services** | 10 files | Cross-cutting business logic |
+| Directory              | Files    | Purpose                                    |
+| ---------------------- | -------- | ------------------------------------------ |
+| **use-cases/campaign** | 6 files  | Campaign CRUD + status management          |
+| **use-cases/report**   | 2 files  | Report generation workflows                |
+| **use-cases/kpi**      | 2 files  | KPI sync + dashboard queries               |
+| **use-cases/pixel**    | 4 files  | Meta Pixel setup & management              |
+| **use-cases/admin**    | 5 files  | Admin workflows (users, payments, refunds) |
+| **use-cases/ai-team**  | 11 files | AI team command coordination & validation  |
+| **dto/campaign**       | 3 files  | Campaign create/update/view DTOs           |
+| **dto/report**         | 1 file   | Report response DTO                        |
+| **dto/kpi**            | 1 file   | KPI dashboard DTO                          |
+| **dto/quota**          | 1 file   | Usage quota status DTO                     |
+| **dto/pixel**          | 1 file   | Meta Pixel DTO                             |
+| **dto/admin**          | 4 files  | Admin dashboard, user list, payment DTOs   |
+| **ports**              | 6 files  | External service contracts                 |
+| **services**           | 10 files | Cross-cutting business logic               |
 
 ## Use Case Catalog
 
 ### Campaign Management
+
 ```typescript
 // Create campaign with optional Meta sync
 CreateCampaignUseCase(campaignRepo, metaAdsService, usageLogRepo)
@@ -132,6 +133,7 @@ ResumeCampaignUseCase(campaignRepo, metaAdsService)
 ```
 
 ### Report Generation
+
 ```typescript
 // Generate weekly AI-powered report
 GenerateWeeklyReportUseCase(campaignRepo, kpiRepo, aiService)
@@ -140,6 +142,7 @@ GenerateWeeklyReportUseCase(campaignRepo, kpiRepo, aiService)
 ```
 
 ### KPI & Insights Sync
+
 ```typescript
 // Sync insights from Meta Ads API
 SyncMetaInsightsUseCase(campaignRepo, kpiRepo, metaAdsService)
@@ -151,6 +154,7 @@ GetDashboardKPIUseCase(kpiRepo, campaignRepo)
 ```
 
 ### Meta Pixel Setup
+
 ```typescript
 // List all Meta Pixels for user
 ListUserPixelsUseCase(pixelRepo) → MetaPixelDTO[]
@@ -168,6 +172,7 @@ GetPixelStatusUseCase(pixelRepo) → PixelStatusDTO
 ```
 
 ### Admin Operations
+
 ```typescript
 // Get admin dashboard stats
 GetAdminDashboardStatsUseCase(userRepo, paymentRepo)
@@ -191,6 +196,7 @@ ProcessRefundUseCase(paymentRepo) → { success, message }
 ```
 
 ### AI Team Coordination
+
 ```typescript
 // Classify user command intent (Korean support)
 IntentClassifier
@@ -302,22 +308,23 @@ AITeamPort {
 
 ### Business Logic Services
 
-| Service | Purpose | Key Methods |
-|---------|---------|-------------|
-| **BudgetRecommendationService** | Industry-based budget strategies | `generateRecommendation()`, `validateBudget()`, `getIndustryDefaultAOV()` |
-| **QuotaService** | MVP usage limit enforcement | `checkQuota()`, `enforceQuota()`, `getFullQuotaStatus()`, `isInTrialPeriod()` |
-| **AnomalyDetectionService** | Detect performance anomalies | `detectAnomalies()`, `scoreAnomaly()` |
-| **AnomalyRootCauseService** | Analyze root causes | `analyzeRootCause()` |
-| **AnomalySegmentAnalysisService** | Segment-level analysis | `analyzeBySegment()` |
-| **CompetitorBenchmarkService** | Competitive comparison | `getBenchmarks()`, `comparePerformance()` |
-| **CopyLearningService** | Copy performance insights | `analyzeCopyPerformance()`, `generateInsights()` |
-| **CampaignAnalyzer** | Campaign metrics analysis | `analyzeCampaign()`, `calculateMetrics()` |
-| **BudgetAlertService** | Budget monitoring & alerts | `checkBudgetStatus()`, `sendAlert()` |
-| **ReportSchedulerService** | Schedule report generation | `scheduleReport()`, `generateScheduledReport()` |
+| Service                           | Purpose                          | Key Methods                                                                   |
+| --------------------------------- | -------------------------------- | ----------------------------------------------------------------------------- |
+| **BudgetRecommendationService**   | Industry-based budget strategies | `generateRecommendation()`, `validateBudget()`, `getIndustryDefaultAOV()`     |
+| **QuotaService**                  | MVP usage limit enforcement      | `checkQuota()`, `enforceQuota()`, `getFullQuotaStatus()`, `isInTrialPeriod()` |
+| **AnomalyDetectionService**       | Detect performance anomalies     | `detectAnomalies()`, `scoreAnomaly()`                                         |
+| **AnomalyRootCauseService**       | Analyze root causes              | `analyzeRootCause()`                                                          |
+| **AnomalySegmentAnalysisService** | Segment-level analysis           | `analyzeBySegment()`                                                          |
+| **CompetitorBenchmarkService**    | Competitive comparison           | `getBenchmarks()`, `comparePerformance()`                                     |
+| **CopyLearningService**           | Copy performance insights        | `analyzeCopyPerformance()`, `generateInsights()`                              |
+| **CampaignAnalyzer**              | Campaign metrics analysis        | `analyzeCampaign()`, `calculateMetrics()`                                     |
+| **BudgetAlertService**            | Budget monitoring & alerts       | `checkBudgetStatus()`, `sendAlert()`                                          |
+| **ReportSchedulerService**        | Schedule report generation       | `scheduleReport()`, `generateScheduledReport()`                               |
 
 ## Dependency Injections & Flow
 
 ### Campaign Creation Flow
+
 ```
 CreateCampaignUseCase
   ├── ICampaignRepository (from domain)
@@ -339,6 +346,7 @@ Usage Logging:
 ```
 
 ### Report Generation Flow
+
 ```
 GenerateWeeklyReportUseCase
   ├── ICampaignRepository (from domain)
@@ -358,6 +366,7 @@ Format & Return:
 ```
 
 ### Pixel Setup Flow
+
 ```
 SetupPixelUseCase
   └── IMetaPixelRepository (from domain)
@@ -378,25 +387,31 @@ Generate Result:
 ## Data Transfer Objects (DTOs)
 
 ### Campaign DTOs
+
 - **CreateCampaignDTO**: Request to create campaign
 - **UpdateCampaignDTO**: Request to update campaign properties
 - **CampaignDTO**: Response with campaign details
 
 ### Report DTOs
+
 - **ReportDTO**: Weekly report with insights and metrics
 
 ### KPI DTOs
+
 - **DashboardKPIDTO**: KPI summary for dashboard
 
 ### Quota DTOs
+
 - **QuotaStatusDTO**: Usage and remaining quota per type
 - **FullQuotaStatusDTO**: Quota + trial status
 
 ### Pixel DTOs
+
 - **MetaPixelDTO**: Pixel details
 - **SetupPixelResultDTO**: Setup result with script/URL
 
 ### Admin DTOs
+
 - **AdminDashboardDTO**: Admin statistics
 - **UserListDTO**: List of users
 - **PaymentDTO**: Payment details
@@ -405,6 +420,7 @@ Generate Result:
 ## AI Team Workflow Integration
 
 ### Command Processing Pipeline
+
 ```
 User Input (Korean/English)
     ↓
@@ -435,6 +451,7 @@ ReportGenerator
 ```
 
 ### Approval Workflow States
+
 ```typescript
 interface ApprovalState {
   id: string
@@ -452,6 +469,7 @@ interface ApprovalState {
 ## Key Patterns
 
 ### Use Case Pattern
+
 ```typescript
 export class SomeUseCase {
   constructor(
@@ -471,6 +489,7 @@ export class SomeUseCase {
 ```
 
 ### Service Pattern
+
 ```typescript
 export class SomeService {
   // Pure application logic (no entity loading)
@@ -484,6 +503,7 @@ export class SomeService {
 ```
 
 ### Error Handling
+
 ```typescript
 export class CustomError extends Error {
   constructor(message: string) {
@@ -500,6 +520,7 @@ throw new QuotaExceededError(type, limit, period)
 ## Architectural Constraints
 
 ### Dependency Flow
+
 ```
 Domain (entities, value objects, repositories)
     ↑
@@ -511,30 +532,34 @@ Infrastructure (implementations) & Presentation (UI)
 **Rule**: Application MUST NOT depend on Infrastructure/Presentation. Only the inverse.
 
 ### Repository Abstraction
+
 - Use `IXxxRepository` interfaces (defined in domain/)
 - Implementation lives in infrastructure/
 - Application depends only on interface
 
 ### Port Abstraction
+
 - Define service contracts in ports/
 - Implementation lives in infrastructure/
 - Enables testing with mock implementations
 
 ### DTO Boundaries
+
 - Use DTOs for all requests/responses
 - DTOs transform domain objects to safe transfer objects
 - Hide internal domain structure
 
 ## Testing Considerations
 
-| Layer | Test Type | What to Test |
-|-------|-----------|--------------|
+| Layer         | Test Type          | What to Test                                           |
+| ------------- | ------------------ | ------------------------------------------------------ |
 | **Use Cases** | Unit + Integration | Business flow, error handling, repository interactions |
-| **Services** | Unit | Algorithm correctness, edge cases |
-| **DTOs** | Integration | Proper transformation of domain → DTO |
-| **Ports** | Mock/Stub | Contract verification, error handling |
+| **Services**  | Unit               | Algorithm correctness, edge cases                      |
+| **DTOs**      | Integration        | Proper transformation of domain → DTO                  |
+| **Ports**     | Mock/Stub          | Contract verification, error handling                  |
 
 ### Mocking Strategy
+
 ```typescript
 // Create mocks for all dependencies
 const mockCampaignRepo = {
@@ -548,43 +573,43 @@ const mockMetaAdsService = {
   updateCampaignStatus: jest.fn(),
 }
 
-const useCase = new CreateCampaignUseCase(
-  mockCampaignRepo,
-  mockMetaAdsService,
-  mockUsageLogRepo
-)
+const useCase = new CreateCampaignUseCase(mockCampaignRepo, mockMetaAdsService, mockUsageLogRepo)
 ```
 
 ## Performance Considerations
 
 ### Quota Checking
+
 - Cache quota limits (rarely change)
 - Use database counts efficiently
 - Consider time-based caching for period calculations
 
 ### Meta Insights Sync
+
 - Batch API calls to Meta
 - Store insights in local cache
 - Implement retry logic for API failures
 
 ### Report Generation
+
 - Parallelize data fetching
 - Cache industry benchmarks
 - Consider background job for large reports
 
 ## Future Extensions
 
-| Feature | Impact | Complexity |
-|---------|--------|-----------|
-| **Multi-account support** | Campaign, KPI, Pixel repos | Medium |
-| **Automation rules** | New use cases, TDD workflow | High |
-| **Custom integrations** | More platform adapters | Medium |
-| **Advanced analytics** | More services, ML models | High |
-| **Webhook handlers** | New use cases, async workflows | Medium |
+| Feature                   | Impact                         | Complexity |
+| ------------------------- | ------------------------------ | ---------- |
+| **Multi-account support** | Campaign, KPI, Pixel repos     | Medium     |
+| **Automation rules**      | New use cases, TDD workflow    | High       |
+| **Custom integrations**   | More platform adapters         | Medium     |
+| **Advanced analytics**    | More services, ML models       | High       |
+| **Webhook handlers**      | New use cases, async workflows | Medium     |
 
 ## Summary
 
 The application layer is the **use case orchestrator**. It:
+
 - ✓ Defines all business workflows (use cases)
 - ✓ Abstracts external services (ports)
 - ✓ Manages data transfer (DTOs)

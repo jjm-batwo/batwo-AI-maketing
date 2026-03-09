@@ -4,15 +4,16 @@ import { useState, useEffect } from 'react'
 import { Brain, Heart, Users, Target, Palette, PenTool, type LucideIcon } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
-type KnowledgeDomain = 'neuromarketing' | 'marketing_psychology' | 'crowd_psychology' | 'meta_best_practices' | 'color_psychology' | 'copywriting_psychology'
+type KnowledgeDomain =
+  | 'neuromarketing'
+  | 'marketing_psychology'
+  | 'crowd_psychology'
+  | 'meta_best_practices'
+  | 'color_psychology'
+  | 'copywriting_psychology'
 type ScienceGrade = 'A+' | 'A' | 'B+' | 'B' | 'C+' | 'C' | 'D' | 'F'
 
 interface ScoringFactor {
@@ -37,9 +38,9 @@ interface DomainRecommendation {
 }
 
 interface DomainScore {
-  domain: string  // Changed from KnowledgeDomain to string for flexibility
+  domain: string // Changed from KnowledgeDomain to string for flexibility
   score: number
-  grade?: string  // Make optional - compute from score if missing
+  grade?: string // Make optional - compute from score if missing
   weight?: number
   factors?: ScoringFactor[]
   evidence?: string[]
@@ -104,10 +105,14 @@ const getScoreColor = (score: number): string => {
 }
 
 const getGradeBadgeColor = (grade: ScienceGrade): string => {
-  if (grade === 'A+' || grade === 'A') return 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30'
-  if (grade === 'B+' || grade === 'B') return 'bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/30'
-  if (grade === 'C+' || grade === 'C') return 'bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 border-yellow-500/30'
-  if (grade === 'D') return 'bg-orange-500/20 text-orange-700 dark:text-orange-300 border-orange-500/30'
+  if (grade === 'A+' || grade === 'A')
+    return 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30'
+  if (grade === 'B+' || grade === 'B')
+    return 'bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-500/30'
+  if (grade === 'C+' || grade === 'C')
+    return 'bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 border-yellow-500/30'
+  if (grade === 'D')
+    return 'bg-orange-500/20 text-orange-700 dark:text-orange-300 border-orange-500/30'
   return 'bg-red-500/20 text-red-700 dark:text-red-300 border-red-500/30'
 }
 
@@ -220,9 +225,7 @@ export function DomainBreakdown({
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-sm font-medium text-foreground">
-                            {label}
-                          </span>
+                          <span className="text-sm font-medium text-foreground">{label}</span>
                           <div className="flex items-center gap-2">
                             <span
                               className="text-sm font-semibold text-foreground"
@@ -232,7 +235,10 @@ export function DomainBreakdown({
                             </span>
                             <Badge
                               variant="outline"
-                              className={cn('text-xs font-semibold', getGradeBadgeColor(grade as ScienceGrade))}
+                              className={cn(
+                                'text-xs font-semibold',
+                                getGradeBadgeColor(grade as ScienceGrade)
+                              )}
                               aria-label={`등급 ${grade}`}
                             >
                               {grade}

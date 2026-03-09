@@ -1,7 +1,10 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { CampaignEditForm, CampaignEditFormData } from '@/presentation/components/campaign/CampaignEditForm'
+import {
+  CampaignEditForm,
+  CampaignEditFormData,
+} from '@/presentation/components/campaign/CampaignEditForm'
 import { useCampaignMutations } from '@/presentation/hooks/useCampaignMutations'
 import { useUIStore } from '@/presentation/stores'
 import { Loader2, ArrowLeft } from 'lucide-react'

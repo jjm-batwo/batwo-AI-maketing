@@ -45,7 +45,9 @@ interface TrustIndicatorItemProps {
   indicator: Indicator
 }
 
-const TrustIndicatorItem = memo(function TrustIndicatorItem({ indicator }: TrustIndicatorItemProps) {
+const TrustIndicatorItem = memo(function TrustIndicatorItem({
+  indicator,
+}: TrustIndicatorItemProps) {
   const colorClass = COLOR_CLASSES[indicator.color]
 
   return (

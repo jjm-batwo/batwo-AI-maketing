@@ -117,8 +117,7 @@ export function InviteMemberDialog({ teamId, open, onOpenChange }: InviteMemberD
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <UserPlus className="h-5 w-5" />
-            팀 멤버 초대
+            <UserPlus className="h-5 w-5" />팀 멤버 초대
           </DialogTitle>
           <DialogDescription>이메일 주소로 새 멤버를 초대하세요.</DialogDescription>
         </DialogHeader>

@@ -7,8 +7,7 @@ export type FacebookLoginStatus = 'connected' | 'not_authorized' | 'unknown' | '
 
 export function useFacebookLoginStatus() {
   const isTestOrWebDriver =
-    process.env.NODE_ENV === 'test' ||
-    (typeof navigator !== 'undefined' && navigator.webdriver)
+    process.env.NODE_ENV === 'test' || (typeof navigator !== 'undefined' && navigator.webdriver)
   const [status, setStatus] = useState<FacebookLoginStatus>(
     isTestOrWebDriver ? 'unknown' : 'loading'
   )

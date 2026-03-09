@@ -43,10 +43,7 @@ export async function POST(request: NextRequest) {
 
   const validation = shareRequestSchema.safeParse(body)
   if (!validation.success) {
-    return NextResponse.json(
-      { message: validation.error.issues[0].message },
-      { status: 400 }
-    )
+    return NextResponse.json({ message: validation.error.issues[0].message }, { status: 400 })
   }
 
   const { report, signature } = validation.data
@@ -65,8 +62,5 @@ export async function POST(request: NextRequest) {
 
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
 
-  return NextResponse.json(
-    { token, shareUrl, expiresAt },
-    { status: 201 }
-  )
+  return NextResponse.json({ token, shareUrl, expiresAt }, { status: 201 })
 }

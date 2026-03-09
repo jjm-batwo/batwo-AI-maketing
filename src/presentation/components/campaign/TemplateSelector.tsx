@@ -44,8 +44,7 @@ export function TemplateSelector({
   selectedTemplateId,
   showTips = false,
 }: TemplateSelectorProps) {
-  const [hoveredTemplate, setHoveredTemplate] =
-    useState<CampaignTemplateId | null>(null)
+  const [hoveredTemplate, setHoveredTemplate] = useState<CampaignTemplateId | null>(null)
   const templates = getAllCampaignTemplates()
 
   return (
@@ -86,15 +85,11 @@ export function TemplateSelector({
 
               <div className="space-y-1">
                 <h3 className="font-medium">{template.name}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {template.description}
-                </p>
+                <p className="text-sm text-muted-foreground">{template.description}</p>
               </div>
 
               <div className="mt-auto flex w-full items-center justify-between pt-2">
-                <span className="text-xs text-muted-foreground">
-                  {template.category}
-                </span>
+                <span className="text-xs text-muted-foreground">{template.category}</span>
                 <span className="text-sm font-medium text-primary">
                   {formatBudget(template.suggestedDailyBudget)}/일
                 </span>

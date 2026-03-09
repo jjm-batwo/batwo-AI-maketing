@@ -112,7 +112,11 @@ function getStatusConfig(status: string) {
 }
 
 export function PixelStatus({ pixelId, compact = false }: PixelStatusProps) {
-  const { data: status, isLoading, error } = useQuery({
+  const {
+    data: status,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['pixelStatus', pixelId],
     queryFn: () => fetchPixelStatus(pixelId),
     refetchInterval: 30000, // Refresh every 30 seconds
@@ -157,16 +161,9 @@ export function PixelStatus({ pixelId, compact = false }: PixelStatusProps) {
 
   if (compact) {
     return (
-      <div
-        data-testid="pixel-status"
-        className="compact flex flex-col gap-2"
-        role="status"
-      >
+      <div data-testid="pixel-status" className="compact flex flex-col gap-2" role="status">
         <div className="flex items-center gap-2">
-          <div
-            data-testid="status-indicator"
-            className={cn('h-2 w-2 rounded-full', color)}
-          />
+          <div data-testid="status-indicator" className={cn('h-2 w-2 rounded-full', color)} />
           <span className={cn('text-sm', textColor)}>{label}</span>
         </div>
         {health && <MatchRateBar matchRate={health.matchRate} compact />}
@@ -175,11 +172,7 @@ export function PixelStatus({ pixelId, compact = false }: PixelStatusProps) {
   }
 
   return (
-    <div
-      data-testid="pixel-status"
-      className="rounded-lg border p-4"
-      role="status"
-    >
+    <div data-testid="pixel-status" className="rounded-lg border p-4" role="status">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div
@@ -190,14 +183,14 @@ export function PixelStatus({ pixelId, compact = false }: PixelStatusProps) {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className={cn('rounded-full px-2 py-0.5 text-sm font-medium', bgColor, textColor)}>
+              <span
+                className={cn('rounded-full px-2 py-0.5 text-sm font-medium', bgColor, textColor)}
+              >
                 {label}
               </span>
               <div className={cn('h-2 w-2 rounded-full', color)} />
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {status.name}
-            </p>
+            <p className="mt-1 text-sm text-muted-foreground">{status.name}</p>
           </div>
         </div>
       </div>
@@ -233,12 +226,23 @@ export function PixelStatus({ pixelId, compact = false }: PixelStatusProps) {
           {health.suggestions.map((suggestion) => {
             const isError = suggestion.severity === 'error'
             const isWarn = suggestion.severity === 'warn'
-            const bannerBg = isError ? 'bg-red-50 border-red-200' : isWarn ? 'bg-yellow-50 border-yellow-200' : 'bg-blue-50 border-blue-200'
-            const bannerTextColor = isError ? 'text-red-800' : isWarn ? 'text-yellow-800' : 'text-blue-800'
+            const bannerBg = isError
+              ? 'bg-red-50 border-red-200'
+              : isWarn
+                ? 'bg-yellow-50 border-yellow-200'
+                : 'bg-blue-50 border-blue-200'
+            const bannerTextColor = isError
+              ? 'text-red-800'
+              : isWarn
+                ? 'text-yellow-800'
+                : 'text-blue-800'
             const IconComponent = isError ? AlertCircle : isWarn ? AlertTriangle : Info
 
             return (
-              <div key={suggestion.key} className={cn('flex gap-2 rounded-lg border p-3', bannerBg)}>
+              <div
+                key={suggestion.key}
+                className={cn('flex gap-2 rounded-lg border p-3', bannerBg)}
+              >
                 <IconComponent className={cn('mt-0.5 h-4 w-4 shrink-0', bannerTextColor)} />
                 <p className={cn('text-sm', bannerTextColor)}>{suggestion.message}</p>
               </div>

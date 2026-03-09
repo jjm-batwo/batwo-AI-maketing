@@ -5,22 +5,18 @@
  * Format: "resource:action" (e.g., "campaign:create", "member:manage")
  */
 
-export type Resource =
-  | 'team'
-  | 'member'
-  | 'campaign'
-  | 'report'
-  | 'settings'
-  | 'dashboard'
+export type Resource = 'team' | 'member' | 'campaign' | 'report' | 'settings' | 'dashboard'
 
-export type Action =
-  | 'create'
-  | 'read'
-  | 'update'
-  | 'delete'
-  | 'manage'
+export type Action = 'create' | 'read' | 'update' | 'delete' | 'manage'
 
-const VALID_RESOURCES: Resource[] = ['team', 'member', 'campaign', 'report', 'settings', 'dashboard']
+const VALID_RESOURCES: Resource[] = [
+  'team',
+  'member',
+  'campaign',
+  'report',
+  'settings',
+  'dashboard',
+]
 const VALID_ACTIONS: Action[] = ['create', 'read', 'update', 'delete', 'manage']
 
 export class Permission {

@@ -16,23 +16,23 @@
  * 업종 타입
  */
 export type Industry =
-  | 'ecommerce'      // 이커머스/쇼핑몰
-  | 'food_beverage'  // F&B/음식점
-  | 'beauty'         // 뷰티/화장품
-  | 'fashion'        // 패션/의류
-  | 'education'      // 교육/학원
-  | 'service'        // 서비스업
-  | 'saas'           // SaaS/소프트웨어
-  | 'other'          // 기타
+  | 'ecommerce' // 이커머스/쇼핑몰
+  | 'food_beverage' // F&B/음식점
+  | 'beauty' // 뷰티/화장품
+  | 'fashion' // 패션/의류
+  | 'education' // 교육/학원
+  | 'service' // 서비스업
+  | 'saas' // SaaS/소프트웨어
+  | 'other' // 기타
 
 /**
  * 사업 규모
  */
 export type BusinessScale =
-  | 'individual'     // 개인사업자 (월매출 1천만 미만)
-  | 'small'          // 소상공인 (월매출 1천만~5천만)
-  | 'medium'         // 중소기업 (월매출 5천만~5억)
-  | 'large'          // 대기업 (월매출 5억 이상)
+  | 'individual' // 개인사업자 (월매출 1천만 미만)
+  | 'small' // 소상공인 (월매출 1천만~5천만)
+  | 'medium' // 중소기업 (월매출 5천만~5억)
+  | 'large' // 대기업 (월매출 5억 이상)
 
 /**
  * AOV 티어 (객단가 구간)
@@ -60,12 +60,12 @@ export interface IndustryBudgetBenchmark {
   industry: Industry
   label: string
   dailyBudget: {
-    min: number        // 최소 일일 예산 (KRW)
+    min: number // 최소 일일 예산 (KRW)
     recommended: number // 권장 일일 예산 (KRW)
-    max: number        // 최대 일일 예산 (KRW)
+    max: number // 최대 일일 예산 (KRW)
   }
-  averageCPA: number   // 평균 CPA (KRW)
-  defaultAOV: number   // 기본 객단가 추정치 (KRW)
+  averageCPA: number // 평균 CPA (KRW)
+  defaultAOV: number // 기본 객단가 추정치 (KRW)
   description: string
 }
 
@@ -112,9 +112,9 @@ export interface BudgetRange {
 export interface BudgetRecommendationInput {
   industry: Industry
   businessScale: BusinessScale
-  monthlyMarketingBudget?: number  // 월 마케팅 예산 (직접 입력)
-  averageOrderValue?: number       // 평균 객단가 (직접 입력)
-  marginRate?: number              // 마진율 (선택, 기본 30%)
+  monthlyMarketingBudget?: number // 월 마케팅 예산 (직접 입력)
+  averageOrderValue?: number // 평균 객단가 (직접 입력)
+  marginRate?: number // 마진율 (선택, 기본 30%)
   existingCampaignData?: ExistingCampaignData
 }
 
@@ -122,12 +122,12 @@ export interface BudgetRecommendationInput {
  * 기존 캠페인 데이터 (Meta API에서 가져온 데이터)
  */
 export interface ExistingCampaignData {
-  avgDailySpend: number       // 평균 일일 지출
-  avgROAS: number             // 평균 ROAS
-  avgCPA: number              // 평균 CPA
-  avgAOV: number              // Meta에서 계산된 평균 객단가
-  totalSpend30Days: number    // 30일 총 지출
-  totalRevenue30Days: number  // 30일 총 매출
+  avgDailySpend: number // 평균 일일 지출
+  avgROAS: number // 평균 ROAS
+  avgCPA: number // 평균 CPA
+  avgAOV: number // Meta에서 계산된 평균 객단가
+  totalSpend30Days: number // 30일 총 지출
+  totalRevenue30Days: number // 30일 총 매출
   totalPurchases30Days: number // 30일 총 전환수
 }
 
@@ -137,14 +137,15 @@ export interface ExistingCampaignData {
 export interface BudgetRecommendation {
   dailyBudget: BudgetRange
   source: BudgetRecommendationSource
-  testBudget: number          // 7일 테스트 예산
-  targetROAS: number          // 객단가 기반 동적 계산
+  testBudget: number // 7일 테스트 예산
+  targetROAS: number // 객단가 기반 동적 계산
   targetCPA: number
-  aovUsed: number             // 사용된 객단가 값
-  aovSource: AOVSource        // 객단가 출처
-  reasoning: string           // 추천 근거 설명
+  aovUsed: number // 사용된 객단가 값
+  aovSource: AOVSource // 객단가 출처
+  reasoning: string // 추천 근거 설명
   tips: string[]
-  comparison?: {              // 기존 광고주용 비교 데이터
+  comparison?: {
+    // 기존 광고주용 비교 데이터
     currentVsRecommended: string
     potentialImpact: string
   }

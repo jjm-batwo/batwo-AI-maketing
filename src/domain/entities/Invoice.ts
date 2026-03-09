@@ -316,9 +316,7 @@ export class Invoice {
       throw InvalidInvoiceError.refundExceedsRemaining()
     }
 
-    const totalRefundAmount = this._refundAmount
-      ? this._refundAmount.add(refundMoney)
-      : refundMoney
+    const totalRefundAmount = this._refundAmount ? this._refundAmount.add(refundMoney) : refundMoney
 
     const isFullRefund = totalRefundAmount.equals(this._amount)
     const newStatus = isFullRefund ? InvoiceStatus.REFUNDED : InvoiceStatus.PARTIALLY_REFUNDED

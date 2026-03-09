@@ -16,12 +16,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: [
-          '/api/',
-          '/auth/',
-          '/_next/',
-          '/private/',
-        ],
+        disallow: ['/api/', '/auth/', '/_next/', '/private/'],
       },
       // Googlebot 특별 규칙 (선택적)
       {

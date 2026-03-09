@@ -81,12 +81,12 @@ export class AuditScore {
 
     // 낭비 추정: ROAS < 1.0인 캠페인의 총 지출
     const wastedSpend = campaignInsights
-      .filter(c => c.spend > 0 && c.revenue / c.spend < 1.0)
+      .filter((c) => c.spend > 0 && c.revenue / c.spend < 1.0)
       .reduce((sum, c) => sum + c.spend, 0)
 
     // 개선 추정: 낮은 CTR/CVR 캠페인 spend의 30%를 보수적 추가 수익으로 산정
     const improvableSpend = campaignInsights
-      .filter(c => {
+      .filter((c) => {
         const ctr = c.impressions > 0 ? c.clicks / c.impressions : 0
         const cvr = c.clicks > 0 ? c.conversions / c.clicks : 0
         return ctr < 0.005 || cvr < 0.01
@@ -98,8 +98,14 @@ export class AuditScore {
     return new AuditScore({
       overall,
       categories,
-      estimatedWaste: Money.create(Math.round(wastedSpend), currency as 'KRW' | 'USD' | 'EUR' | 'JPY'),
-      estimatedImprovement: Money.create(Math.round(improvableSpend * 0.3), currency as 'KRW' | 'USD' | 'EUR' | 'JPY'),
+      estimatedWaste: Money.create(
+        Math.round(wastedSpend),
+        currency as 'KRW' | 'USD' | 'EUR' | 'JPY'
+      ),
+      estimatedImprovement: Money.create(
+        Math.round(improvableSpend * 0.3),
+        currency as 'KRW' | 'USD' | 'EUR' | 'JPY'
+      ),
       grade,
     })
   }
@@ -123,7 +129,7 @@ export class AuditScore {
     const findings: AuditFinding[] = []
     const recommendations: AuditRecommendation[] = []
 
-    const lowRoasCampaigns = campaigns.filter(c => c.spend > 0 && c.revenue / c.spend < 1.0)
+    const lowRoasCampaigns = campaigns.filter((c) => c.spend > 0 && c.revenue / c.spend < 1.0)
     const lowRoasRatio = campaigns.length > 0 ? lowRoasCampaigns.length / campaigns.length : 0
 
     // 점수: ROAS 1 미만 비율이 낮을수록 높은 점수
@@ -135,7 +141,7 @@ export class AuditScore {
         message: '모든 캠페인이 ROAS 1.0 이상을 달성하고 있습니다.',
       })
     } else {
-      lowRoasCampaigns.forEach(c => {
+      lowRoasCampaigns.forEach((c) => {
         const roas = c.spend > 0 ? (c.revenue / c.spend).toFixed(2) : '0.00'
         findings.push({
           type: 'critical',
@@ -160,7 +166,7 @@ export class AuditScore {
     const findings: AuditFinding[] = []
     const recommendations: AuditRecommendation[] = []
 
-    const campaignsWithImpressions = campaigns.filter(c => c.impressions > 0)
+    const campaignsWithImpressions = campaigns.filter((c) => c.impressions > 0)
     if (campaignsWithImpressions.length === 0) {
       return {
         name: '타겟팅 정확도',
@@ -170,18 +176,14 @@ export class AuditScore {
       }
     }
 
-    const lowCtrCampaigns = campaignsWithImpressions.filter(
-      c => c.clicks / c.impressions < 0.005
-    )
-    const highCtrCampaigns = campaignsWithImpressions.filter(
-      c => c.clicks / c.impressions > 0.02
-    )
+    const lowCtrCampaigns = campaignsWithImpressions.filter((c) => c.clicks / c.impressions < 0.005)
+    const highCtrCampaigns = campaignsWithImpressions.filter((c) => c.clicks / c.impressions > 0.02)
 
     const goodRatio = highCtrCampaigns.length / campaignsWithImpressions.length
     const badRatio = lowCtrCampaigns.length / campaignsWithImpressions.length
     const score = Math.round(Math.min(100, Math.max(0, 100 - badRatio * 80 + goodRatio * 20)))
 
-    highCtrCampaigns.forEach(c => {
+    highCtrCampaigns.forEach((c) => {
       const ctr = ((c.clicks / c.impressions) * 100).toFixed(2)
       findings.push({
         type: 'positive',
@@ -189,7 +191,7 @@ export class AuditScore {
       })
     })
 
-    lowCtrCampaigns.forEach(c => {
+    lowCtrCampaigns.forEach((c) => {
       const ctr = ((c.clicks / c.impressions) * 100).toFixed(2)
       findings.push({
         type: 'warning',
@@ -216,28 +218,26 @@ export class AuditScore {
     const findings: AuditFinding[] = []
     const recommendations: AuditRecommendation[] = []
 
-    const campaignsWithClicks = campaigns.filter(c => c.clicks > 0)
+    const campaignsWithClicks = campaigns.filter((c) => c.clicks > 0)
     if (campaignsWithClicks.length === 0) {
       return {
         name: '크리에이티브 성과',
         score: 0,
-        findings: [{ type: 'warning', message: '클릭 데이터가 없어 크리에이티브를 평가할 수 없습니다.' }],
+        findings: [
+          { type: 'warning', message: '클릭 데이터가 없어 크리에이티브를 평가할 수 없습니다.' },
+        ],
         recommendations: [],
       }
     }
 
-    const lowCvrCampaigns = campaignsWithClicks.filter(
-      c => c.conversions / c.clicks < 0.01
-    )
-    const highCvrCampaigns = campaignsWithClicks.filter(
-      c => c.conversions / c.clicks > 0.03
-    )
+    const lowCvrCampaigns = campaignsWithClicks.filter((c) => c.conversions / c.clicks < 0.01)
+    const highCvrCampaigns = campaignsWithClicks.filter((c) => c.conversions / c.clicks > 0.03)
 
     const badRatio = lowCvrCampaigns.length / campaignsWithClicks.length
     const goodRatio = highCvrCampaigns.length / campaignsWithClicks.length
     const score = Math.round(Math.min(100, Math.max(0, 100 - badRatio * 80 + goodRatio * 20)))
 
-    highCvrCampaigns.forEach(c => {
+    highCvrCampaigns.forEach((c) => {
       const cvr = ((c.conversions / c.clicks) * 100).toFixed(2)
       findings.push({
         type: 'positive',
@@ -245,7 +245,7 @@ export class AuditScore {
       })
     })
 
-    lowCvrCampaigns.forEach(c => {
+    lowCvrCampaigns.forEach((c) => {
       const cvr = ((c.conversions / c.clicks) * 100).toFixed(2)
       findings.push({
         type: 'warning',
@@ -275,7 +275,7 @@ export class AuditScore {
     const RECENT_CAMPAIGN_DAYS = 7
     const recentThreshold = Date.now() - RECENT_CAMPAIGN_DAYS * 24 * 60 * 60 * 1000
 
-    const untrackedCampaigns = campaigns.filter(c => c.conversions === 0)
+    const untrackedCampaigns = campaigns.filter((c) => c.conversions === 0)
 
     if (untrackedCampaigns.length === 0) {
       findings.push({
@@ -287,14 +287,14 @@ export class AuditScore {
 
     // conversions=0인 캠페인을 최근/오래된 두 그룹으로 분류
     const recentCampaigns = untrackedCampaigns.filter(
-      c => c.createdTime && new Date(c.createdTime).getTime() > recentThreshold
+      (c) => c.createdTime && new Date(c.createdTime).getTime() > recentThreshold
     )
     const staleUntrackedCampaigns = untrackedCampaigns.filter(
-      c => !c.createdTime || new Date(c.createdTime).getTime() <= recentThreshold
+      (c) => !c.createdTime || new Date(c.createdTime).getTime() <= recentThreshold
     )
 
     // 최근 캠페인: 데이터 수집 중 (warning)
-    recentCampaigns.forEach(c => {
+    recentCampaigns.forEach((c) => {
       findings.push({
         type: 'warning',
         message: `캠페인 "${c.campaignName}"은 최근 생성되어 데이터 수집 중입니다. 7일 후 다시 확인하세요.`,
@@ -302,7 +302,7 @@ export class AuditScore {
     })
 
     // 오래된 캠페인 또는 createdTime 없음: 전환 추적 미설정 (critical)
-    staleUntrackedCampaigns.forEach(c => {
+    staleUntrackedCampaigns.forEach((c) => {
       findings.push({
         type: 'critical',
         message: `캠페인 "${c.campaignName}"에 전환 추적이 설정되어 있지 않습니다.`,
@@ -318,7 +318,8 @@ export class AuditScore {
     }
 
     // 점수 계산: recent 캠페인은 50% 가중 (완전 무시도 아니고 critical도 아닌 중간값)
-    const effectiveTracked = campaigns.length - staleUntrackedCampaigns.length - recentCampaigns.length * 0.5
+    const effectiveTracked =
+      campaigns.length - staleUntrackedCampaigns.length - recentCampaigns.length * 0.5
     const trackedRatio = effectiveTracked / campaigns.length
     const score = Math.round(trackedRatio * 100)
 

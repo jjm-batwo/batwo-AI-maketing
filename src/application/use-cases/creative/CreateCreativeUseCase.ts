@@ -4,9 +4,7 @@ import { CreateCreativeDTO } from '@application/dto/creative/CreateCreativeDTO'
 import { CreativeDTO, toCreativeDTO } from '@application/dto/creative/CreativeDTO'
 
 export class CreateCreativeUseCase {
-  constructor(
-    private readonly creativeRepository: ICreativeRepository
-  ) {}
+  constructor(private readonly creativeRepository: ICreativeRepository) {}
 
   async execute(dto: CreateCreativeDTO): Promise<CreativeDTO> {
     const creative = Creative.create({

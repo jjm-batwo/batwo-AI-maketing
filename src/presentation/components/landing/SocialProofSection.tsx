@@ -16,10 +16,7 @@ const MARQUEE_ITEMS = [...PLATFORMS, ...PLATFORMS, ...PLATFORMS]
 
 export function SocialProofSection() {
   return (
-    <section
-      id="social-proof"
-      className="py-14 md:py-20 border-y border-gray-100 overflow-hidden"
-    >
+    <section id="social-proof" className="py-14 md:py-20 border-y border-gray-100 overflow-hidden">
       <div className="container mx-auto px-4 mb-10 text-center">
         <SectionLabel className="text-center">연동 플랫폼</SectionLabel>
         <p className="text-sm text-muted-foreground">

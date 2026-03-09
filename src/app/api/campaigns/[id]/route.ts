@@ -13,19 +13,14 @@ import { invalidateCache, getUserPattern } from '@/lib/cache/kpiCache'
 import { revalidateTag } from 'next/cache'
 import { updateCampaignSchema, validateBody } from '@/lib/validations'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
   try {
     const { id } = await params
 
-    const getCampaign = container.resolve<GetCampaignUseCase>(
-      DI_TOKENS.GetCampaignUseCase
-    )
+    const getCampaign = container.resolve<GetCampaignUseCase>(DI_TOKENS.GetCampaignUseCase)
 
     const campaign = await getCampaign.execute({
       campaignId: id,
@@ -33,26 +28,17 @@ export async function GET(
     })
 
     if (!campaign) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     return NextResponse.json(campaign)
   } catch (error) {
     console.error('Failed to fetch campaign:', error)
-    return NextResponse.json(
-      { message: 'Failed to fetch campaign' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to fetch campaign' }, { status: 500 })
   }
 }
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 
@@ -65,9 +51,7 @@ export async function PATCH(
 
     const body = validation.data
 
-    const updateCampaign = container.resolve<UpdateCampaignUseCase>(
-      DI_TOKENS.UpdateCampaignUseCase
-    )
+    const updateCampaign = container.resolve<UpdateCampaignUseCase>(DI_TOKENS.UpdateCampaignUseCase)
 
     const result = await updateCampaign.execute({
       campaignId: id,
@@ -91,41 +75,26 @@ export async function PATCH(
     return NextResponse.json(result)
   } catch (error) {
     if (error instanceof CampaignNotFoundError) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     if (error instanceof UnauthorizedCampaignAccessError) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     if (error instanceof DuplicateCampaignNameError) {
-      return NextResponse.json(
-        { message: error.message },
-        { status: 400 }
-      )
+      return NextResponse.json({ message: error.message }, { status: 400 })
     }
 
     if (error instanceof Error) {
       // Handle domain errors (e.g., "Cannot update a completed campaign")
       if (error.message.includes('Cannot update')) {
-        return NextResponse.json(
-          { message: error.message },
-          { status: 400 }
-        )
+        return NextResponse.json({ message: error.message }, { status: 400 })
       }
     }
 
     console.error('Failed to update campaign:', error)
-    return NextResponse.json(
-      { message: 'Failed to update campaign' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to update campaign' }, { status: 500 })
   }
 }
 
@@ -139,25 +108,17 @@ export async function DELETE(
   try {
     const { id } = await params
 
-    const campaignRepository = container.resolve<ICampaignRepository>(
-      DI_TOKENS.CampaignRepository
-    )
+    const campaignRepository = container.resolve<ICampaignRepository>(DI_TOKENS.CampaignRepository)
 
     const campaign = await campaignRepository.findById(id)
 
     if (!campaign) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     // Check ownership
     if (campaign.userId !== user.id) {
-      return NextResponse.json(
-        { message: '캠페인을 찾을 수 없습니다' },
-        { status: 404 }
-      )
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
     await campaignRepository.delete(id)
@@ -170,9 +131,6 @@ export async function DELETE(
     return new NextResponse(null, { status: 204 })
   } catch (error) {
     console.error('Failed to delete campaign:', error)
-    return NextResponse.json(
-      { message: 'Failed to delete campaign' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Failed to delete campaign' }, { status: 500 })
   }
 }

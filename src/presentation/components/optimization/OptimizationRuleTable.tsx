@@ -158,7 +158,8 @@ export const OptimizationRuleTable = memo(function OptimizationRuleTable({
         </div>
         <h3 className="text-base font-semibold">아직 최적화 규칙이 없습니다</h3>
         <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-          프리셋으로 빠르게 시작하거나 직접 만들어보세요. 규칙이 충족되면 자동으로 액션을 실행합니다.
+          프리셋으로 빠르게 시작하거나 직접 만들어보세요. 규칙이 충족되면 자동으로 액션을
+          실행합니다.
         </p>
       </div>
     )
@@ -188,10 +189,7 @@ export const OptimizationRuleTable = memo(function OptimizationRuleTable({
               <TableCell>
                 <Badge
                   variant="outline"
-                  className={cn(
-                    'text-xs font-medium',
-                    RULE_TYPE_BADGE[rule.ruleType]
-                  )}
+                  className={cn('text-xs font-medium', RULE_TYPE_BADGE[rule.ruleType])}
                 >
                   {RULE_TYPE_LABELS[rule.ruleType] || rule.ruleType}
                 </Badge>

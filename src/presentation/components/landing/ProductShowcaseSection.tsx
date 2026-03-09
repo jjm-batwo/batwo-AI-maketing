@@ -79,11 +79,7 @@ function DashboardPreview() {
       {/* Mock Chart */}
       <div className="h-32 bg-gradient-to-r from-primary/10 via-primary/20 to-primary/10 rounded-lg flex items-end justify-around p-4">
         {[40, 65, 45, 80, 55, 90, 70].map((height, i) => (
-          <div
-            key={i}
-            className="w-8 bg-primary/60 rounded-t"
-            style={{ height: `${height}%` }}
-          />
+          <div key={i} className="w-8 bg-primary/60 rounded-t" style={{ height: `${height}%` }} />
         ))}
       </div>
     </div>
@@ -122,17 +118,12 @@ function CampaignPreview() {
 
       <div className="space-y-3">
         {campaigns.map((campaign, i) => (
-          <div
-            key={i}
-            className="flex items-center justify-between p-4 bg-muted/50 rounded-lg"
-          >
+          <div key={i} className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
             <div className="flex items-center gap-3">
               <Target className="h-5 w-5 text-primary" />
               <div>
                 <div className="font-medium">{campaign.name}</div>
-                <div className="text-xs text-muted-foreground">
-                  {campaign.budget}
-                </div>
+                <div className="text-xs text-muted-foreground">{campaign.budget}</div>
               </div>
             </div>
             <div className="text-right">
@@ -225,14 +216,16 @@ function ChatPreview() {
                 <div className="text-[10px] text-muted-foreground">ROAS</div>
                 <div className="text-sm font-semibold">4.52x</div>
                 <div className="text-[10px] text-emerald-600 flex items-center gap-0.5">
-                  <ArrowUpRight className="h-3 w-3" />+12.3%
+                  <ArrowUpRight className="h-3 w-3" />
+                  +12.3%
                 </div>
               </div>
               <div>
                 <div className="text-[10px] text-muted-foreground">전환수</div>
                 <div className="text-sm font-semibold">123건</div>
                 <div className="text-[10px] text-emerald-600 flex items-center gap-0.5">
-                  <ArrowUpRight className="h-3 w-3" />+8.1%
+                  <ArrowUpRight className="h-3 w-3" />
+                  +8.1%
                 </div>
               </div>
             </div>
@@ -256,8 +249,14 @@ function ChatPreview() {
                 캠페인 생성 확인
               </div>
               <div className="space-y-1 text-xs">
-                <div className="flex justify-between"><span className="text-muted-foreground">목표</span><span>전환</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">예산</span><span>₩50,000/일</span></div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">목표</span>
+                  <span>전환</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">예산</span>
+                  <span>₩50,000/일</span>
+                </div>
               </div>
             </div>
           </div>
@@ -274,8 +273,9 @@ export function ProductShowcaseSection() {
     <section id="product-showcase" className="py-16 md:py-24 overflow-hidden">
       <div
         ref={ref}
-        className={`container mx-auto px-4 transition-all duration-1000 ${isIntersecting ? 'animate-slide-up opacity-100' : 'opacity-0 translate-y-10'
-          }`}
+        className={`container mx-auto px-4 transition-all duration-1000 ${
+          isIntersecting ? 'animate-slide-up opacity-100' : 'opacity-0 translate-y-10'
+        }`}
       >
         {/* Section Header */}
         <div className="text-center mb-12">
@@ -286,11 +286,7 @@ export function ProductShowcaseSection() {
             복잡한 광고 데이터를 쉽게 이해하고, AI 인사이트로 빠르게 의사결정하세요
           </p>
           {/* 중간 CTA 버튼 - 이탈 위험 지점 개선 */}
-          <Button
-            size="lg"
-            className="gap-2 bg-primary hover:bg-primary/90 shadow-lg"
-            asChild
-          >
+          <Button size="lg" className="gap-2 bg-primary hover:bg-primary/90 shadow-lg" asChild>
             <Link href="/register" aria-label="14일 묶료 체험 시작하기">
               14일 묶료 체험 시작하기
               <ArrowRight className="h-4 w-4" aria-hidden="true" />

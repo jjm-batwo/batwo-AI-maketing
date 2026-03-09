@@ -11,34 +11,34 @@ import {
 } from '@/lib/middleware/rateLimit'
 
 interface ScienceOptimizeRequestBody {
-  campaignName: string;
-  objective: string;
-  industry?: string;
+  campaignName: string
+  objective: string
+  industry?: string
   currentMetrics: {
-    ctr: number;
-    cvr: number;
-    roas: number;
-    cpa: number;
-    impressions?: number;
-    clicks?: number;
-    spend?: number;
-  };
+    ctr: number
+    cvr: number
+    roas: number
+    cpa: number
+    impressions?: number
+    clicks?: number
+    spend?: number
+  }
   targetAudience?: {
-    ageRange?: string;
-    gender?: string;
-    interests?: string[];
-    location?: string;
-  };
+    ageRange?: string
+    gender?: string
+    interests?: string[]
+    location?: string
+  }
   budget?: {
-    daily: number;
-    total?: number;
-  };
+    daily: number
+    total?: number
+  }
 }
 
 export async function POST(request: NextRequest) {
   try {
     // 1. Authenticate user
-    const user = await getAuthenticatedUser();
+    const user = await getAuthenticatedUser()
     if (!user) {
       return unauthorizedResponse()
     }
@@ -56,12 +56,15 @@ export async function POST(request: NextRequest) {
 
     if (!body.campaignName || !body.objective || !body.currentMetrics) {
       return NextResponse.json(
-        { error: '필수 필드가 누락되었습니다. campaignName, objective, currentMetrics를 제공해주세요.' },
+        {
+          error:
+            '필수 필드가 누락되었습니다. campaignName, objective, currentMetrics를 제공해주세요.',
+        },
         { status: 400 }
       )
     }
 
-    const { ctr, cvr, roas, cpa } = body.currentMetrics;
+    const { ctr, cvr, roas, cpa } = body.currentMetrics
     if (
       typeof ctr !== 'number' ||
       typeof cvr !== 'number' ||
@@ -92,7 +95,16 @@ export async function POST(request: NextRequest) {
     const input: GenerateOptimizationInput = {
       campaignName: body.campaignName,
       objective: body.objective,
-      industry: body.industry as 'ecommerce' | 'food_beverage' | 'beauty' | 'fashion' | 'education' | 'service' | 'saas' | 'health' | undefined,
+      industry: body.industry as
+        | 'ecommerce'
+        | 'food_beverage'
+        | 'beauty'
+        | 'fashion'
+        | 'education'
+        | 'service'
+        | 'saas'
+        | 'health'
+        | undefined,
       currentMetrics: {
         ctr: body.currentMetrics.ctr,
         cvr: body.currentMetrics.cvr,
@@ -104,10 +116,10 @@ export async function POST(request: NextRequest) {
         conversions: 0,
       },
       targetAudience: body.targetAudience,
-    };
+    }
 
     // 7. Call generateScienceBackedOptimization
-    const result = await scienceService.generateScienceBackedOptimization(input);
+    const result = await scienceService.generateScienceBackedOptimization(input)
 
     // 8. Log usage
     await quotaService.logUsage(user.id, 'AI_SCIENCE')
@@ -126,9 +138,6 @@ export async function POST(request: NextRequest) {
     return addRateLimitHeaders(jsonResponse, rateLimitResult)
   } catch (error) {
     console.error('[AI Science Optimize Error]', error)
-    return NextResponse.json(
-      { error: '과학 기반 최적화 분석에 실패했습니다' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: '과학 기반 최적화 분석에 실패했습니다' }, { status: 500 })
   }
 }

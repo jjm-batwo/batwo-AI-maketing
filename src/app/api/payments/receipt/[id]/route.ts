@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS } from '@/lib/di/container'
-import type { IPaymentLogRepository, PaymentLogData } from '@/domain/repositories/IPaymentLogRepository'
+import type {
+  IPaymentLogRepository,
+  PaymentLogData,
+} from '@/domain/repositories/IPaymentLogRepository'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) {
     return unauthorizedResponse()
@@ -23,10 +23,7 @@ export async function GET(
   const paymentLog = allPaymentLogs.find((log: PaymentLogData) => log.id === id)
 
   if (!paymentLog) {
-    return NextResponse.json(
-      { error: '결제 내역을 찾을 수 없습니다' },
-      { status: 404 }
-    )
+    return NextResponse.json({ error: '결제 내역을 찾을 수 없습니다' }, { status: 404 })
   }
 
   // Return payment receipt details

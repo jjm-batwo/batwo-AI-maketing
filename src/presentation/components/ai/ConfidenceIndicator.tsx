@@ -1,12 +1,7 @@
 'use client'
 
 import { Badge } from '@/components/ui/badge'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { CheckCircle2, AlertTriangle, XCircle } from 'lucide-react'
 
@@ -109,12 +104,8 @@ export function ConfidenceIndicator({
         </TooltipTrigger>
         <TooltipContent className="max-w-xs">
           <div className="space-y-1">
-            <p className="font-semibold text-sm">
-              신뢰도: {normalizedConfidence}%
-            </p>
-            <p className="text-xs text-muted-foreground">
-              {confidenceInfo.description}
-            </p>
+            <p className="font-semibold text-sm">신뢰도: {normalizedConfidence}%</p>
+            <p className="text-xs text-muted-foreground">{confidenceInfo.description}</p>
           </div>
         </TooltipContent>
       </Tooltip>

@@ -252,7 +252,9 @@ export class PortfolioOptimizationService {
 
       const changePercent =
         campaign.currentBudget > 0
-          ? Math.round(((recommendedBudget - campaign.currentBudget) / campaign.currentBudget) * 100)
+          ? Math.round(
+              ((recommendedBudget - campaign.currentBudget) / campaign.currentBudget) * 100
+            )
           : 0
 
       return {
@@ -370,8 +372,7 @@ export class PortfolioOptimizationService {
           return spend > 0 ? revenue / spend : 0
         })
 
-        const avgROAS =
-          dailyROAS.reduce((sum, r) => sum + r, 0) / Math.max(dailyROAS.length, 1)
+        const avgROAS = dailyROAS.reduce((sum, r) => sum + r, 0) / Math.max(dailyROAS.length, 1)
         const variance =
           dailyROAS.reduce((sum, r) => sum + Math.pow(r - avgROAS, 2), 0) /
           Math.max(dailyROAS.length, 1)

@@ -1,12 +1,5 @@
 import React from 'react'
-import {
-  Document,
-  Page,
-  Text,
-  View,
-  StyleSheet,
-  Font,
-} from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer'
 import type { ReportDTO } from '@application/dto/report/ReportDTO'
 import type { ReportSection } from '@domain/entities/Report'
 import type { ChartData, TableData, PDFGenerationOptions } from '../types'
@@ -16,8 +9,7 @@ import type { ChartData, TableData, PDFGenerationOptions } from '../types'
 // ========================================
 
 const shouldUseRemotePdfFont =
-  process.env.NODE_ENV !== 'test' &&
-  process.env.DISABLE_REMOTE_PDF_FONT !== 'true'
+  process.env.NODE_ENV !== 'test' && process.env.DISABLE_REMOTE_PDF_FONT !== 'true'
 
 export const PDF_FONT_FAMILY = shouldUseRemotePdfFont ? 'NotoSansKR' : 'Helvetica'
 
@@ -165,7 +157,11 @@ export abstract class BaseReportTemplate {
   abstract generate(report: ReportDTO, options?: PDFGenerationOptions): React.ReactElement
 
   // Protected helper methods
-  protected renderHeader(title: string, subtitle: string, dateRange: { startDate: string; endDate: string }): React.ReactElement {
+  protected renderHeader(
+    title: string,
+    subtitle: string,
+    dateRange: { startDate: string; endDate: string }
+  ): React.ReactElement {
     return (
       <View style={baseStyles.header}>
         <Text style={baseStyles.title}>{title}</Text>
@@ -180,9 +176,7 @@ export abstract class BaseReportTemplate {
   protected renderFooter(pageNumber?: number): React.ReactElement {
     return (
       <View style={baseStyles.footer}>
-        <Text style={baseStyles.footerText}>
-          생성일: {new Date().toLocaleDateString('ko-KR')}
-        </Text>
+        <Text style={baseStyles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
         <Text style={baseStyles.footerText}>
           바투 AI 마케팅{pageNumber ? ` | 페이지 ${pageNumber}` : ''}
         </Text>
@@ -198,9 +192,7 @@ export abstract class BaseReportTemplate {
       <View style={{ marginVertical: 12 }}>
         {chartData.map((data, index) => (
           <View key={index} style={{ marginBottom: 8 }}>
-            <Text style={{ fontSize: 10, color: '#64748b', marginBottom: 4 }}>
-              {data.label}
-            </Text>
+            <Text style={{ fontSize: 10, color: '#64748b', marginBottom: 4 }}>{data.label}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <View
                 style={{
@@ -290,14 +282,18 @@ export function BaseDocument({ children }: { children: React.ReactNode }) {
   return <Document>{children}</Document>
 }
 
-export function BasePage({ children, pageNumber }: { children: React.ReactNode; pageNumber?: number }) {
+export function BasePage({
+  children,
+  pageNumber,
+}: {
+  children: React.ReactNode
+  pageNumber?: number
+}) {
   return (
     <Page size="A4" style={baseStyles.page}>
       {children}
       <View style={baseStyles.footer}>
-        <Text style={baseStyles.footerText}>
-          생성일: {new Date().toLocaleDateString('ko-KR')}
-        </Text>
+        <Text style={baseStyles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
         <Text style={baseStyles.footerText}>
           바투 AI 마케팅{pageNumber ? ` | 페이지 ${pageNumber}` : ''}
         </Text>

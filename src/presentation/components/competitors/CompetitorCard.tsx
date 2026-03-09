@@ -42,9 +42,7 @@ export function CompetitorCard({
     <Card className="h-full">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-2">
-          <CardTitle className="text-base font-semibold leading-tight">
-            {pageName}
-          </CardTitle>
+          <CardTitle className="text-base font-semibold leading-tight">{pageName}</CardTitle>
           <div className="flex items-center gap-1 text-sm text-muted-foreground shrink-0">
             <Megaphone className="h-3.5 w-3.5" />
             <span>{adCount}개 광고</span>
@@ -95,7 +93,9 @@ export function CompetitorCard({
         </div>
         <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
           <Clock className="h-3.5 w-3.5" />
-          <span>평균 광고 수명 <strong className="text-foreground">{averageAdLifespan}일</strong></span>
+          <span>
+            평균 광고 수명 <strong className="text-foreground">{averageAdLifespan}일</strong>
+          </span>
         </div>
       </CardContent>
     </Card>

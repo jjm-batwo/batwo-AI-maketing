@@ -1,7 +1,13 @@
 import React from 'react'
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
 import type { ReportDTO } from '@application/dto/report/ReportDTO'
-import { baseStyles, formatNumber, formatCurrency, formatDate, formatPercent } from './BaseReportTemplate'
+import {
+  baseStyles,
+  formatNumber,
+  formatCurrency,
+  formatDate,
+  formatPercent,
+} from './BaseReportTemplate'
 import { MetricCard } from '../components/MetricCard'
 import { BarChart } from '../components/BarChart'
 
@@ -108,38 +114,14 @@ export function DailyReportTemplate({ report }: DailyReportTemplateProps) {
         <View style={styles.summarySection}>
           <Text style={styles.sectionTitle}>오늘의 성과</Text>
           <View style={styles.metricsGrid}>
-            <MetricCard
-              label="총 노출"
-              value={formatNumber(summaryMetrics.totalImpressions)}
-            />
-            <MetricCard
-              label="총 클릭"
-              value={formatNumber(summaryMetrics.totalClicks)}
-            />
-            <MetricCard
-              label="총 전환"
-              value={formatNumber(summaryMetrics.totalConversions)}
-            />
-            <MetricCard
-              label="총 지출"
-              value={formatCurrency(summaryMetrics.totalSpend)}
-            />
-            <MetricCard
-              label="총 매출"
-              value={formatCurrency(summaryMetrics.totalRevenue)}
-            />
-            <MetricCard
-              label="ROAS"
-              value={`${summaryMetrics.overallROAS.toFixed(2)}x`}
-            />
-            <MetricCard
-              label="평균 CTR"
-              value={formatPercent(summaryMetrics.averageCTR)}
-            />
-            <MetricCard
-              label="평균 CVR"
-              value={formatPercent(summaryMetrics.averageCVR)}
-            />
+            <MetricCard label="총 노출" value={formatNumber(summaryMetrics.totalImpressions)} />
+            <MetricCard label="총 클릭" value={formatNumber(summaryMetrics.totalClicks)} />
+            <MetricCard label="총 전환" value={formatNumber(summaryMetrics.totalConversions)} />
+            <MetricCard label="총 지출" value={formatCurrency(summaryMetrics.totalSpend)} />
+            <MetricCard label="총 매출" value={formatCurrency(summaryMetrics.totalRevenue)} />
+            <MetricCard label="ROAS" value={`${summaryMetrics.overallROAS.toFixed(2)}x`} />
+            <MetricCard label="평균 CTR" value={formatPercent(summaryMetrics.averageCTR)} />
+            <MetricCard label="평균 CVR" value={formatPercent(summaryMetrics.averageCVR)} />
           </View>
         </View>
 
@@ -238,8 +220,7 @@ export function DailyReportTemplate({ report }: DailyReportTemplateProps) {
                   label: s.title.substring(0, 20),
                   value: s.metrics?.conversions || 0,
                   color: '#3b82f6',
-                }))
-              }
+                }))}
               formatValue={(v) => formatNumber(v)}
             />
           </View>
@@ -264,9 +245,7 @@ export function DailyReportTemplate({ report }: DailyReportTemplateProps) {
 
         {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            생성일: {new Date().toLocaleDateString('ko-KR')}
-          </Text>
+          <Text style={styles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
           <Text style={styles.footerText}>바투 AI 마케팅 | 일간 보고서</Text>
         </View>
       </Page>

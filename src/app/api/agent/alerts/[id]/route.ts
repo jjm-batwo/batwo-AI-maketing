@@ -3,10 +3,7 @@ import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS } from '@/lib/di/container'
 import type { IAlertRepository } from '@/domain/repositories/IAlertRepository'
 
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
   if (!user) return unauthorizedResponse()
 

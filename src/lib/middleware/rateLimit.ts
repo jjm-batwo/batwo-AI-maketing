@@ -118,10 +118,12 @@ async function initUpstash(): Promise<boolean> {
     if (process.env.NODE_ENV !== 'production') {
       console.warn(
         '[RateLimit] Upstash not configured in development, using memory fallback. ' +
-        'For production, set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN'
+          'For production, set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN'
       )
     } else {
-      console.error('[RateLimit] Upstash not configured in production - Rate limiting may not work correctly')
+      console.error(
+        '[RateLimit] Upstash not configured in production - Rate limiting may not work correctly'
+      )
     }
     return false
   }
@@ -256,10 +258,7 @@ export function getClientIp(request: NextRequest): string {
 /**
  * Rate Limit 헤더 추가
  */
-export function addRateLimitHeaders(
-  response: NextResponse,
-  result: RateLimitResult
-): NextResponse {
+export function addRateLimitHeaders(response: NextResponse, result: RateLimitResult): NextResponse {
   response.headers.set('X-RateLimit-Limit', result.limit.toString())
   response.headers.set('X-RateLimit-Remaining', result.remaining.toString())
   response.headers.set('X-RateLimit-Reset', result.reset.toString())

@@ -55,13 +55,7 @@ export const DEFAULT_ROLE_PERMISSIONS: Record<TeamRoleType, TeamPermission[]> = 
     'settings:read',
     'settings:write',
   ],
-  MEMBER: [
-    'campaign:read',
-    'campaign:write',
-    'report:read',
-    'report:write',
-    'analytics:read',
-  ],
+  MEMBER: ['campaign:read', 'campaign:write', 'report:read', 'report:write', 'analytics:read'],
   VIEWER: ['campaign:read', 'report:read', 'analytics:read'],
 }
 
