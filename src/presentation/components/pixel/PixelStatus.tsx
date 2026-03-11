@@ -119,13 +119,13 @@ export function PixelStatus({ pixelId, compact = false }: PixelStatusProps) {
   } = useQuery({
     queryKey: ['pixelStatus', pixelId],
     queryFn: () => fetchPixelStatus(pixelId),
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: 120_000, // PERF-07: 30s → 120s (2분) 폴링 간격 연장
   })
 
   const { data: health } = useQuery({
     queryKey: ['trackingHealth', pixelId],
     queryFn: () => fetchTrackingHealth(pixelId),
-    refetchInterval: 60000, // Refresh every 60 seconds
+    refetchInterval: 300_000, // PERF-07: 60s → 300s (5분) 폴링 간격 연장
   })
 
   if (isLoading) {

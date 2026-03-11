@@ -246,9 +246,9 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
         </div>
 
         {/* Bulk Action Bar */}
-        {selectedCampaignIds.length > 0 && (
+        {selectedCampaignIds.size > 0 && (
           <div className="flex items-center gap-3 rounded-lg border border-primary/20 bg-primary/5 p-3">
-            <span className="text-sm font-medium">{selectedCampaignIds.length}개 선택됨</span>
+            <span className="text-sm font-medium">{selectedCampaignIds.size}개 선택됨</span>
             <div className="flex gap-2 ml-auto">
               <Button variant="outline" size="sm">
                 <Pause className="mr-1 h-3 w-3" />

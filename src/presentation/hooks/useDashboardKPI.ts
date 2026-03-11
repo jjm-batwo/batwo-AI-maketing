@@ -121,6 +121,7 @@ export function useDashboardKPI(params?: {
     queryFn: () => fetchDashboardKPI(queryParams),
     staleTime: 60 * 1000, // 1 minute
     refetchInterval: 5 * 60 * 1000, // 5 minutes
+    refetchIntervalInBackground: false, // PERF-08: 탭 비활성 시 폴링 중지
     enabled,
   })
 }
