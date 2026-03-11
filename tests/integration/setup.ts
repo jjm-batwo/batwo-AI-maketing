@@ -47,6 +47,7 @@ export async function cleanDatabase(): Promise<void> {
     client.usageLog.deleteMany(),
     client.kPISnapshot.deleteMany(),
     client.report.deleteMany(),
+    client.subscription.deleteMany(),
     client.campaign.deleteMany(),
     client.metaAdAccount.deleteMany(),
     client.teamMember.deleteMany(),
