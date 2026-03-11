@@ -110,7 +110,7 @@
 - **위험**: 과금 오류, 환불 실패, 이중 결제
 - **조치**:
   - [x] `TossPaymentsClient.test.ts` — fetch 모킹 (성공/실패/에러코드)
-  - [ ] `SubscribePlanUseCase.test.ts` 등 5개 use case 단위 테스트
+  - [x] `SubscribePlanUseCase.test.ts` 등 5개 use case 단위 테스트 (26건 작성 완료)
   - [x] 웹훅 검증 테스트
 - **파일**: `src/infrastructure/payment/TossPaymentsClient.ts`, `src/application/use-cases/payment/`
 
