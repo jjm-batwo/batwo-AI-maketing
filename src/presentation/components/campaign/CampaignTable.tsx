@@ -98,6 +98,7 @@ interface CampaignTableProps {
   campaigns: Campaign[]
   isLoading?: boolean
   onStatusChange?: (id: string, status: string) => void
+  onRowClick?: (id: string, name: string) => void
 }
 
 // UX-06: Status config with icons for color-blind accessibility
@@ -132,6 +133,7 @@ export const CampaignTable = memo(function CampaignTable({
   campaigns,
   isLoading = false,
   onStatusChange,
+  onRowClick,
 }: CampaignTableProps) {
   const t = useTranslations()
   const router = useRouter()
@@ -391,9 +393,14 @@ export const CampaignTable = memo(function CampaignTable({
       ) {
         return
       }
-      router.push(`/campaigns/${id}`)
+      if (onRowClick) {
+        const campaign = campaigns.find((c) => c.id === id)
+        onRowClick(id, campaign?.name ?? '')
+      } else {
+        router.push(`/campaigns/${id}`)
+      }
     },
-    [router]
+    [router, onRowClick, campaigns]
   )
 
   // UX-03: Handle preset save via Dialog

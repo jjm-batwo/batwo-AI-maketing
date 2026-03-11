@@ -73,7 +73,7 @@ describe('KPICard', () => {
     it('should show neutral color for no change', () => {
       render(<KPICard {...defaultProps} change={0} changeType="neutral" />)
       const changeElement = screen.getByText('0%').closest('div')
-      expect(changeElement).toHaveClass('text-gray-600')
+      expect(changeElement).toHaveClass('text-muted-foreground')
     })
   })
 

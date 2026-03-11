@@ -2,7 +2,39 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type React from 'react'
+import { NextIntlClientProvider } from 'next-intl'
 import { AdSetTable } from '../../../../../src/presentation/components/campaign/AdSetTable'
+
+// Mock next-intl to pass through known keys
+const mockMessages = {
+  table: {
+    columns: {
+      name: '이름',
+      dailyBudget: '일예산',
+      spend: '지출',
+      impressions: '노출',
+      clicks: '클릭',
+      ctr: 'CTR',
+      conversions: '전환',
+      roas: 'ROAS',
+    },
+    status: {
+      active: '진행 중',
+      paused: '일시정지',
+      deleted: '삭제됨',
+      archived: '보관됨',
+    },
+    empty: {
+      adSets: '광고 세트가 없습니다',
+      ads: '광고가 없습니다',
+    },
+  },
+  campaignSummary: {
+    columns: {
+      status: '상태',
+    },
+  },
+}
 
 // Mock shadcn/ui Table components
 vi.mock('@/components/ui/table', () => ({
@@ -43,6 +75,22 @@ vi.mock('@/lib/utils/format', () => ({
   formatMultiplier: (n: number) => `${n.toFixed(2)}x`,
 }))
 
+// Mock lucide-react icons
+vi.mock('lucide-react', () => ({
+  Play: ({ className }: { className?: string }) => <span data-testid="icon-play" className={className} />,
+  Pause: ({ className }: { className?: string }) => <span data-testid="icon-pause" className={className} />,
+  Trash2: ({ className }: { className?: string }) => <span data-testid="icon-trash" className={className} />,
+  Archive: ({ className }: { className?: string }) => <span data-testid="icon-archive" className={className} />,
+}))
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="ko" messages={mockMessages}>
+      {ui}
+    </NextIntlClientProvider>
+  )
+}
+
 const mockAdSets = [
   {
     id: 'adset-1',
@@ -73,44 +121,40 @@ const mockAdSets = [
 
 describe('AdSetTable', () => {
   describe('로딩 상태', () => {
-    it('isLoading이 true이면 "로딩 중..." 텍스트를 표시한다', () => {
-      render(<AdSetTable adSets={[]} isLoading={true} />)
-      expect(screen.getByText('로딩 중...')).toBeInTheDocument()
-    })
-
-    it('isLoading이 true이면 테이블을 렌더링하지 않는다', () => {
-      render(<AdSetTable adSets={mockAdSets} isLoading={true} />)
-      expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    it('isLoading이 true이면 스켈레톤을 표시한다', () => {
+      renderWithIntl(<AdSetTable adSets={[]} isLoading={true} />)
+      // 로딩 시 스켈레톤 테이블 헤더 렌더링
+      expect(screen.getByText('이름')).toBeInTheDocument()
     })
   })
 
   describe('빈 상태', () => {
     it('광고 세트가 없으면 "광고 세트가 없습니다" 텍스트를 표시한다', () => {
-      render(<AdSetTable adSets={[]} />)
+      renderWithIntl(<AdSetTable adSets={[]} />)
       expect(screen.getByText('광고 세트가 없습니다')).toBeInTheDocument()
     })
 
     it('광고 세트가 없으면 테이블을 렌더링하지 않는다', () => {
-      render(<AdSetTable adSets={[]} />)
+      renderWithIntl(<AdSetTable adSets={[]} />)
       expect(screen.queryByRole('table')).not.toBeInTheDocument()
     })
   })
 
   describe('데이터 렌더링', () => {
     it('광고 세트 이름을 표시한다', () => {
-      render(<AdSetTable adSets={mockAdSets} />)
+      renderWithIntl(<AdSetTable adSets={mockAdSets} />)
       expect(screen.getByText('테스트 광고 세트 A')).toBeInTheDocument()
       expect(screen.getByText('테스트 광고 세트 B')).toBeInTheDocument()
     })
 
     it('한국어 상태 레이블을 표시한다', () => {
-      render(<AdSetTable adSets={mockAdSets} />)
+      renderWithIntl(<AdSetTable adSets={mockAdSets} />)
       expect(screen.getByText('진행 중')).toBeInTheDocument()
       expect(screen.getByText('일시정지')).toBeInTheDocument()
     })
 
     it('테이블 헤더를 올바르게 렌더링한다', () => {
-      render(<AdSetTable adSets={mockAdSets} />)
+      renderWithIntl(<AdSetTable adSets={mockAdSets} />)
       expect(screen.getByText('이름')).toBeInTheDocument()
       expect(screen.getByText('상태')).toBeInTheDocument()
       expect(screen.getByText('일예산')).toBeInTheDocument()
@@ -123,13 +167,12 @@ describe('AdSetTable', () => {
     })
 
     it('dailyBudget가 없으면 "-"를 표시한다', () => {
-      render(<AdSetTable adSets={mockAdSets} />)
-      // adset-2 has no dailyBudget
+      renderWithIntl(<AdSetTable adSets={mockAdSets} />)
       expect(screen.getByText('-')).toBeInTheDocument()
     })
 
     it('dailyBudget가 있으면 포맷된 금액을 표시한다', () => {
-      render(<AdSetTable adSets={mockAdSets} />)
+      renderWithIntl(<AdSetTable adSets={mockAdSets} />)
       expect(screen.getByText('50,000원')).toBeInTheDocument()
     })
   })
@@ -138,7 +181,7 @@ describe('AdSetTable', () => {
     it('행 클릭 시 onAdSetClick 콜백에 올바른 ID를 전달한다', async () => {
       const user = userEvent.setup()
       const handleClick = vi.fn()
-      render(<AdSetTable adSets={mockAdSets} onAdSetClick={handleClick} />)
+      renderWithIntl(<AdSetTable adSets={mockAdSets} onAdSetClick={handleClick} />)
 
       const row = screen.getByText('테스트 광고 세트 A').closest('tr')!
       await user.click(row)
@@ -148,7 +191,7 @@ describe('AdSetTable', () => {
 
     it('onAdSetClick이 없으면 클릭해도 에러가 발생하지 않는다', async () => {
       const user = userEvent.setup()
-      render(<AdSetTable adSets={mockAdSets} />)
+      renderWithIntl(<AdSetTable adSets={mockAdSets} />)
 
       const row = screen.getByText('테스트 광고 세트 A').closest('tr')!
       await user.click(row)

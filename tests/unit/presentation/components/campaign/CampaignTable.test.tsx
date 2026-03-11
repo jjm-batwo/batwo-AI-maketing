@@ -20,13 +20,54 @@ vi.mock('next/link', () => ({
 }))
 
 vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string) => {
+  useTranslations: () => (key: string, params?: Record<string, unknown>) => {
     const map: Record<string, string> = {
       'campaignSummary.columns.name': '이름',
       'campaignSummary.columns.status': '상태',
       'campaigns.empty.title': '캠페인이 없습니다',
       'campaigns.empty.description': '첫 캠페인을 만들어 광고를 시작하세요',
       'currency.suffix': '원',
+      'table.columns.activation': '활성',
+      'table.columns.budget': '예산',
+      'table.columns.spend': '지출',
+      'table.columns.roas': 'ROAS',
+      'table.columns.ctr': 'CTR',
+      'table.columns.cpc': 'CPC',
+      'table.columns.cpa': 'CPA',
+      'table.columns.cvr': 'CVR',
+      'table.columns.cpm': 'CPM',
+      'table.columns.reach': '도달',
+      'table.columns.impressions': '노출',
+      'table.columns.clicks': '클릭',
+      'table.columns.conversions': '전환',
+      'table.columns.createdAt': '생성일',
+      'table.columnConfig.visibleCount': `${params?.count ?? 0}개 표시`,
+      'table.columnConfig.presets': '프리셋',
+      'table.columnConfig.savedPresets': '저장된 프리셋',
+      'table.columnConfig.noPresets': '저장된 프리셋 없음',
+      'table.columnConfig.saveCurrentPreset': '현재 설정 저장',
+      'table.columnConfig.columnSettings': '열 설정',
+      'table.columnConfig.metricsToShow': '표시할 지표',
+      'table.columnConfig.countLabel': `${params?.count ?? 0}개`,
+      'table.columnConfig.selectAll': '전체 선택',
+      'table.columnConfig.deselectAll': '전체 해제',
+      'table.status.active': '진행 중',
+      'table.status.paused': '일시정지',
+      'table.status.completed': '완료',
+      'table.status.draft': '초안',
+      'table.status.pendingReview': '검토 중',
+      'table.objective.traffic': '트래픽',
+      'table.objective.conversions': '전환',
+      'table.objective.brandAwareness': '브랜드 인지도',
+      'table.objective.reach': '도달',
+      'table.objective.engagement': '참여',
+      'table.actions.toggleActivation': `${params?.name ?? ''} 활성/비활성 전환`,
+      'accessibility.statusToggled': `${params?.name ?? ''} 상태 변경: ${params?.status ?? ''}`,
+      'table.columnConfig.presetSaveDialogTitle': '프리셋 이름',
+      'table.columnConfig.presetSaveDialogDescription': '현재 열 설정을 프리셋으로 저장합니다',
+      'table.columnConfig.presetNamePlaceholder': '프리셋 이름 입력',
+      'table.columnConfig.cancelButton': '취소',
+      'table.columnConfig.saveButton': '저장',
     }
     return map[key] || key
   },
@@ -58,7 +99,7 @@ vi.mock('@/presentation/stores', () => ({
       searchQuery: '',
     },
     setFilters: vi.fn(),
-    selectedCampaignIds: [],
+    selectedCampaignIds: new Set(),
     selectCampaign: vi.fn(),
     deselectCampaign: vi.fn(),
     selectAllCampaigns: vi.fn(),
@@ -85,6 +126,13 @@ vi.mock('@/presentation/stores', () => ({
     loadColumnPreset: vi.fn(),
     deleteColumnPreset: vi.fn(),
   }),
+}))
+
+vi.mock('@/presentation/stores/uiStore', () => ({
+  useUIStore: (selector: (s: Record<string, unknown>) => unknown) => {
+    const state = { announceToScreenReader: vi.fn() }
+    return selector ? selector(state) : state
+  },
 }))
 
 describe('CampaignTable', () => {

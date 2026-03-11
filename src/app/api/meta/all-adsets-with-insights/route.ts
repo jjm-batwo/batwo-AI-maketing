@@ -3,6 +3,7 @@ import { getAuthenticatedUser } from '@/lib/auth'
 import { MetaAdsClient } from '@/infrastructure/external/meta-ads/MetaAdsClient'
 import { prisma } from '@/lib/prisma'
 import { mapWithConcurrency } from '@/lib/utils/mapWithConcurrency'
+import { safeDecryptToken } from '@application/utils/TokenEncryption'
 
 export async function GET(request: NextRequest) {
     try {
@@ -23,11 +24,12 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ adSets: [] })
         }
 
+        const decryptedToken = safeDecryptToken(metaAccount.accessToken)
         const metaAdsClient = new MetaAdsClient()
 
         // 1. Get all campaigns
         const { campaigns } = await metaAdsClient.listCampaigns(
-            metaAccount.accessToken,
+            decryptedToken,
             metaAccount.metaAccountId,
             { limit: 20 }
         )
@@ -35,7 +37,7 @@ export async function GET(request: NextRequest) {
         // 2. Map all ad sets across all campaigns sequentially to avoid rate limits
         const allAdSets = await mapWithConcurrency(campaigns as any[], 2, async (campaign: any) => {
             try {
-                const adSets = await metaAdsClient.listAdSets(metaAccount.accessToken!, campaign.id)
+                const adSets = await metaAdsClient.listAdSets(decryptedToken, campaign.id)
                 return adSets.map((as) => ({ ...as, campaignId: campaign.id }))
             } catch (error: any) {
                 if (error?.message?.includes('limit reached')) {
@@ -52,7 +54,7 @@ export async function GET(request: NextRequest) {
         const adSetsWithInsights = await mapWithConcurrency(flattenedAdSets, 2, async (adSet) => {
             try {
                 const insights = await metaAdsClient.getAdSetInsights(
-                    metaAccount.accessToken!,
+                    decryptedToken,
                     adSet.id,
                     datePreset as any
                 )

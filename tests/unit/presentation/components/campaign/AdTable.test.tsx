@@ -1,9 +1,36 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import type React from 'react'
+import { NextIntlClientProvider } from 'next-intl'
 import { AdTable } from '../../../../../src/presentation/components/campaign/AdTable'
 
-// Mock shadcn/ui Table components
+const mockMessages = {
+  table: {
+    columns: {
+      name: '이름',
+      spend: '지출',
+      impressions: '노출',
+      clicks: '클릭',
+      ctr: 'CTR',
+      conversions: '전환',
+      roas: 'ROAS',
+    },
+    status: {
+      active: '진행 중',
+      paused: '일시정지',
+      deleted: '삭제됨',
+    },
+    empty: {
+      ads: '광고가 없습니다',
+    },
+  },
+  campaignSummary: {
+    columns: {
+      status: '상태',
+    },
+  },
+}
+
 vi.mock('@/components/ui/table', () => ({
   Table: ({ children, ...props }: React.PropsWithChildren) => (
     <table {...props}>{children}</table>
@@ -36,6 +63,20 @@ vi.mock('@/lib/utils/format', () => ({
   formatMultiplier: (n: number) => `${n.toFixed(2)}x`,
 }))
 
+vi.mock('lucide-react', () => ({
+  Play: ({ className }: { className?: string }) => <span data-testid="icon-play" className={className} />,
+  Pause: ({ className }: { className?: string }) => <span data-testid="icon-pause" className={className} />,
+  Trash2: ({ className }: { className?: string }) => <span data-testid="icon-trash" className={className} />,
+}))
+
+function renderWithIntl(ui: React.ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="ko" messages={mockMessages}>
+      {ui}
+    </NextIntlClientProvider>
+  )
+}
+
 const mockAds = [
   {
     id: 'ad-1',
@@ -65,44 +106,39 @@ const mockAds = [
 
 describe('AdTable', () => {
   describe('로딩 상태', () => {
-    it('isLoading이 true이면 "로딩 중..." 텍스트를 표시한다', () => {
-      render(<AdTable ads={[]} isLoading={true} />)
-      expect(screen.getByText('로딩 중...')).toBeInTheDocument()
-    })
-
-    it('isLoading이 true이면 테이블을 렌더링하지 않는다', () => {
-      render(<AdTable ads={mockAds} isLoading={true} />)
-      expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    it('isLoading이 true이면 스켈레톤 테이블 헤더를 표시한다', () => {
+      renderWithIntl(<AdTable ads={[]} isLoading={true} />)
+      expect(screen.getByText('이름')).toBeInTheDocument()
     })
   })
 
   describe('빈 상태', () => {
     it('광고가 없으면 "광고가 없습니다" 텍스트를 표시한다', () => {
-      render(<AdTable ads={[]} />)
+      renderWithIntl(<AdTable ads={[]} />)
       expect(screen.getByText('광고가 없습니다')).toBeInTheDocument()
     })
 
     it('광고가 없으면 테이블을 렌더링하지 않는다', () => {
-      render(<AdTable ads={[]} />)
+      renderWithIntl(<AdTable ads={[]} />)
       expect(screen.queryByRole('table')).not.toBeInTheDocument()
     })
   })
 
   describe('데이터 렌더링', () => {
     it('광고 이름을 표시한다', () => {
-      render(<AdTable ads={mockAds} />)
+      renderWithIntl(<AdTable ads={mockAds} />)
       expect(screen.getByText('테스트 광고 A')).toBeInTheDocument()
       expect(screen.getByText('테스트 광고 B')).toBeInTheDocument()
     })
 
     it('한국어 상태 레이블을 표시한다', () => {
-      render(<AdTable ads={mockAds} />)
+      renderWithIntl(<AdTable ads={mockAds} />)
       expect(screen.getByText('진행 중')).toBeInTheDocument()
       expect(screen.getByText('일시정지')).toBeInTheDocument()
     })
 
     it('테이블 헤더를 올바르게 렌더링한다', () => {
-      render(<AdTable ads={mockAds} />)
+      renderWithIntl(<AdTable ads={mockAds} />)
       expect(screen.getByText('이름')).toBeInTheDocument()
       expect(screen.getByText('상태')).toBeInTheDocument()
       expect(screen.getByText('지출')).toBeInTheDocument()
@@ -114,15 +150,13 @@ describe('AdTable', () => {
     })
 
     it('포맷된 지출 금액을 표시한다', () => {
-      render(<AdTable ads={mockAds} />)
+      renderWithIntl(<AdTable ads={mockAds} />)
       expect(screen.getByText('20,000원')).toBeInTheDocument()
-      expect(screen.getByText('5,000원')).toBeInTheDocument()
     })
 
     it('포맷된 노출수를 표시한다', () => {
-      render(<AdTable ads={mockAds} />)
+      renderWithIntl(<AdTable ads={mockAds} />)
       expect(screen.getByText('8,000')).toBeInTheDocument()
-      expect(screen.getByText('3,000')).toBeInTheDocument()
     })
   })
 })

@@ -135,7 +135,7 @@ describe('Header', () => {
     it('should have bg-white background', () => {
       render(<Header />, { wrapper: Wrapper })
       const header = screen.getByRole('banner')
-      expect(header).toHaveClass('bg-white')
+      expect(header).toHaveClass('bg-background')
     })
 
     it('should have proper height', () => {

@@ -81,9 +81,9 @@ describe('useQuotaCheck', () => {
 
     const { result } = renderHook(() => useQuotaCheck('campaigns'), { wrapper: createWrapper() })
 
-    await waitFor(() => expect(result.current.isExceeded).toBe(false))
+    await waitFor(() => expect(result.current.remaining).toBe(2))
 
-    expect(result.current.remaining).toBe(2)
+    expect(result.current.isExceeded).toBe(false)
     expect(result.current.percentage).toBe(60) // 3/5 = 60%
     expect(result.current.plan).toBe('STARTER')
   })

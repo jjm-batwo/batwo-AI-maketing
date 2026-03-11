@@ -3,6 +3,7 @@ import { getAuthenticatedUser } from '@/lib/auth'
 import { MetaAdsClient } from '@/infrastructure/external/meta-ads/MetaAdsClient'
 import { prisma } from '@/lib/prisma'
 import { mapWithConcurrency } from '@/lib/utils/mapWithConcurrency'
+import { safeDecryptToken } from '@application/utils/TokenEncryption'
 
 export async function GET(request: NextRequest) {
     try {
@@ -22,11 +23,12 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ ads: [] })
         }
 
+        const decryptedToken = safeDecryptToken(metaAccount.accessToken)
         const metaAdsClient = new MetaAdsClient()
 
         // 1. Get campaigns
         const { campaigns } = await metaAdsClient.listCampaigns(
-            metaAccount.accessToken,
+            decryptedToken,
             metaAccount.metaAccountId,
             { limit: 10 } // limit campaigns to prevent abuse
         )
@@ -34,7 +36,7 @@ export async function GET(request: NextRequest) {
         // 2. Get adsets (conc 2)
         const allAdSetsNested = await mapWithConcurrency(campaigns as any[], 2, async (campaign: any) => {
             try {
-                const adSets = await metaAdsClient.listAdSets(metaAccount.accessToken!, campaign.id)
+                const adSets = await metaAdsClient.listAdSets(decryptedToken, campaign.id)
                 return adSets
             } catch (error) {
                 return []
@@ -45,7 +47,7 @@ export async function GET(request: NextRequest) {
         // 3. Get ads (conc 2)
         const allAdsNested = await mapWithConcurrency(flattenedAdSets, 2, async (adSet) => {
             try {
-                const ads = await metaAdsClient.listAds(metaAccount.accessToken!, adSet.id)
+                const ads = await metaAdsClient.listAds(decryptedToken, adSet.id)
                 return ads
             } catch (error) {
                 return []
@@ -57,7 +59,7 @@ export async function GET(request: NextRequest) {
         const adsWithInsights = await mapWithConcurrency(flattenedAds, 2, async (ad) => {
             try {
                 const insights = await metaAdsClient.getAdInsights(
-                    metaAccount.accessToken!,
+                    decryptedToken,
                     ad.id,
                     datePreset as any
                 )

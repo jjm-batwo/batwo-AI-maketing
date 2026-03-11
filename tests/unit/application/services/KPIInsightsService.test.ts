@@ -973,8 +973,7 @@ describe('KPIInsightsService', () => {
         findByUserId: vi.fn().mockResolvedValue([]),
       }
 
-      const service = new KPIInsightsService(kpiRepository, campaignRepository)
-      service.setInsightHistoryRepository(mockInsightHistoryRepo)
+      const service = new KPIInsightsService(kpiRepository, campaignRepository, undefined, undefined, mockInsightHistoryRepo)
 
       // When: suppress console.warn for cleaner test output
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
@@ -1033,8 +1032,7 @@ describe('KPIInsightsService', () => {
         findByUserId: vi.fn().mockResolvedValue([]),
       }
 
-      const service = new KPIInsightsService(kpiRepository, campaignRepository)
-      service.setInsightHistoryRepository(mockInsightHistoryRepo)
+      const service = new KPIInsightsService(kpiRepository, campaignRepository, undefined, undefined, mockInsightHistoryRepo)
 
       // When
       const result = await service.generateInsights(userId)
