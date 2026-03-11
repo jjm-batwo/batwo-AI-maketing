@@ -2,15 +2,19 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Download, Share2, Sparkles } from 'lucide-react'
+import { Download, Sparkles } from 'lucide-react'
 import { KPICard } from '../dashboard/KPICard'
 import DOMPurify from 'dompurify'
+import { ShareReportButton } from './ShareReportButton'
+import { ReportScheduleForm } from './ReportScheduleForm'
 
 interface ReportDetailProps {
   report: {
     id: string
     type: string
     dateRange: { startDate: string; endDate: string }
+    shareToken?: string | null
+    shareExpiresAt?: string | null
     summaryMetrics: {
       totalImpressions: number
       totalClicks: number
@@ -33,14 +37,18 @@ interface ReportDetailProps {
   }
   isLoading?: boolean
   onDownload?: () => void
-  onShare?: () => void
+  onShareCreated?: (url: string, expiresAt: string) => void
+  onShareRevoked?: () => void
+  onScheduleCreated?: () => void
 }
 
 export function ReportDetail({
   report,
   isLoading = false,
   onDownload,
-  onShare,
+  onShareCreated,
+  onShareRevoked,
+  onScheduleCreated,
 }: ReportDetailProps) {
   if (isLoading) {
     return (
@@ -57,6 +65,11 @@ export function ReportDetail({
 
   const { summaryMetrics, aiInsights } = report
 
+  // Determine an existing share URL if a token exists and is valid
+  const existingShareUrl = report.shareToken && report.shareExpiresAt && new Date(report.shareExpiresAt) > new Date()
+    ? `${process.env.NEXT_PUBLIC_APP_URL || ''}/reports/share/${report.shareToken}`
+    : undefined
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -70,12 +83,16 @@ export function ReportDetail({
           </p>
         </div>
         <div className="flex gap-2">
-          {onShare && (
-            <Button variant="outline" onClick={onShare}>
-              <Share2 className="mr-1 h-4 w-4" />
-              공유
-            </Button>
-          )}
+          <ReportScheduleForm onScheduleCreated={onScheduleCreated} />
+          
+          <ShareReportButton 
+            reportId={report.id}
+            existingShareUrl={existingShareUrl}
+            existingShareExpiresAt={report.shareExpiresAt || undefined}
+            onShareCreated={onShareCreated}
+            onShareRevoked={onShareRevoked}
+          />
+
           {onDownload && (
             <Button onClick={onDownload}>
               <Download className="mr-1 h-4 w-4" />

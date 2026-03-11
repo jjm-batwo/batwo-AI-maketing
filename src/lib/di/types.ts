@@ -9,6 +9,7 @@ export const DI_TOKENS = {
   // Repositories
   CampaignRepository: Symbol.for('CampaignRepository'),
   ReportRepository: Symbol.for('ReportRepository'),
+  ReportScheduleRepository: Symbol.for('ReportScheduleRepository'),
   KPIRepository: Symbol.for('KPIRepository'),
   UserRepository: Symbol.for('UserRepository'),
   UsageLogRepository: Symbol.for('UsageLogRepository'),
@@ -75,6 +76,7 @@ export const DI_TOKENS = {
   ListCampaignsUseCase: Symbol.for('ListCampaignsUseCase'),
   SyncCampaignsUseCase: Symbol.for('SyncCampaignsUseCase'),
   GenerateWeeklyReportUseCase: Symbol.for('GenerateWeeklyReportUseCase'),
+  SendScheduledReportsUseCase: Symbol.for('SendScheduledReportsUseCase'),
   GetDashboardKPIUseCase: Symbol.for('GetDashboardKPIUseCase'),
   GetLiveDashboardKPIUseCase: Symbol.for('GetLiveDashboardKPIUseCase'),
   SyncMetaInsightsUseCase: Symbol.for('SyncMetaInsightsUseCase'),

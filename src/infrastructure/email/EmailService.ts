@@ -109,4 +109,34 @@ export class EmailService implements IEmailService {
       html,
     })
   }
+
+  async sendReportEmail(params: {
+    to: string[]
+    subject: string
+    reportId: string
+    reportSummary: import('../../domain/entities/Report').ReportSummaryMetrics
+    shareUrl?: string
+  }): Promise<{ success: boolean; messageId?: string }> {
+    const summary = params.reportSummary
+    const html = `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+        <h1 style="color: #1f2937;">바투 AI 광고 성과 보고서</h1>
+        <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 16px 0;">
+          <p><strong>총 지출:</strong> ${summary.totalSpend.toLocaleString()}원</p>
+          <p><strong>총 매출:</strong> ${summary.totalRevenue.toLocaleString()}원</p>
+          <p><strong>ROAS:</strong> ${summary.overallROAS.toFixed(2)}x</p>
+          <p><strong>전환수:</strong> ${summary.totalConversions.toLocaleString()}</p>
+        </div>
+        ${params.shareUrl ? `<a href="${params.shareUrl}" style="display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none;">상세 보고서 보기</a>` : ''}
+      </div>
+    `
+
+    const result = await this.sendEmail({
+      to: params.to,
+      subject: params.subject,
+      html,
+    })
+
+    return { success: result.success, messageId: result.messageId }
+  }
 }

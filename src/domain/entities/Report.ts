@@ -97,6 +97,8 @@ export interface ReportProps extends CreateReportProps {
   status: ReportStatus
   generatedAt?: Date
   sentAt?: Date
+  shareToken?: string | null
+  shareExpiresAt?: Date | null
   createdAt: Date
   updatedAt: Date
 }
@@ -111,6 +113,8 @@ export class Report extends AggregateRoot {
     private readonly _sections: ReportSection[],
     private readonly _aiInsights: AIInsight[],
     private readonly _status: ReportStatus,
+    private readonly _shareToken: string | null | undefined,
+    private readonly _shareExpiresAt: Date | null | undefined,
     private readonly _generatedAt: Date | undefined,
     private readonly _sentAt: Date | undefined,
     private readonly _createdAt: Date,
@@ -136,6 +140,8 @@ export class Report extends AggregateRoot {
       'DRAFT',
       undefined,
       undefined,
+      undefined,
+      undefined,
       now,
       now
     )
@@ -155,6 +161,8 @@ export class Report extends AggregateRoot {
       [],
       [],
       'DRAFT',
+      undefined,
+      undefined,
       undefined,
       undefined,
       now,
@@ -179,6 +187,8 @@ export class Report extends AggregateRoot {
       'DRAFT',
       undefined,
       undefined,
+      undefined,
+      undefined,
       now,
       now
     )
@@ -194,6 +204,8 @@ export class Report extends AggregateRoot {
       [...props.sections],
       [...props.aiInsights],
       props.status,
+      props.shareToken,
+      props.shareExpiresAt,
       props.generatedAt,
       props.sentAt,
       props.createdAt,
@@ -222,6 +234,35 @@ export class Report extends AggregateRoot {
       throw InvalidReportError.invalidDateRange('Monthly', 31)
     }
   }
+
+
+  generateShareToken(expiryDays: number = 30): Report {
+    const token = crypto.randomUUID().replace(/-/g, '');
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + expiryDays);
+
+    return Report.restore({
+      ...this.toJSON(),
+      shareToken: token,
+      shareExpiresAt: expiresAt,
+    });
+  }
+
+  revokeShareToken(): Report {
+    return Report.restore({
+      ...this.toJSON(),
+      shareToken: null,
+      shareExpiresAt: null,
+    });
+  }
+
+  isShareValid(): boolean {
+    if (!this._shareToken || !this._shareExpiresAt) return false;
+    return new Date() < this._shareExpiresAt;
+  }
+
+  get shareToken(): string | null { return this._shareToken ?? null; }
+  get shareExpiresAt(): Date | null { return this._shareExpiresAt ?? null; }
 
   // Getters
   get id(): string {
@@ -272,6 +313,8 @@ export class Report extends AggregateRoot {
       [...this._sections, section],
       this._aiInsights,
       this._status,
+      this._shareToken,
+      this._shareExpiresAt,
       this._generatedAt,
       this._sentAt,
       this._createdAt,
@@ -293,6 +336,8 @@ export class Report extends AggregateRoot {
       this._sections,
       [...this._aiInsights, insight],
       this._status,
+      this._shareToken,
+      this._shareExpiresAt,
       this._generatedAt,
       this._sentAt,
       this._createdAt,
@@ -310,6 +355,8 @@ export class Report extends AggregateRoot {
       this._sections,
       this._aiInsights,
       'GENERATED',
+      this._shareToken,
+      this._shareExpiresAt,
       new Date(),
       this._sentAt,
       this._createdAt,
@@ -346,6 +393,8 @@ export class Report extends AggregateRoot {
       this._sections,
       this._aiInsights,
       'SENT',
+      this._shareToken,
+      this._shareExpiresAt,
       this._generatedAt,
       new Date(),
       this._createdAt,
@@ -403,6 +452,8 @@ export class Report extends AggregateRoot {
       sections: this._sections,
       aiInsights: this._aiInsights,
       status: this._status,
+      shareToken: this._shareToken ?? null,
+      shareExpiresAt: this._shareExpiresAt ?? null,
       generatedAt: this._generatedAt,
       sentAt: this._sentAt,
       createdAt: this._createdAt,

@@ -84,6 +84,18 @@ export class PrismaReportRepository implements IReportRepository {
     return ReportMapper.toDomain(report)
   }
 
+  async findByShareToken(token: string): Promise<Report | null> {
+    const report = await this.prisma.report.findUnique({
+      where: { shareToken: token },
+    })
+
+    if (!report) {
+      return null
+    }
+
+    return ReportMapper.toDomain(report)
+  }
+
   async update(report: Report): Promise<Report> {
     const data = ReportMapper.toUpdateInput(report)
 
