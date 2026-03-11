@@ -8,6 +8,8 @@ export interface CreateSubscriptionProps {
   currentPeriodStart: Date
   currentPeriodEnd: Date
   status?: SubscriptionStatus
+  trialEndDate?: Date | null
+  trialStartedAt?: Date | null
 }
 
 export interface SubscriptionProps extends CreateSubscriptionProps {
@@ -28,8 +30,30 @@ export class Subscription {
     private readonly _currentPeriodEnd: Date,
     private readonly _cancelledAt: Date | undefined,
     private readonly _createdAt: Date,
-    private readonly _updatedAt: Date
+    private readonly _updatedAt: Date,
+    private readonly _trialEndDate: Date | null = null,
+    private readonly _trialStartedAt: Date | null = null
   ) {}
+
+  static startTrial(params: { userId: string }): Subscription {
+    const now = new Date()
+    const trialEnd = new Date(now)
+    trialEnd.setDate(trialEnd.getDate() + 14)
+
+    return new Subscription(
+      crypto.randomUUID(),
+      params.userId,
+      SubscriptionPlan.PRO,
+      SubscriptionStatus.TRIALING,
+      now,
+      trialEnd,
+      undefined,
+      now,
+      now,
+      trialEnd,
+      now
+    )
+  }
 
   static create(props: CreateSubscriptionProps): Subscription {
     Subscription.validatePeriod(props.currentPeriodStart, props.currentPeriodEnd)
@@ -46,7 +70,9 @@ export class Subscription {
       props.currentPeriodEnd,
       undefined,
       now,
-      now
+      now,
+      props.trialEndDate ?? null,
+      props.trialStartedAt ?? null
     )
   }
 
@@ -60,7 +86,9 @@ export class Subscription {
       props.currentPeriodEnd,
       props.cancelledAt,
       props.createdAt,
-      props.updatedAt
+      props.updatedAt,
+      props.trialEndDate ?? null,
+      props.trialStartedAt ?? null
     )
   }
 
@@ -107,6 +135,14 @@ export class Subscription {
     return new Date(this._updatedAt)
   }
 
+  get trialEndDate(): Date | null {
+    return this._trialEndDate ? new Date(this._trialEndDate) : null
+  }
+
+  get trialStartedAt(): Date | null {
+    return this._trialStartedAt ? new Date(this._trialStartedAt) : null
+  }
+
   // State checks
   isActive(): boolean {
     return this._status === SubscriptionStatus.ACTIVE
@@ -145,6 +181,22 @@ export class Subscription {
     return Math.ceil(diff / (1000 * 60 * 60 * 24))
   }
 
+  trialDaysRemaining(): number {
+    if (!this._trialEndDate) return 0
+    const now = new Date()
+    const diff = this._trialEndDate.getTime() - now.getTime()
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)))
+  }
+
+  isTrialExpired(): boolean {
+    if (!this._trialEndDate) return false
+    return new Date() > this._trialEndDate
+  }
+
+  hasUsedTrial(): boolean {
+    return this._trialStartedAt !== null && this._trialStartedAt !== undefined
+  }
+
   // Commands
   /**
    * 구독 취소
@@ -174,7 +226,9 @@ export class Subscription {
       this._currentPeriodEnd,
       new Date(),
       this._createdAt,
-      new Date()
+      new Date(),
+      this._trialEndDate,
+      this._trialStartedAt
     )
   }
 
@@ -198,7 +252,9 @@ export class Subscription {
       this._currentPeriodEnd,
       this._cancelledAt,
       this._createdAt,
-      new Date()
+      new Date(),
+      this._trialEndDate,
+      this._trialStartedAt
     )
   }
 
@@ -222,7 +278,9 @@ export class Subscription {
       this._currentPeriodEnd,
       this._cancelledAt,
       this._createdAt,
-      new Date()
+      new Date(),
+      this._trialEndDate,
+      this._trialStartedAt
     )
   }
 
@@ -246,7 +304,9 @@ export class Subscription {
       this._currentPeriodEnd,
       this._cancelledAt,
       this._createdAt,
-      new Date()
+      new Date(),
+      this._trialEndDate,
+      this._trialStartedAt
     )
   }
 
@@ -274,7 +334,9 @@ export class Subscription {
       newPeriodEnd,
       this._cancelledAt,
       this._createdAt,
-      new Date()
+      new Date(),
+      this._trialEndDate,
+      this._trialStartedAt
     )
   }
 
@@ -302,7 +364,35 @@ export class Subscription {
       this._currentPeriodEnd,
       this._cancelledAt,
       this._createdAt,
-      new Date()
+      new Date(),
+      this._trialEndDate,
+      this._trialStartedAt
+    )
+  }
+  
+  /**
+   * 만료됨으로 표시
+   */
+  markExpired(): Subscription {
+    if (!canTransitionSubscription(this._status, SubscriptionStatus.EXPIRED)) {
+      throw InvalidSubscriptionError.invalidStatusTransition(
+        this._status,
+        SubscriptionStatus.EXPIRED
+      )
+    }
+
+    return new Subscription(
+      this._id,
+      this._userId,
+      this._plan,
+      SubscriptionStatus.EXPIRED,
+      this._currentPeriodStart,
+      this._currentPeriodEnd,
+      this._cancelledAt,
+      this._createdAt,
+      new Date(),
+      this._trialEndDate,
+      this._trialStartedAt
     )
   }
 
@@ -317,6 +407,8 @@ export class Subscription {
       cancelledAt: this._cancelledAt,
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
+      trialEndDate: this._trialEndDate,
+      trialStartedAt: this._trialStartedAt,
     }
   }
 }

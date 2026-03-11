@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { Subscription, type CreateSubscriptionProps } from '@domain/entities/Subscription'
 import { SubscriptionPlan } from '@domain/value-objects/SubscriptionPlan'
 import { SubscriptionStatus } from '@domain/value-objects/SubscriptionStatus'
@@ -17,6 +17,62 @@ describe('Subscription', () => {
       currentPeriodStart: now,
       currentPeriodEnd: periodEnd,
     }
+  })
+
+  describe('Trial', () => {
+    it('should start a 14-day trial with PRO plan', () => {
+      const subscription = Subscription.startTrial({
+        userId: 'user-123',
+      })
+
+      expect(subscription.plan).toBe(SubscriptionPlan.PRO)
+      expect(subscription.status).toBe(SubscriptionStatus.TRIALING)
+      expect(subscription.trialEndDate).toBeDefined()
+      expect(subscription.isTrialing()).toBe(true)
+      expect(subscription.hasAccess()).toBe(true)
+    })
+
+    it('should calculate remaining trial days correctly', () => {
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-03-11T00:00:00Z'))
+
+      const subscription = Subscription.startTrial({ userId: 'user-123' })
+      expect(subscription.trialDaysRemaining()).toBe(14)
+
+      vi.setSystemTime(new Date('2026-03-21T00:00:00Z'))
+      expect(subscription.trialDaysRemaining()).toBe(4)
+
+      vi.useRealTimers()
+    })
+
+    it('should detect expired trial', () => {
+      vi.useFakeTimers()
+      vi.setSystemTime(new Date('2026-03-11T00:00:00Z'))
+
+      const subscription = Subscription.startTrial({ userId: 'user-123' })
+
+      vi.setSystemTime(new Date('2026-03-26T00:00:00Z'))
+      expect(subscription.isTrialExpired()).toBe(true)
+
+      vi.useRealTimers()
+    })
+
+    it('should not allow trial if user already had one', () => {
+      const existing = Subscription.restore({
+        id: 'sub-1',
+        userId: 'user-123',
+        plan: SubscriptionPlan.FREE,
+        status: SubscriptionStatus.EXPIRED,
+        currentPeriodStart: new Date('2026-01-01'),
+        currentPeriodEnd: new Date('2026-01-15'),
+        trialStartedAt: new Date('2026-01-01'),
+        trialEndDate: new Date('2026-01-15'),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+
+      expect(existing.hasUsedTrial()).toBe(true)
+    })
   })
 
   describe('create', () => {
