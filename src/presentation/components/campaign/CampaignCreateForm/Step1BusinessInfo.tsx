@@ -66,11 +66,11 @@ export function Step1BusinessInfo() {
                     : 'border-gray-200 hover:border-gray-300'
                 )}
               >
-                <Icon className={cn('h-6 w-6', isSelected ? 'text-primary' : 'text-gray-500')} />
+                <Icon className={cn('h-6 w-6', isSelected ? 'text-primary' : 'text-muted-foreground')} />
                 <span
                   className={cn(
                     'text-sm font-medium',
-                    isSelected ? 'text-primary' : 'text-gray-700'
+                    isSelected ? 'text-primary' : 'text-foreground'
                   )}
                 >
                   {obj.label}

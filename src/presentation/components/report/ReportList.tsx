@@ -47,7 +47,7 @@ export function ReportList({ reports, isLoading = false, onDownload }: ReportLis
   if (reports.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
-        <FileText className="h-12 w-12 text-gray-400" />
+        <FileText className="h-12 w-12 text-muted-foreground/50" />
         <h3 className="mt-4 text-lg font-semibold">아직 보고서가 없어요</h3>
         <p className="mt-2 text-sm text-muted-foreground">
           캠페인을 운영하면 자동으로 주간 보고서가 생성됩니다

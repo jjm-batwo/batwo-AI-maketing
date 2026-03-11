@@ -54,7 +54,7 @@ export function QuotaExceededDialog({ open, onClose, onUpgrade, type }: QuotaExc
           <div className="flex items-start gap-3">
             <Sparkles className="h-5 w-5 text-primary" />
             <div>
-              <p className="font-medium text-gray-900">더 많은 기능을 원하시면</p>
+              <p className="font-medium text-foreground">더 많은 기능을 원하시면</p>
               <p className="text-sm text-muted-foreground">
                 유료 플랜으로 업그레이드하면 무제한으로 사용할 수 있어요
               </p>

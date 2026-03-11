@@ -50,9 +50,9 @@ export function PixelSetupStep() {
         <Code2 className="h-8 w-8 text-purple-600" />
       </div>
 
-      <h2 className="mb-2 text-2xl font-bold text-gray-900">{t('title')}</h2>
+      <h2 className="mb-2 text-2xl font-bold text-foreground">{t('title')}</h2>
 
-      <p className="mb-6 text-gray-600">{t('description')}</p>
+      <p className="mb-6 text-muted-foreground">{t('description')}</p>
 
       {/* 분기 1: Meta 미연결 */}
       {!isMetaConnected ? (
@@ -81,7 +81,7 @@ export function PixelSetupStep() {
             selectedPlatform={selectedPlatform ?? undefined}
           />
 
-          <Button variant="ghost" size="sm" onClick={handleReset} className="text-gray-500">
+          <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground">
             {t('selectOther')}
           </Button>
         </div>
@@ -97,11 +97,11 @@ export function PixelSetupStep() {
 
           {/* 카페24: 기존 스크립트 코드 표시 */}
           {selectedPlatform === EcommercePlatform.CAFE24 && (
-            <div className="rounded-lg border bg-gray-50 p-4 text-left">
-              <h4 className="mb-2 font-medium text-gray-900">{t('installation.title')}</h4>
-              <p className="mb-3 text-sm text-gray-600">{t('installation.description')}</p>
+            <div className="rounded-lg border bg-muted p-4 text-left">
+              <h4 className="mb-2 font-medium text-foreground">{t('installation.title')}</h4>
+              <p className="mb-3 text-sm text-muted-foreground">{t('installation.description')}</p>
               <div className="relative">
-                <pre className="overflow-x-auto rounded bg-gray-900 p-3 text-xs text-gray-100">
+                <pre className="overflow-x-auto rounded bg-zinc-900 dark:bg-zinc-950 p-3 text-xs text-zinc-100">
                   <code>{scriptCode}</code>
                 </pre>
                 <Button
@@ -131,15 +131,15 @@ export function PixelSetupStep() {
             </div>
           )}
 
-          <Button variant="ghost" size="sm" onClick={handleReset} className="text-gray-500">
+          <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground">
             {t('selectOther')}
           </Button>
         </div>
       )}
 
-      <div className="mt-6 rounded-lg bg-gray-50 p-4 text-left">
-        <h4 className="mb-2 font-medium text-gray-900">{t('benefits.title')}</h4>
-        <ul className="space-y-1 text-sm text-gray-600">
+      <div className="mt-6 rounded-lg bg-muted p-4 text-left">
+        <h4 className="mb-2 font-medium text-foreground">{t('benefits.title')}</h4>
+        <ul className="space-y-1 text-sm text-muted-foreground">
           <li>• {t('benefits.item1')}</li>
           <li>• {t('benefits.item2')}</li>
           <li>• {t('benefits.item3')}</li>
@@ -148,7 +148,7 @@ export function PixelSetupStep() {
         </ul>
       </div>
 
-      <p className="mt-4 text-sm text-gray-500">{t('installation.skipMessage')}</p>
+      <p className="mt-4 text-sm text-muted-foreground">{t('installation.skipMessage')}</p>
     </div>
   )
 }

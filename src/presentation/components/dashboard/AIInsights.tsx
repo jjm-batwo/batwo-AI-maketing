@@ -127,7 +127,7 @@ const priorityConfig: Record<
   },
   low: {
     label: '낮음',
-    className: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
+    className: 'bg-muted text-muted-foreground',
   },
 }
 
@@ -209,11 +209,11 @@ export const AIInsights = memo(function AIInsights({
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="animate-pulse rounded-lg border p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="h-4 w-12 rounded bg-gray-200 dark:bg-gray-700" />
-                  <div className="h-4 w-24 rounded bg-gray-200 dark:bg-gray-700" />
+                  <div className="h-4 w-12 rounded bg-muted" />
+                  <div className="h-4 w-24 rounded bg-muted" />
                 </div>
-                <div className="h-3 w-full rounded bg-gray-200 dark:bg-gray-700" />
-                <div className="mt-1 h-3 w-3/4 rounded bg-gray-200 dark:bg-gray-700" />
+                <div className="h-3 w-full rounded bg-muted" />
+                <div className="mt-1 h-3 w-3/4 rounded bg-muted" />
               </div>
             ))}
           </div>

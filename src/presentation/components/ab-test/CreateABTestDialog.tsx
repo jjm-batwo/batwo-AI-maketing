@@ -192,7 +192,7 @@ export function CreateABTestDialog({ campaignId, open, onOpenChange }: CreateABT
 
             <div className="space-y-3">
               {variants.map((variant, index) => (
-                <div key={index} className="p-4 border rounded-lg bg-gray-50 space-y-3">
+                <div key={index} className="p-4 border rounded-lg bg-muted space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium">

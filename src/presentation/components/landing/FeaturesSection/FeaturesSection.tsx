@@ -16,7 +16,7 @@ export const FeaturesSection = memo(function FeaturesSection({
   const { isVisible } = useScrollAnimation(sectionRef, { threshold: 0.1 })
 
   return (
-    <section id={id} className="py-20 md:py-32 overflow-hidden bg-gray-50/50">
+    <section id={id} className="py-20 md:py-32 overflow-hidden bg-muted/50">
       <div
         ref={sectionRef}
         className={`container mx-auto px-4 transition-all duration-1000 ${

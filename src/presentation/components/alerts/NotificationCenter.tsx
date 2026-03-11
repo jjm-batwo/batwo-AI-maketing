@@ -173,7 +173,7 @@ function AlertItem({ alert, onNavigate, locale }: AlertItemProps) {
       href={`/campaigns/${alert.campaignId}`}
       onClick={onNavigate}
       className={cn(
-        'block rounded-lg border p-4 transition-colors hover:bg-gray-50',
+        'block rounded-lg border p-4 transition-colors hover:bg-muted',
         severityStyle.bgColor
       )}
     >

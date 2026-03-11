@@ -49,7 +49,7 @@ export function MobileSidebar() {
                   'flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-colors',
                   isActive
                     ? 'bg-primary/10 text-primary'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    : 'text-muted-foreground hover:bg-accent hover:text-foreground'
                 )}
               >
                 <item.icon className="h-5 w-5" />

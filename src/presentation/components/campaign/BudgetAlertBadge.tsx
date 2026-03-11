@@ -64,7 +64,7 @@ export function BudgetAlertBadge({
     >
       <Icon className={cn('h-3.5 w-3.5', config.iconColor)} />
       <span>{spendPercent}%</span>
-      {!isAlertEnabled && <BellOff className="h-3 w-3 text-gray-400" />}
+      {!isAlertEnabled && <BellOff className="h-3 w-3 text-muted-foreground" />}
     </div>
   )
 

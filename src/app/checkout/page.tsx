@@ -32,7 +32,7 @@ export default async function CheckoutPage({
   const planConfig = PLAN_CONFIGS[plan]
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <CheckoutForm
         plan={plan}
         planLabel={planConfig.label}

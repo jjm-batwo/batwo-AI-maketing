@@ -46,8 +46,8 @@ export function AdPreview() {
         {/* 이미지 영역 */}
         <div className="flex aspect-[1.91/1] items-center justify-center bg-gray-100">
           <div className="text-center">
-            <ImageIcon className="mx-auto h-12 w-12 text-gray-300" />
-            <p className="mt-2 text-xs text-gray-400">
+            <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground/50" />
+            <p className="mt-2 text-xs text-muted-foreground">
               {creative?.assetIds?.length
                 ? `${creative.assetIds.length}개 에셋 선택됨`
                 : '이미지가 여기에 표시됩니다'}

@@ -15,7 +15,7 @@ export const TestimonialsSection = memo(function TestimonialsSection() {
   const col3 = TESTIMONIALS.filter((_, i) => i % 3 === 2)
 
   return (
-    <section id="testimonials" className="py-20 md:py-32 overflow-hidden bg-gray-50/50">
+    <section id="testimonials" className="py-20 md:py-32 overflow-hidden bg-muted/50">
       <div
         ref={ref}
         className={`container mx-auto px-4 transition-all duration-1000 ${

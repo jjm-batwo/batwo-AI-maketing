@@ -60,9 +60,9 @@ export function ABTestList({ campaignId }: ABTestListProps) {
       </div>
 
       {abTests.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 text-center border rounded-lg bg-gray-50">
-          <FlaskConical className="h-12 w-12 text-gray-300" />
-          <h3 className="mt-4 font-medium text-gray-900">A/B 테스트가 없습니다</h3>
+        <div className="flex flex-col items-center justify-center py-12 text-center border rounded-lg bg-muted">
+          <FlaskConical className="h-12 w-12 text-muted-foreground/40" />
+          <h3 className="mt-4 font-medium text-foreground">A/B 테스트가 없습니다</h3>
           <p className="mt-1 text-sm text-muted-foreground">
             광고 소재나 타겟팅을 테스트하여
             <br />

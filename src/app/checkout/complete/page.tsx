@@ -97,8 +97,8 @@ function CheckoutCompleteContent() {
       <Card className="w-full max-w-md">
         <CardContent className="flex flex-col items-center py-12">
           <Loader2 className="h-12 w-12 animate-spin text-primary mb-4" />
-          <p className="text-lg font-medium text-gray-900">구독을 처리하고 있습니다...</p>
-          <p className="text-sm text-gray-500 mt-2">잠시만 기다려주세요</p>
+          <p className="text-lg font-medium text-foreground">구독을 처리하고 있습니다...</p>
+          <p className="text-sm text-muted-foreground mt-2">잠시만 기다려주세요</p>
         </CardContent>
       </Card>
     )
@@ -117,21 +117,21 @@ function CheckoutCompleteContent() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+          <div className="bg-muted rounded-lg p-4 space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">플랜</span>
+              <span className="text-sm text-muted-foreground">플랜</span>
               <span className="font-semibold">{getPlanName(result.plan)}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">결제 금액</span>
+              <span className="text-sm text-muted-foreground">결제 금액</span>
               <span className="font-semibold text-lg">{formatAmount(result.amount)}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">결제 주기</span>
+              <span className="text-sm text-muted-foreground">결제 주기</span>
               <span className="font-semibold">{getPeriodName(result.billingPeriod)}</span>
             </div>
             <div className="flex justify-between items-center pt-2 border-t">
-              <span className="text-sm text-gray-600">다음 결제일</span>
+              <span className="text-sm text-muted-foreground">다음 결제일</span>
               <span className="text-sm font-medium">
                 {new Date(result.currentPeriodEnd).toLocaleDateString('ko-KR')}
               </span>
@@ -173,7 +173,7 @@ function CheckoutCompleteContent() {
 
 export default function CheckoutCompletePage() {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Suspense
         fallback={
           <Card className="w-full max-w-md">

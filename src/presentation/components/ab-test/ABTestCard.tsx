@@ -70,7 +70,7 @@ export function ABTestCard({
         {/* Variants comparison */}
         <div className="grid grid-cols-2 gap-4">
           {control && (
-            <div className="p-3 bg-gray-50 rounded-lg">
+            <div className="p-3 bg-muted rounded-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Badge variant="outline" className="text-xs">
                   컨트롤
@@ -98,8 +98,8 @@ export function ABTestCard({
               className={cn(
                 'p-3 rounded-lg',
                 statisticalResult.winner?.id === treatment.id
-                  ? 'bg-green-50 border border-green-200'
-                  : 'bg-gray-50'
+                  ? 'bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800'
+                  : 'bg-muted'
               )}
             >
               <div className="flex items-center gap-2 mb-2">
@@ -142,7 +142,7 @@ export function ABTestCard({
           <Progress value={sampleProgress} className="h-2" />
         </div>
 
-        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+        <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
           <div className="space-y-1">
             <div className="text-sm text-muted-foreground">통계적 유의성</div>
             <div className="flex items-center gap-2">

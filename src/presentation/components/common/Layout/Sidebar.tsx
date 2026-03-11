@@ -21,7 +21,7 @@ export function Sidebar() {
 
   return (
     <aside
-      className="hidden w-60 flex-col border-r border-gray-200 bg-white md:flex shadow-sm z-50"
+      className="hidden w-60 flex-col border-r border-border bg-background md:flex shadow-sm z-50"
       aria-label={t('navigation.mainNav')}
     >
       <div className="flex h-20 items-center px-6">
@@ -36,7 +36,7 @@ export function Sidebar() {
           >
             B
           </div>
-          <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300">
+          <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-muted-foreground">
             {t('brand.name')}
           </span>
           <span
@@ -61,8 +61,8 @@ export function Sidebar() {
               className={cn(
                 'flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 group relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2',
                 isActive
-                  ? 'bg-gray-100 text-slate-900 shadow-sm'
-                  : 'text-slate-500 hover:text-slate-900 hover:bg-gray-50'
+                  ? 'bg-accent text-accent-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
               )}
             >
               <item.icon

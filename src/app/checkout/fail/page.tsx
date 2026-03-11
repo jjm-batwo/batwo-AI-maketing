@@ -12,7 +12,7 @@ export default async function CheckoutFailPage({
   const { code, message } = await searchParams
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <Card>
           <CardHeader>
@@ -47,8 +47,8 @@ export default async function CheckoutFailPage({
 
             {/* Common reasons */}
             <div className="space-y-2">
-              <h4 className="font-medium text-sm text-gray-900">자주 발생하는 문제:</h4>
-              <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
+              <h4 className="font-medium text-sm text-foreground">자주 발생하는 문제:</h4>
+              <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
                 <li>카드 한도 초과</li>
                 <li>카드 정보 입력 오류</li>
                 <li>인증 실패 또는 취소</li>
@@ -73,7 +73,7 @@ export default async function CheckoutFailPage({
             </div>
 
             {/* Contact info */}
-            <div className="text-center text-sm text-gray-500 border-t pt-4">
+            <div className="text-center text-sm text-muted-foreground border-t pt-4">
               <p>문제가 계속되면</p>
               <a
                 href="mailto:support@batwo.ai"

@@ -8,7 +8,11 @@
     "delete": "삭제",
     "confirm": "확인",
     "openMenu": "메뉴 열기",
-    "user": "사용자"
+    "user": "사용자",
+    "toggleTheme": "테마 변경",
+    "themeLight": "라이트 모드",
+    "themeDark": "다크 모드",
+    "themeSystem": "시스템 설정"
   },
   "navigation": {
     "dashboard": "대시보드",

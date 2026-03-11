@@ -106,8 +106,8 @@ export function AssetUploader({ onUpload, isUploading = false }: AssetUploaderPr
           isUploading && 'opacity-50 pointer-events-none'
         )}
       >
-        <Upload className="mb-3 h-10 w-10 text-gray-400" />
-        <p className="text-sm font-medium text-gray-700">이미지 또는 동영상을 드래그하거나</p>
+        <Upload className="mb-3 h-10 w-10 text-muted-foreground" />
+        <p className="text-sm font-medium text-foreground">이미지 또는 동영상을 드래그하거나</p>
         <label className="mt-2 cursor-pointer">
           <span className="text-sm font-medium text-primary hover:underline">파일 선택</span>
           <input
@@ -140,11 +140,11 @@ export function AssetUploader({ onUpload, isUploading = false }: AssetUploaderPr
             <div key={asset.id} className="group relative rounded-lg border overflow-hidden">
               {asset.type === 'IMAGE' ? (
                 <div className="flex aspect-square items-center justify-center bg-gray-100">
-                  <ImageIcon className="h-8 w-8 text-gray-400" />
+                  <ImageIcon className="h-8 w-8 text-muted-foreground" />
                 </div>
               ) : (
                 <div className="flex aspect-square items-center justify-center bg-gray-100">
-                  <Film className="h-8 w-8 text-gray-400" />
+                  <Film className="h-8 w-8 text-muted-foreground" />
                 </div>
               )}
               <div className="p-2">

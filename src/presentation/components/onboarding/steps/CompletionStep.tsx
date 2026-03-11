@@ -12,14 +12,14 @@ export function CompletionStep() {
         <PartyPopper className="h-8 w-8 text-green-600" />
       </div>
 
-      <h2 className="mb-2 text-2xl font-bold text-gray-900">{t('title')}</h2>
+      <h2 className="mb-2 text-2xl font-bold text-foreground">{t('title')}</h2>
 
-      <p className="mb-8 text-gray-600">{t('description')}</p>
+      <p className="mb-8 text-muted-foreground">{t('description')}</p>
 
       <div className="w-full space-y-4">
         <div className="rounded-lg border border-primary/20 bg-primary/5 p-4">
           <h3 className="mb-2 font-medium text-primary">{t('nextSteps.title')}</h3>
-          <ul className="space-y-2 text-left text-sm text-gray-700">
+          <ul className="space-y-2 text-left text-sm text-foreground/80">
             <li className="flex items-center gap-2">
               <ArrowRight className="h-4 w-4 text-primary" />
               {t('nextSteps.item1')}
@@ -35,7 +35,7 @@ export function CompletionStep() {
           </ul>
         </div>
 
-        <p className="text-sm text-gray-500">{t('helpNote')}</p>
+        <p className="text-sm text-muted-foreground">{t('helpNote')}</p>
       </div>
     </div>
   )

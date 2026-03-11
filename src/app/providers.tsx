@@ -26,7 +26,7 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <ErrorBoundary>
-      <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem={true}>
         <SessionProvider>
           <QueryClientProvider client={queryClient}>
             {children}

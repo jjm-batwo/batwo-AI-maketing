@@ -128,6 +128,6 @@ function getCategoryColor(category: string): string {
     case '인지도':
       return 'bg-purple-100 text-purple-600'
     default:
-      return 'bg-gray-100 text-gray-600'
+      return 'bg-muted text-muted-foreground'
   }
 }

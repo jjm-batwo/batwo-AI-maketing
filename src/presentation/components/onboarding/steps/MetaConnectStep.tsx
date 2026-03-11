@@ -57,9 +57,9 @@ export function MetaConnectStep() {
         <Facebook className="h-8 w-8 text-blue-600" />
       </div>
 
-      <h2 className="mb-2 text-2xl font-bold text-gray-900">{t('title')}</h2>
+      <h2 className="mb-2 text-2xl font-bold text-foreground">{t('title')}</h2>
 
-      <p className="mb-6 text-gray-600">{t('description')}</p>
+      <p className="mb-6 text-muted-foreground">{t('description')}</p>
 
       {isMetaConnected ? (
         <div className="flex flex-col items-center gap-4">
@@ -67,13 +67,13 @@ export function MetaConnectStep() {
             <CheckCircle2 className="h-5 w-5" />
             <span className="font-medium">{t('connected')}</span>
           </div>
-          <p className="text-sm text-gray-500">{t('connectedNext')}</p>
+          <p className="text-sm text-muted-foreground">{t('connectedNext')}</p>
         </div>
       ) : (
         <div className="flex flex-col items-center gap-6 w-full">
           {/* Why Connect Section */}
-          <div className="w-full rounded-lg border bg-gradient-to-br from-blue-50 to-purple-50 p-4">
-            <h3 className="mb-3 font-semibold text-gray-900 text-left">{tMeta('title')}</h3>
+          <div className="w-full rounded-lg border bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 p-4">
+            <h3 className="mb-3 font-semibold text-foreground text-left">{tMeta('title')}</h3>
             <div className="grid gap-3">
               {permissions.map((perm, index) => (
                 <div key={index} className="flex items-start gap-3 text-left">
@@ -83,8 +83,8 @@ export function MetaConnectStep() {
                     <perm.icon className={`h-4 w-4 ${perm.color}`} />
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900 text-sm">{perm.title}</p>
-                    <p className="text-xs text-gray-600">{perm.description}</p>
+                    <p className="font-medium text-foreground text-sm">{perm.title}</p>
+                    <p className="text-xs text-muted-foreground">{perm.description}</p>
                   </div>
                 </div>
               ))}
@@ -99,7 +99,7 @@ export function MetaConnectStep() {
             </Link>
           </Button>
 
-          <p className="text-sm text-gray-500">{t('connectLater')}</p>
+          <p className="text-sm text-muted-foreground">{t('connectLater')}</p>
         </div>
       )}
     </div>

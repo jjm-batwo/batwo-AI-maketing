@@ -150,7 +150,7 @@ export default function ScienceAnalysisPage() {
                   placeholder="예: 지금 구매하면 50% 할인"
                   value={formData.headline}
                   onChange={(e) => handleInputChange('headline', e.target.value)}
-                  className="bg-white/50"
+                  className="bg-background/50"
                 />
               </div>
 
@@ -164,7 +164,7 @@ export default function ScienceAnalysisPage() {
                   value={formData.primaryText}
                   onChange={(e) => handleInputChange('primaryText', e.target.value)}
                   rows={4}
-                  className="bg-white/50"
+                  className="bg-background/50"
                 />
               </div>
 
@@ -178,7 +178,7 @@ export default function ScienceAnalysisPage() {
                   value={formData.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
                   rows={3}
-                  className="bg-white/50"
+                  className="bg-background/50"
                 />
               </div>
 
@@ -191,7 +191,7 @@ export default function ScienceAnalysisPage() {
                   placeholder="예: 지금 바로 구매하기"
                   value={formData.callToAction}
                   onChange={(e) => handleInputChange('callToAction', e.target.value)}
-                  className="bg-white/50"
+                  className="bg-background/50"
                 />
               </div>
 
@@ -204,7 +204,7 @@ export default function ScienceAnalysisPage() {
                     value={formData.industry}
                     onValueChange={(value) => handleInputChange('industry', value)}
                   >
-                    <SelectTrigger id="industry" className="bg-white/50">
+                    <SelectTrigger id="industry" className="bg-background/50">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -225,7 +225,7 @@ export default function ScienceAnalysisPage() {
                     value={formData.objective}
                     onValueChange={(value) => handleInputChange('objective', value)}
                   >
-                    <SelectTrigger id="objective" className="bg-white/50">
+                    <SelectTrigger id="objective" className="bg-background/50">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -248,7 +248,7 @@ export default function ScienceAnalysisPage() {
                   placeholder="예: 20-30대 여성, 직장인"
                   value={formData.targetAudience}
                   onChange={(e) => handleInputChange('targetAudience', e.target.value)}
-                  className="bg-white/50"
+                  className="bg-background/50"
                 />
               </div>
 

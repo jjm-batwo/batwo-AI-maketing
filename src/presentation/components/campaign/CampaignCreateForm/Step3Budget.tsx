@@ -89,7 +89,7 @@ export function Step3Budget() {
       </div>
 
       {/* 예상 총 예산 */}
-      <div className="rounded-lg bg-gray-50 p-4">
+      <div className="rounded-lg bg-muted p-4">
         <div className="flex items-center justify-between">
           <span className="text-sm text-muted-foreground">예상 총 예산</span>
           <span className="text-lg font-semibold">{totalBudget.toLocaleString()}원</span>

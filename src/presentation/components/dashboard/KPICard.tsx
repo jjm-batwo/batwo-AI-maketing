@@ -139,7 +139,7 @@ export function KPICard({
               (changeType === 'decrease' || changeType === 'negative') &&
                 'text-red-700 bg-red-50 ring-red-600/20 dark:bg-red-900/20 dark:text-red-400 dark:ring-red-500/30',
               changeType === 'neutral' &&
-                'text-gray-600 bg-gray-50 ring-gray-500/20 dark:bg-gray-800 dark:text-gray-400'
+                'text-muted-foreground bg-muted ring-border'
             )}
           >
             {(changeType === 'increase' || changeType === 'positive') && (
