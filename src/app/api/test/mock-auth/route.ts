@@ -13,7 +13,7 @@ import { GlobalRole } from '@domain/value-objects/GlobalRole'
  */
 export async function GET() {
   // 프로덕션 환경에서는 차단
-  if (process.env.NODE_ENV === 'production' && !process.env.ALLOW_TEST_API) {
+  if (process.env.NODE_ENV !== 'development' && process.env.NODE_ENV !== 'test') {
     return NextResponse.json({ error: 'Not available in production' }, { status: 403 })
   }
 
@@ -49,10 +49,10 @@ export async function GET() {
       jti: crypto.randomUUID(), // JWT ID - NextAuth에서 사용
     }
 
-    // NextAuth 세션 쿠키 설정
+    // NextAuth 세션 쿠키 설정 (테스트/개발 환경 전용이므로 secure=false)
     const cookieStore = await cookies()
-    const secureCookie = process.env.NODE_ENV === 'production'
-    const cookieName = secureCookie ? '__Secure-authjs.session-token' : 'authjs.session-token'
+    const secureCookie = false
+    const cookieName = 'authjs.session-token'
 
     // NextAuth JWT 토큰 생성 - NextAuth와 동일한 시크릿 사용
     // NextAuth는 AUTH_SECRET을 우선 사용하고, 없으면 NEXTAUTH_SECRET 사용
@@ -100,14 +100,13 @@ export async function GET() {
  * Mock 세션 삭제 (로그아웃)
  */
 export async function DELETE() {
-  if (process.env.NODE_ENV === 'production' && !process.env.ALLOW_TEST_API) {
+  if (process.env.NODE_ENV !== 'development' && process.env.NODE_ENV !== 'test') {
     return NextResponse.json({ error: 'Not available in production' }, { status: 403 })
   }
 
   try {
     const cookieStore = await cookies()
-    const secureCookie = process.env.NODE_ENV === 'production'
-    const cookieName = secureCookie ? '__Secure-authjs.session-token' : 'authjs.session-token'
+    const cookieName = 'authjs.session-token'
 
     cookieStore.delete(cookieName)
 

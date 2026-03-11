@@ -8,6 +8,7 @@ import {
   UnauthorizedCampaignAccessError,
 } from '@application/use-cases/campaign/UpdateCampaignUseCase'
 import { DuplicateCampaignNameError } from '@application/use-cases/campaign/CreateCampaignUseCase'
+import { InvalidCampaignError } from '@domain/errors/InvalidCampaignError'
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import { invalidateCache, getUserPattern } from '@/lib/cache/kpiCache'
 import { revalidateTag } from 'next/cache'
@@ -86,11 +87,8 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       return NextResponse.json({ message: error.message }, { status: 400 })
     }
 
-    if (error instanceof Error) {
-      // Handle domain errors (e.g., "Cannot update a completed campaign")
-      if (error.message.includes('Cannot update')) {
-        return NextResponse.json({ message: error.message }, { status: 400 })
-      }
+    if (error instanceof InvalidCampaignError) {
+      return NextResponse.json({ message: error.message }, { status: 400 })
     }
 
     console.error('Failed to update campaign:', error)

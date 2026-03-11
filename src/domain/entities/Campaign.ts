@@ -217,7 +217,7 @@ export class Campaign extends AggregateRoot {
   // Commands
   changeStatus(newStatus: CampaignStatus): Campaign {
     if (isTerminalStatus(this._status)) {
-      throw new Error('Cannot change status of a completed campaign')
+      throw InvalidCampaignError.terminalStatusChange()
     }
 
     if (!canTransition(this._status, newStatus)) {
@@ -259,7 +259,7 @@ export class Campaign extends AggregateRoot {
 
   updateBudget(newBudget: Money): Campaign {
     if (isTerminalStatus(this._status)) {
-      throw new Error('Cannot update budget of a completed campaign')
+      throw InvalidCampaignError.terminalBudgetUpdate()
     }
 
     Campaign.validateBudget(newBudget)
@@ -305,7 +305,7 @@ export class Campaign extends AggregateRoot {
     targetAudience?: TargetAudience | null
   }): Campaign {
     if (isTerminalStatus(this._status)) {
-      throw new Error('Cannot update a completed campaign')
+      throw InvalidCampaignError.terminalCampaignUpdate()
     }
 
     // For ACTIVE campaigns, only budget updates are allowed
@@ -324,7 +324,7 @@ export class Campaign extends AggregateRoot {
           props.targetAudience === undefined)
 
       if (!hasOnlyBudget) {
-        throw new Error('Only budget can be updated for active campaigns')
+        throw InvalidCampaignError.activeCampaignLimitedUpdate()
       }
     }
 
@@ -369,7 +369,7 @@ export class Campaign extends AggregateRoot {
 
   setMetaCampaignId(metaCampaignId: string): Campaign {
     if (this._metaCampaignId) {
-      throw new Error('Meta campaign ID is already set')
+      throw InvalidCampaignError.metaCampaignIdAlreadySet()
     }
 
     return new Campaign(

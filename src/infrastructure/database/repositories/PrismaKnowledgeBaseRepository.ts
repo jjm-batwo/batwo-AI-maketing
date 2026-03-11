@@ -31,11 +31,12 @@ export class PrismaKnowledgeBaseRepository implements IKnowledgeBaseRepository {
         metadata,
         1 - (embedding <=> $1::vector) AS similarity
       FROM knowledge_documents
-      WHERE 1 - (embedding <=> $1::vector) >= ${similarityThreshold}
+      WHERE 1 - (embedding <=> $1::vector) >= $3
       ORDER BY similarity DESC
       LIMIT $2`,
             vectorString,
-            limit
+            limit,
+            similarityThreshold
         )
 
         return results

@@ -10,7 +10,7 @@ import { prisma } from '@/lib/prisma'
  */
 export async function GET() {
   // 프로덕션 환경에서는 차단
-  if (process.env.NODE_ENV === 'production' && !process.env.ALLOW_TEST_API) {
+  if (process.env.NODE_ENV !== 'development' && process.env.NODE_ENV !== 'test') {
     return NextResponse.json({ error: 'Not available in production' }, { status: 403 })
   }
 
@@ -69,25 +69,25 @@ export async function GET() {
 
     const testCampaign = existingCampaign
       ? await prisma.campaign.update({
-          where: { id: existingCampaign.id },
-          data: {
-            name: 'E2E Test Campaign',
-            status: 'ACTIVE',
-            objective: 'CONVERSIONS',
-            dailyBudget: 50000,
-          },
-        })
+        where: { id: existingCampaign.id },
+        data: {
+          name: 'E2E Test Campaign',
+          status: 'ACTIVE',
+          objective: 'CONVERSIONS',
+          dailyBudget: 50000,
+        },
+      })
       : await prisma.campaign.create({
-          data: {
-            userId: testUser.id,
-            metaCampaignId: 'campaign_test_001',
-            name: 'E2E Test Campaign',
-            status: 'ACTIVE',
-            objective: 'CONVERSIONS',
-            dailyBudget: 50000,
-            startDate: new Date(),
-          },
-        })
+        data: {
+          userId: testUser.id,
+          metaCampaignId: 'campaign_test_001',
+          name: 'E2E Test Campaign',
+          status: 'ACTIVE',
+          objective: 'CONVERSIONS',
+          dailyBudget: 50000,
+          startDate: new Date(),
+        },
+      })
 
     console.log('[DB Init] Test campaign created:', testCampaign.name)
 
@@ -102,26 +102,26 @@ export async function GET() {
 
     const testKPI = existingKPI
       ? await prisma.kPISnapshot.update({
-          where: { id: existingKPI.id },
-          data: {
-            impressions: 10000,
-            clicks: 500,
-            spend: 25000,
-            conversions: 50,
-            revenue: 125000,
-          },
-        })
+        where: { id: existingKPI.id },
+        data: {
+          impressions: 10000,
+          clicks: 500,
+          spend: 25000,
+          conversions: 50,
+          revenue: 125000,
+        },
+      })
       : await prisma.kPISnapshot.create({
-          data: {
-            campaignId: testCampaign.id,
-            date: today,
-            impressions: 10000,
-            clicks: 500,
-            spend: 25000,
-            conversions: 50,
-            revenue: 125000,
-          },
-        })
+        data: {
+          campaignId: testCampaign.id,
+          date: today,
+          impressions: 10000,
+          clicks: 500,
+          spend: 25000,
+          conversions: 50,
+          revenue: 125000,
+        },
+      })
 
     console.log('[DB Init] Test KPI snapshot created')
 
@@ -169,7 +169,7 @@ export async function GET() {
  * 테스트 데이터 정리
  */
 export async function DELETE() {
-  if (process.env.NODE_ENV === 'production' && !process.env.ALLOW_TEST_API) {
+  if (process.env.NODE_ENV !== 'development' && process.env.NODE_ENV !== 'test') {
     return NextResponse.json({ error: 'Not available in production' }, { status: 403 })
   }
 

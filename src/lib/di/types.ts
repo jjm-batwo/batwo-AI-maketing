@@ -15,7 +15,7 @@ export const DI_TOKENS = {
   BudgetAlertRepository: Symbol.for('BudgetAlertRepository'),
   ABTestRepository: Symbol.for('ABTestRepository'),
   TeamRepository: Symbol.for('TeamRepository'),
-  TeamRoleRepository: Symbol.for('TeamRoleRepository'),
+  TeamRoleRepository: Symbol.for('TeamRoleRepository'), // TODO: PrismaTeamRoleRepository 구현 필요 (container.ts에 미등록)
   SubscriptionRepository: Symbol.for('SubscriptionRepository'),
   InvoiceRepository: Symbol.for('InvoiceRepository'),
   MetaPixelRepository: Symbol.for('MetaPixelRepository'),

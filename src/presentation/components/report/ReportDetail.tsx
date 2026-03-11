@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Download, Share2, Sparkles } from 'lucide-react'
 import { KPICard } from '../dashboard/KPICard'
+import DOMPurify from 'dompurify'
 
 interface ReportDetailProps {
   report: {
@@ -128,13 +129,12 @@ export function ReportDetail({
             {aiInsights.map((insight, index) => (
               <div
                 key={index}
-                className={`rounded-lg p-4 ${
-                  insight.type === 'POSITIVE'
+                className={`rounded-lg p-4 ${insight.type === 'POSITIVE'
                     ? 'bg-green-50 text-green-800'
                     : insight.type === 'NEGATIVE'
                       ? 'bg-red-50 text-red-800'
                       : 'bg-blue-50 text-blue-800'
-                }`}
+                  }`}
               >
                 <p className="text-sm">{insight.message}</p>
                 <p className="mt-1 text-xs opacity-70">
@@ -155,7 +155,7 @@ export function ReportDetail({
           <CardContent>
             <div
               className="prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: section.content }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(section.content) }}
             />
           </CardContent>
         </Card>

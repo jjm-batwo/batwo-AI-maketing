@@ -4,22 +4,17 @@ import {
   WarmupSummary,
 } from '@/infrastructure/external/meta-ads/MetaAdsWarmupClient'
 
-// Vercel Cron 또는 내부 API 호출만 허용
+// Vercel Cron 또는 내부 API 호출만 허용 — CRON_SECRET 기반 Bearer 인증
 function isAuthorized(request: NextRequest): boolean {
-  // Vercel Cron에서 호출 시 헤더 확인
   const authHeader = request.headers.get('authorization')
   const cronSecret = process.env.CRON_SECRET
 
-  if (cronSecret && authHeader === `Bearer ${cronSecret}`) {
-    return true
+  if (!cronSecret) {
+    console.error('[Internal API] CRON_SECRET is not configured')
+    return false
   }
 
-  // 개발 환경에서는 허용
-  if (process.env.NODE_ENV === 'development') {
-    return true
-  }
-
-  return false
+  return authHeader === `Bearer ${cronSecret}`
 }
 
 // DB 로깅을 위한 동적 import (DB 연결 실패 시에도 웜업은 동작)

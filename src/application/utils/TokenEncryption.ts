@@ -20,6 +20,13 @@ const SEPARATOR = ':'
 function getEncryptionKey(): Buffer | null {
   const key = process.env.TOKEN_ENCRYPTION_KEY
   if (!key) {
+    // SEC-11: 프로덕션에서는 암호화 키 필수 (평문 저장 방지)
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(
+        'TOKEN_ENCRYPTION_KEY is required in production. ' +
+        'Generate with: openssl rand -hex 32'
+      )
+    }
     return null
   }
   // 64자 hex 문자열 → 32바이트

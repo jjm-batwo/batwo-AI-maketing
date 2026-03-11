@@ -2,20 +2,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { MetaApiLogRepository } from '@/infrastructure/external/meta-ads/MetaApiLogRepository'
 
-// 내부 API 인증 확인
+// 내부 API 인증 확인 — CRON_SECRET 기반 Bearer 인증만 허용
 function isAuthorized(request: NextRequest): boolean {
   const authHeader = request.headers.get('authorization')
   const cronSecret = process.env.CRON_SECRET
 
-  if (cronSecret && authHeader === `Bearer ${cronSecret}`) {
-    return true
+  if (!cronSecret) {
+    console.error('[Internal API] CRON_SECRET is not configured')
+    return false
   }
 
-  if (process.env.NODE_ENV === 'development') {
-    return true
-  }
-
-  return false
+  return authHeader === `Bearer ${cronSecret}`
 }
 
 /**
@@ -78,12 +75,12 @@ export async function GET(request: NextRequest) {
       },
       today: todayStats
         ? {
-            calls: todayStats.calls,
-            errors: todayStats.errors,
-            errorRate: `${todayStats.errorRate.toFixed(2)}%`,
-            targetCalls: dailyTarget,
-            onTrack: todayStats.calls >= dailyTarget,
-          }
+          calls: todayStats.calls,
+          errors: todayStats.errors,
+          errorRate: `${todayStats.errorRate.toFixed(2)}%`,
+          targetCalls: dailyTarget,
+          onTrack: todayStats.calls >= dailyTarget,
+        }
         : null,
       callsByEndpoint: stats.callsByEndpoint,
       dailyBreakdown: stats.dailyBreakdown,

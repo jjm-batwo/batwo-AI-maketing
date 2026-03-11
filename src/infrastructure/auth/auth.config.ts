@@ -28,7 +28,22 @@ export const authConfig = {
           profileEmail: profile?.email,
         })
       }
-      // Allow all sign-ins by default
+
+      // SEC-05: allowDangerousEmailAccountLinking 보안 보완
+      // OAuth 프로바이더의 email_verified를 검증하여
+      // 검증되지 않은 이메일로 계정 연결 공격을 방지
+      if (account?.provider && account.provider !== 'credentials') {
+        const emailVerified = (profile as Record<string, unknown>)?.email_verified
+        // Google은 email_verified 제공, Meta는 제공하지 않을 수 있음
+        if (emailVerified === false) {
+          console.warn('[AUTH] Sign-in blocked: unverified email', {
+            provider: account.provider,
+            email: user?.email,
+          })
+          return false
+        }
+      }
+
       return true
     },
     authorized({ auth, request: { nextUrl } }) {

@@ -134,8 +134,9 @@ describe('PrismaKnowledgeBaseRepository', () => {
             await repo.findSimilar(Array(1536).fill(0), 5, 0.8)
 
             const callArgs = (mockPrisma.$queryRawUnsafe as ReturnType<typeof vi.fn>).mock.calls[0]
-            // Should include threshold in WHERE clause or HAVING
-            expect(callArgs[0]).toContain('0.8')
+            // SEC-04: threshold는 SQL 문자열이 아닌 파라미터 $3으로 전달
+            expect(callArgs[0]).toContain('$3')
+            expect(callArgs[3]).toBe(0.8)
         })
 
         it('should_use_default_threshold_of_0.7', async () => {
@@ -144,7 +145,9 @@ describe('PrismaKnowledgeBaseRepository', () => {
             await repo.findSimilar(Array(1536).fill(0), 5)
 
             const callArgs = (mockPrisma.$queryRawUnsafe as ReturnType<typeof vi.fn>).mock.calls[0]
-            expect(callArgs[0]).toContain('0.7')
+            // SEC-04: threshold는 파라미터 $3으로 전달 (기본값 0.7)
+            expect(callArgs[0]).toContain('$3')
+            expect(callArgs[3]).toBe(0.7)
         })
 
         it('should_return_empty_array_when_no_similar_documents', async () => {

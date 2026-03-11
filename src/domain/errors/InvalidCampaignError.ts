@@ -38,4 +38,20 @@ export class InvalidCampaignError extends DomainError {
   static metaCampaignIdAlreadySet(): InvalidCampaignError {
     return new InvalidCampaignError('Meta campaign ID is already set')
   }
+
+  static terminalStatusChange(): InvalidCampaignError {
+    return new InvalidCampaignError('Cannot change status of a completed campaign')
+  }
+
+  static terminalBudgetUpdate(): InvalidCampaignError {
+    return new InvalidCampaignError('Cannot update budget of a completed campaign')
+  }
+
+  static terminalCampaignUpdate(): InvalidCampaignError {
+    return new InvalidCampaignError('Cannot update a completed campaign')
+  }
+
+  static activeCampaignLimitedUpdate(): InvalidCampaignError {
+    return new InvalidCampaignError('Only budget can be updated for active campaigns')
+  }
 }
