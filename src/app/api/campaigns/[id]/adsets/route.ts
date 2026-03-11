@@ -1,17 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
-import { PrismaAdSetRepository } from '@infrastructure/database/repositories/PrismaAdSetRepository'
-import { PrismaCampaignRepository } from '@infrastructure/database/repositories/PrismaCampaignRepository'
-import {
-  CreateAdSetUseCase,
-  CampaignNotFoundError,
-} from '@application/use-cases/adset/CreateAdSetUseCase'
-import { ListAdSetsUseCase } from '@application/use-cases/adset/ListAdSetsUseCase'
-import { prisma } from '@/lib/prisma'
+import { container, DI_TOKENS } from '@/lib/di/container'
+import { CampaignNotFoundError } from '@application/use-cases/adset/CreateAdSetUseCase'
+import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
+import type { CreateAdSetUseCase } from '@application/use-cases/adset/CreateAdSetUseCase'
+import type { ListAdSetsUseCase } from '@application/use-cases/adset/ListAdSetsUseCase'
 import { revalidateTag } from 'next/cache'
-
-const campaignRepository = new PrismaCampaignRepository(prisma)
-const adSetRepository = new PrismaAdSetRepository(prisma)
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser()
@@ -21,12 +15,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const { id } = await params
 
     // 캠페인 소유권 확인
+    const campaignRepository = container.resolve<ICampaignRepository>(DI_TOKENS.CampaignRepository)
     const campaign = await campaignRepository.findById(id)
     if (!campaign || campaign.userId !== user.id) {
       return NextResponse.json({ error: '캠페인을 찾을 수 없습니다' }, { status: 404 })
     }
 
-    const listAdSets = new ListAdSetsUseCase(adSetRepository)
+    const listAdSets = container.resolve<ListAdSetsUseCase>(DI_TOKENS.ListAdSetsUseCase)
     const adSets = await listAdSets.execute(id)
 
     return NextResponse.json({ adSets })
@@ -44,6 +39,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const { id } = await params
 
     // 캠페인 소유권 확인
+    const campaignRepository = container.resolve<ICampaignRepository>(DI_TOKENS.CampaignRepository)
     const campaign = await campaignRepository.findById(id)
     if (!campaign || campaign.userId !== user.id) {
       return NextResponse.json({ error: '캠페인을 찾을 수 없습니다' }, { status: 404 })
@@ -51,7 +47,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     const body = await request.json()
 
-    const createAdSet = new CreateAdSetUseCase(campaignRepository, adSetRepository)
+    const createAdSet = container.resolve<CreateAdSetUseCase>(DI_TOKENS.CreateAdSetUseCase)
     const result = await createAdSet.execute({
       campaignId: id,
       name: body.name,

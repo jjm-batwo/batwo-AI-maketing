@@ -27,7 +27,7 @@ export interface MetaApiStats {
 }
 
 export class MetaApiLogRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaClient) { }
 
   /**
    * API 호출 로그 기록
@@ -44,6 +44,26 @@ export class MetaApiLogRepository {
         latencyMs: entry.latencyMs,
         accountId: entry.accountId ?? null,
       },
+    })
+  }
+
+  /**
+   * API 호출 로그 배치 기록 (N round-trips → 1)
+   */
+  async logMany(entries: MetaApiLogEntry[]): Promise<void> {
+    if (entries.length === 0) return
+
+    await this.prisma.metaApiLog.createMany({
+      data: entries.map((entry) => ({
+        endpoint: entry.endpoint,
+        method: entry.method,
+        statusCode: entry.statusCode,
+        success: entry.success,
+        errorCode: entry.errorCode ?? null,
+        errorMsg: entry.errorMsg ?? null,
+        latencyMs: entry.latencyMs,
+        accountId: entry.accountId ?? null,
+      })),
     })
   }
 

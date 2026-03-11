@@ -57,7 +57,7 @@ async function tryGetAccountsFromDB(targetAccountId: string | undefined): Promis
   }
 }
 
-// DB에 로그 저장 시도
+// DB에 로그 배치 저장 (PERF-03: 직렬 → createMany)
 async function tryLogToDatabase(summary: WarmupSummary, accountId: string): Promise<boolean> {
   try {
     const { prisma } = await import('@/lib/prisma')
@@ -65,8 +65,8 @@ async function tryLogToDatabase(summary: WarmupSummary, accountId: string): Prom
       await import('@infrastructure/external/meta-ads/MetaApiLogRepository')
     const logRepository = new MetaApiLogRepository(prisma)
 
-    for (const result of summary.results) {
-      await logRepository.log({
+    await logRepository.logMany(
+      summary.results.map((result) => ({
         endpoint: result.endpoint,
         method: 'GET',
         statusCode: result.success ? 200 : 400,
@@ -75,8 +75,8 @@ async function tryLogToDatabase(summary: WarmupSummary, accountId: string): Prom
         errorMsg: result.errorMessage,
         latencyMs: result.latencyMs,
         accountId: accountId,
-      })
-    }
+      }))
+    )
     return true
   } catch (error) {
     console.warn(
