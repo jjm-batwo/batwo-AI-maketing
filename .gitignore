@@ -15,6 +15,9 @@
 /playwright-report
 /test-results
 /tests/e2e/storage-state.json
+/tests/performance/results/*.json
+.stryker-tmp/
+/reports/mutation/
 
 # next.js
 /.next/
