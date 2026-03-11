@@ -4,7 +4,7 @@ import { KPI } from '@domain/entities/KPI'
 import { KPIMapper } from '../mappers/KPIMapper'
 
 export class PrismaKPIRepository implements IKPIRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaClient) { }
 
   async save(kpi: KPI): Promise<KPI> {
     const data = KPIMapper.toCreateInput(kpi)
@@ -47,14 +47,46 @@ export class PrismaKPIRepository implements IKPIRepository {
   }
 
   async saveMany(kpis: KPI[]): Promise<KPI[]> {
-    const results: KPI[] = []
+    if (kpis.length === 0) return []
 
-    for (const kpi of kpis) {
-      const saved = await this.save(kpi)
-      results.push(saved)
-    }
+    const operations = kpis.map((kpi) => {
+      const data = KPIMapper.toCreateInput(kpi)
+      return this.prisma.kPISnapshot.upsert({
+        where: {
+          campaignId_date: {
+            campaignId: data.campaignId,
+            date: data.date,
+          },
+        },
+        update: {
+          impressions: data.impressions,
+          clicks: data.clicks,
+          linkClicks: data.linkClicks,
+          conversions: data.conversions,
+          spend: data.spend,
+          currency: data.currency,
+          revenue: data.revenue,
+        },
+        create: {
+          id: data.id,
+          impressions: data.impressions,
+          clicks: data.clicks,
+          linkClicks: data.linkClicks,
+          conversions: data.conversions,
+          spend: data.spend,
+          currency: data.currency,
+          revenue: data.revenue,
+          date: data.date,
+          createdAt: data.createdAt,
+          campaign: {
+            connect: { id: data.campaignId },
+          },
+        },
+      })
+    })
 
-    return results
+    const results = await this.prisma.$transaction(operations)
+    return results.map(KPIMapper.toDomain)
   }
 
   async findById(id: string): Promise<KPI | null> {
@@ -317,10 +349,10 @@ export class PrismaKPIRepository implements IKPIRepository {
     if (filters.dateFrom || filters.dateTo) {
       where.date = {}
       if (filters.dateFrom) {
-        ;(where.date as Record<string, Date>).gte = filters.dateFrom
+        ; (where.date as Record<string, Date>).gte = filters.dateFrom
       }
       if (filters.dateTo) {
-        ;(where.date as Record<string, Date>).lte = filters.dateTo
+        ; (where.date as Record<string, Date>).lte = filters.dateTo
       }
     }
 

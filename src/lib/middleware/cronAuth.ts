@@ -7,9 +7,11 @@
  * 1. CRON_SECRET must be configured in environment variables
  * 2. Authorization header must match "Bearer {CRON_SECRET}"
  * 3. Fails closed: returns 500 if CRON_SECRET is not configured
+ * 4. Uses timingSafeEqual to prevent timing attacks
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { timingSafeEqual } from 'crypto'
 
 export interface CronAuthResult {
   authorized: boolean
@@ -47,9 +49,23 @@ export function validateCronAuth(request: NextRequest): CronAuthResult {
   }
 
   const authHeader = request.headers.get('authorization')
+  const expectedValue = `Bearer ${cronSecret}`
 
-  // Validate authorization header
-  if (!authHeader || authHeader !== `Bearer ${cronSecret}`) {
+  // Validate authorization header with timing-safe comparison
+  if (!authHeader || authHeader.length !== expectedValue.length) {
+    console.warn('[Cron Auth] Unauthorized cron request attempt')
+    return {
+      authorized: false,
+      response: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }),
+    }
+  }
+
+  const isValid = timingSafeEqual(
+    Buffer.from(authHeader),
+    Buffer.from(expectedValue)
+  )
+
+  if (!isValid) {
     console.warn('[Cron Auth] Unauthorized cron request attempt')
     return {
       authorized: false,

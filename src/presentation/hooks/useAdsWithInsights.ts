@@ -23,22 +23,30 @@ interface AdsWithInsightsResponse {
 }
 
 async function fetchAdsWithInsights(
-  adSetId: string,
+  adSetId: string | null,
   datePreset: CampaignDatePreset
 ): Promise<AdWithInsights[]> {
-  const res = await fetch(`/api/adsets/${adSetId}/ads-with-insights?datePreset=${datePreset}`)
+  const url = adSetId
+    ? `/api/adsets/${adSetId}/ads-with-insights?datePreset=${datePreset}`
+    : `/api/meta/all-ads-with-insights?datePreset=${datePreset}`
+
+  const res = await fetch(url)
   if (!res.ok) {
     throw new Error('Failed to fetch ads with insights')
   }
   const data: AdsWithInsightsResponse = await res.json()
-  return data.ads
+  return data.ads || []
 }
 
-export function useAdsWithInsights(adSetId: string, datePreset: CampaignDatePreset = 'last_7d') {
+export function useAdsWithInsights(
+  adSetId: string | null,
+  datePreset: CampaignDatePreset = 'last_7d',
+  enabled: boolean = true
+) {
   return useQuery({
     queryKey: ['ads-with-insights', adSetId, datePreset],
     queryFn: () => fetchAdsWithInsights(adSetId, datePreset),
-    enabled: !!adSetId,
-    staleTime: 60 * 1000,
+    enabled: enabled,
+    staleTime: 5 * 60 * 1000, // 5분: Meta API N+1 부하 경감
   })
 }

@@ -9,6 +9,7 @@ import {
   DeleteAdSetUseCase,
   AdSetNotFoundError as DeleteNotFoundError,
 } from '@application/use-cases/adset/DeleteAdSetUseCase'
+import { DomainError } from '@domain/errors/DomainError'
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import type { IAdSetRepository } from '@domain/repositories/IAdSetRepository'
 import { revalidateTag } from 'next/cache'
@@ -80,7 +81,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       return NextResponse.json({ error: '광고 세트를 찾을 수 없습니다' }, { status: 404 })
     }
 
-    if (error instanceof Error && error.message.includes('Cannot change status')) {
+    if (error instanceof DomainError) {
       return NextResponse.json({ error: error.message }, { status: 400 })
     }
 
