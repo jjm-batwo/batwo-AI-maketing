@@ -72,6 +72,10 @@ React 컴포넌트 구현의 일관성과 품질을 검증합니다:
 | `src/presentation/components/pixel/PlatformSelector.tsx`                  | 픽셀 설치 — 플랫폼 선택 카드 (카페24/자체몰/네이버)     |
 | `src/presentation/components/pixel/guides/CustomSiteGuide.tsx`            | 픽셀 설치 — 자체몰 설치 가이드                           |
 | `src/presentation/components/pixel/guides/NaverGuide.tsx`                 | 픽셀 설치 — 네이버 스마트스토어 설치 가이드              |
+| `src/presentation/components/pixel/MatchRateBar.tsx`                      | 픽셀 설치 — EMQ 매칭률 시각화 바                         |
+| `src/presentation/components/pixel/PixelStatus.tsx`                       | 픽셀 설치 — 픽셀 상태 대시보드 (EMQ, 헬스 상태 통합 표기)|
+| `src/presentation/components/pixel/HybridTrackingCard.tsx`                | 픽셀 설치 — 픽셀 vs CAPI 이벤트 교차 비교 카드           |
+| `src/app/(dashboard)/settings/pixel/page.tsx`                             | 픽셀 설정 페이지                                         |
 | `src/presentation/components/onboarding/steps/PixelSetupStep.tsx`         | 온보딩 — 픽셀 설치 단계 (플랫폼 선택 → 가이드 분기)     |
 | `src/presentation/hooks/useScrollAnimation.ts`                            | 스크롤 애니메이션 훅                                     |
 | `src/presentation/hooks/useDashboardKPI.ts`                               | 대시보드 KPI 데이터 훅                                   |
@@ -104,6 +108,8 @@ grep -rn "interface.*Props" src/presentation/components/optimization/ --include=
 grep -rn "interface.*Props" src/presentation/components/pixel/ --include="*.tsx"
 grep -rn "interface.*Props" src/presentation/components/onboarding/ --include="*.tsx"
 grep -rn "interface.*Props" src/presentation/components/audit/ --include="*.tsx"
+grep -rn "interface.*Props" src/presentation/components/analytics/ --include="*.tsx"
+grep -rn "interface.*Props" src/presentation/components/report/ --include="*.tsx"
 grep -rn "interface.*Props" src/presentation/utils/ --include="*.ts" --include="*.tsx"
 ```
 
@@ -147,6 +153,8 @@ grep -rn "@/components/ui/" src/presentation/components/optimization/ --include=
 grep -rn "@/components/ui/" src/presentation/components/pixel/ --include="*.tsx"
 grep -rn "@/components/ui/" src/presentation/components/onboarding/ --include="*.tsx"
 grep -rn "@/components/ui/" src/presentation/components/audit/ --include="*.tsx"
+grep -rn "@/components/ui/" src/presentation/components/analytics/ --include="*.tsx"
+grep -rn "@/components/ui/" src/presentation/components/report/ --include="*.tsx"
 grep -rn "@/components/ui/" src/presentation/utils/ --include="*.ts" --include="*.tsx"
 ```
 
@@ -167,6 +175,8 @@ grep -rn "cn(" src/presentation/components/optimization/ --include="*.tsx"
 grep -rn "cn(" src/presentation/components/pixel/ --include="*.tsx"
 grep -rn "cn(" src/presentation/components/onboarding/ --include="*.tsx"
 grep -rn "cn(" src/presentation/components/audit/ --include="*.tsx"
+grep -rn "cn(" src/presentation/components/analytics/ --include="*.tsx"
+grep -rn "cn(" src/presentation/components/report/ --include="*.tsx"
 grep -rn "cn(" src/presentation/utils/ --include="*.ts" --include="*.tsx"
 ```
 
@@ -197,6 +207,8 @@ grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/compo
 grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/components/pixel/ --include="*.tsx"
 grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/components/onboarding/ --include="*.tsx"
 grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/components/audit/ --include="*.tsx"
+grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/components/analytics/ --include="*.tsx"
+grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/components/report/ --include="*.tsx"
 grep -rn "aria-label\|aria-describedby\|aria-live\|role=" src/presentation/utils/ --include="*.ts" --include="*.tsx"
 ```
 
@@ -248,6 +260,8 @@ grep -rn "md:\|lg:\|sm:" src/presentation/components/optimization/ --include="*.
 grep -rn "md:\|lg:\|sm:" src/presentation/components/pixel/ --include="*.tsx" | head -20
 grep -rn "md:\|lg:\|sm:" src/presentation/components/onboarding/ --include="*.tsx" | head -20
 grep -rn "md:\|lg:\|sm:" src/presentation/components/audit/ --include="*.tsx" | head -20
+grep -rn "md:\|lg:\|sm:" src/presentation/components/analytics/ --include="*.tsx" | head -20
+grep -rn "md:\|lg:\|sm:" src/presentation/components/report/ --include="*.tsx" | head -20
 grep -rn "md:\|lg:\|sm:" src/presentation/utils/ --include="*.ts" --include="*.tsx" | head -20
 ```
 

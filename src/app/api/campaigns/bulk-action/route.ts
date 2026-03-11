@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { container, DI_TOKENS } from '@/lib/di';
 import { getAuthenticatedUser } from '@/lib/auth';
+import { revalidateTag } from 'next/cache';
 
 const bulkActionSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('status_change'), status: z.enum(['ACTIVE', 'PAUSED']) }),
@@ -38,6 +39,8 @@ export async function POST(request: NextRequest) {
       campaignIds: parsed.data.campaignIds,
       action: parsed.data.action as any,
     });
+
+    revalidateTag('campaigns', 'default');
 
     return NextResponse.json({ success: true, data: result });
   } catch (error) {

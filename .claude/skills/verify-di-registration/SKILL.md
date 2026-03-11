@@ -206,6 +206,27 @@ grep -n "KPIInsightsService" src/lib/di/container.ts
 
 ---
 
+### New Pattern: Phase 2 Retention Services Check
+
+**Context:** Phase 2 (리텐션 강화)로 자동 보고서, 퍼널 시각화, 벌크 작업, 벤치마크 기능이 추가됨.
+
+**검사:** 다음 UseCase들이 DI에 등록되었는지 확인합니다:
+
+- SendScheduledReportsUseCase
+- ConversionFunnelService
+- PerformanceBenchmarkService
+- BulkUpdateCampaignsUseCase
+
+```bash
+# Phase 2 service 등록 확인
+grep -n "SendScheduledReportsUseCase\|ConversionFunnelService\|PerformanceBenchmarkService\|BulkUpdateCampaignsUseCase" src/lib/di/container.ts
+```
+
+**PASS 기준:** 모든 신규 서비스/UseCase가 container.register로 등록됨
+**FAIL 기준:** 누락된 등록이 있음
+
+---
+
 ### New Pattern: RAG Service Registration Check
 
 **Context:** Hybrid RAG Integration으로 임베딩/벡터검색/지식적재 서비스가 추가됨.

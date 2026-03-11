@@ -150,3 +150,5 @@ grep -rl "export async function \(POST\|PATCH\|PUT\|DELETE\)" src/app/api/ --inc
 18. **Meta 계정 API** — `src/app/api/meta/accounts/`, `src/app/api/meta/select-account/` Meta 계정 선택/연결 API는 ISR 페이지 미연결
 19. **보고서 전달 API** — `src/app/api/reports/[id]/send/route.ts`, `src/app/api/reports/[id]/share/route.ts`는 이메일 전송/공유 처리 전용으로 ISR 페이지 데이터 모델을 변경하지 않음
 20. **예산 추천 API** — `src/app/api/campaigns/budget-recommendation/route.ts`는 추천 계산 결과를 반환하는 API로 persisted read model 변경이 없어 revalidateTag 불필요
+21. **보고서 스케줄 API** — `src/app/api/reports/schedule/route.ts` 보고서 스케줄 변경은 실시간으로 이뤄지며 ISR 캐시와 무관
+22. **애널리틱스 API** — `src/app/api/analytics/**` 벤치마크, 퍼널 데이터 등은 실시간 대시보드 용도로 ISR 무관
