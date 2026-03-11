@@ -15,6 +15,7 @@ export interface IReportRepository {
   findByUserId(userId: string): Promise<Report[]>
   findByFilters(filters: ReportFilters): Promise<Report[]>
   findLatestByUserAndType(userId: string, type: ReportType): Promise<Report | null>
+  findByShareToken(token: string): Promise<Report | null>
   update(report: Report): Promise<Report>
   delete(id: string): Promise<void>
 }

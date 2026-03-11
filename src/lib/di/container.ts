@@ -23,6 +23,7 @@ import { registerAuthModule } from './modules/auth.module'
 // Type-only imports for convenience function signatures
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import type { IReportRepository } from '@domain/repositories/IReportRepository'
+import type { IReportScheduleRepository } from '@domain/repositories/IReportScheduleRepository'
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
 import type { IBudgetAlertRepository } from '@domain/repositories/IBudgetAlertRepository'
 import type { IABTestRepository } from '@domain/repositories/IABTestRepository'
@@ -76,6 +77,7 @@ import type { ResumeCampaignUseCase } from '@application/use-cases/campaign/Resu
 import type { DeleteCampaignUseCase } from '@application/use-cases/campaign/DeleteCampaignUseCase'
 import type { SyncCampaignsUseCase } from '@application/use-cases/campaign/SyncCampaignsUseCase'
 import type { GenerateWeeklyReportUseCase } from '@application/use-cases/report/GenerateWeeklyReportUseCase'
+import type { SendScheduledReportsUseCase } from '@application/use-cases/report/SendScheduledReportsUseCase'
 import type { GetDashboardKPIUseCase } from '@application/use-cases/kpi/GetDashboardKPIUseCase'
 import type { ListUserPixelsUseCase } from '@application/use-cases/pixel/ListUserPixelsUseCase'
 import type { SelectPixelUseCase } from '@application/use-cases/pixel/SelectPixelUseCase'
@@ -173,6 +175,10 @@ export function getReportRepository(): IReportRepository {
   return container.resolve(DI_TOKENS.ReportRepository)
 }
 
+export function getReportScheduleRepository(): IReportScheduleRepository {
+  return container.resolve(DI_TOKENS.ReportScheduleRepository)
+}
+
 export function getKPIRepository(): IKPIRepository {
   return container.resolve(DI_TOKENS.KPIRepository)
 }
@@ -199,6 +205,10 @@ export function getResumeCampaignUseCase(): ResumeCampaignUseCase {
 
 export function getGenerateWeeklyReportUseCase(): GenerateWeeklyReportUseCase {
   return container.resolve(DI_TOKENS.GenerateWeeklyReportUseCase)
+}
+
+export function getSendScheduledReportsUseCase(): SendScheduledReportsUseCase {
+  return container.resolve(DI_TOKENS.SendScheduledReportsUseCase)
 }
 
 export function getGetDashboardKPIUseCase(): GetDashboardKPIUseCase {
