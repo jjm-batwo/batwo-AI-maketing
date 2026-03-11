@@ -2,6 +2,14 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { SetupPixelUseCase, SetupMode } from '@application/use-cases/pixel/SetupPixelUseCase'
 import { MockMetaPixelRepository } from '@tests/mocks/repositories/MockMetaPixelRepository'
 import { MetaPixel, PixelSetupMethod } from '@domain/entities/MetaPixel'
+import type { IAppConfig } from '@application/ports/IAppConfig'
+
+const mockAppConfig: IAppConfig = {
+  nodeEnv: 'test',
+  metaAppId: 'test-app-id',
+  metaAppSecret: 'test-app-secret',
+  appUrl: 'https://batwo.ai',
+}
 
 describe('SetupPixelUseCase', () => {
   let useCase: SetupPixelUseCase
@@ -9,7 +17,7 @@ describe('SetupPixelUseCase', () => {
 
   beforeEach(() => {
     pixelRepository = new MockMetaPixelRepository()
-    useCase = new SetupPixelUseCase(pixelRepository)
+    useCase = new SetupPixelUseCase(pixelRepository, mockAppConfig)
   })
 
   describe('execute - select existing pixel for manual setup', () => {

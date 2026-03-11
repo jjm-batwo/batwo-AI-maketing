@@ -4,13 +4,23 @@
  * A simple DI container for managing dependencies in the application.
  * This lightweight implementation provides constructor injection
  * without external DI libraries.
+ *
+ * Registration is split into domain-specific modules under ./modules/
  */
 
-import { env } from '@/lib/env'
 import { DI_TOKENS } from './types'
 import { SubscriptionPlan, getAIModelConfig } from '@domain/value-objects/SubscriptionPlan'
 
-// Repository interfaces
+// Module registrations
+import { registerCommonModule } from './modules/common.module'
+import { registerCampaignModule } from './modules/campaign.module'
+import { registerReportModule } from './modules/report.module'
+import { registerKPIModule } from './modules/kpi.module'
+import { registerPaymentModule } from './modules/payment.module'
+import { registerMetaModule } from './modules/meta.module'
+import { registerAuthModule } from './modules/auth.module'
+
+// Type-only imports for convenience function signatures
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import type { IReportRepository } from '@domain/repositories/IReportRepository'
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
@@ -28,164 +38,81 @@ import type { IAIFeedbackRepository } from '@domain/repositories/IAIFeedbackRepo
 import type { IConversationRepository } from '@domain/repositories/IConversationRepository'
 import type { IPendingActionRepository } from '@domain/repositories/IPendingActionRepository'
 import type { IAlertRepository } from '@domain/repositories/IAlertRepository'
-import type { IMetaAdAccountRepository } from '@application/ports/IMetaAdAccountRepository'
-import type { IInsightHistoryRepository } from '@domain/repositories/IInsightHistoryRepository'
+import type { IAdSetRepository } from '@domain/repositories/IAdSetRepository'
+import type { ICompetitorTrackingRepository } from '@domain/repositories/ICompetitorTrackingRepository'
+import type { IOptimizationRuleRepository } from '@domain/repositories/IOptimizationRuleRepository'
 import type { IPaymentGateway } from '@application/ports/IPaymentGateway'
-
-// Port interfaces
-import type { IMetaAdsService } from '@application/ports/IMetaAdsService'
 import type { IAIService } from '@application/ports/IAIService'
 import type { IStreamingAIService } from '@application/ports/IStreamingAIService'
+import type { ICacheService } from '@application/ports/ICacheService'
 import type { IKnowledgeBaseService } from '@application/ports/IKnowledgeBaseService'
 import type { IResearchService } from '@application/ports/IResearchService'
-import type { ICacheService } from '@application/ports/ICacheService'
-import type { IPlatformAdapter } from '@application/ports/IPlatformAdapter'
-import type { IResilienceService } from '@application/ports/IResilienceService'
-import type { IPromptTemplateService } from '@application/ports/IPromptTemplateService'
-import type { IFallbackResponseService } from '@application/ports/IFallbackResponseService'
-import type { IFewShotExampleRegistry } from '@application/ports/IFewShotExampleRegistry'
-import type { IMetaPixelService } from '@application/ports/IMetaPixelService'
-import type { ICAPIService } from '@application/ports/ICAPIService'
-
-// Infrastructure implementations
-import { PrismaCampaignRepository } from '@infrastructure/database/repositories/PrismaCampaignRepository'
-import { PrismaReportRepository } from '@infrastructure/database/repositories/PrismaReportRepository'
-import { PrismaKPIRepository } from '@infrastructure/database/repositories/PrismaKPIRepository'
-import { PrismaUsageLogRepository } from '@infrastructure/database/repositories/PrismaUsageLogRepository'
-import { PrismaBudgetAlertRepository } from '@infrastructure/database/repositories/PrismaBudgetAlertRepository'
-import { PrismaABTestRepository } from '@infrastructure/database/repositories/PrismaABTestRepository'
-import { PrismaTeamRepository } from '@infrastructure/database/repositories/PrismaTeamRepository'
-import { PrismaUserRepository } from '@infrastructure/database/repositories/PrismaUserRepository'
-import { PrismaSubscriptionRepository } from '@infrastructure/database/repositories/PrismaSubscriptionRepository'
-import { PrismaInvoiceRepository } from '@infrastructure/database/repositories/PrismaInvoiceRepository'
-import { PrismaMetaPixelRepository } from '@infrastructure/database/repositories/PrismaMetaPixelRepository'
-import { PrismaBillingKeyRepository } from '@infrastructure/database/repositories/PrismaBillingKeyRepository'
-import { PrismaPaymentLogRepository } from '@infrastructure/database/repositories/PrismaPaymentLogRepository'
-import { PrismaAIFeedbackRepository } from '@infrastructure/database/repositories/PrismaAIFeedbackRepository'
-import { PrismaConversationRepository } from '@infrastructure/database/repositories/PrismaConversationRepository'
-import { PrismaPendingActionRepository } from '@infrastructure/database/repositories/PrismaPendingActionRepository'
-import { PrismaAlertRepository } from '@infrastructure/database/repositories/PrismaAlertRepository'
-import { PrismaMetaAdAccountRepository } from '@infrastructure/database/repositories/PrismaMetaAdAccountRepository'
-import { PrismaInsightHistoryRepository } from '@infrastructure/database/repositories/PrismaInsightHistoryRepository'
-import { TossPaymentsClient } from '@infrastructure/payment/TossPaymentsClient'
-import { MetaAdsClient } from '@infrastructure/external/meta-ads/MetaAdsClient'
-import { Cafe24Adapter } from '@infrastructure/external/platforms/cafe24/Cafe24Adapter'
-import { MetaPixelClient } from '@infrastructure/external/meta-pixel/MetaPixelClient'
-import { CAPIClient } from '@infrastructure/external/meta-pixel/CAPIClient'
-import { AIService } from '@infrastructure/external/openai/AIService'
-import { ResilienceService } from '@infrastructure/external/errors/ResilienceService'
-import { StreamingAIService } from '@infrastructure/external/openai/streaming/StreamingAIService'
-import { KnowledgeBaseService } from '@infrastructure/knowledge'
-import { MarketingIntelligenceService } from '@application/services/MarketingIntelligenceService'
-import { ScienceAIService } from '@infrastructure/external/openai/ScienceAIService'
-import { PerplexityResearchService } from '@infrastructure/external/research'
-import { RedisCacheService } from '@infrastructure/cache/RedisCacheService'
-import { MemoryCacheService } from '@infrastructure/cache/MemoryCacheService'
+import type { IEmailService } from '@application/ports/IEmailService'
+import type { IReportPDFGenerator } from '@infrastructure/pdf/ReportPDFGenerator'
 import type { IToolRegistry } from '@application/ports/IConversationalAgent'
-import { registerAllTools } from '@application/tools/registerAllTools'
-import { ConversationalAgentService } from '@application/services/ConversationalAgentService'
-import { ActionConfirmationService } from '@application/services/ActionConfirmationService'
-import { ProactiveAlertService } from '@application/services/ProactiveAlertService'
-import { PromptTemplateService } from '@application/services/PromptTemplateService'
-import { FallbackResponseService } from '@application/services/FallbackResponseService'
-import { FewShotExampleRegistry } from '@application/services/FewShotExampleRegistry'
-import { GuideQuestionService } from '@application/services/GuideQuestionService'
-import { ConversationSummarizerService } from '@application/services/ConversationSummarizerService'
-import { KPIInsightsService } from '@application/services/KPIInsightsService'
 import type { IGuideQuestionService } from '@application/ports/IGuideQuestionService'
 
-// Application services and use cases
-import { QuotaService } from '@application/services/QuotaService'
-import { BudgetAlertService } from '@application/services/BudgetAlertService'
-import { AnomalyDetectionService } from '@application/services/AnomalyDetectionService'
-import { AnomalyRootCauseService } from '@application/services/AnomalyRootCauseService'
-import { AnomalySegmentAnalysisService } from '@application/services/AnomalySegmentAnalysisService'
-import { CopyLearningService } from '@application/services/CopyLearningService'
-import { CampaignAnalyzer } from '@application/services/CampaignAnalyzer'
-import { CompetitorBenchmarkService } from '@application/services/CompetitorBenchmarkService'
-import { TargetingRecommendationService } from '@application/services/TargetingRecommendationService'
-import { PermissionService } from '@application/services/PermissionService'
-import { ABTestAnalysisService } from '@application/services/ABTestAnalysisService'
-import {
-  ReportPDFGenerator,
-  type IReportPDFGenerator,
-} from '@infrastructure/pdf/ReportPDFGenerator'
-import { EmailService } from '@infrastructure/email/EmailService'
-import type { IEmailService } from '@application/ports/IEmailService'
-import { CreateCampaignUseCase } from '@application/use-cases/campaign/CreateCampaignUseCase'
-import { UpdateCampaignUseCase } from '@application/use-cases/campaign/UpdateCampaignUseCase'
-import { PauseCampaignUseCase } from '@application/use-cases/campaign/PauseCampaignUseCase'
-import { ResumeCampaignUseCase } from '@application/use-cases/campaign/ResumeCampaignUseCase'
-import { DeleteCampaignUseCase } from '@application/use-cases/campaign/DeleteCampaignUseCase'
-import { GetCampaignUseCase } from '@application/use-cases/campaign/GetCampaignUseCase'
-import { ListCampaignsUseCase } from '@application/use-cases/campaign/ListCampaignsUseCase'
-import { SyncCampaignsUseCase } from '@application/use-cases/campaign/SyncCampaignsUseCase'
-import { GenerateWeeklyReportUseCase } from '@application/use-cases/report/GenerateWeeklyReportUseCase'
-import { GetDashboardKPIUseCase } from '@application/use-cases/kpi/GetDashboardKPIUseCase'
-import { GetLiveDashboardKPIUseCase } from '@application/use-cases/kpi/GetLiveDashboardKPIUseCase'
-import { SyncMetaInsightsUseCase } from '@application/use-cases/kpi/SyncMetaInsightsUseCase'
-import { SyncAllInsightsUseCase } from '@application/use-cases/kpi/SyncAllInsightsUseCase'
-import { ListUserPixelsUseCase } from '@application/use-cases/pixel/ListUserPixelsUseCase'
-import { SelectPixelUseCase } from '@application/use-cases/pixel/SelectPixelUseCase'
-import { IssueBillingKeyUseCase } from '@application/use-cases/payment/IssueBillingKeyUseCase'
-import { SubscribePlanUseCase } from '@application/use-cases/payment/SubscribePlanUseCase'
-import { CancelSubscriptionUseCase } from '@application/use-cases/payment/CancelSubscriptionUseCase'
-import { ChangePlanUseCase } from '@application/use-cases/payment/ChangePlanUseCase'
-import { GetPaymentHistoryUseCase } from '@application/use-cases/payment/GetPaymentHistoryUseCase'
+import type { QuotaService } from '@application/services/QuotaService'
+import type { BudgetAlertService } from '@application/services/BudgetAlertService'
+import type { AnomalyDetectionService } from '@application/services/AnomalyDetectionService'
+import type { AnomalyRootCauseService } from '@application/services/AnomalyRootCauseService'
+import type { AnomalySegmentAnalysisService } from '@application/services/AnomalySegmentAnalysisService'
+import type { CopyLearningService } from '@application/services/CopyLearningService'
+import type { CampaignAnalyzer } from '@application/services/CampaignAnalyzer'
+import type { CompetitorBenchmarkService } from '@application/services/CompetitorBenchmarkService'
+import type { TargetingRecommendationService } from '@application/services/TargetingRecommendationService'
+import type { PermissionService } from '@application/services/PermissionService'
+import type { ABTestAnalysisService } from '@application/services/ABTestAnalysisService'
+import type { ConversationalAgentService } from '@application/services/ConversationalAgentService'
+import type { ActionConfirmationService } from '@application/services/ActionConfirmationService'
+import type { ProactiveAlertService } from '@application/services/ProactiveAlertService'
+import type { MarketingIntelligenceService } from '@application/services/MarketingIntelligenceService'
+import type { ConversationSummarizerService } from '@application/services/ConversationSummarizerService'
+import type { KPIInsightsService } from '@application/services/KPIInsightsService'
 
-import { PrismaAdSetRepository } from '@infrastructure/database/repositories/PrismaAdSetRepository'
-import type { IAdSetRepository } from '@domain/repositories/IAdSetRepository'
-import { CreateAdSetUseCase } from '@application/use-cases/adset/CreateAdSetUseCase'
-import { UpdateAdSetUseCase } from '@application/use-cases/adset/UpdateAdSetUseCase'
-import { DeleteAdSetUseCase } from '@application/use-cases/adset/DeleteAdSetUseCase'
-import { ListAdSetsUseCase } from '@application/use-cases/adset/ListAdSetsUseCase'
+import type { CreateCampaignUseCase } from '@application/use-cases/campaign/CreateCampaignUseCase'
+import type { UpdateCampaignUseCase } from '@application/use-cases/campaign/UpdateCampaignUseCase'
+import type { PauseCampaignUseCase } from '@application/use-cases/campaign/PauseCampaignUseCase'
+import type { ResumeCampaignUseCase } from '@application/use-cases/campaign/ResumeCampaignUseCase'
+import type { DeleteCampaignUseCase } from '@application/use-cases/campaign/DeleteCampaignUseCase'
+import type { GetCampaignUseCase } from '@application/use-cases/campaign/GetCampaignUseCase'
+import type { ListCampaignsUseCase } from '@application/use-cases/campaign/ListCampaignsUseCase'
+import type { SyncCampaignsUseCase } from '@application/use-cases/campaign/SyncCampaignsUseCase'
+import type { GenerateWeeklyReportUseCase } from '@application/use-cases/report/GenerateWeeklyReportUseCase'
+import type { GetDashboardKPIUseCase } from '@application/use-cases/kpi/GetDashboardKPIUseCase'
+import type { ListUserPixelsUseCase } from '@application/use-cases/pixel/ListUserPixelsUseCase'
+import type { SelectPixelUseCase } from '@application/use-cases/pixel/SelectPixelUseCase'
+import type { GetTrackingHealthUseCase } from '@application/use-cases/pixel/GetTrackingHealthUseCase'
+import type { SendCAPIEventsUseCase } from '@application/use-cases/pixel/SendCAPIEventsUseCase'
+import type { IssueBillingKeyUseCase } from '@application/use-cases/payment/IssueBillingKeyUseCase'
+import type { SubscribePlanUseCase } from '@application/use-cases/payment/SubscribePlanUseCase'
+import type { CancelSubscriptionUseCase } from '@application/use-cases/payment/CancelSubscriptionUseCase'
+import type { ChangePlanUseCase } from '@application/use-cases/payment/ChangePlanUseCase'
+import type { GetPaymentHistoryUseCase } from '@application/use-cases/payment/GetPaymentHistoryUseCase'
+import type { RefreshMetaTokenUseCase } from '@application/use-cases/token/RefreshMetaTokenUseCase'
+import type { AuditAdAccountUseCase } from '@application/use-cases/audit/AuditAdAccountUseCase'
+import type { CreateAdSetUseCase } from '@application/use-cases/adset/CreateAdSetUseCase'
+import type { UpdateAdSetUseCase } from '@application/use-cases/adset/UpdateAdSetUseCase'
+import type { DeleteAdSetUseCase } from '@application/use-cases/adset/DeleteAdSetUseCase'
+import type { ListAdSetsUseCase } from '@application/use-cases/adset/ListAdSetsUseCase'
+import type { TrackCompetitorUseCase } from '@application/use-cases/competitor/TrackCompetitorUseCase'
+import type { UntrackCompetitorUseCase } from '@application/use-cases/competitor/UntrackCompetitorUseCase'
+import type { GetTrackedCompetitorsUseCase } from '@application/use-cases/competitor/GetTrackedCompetitorsUseCase'
+import type { CreateOptimizationRuleUseCase } from '@application/use-cases/optimization/CreateOptimizationRuleUseCase'
+import type { UpdateOptimizationRuleUseCase } from '@application/use-cases/optimization/UpdateOptimizationRuleUseCase'
+import type { DeleteOptimizationRuleUseCase } from '@application/use-cases/optimization/DeleteOptimizationRuleUseCase'
+import type { ListOptimizationRulesUseCase } from '@application/use-cases/optimization/ListOptimizationRulesUseCase'
+import type { EvaluateOptimizationRulesUseCase } from '@application/use-cases/optimization/EvaluateOptimizationRulesUseCase'
+import type { AutoOptimizeCampaignUseCase } from '@application/use-cases/optimization/AutoOptimizeCampaignUseCase'
+import type { CalculateSavingsUseCase } from '@application/use-cases/optimization/CalculateSavingsUseCase'
 
-import { PrismaAdRepository } from '@infrastructure/database/repositories/PrismaAdRepository'
-import type { IAdRepository } from '@domain/repositories/IAdRepository'
-import { CreateAdUseCase } from '@application/use-cases/ad/CreateAdUseCase'
+import { AIService } from '@infrastructure/external/openai/AIService'
 
-import { PrismaCreativeRepository } from '@infrastructure/database/repositories/PrismaCreativeRepository'
-import type { ICreativeRepository } from '@domain/repositories/ICreativeRepository'
-import { PrismaCreativeAssetRepository } from '@infrastructure/database/repositories/PrismaCreativeAssetRepository'
-import type { ICreativeAssetRepository } from '@domain/repositories/ICreativeAssetRepository'
-import { CreateCreativeUseCase } from '@application/use-cases/creative/CreateCreativeUseCase'
-import { UploadAssetUseCase } from '@application/use-cases/creative/UploadAssetUseCase'
-
-import {
-  BlobStorageService,
-  type IBlobStorageService,
-} from '@infrastructure/storage/BlobStorageService'
-import { CreateAdvantageCampaignUseCase } from '@application/use-cases/campaign/CreateAdvantageCampaignUseCase'
-import { RefreshMetaTokenUseCase } from '@application/use-cases/token/RefreshMetaTokenUseCase'
-import { PrismaConversionEventRepository } from '@infrastructure/database/repositories/PrismaConversionEventRepository'
-import type { IConversionEventRepository } from '@domain/repositories/IConversionEventRepository'
-import { SendCAPIEventsUseCase } from '@application/use-cases/pixel/SendCAPIEventsUseCase'
-import { GetTrackingHealthUseCase } from '@application/use-cases/pixel/GetTrackingHealthUseCase'
-
-import { PrismaCompetitorTrackingRepository } from '@infrastructure/database/repositories/PrismaCompetitorTrackingRepository'
-import type { ICompetitorTrackingRepository } from '@domain/repositories/ICompetitorTrackingRepository'
-import { TrackCompetitorUseCase } from '@application/use-cases/competitor/TrackCompetitorUseCase'
-import { UntrackCompetitorUseCase } from '@application/use-cases/competitor/UntrackCompetitorUseCase'
-import { GetTrackedCompetitorsUseCase } from '@application/use-cases/competitor/GetTrackedCompetitorsUseCase'
-
-import { PrismaOptimizationRuleRepository } from '@infrastructure/database/repositories/PrismaOptimizationRuleRepository'
-import type { IOptimizationRuleRepository } from '@domain/repositories/IOptimizationRuleRepository'
-import { CreateOptimizationRuleUseCase } from '@application/use-cases/optimization/CreateOptimizationRuleUseCase'
-import { UpdateOptimizationRuleUseCase } from '@application/use-cases/optimization/UpdateOptimizationRuleUseCase'
-import { DeleteOptimizationRuleUseCase } from '@application/use-cases/optimization/DeleteOptimizationRuleUseCase'
-import { ListOptimizationRulesUseCase } from '@application/use-cases/optimization/ListOptimizationRulesUseCase'
-import { EvaluateOptimizationRulesUseCase } from '@application/use-cases/optimization/EvaluateOptimizationRulesUseCase'
-import { AutoOptimizeCampaignUseCase } from '@application/use-cases/optimization/AutoOptimizeCampaignUseCase'
-import { CalculateSavingsUseCase } from '@application/use-cases/optimization/CalculateSavingsUseCase'
-import { AuditAdAccountUseCase } from '@application/use-cases/audit/AuditAdAccountUseCase'
-import { GetFeedbackAnalyticsUseCase } from '@application/use-cases/ai/GetFeedbackAnalyticsUseCase'
-
-import { prisma } from '@/lib/prisma'
-import { safeDecryptToken } from '@application/utils/TokenEncryption'
+// ─── Container Class ────────────────────────────────────────────────
 
 type Factory<T> = () => T
 
-class Container {
+export class Container {
   private singletons = new Map<symbol, unknown>()
   private factories = new Map<symbol, Factory<unknown>>()
 
@@ -216,713 +143,31 @@ class Container {
   }
 }
 
-// Create and configure the container
+// ─── Create and Configure Container ─────────────────────────────────
+
 const container = new Container()
 
-// Register Repositories (Singletons)
-container.registerSingleton<ICampaignRepository>(
-  DI_TOKENS.CampaignRepository,
-  () => new PrismaCampaignRepository(prisma)
-)
-
-container.registerSingleton<IReportRepository>(
-  DI_TOKENS.ReportRepository,
-  () => new PrismaReportRepository(prisma)
-)
-
-container.registerSingleton<IKPIRepository>(
-  DI_TOKENS.KPIRepository,
-  () => new PrismaKPIRepository(prisma)
-)
-
-container.registerSingleton<IUsageLogRepository>(
-  DI_TOKENS.UsageLogRepository,
-  () => new PrismaUsageLogRepository(prisma)
-)
-
-container.registerSingleton<IBudgetAlertRepository>(
-  DI_TOKENS.BudgetAlertRepository,
-  () => new PrismaBudgetAlertRepository(prisma)
-)
-
-container.registerSingleton<IABTestRepository>(
-  DI_TOKENS.ABTestRepository,
-  () => new PrismaABTestRepository(prisma)
-)
-
-container.registerSingleton<ITeamRepository>(
-  DI_TOKENS.TeamRepository,
-  () => new PrismaTeamRepository(prisma)
-)
-
-container.registerSingleton<IUserRepository>(
-  DI_TOKENS.UserRepository,
-  () => new PrismaUserRepository(prisma)
-)
-
-container.registerSingleton<ISubscriptionRepository>(
-  DI_TOKENS.SubscriptionRepository,
-  () => new PrismaSubscriptionRepository(prisma)
-)
-
-container.registerSingleton<IInvoiceRepository>(
-  DI_TOKENS.InvoiceRepository,
-  () => new PrismaInvoiceRepository(prisma)
-)
-
-container.registerSingleton<IMetaPixelRepository>(
-  DI_TOKENS.MetaPixelRepository,
-  () => new PrismaMetaPixelRepository(prisma)
-)
-
-container.registerSingleton<IBillingKeyRepository>(
-  DI_TOKENS.BillingKeyRepository,
-  () => new PrismaBillingKeyRepository(prisma)
-)
-
-container.registerSingleton<IPaymentLogRepository>(
-  DI_TOKENS.PaymentLogRepository,
-  () => new PrismaPaymentLogRepository(prisma)
-)
-
-container.registerSingleton<IAIFeedbackRepository>(
-  DI_TOKENS.AIFeedbackRepository,
-  () => new PrismaAIFeedbackRepository(prisma)
-)
-
-// Conversational Agent Repositories (Singletons)
-container.registerSingleton<IConversationRepository>(
-  DI_TOKENS.ConversationRepository,
-  () => new PrismaConversationRepository(prisma)
-)
-
-container.registerSingleton<IPendingActionRepository>(
-  DI_TOKENS.PendingActionRepository,
-  () => new PrismaPendingActionRepository(prisma)
-)
-
-container.registerSingleton<IAlertRepository>(
-  DI_TOKENS.AlertRepository,
-  () => new PrismaAlertRepository(prisma)
-)
-
-container.registerSingleton<IMetaAdAccountRepository>(
-  DI_TOKENS.MetaAdAccountRepository,
-  () => new PrismaMetaAdAccountRepository(prisma)
-)
-
-// Register External Services (Singletons)
-container.registerSingleton<IMetaAdsService>(DI_TOKENS.MetaAdsService, () => new MetaAdsClient())
-
-container.registerSingleton<IAIService>(
-  DI_TOKENS.AIService,
-  () => new AIService(process.env.OPENAI_API_KEY || '', process.env.OPENAI_MODEL || 'gpt-4o-mini')
-)
-
-container.registerSingleton<IStreamingAIService>(
-  DI_TOKENS.StreamingAIService,
-  () => new StreamingAIService(process.env.OPENAI_MODEL || 'gpt-4o-mini')
-)
-
-container.registerSingleton<IPaymentGateway>(
-  DI_TOKENS.PaymentGateway,
-  () => new TossPaymentsClient()
-)
-
-container.registerSingleton<IPlatformAdapter>(
-  DI_TOKENS.PlatformAdapter,
-  () =>
-    new Cafe24Adapter(process.env.CAFE24_CLIENT_ID || '', process.env.CAFE24_CLIENT_SECRET || '')
-)
-
-container.registerSingleton<IMetaPixelService>(
-  DI_TOKENS.MetaPixelService,
-  () => new MetaPixelClient()
-)
-
-container.registerSingleton<ICAPIService>(DI_TOKENS.CAPIService, () => new CAPIClient())
-
-// Resilience Service (Singleton)
-container.registerSingleton<IResilienceService>(
-  DI_TOKENS.ResilienceService,
-  () => new ResilienceService()
-)
-
-// PromptTemplate Service (Singleton)
-container.registerSingleton<IPromptTemplateService>(
-  DI_TOKENS.PromptTemplateService,
-  () => new PromptTemplateService()
-)
-
-// FallbackResponse Service (Singleton)
-container.registerSingleton<IFallbackResponseService>(
-  DI_TOKENS.FallbackResponseService,
-  () =>
-    new FallbackResponseService(container.resolve<IResilienceService>(DI_TOKENS.ResilienceService))
-)
-
-// FewShotExample Registry (Singleton)
-container.registerSingleton<IFewShotExampleRegistry>(
-  DI_TOKENS.FewShotExampleRegistry,
-  () => new FewShotExampleRegistry()
-)
-
-// Register Cache Service (Singleton)
-container.registerSingleton<ICacheService>(DI_TOKENS.CacheService, () => {
-  const cacheEnabled = process.env.CACHE_ENABLED !== 'false'
-  const redisUrl = process.env.REDIS_URL
-
-  if (cacheEnabled && redisUrl) {
-    console.log('[DI] Using Redis cache service')
-    return new RedisCacheService(redisUrl)
-  } else {
-    console.log('[DI] Using in-memory cache service (development only)')
-    return new MemoryCacheService()
-  }
-})
-
-// Register Application Services (Singletons)
-container.registerSingleton(
-  DI_TOKENS.QuotaService,
-  () =>
-    new QuotaService(
-      container.resolve(DI_TOKENS.UsageLogRepository),
-      container.resolve(DI_TOKENS.UserRepository),
-      container.resolve(DI_TOKENS.SubscriptionRepository)
-    )
-)
-
-container.registerSingleton(
-  DI_TOKENS.BudgetAlertService,
-  () =>
-    new BudgetAlertService(
-      container.resolve(DI_TOKENS.BudgetAlertRepository),
-      container.resolve(DI_TOKENS.KPIRepository)
-    )
-)
-
-container.registerSingleton(
-  DI_TOKENS.AnomalyDetectionService,
-  () =>
-    new AnomalyDetectionService(
-      container.resolve(DI_TOKENS.KPIRepository),
-      container.resolve(DI_TOKENS.CampaignRepository)
-    )
-)
-
-container.registerSingleton(DI_TOKENS.AnomalyRootCauseService, () => new AnomalyRootCauseService())
-
-container.registerSingleton(
-  DI_TOKENS.AnomalySegmentAnalysisService,
-  () => new AnomalySegmentAnalysisService()
-)
-
-container.registerSingleton(DI_TOKENS.CopyLearningService, () => new CopyLearningService())
-
-container.registerSingleton(DI_TOKENS.CampaignAnalyzer, () => new CampaignAnalyzer())
-
-container.registerSingleton(
-  DI_TOKENS.CompetitorBenchmarkService,
-  () => new CompetitorBenchmarkService()
-)
-
-container.registerSingleton(
-  DI_TOKENS.TargetingRecommendationService,
-  () => new TargetingRecommendationService()
-)
-
-container.registerSingleton(DI_TOKENS.PermissionService, () => new PermissionService(prisma))
-
-container.registerSingleton(
-  DI_TOKENS.ABTestAnalysisService,
-  () => new ABTestAnalysisService(container.resolve(DI_TOKENS.ABTestRepository))
-)
-
-// Conversational Agent Services
-container.registerSingleton<IToolRegistry>(DI_TOKENS.ToolRegistry, () =>
-  registerAllTools({
-    campaignRepository: container.resolve(DI_TOKENS.CampaignRepository),
-    kpiRepository: container.resolve(DI_TOKENS.KPIRepository),
-    getDashboardKPIUseCase: container.resolve(DI_TOKENS.GetDashboardKPIUseCase),
-    listCampaignsUseCase: container.resolve(DI_TOKENS.ListCampaignsUseCase),
-    getCampaignUseCase: container.resolve(DI_TOKENS.GetCampaignUseCase),
-    generateWeeklyReportUseCase: container.resolve(DI_TOKENS.GenerateWeeklyReportUseCase),
-    createCampaignUseCase: container.resolve(DI_TOKENS.CreateCampaignUseCase),
-    updateCampaignUseCase: container.resolve(DI_TOKENS.UpdateCampaignUseCase),
-    pauseCampaignUseCase: container.resolve(DI_TOKENS.PauseCampaignUseCase),
-    resumeCampaignUseCase: container.resolve(DI_TOKENS.ResumeCampaignUseCase),
-    deleteCampaignUseCase: container.resolve(DI_TOKENS.DeleteCampaignUseCase),
-  })
-)
-
-container.registerSingleton(
-  DI_TOKENS.ConversationalAgentService,
-  () =>
-    new ConversationalAgentService(
-      container.resolve<IToolRegistry>(DI_TOKENS.ToolRegistry),
-      container.resolve<IConversationRepository>(DI_TOKENS.ConversationRepository),
-      container.resolve<IPendingActionRepository>(DI_TOKENS.PendingActionRepository),
-      container.resolve<IResilienceService>(DI_TOKENS.ResilienceService),
-      async (userId: string) => {
-        const metaAccount = await prisma.metaAdAccount.findUnique({
-          where: { userId },
-        })
-        return {
-          userId,
-          accessToken: metaAccount?.accessToken ? safeDecryptToken(metaAccount.accessToken) : null,
-          adAccountId: metaAccount?.metaAccountId ?? null,
-          conversationId: '',
-        }
-      }
-    )
-)
-
-container.registerSingleton(
-  DI_TOKENS.ActionConfirmationService,
-  () =>
-    new ActionConfirmationService(
-      container.resolve<IPendingActionRepository>(DI_TOKENS.PendingActionRepository),
-      container.resolve<IConversationRepository>(DI_TOKENS.ConversationRepository),
-      container.resolve<IToolRegistry>(DI_TOKENS.ToolRegistry),
-      async (userId: string) => ({
-        userId,
-        accessToken: null,
-        adAccountId: null,
-        conversationId: '',
-      })
-    )
-)
-
-container.registerSingleton(
-  DI_TOKENS.ProactiveAlertService,
-  () =>
-    new ProactiveAlertService(
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.KPIRepository),
-      container.resolve(DI_TOKENS.AlertRepository)
-    )
-)
-
-// KPI Insights Service (Singleton)
-container.registerSingleton<IInsightHistoryRepository>(
-  DI_TOKENS.InsightHistoryRepository,
-  () => new PrismaInsightHistoryRepository(prisma)
-)
-
-container.registerSingleton(DI_TOKENS.KPIInsightsService, () => {
-  return new KPIInsightsService(
-    container.resolve(DI_TOKENS.KPIRepository),
-    container.resolve(DI_TOKENS.CampaignRepository),
-    container.resolve<IAIService>(DI_TOKENS.AIService),
-    container.resolve<ICacheService>(DI_TOKENS.CacheService),
-    container.resolve<IInsightHistoryRepository>(DI_TOKENS.InsightHistoryRepository)
-  )
-})
-
-// Register Infrastructure Services (Singletons)
-container.registerSingleton<IReportPDFGenerator>(
-  DI_TOKENS.ReportPDFGenerator,
-  () => new ReportPDFGenerator()
-)
-
-container.registerSingleton<IEmailService>(
-  DI_TOKENS.EmailService,
-  () => new EmailService(env.RESEND_API_KEY || '')
-)
-
-// Register Marketing Intelligence Services (Singletons)
-container.registerSingleton<IKnowledgeBaseService>(
-  DI_TOKENS.KnowledgeBaseService,
-  () => new KnowledgeBaseService()
-)
-
-container.registerSingleton<IResearchService>(
-  DI_TOKENS.ResearchService,
-  () => new PerplexityResearchService(process.env.PERPLEXITY_API_KEY)
-)
-
-container.registerSingleton(DI_TOKENS.MarketingIntelligenceService, () => {
-  const knowledgeBase = container.resolve<IKnowledgeBaseService>(DI_TOKENS.KnowledgeBaseService)
-  const researchEnabled = process.env.RESEARCH_ENABLED === 'true'
-  const researchService = researchEnabled
-    ? container.resolve<IResearchService>(DI_TOKENS.ResearchService)
-    : undefined
-  return new MarketingIntelligenceService(knowledgeBase, researchService)
-})
-
-container.registerSingleton<IAIService>(
-  DI_TOKENS.ScienceAIService,
-  () =>
-    new ScienceAIService(
-      container.resolve(DI_TOKENS.AIService),
-      container.resolve(DI_TOKENS.MarketingIntelligenceService)
-    )
-)
-
-// Register Use Cases (Transient - new instance each time)
-container.register(
-  DI_TOKENS.CreateCampaignUseCase,
-  () =>
-    new CreateCampaignUseCase(
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.MetaAdsService),
-      container.resolve(DI_TOKENS.UsageLogRepository)
-    )
-)
-
-container.register(
-  DI_TOKENS.UpdateCampaignUseCase,
-  () =>
-    new UpdateCampaignUseCase(
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.MetaAdsService)
-    )
-)
-
-container.register(
-  DI_TOKENS.PauseCampaignUseCase,
-  () =>
-    new PauseCampaignUseCase(
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.MetaAdsService)
-    )
-)
-
-container.register(
-  DI_TOKENS.ResumeCampaignUseCase,
-  () =>
-    new ResumeCampaignUseCase(
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.MetaAdsService)
-    )
-)
-
-container.register(
-  DI_TOKENS.DeleteCampaignUseCase,
-  () => new DeleteCampaignUseCase(container.resolve(DI_TOKENS.CampaignRepository))
-)
-
-container.register(
-  DI_TOKENS.GetCampaignUseCase,
-  () => new GetCampaignUseCase(container.resolve(DI_TOKENS.CampaignRepository))
-)
-
-container.register(
-  DI_TOKENS.ListCampaignsUseCase,
-  () => new ListCampaignsUseCase(container.resolve(DI_TOKENS.CampaignRepository))
-)
-
-container.register(
-  DI_TOKENS.SyncCampaignsUseCase,
-  () =>
-    new SyncCampaignsUseCase(
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.MetaAdsService),
-      container.resolve(DI_TOKENS.MetaAdAccountRepository)
-    )
-)
-
-container.register(
-  DI_TOKENS.GenerateWeeklyReportUseCase,
-  () =>
-    new GenerateWeeklyReportUseCase(
-      container.resolve(DI_TOKENS.ReportRepository),
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.KPIRepository),
-      container.resolve(DI_TOKENS.AIService),
-      container.resolve(DI_TOKENS.UsageLogRepository)
-    )
-)
-
-container.register(
-  DI_TOKENS.GetDashboardKPIUseCase,
-  () =>
-    new GetDashboardKPIUseCase(
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.KPIRepository)
-    )
-)
-
-container.register(
-  DI_TOKENS.GetLiveDashboardKPIUseCase,
-  () =>
-    new GetLiveDashboardKPIUseCase(
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.MetaAdsService),
-      container.resolve(DI_TOKENS.MetaAdAccountRepository)
-    )
-)
-
-container.register(
-  DI_TOKENS.SyncMetaInsightsUseCase,
-  () =>
-    new SyncMetaInsightsUseCase(
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.KPIRepository),
-      container.resolve(DI_TOKENS.MetaAdsService)
-    )
-)
-
-container.register(
-  DI_TOKENS.SyncAllInsightsUseCase,
-  () =>
-    new SyncAllInsightsUseCase(
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.KPIRepository),
-      container.resolve(DI_TOKENS.MetaAdsService),
-      container.resolve(DI_TOKENS.MetaAdAccountRepository)
-    )
-)
-
-// AdSet Repository (Singleton)
-container.registerSingleton<IAdSetRepository>(
-  DI_TOKENS.AdSetRepository,
-  () => new PrismaAdSetRepository(prisma)
-)
-
-// AdSet Use Cases (Transient)
-container.register(
-  DI_TOKENS.CreateAdSetUseCase,
-  () =>
-    new CreateAdSetUseCase(
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.AdSetRepository)
-    )
-)
-
-container.register(
-  DI_TOKENS.UpdateAdSetUseCase,
-  () => new UpdateAdSetUseCase(container.resolve(DI_TOKENS.AdSetRepository))
-)
-
-container.register(
-  DI_TOKENS.DeleteAdSetUseCase,
-  () => new DeleteAdSetUseCase(container.resolve(DI_TOKENS.AdSetRepository))
-)
-
-container.register(
-  DI_TOKENS.ListAdSetsUseCase,
-  () => new ListAdSetsUseCase(container.resolve(DI_TOKENS.AdSetRepository))
-)
-
-// Ad Repository (Singleton)
-container.registerSingleton<IAdRepository>(
-  DI_TOKENS.AdRepository,
-  () => new PrismaAdRepository(prisma)
-)
-
-// Creative Repository (Singleton)
-container.registerSingleton<ICreativeRepository>(
-  DI_TOKENS.CreativeRepository,
-  () => new PrismaCreativeRepository(prisma)
-)
-
-// CreativeAsset Repository (Singleton)
-container.registerSingleton<ICreativeAssetRepository>(
-  DI_TOKENS.CreativeAssetRepository,
-  () => new PrismaCreativeAssetRepository(prisma)
-)
-
-// Blob Storage Service (Singleton)
-container.registerSingleton<IBlobStorageService>(
-  DI_TOKENS.BlobStorageService,
-  () => new BlobStorageService()
-)
-
-// Ad Use Cases (Transient)
-container.register(
-  DI_TOKENS.CreateAdUseCase,
-  () =>
-    new CreateAdUseCase(
-      container.resolve(DI_TOKENS.AdRepository),
-      container.resolve(DI_TOKENS.AdSetRepository),
-      container.resolve(DI_TOKENS.CreativeRepository)
-    )
-)
-
-// Creative Use Cases (Transient)
-container.register(
-  DI_TOKENS.CreateCreativeUseCase,
-  () => new CreateCreativeUseCase(container.resolve(DI_TOKENS.CreativeRepository))
-)
-
-container.register(
-  DI_TOKENS.UploadAssetUseCase,
-  () =>
-    new UploadAssetUseCase(
-      container.resolve(DI_TOKENS.CreativeAssetRepository),
-      container.resolve(DI_TOKENS.BlobStorageService)
-    )
-)
-
-// Advantage+ Campaign Use Case (Transient)
-container.register(
-  DI_TOKENS.CreateAdvantageCampaignUseCase,
-  () =>
-    new CreateAdvantageCampaignUseCase(
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.AdSetRepository),
-      container.resolve(DI_TOKENS.MetaAdsService),
-      container.resolve(DI_TOKENS.UsageLogRepository)
-    )
-)
-
-// Pixel Use Cases
-container.register(
-  DI_TOKENS.ListUserPixelsUseCase,
-  () => new ListUserPixelsUseCase(container.resolve(DI_TOKENS.MetaPixelRepository))
-)
-
-container.register(
-  DI_TOKENS.SelectPixelUseCase,
-  () => new SelectPixelUseCase(container.resolve(DI_TOKENS.MetaPixelRepository))
-)
-
-// GetTrackingHealth Use Case (Transient)
-container.register(
-  DI_TOKENS.GetTrackingHealthUseCase,
-  () =>
-    new GetTrackingHealthUseCase(
-      container.resolve(DI_TOKENS.MetaPixelRepository),
-      container.resolve(DI_TOKENS.MetaPixelService),
-      {
-        async getCAPIStatsByPixelId(pixelId: string) {
-          const repo = container.resolve<IConversionEventRepository>(
-            DI_TOKENS.ConversionEventRepository
-          )
-          return repo.countByPixelIdGrouped(pixelId)
-        },
-      },
-      {
-        async getAccessTokenByUserId(userId: string) {
-          const account = await prisma.metaAdAccount.findUnique({ where: { userId } })
-          return account?.accessToken ? safeDecryptToken(account.accessToken) : null
-        },
-      }
-    )
-)
-
-// Payment Use Cases
-container.register(
-  DI_TOKENS.IssueBillingKeyUseCase,
-  () =>
-    new IssueBillingKeyUseCase(
-      container.resolve(DI_TOKENS.BillingKeyRepository),
-      container.resolve(DI_TOKENS.PaymentGateway)
-    )
-)
-
-container.register(
-  DI_TOKENS.SubscribePlanUseCase,
-  () =>
-    new SubscribePlanUseCase(
-      container.resolve(DI_TOKENS.BillingKeyRepository),
-      container.resolve(DI_TOKENS.SubscriptionRepository),
-      container.resolve(DI_TOKENS.InvoiceRepository),
-      container.resolve(DI_TOKENS.PaymentLogRepository),
-      container.resolve(DI_TOKENS.PaymentGateway)
-    )
-)
-
-container.register(
-  DI_TOKENS.CancelSubscriptionUseCase,
-  () =>
-    new CancelSubscriptionUseCase(
-      container.resolve(DI_TOKENS.SubscriptionRepository),
-      container.resolve(DI_TOKENS.BillingKeyRepository)
-    )
-)
-
-container.register(
-  DI_TOKENS.ChangePlanUseCase,
-  () =>
-    new ChangePlanUseCase(
-      container.resolve(DI_TOKENS.SubscriptionRepository),
-      container.resolve(DI_TOKENS.BillingKeyRepository),
-      container.resolve(DI_TOKENS.InvoiceRepository),
-      container.resolve(DI_TOKENS.PaymentLogRepository),
-      container.resolve(DI_TOKENS.PaymentGateway)
-    )
-)
-
-container.register(
-  DI_TOKENS.GetPaymentHistoryUseCase,
-  () => new GetPaymentHistoryUseCase(container.resolve(DI_TOKENS.PaymentLogRepository))
-)
-
-// Optimization Repository (Singleton)
-container.registerSingleton<IOptimizationRuleRepository>(
-  DI_TOKENS.OptimizationRuleRepository,
-  () => new PrismaOptimizationRuleRepository(prisma)
-)
-
-// Optimization Use Cases (Transient)
-container.register(
-  DI_TOKENS.AutoOptimizeCampaignUseCase,
-  () =>
-    new AutoOptimizeCampaignUseCase(
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.MetaAdsService)
-    )
-)
-
-container.register(
-  DI_TOKENS.CreateOptimizationRuleUseCase,
-  () => new CreateOptimizationRuleUseCase(container.resolve(DI_TOKENS.OptimizationRuleRepository))
-)
-
-container.register(
-  DI_TOKENS.UpdateOptimizationRuleUseCase,
-  () => new UpdateOptimizationRuleUseCase(container.resolve(DI_TOKENS.OptimizationRuleRepository))
-)
-
-container.register(
-  DI_TOKENS.DeleteOptimizationRuleUseCase,
-  () => new DeleteOptimizationRuleUseCase(container.resolve(DI_TOKENS.OptimizationRuleRepository))
-)
-
-container.register(
-  DI_TOKENS.ListOptimizationRulesUseCase,
-  () => new ListOptimizationRulesUseCase(container.resolve(DI_TOKENS.OptimizationRuleRepository))
-)
-
-container.register(
-  DI_TOKENS.EvaluateOptimizationRulesUseCase,
-  () =>
-    new EvaluateOptimizationRulesUseCase(
-      container.resolve(DI_TOKENS.OptimizationRuleRepository),
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.KPIRepository),
-      container.resolve(DI_TOKENS.AutoOptimizeCampaignUseCase)
-    )
-)
-
-// 절감 금액 계산 UseCase
-container.register(
-  DI_TOKENS.CalculateSavingsUseCase,
-  () =>
-    new CalculateSavingsUseCase(
-      container.resolve(DI_TOKENS.OptimizationRuleRepository),
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.KPIRepository)
-    )
-)
-
-// Audit Use Cases
-container.register(
-  DI_TOKENS.AuditAdAccountUseCase,
-  () => new AuditAdAccountUseCase(container.resolve(DI_TOKENS.MetaAdsService))
-)
-
-// Feedback Analytics Use Cases
-container.register(
-  DI_TOKENS.GetFeedbackAnalyticsUseCase,
-  () => new GetFeedbackAnalyticsUseCase(container.resolve(DI_TOKENS.AIFeedbackRepository))
-)
+// 등록 순서 중요: 의존 관계에 따라 선행 모듈부터 등록
+// 1. Meta (MetaAdsService, AdAccountRepository 등 – 다른 모듈 의존)
+registerMetaModule(container)
+// 2. Campaign (CampaignRepository 등 – KPI/Report에서 의존)
+registerCampaignModule(container)
+// 3. KPI (KPIRepository – Report에서 의존)
+registerKPIModule(container)
+// 4. Payment (SubscriptionRepository – Common/QuotaService에서 의존)
+registerPaymentModule(container)
+// 5. Common (AI, Cache, Quota 등 – Auth에서 의존)
+registerCommonModule(container)
+// 6. Report (GenerateWeeklyReportUseCase – Auth에서 의존)
+registerReportModule(container)
+// 7. Auth (ToolRegistry, ConversationalAgent – 모든 Use Case 의존)
+registerAuthModule(container)
 
 export { container, DI_TOKENS }
 
-// Convenience functions for resolving dependencies
+// ─── Convenience Functions ──────────────────────────────────────────
+// 기존 export 시그니처를 유지하여 import 경로 변경 최소화
+
 export function getCampaignRepository(): ICampaignRepository {
   return container.resolve(DI_TOKENS.CampaignRepository)
 }
@@ -1195,53 +440,9 @@ export function getCacheService(): ICacheService {
   return container.resolve(DI_TOKENS.CacheService)
 }
 
-// Competitor Tracking Repository (Singleton)
-container.registerSingleton<ICompetitorTrackingRepository>(
-  DI_TOKENS.CompetitorTrackingRepository,
-  () => new PrismaCompetitorTrackingRepository(prisma)
-)
-
-// Competitor Tracking Use Cases (Transient)
-container.register(
-  DI_TOKENS.TrackCompetitorUseCase,
-  () => new TrackCompetitorUseCase(container.resolve(DI_TOKENS.CompetitorTrackingRepository))
-)
-
-container.register(
-  DI_TOKENS.UntrackCompetitorUseCase,
-  () => new UntrackCompetitorUseCase(container.resolve(DI_TOKENS.CompetitorTrackingRepository))
-)
-
-container.register(
-  DI_TOKENS.GetTrackedCompetitorsUseCase,
-  () => new GetTrackedCompetitorsUseCase(container.resolve(DI_TOKENS.CompetitorTrackingRepository))
-)
-
-// Token Management Use Cases (Transient)
-container.register(
-  DI_TOKENS.RefreshMetaTokenUseCase,
-  () => new RefreshMetaTokenUseCase(container.resolve(DI_TOKENS.MetaAdAccountRepository))
-)
-
 export function getRefreshMetaTokenUseCase(): RefreshMetaTokenUseCase {
   return container.resolve(DI_TOKENS.RefreshMetaTokenUseCase)
 }
-
-// ConversionEvent Repository (Singleton)
-container.registerSingleton<IConversionEventRepository>(
-  DI_TOKENS.ConversionEventRepository,
-  () => new PrismaConversionEventRepository(prisma)
-)
-
-// SendCAPIEvents Use Case (Transient)
-container.register(
-  DI_TOKENS.SendCAPIEventsUseCase,
-  () =>
-    new SendCAPIEventsUseCase(
-      container.resolve(DI_TOKENS.ConversionEventRepository),
-      container.resolve(DI_TOKENS.CAPIService)
-    )
-)
 
 export function getSendCAPIEventsUseCase(): SendCAPIEventsUseCase {
   return container.resolve(DI_TOKENS.SendCAPIEventsUseCase)
@@ -1295,21 +496,9 @@ export function getCalculateSavingsUseCase(): CalculateSavingsUseCase {
   return container.resolve(DI_TOKENS.CalculateSavingsUseCase)
 }
 
-// Guide Question Service (Singleton)
-container.registerSingleton<IGuideQuestionService>(
-  DI_TOKENS.GuideQuestionService,
-  () => new GuideQuestionService({ questions: {}, maxQuestionsPerIntent: 5 })
-)
-
 export function getGuideQuestionService(): IGuideQuestionService {
   return container.resolve(DI_TOKENS.GuideQuestionService)
 }
-
-// Conversation Summarizer Service
-container.register<ConversationSummarizerService>(
-  DI_TOKENS.ConversationSummarizerService,
-  () => new ConversationSummarizerService(container.resolve<IAIService>(DI_TOKENS.AIService))
-)
 
 export function getConversationSummarizerService(): ConversationSummarizerService {
   return container.resolve(DI_TOKENS.ConversationSummarizerService)

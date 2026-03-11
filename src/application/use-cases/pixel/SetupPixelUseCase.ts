@@ -1,6 +1,7 @@
 import { IMetaPixelRepository } from '@domain/repositories/IMetaPixelRepository'
 import { MetaPixel, PixelSetupMethod } from '@domain/entities/MetaPixel'
 import { InvalidPixelSetupError, PixelNotFoundError } from '@domain/errors'
+import type { IAppConfig } from '@application/ports/IAppConfig'
 
 export enum SetupMode {
   MANUAL = 'MANUAL',
@@ -31,7 +32,10 @@ export interface SetupPixelResultDTO {
 }
 
 export class SetupPixelUseCase {
-  constructor(private readonly pixelRepository: IMetaPixelRepository) {}
+  constructor(
+    private readonly pixelRepository: IMetaPixelRepository,
+    private readonly appConfig: IAppConfig
+  ) {}
 
   async execute(input: SetupPixelInput): Promise<SetupPixelResultDTO> {
     // Validation: Either pixelId or newPixel must be provided, but not both
@@ -158,7 +162,7 @@ src="https://www.facebook.com/tr?id=${metaPixelId}&ev=PageView&noscript=1"
   }
 
   private generatePlatformConnectUrl(pixelId: string, platform: 'CAFE24' | 'CUSTOM'): string {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://batwo.ai'
+    const baseUrl = this.appConfig.appUrl
 
     if (platform === 'CAFE24') {
       return `${baseUrl}/api/platform/cafe24/auth?pixelId=${pixelId}`

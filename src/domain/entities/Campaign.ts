@@ -309,21 +309,14 @@ export class Campaign extends AggregateRoot {
     }
 
     // For ACTIVE campaigns, only budget updates are allowed
-    if (
-      this._status === CampaignStatus.ACTIVE &&
-      (props.name !== undefined ||
+    if (this._status === CampaignStatus.ACTIVE) {
+      const hasNonBudgetFields =
+        props.name !== undefined ||
         props.startDate !== undefined ||
         props.endDate !== undefined ||
-        props.targetAudience !== undefined)
-    ) {
-      const hasOnlyBudget =
-        Object.keys(props).filter((k) => k !== 'dailyBudget').length === 0 ||
-        (props.name === undefined &&
-          props.startDate === undefined &&
-          props.endDate === undefined &&
-          props.targetAudience === undefined)
+        props.targetAudience !== undefined
 
-      if (!hasOnlyBudget) {
+      if (hasNonBudgetFields) {
         throw InvalidCampaignError.activeCampaignLimitedUpdate()
       }
     }

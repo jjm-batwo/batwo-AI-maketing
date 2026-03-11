@@ -2,24 +2,23 @@
  * PermissionService
  *
  * Implements permission checking using TeamRole domain entities.
+ * Uses IPermissionRepository instead of PrismaClient directly (QUAL-09).
  */
 
 import { IPermissionService } from '../ports/IPermissionService'
 import { Permission } from '@/domain/value-objects/Permission'
 import { TeamRoleEntity, TeamRoleName } from '@/domain/entities/TeamRole'
-import { PrismaClient } from '@/generated/prisma'
+import type { IPermissionRepository } from '@domain/repositories/IPermissionRepository'
 
 // Map database TeamRole enum to domain TeamRoleName
 type DatabaseTeamRole = 'OWNER' | 'ADMIN' | 'MEMBER' | 'VIEWER'
 
 export class PermissionService implements IPermissionService {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly permissionRepository: IPermissionRepository) {}
 
   async checkPermission(userId: string, teamId: string, permissionStr: string): Promise<boolean> {
     // 1. Get the team member record
-    const teamMember = await this.prisma.teamMember.findUnique({
-      where: { teamId_userId: { teamId, userId } },
-    })
+    const teamMember = await this.permissionRepository.findTeamMember(teamId, userId)
 
     if (!teamMember) return false
 
@@ -36,9 +35,7 @@ export class PermissionService implements IPermissionService {
   }
 
   async getUserPermissions(userId: string, teamId: string): Promise<string[]> {
-    const teamMember = await this.prisma.teamMember.findUnique({
-      where: { teamId_userId: { teamId, userId } },
-    })
+    const teamMember = await this.permissionRepository.findTeamMember(teamId, userId)
 
     if (!teamMember) return []
 
@@ -47,9 +44,7 @@ export class PermissionService implements IPermissionService {
   }
 
   async getUserRole(userId: string, teamId: string): Promise<TeamRoleName | null> {
-    const teamMember = await this.prisma.teamMember.findUnique({
-      where: { teamId_userId: { teamId, userId } },
-    })
+    const teamMember = await this.permissionRepository.findTeamMember(teamId, userId)
 
     if (!teamMember) return null
 
