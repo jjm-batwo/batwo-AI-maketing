@@ -90,9 +90,9 @@ Phase 3-4: 3개 에이전트 병렬 + 1개 순차
 
 ### 각 Phase 완료 후 체크포인트
 
-- [ ] `npx tsc --noEmit` 통과
-- [ ] `npx vitest run` 전체 테스트 통과
-- [ ] `npx next build` 빌드 성공
-- [ ] 기존 테스트 회귀 없음
-- [ ] `/verify-architecture` 레이어 의존성 검증
-- [ ] `/verify-di-registration` DI 토큰 동기화 검증
+- [x] `npx tsc --noEmit` 통과
+- [x] `npx vitest run` 전체 테스트 통과
+- [x] `npx next build` 빌드 성공
+- [x] 기존 테스트 회귀 없음
+- [x] `/verify-architecture` 레이어 의존성 검증
+- [x] `/verify-di-registration` DI 토큰 동기화 검증
