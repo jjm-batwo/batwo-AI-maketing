@@ -41,7 +41,12 @@ export const createCampaignSchema = z.object({
   adAccountId: z.string().optional().openapi({ example: 'act_123456789' }),
 })
 
-export const updateCampaignSchema = createCampaignSchema.partial().omit({ objective: true })
+export const updateCampaignSchema = createCampaignSchema
+  .partial()
+  .omit({ objective: true })
+  .extend({
+    status: z.enum(['ACTIVE', 'PAUSED']).optional().openapi({ example: 'PAUSED' }),
+  })
 
 export const reportQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1).openapi({ example: 1 }),

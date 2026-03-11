@@ -49,8 +49,14 @@ export class UpdateCampaignUseCase {
       }
     }
 
+    // Status change (separate domain operation from field update)
+    let campaignToUpdate = campaign
+    if (dto.status !== undefined && dto.status !== campaign.status) {
+      campaignToUpdate = campaign.changeStatus(dto.status)
+    }
+
     // Prepare update props
-    const updateProps: Parameters<typeof campaign.update>[0] = {}
+    const updateProps: Parameters<typeof campaignToUpdate.update>[0] = {}
 
     if (dto.name !== undefined) {
       updateProps.name = dto.name
@@ -72,14 +78,18 @@ export class UpdateCampaignUseCase {
       updateProps.targetAudience = dto.targetAudience
     }
 
-    // Update the campaign entity
-    const updatedCampaign = campaign.update(updateProps)
+    // Update the campaign entity (only if there are field updates)
+    const hasFieldUpdates = Object.keys(updateProps).length > 0
+    const updatedCampaign = hasFieldUpdates
+      ? campaignToUpdate.update(updateProps)
+      : campaignToUpdate
 
     // Sync to Meta Ads if requested and has metaCampaignId
     if (dto.syncToMeta && dto.accessToken && campaign.metaCampaignId) {
       await this.metaAdsService.updateCampaign(dto.accessToken, campaign.metaCampaignId, {
         name: dto.name,
         dailyBudget: dto.dailyBudget,
+        status: (dto.status === 'ACTIVE' || dto.status === 'PAUSED') ? dto.status : undefined,
         endTime: dto.endDate === null ? null : dto.endDate ? new Date(dto.endDate) : undefined,
       })
     }

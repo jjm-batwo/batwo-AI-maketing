@@ -37,7 +37,12 @@ export const createCampaignSchema = z.object({
 /**
  * Campaign PATCH body validation (partial update)
  */
-export const updateCampaignSchema = createCampaignSchema.partial().omit({ objective: true })
+export const updateCampaignSchema = createCampaignSchema
+  .partial()
+  .omit({ objective: true })
+  .extend({
+    status: z.nativeEnum(CampaignStatus).optional(),
+  })
 
 export type CampaignQueryParams = z.infer<typeof campaignQuerySchema>
 export type CreateCampaignInput = z.infer<typeof createCampaignSchema>

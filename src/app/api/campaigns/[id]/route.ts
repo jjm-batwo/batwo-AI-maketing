@@ -66,6 +66,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       syncToMeta: body.syncToMeta,
       accessToken: body.accessToken,
       adAccountId: body.adAccountId,
+      status: body.status,
     })
 
     // Invalidate KPI cache for this user

@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ApiSourceBadge } from '@/presentation/components/common/ApiSourceBadge'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
@@ -167,6 +168,34 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
     setSelectedAdSetForDrilldown(id)
     setActiveTab('ads')
   }
+
+  // Status toggle mutation
+  const queryClient = useQueryClient()
+  const statusMutation = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      const res = await fetch(`/api/campaigns/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      })
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({ message: 'Failed to update status' }))
+        throw new Error(error.message || 'Failed to update status')
+      }
+      return res.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['campaigns'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboardKPI'] })
+    },
+  })
+
+  const handleStatusChange = useCallback(
+    (id: string, status: string) => {
+      statusMutation.mutate({ id, status })
+    },
+    [statusMutation]
+  )
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -368,6 +397,7 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
               campaigns={campaigns}
               isLoading={isKpiLoading}
               onRowClick={handleCampaignClick}
+              onStatusChange={handleStatusChange}
             />
           )}
 

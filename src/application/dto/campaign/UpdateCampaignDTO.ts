@@ -1,4 +1,5 @@
 import { CampaignObjective } from '@domain/value-objects/CampaignObjective'
+import { CampaignStatus } from '@domain/value-objects/CampaignStatus'
 import { TargetAudience } from '@domain/entities/Campaign'
 import { Currency } from '@domain/value-objects/Money'
 
@@ -15,4 +16,5 @@ export interface UpdateCampaignDTO {
   accessToken?: string
   adAccountId?: string
   syncToMeta?: boolean
+  status?: CampaignStatus
 }
