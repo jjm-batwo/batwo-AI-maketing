@@ -538,6 +538,8 @@ model Subscription {
   billingKeyId       String?
   nextBillingDate    DateTime?
   tossCustomerKey    String?
+  trialEndDate       DateTime?
+  trialStartedAt     DateTime?
 
   billingKey  BillingKey?  @relation(fields: [billingKeyId], references: [id])
   paymentLogs PaymentLog[]
