@@ -86,7 +86,7 @@ export function decryptToken(encryptedToken: string): string {
     throw new Error('Invalid encrypted token format: invalid tag length')
   }
 
-  const decipher = createDecipheriv(ALGORITHM, key, iv)
+  const decipher = createDecipheriv(ALGORITHM, key, iv, { authTagLength: TAG_LENGTH })
   decipher.setAuthTag(tag)
 
   let decrypted = decipher.update(encryptedBuf)

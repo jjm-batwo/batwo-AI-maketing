@@ -7,7 +7,7 @@ import { createCipheriv, createDecipheriv, randomBytes } from 'crypto'
 
 const ALGORITHM = 'aes-256-gcm'
 const IV_LENGTH = 12 // GCM recommended IV length
-const _TAG_LENGTH = 16 // GCM auth tag length
+const TAG_LENGTH = 16 // GCM auth tag length
 const SEPARATOR = ':'
 
 /**
@@ -62,7 +62,7 @@ export function decryptBillingKey(encryptedString: string): string {
   const encrypted = Buffer.from(encryptedHex, 'hex')
   const tag = Buffer.from(tagHex, 'hex')
 
-  const decipher = createDecipheriv(ALGORITHM, key, iv)
+  const decipher = createDecipheriv(ALGORITHM, key, iv, { authTagLength: TAG_LENGTH })
   decipher.setAuthTag(tag)
 
   let decrypted = decipher.update(encrypted)
