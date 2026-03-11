@@ -5,6 +5,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
+import { headers } from 'next/headers'
 import './globals.css'
 import { Providers } from './providers'
 import { getMetadata, getJsonLdScript } from '@/lib/constants/seo'
@@ -42,12 +43,16 @@ export default async function RootLayout({
   const locale = await getLocale()
   const messages = await getMessages()
 
+  // CSP nonce를 middleware에서 전달받음
+  const nonce = (await headers()).get('x-nonce') ?? undefined
+
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
         {/* JSON-LD 구조화 데이터 - SEO를 위해 head에 포함 */}
         <script
           type="application/ld+json"
+          nonce={nonce}
           dangerouslySetInnerHTML={{ __html: getJsonLdScript('Organization') }}
         />
       </head>

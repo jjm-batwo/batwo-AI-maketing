@@ -12,7 +12,11 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 /**
  * 보안 헤더 설정
- * CSP는 런타임에 동적으로 구성되어야 하므로 여기서는 기본 보안 헤더만 설정
+ *
+ * CSP(Content Security Policy)는 nonce 기반으로 middleware.ts에서 동적 생성합니다.
+ * 여기서는 nonce가 필요 없는 정적 보안 헤더만 설정합니다.
+ *
+ * @see middleware.ts — CSP nonce 생성 및 적용
  */
 const securityHeaders = [
   // DNS Prefetch Control
@@ -52,129 +56,16 @@ const securityHeaders = [
   },
 ]
 
-/**
- * Content Security Policy 생성
- * 개발/프로덕션 환경에 따라 다르게 설정
- */
-function generateCSP(): string {
-  const isDevelopment = process.env.NODE_ENV === 'development'
-
-  const directives: Record<string, string[]> = {
-    'default-src': ["'self'"],
-
-    'script-src': [
-      "'self'",
-      // Next.js 개발 모드 지원
-      ...(isDevelopment ? ["'unsafe-eval'", "'unsafe-inline'"] : ["'unsafe-inline'"]),
-      // Vercel Analytics
-      'https://va.vercel-scripts.com',
-      // Google Analytics
-      'https://www.googletagmanager.com',
-      'https://www.google-analytics.com',
-      // Sentry
-      'https://browser.sentry-cdn.com',
-      'https://*.sentry.io',
-      // Facebook SDK
-      'https://connect.facebook.net',
-    ],
-
-    'style-src': [
-      "'self'",
-      "'unsafe-inline'", // Tailwind CSS
-      'https://fonts.googleapis.com',
-    ],
-
-    'img-src': [
-      "'self'",
-      'data:',
-      'blob:',
-      'https://*.facebook.com',
-      'https://*.fbcdn.net',
-      'https://*.google.com',
-      'https://*.googleusercontent.com',
-      'https://*.vercel.app',
-      'https://*.supabase.co',
-      'https://ui-avatars.com',
-    ],
-
-    'font-src': [
-      "'self'",
-      'data:',
-      'https://fonts.gstatic.com',
-    ],
-
-    'connect-src': [
-      "'self'",
-      // Supabase
-      'https://*.supabase.co',
-      // Meta Ads API
-      'https://graph.facebook.com',
-      'https://*.facebook.com',
-      // OpenAI
-      'https://api.openai.com',
-      // Sentry
-      'https://*.sentry.io',
-      'https://*.ingest.sentry.io',
-      // Vercel
-      'https://vitals.vercel-insights.com',
-      'https://va.vercel-scripts.com',
-      // WebSocket (개발 모드)
-      ...(isDevelopment ? ['ws://localhost:3000', 'ws://127.0.0.1:3000'] : []),
-    ],
-
-    'frame-src': [
-      "'self'",
-      // OAuth 프로바이더
-      'https://*.facebook.com',
-      'https://accounts.google.com',
-      'https://accounts.kakao.com',
-    ],
-
-    'media-src': ["'self'", 'blob:'],
-
-    'object-src': ["'none'"],
-
-    'base-uri': ["'self'"],
-
-    'form-action': [
-      "'self'",
-      'https://accounts.google.com',
-      'https://accounts.kakao.com',
-      'https://*.facebook.com',
-    ],
-
-    'frame-ancestors': ["'self'"],
-  }
-
-  // 프로덕션에서는 비보안 요청 업그레이드
-  if (!isDevelopment) {
-    directives['upgrade-insecure-requests'] = []
-  }
-
-  return Object.entries(directives)
-    .map(([key, values]) => {
-      if (values.length === 0) return key
-      return `${key} ${values.join(' ')}`
-    })
-    .join('; ')
-}
-
 const nextConfig: NextConfig = {
   // X-Powered-By 헤더 제거 (보안)
   poweredByHeader: false,
 
-  // 보안 헤더 설정
+  // 보안 헤더 설정 (CSP는 middleware.ts에서 nonce와 함께 동적 생성)
   headers: async () => [
     {
-      // 모든 경로에 보안 헤더 적용
+      // 모든 경로에 정적 보안 헤더 적용
       source: '/:path*',
-      headers: [
-        ...securityHeaders,
-        {
-          key: 'Content-Security-Policy',
-          value: generateCSP(),
-        },
-      ],
+      headers: securityHeaders,
     },
     {
       // API 경로 추가 보안
