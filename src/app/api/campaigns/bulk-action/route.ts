@@ -16,7 +16,7 @@ const requestSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await getAuthenticatedUser(request);
+    const user = await getAuthenticatedUser();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const useCase = container.resolve(DI_TOKENS.BulkUpdateCampaignsUseCase);
+    const useCase = container.resolve(DI_TOKENS.BulkUpdateCampaignsUseCase) as any;
 
     const result = await useCase.execute({
       userId: user.id,

@@ -56,6 +56,7 @@ import {
 import { useCampaignStore, type ColumnKey } from '@/presentation/stores'
 import { useTranslations } from 'next-intl'
 import { useUIStore } from '@/presentation/stores/uiStore'
+import { BulkActionBar } from './BulkActionBar'
 
 type CampaignStatus = 'ACTIVE' | 'PAUSED' | 'COMPLETED' | 'DRAFT' | 'PENDING_REVIEW'
 type SortField =
@@ -924,6 +925,7 @@ export const CampaignTable = memo(function CampaignTable({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <BulkActionBar />
     </div>
   )
 })
