@@ -1,5 +1,6 @@
 # Production Deployment
 # Manual trigger with approval workflow
+# Phase 4: 보안 게이트 통합 - 시크릿 스캔 + SAST + npm audit 필수
 
 name: Deploy to Production
 
@@ -20,12 +21,21 @@ env:
 
 jobs:
   # =============================================================================
+  # Security Gate (Phase 4 - 보안 자동화)
+  # =============================================================================
+  security-gate:
+    name: 🔒 Security Gate
+    uses: ./.github/workflows/deploy-gate.yml
+    secrets: inherit
+
+  # =============================================================================
   # Validation Gate
   # =============================================================================
   validate:
     name: Validate Deployment
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    needs: security-gate
 
     steps:
       - name: Validate confirmation
@@ -65,7 +75,7 @@ jobs:
     name: Deploy to Production
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    needs: validate
+    needs: [security-gate, validate]
     environment:
       name: production
       url: https://batwo.ai

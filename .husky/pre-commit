@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+
+set -e
+
+echo "[pre-commit] Running gitleaks secret scan..."
+
+# gitleaks가 설치되어 있는지 확인
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks git --pre-commit --staged --verbose
+  echo "[pre-commit] ✅ No secrets detected"
+else
+  echo "[pre-commit] ⚠️  gitleaks not installed. Install with: brew install gitleaks"
+  echo "[pre-commit] Skipping local secret scan (CI will still catch secrets)"
+fi

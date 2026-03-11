@@ -1,0 +1,93 @@
+# Semgrep Configuration
+# Phase 4 보안 자동화 - SAST 규칙 설정
+
+rules:
+  # =========================================================================
+  # Custom Rules - SQL Injection Prevention
+  # =========================================================================
+  - id: batwo-no-raw-sql-string-concat
+    patterns:
+      - pattern: |
+          $QUERY = "..." + $INPUT + "..."
+      - metavariable-regex:
+          metavariable: $QUERY
+          regex: .*(query|sql|SQL|Query).*
+    message: >
+      SQL injection risk: Do not concatenate user input into SQL strings.
+      Use parameterized queries with Prisma or prepared statements instead.
+    languages: [typescript, javascript]
+    severity: ERROR
+    metadata:
+      category: security
+      cwe: "CWE-89: SQL Injection"
+
+  - id: batwo-no-template-literal-sql
+    patterns:
+      - pattern: |
+          $PRISMA.$executeRaw`...${$INPUT}...`
+    message: >
+      SQL injection risk: Do not use template literals with $executeRaw.
+      Use $executeRaw with Prisma.sql tagged template or $executeRawUnsafe
+      with parameterized placeholders.
+    languages: [typescript, javascript]
+    severity: WARNING
+    metadata:
+      category: security
+      cwe: "CWE-89: SQL Injection"
+
+  # =========================================================================
+  # Custom Rules - XSS Prevention
+  # =========================================================================
+  - id: batwo-no-dangerously-set-inner-html
+    pattern: dangerouslySetInnerHTML={...}
+    message: >
+      XSS risk: Avoid using dangerouslySetInnerHTML.
+      If absolutely necessary, sanitize input with DOMPurify first.
+    languages: [typescript, javascript]
+    severity: WARNING
+    metadata:
+      category: security
+      cwe: "CWE-79: XSS"
+
+  # =========================================================================
+  # Custom Rules - eval() Prevention
+  # =========================================================================
+  - id: batwo-no-eval
+    patterns:
+      - pattern: eval(...)
+      - pattern: Function(...)
+      - pattern: setTimeout($STR, ...)
+        metavariable-regex:
+          metavariable: $STR
+          regex: ^".*"$
+      - pattern: setInterval($STR, ...)
+        metavariable-regex:
+          metavariable: $STR
+          regex: ^".*"$
+    message: >
+      Security risk: eval() and similar dynamic code execution patterns
+      are dangerous. Use safer alternatives.
+    languages: [typescript, javascript]
+    severity: ERROR
+    metadata:
+      category: security
+      cwe: "CWE-95: Eval Injection"
+
+  # =========================================================================
+  # Custom Rules - Sensitive Data Exposure
+  # =========================================================================
+  - id: batwo-no-console-log-secrets
+    patterns:
+      - pattern: |
+          console.log(..., $SECRET, ...)
+      - metavariable-regex:
+          metavariable: $SECRET
+          regex: .*(token|secret|password|key|apiKey|api_key|accessToken|access_token).*
+    message: >
+      Sensitive data exposure: Do not log secrets, tokens, or passwords
+      to the console. Use structured logging with redaction.
+    languages: [typescript, javascript]
+    severity: WARNING
+    metadata:
+      category: security
+      cwe: "CWE-532: Information Exposure Through Log Files"

@@ -114,6 +114,7 @@
     "eslint-config-next": "16.1.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-security": "^4.0.0",
     "husky": "^9.1.7",
     "ioredis-mock": "^8.13.1",
     "jsdom": "^27.3.0",

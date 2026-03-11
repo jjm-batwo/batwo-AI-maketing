@@ -1,0 +1,37 @@
+# Gitleaks Configuration
+# Phase 4 보안 자동화 - 시크릿 스캐닝 규칙
+
+title = "Batwo Gitleaks Config"
+
+[extend]
+# Use default gitleaks rules as baseline
+useDefault = true
+
+# Allowlist - 허용 패턴 (false positive 방지)
+[allowlist]
+description = "Allowlisted patterns"
+paths = [
+  # Test files may contain mock secrets
+  '''tests/.*''',
+  '''.*\.test\.ts''',
+  '''.*\.test\.tsx''',
+  '''.*\.spec\.ts''',
+  # Example env file
+  '''\.env\.example''',
+  # Lock files
+  '''package-lock\.json''',
+  # Generated files
+  '''src/generated/.*''',
+  # Documentation
+  '''docs/.*''',
+  '''.*\.md''',
+]
+
+# CI 테스트용 시크릿 허용
+[[rules]]
+id = "ci-test-secret"
+description = "CI test secrets (non-production)"
+regex = '''test-secret-for-ci-only'''
+[rules.allowlist]
+description = "CI test constants"
+regexTarget = "match"

@@ -1,0 +1,146 @@
+# Security Scan Pipeline - Phase 4 보안 자동화
+# Gitleaks 시크릿 스캐닝 + Semgrep SAST 분석
+# 모든 push/PR에서 실행되며, PR 머지 블로킹
+
+name: Security Scan
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: security-scan-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  # =============================================================================
+  # Gitleaks - 시크릿 스캐닝
+  # =============================================================================
+  gitleaks:
+    name: Gitleaks Secret Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+      - name: Upload Gitleaks SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
+        continue-on-error: true
+
+  # =============================================================================
+  # Semgrep - SAST 정적 분석
+  # =============================================================================
+  semgrep:
+    name: Semgrep SAST Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    container:
+      image: semgrep/semgrep
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep
+        run: |
+          semgrep scan \
+            --config "p/javascript" \
+            --config "p/typescript" \
+            --config "p/nextjs" \
+            --config "p/react" \
+            --config "p/sql-injection" \
+            --config "p/xss" \
+            --config "p/secrets" \
+            --config "p/owasp-top-ten" \
+            --sarif \
+            --output semgrep-results.sarif \
+            --error \
+            --exclude "node_modules" \
+            --exclude ".next" \
+            --exclude "coverage" \
+            --exclude ".worktrees" \
+            --exclude "src/generated" \
+            --exclude "*.test.ts" \
+            --exclude "*.test.tsx" \
+            --exclude "*.spec.ts" \
+            --exclude "tests" \
+            src/
+
+      - name: Upload Semgrep SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep-results.sarif
+        continue-on-error: true
+
+  # =============================================================================
+  # ESLint Security Rules
+  # =============================================================================
+  eslint-security:
+    name: ESLint Security Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Run ESLint with Security Rules
+        run: npm run lint
+
+  # =============================================================================
+  # Security Scan Success Gate
+  # =============================================================================
+  security-scan-success:
+    name: Security Scan Success
+    runs-on: ubuntu-latest
+    needs: [gitleaks, semgrep, eslint-security]
+    if: always()
+
+    steps:
+      - name: Check all security scans passed
+        run: |
+          if [[ "${{ needs.gitleaks.result }}" != "success" ]] || \
+             [[ "${{ needs.semgrep.result }}" != "success" ]] || \
+             [[ "${{ needs.eslint-security.result }}" != "success" ]]; then
+            echo "::error::One or more security scans failed!"
+            echo ""
+            echo "Results:"
+            echo "  Gitleaks:        ${{ needs.gitleaks.result }}"
+            echo "  Semgrep SAST:    ${{ needs.semgrep.result }}"
+            echo "  ESLint Security: ${{ needs.eslint-security.result }}"
+            exit 1
+          fi
+          echo "✅ All security scans passed!"

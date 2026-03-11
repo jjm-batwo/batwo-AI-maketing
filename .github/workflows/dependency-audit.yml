@@ -1,0 +1,118 @@
+# Dependency Audit Pipeline - Phase 4 보안 자동화
+# npm audit를 CI에서 자동 실행하여 취약 의존성 탐지
+# high 이상 취약점 발견 시 PR 블로킹
+
+name: Dependency Audit
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  # 매주 월요일 09:00 KST (일요일 24:00 UTC) 자동 스캔
+  schedule:
+    - cron: '0 0 * * 1'
+
+concurrency:
+  group: dependency-audit-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  NPM_VERSION: '11.9.0'
+
+jobs:
+  # =============================================================================
+  # npm audit (Production Dependencies)
+  # =============================================================================
+  npm-audit:
+    name: npm Audit (Production)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Setup npm
+        run: npm install -g npm@${{ env.NPM_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit (production, high severity)
+        run: |
+          echo "## npm Audit Report (Production)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if npm audit --omit=dev --audit-level=high 2>&1 | tee audit-output.txt; then
+            echo "✅ No high/critical vulnerabilities found in production dependencies" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ High/critical vulnerabilities found!" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat audit-output.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+      - name: Run npm audit (all dependencies, advisory only)
+        if: always()
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## npm Audit Report (All Dependencies - Advisory)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if npm audit --audit-level=critical 2>&1 | tee audit-all-output.txt; then
+            echo "✅ No critical vulnerabilities in all dependencies" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Critical vulnerabilities found in dev dependencies" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat audit-all-output.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+        continue-on-error: true
+
+  # =============================================================================
+  # License Compliance Check
+  # =============================================================================
+  license-check:
+    name: License Compliance
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          deny-licenses: GPL-3.0, AGPL-3.0
+          comment-summary-in-pr: always
+
+  # =============================================================================
+  # Dependency Audit Success Gate
+  # =============================================================================
+  dependency-audit-success:
+    name: Dependency Audit Success
+    runs-on: ubuntu-latest
+    needs: [npm-audit]
+    if: always()
+
+    steps:
+      - name: Check audit passed
+        run: |
+          if [[ "${{ needs.npm-audit.result }}" != "success" ]]; then
+            echo "::error::Dependency audit failed! Fix vulnerabilities before merging."
+            exit 1
+          fi
+          echo "✅ Dependency audit passed!"
