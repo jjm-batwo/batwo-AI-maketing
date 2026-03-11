@@ -36,9 +36,10 @@ model User {
   globalRole    GlobalRole     @default(USER)
   accounts      Account[]
   sessions      Session[]
-  campaigns     Campaign[]
-  reports       Report[]
-  usageLogs     UsageLog[]
+  campaigns       Campaign[]
+  reports         Report[]
+  reportSchedules ReportSchedule[]
+  usageLogs       UsageLog[]
   metaAccount   MetaAdAccount?
   metaPixels    MetaPixel[]
   subscription  Subscription?
@@ -296,11 +297,13 @@ model Report {
   campaignIds String[]
   startDate   DateTime
   endDate     DateTime
-  sections    Json         @default("[]")
-  aiInsights  Json         @default("[]")
-  status      ReportStatus @default(DRAFT)
-  generatedAt DateTime?
-  sentAt      DateTime?
+  sections       Json         @default("[]")
+  aiInsights     Json         @default("[]")
+  status         ReportStatus @default(DRAFT)
+  shareToken     String?      @unique
+  shareExpiresAt DateTime?
+  generatedAt    DateTime?
+  sentAt         DateTime?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
@@ -308,6 +311,25 @@ model Report {
   @@index([type])
   @@index([status])
   @@index([createdAt])
+}
+
+// ========================================
+// Report Schedule
+// ========================================
+
+model ReportSchedule {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  frequency   String   // DAILY | WEEKLY | MONTHLY
+  recipients  String[] // 이메일 주소 배열
+  nextSendAt  DateTime
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([nextSendAt, isActive])
+  @@index([userId])
 }
 
 // ========================================
