@@ -19,6 +19,7 @@ import { PrismaInsightHistoryRepository } from '@infrastructure/database/reposit
 
 // Application services
 import { KPIInsightsService } from '@application/services/KPIInsightsService'
+import { PerformanceBenchmarkService } from '@application/services/PerformanceBenchmarkService'
 
 // Use Cases
 import { GetDashboardKPIUseCase } from '@application/use-cases/kpi/GetDashboardKPIUseCase'
@@ -48,6 +49,13 @@ export function registerKPIModule(container: Container): void {
       container.resolve<IAIService>(DI_TOKENS.AIService),
       container.resolve<ICacheService>(DI_TOKENS.CacheService),
       container.resolve<IInsightHistoryRepository>(DI_TOKENS.InsightHistoryRepository)
+    )
+  })
+
+  container.registerSingleton(DI_TOKENS.PerformanceBenchmarkService, () => {
+    return new PerformanceBenchmarkService(
+      container.resolve(DI_TOKENS.KPIRepository),
+      container.resolve(DI_TOKENS.CampaignRepository)
     )
   })
 

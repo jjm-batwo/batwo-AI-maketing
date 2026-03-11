@@ -65,6 +65,7 @@ export const DI_TOKENS = {
   MarketingIntelligenceService: Symbol.for('MarketingIntelligenceService'),
   ScienceAIService: Symbol.for('ScienceAIService'),
   ResearchService: Symbol.for('ResearchService'),
+  PerformanceBenchmarkService: Symbol.for('PerformanceBenchmarkService'),
 
   // Use Cases
   CreateCampaignUseCase: Symbol.for('CreateCampaignUseCase'),
