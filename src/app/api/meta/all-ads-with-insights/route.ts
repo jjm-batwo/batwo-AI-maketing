@@ -2,20 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser } from '@/lib/auth'
 import { MetaAdsClient } from '@/infrastructure/external/meta-ads/MetaAdsClient'
 import { prisma } from '@/lib/prisma'
-
-async function mapWithConcurrency<T, U>(
-    items: T[],
-    limit: number,
-    fn: (item: T) => Promise<U>
-): Promise<U[]> {
-    const results: U[] = []
-    for (let i = 0; i < items.length; i += limit) {
-        const chunk = items.slice(i, i + limit)
-        const chunkResults = await Promise.all(chunk.map(fn))
-        results.push(...chunkResults)
-    }
-    return results
-}
+import { mapWithConcurrency } from '@/lib/utils/mapWithConcurrency'
 
 export async function GET(request: NextRequest) {
     try {

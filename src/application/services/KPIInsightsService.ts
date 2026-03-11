@@ -108,21 +108,13 @@ export interface LiveDataOverrides {
 // ============================================================================
 
 export class KPIInsightsService {
-  private insightHistoryRepository?: IInsightHistoryRepository
-
   constructor(
     private readonly kpiRepository: IKPIRepository,
     private readonly campaignRepository: ICampaignRepository,
     private readonly aiService?: IAIService,
-    private readonly cacheService?: ICacheService
-  ) {}
-
-  /**
-   * Optional setter for InsightHistory repository (avoids breaking existing constructor calls)
-   */
-  setInsightHistoryRepository(repo: IInsightHistoryRepository): void {
-    this.insightHistoryRepository = repo
-  }
+    private readonly cacheService?: ICacheService,
+    private readonly insightHistoryRepository?: IInsightHistoryRepository
+  ) { }
 
   /**
    * 사용자의 모든 캠페인에 대한 KPI 인사이트 생성
@@ -163,9 +155,9 @@ export class KPIInsightsService {
     const campaignIds = activeCampaigns.map((c) => c.id)
     const [todayMap, yesterdayMap, last7DaysMap] = await Promise.all([
       liveOverrides?.todayMap ??
-        this.kpiRepository.aggregateByCampaignIds(campaignIds, todayStart, todayEnd),
+      this.kpiRepository.aggregateByCampaignIds(campaignIds, todayStart, todayEnd),
       liveOverrides?.yesterdayMap ??
-        this.kpiRepository.aggregateByCampaignIds(campaignIds, yesterdayStart, yesterdayEnd),
+      this.kpiRepository.aggregateByCampaignIds(campaignIds, yesterdayStart, yesterdayEnd),
       this.kpiRepository.aggregateByCampaignIds(campaignIds, last7DaysStart, yesterdayEnd),
     ])
 
@@ -371,11 +363,11 @@ export class KPIInsightsService {
               const match = structured.find((e) => e.id === insight.id)
               return match
                 ? {
-                    ...insight,
-                    rootCause: match.rootCause,
-                    recommendations: match.recommendations,
-                    forecast: match.forecast,
-                  }
+                  ...insight,
+                  rootCause: match.rootCause,
+                  recommendations: match.recommendations,
+                  forecast: match.forecast,
+                }
                 : insight
             })
           }

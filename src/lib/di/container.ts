@@ -510,16 +510,13 @@ container.registerSingleton<IInsightHistoryRepository>(
 )
 
 container.registerSingleton(DI_TOKENS.KPIInsightsService, () => {
-  const service = new KPIInsightsService(
+  return new KPIInsightsService(
     container.resolve(DI_TOKENS.KPIRepository),
     container.resolve(DI_TOKENS.CampaignRepository),
     container.resolve<IAIService>(DI_TOKENS.AIService),
-    container.resolve<ICacheService>(DI_TOKENS.CacheService)
-  )
-  service.setInsightHistoryRepository(
+    container.resolve<ICacheService>(DI_TOKENS.CacheService),
     container.resolve<IInsightHistoryRepository>(DI_TOKENS.InsightHistoryRepository)
   )
-  return service
 })
 
 // Register Infrastructure Services (Singletons)
