@@ -312,8 +312,8 @@ export const CampaignTable = memo(function CampaignTable({
   }, [campaigns, filters.searchQuery, filters.sortBy, filters.sortOrder])
 
   const allSelected =
-    sortedCampaigns.length > 0 && sortedCampaigns.every((c) => selectedCampaignIds.includes(c.id))
-  const someSelected = sortedCampaigns.some((c) => selectedCampaignIds.includes(c.id))
+    sortedCampaigns.length > 0 && sortedCampaigns.every((c) => selectedCampaignIds.has(c.id))
+  const someSelected = sortedCampaigns.some((c) => selectedCampaignIds.has(c.id))
 
   const handleSelectAll = useCallback(() => {
     if (allSelected) {
@@ -704,7 +704,7 @@ export const CampaignTable = memo(function CampaignTable({
           <TableBody>
             {sortedCampaigns.map((campaign) => {
               const status = statusConfig[campaign.status]
-              const isSelected = selectedCampaignIds.includes(campaign.id)
+              const isSelected = selectedCampaignIds.has(campaign.id)
               // UX-06: Get icon component for status
               const StatusIcon = statusIconMap[campaign.status]
 

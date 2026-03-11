@@ -93,7 +93,7 @@ interface CampaignState {
   resetFilters: () => void
 
   // Selected campaigns
-  selectedCampaignIds: string[]
+  selectedCampaignIds: Set<string>
   selectCampaign: (id: string) => void
   deselectCampaign: (id: string) => void
   selectAllCampaigns: (ids: string[]) => void
@@ -171,19 +171,23 @@ export const useCampaignStore = create<CampaignState>()(
       resetFilters: () => set({ filters: defaultFilters }),
 
       // Selected campaigns
-      selectedCampaignIds: [],
+      selectedCampaignIds: new Set<string>(),
       selectCampaign: (id) =>
-        set((state) => ({
-          selectedCampaignIds: state.selectedCampaignIds.includes(id)
-            ? state.selectedCampaignIds
-            : [...state.selectedCampaignIds, id],
-        })),
+        set((state) => {
+          if (state.selectedCampaignIds.has(id)) return state
+          const next = new Set(state.selectedCampaignIds)
+          next.add(id)
+          return { selectedCampaignIds: next }
+        }),
       deselectCampaign: (id) =>
-        set((state) => ({
-          selectedCampaignIds: state.selectedCampaignIds.filter((cid) => cid !== id),
-        })),
-      selectAllCampaigns: (ids) => set({ selectedCampaignIds: ids }),
-      clearSelection: () => set({ selectedCampaignIds: [] }),
+        set((state) => {
+          if (!state.selectedCampaignIds.has(id)) return state
+          const next = new Set(state.selectedCampaignIds)
+          next.delete(id)
+          return { selectedCampaignIds: next }
+        }),
+      selectAllCampaigns: (ids) => set({ selectedCampaignIds: new Set(ids) }),
+      clearSelection: () => set({ selectedCampaignIds: new Set<string>() }),
 
       // Form draft
       formDraft: null,

@@ -47,6 +47,153 @@ const AIInsights = lazy(() =>
   import('@/presentation/components/dashboard').then((mod) => ({ default: mod.AIInsights }))
 )
 
+// PERF-05: 순수 함수를 모듈 스코프로 이동하여 렌더마다 재생성 방지
+const getChangeType = (value: number | undefined): 'positive' | 'negative' | 'neutral' => {
+  const v = value ?? 0
+  if (v > 0) return 'positive'
+  if (v < 0) return 'negative'
+  return 'neutral'
+}
+
+const getKPIValue = (summaryData: unknown, key: string): number => {
+  if (!summaryData || typeof summaryData !== 'object') return 0
+  const value = (summaryData as Record<string, unknown>)[key]
+  return typeof value === 'number' ? value : 0
+}
+
+const getChangeValue = (changesData: unknown, key: string): number => {
+  if (!changesData || typeof changesData !== 'object') return 0
+  const value = (changesData as Record<string, unknown>)[key]
+  return typeof value === 'number' ? value : 0
+}
+
+type ChartMetricKey =
+  | 'spend'
+  | 'revenue'
+  | 'roas'
+  | 'impressions'
+  | 'clicks'
+  | 'linkClicks'
+  | 'conversions'
+  | 'ctr'
+  | 'cpa'
+  | 'cvr'
+type ChartFormat = 'currency' | 'multiplier' | 'number' | 'percentage'
+
+const getChartMetricValue = (
+  point: {
+    spend: number
+    revenue: number
+    roas: number
+    impressions: number
+    clicks: number
+    linkClicks?: number
+    conversions: number
+  },
+  metric: ChartMetricKey
+): number => {
+  if (metric === 'ctr') {
+    return point.impressions > 0 ? (point.clicks / point.impressions) * 100 : 0
+  }
+  if (metric === 'cpa') {
+    return point.conversions > 0 ? point.spend / point.conversions : 0
+  }
+  if (metric === 'cvr') {
+    return point.clicks > 0 ? (point.conversions / point.clicks) * 100 : 0
+  }
+  if (metric === 'linkClicks') {
+    return point.linkClicks ?? 0
+  }
+  return point[metric]
+}
+
+// PERF-05: 정적 차트 설정을 모듈 스코프로 이동
+interface ChartConfigItem {
+  title: string
+  metric: ChartMetricKey
+  format: ChartFormat
+  color?: 'primary' | 'green' | 'blue' | 'purple'
+}
+
+const objectiveChartConfig: Record<string, [ChartConfigItem, ChartConfigItem]> = {
+  ALL: [
+    { title: '지출 추이', metric: 'spend', format: 'currency' },
+    { title: 'ROAS 추이', metric: 'roas', format: 'multiplier', color: 'green' },
+  ],
+  TRAFFIC: [
+    { title: '웹사이트 유입 추이', metric: 'linkClicks', format: 'number', color: 'blue' },
+    { title: 'CTR 추이', metric: 'ctr', format: 'percentage', color: 'green' },
+  ],
+  LEADS: [
+    { title: '리드 추이', metric: 'conversions', format: 'number', color: 'blue' },
+    { title: 'CPL 추이', metric: 'cpa', format: 'currency', color: 'purple' },
+  ],
+  SALES: [
+    { title: '매출 추이', metric: 'revenue', format: 'currency', color: 'blue' },
+    { title: 'ROAS 추이', metric: 'roas', format: 'multiplier', color: 'green' },
+  ],
+  CONVERSIONS: [
+    { title: '전환수 추이', metric: 'conversions', format: 'number', color: 'blue' },
+    { title: 'CPA 추이', metric: 'cpa', format: 'currency', color: 'purple' },
+  ],
+  AWARENESS: [
+    { title: '노출수 추이', metric: 'impressions', format: 'number', color: 'blue' },
+    { title: 'CTR 추이', metric: 'ctr', format: 'percentage', color: 'green' },
+  ],
+  ENGAGEMENT: [
+    { title: '참여수 추이', metric: 'clicks', format: 'number', color: 'blue' },
+    { title: '참여율 추이', metric: 'ctr', format: 'percentage', color: 'green' },
+  ],
+  APP_PROMOTION: [
+    { title: '앱 설치 추이', metric: 'conversions', format: 'number', color: 'blue' },
+    { title: 'CPI 추이', metric: 'cpa', format: 'currency', color: 'purple' },
+  ],
+}
+
+// PERF-05: 정적 테이블 컬럼 설정을 모듈 스코프로 이동
+const objectiveTableColumns: Record<string, CampaignMetricColumn[]> = {
+  ALL: [
+    { key: 'spend', label: '지출', format: 'currency', unit: '원' },
+    { key: 'roas', label: 'ROAS', format: 'multiplier', unit: 'x' },
+    { key: 'ctr', label: 'CTR', format: 'percentage', unit: '%' },
+  ],
+  TRAFFIC: [
+    { key: 'spend', label: '지출', format: 'currency', unit: '원' },
+    { key: 'linkClicks', label: '웹사이트 유입', format: 'number' },
+    { key: 'ctr', label: 'CTR', format: 'percentage', unit: '%' },
+  ],
+  LEADS: [
+    { key: 'spend', label: '지출', format: 'currency', unit: '원' },
+    { key: 'conversions', label: '리드수', format: 'number' },
+    { key: 'cpa', label: 'CPL', format: 'currency', unit: '원' },
+  ],
+  SALES: [
+    { key: 'spend', label: '지출', format: 'currency', unit: '원' },
+    { key: 'revenue', label: '매출', format: 'currency', unit: '원' },
+    { key: 'roas', label: 'ROAS', format: 'multiplier', unit: 'x' },
+  ],
+  CONVERSIONS: [
+    { key: 'spend', label: '지출', format: 'currency', unit: '원' },
+    { key: 'conversions', label: '전환수', format: 'number' },
+    { key: 'cpa', label: 'CPA', format: 'currency', unit: '원' },
+  ],
+  AWARENESS: [
+    { key: 'spend', label: '지출', format: 'currency', unit: '원' },
+    { key: 'impressions', label: '노출수', format: 'number' },
+    { key: 'ctr', label: 'CTR', format: 'percentage', unit: '%' },
+  ],
+  ENGAGEMENT: [
+    { key: 'spend', label: '지출', format: 'currency', unit: '원' },
+    { key: 'clicks', label: '참여수', format: 'number' },
+    { key: 'ctr', label: '참여율', format: 'percentage', unit: '%' },
+  ],
+  APP_PROMOTION: [
+    { key: 'spend', label: '지출', format: 'currency', unit: '원' },
+    { key: 'conversions', label: '설치수', format: 'number' },
+    { key: 'cpa', label: 'CPI', format: 'currency', unit: '원' },
+  ],
+}
+
 export default function DashboardPage() {
   const t = useTranslations()
   const searchParams = useSearchParams()
@@ -278,27 +425,7 @@ export default function DashboardPage() {
     )
   }
 
-  // Helper to determine change type
-  const getChangeType = (value: number | undefined): 'positive' | 'negative' | 'neutral' => {
-    const v = value ?? 0
-    if (v > 0) return 'positive'
-    if (v < 0) return 'negative'
-    return 'neutral'
-  }
 
-  // Helper to safely get KPI values from summary
-  const getKPIValue = (summaryData: unknown, key: string): number => {
-    if (!summaryData || typeof summaryData !== 'object') return 0
-    const value = (summaryData as Record<string, unknown>)[key]
-    return typeof value === 'number' ? value : 0
-  }
-
-  // Helper to safely get change values
-  const getChangeValue = (changesData: unknown, key: string): number => {
-    if (!changesData || typeof changesData !== 'object') return 0
-    const value = (changesData as Record<string, unknown>)[key]
-    return typeof value === 'number' ? value : 0
-  }
 
   // KPI Configuration interface
   interface KPIConfigItem {
@@ -582,137 +709,8 @@ export default function DashboardPage() {
   // Get the KPI config for the current objective
   const currentKPIConfig = objectiveKPIConfig[dashboardObjective] || objectiveKPIConfig.ALL
 
-  type ChartMetricKey =
-    | 'spend'
-    | 'revenue'
-    | 'roas'
-    | 'impressions'
-    | 'clicks'
-    | 'linkClicks'
-    | 'conversions'
-    | 'ctr'
-    | 'cpa'
-    | 'cvr'
-  type ChartFormat = 'currency' | 'multiplier' | 'number' | 'percentage'
-
-  const getChartMetricValue = (
-    point: {
-      spend: number
-      revenue: number
-      roas: number
-      impressions: number
-      clicks: number
-      linkClicks?: number
-      conversions: number
-    },
-    metric: ChartMetricKey
-  ): number => {
-    if (metric === 'ctr') {
-      return point.impressions > 0 ? (point.clicks / point.impressions) * 100 : 0
-    }
-    if (metric === 'cpa') {
-      return point.conversions > 0 ? point.spend / point.conversions : 0
-    }
-    if (metric === 'cvr') {
-      return point.clicks > 0 ? (point.conversions / point.clicks) * 100 : 0
-    }
-    if (metric === 'linkClicks') {
-      return point.linkClicks ?? 0
-    }
-    return point[metric]
-  }
-
-  interface ChartConfigItem {
-    title: string
-    metric: ChartMetricKey
-    format: ChartFormat
-    color?: 'primary' | 'green' | 'blue' | 'purple'
-  }
-
-  const objectiveChartConfig: Record<string, [ChartConfigItem, ChartConfigItem]> = {
-    ALL: [
-      { title: t('dashboard.charts.spendTrend'), metric: 'spend', format: 'currency' },
-      {
-        title: t('dashboard.charts.roasTrend'),
-        metric: 'roas',
-        format: 'multiplier',
-        color: 'green',
-      },
-    ],
-    TRAFFIC: [
-      { title: '웹사이트 유입 추이', metric: 'linkClicks', format: 'number', color: 'blue' },
-      { title: 'CTR 추이', metric: 'ctr', format: 'percentage', color: 'green' },
-    ],
-    LEADS: [
-      { title: '리드 추이', metric: 'conversions', format: 'number', color: 'blue' },
-      { title: 'CPL 추이', metric: 'cpa', format: 'currency', color: 'purple' },
-    ],
-    SALES: [
-      { title: '매출 추이', metric: 'revenue', format: 'currency', color: 'blue' },
-      { title: 'ROAS 추이', metric: 'roas', format: 'multiplier', color: 'green' },
-    ],
-    CONVERSIONS: [
-      { title: '전환수 추이', metric: 'conversions', format: 'number', color: 'blue' },
-      { title: 'CPA 추이', metric: 'cpa', format: 'currency', color: 'purple' },
-    ],
-    AWARENESS: [
-      { title: '노출수 추이', metric: 'impressions', format: 'number', color: 'blue' },
-      { title: 'CTR 추이', metric: 'ctr', format: 'percentage', color: 'green' },
-    ],
-    ENGAGEMENT: [
-      { title: '참여수 추이', metric: 'clicks', format: 'number', color: 'blue' },
-      { title: '참여율 추이', metric: 'ctr', format: 'percentage', color: 'green' },
-    ],
-    APP_PROMOTION: [
-      { title: '앱 설치 추이', metric: 'conversions', format: 'number', color: 'blue' },
-      { title: 'CPI 추이', metric: 'cpa', format: 'currency', color: 'purple' },
-    ],
-  }
-
   const currentCharts = objectiveChartConfig[dashboardObjective] || objectiveChartConfig.ALL
 
-  const objectiveTableColumns: Record<string, CampaignMetricColumn[]> = {
-    ALL: [
-      { key: 'spend', label: '지출', format: 'currency', unit: '원' },
-      { key: 'roas', label: 'ROAS', format: 'multiplier', unit: 'x' },
-      { key: 'ctr', label: 'CTR', format: 'percentage', unit: '%' },
-    ],
-    TRAFFIC: [
-      { key: 'spend', label: '지출', format: 'currency', unit: '원' },
-      { key: 'linkClicks', label: '웹사이트 유입', format: 'number' },
-      { key: 'ctr', label: 'CTR', format: 'percentage', unit: '%' },
-    ],
-    LEADS: [
-      { key: 'spend', label: '지출', format: 'currency', unit: '원' },
-      { key: 'conversions', label: '리드수', format: 'number' },
-      { key: 'cpa', label: 'CPL', format: 'currency', unit: '원' },
-    ],
-    SALES: [
-      { key: 'spend', label: '지출', format: 'currency', unit: '원' },
-      { key: 'revenue', label: '매출', format: 'currency', unit: '원' },
-      { key: 'roas', label: 'ROAS', format: 'multiplier', unit: 'x' },
-    ],
-    CONVERSIONS: [
-      { key: 'spend', label: '지출', format: 'currency', unit: '원' },
-      { key: 'conversions', label: '전환수', format: 'number' },
-      { key: 'cpa', label: 'CPA', format: 'currency', unit: '원' },
-    ],
-    AWARENESS: [
-      { key: 'spend', label: '지출', format: 'currency', unit: '원' },
-      { key: 'impressions', label: '노출수', format: 'number' },
-      { key: 'ctr', label: 'CTR', format: 'percentage', unit: '%' },
-    ],
-    ENGAGEMENT: [
-      { key: 'spend', label: '지출', format: 'currency', unit: '원' },
-      { key: 'clicks', label: '참여수', format: 'number' },
-      { key: 'ctr', label: '참여율', format: 'percentage', unit: '%' },
-    ],
-    APP_PROMOTION: [
-      { key: 'spend', label: '지출', format: 'currency', unit: '원' },
-      { key: 'conversions', label: '설치수', format: 'number' },
-      { key: 'cpa', label: 'CPI', format: 'currency', unit: '원' },
-    ],
-  }
 
   const currentTableColumns = objectiveTableColumns[dashboardObjective] || objectiveTableColumns.ALL
 

@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import { getAuthenticatedUser } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { cookies } from 'next/headers'
+import { prisma } from '@/lib/prisma'
+import { container, DI_TOKENS } from '@/lib/di/container'
+import { ListCampaignsUseCase } from '@application/use-cases/campaign/ListCampaignsUseCase'
 import { CampaignsClient } from './CampaignsClient'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -19,18 +21,15 @@ export default async function CampaignsPage() {
     redirect('/login')
   }
 
-  const cookieStore = await cookies()
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
-
-  // Meta 연결 상태 확인
+  // PERF-06: self HTTP fetch 대신 Prisma 직접 호출로 Meta 연결 상태 확인
   let isConnected = false
   try {
-    const metaRes = await fetch(`${baseUrl}/api/meta/connection`, {
-      headers: { Cookie: cookieStore.toString() },
-      next: { revalidate: 0 },
+    const account = await prisma.metaAdAccount.findFirst({
+      where: { userId: user.id },
+      select: { id: true, tokenExpiry: true },
     })
-    const metaData = await metaRes.json()
-    isConnected = metaData.isConnected || false
+    const isExpired = account?.tokenExpiry ? new Date(account.tokenExpiry) < new Date() : false
+    isConnected = !!account && !isExpired
   } catch {
     isConnected = false
   }
@@ -68,20 +67,18 @@ export default async function CampaignsPage() {
     )
   }
 
-  // 캠페인 목록 fetch (KPI는 CampaignsClient에서 기간별 클라이언트 사이드 fetch)
+  // PERF-06: self HTTP fetch 대신 ListCampaignsUseCase 직접 호출
   type CampaignsClientProps = Parameters<typeof CampaignsClient>[0]
   let campaigns: CampaignsClientProps['initialCampaigns'] = []
 
   try {
-    const campaignsRes = await fetch(`${baseUrl}/api/campaigns?pageSize=100`, {
-      headers: { Cookie: cookieStore.toString() },
-      next: { revalidate: 60, tags: ['campaigns'] },
+    const listCampaigns = container.resolve<ListCampaignsUseCase>(DI_TOKENS.ListCampaignsUseCase)
+    const result = await listCampaigns.execute({
+      userId: user.id,
+      page: 1,
+      limit: 100,
     })
-
-    if (campaignsRes.ok) {
-      const data = await campaignsRes.json()
-      campaigns = data.campaigns || []
-    }
+    campaigns = result.data as CampaignsClientProps['initialCampaigns']
   } catch (error) {
     console.error('Failed to fetch campaigns:', error)
   }
