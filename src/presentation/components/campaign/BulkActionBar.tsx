@@ -10,7 +10,7 @@ export const BulkActionBar = memo(function BulkActionBar() {
   const [loading, setLoading] = useState(false);
   const [showBudgetModal, setShowBudgetModal] = useState(false);
 
-  if (selectedCampaignIds.length === 0) return null;
+  if (selectedCampaignIds.size === 0) return null;
 
   const executeBulkAction = async (action: BulkAction) => {
     setLoading(true);
@@ -18,7 +18,7 @@ export const BulkActionBar = memo(function BulkActionBar() {
       const res = await fetch('/api/campaigns/bulk-action', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ campaignIds: selectedCampaignIds, action }),
+        body: JSON.stringify({ campaignIds: Array.from(selectedCampaignIds), action }),
       });
       const data = await res.json();
       if (data.data?.failedCount > 0) {
@@ -36,7 +36,7 @@ export const BulkActionBar = memo(function BulkActionBar() {
     <>
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white shadow-xl border rounded-xl px-6 py-3 flex items-center gap-4 z-50">
         <span className="text-sm font-medium text-gray-700">
-          {selectedCampaignIds.length}개 선택됨
+          {selectedCampaignIds.size}개 선택됨
         </span>
         <div className="h-6 w-px bg-gray-200" />
         <button onClick={() => executeBulkAction({ type: 'status_change', status: 'PAUSED' as any })}

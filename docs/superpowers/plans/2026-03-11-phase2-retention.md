@@ -1,6 +1,6 @@
 # Phase 2: 리텐션 강화 구현 계획
 
-> **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** 사용자 리텐션 강화 (보고서 습관화 → 퍼널 가시성 → 파워유저 도구 → 맥락 제공)
 
@@ -19,7 +19,7 @@
 - Create: `src/domain/entities/ReportSchedule.ts`
 - Test: `tests/unit/domain/entities/ReportSchedule.test.ts`
 
-- [ ] **Step 1: Prisma 스키마에 ReportSchedule 모델 추가**
+- [x] **Step 1: Prisma 스키마에 ReportSchedule 모델 추가**
 
 ```prisma
 model ReportSchedule {
@@ -47,11 +47,11 @@ model Report {
 }
 ```
 
-- [ ] **Step 2: 마이그레이션 실행**
+- [x] **Step 2: 마이그레이션 실행**
 
 Run: `npx prisma migrate dev --name add_report_schedule_and_share`
 
-- [ ] **Step 3: ReportSchedule 도메인 엔티티 작성**
+- [x] **Step 3: ReportSchedule 도메인 엔티티 작성**
 
 ```typescript
 // src/domain/entities/ReportSchedule.ts
@@ -147,7 +147,7 @@ export class ReportSchedule {
 }
 ```
 
-- [ ] **Step 4: 테스트 작성**
+- [x] **Step 4: 테스트 작성**
 
 ```typescript
 describe('ReportSchedule', () => {
@@ -190,7 +190,7 @@ describe('ReportSchedule', () => {
 });
 ```
 
-- [ ] **Step 5: 테스트 통과 확인 후 Commit**
+- [x] **Step 5: 테스트 통과 확인 후 Commit**
 
 ```bash
 git commit -m "feat(report): add ReportSchedule entity with frequency calculation"
@@ -204,7 +204,7 @@ git commit -m "feat(report): add ReportSchedule entity with frequency calculatio
 - Modify: `src/domain/entities/Report.ts`
 - Test: `tests/unit/domain/entities/Report.test.ts`
 
-- [ ] **Step 1: Report에 공유 메서드 추가**
+- [x] **Step 1: Report에 공유 메서드 추가**
 
 ```typescript
 // src/domain/entities/Report.ts에 추가
@@ -239,7 +239,7 @@ get shareToken(): string | null { return this._shareToken ?? null; }
 get shareExpiresAt(): Date | null { return this._shareExpiresAt ?? null; }
 ```
 
-- [ ] **Step 2: 테스트 작성 및 통과**
+- [x] **Step 2: 테스트 작성 및 통과**
 
 ```typescript
 it('should generate a share token with 30-day expiry', () => {
@@ -260,7 +260,7 @@ it('should revoke share token', () => {
 });
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git commit -m "feat(report): add share token generation and revocation"
@@ -274,7 +274,7 @@ git commit -m "feat(report): add share token generation and revocation"
 - Create: `src/infrastructure/email/ResendEmailService.ts`
 - Modify: `src/application/ports/IEmailService.ts` (포트 정의/수정)
 
-- [ ] **Step 1: IEmailService 포트 확인/수정**
+- [x] **Step 1: IEmailService 포트 확인/수정**
 
 ```typescript
 // src/application/ports/IEmailService.ts
@@ -289,7 +289,7 @@ export interface IEmailService {
 }
 ```
 
-- [ ] **Step 2: Resend 어댑터 구현**
+- [x] **Step 2: Resend 어댑터 구현**
 
 ```typescript
 // src/infrastructure/email/ResendEmailService.ts
@@ -341,9 +341,9 @@ export class ResendEmailService implements IEmailService {
 }
 ```
 
-- [ ] **Step 3: DI 바인딩 업데이트**
+- [x] **Step 3: DI 바인딩 업데이트**
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git commit -m "feat(email): add ResendEmailService for report delivery"
@@ -357,7 +357,7 @@ git commit -m "feat(email): add ResendEmailService for report delivery"
 - Create: `src/application/use-cases/report/SendScheduledReportsUseCase.ts`
 - Create: `src/app/api/cron/send-scheduled-reports/route.ts`
 
-- [ ] **Step 1: SendScheduledReportsUseCase 구현**
+- [x] **Step 1: SendScheduledReportsUseCase 구현**
 
 ```typescript
 export class SendScheduledReportsUseCase {
@@ -415,7 +415,7 @@ export class SendScheduledReportsUseCase {
 }
 ```
 
-- [ ] **Step 2: Cron 라우트 구현**
+- [x] **Step 2: Cron 라우트 구현**
 
 ```typescript
 // src/app/api/cron/send-scheduled-reports/route.ts
@@ -437,13 +437,13 @@ export async function GET(request: NextRequest) {
 }
 ```
 
-- [ ] **Step 3: vercel.json cron 추가**
+- [x] **Step 3: vercel.json cron 추가**
 
 ```json
 { "path": "/api/cron/send-scheduled-reports", "schedule": "0 0 * * *" }
 ```
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git commit -m "feat(report): add scheduled report sending cron job"
@@ -456,7 +456,7 @@ git commit -m "feat(report): add scheduled report sending cron job"
 **Files:**
 - Create: `src/app/api/reports/share/[token]/route.ts`
 
-- [ ] **Step 1: 퍼블릭 공유 라우트 (인증 불필요)**
+- [x] **Step 1: 퍼블릭 공유 라우트 (인증 불필요)**
 
 ```typescript
 // src/app/api/reports/share/[token]/route.ts
@@ -492,7 +492,7 @@ export async function GET(
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git commit -m "feat(api): add public report share endpoint"
@@ -505,7 +505,7 @@ git commit -m "feat(api): add public report share endpoint"
 **Files:**
 - Create: `src/app/api/reports/schedule/route.ts`
 
-- [ ] **Step 1: CRUD API 구현**
+- [x] **Step 1: CRUD API 구현**
 
 ```typescript
 // GET: 사용자의 보고서 스케줄 조회
@@ -514,7 +514,7 @@ git commit -m "feat(api): add public report share endpoint"
 // DELETE: 스케줄 비활성화
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git commit -m "feat(api): add report schedule CRUD endpoints"
@@ -528,7 +528,7 @@ git commit -m "feat(api): add report schedule CRUD endpoints"
 - Create: `src/presentation/components/report/ShareReportButton.tsx`
 - Create: `src/presentation/components/report/ReportScheduleForm.tsx`
 
-- [ ] **Step 1: ShareReportButton 구현**
+- [x] **Step 1: ShareReportButton 구현**
 
 ```tsx
 'use client';
@@ -573,13 +573,13 @@ export const ShareReportButton = memo(function ShareReportButton({ reportId }: {
 });
 ```
 
-- [ ] **Step 2: ReportScheduleForm 구현**
+- [x] **Step 2: ReportScheduleForm 구현**
 
 빈도 선택(일간/주간/월간), 수신자 이메일 입력, 활성/비활성 토글.
 
-- [ ] **Step 3: 보고서 리스트에 공유/스케줄 버튼 통합**
+- [x] **Step 3: 보고서 리스트에 공유/스케줄 버튼 통합**
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git commit -m "feat(ui): add report sharing and schedule management UI"
@@ -589,18 +589,18 @@ git commit -m "feat(ui): add report sharing and schedule management UI"
 
 ### Task 8: Feature 4 통합 테스트
 
-- [ ] **Step 1: 전체 플로우 확인**
+- [x] **Step 1: 전체 플로우 확인**
 
 1. 보고서 스케줄 생성 (주간, boss@company.com)
 2. Cron 실행 시 이메일 발송
 3. 공유 링크 생성 및 접근
 4. 스케줄 비활성화
 
-- [ ] **Step 2: 전체 테스트 통과 확인**
+- [x] **Step 2: 전체 테스트 통과 확인**
 
 Run: `npx tsc --noEmit && npx vitest run`
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git commit -m "feat: complete report auto-send and sharing feature"
@@ -941,7 +941,7 @@ git commit -m "feat: complete conversion funnel visualization"
 - Create: `src/application/use-cases/campaign/BulkUpdateCampaignsUseCase.ts`
 - Test: `tests/unit/application/campaign/BulkUpdateCampaignsUseCase.test.ts`
 
-- [ ] **Step 1: 테스트 작성**
+- [x] **Step 1: 테스트 작성**
 
 ```typescript
 describe('BulkUpdateCampaignsUseCase', () => {
@@ -1004,7 +1004,7 @@ describe('BulkUpdateCampaignsUseCase', () => {
 });
 ```
 
-- [ ] **Step 2: UseCase 구현**
+- [x] **Step 2: UseCase 구현**
 
 ```typescript
 export type BulkAction =
@@ -1077,7 +1077,7 @@ export class BulkUpdateCampaignsUseCase {
 }
 ```
 
-- [ ] **Step 3: 테스트 통과 확인 후 Commit**
+- [x] **Step 3: 테스트 통과 확인 후 Commit**
 
 ```bash
 git commit -m "feat(campaign): add BulkUpdateCampaignsUseCase"
@@ -1090,7 +1090,7 @@ git commit -m "feat(campaign): add BulkUpdateCampaignsUseCase"
 **Files:**
 - Create: `src/app/api/campaigns/bulk-action/route.ts`
 
-- [ ] **Step 1: API 구현**
+- [x] **Step 1: API 구현**
 
 ```typescript
 // POST /api/campaigns/bulk-action
@@ -1106,7 +1106,7 @@ const requestSchema = z.object({
 });
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git commit -m "feat(api): add POST /api/campaigns/bulk-action endpoint"
@@ -1120,7 +1120,7 @@ git commit -m "feat(api): add POST /api/campaigns/bulk-action endpoint"
 - Create: `src/presentation/components/campaign/BulkActionBar.tsx`
 - Modify: `src/presentation/components/campaign/CampaignTable.tsx` (통합)
 
-- [ ] **Step 1: BulkActionBar 구현**
+- [x] **Step 1: BulkActionBar 구현**
 
 ```tsx
 'use client';
@@ -1182,9 +1182,9 @@ export const BulkActionBar = memo(function BulkActionBar() {
 });
 ```
 
-- [ ] **Step 2: CampaignTable에 BulkActionBar 통합**
+- [x] **Step 2: CampaignTable에 BulkActionBar 통합**
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git commit -m "feat(ui): add BulkActionBar for multi-campaign operations"
@@ -1197,9 +1197,9 @@ git commit -m "feat(ui): add BulkActionBar for multi-campaign operations"
 **Files:**
 - Create: `src/presentation/components/campaign/BulkBudgetModal.tsx`
 
-- [ ] **Step 1: 예산 변경 모달 (절대값/퍼센트 선택)**
+- [x] **Step 1: 예산 변경 모달 (절대값/퍼센트 선택)**
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git commit -m "feat(ui): add bulk budget change modal"
@@ -1209,11 +1209,11 @@ git commit -m "feat(ui): add bulk budget change modal"
 
 ### Task 5: Feature 6 통합 확인
 
-- [ ] **Step 1: 전체 테스트**
+- [x] **Step 1: 전체 테스트**
 
 Run: `npx tsc --noEmit && npx vitest run`
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git commit -m "feat: complete campaign bulk operations"
@@ -1230,7 +1230,7 @@ git commit -m "feat: complete campaign bulk operations"
 - Create: `src/application/services/PerformanceBenchmarkService.ts`
 - Test: `tests/unit/application/services/PerformanceBenchmarkService.test.ts`
 
-- [ ] **Step 1: IndustryBenchmark 밸류 오브젝트**
+- [x] **Step 1: IndustryBenchmark 밸류 오브젝트**
 
 ```typescript
 // src/domain/value-objects/IndustryBenchmark.ts
@@ -1267,7 +1267,7 @@ export function calculatePercentileGrade(percentile: number): PercentileGrade {
 }
 ```
 
-- [ ] **Step 2: PerformanceBenchmarkService 테스트**
+- [x] **Step 2: PerformanceBenchmarkService 테스트**
 
 ```typescript
 describe('PerformanceBenchmarkService', () => {
@@ -1300,7 +1300,7 @@ describe('PerformanceBenchmarkService', () => {
 });
 ```
 
-- [ ] **Step 3: Service 구현**
+- [x] **Step 3: Service 구현**
 
 ```typescript
 export class PerformanceBenchmarkService {
@@ -1367,7 +1367,7 @@ export class PerformanceBenchmarkService {
 }
 ```
 
-- [ ] **Step 4: 테스트 통과 확인 후 Commit**
+- [x] **Step 4: 테스트 통과 확인 후 Commit**
 
 ```bash
 git commit -m "feat(analytics): add PerformanceBenchmarkService with percentile calculation"
@@ -1380,7 +1380,7 @@ git commit -m "feat(analytics): add PerformanceBenchmarkService with percentile 
 **Files:**
 - Create: `src/app/api/analytics/benchmark/route.ts`
 
-- [ ] **Step 1: API 구현**
+- [x] **Step 1: API 구현**
 
 ```typescript
 // GET /api/analytics/benchmark?industry=ECOMMERCE&period=30
@@ -1400,7 +1400,7 @@ export async function GET(request: NextRequest) {
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git commit -m "feat(api): add GET /api/analytics/benchmark endpoint"
@@ -1414,7 +1414,7 @@ git commit -m "feat(api): add GET /api/analytics/benchmark endpoint"
 - Create: `src/presentation/components/analytics/BenchmarkCard.tsx`
 - Create: `src/presentation/hooks/useBenchmark.ts`
 
-- [ ] **Step 1: useBenchmark 훅**
+- [x] **Step 1: useBenchmark 훅**
 
 ```typescript
 export function useBenchmark(industry: string, period: number = 30) {
@@ -1431,7 +1431,7 @@ export function useBenchmark(industry: string, period: number = 30) {
 }
 ```
 
-- [ ] **Step 2: BenchmarkCard 컴포넌트**
+- [x] **Step 2: BenchmarkCard 컴포넌트**
 
 ```tsx
 'use client';
@@ -1507,9 +1507,9 @@ function MetricRow({ metric }: { metric: MetricBenchmark }) {
 }
 ```
 
-- [ ] **Step 3: 대시보드 및 캠페인 상세에 BenchmarkCard 추가**
+- [x] **Step 3: 대시보드 및 캠페인 상세에 BenchmarkCard 추가**
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git commit -m "feat(ui): add BenchmarkCard with percentile gauge"
@@ -1523,13 +1523,13 @@ git commit -m "feat(ui): add BenchmarkCard with percentile gauge"
 - Modify: `src/domain/repositories/IKPIRepository.ts`
 - Modify: `src/infrastructure/database/repositories/PrismaKPIRepository.ts`
 
-- [ ] **Step 1: 인터페이스에 메서드 추가**
+- [x] **Step 1: 인터페이스에 메서드 추가**
 
 ```typescript
 getIndustryPercentiles(industry: string, periodDays: number): Promise<IndustryPercentiles>;
 ```
 
-- [ ] **Step 2: Prisma raw query로 PostgreSQL PERCENTILE_CONT 활용**
+- [x] **Step 2: Prisma raw query로 PostgreSQL PERCENTILE_CONT 활용**
 
 ```typescript
 async getIndustryPercentiles(industry: string, periodDays: number) {
@@ -1555,7 +1555,7 @@ async getIndustryPercentiles(industry: string, periodDays: number) {
 }
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git commit -m "feat(repo): add industry percentile query with PERCENTILE_CONT"
@@ -1565,11 +1565,11 @@ git commit -m "feat(repo): add industry percentile query with PERCENTILE_CONT"
 
 ### Task 5: Feature 7 통합 확인
 
-- [ ] **Step 1: 전체 테스트**
+- [x] **Step 1: 전체 테스트**
 
 Run: `npx tsc --noEmit && npx vitest run`
 
-- [ ] **Step 2: Final Commit**
+- [x] **Step 2: Final Commit**
 
 ```bash
 git commit -m "feat: complete Phase 2 - reports, funnel, bulk ops, benchmarks"
