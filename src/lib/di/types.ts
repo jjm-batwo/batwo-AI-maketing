@@ -75,6 +75,7 @@ export const DI_TOKENS = {
   GetCampaignUseCase: Symbol.for('GetCampaignUseCase'),
   ListCampaignsUseCase: Symbol.for('ListCampaignsUseCase'),
   SyncCampaignsUseCase: Symbol.for('SyncCampaignsUseCase'),
+  BulkUpdateCampaignsUseCase: Symbol.for('BulkUpdateCampaignsUseCase'),
   GenerateWeeklyReportUseCase: Symbol.for('GenerateWeeklyReportUseCase'),
   SendScheduledReportsUseCase: Symbol.for('SendScheduledReportsUseCase'),
   GetDashboardKPIUseCase: Symbol.for('GetDashboardKPIUseCase'),

@@ -48,6 +48,7 @@ import { DeleteCampaignUseCase } from '@application/use-cases/campaign/DeleteCam
 import { GetCampaignUseCase } from '@application/use-cases/campaign/GetCampaignUseCase'
 import { ListCampaignsUseCase } from '@application/use-cases/campaign/ListCampaignsUseCase'
 import { SyncCampaignsUseCase } from '@application/use-cases/campaign/SyncCampaignsUseCase'
+import { BulkUpdateCampaignsUseCase } from '@application/use-cases/campaign/BulkUpdateCampaignsUseCase'
 import { CreateAdvantageCampaignUseCase } from '@application/use-cases/campaign/CreateAdvantageCampaignUseCase'
 
 // AdSet Use Cases
@@ -255,6 +256,15 @@ export function registerCampaignModule(container: Container): void {
         container.resolve(DI_TOKENS.CampaignRepository),
         container.resolve(DI_TOKENS.MetaAdsService),
         container.resolve(DI_TOKENS.MetaAdAccountRepository)
+      )
+  )
+
+  container.register(
+    DI_TOKENS.BulkUpdateCampaignsUseCase,
+    () =>
+      new BulkUpdateCampaignsUseCase(
+        container.resolve(DI_TOKENS.CampaignRepository),
+        container.resolve(DI_TOKENS.MetaAdsService)
       )
   )
 
