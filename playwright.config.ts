@@ -30,6 +30,20 @@ export default defineConfig({
         storageState: './tests/e2e/storage-state.json',
       },
     },
+    {
+      name: 'firefox',
+      use: {
+        ...devices['Desktop Firefox'],
+        storageState: './tests/e2e/storage-state.json',
+      },
+    },
+    {
+      name: 'webkit',
+      use: {
+        ...devices['Desktop Safari'],
+        storageState: './tests/e2e/storage-state.json',
+      },
+    },
   ],
   webServer: {
     command: 'npm run dev',

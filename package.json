@@ -25,6 +25,9 @@
     "analyze": "ANALYZE=true npm run build",
     "api:validate": "tsx scripts/validate-openapi.ts",
     "api:docs": "tsx scripts/validate-openapi.ts",
+    "test:perf": "k6 run tests/performance/run-all.js",
+    "test:contract": "vitest run tests/contract",
+    "test:mutation": "npx stryker run",
     "prepare": "husky"
   },
   "dependencies": {
