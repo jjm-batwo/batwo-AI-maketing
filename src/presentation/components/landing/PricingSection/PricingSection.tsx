@@ -123,7 +123,7 @@ export const PricingSection = memo(function PricingSection({
                   'flex flex-col h-full relative overflow-hidden transition-all duration-300 bg-white shadow-sm hover:shadow-lg hover:-translate-y-1',
                   isPopular
                     ? 'border-primary ring-1 ring-primary shadow-md transform lg:-translate-y-2 lg:scale-105 z-10 hover:shadow-primary/20'
-                    : 'border-gray-100 hover:border-gray-200'
+                    : 'border-gray-100 hover:border-border'
                 )}
               >
                 {/* Popular Badge */}

@@ -22,7 +22,7 @@ export function MatchRateBar({ matchRate, compact = false }: MatchRateBarProps) 
   if (matchRate === null) {
     return (
       <div data-testid="match-rate-bar" className="match-rate-bar unknown">
-        <div className={cn('w-full rounded-full bg-gray-200', compact ? 'h-2' : 'h-3')}>
+        <div className={cn('w-full rounded-full bg-accent', compact ? 'h-2' : 'h-3')}>
           <div
             className={cn('rounded-full bg-gray-400', compact ? 'h-2' : 'h-3')}
             style={{ width: '0%' }}
@@ -59,7 +59,7 @@ export function MatchRateBar({ matchRate, compact = false }: MatchRateBarProps) 
         <span className="text-sm font-medium">이벤트 매칭률</span>
         <span className={cn('text-sm font-bold', getTextColorClass(matchRate))}>{percentage}%</span>
       </div>
-      <div className={cn('w-full rounded-full bg-gray-200', compact ? 'h-2' : 'h-3')}>
+      <div className={cn('w-full rounded-full bg-accent', compact ? 'h-2' : 'h-3')}>
         <div
           className={cn(
             'rounded-full transition-all duration-500',

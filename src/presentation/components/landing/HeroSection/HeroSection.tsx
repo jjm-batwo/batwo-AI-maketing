@@ -28,7 +28,7 @@ export const HeroSection = memo(function HeroSection() {
         {/* Centered Dashboard Preview */}
         <div
           ref={previewRef}
-          className={`relative mt-16 w-full max-w-4xl mx-auto rounded-xl shadow-2xl overflow-hidden border border-gray-200 ${previewVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
+          className={`relative mt-16 w-full max-w-4xl mx-auto rounded-xl shadow-2xl overflow-hidden border border-border ${previewVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
           role="img"
           aria-label="대시보드 미리보기"
         >

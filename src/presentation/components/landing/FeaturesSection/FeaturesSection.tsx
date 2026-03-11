@@ -41,7 +41,7 @@ export const FeaturesSection = memo(function FeaturesSection({
             return (
               <div
                 key={feature.title}
-                className="group bg-white border border-gray-100 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-gray-200 transition-all duration-300 cursor-default"
+                className="group bg-background border border-border rounded-xl p-6 shadow-sm hover:shadow-md hover:border-primary transition-all duration-300 cursor-default"
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/15 transition-colors">
                   <Icon className="h-6 w-6 text-primary" aria-hidden="true" />
@@ -67,19 +67,19 @@ export const FeaturesSection = memo(function FeaturesSection({
 function DashboardMock() {
   return (
     <div
-      className="rounded-2xl border border-gray-200 shadow-2xl overflow-hidden bg-white"
+      className="rounded-2xl border border-border shadow-2xl overflow-hidden bg-white"
       role="img"
       aria-label="바투 대시보드 미리보기"
     >
       {/* Browser Chrome */}
-      <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 border-b border-gray-200">
+      <div className="flex items-center gap-2 px-4 py-3 bg-muted border-b border-border">
         <div className="flex gap-1.5">
           <div className="w-3 h-3 rounded-full bg-red-400" aria-hidden="true" />
           <div className="w-3 h-3 rounded-full bg-yellow-400" aria-hidden="true" />
           <div className="w-3 h-3 rounded-full bg-green-400" aria-hidden="true" />
         </div>
         <div className="flex-1 mx-4">
-          <div className="bg-white border border-gray-200 rounded-md h-7 flex items-center px-3 max-w-xs mx-auto">
+          <div className="bg-white border border-border rounded-md h-7 flex items-center px-3 max-w-xs mx-auto">
             <svg
               className="w-3 h-3 text-green-500 mr-2 shrink-0"
               fill="none"
@@ -94,18 +94,18 @@ function DashboardMock() {
                 d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
               />
             </svg>
-            <span className="text-xs text-gray-400 font-mono">app.batwo.io/dashboard</span>
+            <span className="text-xs text-muted-foreground font-mono">app.batwo.io/dashboard</span>
           </div>
         </div>
       </div>
 
       {/* Dashboard Content */}
-      <div className="p-6 bg-gray-50/50">
+      <div className="p-6 bg-muted/50">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h4 className="font-semibold text-gray-900">광고 성과 대시보드</h4>
-            <p className="text-xs text-gray-500 mt-0.5">최근 7일 기준</p>
+            <h4 className="font-semibold text-foreground">광고 성과 대시보드</h4>
+            <p className="text-xs text-muted-foreground mt-0.5">최근 7일 기준</p>
           </div>
           <div className="flex items-center gap-1.5 text-xs font-medium text-green-600 bg-green-50 border border-green-100 px-3 py-1.5 rounded-full">
             <span
@@ -126,24 +126,24 @@ function DashboardMock() {
           ].map((kpi) => (
             <div
               key={kpi.label}
-              className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm"
+              className="bg-background rounded-xl p-4 border border-border shadow-sm"
             >
-              <p className="text-xs text-gray-500 mb-1">{kpi.label}</p>
-              <p className="text-xl font-bold text-gray-900">{kpi.value}</p>
+              <p className="text-xs text-muted-foreground mb-1">{kpi.label}</p>
+              <p className="text-xl font-bold text-foreground">{kpi.value}</p>
               <p
                 className={`text-xs mt-1 font-medium ${kpi.up ? 'text-green-600' : 'text-blue-600'}`}
               >
-                {kpi.change} <span className="text-gray-400 font-normal">전주 대비</span>
+                {kpi.change} <span className="text-muted-foreground font-normal">전주 대비</span>
               </p>
             </div>
           ))}
         </div>
 
         {/* Chart Mockup */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+        <div className="bg-background rounded-xl border border-border shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-sm font-medium text-gray-700">일별 전환 트렌드</span>
-            <span className="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-md border border-gray-100">
+            <span className="text-sm font-medium text-muted-foreground">일별 전환 트렌드</span>
+            <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md border border-border">
               최근 7일
             </span>
           </div>
@@ -155,7 +155,7 @@ function DashboardMock() {
                   style={{ height: `${h}%` }}
                   aria-hidden="true"
                 />
-                <span className="text-[10px] text-gray-400">
+                <span className="text-[10px] text-muted-foreground">
                   {['월', '화', '수', '목', '금', '토', '일'][i]}
                 </span>
               </div>

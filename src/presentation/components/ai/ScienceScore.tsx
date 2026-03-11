@@ -248,7 +248,7 @@ export function ScienceScore({
         <div className="flex flex-col items-center gap-1">
           <div
             className={cn(
-              'font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1.5',
+              'font-medium text-foreground flex items-center gap-1.5',
               config.labelText
             )}
           >
@@ -266,7 +266,7 @@ export function ScienceScore({
           {analyzedDomains !== undefined && totalDomains !== undefined && (
             <div
               className={cn(
-                'text-gray-500 dark:text-gray-400',
+                'text-muted-foreground',
                 size === 'sm' ? 'text-[10px]' : size === 'md' ? 'text-xs' : 'text-sm'
               )}
             >

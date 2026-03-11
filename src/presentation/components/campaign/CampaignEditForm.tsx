@@ -240,7 +240,7 @@ export function CampaignEditForm({
                     'rounded-lg border px-4 py-2 text-sm transition-all',
                     formData.targetAudience?.gender === gender.id
                       ? 'border-primary bg-primary/5 text-primary'
-                      : 'border-gray-200 hover:border-gray-300',
+                      : 'border-border hover:border-border',
                     isCompleted && 'cursor-not-allowed opacity-50'
                   )}
                 >
@@ -276,7 +276,7 @@ export function CampaignEditForm({
                     'rounded-lg border px-4 py-2 text-sm transition-all',
                     formData.targetAudience?.locations?.includes(location.id)
                       ? 'border-primary bg-primary/5 text-primary'
-                      : 'border-gray-200 hover:border-gray-300',
+                      : 'border-border hover:border-border',
                     isCompleted && 'cursor-not-allowed opacity-50'
                   )}
                 >

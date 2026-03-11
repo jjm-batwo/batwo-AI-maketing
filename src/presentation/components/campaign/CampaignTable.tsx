@@ -730,7 +730,7 @@ export const CampaignTable = memo(function CampaignTable({
                         'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
                         campaign.status === 'ACTIVE'
                           ? 'bg-blue-500'
-                          : 'bg-gray-200 dark:bg-gray-600',
+                          : 'bg-accent dark:bg-gray-600',
                         campaign.status !== 'ACTIVE' &&
                         campaign.status !== 'PAUSED' &&
                         'cursor-not-allowed opacity-50'

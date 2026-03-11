@@ -24,17 +24,17 @@ export const TestimonialCard = memo(function TestimonialCard({
   testimonial,
 }: TestimonialCardProps) {
   return (
-    <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-gray-200 transition-all duration-300 cursor-default break-inside-avoid mb-5">
+    <div className="bg-background border border-border rounded-xl p-5 shadow-sm hover:shadow-md hover:border-primary transition-all duration-300 cursor-default break-inside-avoid mb-5">
       {/* Stars */}
       <StarRating rating={testimonial.rating} />
 
       {/* Content with highlight */}
-      <blockquote className="mt-3 mb-4 text-sm text-gray-600 leading-relaxed">
+      <blockquote className="mt-3 mb-4 text-sm text-muted-foreground leading-relaxed">
         {renderWithHighlight(testimonial.content, testimonial.highlight)}
       </blockquote>
 
       {/* Author */}
-      <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+      <div className="flex items-center gap-3 pt-4 border-t border-border">
         <Avatar className={`w-9 h-9 ${testimonial.avatarColor}`}>
           <AvatarFallback
             className="text-white text-xs font-semibold"
@@ -44,7 +44,7 @@ export const TestimonialCard = memo(function TestimonialCard({
           </AvatarFallback>
         </Avatar>
         <div>
-          <p className="text-sm font-semibold text-gray-900">{testimonial.name}</p>
+          <p className="text-sm font-semibold text-foreground">{testimonial.name}</p>
           <p className="text-xs text-muted-foreground">
             {testimonial.role} · {testimonial.company}
           </p>

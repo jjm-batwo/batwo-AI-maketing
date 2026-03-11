@@ -100,7 +100,7 @@ export function AmbientInsightToast({ insight, onDismiss, onSeen }: AmbientInsig
         `}
       >
         {/* Confidence Indicator Bar */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gray-200 rounded-t-lg overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-accent rounded-t-lg overflow-hidden">
           <div
             className={`h-full ${config.confidenceColor} transition-all duration-1000`}
             style={{ width: `${insight.confidence}%` }}
@@ -124,14 +124,14 @@ export function AmbientInsightToast({ insight, onDismiss, onSeen }: AmbientInsig
             {/* Text Content */}
             <div className="flex-1 min-w-0">
               {/* Title */}
-              <h3 className="text-sm font-semibold text-gray-900 mb-1">{insight.title}</h3>
+              <h3 className="text-sm font-semibold text-foreground mb-1">{insight.title}</h3>
 
               {/* Message */}
-              <p className="text-sm text-gray-700 leading-relaxed">{insight.message}</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">{insight.message}</p>
 
               {/* Confidence Badge */}
               <div className="mt-2 flex items-center gap-2">
-                <span className="text-xs text-gray-500">신뢰도: {insight.confidence}%</span>
+                <span className="text-xs text-muted-foreground">신뢰도: {insight.confidence}%</span>
                 {insight.confidence >= 85 && (
                   <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
                     높음
@@ -179,8 +179,8 @@ export function AmbientInsightToast({ insight, onDismiss, onSeen }: AmbientInsig
               className="
                 flex-shrink-0 w-6 h-6 rounded-full
                 flex items-center justify-center
-                text-gray-400 hover:text-gray-600
-                hover:bg-gray-100
+                text-muted-foreground hover:text-muted-foreground
+                hover:bg-muted
                 transition-colors
               "
               aria-label="알림 닫기"

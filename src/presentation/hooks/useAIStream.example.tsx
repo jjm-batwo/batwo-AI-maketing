@@ -97,7 +97,7 @@ export function AIStreamExample() {
 
       {/* Streamed text output */}
       {text && (
-        <div className="p-4 bg-gray-50 rounded border border-gray-200">
+        <div className="p-4 bg-muted rounded border border-border">
           <h2 className="text-lg font-semibold mb-2">Response:</h2>
           <div className="whitespace-pre-wrap">{text}</div>
           {isLoading && <span className="inline-block w-2 h-4 bg-gray-400 animate-pulse ml-1" />}

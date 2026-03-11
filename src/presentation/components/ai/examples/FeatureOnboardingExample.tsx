@@ -102,10 +102,10 @@ export function FeatureOnboardingExample() {
   return (
     <div className="p-8 max-w-6xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+        <h1 className="text-2xl font-bold text-foreground mb-2">
           AI 기능 발견 & 온보딩 예시
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-muted-foreground">
           사용자가 AI 기능을 자연스럽게 발견하고 학습할 수 있도록 돕습니다.
         </p>
         <button
@@ -123,13 +123,13 @@ export function FeatureOnboardingExample() {
         <div data-tour="copy-generation" className="relative">
           <div
             onClick={() => handleFeatureClick('copy_generation')}
-            className="p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 cursor-pointer hover:border-purple-500 transition-colors"
+            className="p-6 bg-background rounded-xl border border-border cursor-pointer hover:border-purple-500 transition-colors"
           >
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                 <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-semibold text-foreground">
                 AI 광고 카피 생성
               </h3>
               {!isDiscovered('copy_generation') && (
@@ -141,7 +141,7 @@ export function FeatureOnboardingExample() {
                 />
               )}
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-muted-foreground">
               과학적 마케팅 원칙 기반 고품질 카피 자동 생성
             </p>
           </div>
@@ -151,13 +151,13 @@ export function FeatureOnboardingExample() {
         <div data-tour="analysis" className="relative">
           <div
             onClick={() => handleFeatureClick('analysis')}
-            className="p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 cursor-pointer hover:border-purple-500 transition-colors"
+            className="p-6 bg-background rounded-xl border border-border cursor-pointer hover:border-purple-500 transition-colors"
           >
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                 <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-semibold text-foreground">
                 AI 캠페인 분석
               </h3>
               {!isDiscovered('analysis') && (
@@ -169,7 +169,7 @@ export function FeatureOnboardingExample() {
                 />
               )}
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-muted-foreground">
               성과 분석 및 개선 방향 자동 제시
             </p>
           </div>
@@ -179,13 +179,13 @@ export function FeatureOnboardingExample() {
         <div data-tour="insights" className="relative">
           <div
             onClick={() => handleFeatureClick('insights')}
-            className="p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 cursor-pointer hover:border-purple-500 transition-colors"
+            className="p-6 bg-background rounded-xl border border-border cursor-pointer hover:border-purple-500 transition-colors"
           >
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                 <Sparkles className="w-5 h-5 text-green-600 dark:text-green-400" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-semibold text-foreground">
                 AI 인사이트
               </h3>
               {!isDiscovered('insights') && (
@@ -197,7 +197,7 @@ export function FeatureOnboardingExample() {
                 />
               )}
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">숨겨진 패턴과 기회 자동 발견</p>
+            <p className="text-sm text-muted-foreground">숨겨진 패턴과 기회 자동 발견</p>
           </div>
         </div>
 
@@ -205,13 +205,13 @@ export function FeatureOnboardingExample() {
         <div data-tour="chat" className="relative">
           <div
             onClick={() => handleFeatureClick('chat')}
-            className="p-6 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 cursor-pointer hover:border-purple-500 transition-colors"
+            className="p-6 bg-background rounded-xl border border-border cursor-pointer hover:border-purple-500 transition-colors"
           >
             <div className="flex items-center gap-3 mb-3">
               <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
                 <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-400" />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-semibold text-foreground">
                 AI 마케팅 어시스턴트
               </h3>
               {!isDiscovered('chat') && (
@@ -223,7 +223,7 @@ export function FeatureOnboardingExample() {
                 />
               )}
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-muted-foreground">
               24/7 마케팅 전략 자문 및 아이디어
             </p>
           </div>
@@ -232,7 +232,7 @@ export function FeatureOnboardingExample() {
 
       {/* Inline discovery hint example */}
       <div className="mb-8">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+        <h2 className="text-lg font-semibold text-foreground mb-4">
           인라인 발견 힌트 예시
         </h2>
         {!isDiscovered('proactive_insights') && (
@@ -265,9 +265,9 @@ export function FeatureOnboardingExample() {
       )}
 
       {/* Implementation notes */}
-      <div className="mt-12 p-6 bg-gray-50 dark:bg-gray-800 rounded-xl">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">구현 노트</h2>
-        <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+      <div className="mt-12 p-6 bg-muted rounded-xl">
+        <h2 className="text-lg font-semibold text-foreground mb-4">구현 노트</h2>
+        <ul className="space-y-2 text-sm text-muted-foreground">
           <li>
             • <strong>AIFeatureTour:</strong> 단계별 가이드 투어로 여러 기능을 순차적으로 소개
           </li>

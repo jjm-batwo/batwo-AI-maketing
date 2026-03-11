@@ -32,7 +32,7 @@ export function LandingFooter() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-white border-t border-gray-200">
+    <footer className="bg-white border-t border-border">
       <div className="container mx-auto px-4 py-12 md:py-16">
         {/* Top row: Logo + columns */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
@@ -74,7 +74,7 @@ export function LandingFooter() {
         </div>
 
         {/* Bottom row: copyright + legal links */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-gray-100">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-border">
           <p className="text-sm text-muted-foreground">
             Copyright &copy; {currentYear}{' '}
             <Link href="/" className="hover:text-primary transition-colors">

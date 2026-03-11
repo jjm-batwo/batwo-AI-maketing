@@ -83,7 +83,7 @@ export function PartialSuccessUI({
       </div>
 
       {/* Overall Status Bar */}
-      <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
         <div className="flex h-full">
           {stats.success > 0 && (
             <div
@@ -138,7 +138,7 @@ export function PartialSuccessUI({
                       </span>
                     </div>
                     {result.value && (
-                      <p className="mt-1 text-sm text-gray-700 break-words">{result.value}</p>
+                      <p className="mt-1 text-sm text-muted-foreground break-words">{result.value}</p>
                     )}
                     {result.error && <p className="mt-1 text-xs text-red-600">{result.error}</p>}
                   </div>
@@ -151,7 +151,7 @@ export function PartialSuccessUI({
                     onClick={() => onRetryFailed(result.field)}
                     className={cn(
                       'flex items-center gap-1 px-3 py-1.5 text-sm rounded-md',
-                      'bg-white hover:bg-gray-50 border border-gray-200',
+                      'bg-white hover:bg-muted border border-border',
                       'transition-colors flex-shrink-0'
                     )}
                   >

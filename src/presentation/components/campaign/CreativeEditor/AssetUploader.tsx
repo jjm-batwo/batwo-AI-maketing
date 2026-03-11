@@ -102,7 +102,7 @@ export function AssetUploader({ onUpload, isUploading = false }: AssetUploaderPr
         onDragLeave={handleDragLeave}
         className={cn(
           'flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 transition-colors',
-          isDragging ? 'border-primary bg-primary/5' : 'border-gray-300 hover:border-gray-400',
+          isDragging ? 'border-primary bg-primary/5' : 'border-border hover:border-gray-400',
           isUploading && 'opacity-50 pointer-events-none'
         )}
       >
@@ -139,11 +139,11 @@ export function AssetUploader({ onUpload, isUploading = false }: AssetUploaderPr
           {assets.map((asset) => (
             <div key={asset.id} className="group relative rounded-lg border overflow-hidden">
               {asset.type === 'IMAGE' ? (
-                <div className="flex aspect-square items-center justify-center bg-gray-100">
+                <div className="flex aspect-square items-center justify-center bg-muted">
                   <ImageIcon className="h-8 w-8 text-muted-foreground" />
                 </div>
               ) : (
-                <div className="flex aspect-square items-center justify-center bg-gray-100">
+                <div className="flex aspect-square items-center justify-center bg-muted">
                   <Film className="h-8 w-8 text-muted-foreground" />
                 </div>
               )}

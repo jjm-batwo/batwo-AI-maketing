@@ -96,16 +96,16 @@ export function HowItWorksSection({ id = 'how-it-works' }: HowItWorksSectionProp
 
 function PreviewShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-gray-200 shadow-lg overflow-hidden bg-white">
+    <div className="rounded-xl border border-border shadow-lg overflow-hidden bg-white">
       {/* Browser bar */}
-      <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
+      <div className="flex items-center gap-2 px-4 py-3 bg-muted border-b border-border">
         <div className="flex gap-1.5">
           <div className="w-2.5 h-2.5 rounded-full bg-red-400" aria-hidden="true" />
           <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" aria-hidden="true" />
           <div className="w-2.5 h-2.5 rounded-full bg-green-400" aria-hidden="true" />
         </div>
         <div className="flex-1 mx-3">
-          <div className="bg-white border border-gray-200 rounded h-5 max-w-xs mx-auto" />
+          <div className="bg-white border border-border rounded h-5 max-w-xs mx-auto" />
         </div>
       </div>
       <div className="p-5">{children}</div>
@@ -116,7 +116,7 @@ function PreviewShell({ children }: { children: React.ReactNode }) {
 function StepOnePreview() {
   return (
     <PreviewShell>
-      <p className="text-xs text-gray-500 uppercase tracking-widest mb-4 font-semibold">
+      <p className="text-xs text-muted-foreground uppercase tracking-widest mb-4 font-semibold">
         비즈니스 정보
       </p>
       <div className="space-y-3">
@@ -126,9 +126,9 @@ function StepOnePreview() {
           { label: '타겟 고객', placeholder: '예) 20-35세 여성' },
         ].map((field) => (
           <div key={field.label}>
-            <label className="text-xs text-gray-600 font-medium mb-1 block">{field.label}</label>
-            <div className="h-9 bg-gray-50 border border-gray-200 rounded-lg flex items-center px-3">
-              <span className="text-sm text-gray-400">{field.placeholder}</span>
+            <label className="text-xs text-muted-foreground font-medium mb-1 block">{field.label}</label>
+            <div className="h-9 bg-muted border border-border rounded-lg flex items-center px-3">
+              <span className="text-sm text-muted-foreground">{field.placeholder}</span>
             </div>
           </div>
         ))}
@@ -148,12 +148,12 @@ function StepTwoPreview() {
     <PreviewShell>
       <div className="space-y-3">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold">
+          <p className="text-xs text-muted-foreground uppercase tracking-widest font-semibold">
             AI 생성 중
           </p>
           <span className="text-xs text-primary font-semibold">85%</span>
         </div>
-        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-2 bg-muted rounded-full overflow-hidden">
           <div className="h-full bg-primary rounded-full w-[85%] transition-all" />
         </div>
         {[
@@ -165,7 +165,7 @@ function StepTwoPreview() {
           <div key={item.label} className="flex items-center gap-2.5 py-1.5">
             <div
               className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
-                item.done ? 'bg-green-100' : 'bg-gray-100'
+                item.done ? 'bg-green-100' : 'bg-muted'
               }`}
             >
               {item.done ? (
@@ -187,7 +187,7 @@ function StepTwoPreview() {
                 <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               )}
             </div>
-            <span className={`text-sm ${item.done ? 'text-gray-700' : 'text-primary font-medium'}`}>
+            <span className={`text-sm ${item.done ? 'text-muted-foreground' : 'text-primary font-medium'}`}>
               {item.label}
             </span>
           </div>
@@ -207,9 +207,9 @@ function StepThreePreview() {
           { label: '광고비', value: '₩1.25M', up: false },
           { label: 'CTR', value: '3.8%', up: true },
         ].map((kpi) => (
-          <div key={kpi.label} className="bg-gray-50 rounded-lg p-3 border border-gray-100">
-            <p className="text-xs text-gray-500 mb-1">{kpi.label}</p>
-            <p className="text-lg font-bold text-gray-900">{kpi.value}</p>
+          <div key={kpi.label} className="bg-muted rounded-lg p-3 border border-border">
+            <p className="text-xs text-muted-foreground mb-1">{kpi.label}</p>
+            <p className="text-lg font-bold text-foreground">{kpi.value}</p>
             <p className={`text-xs font-medium ${kpi.up ? 'text-green-600' : 'text-blue-600'}`}>
               {kpi.up ? '↑' : '↓'} 전주 대비 개선
             </p>
@@ -218,7 +218,7 @@ function StepThreePreview() {
       </div>
       <div className="bg-primary/5 border border-primary/10 rounded-lg p-3">
         <p className="text-xs font-bold text-primary mb-1">AI 인사이트</p>
-        <p className="text-xs text-gray-600 leading-relaxed">
+        <p className="text-xs text-muted-foreground leading-relaxed">
           30-40대 여성 타겟에서 ROAS가 23% 높습니다. 예산을 더 배분하면 효율을 높일 수 있습니다.
         </p>
       </div>

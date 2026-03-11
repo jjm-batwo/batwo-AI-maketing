@@ -104,8 +104,8 @@ function getStatusConfig(status: string) {
       return {
         label: status,
         color: 'bg-gray-500',
-        bgColor: 'bg-gray-100',
-        textColor: 'text-gray-700',
+        bgColor: 'bg-muted',
+        textColor: 'text-muted-foreground',
         Icon: Activity,
       }
   }

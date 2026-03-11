@@ -136,7 +136,7 @@ export function PixelSelector({
                     className={cn(
                       'rounded-full px-2 py-1 text-xs font-medium',
                       pixel.setupMethod === 'MANUAL'
-                        ? 'bg-gray-100 text-gray-700'
+                        ? 'bg-muted text-muted-foreground'
                         : 'bg-blue-100 text-blue-700'
                     )}
                   >

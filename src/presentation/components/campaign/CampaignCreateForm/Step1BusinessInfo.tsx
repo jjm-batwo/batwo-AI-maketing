@@ -63,7 +63,7 @@ export function Step1BusinessInfo() {
                   'flex flex-col items-center gap-2 rounded-lg border p-4 text-center transition-all',
                   isSelected
                     ? 'border-primary bg-primary/5 ring-2 ring-primary'
-                    : 'border-gray-200 hover:border-gray-300'
+                    : 'border-border hover:border-border'
                 )}
               >
                 <Icon className={cn('h-6 w-6', isSelected ? 'text-primary' : 'text-muted-foreground')} />

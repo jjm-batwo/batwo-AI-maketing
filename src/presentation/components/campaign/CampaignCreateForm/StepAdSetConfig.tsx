@@ -66,14 +66,14 @@ export function StepAdSetConfig() {
                   'flex flex-col items-center gap-2 rounded-lg border-2 p-5 text-center transition-all',
                   isSelected
                     ? 'border-primary bg-primary/5 ring-2 ring-primary'
-                    : 'border-gray-200 hover:border-gray-300'
+                    : 'border-border hover:border-border'
                 )}
               >
-                <Icon className={cn('h-6 w-6', isSelected ? 'text-primary' : 'text-gray-400')} />
+                <Icon className={cn('h-6 w-6', isSelected ? 'text-primary' : 'text-muted-foreground')} />
                 <span
                   className={cn(
                     'text-sm font-semibold',
-                    isSelected ? 'text-primary' : 'text-gray-700'
+                    isSelected ? 'text-primary' : 'text-muted-foreground'
                   )}
                 >
                   {option.label}

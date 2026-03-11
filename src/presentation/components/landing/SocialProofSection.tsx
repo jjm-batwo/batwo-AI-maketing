@@ -16,7 +16,7 @@ const MARQUEE_ITEMS = [...PLATFORMS, ...PLATFORMS, ...PLATFORMS]
 
 export function SocialProofSection() {
   return (
-    <section id="social-proof" className="py-14 md:py-20 border-y border-gray-100 overflow-hidden">
+    <section id="social-proof" className="py-14 md:py-20 border-y border-border overflow-hidden">
       <div className="container mx-auto px-4 mb-10 text-center">
         <SectionLabel className="text-center">연동 플랫폼</SectionLabel>
         <p className="text-sm text-muted-foreground">
@@ -35,7 +35,7 @@ export function SocialProofSection() {
           {MARQUEE_ITEMS.map((platform, index) => (
             <span
               key={`${platform.name}-${index}`}
-              className="shrink-0 text-base md:text-lg font-semibold tracking-tight text-gray-400 hover:text-gray-600 transition-colors duration-200"
+              className="shrink-0 text-base md:text-lg font-semibold tracking-tight text-muted-foreground hover:text-muted-foreground transition-colors duration-200"
               aria-hidden={index >= PLATFORMS.length}
             >
               {platform.name}

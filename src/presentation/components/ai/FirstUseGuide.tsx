@@ -166,32 +166,32 @@ export function FirstUseGuide({
           className={cn(
             'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50',
             'w-full max-w-lg max-h-[90vh] overflow-y-auto',
-            'bg-white dark:bg-gray-900 rounded-xl shadow-2xl',
+            'bg-background rounded-xl shadow-2xl',
             'animate-in fade-in zoom-in-95 duration-300',
             className
           )}
         >
           {/* Header */}
-          <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+          <div className="sticky top-0 bg-background border-b border-border px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                   <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  <h2 className="text-lg font-semibold text-foreground">
                     {guide.title}
                   </h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">처음 사용하시는군요!</p>
+                  <p className="text-sm text-muted-foreground">처음 사용하시는군요!</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={handleDismiss}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                className="p-2 hover:bg-accent rounded-lg transition-colors"
                 aria-label="닫기"
               >
-                <X className="w-5 h-5 text-gray-500" />
+                <X className="w-5 h-5 text-muted-foreground" />
               </button>
             </div>
           </div>
@@ -200,14 +200,14 @@ export function FirstUseGuide({
           <div className="px-6 py-6 space-y-6">
             {/* Description */}
             <div>
-              <p className="text-gray-700 dark:text-gray-300">{guide.description}</p>
+              <p className="text-foreground">{guide.description}</p>
             </div>
 
             {/* Capabilities */}
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <BookOpen className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                <h3 className="text-sm font-semibold text-foreground">
                   이런 것들을 할 수 있어요
                 </h3>
               </div>
@@ -215,7 +215,7 @@ export function FirstUseGuide({
                 {guide.capabilities.map((capability, index) => (
                   <li
                     key={index}
-                    className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400"
+                    className="flex items-start gap-2 text-sm text-muted-foreground"
                   >
                     <ChevronRight className="w-4 h-4 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
                     <span>{capability}</span>
@@ -228,7 +228,7 @@ export function FirstUseGuide({
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Lightbulb className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                <h3 className="text-sm font-semibold text-foreground">
                   더 잘 사용하는 팁
                 </h3>
               </div>
@@ -236,7 +236,7 @@ export function FirstUseGuide({
                 {guide.tips.map((tip, index) => (
                   <li
                     key={index}
-                    className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400"
+                    className="flex items-start gap-2 text-sm text-muted-foreground"
                   >
                     <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center bg-amber-100 dark:bg-amber-900/30 rounded-full text-xs font-medium text-amber-700 dark:text-amber-400">
                       {index + 1}
@@ -249,14 +249,14 @@ export function FirstUseGuide({
           </div>
 
           {/* Footer */}
-          <div className="sticky bottom-0 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700 px-6 py-4">
+          <div className="sticky bottom-0 bg-muted/50 border-t border-border px-6 py-4">
             <div className="flex items-center justify-between gap-4">
-              <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 cursor-pointer">
+              <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
                 <input
                   type="checkbox"
                   checked={!showAgain}
                   onChange={(e) => setShowAgain(!e.target.checked)}
-                  className="rounded border-gray-300 dark:border-gray-600"
+                  className="rounded border-input"
                 />
                 <span>다시 보지 않기</span>
               </label>
@@ -264,7 +264,7 @@ export function FirstUseGuide({
                 <button
                   type="button"
                   onClick={handleDismiss}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-foreground hover:bg-accent rounded-lg transition-colors"
                 >
                   닫기
                 </button>
@@ -289,23 +289,23 @@ export function FirstUseGuide({
   return (
     <div
       className={cn(
-        'bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden',
+        'bg-background rounded-xl border border-border shadow-lg overflow-hidden',
         'animate-in fade-in slide-in-from-top-4 duration-300',
         className
       )}
     >
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 px-6 py-4 border-b border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+            <div className="p-2 bg-background rounded-lg shadow-sm">
               <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100">
+              <h2 className="text-base font-semibold text-foreground">
                 {guide.title}
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">처음 사용하시는군요!</p>
+              <p className="text-sm text-muted-foreground">처음 사용하시는군요!</p>
             </div>
           </div>
           <button
@@ -314,25 +314,25 @@ export function FirstUseGuide({
             className="p-1.5 hover:bg-white/50 dark:hover:bg-gray-800/50 rounded-lg transition-colors"
             aria-label="닫기"
           >
-            <X className="w-4 h-4 text-gray-500" />
+            <X className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
       </div>
 
       {/* Content */}
       <div className="px-6 py-4 space-y-4">
-        <p className="text-sm text-gray-700 dark:text-gray-300">{guide.description}</p>
+        <p className="text-sm text-foreground">{guide.description}</p>
 
         {/* Capabilities */}
         <div>
-          <h3 className="text-xs font-semibold text-gray-900 dark:text-gray-100 mb-2">
+          <h3 className="text-xs font-semibold text-foreground mb-2">
             이런 것들을 할 수 있어요
           </h3>
           <ul className="space-y-1.5">
             {guide.capabilities.map((capability, index) => (
               <li
                 key={index}
-                className="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-400"
+                className="flex items-start gap-2 text-xs text-muted-foreground"
               >
                 <ChevronRight className="w-3 h-3 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
                 <span>{capability}</span>
@@ -343,14 +343,14 @@ export function FirstUseGuide({
 
         {/* Tips */}
         <div>
-          <h3 className="text-xs font-semibold text-gray-900 dark:text-gray-100 mb-2">
+          <h3 className="text-xs font-semibold text-foreground mb-2">
             더 잘 사용하는 팁
           </h3>
           <ul className="space-y-1.5">
             {guide.tips.slice(0, 2).map((tip, index) => (
               <li
                 key={index}
-                className="flex items-start gap-2 text-xs text-gray-600 dark:text-gray-400"
+                className="flex items-start gap-2 text-xs text-muted-foreground"
               >
                 <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center bg-amber-100 dark:bg-amber-900/30 rounded-full text-xs font-medium text-amber-700 dark:text-amber-400">
                   {index + 1}
@@ -363,14 +363,14 @@ export function FirstUseGuide({
       </div>
 
       {/* Footer */}
-      <div className="px-6 py-3 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
+      <div className="px-6 py-3 bg-muted/50 border-t border-border">
         <div className="flex items-center justify-between gap-3">
-          <label className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 cursor-pointer">
+          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
             <input
               type="checkbox"
               checked={!showAgain}
               onChange={(e) => setShowAgain(!e.target.checked)}
-              className="rounded border-gray-300 dark:border-gray-600 text-xs"
+              className="rounded border-input text-xs"
             />
             <span>다시 보지 않기</span>
           </label>
@@ -378,7 +378,7 @@ export function FirstUseGuide({
             <button
               type="button"
               onClick={handleDismiss}
-              className="px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent rounded-lg transition-colors"
             >
               닫기
             </button>

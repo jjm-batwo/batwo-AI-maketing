@@ -82,7 +82,7 @@ export function StepReviewExtended({ submitStage = 'idle' }: StepReviewExtendedP
                 ) : isError ? (
                   <AlertCircle className="h-5 w-5 text-red-500" />
                 ) : (
-                  <div className="h-5 w-5 rounded-full border-2 border-gray-200" />
+                  <div className="h-5 w-5 rounded-full border-2 border-border" />
                 )}
                 <span
                   className={cn(

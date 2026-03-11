@@ -140,7 +140,7 @@ export function CheckoutForm({
       {/* Back link */}
       <Link
         href="/#pricing"
-        className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 mb-6"
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6"
       >
         <ArrowLeft className="h-4 w-4" />
         요금제로 돌아가기
@@ -186,12 +186,12 @@ export function CheckoutForm({
             {isAnnual ? (
               <>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">연간 결제</span>
+                  <span className="text-muted-foreground">연간 결제</span>
                   <span className="text-2xl font-bold">
                     ₩{annualTotalAmount.toLocaleString('ko-KR')}
                   </span>
                 </div>
-                <div className="flex justify-between items-center text-sm text-gray-500">
+                <div className="flex justify-between items-center text-sm text-muted-foreground">
                   <span>월 환산 금액</span>
                   <span>₩{annualMonthlyAmount.toLocaleString('ko-KR')}</span>
                 </div>
@@ -205,13 +205,13 @@ export function CheckoutForm({
             ) : (
               <>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">월간 결제</span>
+                  <span className="text-muted-foreground">월간 결제</span>
                   <span className="text-2xl font-bold">
                     ₩{monthlyAmount.toLocaleString('ko-KR')}
                   </span>
                 </div>
                 {annualPrice < price && (
-                  <p className="text-sm text-gray-500 text-center">
+                  <p className="text-sm text-muted-foreground text-center">
                     연간 결제 시 월 ₩{annualMonthlyAmount.toLocaleString('ko-KR')}
                   </p>
                 )}
@@ -251,13 +251,13 @@ export function CheckoutForm({
           </Button>
 
           {/* Info text */}
-          <div className="text-center space-y-1 text-sm text-gray-500">
+          <div className="text-center space-y-1 text-sm text-muted-foreground">
             <p>결제 후 14일 무료 체험</p>
             <p>언제든 취소 가능</p>
           </div>
 
           {/* Security notice */}
-          <div className="text-xs text-gray-400 text-center border-t pt-4">
+          <div className="text-xs text-muted-foreground text-center border-t pt-4">
             안전한 결제를 위해 토스페이먼츠를 이용합니다
           </div>
         </CardContent>

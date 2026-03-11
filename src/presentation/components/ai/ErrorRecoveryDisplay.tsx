@@ -81,7 +81,7 @@ export function ErrorRecoveryDisplay({
           <StatusIcon className={cn('mt-0.5 h-6 w-6 flex-shrink-0', config.iconColor)} />
           <div className="flex-1 min-w-0">
             <h3 className={cn('font-semibold text-lg', config.titleColor)}>{title}</h3>
-            <p className="mt-1 text-sm text-gray-700 break-words">{error}</p>
+            <p className="mt-1 text-sm text-muted-foreground break-words">{error}</p>
           </div>
         </div>
 
@@ -92,14 +92,14 @@ export function ErrorRecoveryDisplay({
             className="p-1 hover:bg-white/50 rounded-md transition-colors flex-shrink-0"
             aria-label="닫기"
           >
-            <X className="h-5 w-5 text-gray-500" />
+            <X className="h-5 w-5 text-muted-foreground" />
           </button>
         )}
       </div>
 
       {/* Recovery Options */}
       <div className="mt-4 space-y-2">
-        <p className="text-sm font-medium text-gray-900">해결 방법:</p>
+        <p className="text-sm font-medium text-foreground">해결 방법:</p>
 
         {/* Recommended Option */}
         {recommendedOption && (
@@ -108,7 +108,7 @@ export function ErrorRecoveryDisplay({
             onClick={recommendedOption.action}
             className={cn(
               'w-full text-left p-3 rounded-lg border-2',
-              'bg-white hover:bg-gray-50',
+              'bg-white hover:bg-muted',
               'border-blue-300 hover:border-blue-400',
               'transition-all group'
             )}
@@ -120,16 +120,16 @@ export function ErrorRecoveryDisplay({
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-900">{recommendedOption.label}</span>
+                    <span className="font-medium text-foreground">{recommendedOption.label}</span>
                     <span className="flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
                       <Star className="h-3 w-3" />
                       추천
                     </span>
                   </div>
-                  <p className="mt-1 text-sm text-gray-600">{recommendedOption.description}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{recommendedOption.description}</p>
                 </div>
               </div>
-              <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-colors flex-shrink-0" />
+              <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-blue-600 transition-colors flex-shrink-0" />
             </div>
           </button>
         )}
@@ -144,20 +144,20 @@ export function ErrorRecoveryDisplay({
                 onClick={option.action}
                 className={cn(
                   'w-full text-left p-3 rounded-lg border',
-                  'bg-white hover:bg-gray-50',
-                  'border-gray-200 hover:border-gray-300',
+                  'bg-white hover:bg-muted',
+                  'border-border hover:border-border',
                   'transition-all group'
                 )}
               >
                 <div className="flex items-start gap-3">
                   <div className="flex items-center gap-2 flex-1">
-                    {option.icon && <option.icon className="h-5 w-5 text-gray-600 flex-shrink-0" />}
+                    {option.icon && <option.icon className="h-5 w-5 text-muted-foreground flex-shrink-0" />}
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900">{option.label}</p>
-                      <p className="mt-1 text-sm text-gray-600">{option.description}</p>
+                      <p className="font-medium text-foreground">{option.label}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">{option.description}</p>
                     </div>
                   </div>
-                  <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600 transition-colors flex-shrink-0" />
+                  <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-muted-foreground transition-colors flex-shrink-0" />
                 </div>
               </button>
             ))}
@@ -166,8 +166,8 @@ export function ErrorRecoveryDisplay({
       </div>
 
       {/* Helper Text */}
-      <div className="mt-4 pt-3 border-t border-gray-200">
-        <p className="text-xs text-gray-500">
+      <div className="mt-4 pt-3 border-t border-border">
+        <p className="text-xs text-muted-foreground">
           문제가 계속되면 고객 지원팀에 문의하거나 잠시 후 다시 시도해주세요.
         </p>
       </div>

@@ -69,7 +69,7 @@ export function Step2TargetAudience() {
                 'rounded-lg border px-4 py-2 text-sm font-medium transition-all',
                 targetAudience.gender === option.value
                   ? 'border-primary bg-primary/5 text-primary'
-                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                  : 'border-border text-muted-foreground hover:border-border'
               )}
             >
               {option.label}
@@ -92,7 +92,7 @@ export function Step2TargetAudience() {
                   'rounded-full border px-3 py-1 text-sm transition-all',
                   isSelected
                     ? 'border-primary bg-primary text-white'
-                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                    : 'border-border text-muted-foreground hover:border-border'
                 )}
               >
                 {location}

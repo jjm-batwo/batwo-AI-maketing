@@ -77,35 +77,35 @@ export function AISuggestionBubble({
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 blur-xl rounded-2xl" />
 
         {/* Main bubble */}
-        <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+        <div className="relative bg-background rounded-2xl shadow-2xl border border-border overflow-hidden">
           {/* Header with sparkle icon */}
-          <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 border-b border-gray-200 dark:border-gray-800">
+          <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 border-b border-border">
             <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div className="flex-1">
-              <p className="text-xs font-medium text-gray-900 dark:text-gray-100">
+              <p className="text-xs font-medium text-foreground">
                 AI가 도움을 드릴까요?
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{context}</p>
+              <p className="text-xs text-muted-foreground">{context}</p>
             </div>
             <button
               type="button"
               onClick={handleDismiss}
-              className="flex-shrink-0 w-6 h-6 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 flex items-center justify-center transition-colors"
+              className="flex-shrink-0 w-6 h-6 rounded-full hover:bg-accent flex items-center justify-center transition-colors"
               aria-label="닫기"
             >
-              <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+              <X className="w-4 h-4 text-muted-foreground" />
             </button>
           </div>
 
           {/* Content */}
           <div className="px-4 py-3">
-            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{suggestion}</p>
+            <p className="text-sm text-foreground leading-relaxed">{suggestion}</p>
           </div>
 
           {/* Actions */}
-          <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800/50 flex gap-2">
+          <div className="px-4 py-3 bg-muted/50 flex gap-2">
             <button
               type="button"
               onClick={handleAccept}
@@ -116,7 +116,7 @@ export function AISuggestionBubble({
             <button
               type="button"
               onClick={handleDismiss}
-              className="px-4 py-2 text-gray-600 dark:text-gray-400 text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="px-4 py-2 text-muted-foreground text-sm font-medium hover:bg-accent rounded-lg transition-colors"
             >
               괜찮아요
             </button>
@@ -151,7 +151,7 @@ export function CompactAISuggestion({
       )}
     >
       <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-      <p className="flex-1 text-sm text-gray-700 dark:text-gray-300">{suggestion}</p>
+      <p className="flex-1 text-sm text-foreground">{suggestion}</p>
       <div className="flex gap-2 flex-shrink-0">
         <button
           type="button"
@@ -163,10 +163,10 @@ export function CompactAISuggestion({
         <button
           type="button"
           onClick={onDismiss}
-          className="w-6 h-6 rounded hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors"
+          className="w-6 h-6 rounded hover:bg-accent flex items-center justify-center transition-colors"
           aria-label="닫기"
         >
-          <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+          <X className="w-4 h-4 text-muted-foreground" />
         </button>
       </div>
     </div>
@@ -192,22 +192,22 @@ export function TooltipAISuggestion({
   return (
     <div
       className={cn(
-        'bg-white dark:bg-gray-900 rounded-lg shadow-xl border border-gray-200 dark:border-gray-800 p-3',
+        'bg-background rounded-lg shadow-xl border border-border p-3',
         className
       )}
     >
       <div className="flex items-start gap-2 mb-3">
         <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-        <p className="flex-1 text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
+        <p className="flex-1 text-xs text-foreground leading-relaxed">
           {suggestion}
         </p>
         <button
           type="button"
           onClick={onDismiss}
-          className="w-4 h-4 rounded hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center transition-colors flex-shrink-0"
+          className="w-4 h-4 rounded hover:bg-accent flex items-center justify-center transition-colors flex-shrink-0"
           aria-label="닫기"
         >
-          <X className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+          <X className="w-3 h-3 text-muted-foreground" />
         </button>
       </div>
       <button

@@ -143,7 +143,7 @@ export function PlatformSelector({ onSelect, selectedPlatform }: PlatformSelecto
                         'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
                         card.badgeVariant === 'auto'
                           ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300'
-                          : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
+                          : 'bg-muted text-muted-foreground dark:bg-gray-800 dark:text-muted-foreground'
                       )}
                     >
                       {card.badge}

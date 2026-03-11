@@ -60,7 +60,7 @@ const priorityConfig: Record<InsightPriority, { label: string; className: string
   },
   low: {
     label: '낮음',
-    className: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400',
+    className: 'bg-muted text-muted-foreground dark:bg-gray-800 dark:text-muted-foreground',
   },
 }
 
@@ -78,7 +78,7 @@ const forecastDirectionConfig = {
   stable: {
     icon: Minus,
     label: '안정',
-    className: 'text-gray-600 dark:text-gray-400',
+    className: 'text-muted-foreground',
   },
 }
 

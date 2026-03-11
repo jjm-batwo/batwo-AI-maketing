@@ -160,43 +160,43 @@ export function AIFeatureTour({
             left: `${tooltipPosition.left}px`,
           }}
         >
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-background rounded-xl shadow-2xl border border-border overflow-hidden">
             {/* Header */}
-            <div className="px-5 py-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="px-5 py-4 border-b border-border">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-xs font-medium text-purple-600 dark:text-purple-400">
                       {step.feature}
                     </span>
-                    <span className="text-xs text-gray-400 dark:text-gray-500">
+                    <span className="text-xs text-muted-foreground">
                       {currentStep + 1} / {steps.length}
                     </span>
                   </div>
-                  <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
+                  <h3 className="text-base font-semibold text-foreground">
                     {step.title}
                   </h3>
                 </div>
                 <button
                   type="button"
                   onClick={onSkip}
-                  className="flex-shrink-0 p-1.5 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                  className="flex-shrink-0 p-1.5 hover:bg-accent rounded-lg transition-colors"
                   aria-label="투어 종료"
                 >
-                  <X className="w-4 h-4 text-gray-500" />
+                  <X className="w-4 h-4 text-muted-foreground" />
                 </button>
               </div>
             </div>
 
             {/* Content */}
             <div className="px-5 py-4">
-              <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+              <p className="text-sm text-foreground leading-relaxed">
                 {step.description}
               </p>
             </div>
 
             {/* Footer */}
-            <div className="px-5 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
+            <div className="px-5 py-4 bg-muted/50 border-t border-border">
               {/* Step indicators */}
               <div className="flex items-center justify-center gap-1.5 mb-4">
                 {steps.map((_, index) => (
@@ -222,7 +222,7 @@ export function AIFeatureTour({
                 <button
                   type="button"
                   onClick={onSkip}
-                  className="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground dark:hover:text-gray-100 transition-colors"
                 >
                   건너뛰기
                 </button>
@@ -231,10 +231,10 @@ export function AIFeatureTour({
                     <button
                       type="button"
                       onClick={handlePrevious}
-                      className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                      className="p-2 hover:bg-accent rounded-lg transition-colors"
                       aria-label="이전"
                     >
-                      <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                      <ChevronLeft className="w-4 h-4 text-muted-foreground" />
                     </button>
                   )}
                   <button
@@ -267,7 +267,7 @@ export function AIFeatureTour({
           {/* Arrow pointing to target */}
           <div
             className={cn(
-              'absolute w-3 h-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700',
+              'absolute w-3 h-3 bg-background border border-border',
               tooltipPosition.position === 'top' &&
                 'bottom-[-6px] left-1/2 -translate-x-1/2 rotate-45 border-t-0 border-l-0',
               tooltipPosition.position === 'bottom' &&

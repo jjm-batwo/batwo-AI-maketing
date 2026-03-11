@@ -67,8 +67,8 @@ export function FeatureDiscoveryHint({
       <div
         className={cn(
           'absolute z-50 px-3 py-2 max-w-xs',
-          'bg-white dark:bg-gray-800 shadow-lg rounded-lg border border-gray-200 dark:border-gray-700',
-          'text-sm text-gray-700 dark:text-gray-300',
+          'bg-background shadow-lg rounded-lg border border-border',
+          'text-sm text-foreground',
           'animate-in fade-in slide-in-from-top-2 duration-300',
           className
         )}
@@ -79,7 +79,7 @@ export function FeatureDiscoveryHint({
           <button
             type="button"
             onClick={handleDismiss}
-            className="hover:bg-gray-100 dark:hover:bg-gray-700 rounded p-0.5 transition-colors"
+            className="hover:bg-accent rounded p-0.5 transition-colors"
             aria-label="닫기"
           >
             <X className="w-4 h-4" />
@@ -110,10 +110,10 @@ export function FeatureDiscoveryHint({
         </div>
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-gray-700 dark:text-gray-300 font-medium mb-1">
+        <p className="text-sm text-foreground font-medium mb-1">
           새로운 AI 기능을 발견하셨어요!
         </p>
-        <p className="text-sm text-gray-600 dark:text-gray-400">{hint}</p>
+        <p className="text-sm text-muted-foreground">{hint}</p>
       </div>
       <button
         type="button"
@@ -121,7 +121,7 @@ export function FeatureDiscoveryHint({
         className="flex-shrink-0 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded p-1 transition-colors"
         aria-label="닫기"
       >
-        <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+        <X className="w-4 h-4 text-muted-foreground" />
       </button>
     </div>
   )

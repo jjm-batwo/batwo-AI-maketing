@@ -76,7 +76,7 @@ const ROLE_CONFIG: Record<TeamRole, { icon: typeof Crown; label: string; color: 
   VIEWER: {
     icon: Eye,
     label: '뷰어',
-    color: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200',
+    color: 'bg-muted text-foreground dark:bg-gray-900 dark:text-gray-200',
   },
 }
 

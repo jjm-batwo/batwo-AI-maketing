@@ -106,7 +106,7 @@ export function RecommendationCard({
     low: {
       label: '낮음',
       borderClass: 'border-l-gray-500',
-      textClass: 'text-gray-700',
+      textClass: 'text-muted-foreground',
     },
   }
 

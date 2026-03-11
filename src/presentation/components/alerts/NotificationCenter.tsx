@@ -118,8 +118,8 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
             </div>
           ) : alerts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <Bell className="h-12 w-12 text-gray-300" />
-              <h3 className="mt-4 font-medium text-gray-900">{t('notifications.empty.title')}</h3>
+              <Bell className="h-12 w-12 text-muted-foreground/30" />
+              <h3 className="mt-4 font-medium text-foreground">{t('notifications.empty.title')}</h3>
               <p className="mt-1 text-sm text-muted-foreground">
                 {t('notifications.empty.description')}
               </p>
