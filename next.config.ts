@@ -60,6 +60,9 @@ const nextConfig: NextConfig = {
   // X-Powered-By 헤더 제거 (보안)
   poweredByHeader: false,
 
+  // 서버 전용 패키지 - 클라이언트 번들에 포함되지 않도록 명시적으로 지정
+  serverExternalPackages: ['@react-pdf/renderer'],
+
   // 보안 헤더 설정 (CSP는 middleware.ts에서 nonce와 함께 동적 생성)
   headers: async () => [
     {

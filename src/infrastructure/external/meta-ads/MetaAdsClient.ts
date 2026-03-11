@@ -25,6 +25,12 @@ const META_API_VERSION = 'v25.0'
 const META_API_BASE = `https://graph.facebook.com/${META_API_VERSION}`
 const META_API_TIMEOUT_MS = 30000 // 30 seconds for Meta API calls
 
+/**
+ * 성능 모니터링 임계값 (ms)
+ * 이 값을 초과하는 API 호출은 경고 로그를 출력합니다.
+ */
+const SLOW_API_THRESHOLD_MS = 3000
+
 interface MetaApiError {
   error: {
     message: string
@@ -155,10 +161,34 @@ export class MetaAdsClient implements IMetaAdsService {
     } finally {
       const latencyMs = Date.now() - startTime
       const endpointPath = endpoint.split('?')[0].replace(/^\//, '')
+      const method = (options.method || 'GET').toUpperCase()
+
+      // 구조화된 성능 로그 (Vercel 로그 집계용)
+      const perfLog = {
+        type: 'meta_api_call',
+        endpoint: endpointPath,
+        method,
+        statusCode: statusCode || 0,
+        latencyMs,
+        success,
+        ...(errorCode && { errorCode }),
+        ...(errorMsg && { errorMsg: errorMsg.slice(0, 200) }),
+        timestamp: new Date().toISOString(),
+      }
+
+      console.log(`[MetaAdsClient:PERF] ${JSON.stringify(perfLog)}`)
+
+      // 느린 호출 경고 (>3초)
+      if (latencyMs > SLOW_API_THRESHOLD_MS) {
+        console.warn(
+          `[MetaAdsClient:SLOW] ${method} ${endpointPath} took ${latencyMs}ms (threshold: ${SLOW_API_THRESHOLD_MS}ms)`,
+          { latencyMs, statusCode, success }
+        )
+      }
 
       await this.logApiCall({
         endpoint: endpointPath,
-        method: (options.method || 'GET').toUpperCase(),
+        method,
         statusCode: statusCode || 0,
         success,
         errorCode,
