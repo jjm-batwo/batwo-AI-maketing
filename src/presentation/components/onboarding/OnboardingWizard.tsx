@@ -10,6 +10,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { useOnboardingStore } from '@presentation/stores/onboardingStore'
 import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
 import { WelcomeStep } from './steps/WelcomeStep'
 import { MetaConnectStep } from './steps/MetaConnectStep'
 import { PixelSetupStep } from './steps/PixelSetupStep'
@@ -20,6 +21,7 @@ interface OnboardingWizardProps {
 }
 
 export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
+  const router = useRouter()
   const t = useTranslations('onboarding')
   const {
     currentStep,
@@ -53,6 +55,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     if (currentStep === totalSteps) {
       completeOnboarding()
       onComplete?.()
+      router.push('/audit')
     } else {
       nextStep()
     }
@@ -61,6 +64,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const handleSkip = () => {
     skipOnboarding()
     onComplete?.()
+    router.push('/audit')
   }
 
   const renderStep = () => {
