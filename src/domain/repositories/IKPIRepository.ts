@@ -64,4 +64,5 @@ export interface IKPIRepository {
   getCumulativeSpend(campaignId: string, date: Date): Promise<number>
   delete(id: string): Promise<void>
   deleteByCampaignId(campaignId: string): Promise<void>
+  getIndustryPercentiles(industry: string, periodDays: number): Promise<any>
 }

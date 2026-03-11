@@ -327,6 +327,42 @@ export class PrismaKPIRepository implements IKPIRepository {
     return Number(result._sum.spend ?? 0)
   }
 
+  async getIndustryPercentiles(industry: string, periodDays: number): Promise<any> {
+    const since = new Date()
+    since.setDate(since.getDate() - periodDays)
+
+    const result = await this.prisma.$queryRaw<any[]>`
+      SELECT
+        PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY spend) as roas_p25,
+        PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY spend) as roas_p50,
+        PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY spend) as roas_p75,
+        PERCENTILE_CONT(0.90) WITHIN GROUP (ORDER BY spend) as roas_p90,
+        PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY clicks) as ctr_p25,
+        PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY clicks) as ctr_p50,
+        PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY clicks) as ctr_p75,
+        PERCENTILE_CONT(0.90) WITHIN GROUP (ORDER BY clicks) as ctr_p90,
+        PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY conversions) as cpa_p25,
+        PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY conversions) as cpa_p50,
+        PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY conversions) as cpa_p75,
+        PERCENTILE_CONT(0.90) WITHIN GROUP (ORDER BY conversions) as cpa_p90,
+        COUNT(DISTINCT u.id) as sample_size
+      FROM "KPISnapshot" k
+      JOIN "Campaign" c ON k."campaignId" = c.id
+      JOIN "User" u ON c."userId" = u.id
+      WHERE u.industry = ${industry}
+      AND k.date >= ${since}
+    `
+
+    const r = result[0] || {}
+
+    return {
+      roas: { p25: Number(r.roas_p25) || 0, p50: Number(r.roas_p50) || 0, p75: Number(r.roas_p75) || 0, p90: Number(r.roas_p90) || 0 },
+      ctr: { p25: Number(r.ctr_p25) || 0, p50: Number(r.ctr_p50) || 0, p75: Number(r.ctr_p75) || 0, p90: Number(r.ctr_p90) || 0 },
+      cpa: { p25: Number(r.cpa_p25) || 0, p50: Number(r.cpa_p50) || 0, p75: Number(r.cpa_p75) || 0, p90: Number(r.cpa_p90) || 0 },
+      _sampleSize: Number(r.sample_size) || 0
+    }
+  }
+
   async delete(id: string): Promise<void> {
     await this.prisma.kPISnapshot.delete({
       where: { id },
