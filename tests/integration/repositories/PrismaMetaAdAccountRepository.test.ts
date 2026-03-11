@@ -25,7 +25,7 @@ describe('PrismaMetaAdAccountRepository', () => {
                 id: crypto.randomUUID(),
                 userId: testUserId,
                 metaAccountId: `act_${Date.now()}`,
-                accountName: 'Test Ad Account',
+                businessName: 'Test Ad Account',
                 accessToken: 'encrypted-token-data',
                 tokenExpiry,
                 ...overrides,

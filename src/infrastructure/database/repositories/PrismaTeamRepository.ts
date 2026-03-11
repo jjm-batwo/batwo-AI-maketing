@@ -46,7 +46,7 @@ export class PrismaTeamRepository implements ITeamRepository {
       orderBy: { createdAt: 'desc' },
     })
 
-    return teams.map(TeamMapper.toDomain)
+    return teams.map((t) => TeamMapper.toDomain(t))
   }
 
   async findByMemberUserId(userId: string): Promise<Team[]> {
@@ -60,7 +60,7 @@ export class PrismaTeamRepository implements ITeamRepository {
       orderBy: { createdAt: 'desc' },
     })
 
-    return teams.map(TeamMapper.toDomain)
+    return teams.map((t) => TeamMapper.toDomain(t))
   }
 
   async findByFilters(filters: TeamFilters): Promise<Team[]> {
@@ -82,7 +82,7 @@ export class PrismaTeamRepository implements ITeamRepository {
       orderBy: { createdAt: 'desc' },
     })
 
-    return teams.map(TeamMapper.toDomain)
+    return teams.map((t) => TeamMapper.toDomain(t))
   }
 
   async update(team: Team): Promise<Team> {
@@ -166,7 +166,7 @@ export class PrismaTeamRepository implements ITeamRepository {
       orderBy: { invitedAt: 'desc' },
     })
 
-    return members.map(TeamMapper.mapMemberToDomain)
+    return members.map((m) => TeamMapper.mapMemberToDomain(m))
   }
 
   async findMembersByRole(teamId: string, role: TeamRole): Promise<TeamMember[]> {
@@ -179,6 +179,6 @@ export class PrismaTeamRepository implements ITeamRepository {
       },
     })
 
-    return members.map(TeamMapper.mapMemberToDomain)
+    return members.map((m) => TeamMapper.mapMemberToDomain(m))
   }
 }

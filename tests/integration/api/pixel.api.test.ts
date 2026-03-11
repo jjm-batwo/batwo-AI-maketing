@@ -327,6 +327,8 @@ describe('Pixel API Integration', () => {
   })
 
   describe('SetupPixelUseCase', () => {
+    const mockAppConfig = { appUrl: 'http://localhost:3000' }
+
     it('should setup existing pixel with manual mode', async () => {
       const existingPixel = MetaPixel.create({
         userId: testUserId,
@@ -335,7 +337,7 @@ describe('Pixel API Integration', () => {
       })
       await pixelRepository.save(existingPixel)
 
-      const useCase = new SetupPixelUseCase(pixelRepository)
+      const useCase = new SetupPixelUseCase(pixelRepository, mockAppConfig)
 
       const result = await useCase.execute({
         userId: testUserId,
@@ -350,7 +352,7 @@ describe('Pixel API Integration', () => {
     })
 
     it('should create new pixel and setup with manual mode', async () => {
-      const useCase = new SetupPixelUseCase(pixelRepository)
+      const useCase = new SetupPixelUseCase(pixelRepository, mockAppConfig)
 
       const result = await useCase.execute({
         userId: testUserId,
@@ -372,7 +374,7 @@ describe('Pixel API Integration', () => {
     })
 
     it('should setup with PLATFORM_API mode', async () => {
-      const useCase = new SetupPixelUseCase(pixelRepository)
+      const useCase = new SetupPixelUseCase(pixelRepository, mockAppConfig)
 
       const result = await useCase.execute({
         userId: testUserId,
