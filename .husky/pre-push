@@ -14,9 +14,11 @@ npm run test:unit -- --reporter=dot
 if [ "$PREPUSH_FULL" = "1" ]; then
   echo "[pre-push] Running integration tests"
   npm run test:integration -- --reporter=verbose
+
+  echo "[pre-push] Running production build"
+  SKIP_ENV_VALIDATION=true npm run build
 else
-  echo "[pre-push] Set PREPUSH_FULL=1 to run integration tests before push"
+  echo "[pre-push] ℹ️  Set PREPUSH_FULL=1 to also run integration tests + build before push"
 fi
 
-echo "[pre-push] Running production build"
-SKIP_ENV_VALIDATION=true npm run build
+echo "[pre-push] ✅ All checks passed!"
