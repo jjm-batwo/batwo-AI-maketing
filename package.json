@@ -21,6 +21,7 @@
     "test:integration:audit:flow": "vitest run --config vitest.config.integration.ts tests/integration/free-audit-flow.test.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
+    "test:e2e:recording": "playwright test --config playwright.config.recording.ts",
     "analyze": "ANALYZE=true npm run build",
     "api:validate": "tsx scripts/validate-openapi.ts",
     "api:docs": "tsx scripts/validate-openapi.ts",

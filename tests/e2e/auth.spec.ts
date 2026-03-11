@@ -377,7 +377,8 @@ test.describe('Authentication', () => {
       const sessionCookie = cookies.find(c => c.name.includes('session') || c.name.includes('auth'))
 
       // 세션 쿠키가 존재하는지 확인
-      expect(sessionCookie).toBeDefined()
+      expect(sessionCookie).not.toBeUndefined()
+      expect(typeof sessionCookie!.name).toBe('string')
 
       // 새 페이지에서 쿠키 복원 후 접근
       await page.goto('/dashboard')

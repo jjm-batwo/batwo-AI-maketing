@@ -63,11 +63,11 @@ describe('AnomalyRootCauseService', () => {
 
       const analysis = service.analyzeRootCause(anomaly)
 
-      expect(analysis).toBeDefined()
       expect(analysis.metric).toBe('conversions')
       expect(analysis.topCauses.length).toBeGreaterThan(0)
       expect(analysis.topCauses.length).toBeLessThanOrEqual(3)
-      expect(analysis.summary).toBeDefined()
+      expect(typeof analysis.summary).toBe('string')
+      expect(analysis.summary.length).toBeGreaterThan(0)
       expect(analysis.nextSteps.length).toBeGreaterThan(0)
     })
 
@@ -415,7 +415,8 @@ describe('Metric-Specific Root Cause Analysis', () => {
       const analysis = service.analyzeRootCause(anomaly)
       const budgetCause = analysis.allCauses.find(c => c.name.includes('예산'))
 
-      expect(budgetCause).toBeDefined()
+      expect(budgetCause).not.toBeUndefined()
+      expect(budgetCause!.name).toContain('예산')
     })
 
     it('should identify auction competition for spend increase', () => {
@@ -428,7 +429,8 @@ describe('Metric-Specific Root Cause Analysis', () => {
       const analysis = service.analyzeRootCause(anomaly)
       const competitionCause = analysis.allCauses.find(c => c.name.includes('경매'))
 
-      expect(competitionCause).toBeDefined()
+      expect(competitionCause).not.toBeUndefined()
+      expect(competitionCause!.name).toContain('경매')
     })
   })
 
@@ -443,7 +445,8 @@ describe('Metric-Specific Root Cause Analysis', () => {
       const analysis = service.analyzeRootCause(anomaly)
       const saturationCause = analysis.allCauses.find(c => c.name.includes('포화'))
 
-      expect(saturationCause).toBeDefined()
+      expect(saturationCause).not.toBeUndefined()
+      expect(saturationCause!.name).toContain('포화')
     })
 
     it('should identify algorithm learning for mild drop', () => {
@@ -456,7 +459,8 @@ describe('Metric-Specific Root Cause Analysis', () => {
       const analysis = service.analyzeRootCause(anomaly)
       const learningCause = analysis.allCauses.find(c => c.name.includes('학습'))
 
-      expect(learningCause).toBeDefined()
+      expect(learningCause).not.toBeUndefined()
+      expect(learningCause!.name).toContain('학습')
     })
   })
 
@@ -471,7 +475,8 @@ describe('Metric-Specific Root Cause Analysis', () => {
       const analysis = service.analyzeRootCause(anomaly)
       const fatigueCause = analysis.allCauses.find(c => c.name.includes('피로'))
 
-      expect(fatigueCause).toBeDefined()
+      expect(fatigueCause).not.toBeUndefined()
+      expect(fatigueCause!.name).toContain('피로')
     })
   })
 
@@ -486,8 +491,8 @@ describe('Metric-Specific Root Cause Analysis', () => {
       const analysis = service.analyzeRootCause(anomaly)
       const pixelCause = analysis.allCauses.find(c => c.name.includes('픽셀'))
 
-      expect(pixelCause).toBeDefined()
-      expect(pixelCause?.actions.some(a => a.priority === 'critical')).toBe(true)
+      expect(pixelCause).not.toBeUndefined()
+      expect(pixelCause!.actions.some(a => a.priority === 'critical')).toBe(true)
     })
 
     it('should identify landing page issue', () => {
@@ -500,7 +505,8 @@ describe('Metric-Specific Root Cause Analysis', () => {
       const analysis = service.analyzeRootCause(anomaly)
       const landingCause = analysis.allCauses.find(c => c.name.includes('랜딩'))
 
-      expect(landingCause).toBeDefined()
+      expect(landingCause).not.toBeUndefined()
+      expect(landingCause!.name).toContain('랜딩')
     })
   })
 
@@ -515,7 +521,8 @@ describe('Metric-Specific Root Cause Analysis', () => {
       const analysis = service.analyzeRootCause(anomaly)
       const relevanceCause = analysis.allCauses.find(c => c.name.includes('관련성'))
 
-      expect(relevanceCause).toBeDefined()
+      expect(relevanceCause).not.toBeUndefined()
+      expect(relevanceCause!.name).toContain('관련성')
     })
   })
 
@@ -530,7 +537,8 @@ describe('Metric-Specific Root Cause Analysis', () => {
       const analysis = service.analyzeRootCause(anomaly)
       const funnelCause = analysis.allCauses.find(c => c.name.includes('퍼널'))
 
-      expect(funnelCause).toBeDefined()
+      expect(funnelCause).not.toBeUndefined()
+      expect(funnelCause!.name).toContain('퍼널')
     })
   })
 
@@ -545,7 +553,8 @@ describe('Metric-Specific Root Cause Analysis', () => {
       const analysis = service.analyzeRootCause(anomaly)
       const attributionCause = analysis.allCauses.find(c => c.name.includes('기여'))
 
-      expect(attributionCause).toBeDefined()
+      expect(attributionCause).not.toBeUndefined()
+      expect(attributionCause!.name).toContain('기여')
     })
   })
 })
@@ -634,8 +643,8 @@ describe('Context-Based Analysis', () => {
       const analysis = service.analyzeRootCause(anomaly, context)
       const recentChangesCause = analysis.allCauses.find(c => c.id === 'recent_changes')
 
-      expect(recentChangesCause).toBeDefined()
-      expect(recentChangesCause?.evidence.length).toBe(2)
+      expect(recentChangesCause).not.toBeUndefined()
+      expect(recentChangesCause!.evidence.length).toBe(2)
     })
 
     it('should not add recent changes cause for old changes', () => {
