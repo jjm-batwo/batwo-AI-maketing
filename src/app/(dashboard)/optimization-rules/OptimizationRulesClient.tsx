@@ -9,6 +9,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Plus, ChevronDown, ChevronUp, Zap } from 'lucide-react'
 import {
   OptimizationRuleTable,
@@ -16,6 +26,8 @@ import {
   RulePresetCards,
 } from '@/presentation/components/optimization'
 import type { OptimizationRuleResponseDTO } from '@/presentation/components/optimization'
+import { useTranslations } from 'next-intl'
+import { useUIStore } from '@/presentation/stores/uiStore'
 
 interface Campaign {
   id: string
@@ -111,11 +123,17 @@ export function OptimizationRulesClient({
   initialRules,
   campaigns: initialCampaigns,
 }: OptimizationRulesClientProps) {
+  const t = useTranslations()
+  const announceToScreenReader = useUIStore((s) => s.announceToScreenReader)
   const [selectedCampaignId, setSelectedCampaignId] = useState<string>('ALL')
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingRule, setEditingRule] = useState<OptimizationRuleResponseDTO | null>(null)
   const [presetsVisible, setPresetsVisible] = useState(true)
   const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns)
+
+  // UX-03: AlertDialog state (replaces window.confirm)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [deletingRuleId, setDeletingRuleId] = useState<string | null>(null)
 
   // Client-side campaigns revalidation on mount
   useEffect(() => {
@@ -128,7 +146,7 @@ export function OptimizationRulesClient({
           )
         }
       })
-      .catch(() => {})
+      .catch(() => { })
   }, [])
 
   const { rules, isLoading, refetch, createRule, updateRule, deleteRule, toggleRule } =
@@ -158,13 +176,20 @@ export function OptimizationRulesClient({
     setIsFormOpen(true)
   }, [])
 
-  const handleDelete = useCallback(
-    async (id: string) => {
-      if (!window.confirm('이 규칙을 삭제하시겠습니까?')) return
-      await deleteRule(id)
-    },
-    [deleteRule]
-  )
+  // UX-03: Open delete confirmation dialog instead of window.confirm
+  const handleDelete = useCallback((id: string) => {
+    setDeletingRuleId(id)
+    setDeleteDialogOpen(true)
+  }, [])
+
+  // UX-03: Confirm delete action
+  const handleConfirmDelete = useCallback(async () => {
+    if (!deletingRuleId) return
+    await deleteRule(deletingRuleId)
+    announceToScreenReader(t('accessibility.ruleDeleted'))
+    setDeletingRuleId(null)
+    setDeleteDialogOpen(false)
+  }, [deletingRuleId, deleteRule, announceToScreenReader, t])
 
   const handleFormSubmit = useCallback(
     async (data: {
@@ -218,14 +243,14 @@ export function OptimizationRulesClient({
       {/* Header */}
       <div className="flex items-end justify-between border-b border-border/10 pb-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">최적화 규칙</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('optimizationRules.title')}</h1>
           <p className="text-muted-foreground mt-2">
-            조건이 충족되면 자동으로 액션을 실행하는 규칙을 관리하세요
+            {t('optimizationRules.description')}
           </p>
         </div>
         <Button size="lg" className="shadow-sm transition-all" onClick={handleOpenCreate}>
           <Plus className="mr-2 h-4 w-4" />
-          규칙 추가
+          {t('optimizationRules.addRule')}
         </Button>
       </div>
 
@@ -239,7 +264,7 @@ export function OptimizationRulesClient({
         >
           <div className="flex items-center gap-2">
             <Zap className="h-4 w-4 text-primary" />
-            <span className="text-sm font-semibold">빠른 시작 프리셋</span>
+            <span className="text-sm font-semibold">{t('optimizationRules.quickPresets')}</span>
           </div>
           {presetsVisible ? (
             <ChevronUp className="h-4 w-4 text-muted-foreground" />
@@ -258,13 +283,13 @@ export function OptimizationRulesClient({
         {/* Campaign Filter */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">캠페인 필터</span>
+            <span className="text-sm text-muted-foreground">{t('optimizationRules.campaignFilter')}</span>
             <Select value={selectedCampaignId} onValueChange={handleCampaignChange}>
               <SelectTrigger className="w-[220px] bg-white/50 dark:bg-black/10 border-border/50">
-                <SelectValue placeholder="전체 캠페인" />
+                <SelectValue placeholder={t('optimizationRules.allCampaigns')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">전체 캠페인</SelectItem>
+                <SelectItem value="ALL">{t('optimizationRules.allCampaigns')}</SelectItem>
                 {campaigns.map((c) => (
                   <SelectItem key={c.id} value={c.id}>
                     {c.name}
@@ -274,7 +299,7 @@ export function OptimizationRulesClient({
             </Select>
           </div>
           <span className="text-xs text-muted-foreground">
-            {isLoading ? '불러오는 중...' : `규칙 ${filteredRules.length}개`}
+            {isLoading ? t('optimizationRules.loadingRules') : t('optimizationRules.ruleCount', { count: filteredRules.length })}
           </span>
         </div>
 
@@ -297,6 +322,29 @@ export function OptimizationRulesClient({
         defaultCampaignId={defaultCampaignId}
         onSubmit={handleFormSubmit}
       />
+
+      {/* UX-03: Delete confirmation AlertDialog (replaces window.confirm) */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('optimizationRules.deleteConfirm')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('optimizationRules.deleteConfirmDescription')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDeletingRuleId(null)}>
+              {t('optimizationRules.deleteCancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {t('optimizationRules.deleteAction')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

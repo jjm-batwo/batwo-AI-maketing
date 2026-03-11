@@ -263,6 +263,90 @@
     "krw": "원",
     "suffix": "원"
   },
+  "accessibility": {
+    "skipToContent": "본문으로 건너뛰기",
+    "statusToggled": "{name} 광고가 {status} 상태로 변경되었습니다",
+    "ruleDeleted": "규칙이 삭제되었습니다",
+    "ruleToggled": "규칙이 {status} 상태로 변경되었습니다"
+  },
+  "table": {
+    "status": {
+      "active": "진행 중",
+      "paused": "일시정지",
+      "completed": "완료",
+      "draft": "초안",
+      "pendingReview": "검토 중",
+      "deleted": "삭제됨",
+      "archived": "보관됨"
+    },
+    "objective": {
+      "traffic": "트래픽",
+      "conversions": "전환",
+      "brandAwareness": "브랜드 인지도",
+      "reach": "도달",
+      "engagement": "참여"
+    },
+    "columns": {
+      "activation": "활성",
+      "budget": "예산",
+      "dailyBudget": "일예산",
+      "spend": "지출",
+      "roas": "ROAS",
+      "ctr": "CTR",
+      "cpc": "CPC",
+      "cpa": "CPA",
+      "cvr": "CVR",
+      "cpm": "CPM",
+      "reach": "도달",
+      "impressions": "노출",
+      "clicks": "클릭",
+      "conversions": "전환",
+      "createdAt": "생성일",
+      "name": "이름"
+    },
+    "columnConfig": {
+      "visibleCount": "표시 컬럼 {count}개",
+      "presets": "프리셋",
+      "savedPresets": "저장된 프리셋",
+      "noPresets": "저장된 프리셋이 없습니다",
+      "saveCurrentPreset": "+ 현재 설정 저장",
+      "presetNamePrompt": "프리셋 이름을 입력하세요",
+      "columnSettings": "열 설정",
+      "metricsToShow": "표시할 지표",
+      "countLabel": "{count}개",
+      "selectAll": "전체 선택",
+      "deselectAll": "전체 해제"
+    },
+    "actions": {
+      "viewAnalytics": "분석 보기",
+      "edit": "수정",
+      "delete": "삭제",
+      "pause": "일시정지",
+      "resume": "재개",
+      "toggleActivation": "{name} 광고 활성화 토글"
+    },
+    "empty": {
+      "adSets": "광고 세트가 없습니다",
+      "ads": "광고가 없습니다"
+    }
+  },
+  "chart": {
+    "noData": "데이터가 없습니다"
+  },
+  "optimizationRules": {
+    "title": "최적화 규칙",
+    "description": "조건이 충족되면 자동으로 액션을 실행하는 규칙을 관리하세요",
+    "addRule": "규칙 추가",
+    "quickPresets": "빠른 시작 프리셋",
+    "campaignFilter": "캠페인 필터",
+    "allCampaigns": "전체 캠페인",
+    "loadingRules": "불러오는 중...",
+    "ruleCount": "규칙 {count}개",
+    "deleteConfirm": "이 규칙을 삭제하시겠습니까?",
+    "deleteConfirmDescription": "이 작업은 되돌릴 수 없습니다. 선택한 규칙이 영구적으로 삭제됩니다.",
+    "deleteCancel": "취소",
+    "deleteAction": "삭제"
+  },
   "pixel": {
     "loading": "픽셀을 불러오는 중...",
     "loadError": "픽셀을 불러오는데 실패했습니다",

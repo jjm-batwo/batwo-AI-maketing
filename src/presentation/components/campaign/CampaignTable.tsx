@@ -13,6 +13,15 @@ import {
 } from '@/components/ui/table'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,9 +49,13 @@ import {
   ArrowDown,
   Settings2,
   Bookmark,
+  CheckCircle2,
+  FileEdit,
+  Clock,
 } from 'lucide-react'
 import { useCampaignStore, type ColumnKey } from '@/presentation/stores'
 import { useTranslations } from 'next-intl'
+import { useUIStore } from '@/presentation/stores/uiStore'
 
 type CampaignStatus = 'ACTIVE' | 'PAUSED' | 'COMPLETED' | 'DRAFT' | 'PENDING_REVIEW'
 type SortField =
@@ -87,47 +100,13 @@ interface CampaignTableProps {
   onStatusChange?: (id: string, status: string) => void
 }
 
-const statusConfig: Record<CampaignStatus, { label: string; className: string; dot: string }> = {
-  ACTIVE: { label: '진행 중', className: 'bg-green-500/15 text-green-500', dot: 'bg-green-500' },
-  PAUSED: {
-    label: '일시정지',
-    className: 'bg-yellow-500/15 text-yellow-500',
-    dot: 'bg-yellow-500',
-  },
-  COMPLETED: {
-    label: '완료',
-    className: 'bg-muted text-muted-foreground',
-    dot: 'bg-muted-foreground',
-  },
-  DRAFT: { label: '초안', className: 'bg-primary/15 text-primary', dot: 'bg-primary' },
-  PENDING_REVIEW: {
-    label: '검토 중',
-    className: 'bg-purple-500/15 text-purple-500',
-    dot: 'bg-purple-500',
-  },
-}
-
-const objectiveLabels: Record<string, string> = {
-  TRAFFIC: '트래픽',
-  CONVERSIONS: '전환',
-  BRAND_AWARENESS: '브랜드 인지도',
-  REACH: '도달',
-  ENGAGEMENT: '참여',
-}
-
-const columnLabels: Record<ColumnKey, string> = {
-  spend: '지출',
-  roas: 'ROAS',
-  ctr: 'CTR',
-  cpc: 'CPC',
-  cpa: 'CPA',
-  cvr: 'CVR',
-  cpm: 'CPM',
-  reach: '도달',
-  impressions: '노출',
-  clicks: '클릭',
-  conversions: '전환',
-  createdAt: '생성일',
+// UX-06: Status config with icons for color-blind accessibility
+const statusIconMap: Record<CampaignStatus, React.ComponentType<{ className?: string }>> = {
+  ACTIVE: Play,
+  PAUSED: Pause,
+  COMPLETED: CheckCircle2,
+  DRAFT: FileEdit,
+  PENDING_REVIEW: Clock,
 }
 
 function SortIcon({
@@ -156,6 +135,7 @@ export const CampaignTable = memo(function CampaignTable({
 }: CampaignTableProps) {
   const t = useTranslations()
   const router = useRouter()
+  const announceToScreenReader = useUIStore((s) => s.announceToScreenReader)
   const {
     filters,
     setFilters,
@@ -173,9 +153,79 @@ export const CampaignTable = memo(function CampaignTable({
     loadColumnPreset,
     deleteColumnPreset,
   } = useCampaignStore()
+
+  // UX-03: Preset name dialog state (replaces window.prompt)
+  const [presetDialogOpen, setPresetDialogOpen] = useState(false)
+  const [presetName, setPresetName] = useState('')
+
   const visibleMetricCount = useMemo(
     () => Object.values(visibleColumns).filter(Boolean).length,
     [visibleColumns]
+  )
+
+  // UX-01: i18n status config (using translations)
+  const statusConfig = useMemo(
+    () =>
+      ({
+        ACTIVE: {
+          label: t('table.status.active'),
+          className: 'bg-green-500/15 text-green-500',
+          dot: 'bg-green-500',
+        },
+        PAUSED: {
+          label: t('table.status.paused'),
+          className: 'bg-yellow-500/15 text-yellow-500',
+          dot: 'bg-yellow-500',
+        },
+        COMPLETED: {
+          label: t('table.status.completed'),
+          className: 'bg-muted text-muted-foreground',
+          dot: 'bg-muted-foreground',
+        },
+        DRAFT: {
+          label: t('table.status.draft'),
+          className: 'bg-primary/15 text-primary',
+          dot: 'bg-primary',
+        },
+        PENDING_REVIEW: {
+          label: t('table.status.pendingReview'),
+          className: 'bg-purple-500/15 text-purple-500',
+          dot: 'bg-purple-500',
+        },
+      }) as Record<CampaignStatus, { label: string; className: string; dot: string }>,
+    [t]
+  )
+
+  // UX-01: i18n objective labels
+  const objectiveLabels = useMemo(
+    () => ({
+      TRAFFIC: t('table.objective.traffic'),
+      CONVERSIONS: t('table.objective.conversions'),
+      BRAND_AWARENESS: t('table.objective.brandAwareness'),
+      REACH: t('table.objective.reach'),
+      ENGAGEMENT: t('table.objective.engagement'),
+    }),
+    [t]
+  )
+
+  // UX-01: i18n column labels
+  const columnLabels = useMemo(
+    () =>
+      ({
+        spend: t('table.columns.spend'),
+        roas: t('table.columns.roas'),
+        ctr: t('table.columns.ctr'),
+        cpc: t('table.columns.cpc'),
+        cpa: t('table.columns.cpa'),
+        cvr: t('table.columns.cvr'),
+        cpm: t('table.columns.cpm'),
+        reach: t('table.columns.reach'),
+        impressions: t('table.columns.impressions'),
+        clicks: t('table.columns.clicks'),
+        conversions: t('table.columns.conversions'),
+        createdAt: t('table.columns.createdAt'),
+      }) as Record<ColumnKey, string>,
+    [t]
   )
 
   const toggleColumnVisibility = useCallback(
@@ -273,16 +323,23 @@ export const CampaignTable = memo(function CampaignTable({
     }
   }, [allSelected, clearSelection, selectAllCampaigns, sortedCampaigns])
 
+  // UX-08: Toggle with aria-live announcement
   const handleActivationToggle = useCallback(
     (campaign: Campaign) => {
       if (!onStatusChange) return
       if (campaign.status === 'ACTIVE') {
         onStatusChange(campaign.id, 'PAUSED')
+        announceToScreenReader(
+          t('accessibility.statusToggled', { name: campaign.name, status: t('table.status.paused') })
+        )
       } else if (campaign.status === 'PAUSED') {
         onStatusChange(campaign.id, 'ACTIVE')
+        announceToScreenReader(
+          t('accessibility.statusToggled', { name: campaign.name, status: t('table.status.active') })
+        )
       }
     },
-    [onStatusChange]
+    [onStatusChange, announceToScreenReader, t]
   )
 
   // 드래그 앤 드롭 상태
@@ -339,6 +396,15 @@ export const CampaignTable = memo(function CampaignTable({
     [router]
   )
 
+  // UX-03: Handle preset save via Dialog
+  const handleSavePreset = useCallback(() => {
+    if (presetName.trim()) {
+      saveColumnPreset(presetName.trim())
+      setPresetName('')
+      setPresetDialogOpen(false)
+    }
+  }, [presetName, saveColumnPreset])
+
   if (isLoading) {
     return (
       <div className="space-y-3">
@@ -368,22 +434,24 @@ export const CampaignTable = memo(function CampaignTable({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border/50 bg-muted/20 px-3 py-2">
-        <span className="text-xs text-muted-foreground">표시 컬럼 {visibleMetricCount}개</span>
+        <span className="text-xs text-muted-foreground">
+          {t('table.columnConfig.visibleCount', { count: visibleMetricCount })}
+        </span>
         <div className="flex items-center gap-2">
           {/* 프리셋 드롭다운 */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button type="button" variant="outline" size="sm" className="h-8">
                 <Bookmark className="mr-1.5 h-3.5 w-3.5" />
-                프리셋
+                {t('table.columnConfig.presets')}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>저장된 프리셋</DropdownMenuLabel>
+              <DropdownMenuLabel>{t('table.columnConfig.savedPresets')}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {columnPresets.length === 0 ? (
                 <div className="px-2 py-3 text-xs text-muted-foreground text-center">
-                  저장된 프리셋이 없습니다
+                  {t('table.columnConfig.noPresets')}
                 </div>
               ) : (
                 columnPresets.map((preset) => (
@@ -410,17 +478,16 @@ export const CampaignTable = memo(function CampaignTable({
               )}
               <DropdownMenuSeparator />
               <div className="px-2 py-2">
+                {/* UX-03: Dialog instead of window.prompt */}
                 <button
                   type="button"
                   className="w-full text-left text-sm text-primary hover:underline"
                   onClick={() => {
-                    const name = window.prompt('프리셋 이름을 입력하세요:')
-                    if (name?.trim()) {
-                      saveColumnPreset(name.trim())
-                    }
+                    setPresetName('')
+                    setPresetDialogOpen(true)
                   }}
                 >
-                  + 현재 설정 저장
+                  {t('table.columnConfig.saveCurrentPreset')}
                 </button>
               </div>
             </DropdownMenuContent>
@@ -429,14 +496,14 @@ export const CampaignTable = memo(function CampaignTable({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button type="button" variant="outline" size="sm" className="h-8">
-                <Settings2 className="mr-1.5 h-3.5 w-3.5" />열 설정
+                <Settings2 className="mr-1.5 h-3.5 w-3.5" />{t('table.columnConfig.columnSettings')}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 p-2">
               <DropdownMenuLabel className="flex items-center justify-between gap-2 px-2 py-1.5">
-                <span className="text-sm font-semibold">표시할 지표</span>
+                <span className="text-sm font-semibold">{t('table.columnConfig.metricsToShow')}</span>
                 <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
-                  {visibleMetricCount}개
+                  {t('table.columnConfig.countLabel', { count: visibleMetricCount })}
                 </span>
               </DropdownMenuLabel>
               <DropdownMenuSeparator className="my-2" />
@@ -497,11 +564,11 @@ export const CampaignTable = memo(function CampaignTable({
                   className="h-8 px-3 text-xs font-medium text-primary hover:bg-primary/10 hover:text-primary transition-colors"
                   onClick={(e) => {
                     e.preventDefault()
-                    ;(Object.keys(columnLabels) as ColumnKey[]).forEach((key) => {
-                      if (!visibleColumns[key]) {
-                        setVisibleColumn(key, true)
-                      }
-                    })
+                      ; (Object.keys(columnLabels) as ColumnKey[]).forEach((key) => {
+                        if (!visibleColumns[key]) {
+                          setVisibleColumn(key, true)
+                        }
+                      })
                   }}
                 >
                   <svg
@@ -517,7 +584,7 @@ export const CampaignTable = memo(function CampaignTable({
                     <rect width="18" height="18" x="3" y="3" rx="2" />
                     <path d="m9 12 2 2 4-4" />
                   </svg>
-                  전체 선택
+                  {t('table.columnConfig.selectAll')}
                 </Button>
                 <div className="h-4 w-px bg-border" />
                 <Button
@@ -527,11 +594,11 @@ export const CampaignTable = memo(function CampaignTable({
                   className="h-8 px-3 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                   onClick={(e) => {
                     e.preventDefault()
-                    ;(Object.keys(columnLabels) as ColumnKey[]).forEach((key) => {
-                      if (visibleColumns[key]) {
-                        setVisibleColumn(key, false)
-                      }
-                    })
+                      ; (Object.keys(columnLabels) as ColumnKey[]).forEach((key) => {
+                        if (visibleColumns[key]) {
+                          setVisibleColumn(key, false)
+                        }
+                      })
                   }}
                 >
                   <svg
@@ -546,7 +613,7 @@ export const CampaignTable = memo(function CampaignTable({
                   >
                     <rect width="18" height="18" x="3" y="3" rx="2" />
                   </svg>
-                  전체 해제
+                  {t('table.columnConfig.deselectAll')}
                 </Button>
               </div>
             </DropdownMenuContent>
@@ -558,12 +625,12 @@ export const CampaignTable = memo(function CampaignTable({
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-[72px] text-center">활성</TableHead>
+              <TableHead className="w-[72px] text-center">{t('table.columns.activation')}</TableHead>
               <TableHead className="w-[40px]">
                 <Checkbox
                   checked={allSelected ? true : someSelected ? 'indeterminate' : false}
                   onCheckedChange={handleSelectAll}
-                  aria-label="전체 선택"
+                  aria-label={t('table.columnConfig.selectAll')}
                 />
               </TableHead>
               <TableHead>
@@ -581,7 +648,7 @@ export const CampaignTable = memo(function CampaignTable({
                 </button>
               </TableHead>
               <TableHead className="w-[100px]">{t('campaignSummary.columns.status')}</TableHead>
-              <TableHead className="w-[120px] text-right">예산</TableHead>
+              <TableHead className="w-[120px] text-right">{t('table.columns.budget')}</TableHead>
               {columnOrder
                 .filter((key) => visibleColumns[key])
                 .map((key) => {
@@ -638,6 +705,8 @@ export const CampaignTable = memo(function CampaignTable({
             {sortedCampaigns.map((campaign) => {
               const status = statusConfig[campaign.status]
               const isSelected = selectedCampaignIds.includes(campaign.id)
+              // UX-06: Get icon component for status
+              const StatusIcon = statusIconMap[campaign.status]
 
               return (
                 <TableRow
@@ -646,11 +715,12 @@ export const CampaignTable = memo(function CampaignTable({
                   onClick={(e) => handleRowClick(campaign.id, e)}
                 >
                   <TableCell>
+                    {/* UX-04: Toggle switch with unified bg-blue-500 color */}
                     <button
                       type="button"
                       role="switch"
                       aria-checked={campaign.status === 'ACTIVE'}
-                      aria-label={`${campaign.name} 광고 활성화 토글`}
+                      aria-label={t('table.actions.toggleActivation', { name: campaign.name })}
                       disabled={campaign.status !== 'ACTIVE' && campaign.status !== 'PAUSED'}
                       onClick={(e) => {
                         e.stopPropagation()
@@ -662,8 +732,8 @@ export const CampaignTable = memo(function CampaignTable({
                           ? 'bg-blue-500'
                           : 'bg-gray-200 dark:bg-gray-600',
                         campaign.status !== 'ACTIVE' &&
-                          campaign.status !== 'PAUSED' &&
-                          'cursor-not-allowed opacity-50'
+                        campaign.status !== 'PAUSED' &&
+                        'cursor-not-allowed opacity-50'
                       )}
                     >
                       <span
@@ -684,7 +754,7 @@ export const CampaignTable = memo(function CampaignTable({
                           deselectCampaign(campaign.id)
                         }
                       }}
-                      aria-label={`${campaign.name} 선택`}
+                      aria-label={`${campaign.name} ${t('table.columnConfig.selectAll')}`}
                     />
                   </TableCell>
                   <TableCell>
@@ -697,18 +767,19 @@ export const CampaignTable = memo(function CampaignTable({
                         {campaign.name}
                       </Link>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {objectiveLabels[campaign.objective] || campaign.objective}
+                        {objectiveLabels[campaign.objective as keyof typeof objectiveLabels] || campaign.objective}
                       </p>
                     </div>
                   </TableCell>
                   <TableCell>
+                    {/* UX-06: Status badge with icon for color-blind accessibility */}
                     <span
                       className={cn(
                         'inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium',
                         status.className
                       )}
                     >
-                      <span className={cn('h-1.5 w-1.5 rounded-full', status.dot)} />
+                      <StatusIcon className="h-3 w-3" />
                       {status.label}
                     </span>
                   </TableCell>
@@ -761,16 +832,17 @@ export const CampaignTable = memo(function CampaignTable({
                         {key === 'createdAt' &&
                           (campaign.createdAt
                             ? new Date(campaign.createdAt).toLocaleDateString('ko-KR', {
-                                month: 'short',
-                                day: 'numeric',
-                              })
+                              month: 'short',
+                              day: 'numeric',
+                            })
                             : '-')}
                       </TableCell>
                     ))}
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                        {/* UX-07: Enlarged touch target for MoreVertical button (44px) */}
+                        <Button variant="ghost" size="icon" className="h-9 w-9">
                           <MoreVertical className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -778,32 +850,32 @@ export const CampaignTable = memo(function CampaignTable({
                         <DropdownMenuItem asChild>
                           <Link href={`/campaigns/${campaign.id}/analytics`}>
                             <BarChart3 className="mr-2 h-4 w-4" />
-                            분석 보기
+                            {t('table.actions.viewAnalytics')}
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link href={`/campaigns/${campaign.id}/edit`}>
                             <Pencil className="mr-2 h-4 w-4" />
-                            수정
+                            {t('table.actions.edit')}
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         {campaign.status === 'ACTIVE' && onStatusChange && (
                           <DropdownMenuItem onClick={() => onStatusChange(campaign.id, 'PAUSED')}>
                             <Pause className="mr-2 h-4 w-4" />
-                            일시정지
+                            {t('table.actions.pause')}
                           </DropdownMenuItem>
                         )}
                         {campaign.status === 'PAUSED' && onStatusChange && (
                           <DropdownMenuItem onClick={() => onStatusChange(campaign.id, 'ACTIVE')}>
                             <Play className="mr-2 h-4 w-4" />
-                            재개
+                            {t('table.actions.resume')}
                           </DropdownMenuItem>
                         )}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem className="text-red-600">
                           <Trash2 className="mr-2 h-4 w-4" />
-                          삭제
+                          {t('table.actions.delete')}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -814,6 +886,37 @@ export const CampaignTable = memo(function CampaignTable({
           </TableBody>
         </Table>
       </div>
+
+      {/* UX-03: Preset name Dialog (replaces window.prompt) */}
+      <Dialog open={presetDialogOpen} onOpenChange={setPresetDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('table.columnConfig.savedPresets')}</DialogTitle>
+            <DialogDescription>
+              {t('table.columnConfig.presetNamePrompt')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Input
+              value={presetName}
+              onChange={(e) => setPresetName(e.target.value)}
+              placeholder={t('table.columnConfig.presetNamePrompt')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSavePreset()
+              }}
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setPresetDialogOpen(false)}>
+              {t('common.cancel')}
+            </Button>
+            <Button type="button" onClick={handleSavePreset} disabled={!presetName.trim()}>
+              {t('common.save')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 })
