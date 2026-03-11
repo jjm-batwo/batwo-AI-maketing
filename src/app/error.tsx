@@ -11,6 +11,15 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { captureException, captureFeedback } from '@sentry/nextjs'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { AlertTriangle, Home, RefreshCw, MessageCircle } from 'lucide-react'
 
 interface ErrorPageProps {
@@ -105,66 +114,74 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
           </div>
         )}
 
-        {/* Sentry 피드백 다이얼로그 */}
-        {showFeedback && eventId && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <div className="w-full max-w-md rounded-lg bg-background p-6 shadow-xl">
-              <h3 className="mb-4 text-lg font-semibold">문제 신고</h3>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  const form = e.target as HTMLFormElement
-                  const formData = new FormData(form)
+        {/* Sentry 피드백 다이얼로그 (Radix Dialog + Focus Trap) */}
+        <Dialog open={showFeedback} onOpenChange={setShowFeedback}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>문제 신고</DialogTitle>
+              <DialogDescription>
+                에러가 발생하기 전에 무엇을 하고 있었는지 알려주세요.
+              </DialogDescription>
+            </DialogHeader>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                const form = e.target as HTMLFormElement
+                const formData = new FormData(form)
 
-                  captureFeedback({
-                    associatedEventId: eventId,
-                    name: (formData.get('name') as string) || 'Anonymous',
-                    email: (formData.get('email') as string) || 'anonymous@example.com',
-                    message: formData.get('comments') as string,
-                  })
+                captureFeedback({
+                  associatedEventId: eventId,
+                  name: (formData.get('name') as string) || 'Anonymous',
+                  email: (formData.get('email') as string) || 'anonymous@example.com',
+                  message: formData.get('comments') as string,
+                })
 
-                  setShowFeedback(false)
-                }}
-                className="space-y-4"
-              >
-                <div>
-                  <label className="mb-1 block text-sm font-medium">이름 (선택)</label>
-                  <input
-                    type="text"
-                    name="name"
-                    className="w-full rounded-md border px-3 py-2"
-                    placeholder="홍길동"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-sm font-medium">이메일 (선택)</label>
-                  <input
-                    type="email"
-                    name="email"
-                    className="w-full rounded-md border px-3 py-2"
-                    placeholder="email@example.com"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-sm font-medium">무엇이 잘못되었나요?</label>
-                  <textarea
-                    name="comments"
-                    required
-                    rows={4}
-                    className="w-full rounded-md border px-3 py-2"
-                    placeholder="에러가 발생하기 전에 무엇을 하고 있었는지 설명해주세요..."
-                  />
-                </div>
-                <div className="flex justify-end gap-2">
-                  <Button type="button" variant="ghost" onClick={() => setShowFeedback(false)}>
+                setShowFeedback(false)
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label htmlFor="feedback-name" className="mb-1 block text-sm font-medium">이름 (선택)</label>
+                <input
+                  id="feedback-name"
+                  type="text"
+                  name="name"
+                  className="w-full rounded-md border px-3 py-2"
+                  placeholder="홍길동"
+                />
+              </div>
+              <div>
+                <label htmlFor="feedback-email" className="mb-1 block text-sm font-medium">이메일 (선택)</label>
+                <input
+                  id="feedback-email"
+                  type="email"
+                  name="email"
+                  className="w-full rounded-md border px-3 py-2"
+                  placeholder="email@example.com"
+                />
+              </div>
+              <div>
+                <label htmlFor="feedback-comments" className="mb-1 block text-sm font-medium">무엇이 잘못되었나요?</label>
+                <textarea
+                  id="feedback-comments"
+                  name="comments"
+                  required
+                  rows={4}
+                  className="w-full rounded-md border px-3 py-2"
+                  placeholder="에러가 발생하기 전에 무엇을 하고 있었는지 설명해주세요..."
+                />
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button type="button" variant="ghost">
                     취소
                   </Button>
-                  <Button type="submit">전송</Button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
+                </DialogClose>
+                <Button type="submit">전송</Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
 
         {/* 에러 ID (지원팀 문의용) */}
         {eventId && (

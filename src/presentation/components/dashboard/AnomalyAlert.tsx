@@ -1,10 +1,15 @@
 'use client'
 
-import { useState, ReactNode } from 'react'
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import {
   AlertTriangle,
   TrendingUp,
@@ -21,47 +26,6 @@ import {
   HelpCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-
-// Simple Collapsible Component (inline implementation)
-function SimpleCollapsible({
-  open,
-  children,
-}: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  children: ReactNode
-}) {
-  return <div data-state={open ? 'open' : 'closed'}>{children}</div>
-}
-
-function SimpleCollapsibleTrigger({
-  onClick,
-  className,
-  children,
-}: {
-  onClick: () => void
-  className?: string
-  children: ReactNode
-}) {
-  return (
-    <button type="button" onClick={onClick} className={cn('cursor-pointer', className)}>
-      {children}
-    </button>
-  )
-}
-
-function SimpleCollapsibleContent({
-  open,
-  className,
-  children,
-}: {
-  open: boolean
-  className?: string
-  children: ReactNode
-}) {
-  if (!open) return null
-  return <div className={cn(className)}>{children}</div>
-}
 
 // ============================================
 // Types
@@ -248,16 +212,13 @@ function RootCauseSection({ analysis }: { analysis: RootCauseAnalysis }) {
 
   return (
     <div className="mt-3 pt-3 border-t border-current/10">
-      <SimpleCollapsible open={isOpen} onOpenChange={setIsOpen}>
-        <SimpleCollapsibleTrigger
-          onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-2 w-full text-left"
-        >
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <CollapsibleTrigger className="flex items-center gap-2 w-full text-left cursor-pointer">
           <Lightbulb className="h-4 w-4" />
           <span className="text-sm font-medium flex-1">원인 분석</span>
           {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-        </SimpleCollapsibleTrigger>
-        <SimpleCollapsibleContent open={isOpen} className="mt-2 space-y-2">
+        </CollapsibleTrigger>
+        <CollapsibleContent className="mt-2 space-y-2">
           {/* Primary Cause */}
           {primaryCause && (
             <div className="p-2 rounded-md bg-current/5">
@@ -316,8 +277,8 @@ function RootCauseSection({ analysis }: { analysis: RootCauseAnalysis }) {
               +{analysis.possibleCauses.length - 1}개의 다른 가능한 원인이 있습니다
             </div>
           )}
-        </SimpleCollapsibleContent>
-      </SimpleCollapsible>
+        </CollapsibleContent>
+      </Collapsible>
     </div>
   )
 }
@@ -404,19 +365,16 @@ function AnomalyCard({ anomaly }: { anomaly: Anomaly }) {
           )}
 
           {/* Expandable Details */}
-          <SimpleCollapsible open={isExpanded} onOpenChange={setIsExpanded}>
-            <SimpleCollapsibleTrigger
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="flex items-center gap-1 text-xs text-current/60 hover:text-current/80 mt-2"
-            >
+          <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+            <CollapsibleTrigger className="flex items-center gap-1 text-xs text-current/60 hover:text-current/80 mt-2 cursor-pointer">
               {isExpanded ? (
                 <ChevronDown className="h-3 w-3" />
               ) : (
                 <ChevronRight className="h-3 w-3" />
               )}
               <span>상세 정보</span>
-            </SimpleCollapsibleTrigger>
-            <SimpleCollapsibleContent open={isExpanded} className="mt-2">
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-2">
               {/* Baseline Statistics */}
               {anomaly.baseline && (
                 <BaselineSection baseline={anomaly.baseline} metric={anomaly.metric} />
@@ -426,8 +384,8 @@ function AnomalyCard({ anomaly }: { anomaly: Anomaly }) {
               {anomaly.rootCauseAnalysis && (
                 <RootCauseSection analysis={anomaly.rootCauseAnalysis} />
               )}
-            </SimpleCollapsibleContent>
-          </SimpleCollapsible>
+            </CollapsibleContent>
+          </Collapsible>
         </div>
       </div>
     </div>

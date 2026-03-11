@@ -204,19 +204,23 @@ export function CampaignEditForm({
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>연령대</Label>
+            <Label htmlFor="targetAudience.ageMin">연령대</Label>
             <div className="flex items-center gap-4">
               <Input
+                id="targetAudience.ageMin"
                 type="number"
                 className="w-24"
                 disabled={isCompleted}
+                aria-label="최소 연령"
                 {...register('targetAudience.ageMin', { valueAsNumber: true })}
               />
-              <span>~</span>
+              <span aria-hidden="true">~</span>
               <Input
+                id="targetAudience.ageMax"
                 type="number"
                 className="w-24"
                 disabled={isCompleted}
+                aria-label="최대 연령"
                 {...register('targetAudience.ageMax', { valueAsNumber: true })}
               />
               <span>세</span>
