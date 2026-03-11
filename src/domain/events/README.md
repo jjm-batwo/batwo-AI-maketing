@@ -58,11 +58,9 @@ static create(props: CreateCampaignProps): Campaign {
 ### 3. 이벤트 핸들러 등록
 
 ```typescript
-import { InMemoryEventDispatcher } from '@/infrastructure/events'
-import { CampaignCreatedEvent } from '@/domain/events'
+import { IEventDispatcher, CampaignCreatedEvent } from '@/domain/events'
 
-const dispatcher = new InMemoryEventDispatcher()
-
+// IEventDispatcher 구현체를 DI를 통해 주입받아 사용
 // 핸들러 등록
 dispatcher.register(CampaignCreatedEvent.EVENT_TYPE, async (event: CampaignCreatedEvent) => {
   console.log('Campaign created:', event.aggregateId)
@@ -167,7 +165,7 @@ dispatcher.register(MyNewEvent.EVENT_TYPE, async (event: MyNewEvent) => {
 
 ## 프로덕션 고려사항
 
-현재 구현은 MVP를 위한 간단한 in-memory 구현입니다. 프로덕션 환경에서는 다음을 고려하세요:
+현재는 도메인 이벤트 정의와 AggregateRoot만 존재합니다. 이벤트 디스패처 구현체는 필요 시 `src/infrastructure/events/`에 추가하세요. 프로덕션 환경에서는 다음을 고려하세요:
 
 ### 1. 영속성 (Persistence)
 

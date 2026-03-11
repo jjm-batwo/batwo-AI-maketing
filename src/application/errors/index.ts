@@ -15,18 +15,4 @@ export { RateLimitError } from './RateLimitError'
 export { ExternalServiceError } from './ExternalServiceError'
 export { InternalError } from './InternalError'
 
-// Result pattern types
-export type { Result, Success, Failure } from './Result'
-export {
-  success,
-  failure,
-  isSuccess,
-  isFailure,
-  match,
-  map,
-  chain,
-  mapError,
-  unwrap,
-  unwrapOr,
-  tryCatch,
-} from './Result'
+

@@ -108,21 +108,7 @@ export async function DELETE(
 
     const deleteCampaign = container.resolve<DeleteCampaignUseCase>(DI_TOKENS.DeleteCampaignUseCase)
 
-    const result = await deleteCampaign.execute(id, user.id)
-
-    if (!result.ok) {
-      const error = result.error
-      if (error.name === 'NotFoundError') {
-        return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
-      }
-      if (error.name === 'ForbiddenError') {
-        return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
-      }
-      if (error.name === 'ValidationError') {
-        return NextResponse.json({ message: error.message }, { status: 400 })
-      }
-      return NextResponse.json({ message: error.message }, { status: 500 })
-    }
+    await deleteCampaign.execute(id, user.id)
 
     // Invalidate KPI cache for this user
     invalidateCache(getUserPattern(user.id))
@@ -131,7 +117,17 @@ export async function DELETE(
 
     return new NextResponse(null, { status: 204 })
   } catch (error) {
+    if (error instanceof Error && error.name === 'NotFoundError') {
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
+    }
+    if (error instanceof Error && error.name === 'ForbiddenError') {
+      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
+    }
+    if (error instanceof Error && error.name === 'ValidationError') {
+      return NextResponse.json({ message: error.message }, { status: 400 })
+    }
     console.error('Failed to delete campaign:', error)
     return NextResponse.json({ message: 'Failed to delete campaign' }, { status: 500 })
   }
 }
+

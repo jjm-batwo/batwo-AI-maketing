@@ -27,20 +27,20 @@ export function createDeleteCampaignTool(
       const campaign = await campaignRepository.findById(params.campaignId)
       const campaignName = campaign?.name ?? params.campaignId
 
-      const result = await deleteCampaignUseCase.execute(params.campaignId, context.userId)
+      try {
+        await deleteCampaignUseCase.execute(params.campaignId, context.userId)
 
-      if (!result.ok) {
+        return {
+          success: true,
+          data: { campaignId: params.campaignId },
+          formattedMessage: `캠페인 '${campaignName}'이(가) 삭제되었습니다.`,
+        }
+      } catch (error) {
         return {
           success: false,
           data: null,
-          formattedMessage: `캠페인 삭제에 실패했습니다: ${result.error.message}`,
+          formattedMessage: `캠페인 삭제에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`,
         }
-      }
-
-      return {
-        success: true,
-        data: { campaignId: params.campaignId },
-        formattedMessage: `캠페인 '${campaignName}'이(가) 삭제되었습니다.`,
       }
     },
 
