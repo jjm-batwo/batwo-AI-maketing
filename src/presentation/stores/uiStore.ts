@@ -66,14 +66,14 @@ interface UIState {
 
   // Campaign objective filter
   dashboardObjective:
-    | 'ALL'
-    | 'AWARENESS'
-    | 'TRAFFIC'
-    | 'ENGAGEMENT'
-    | 'LEADS'
-    | 'APP_PROMOTION'
-    | 'SALES'
-    | 'CONVERSIONS'
+  | 'ALL'
+  | 'AWARENESS'
+  | 'TRAFFIC'
+  | 'ENGAGEMENT'
+  | 'LEADS'
+  | 'APP_PROMOTION'
+  | 'SALES'
+  | 'CONVERSIONS'
   setDashboardObjective: (
     objective:
       | 'ALL'
@@ -99,6 +99,10 @@ interface UIState {
   closeChatPanel: () => void
   setActiveConversation: (id: string | null) => void
   setUnreadAlertCount: (count: number) => void
+
+  // Accessibility (UX-08)
+  ariaLiveMessage: string
+  announceToScreenReader: (message: string) => void
 }
 
 let toastId = 0
@@ -182,4 +186,14 @@ export const useUIStore = create<UIState>((set) => ({
   closeChatPanel: () => set({ isChatPanelOpen: false }),
   setActiveConversation: (id) => set({ activeConversationId: id }),
   setUnreadAlertCount: (count) => set({ unreadAlertCount: count }),
+
+  // Accessibility (UX-08)
+  ariaLiveMessage: '',
+  announceToScreenReader: (message) => {
+    // Clear first, then set — ensures re-announcement even for identical messages
+    set({ ariaLiveMessage: '' })
+    setTimeout(() => set({ ariaLiveMessage: message }), 50)
+    // Auto-clear after 3 seconds
+    setTimeout(() => set({ ariaLiveMessage: '' }), 3000)
+  },
 }))

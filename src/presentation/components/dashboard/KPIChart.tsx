@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { formatCurrency, formatMultiplier, formatNumber, formatPercent } from '@/lib/utils/format'
+import { useTranslations } from 'next-intl'
 
 interface DataPoint {
   date?: string
@@ -44,6 +45,8 @@ export function KPIChart({
   className,
   chartType = 'bar',
 }: KPIChartProps) {
+  const t = useTranslations()
+
   // Pre-computed heights for loading skeleton
   const skeletonHeights = [75, 45, 60, 85, 50, 70, 55]
 
@@ -60,6 +63,11 @@ export function KPIChart({
   )
 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  // UX-05: Focused index for keyboard navigation
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null)
+
+  // Active index: either hovered or focused
+  const activeIndex = hoveredIndex ?? focusedIndex
 
   const formatChartValue = (value: number): string => {
     // 값이 100 미만이면 소수점 3자리까지 (ROAS 등), 그 외에는 일반 포맷
@@ -95,9 +103,9 @@ export function KPIChart({
       return formatNumber(value)
     }
     // Default currency
-    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M원`
-    if (value >= 1000) return `${(value / 1000).toFixed(0)}K원`
-    return `${value.toLocaleString()}원`
+    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M${t('currency.suffix')}`
+    if (value >= 1000) return `${(value / 1000).toFixed(0)}K${t('currency.suffix')}`
+    return `${value.toLocaleString()}${t('currency.suffix')}`
   }
 
   const formatDateLabel = (dateStr: string): string => {
@@ -108,6 +116,48 @@ export function KPIChart({
     }
     return dateStr
   }
+
+  // UX-05: Keyboard handler for chart navigation
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (data.length === 0) return
+
+      switch (e.key) {
+        case 'ArrowRight':
+          e.preventDefault()
+          setFocusedIndex((prev) => {
+            const next = prev === null ? 0 : Math.min(prev + 1, data.length - 1)
+            return next
+          })
+          setHoveredIndex(null)
+          break
+        case 'ArrowLeft':
+          e.preventDefault()
+          setFocusedIndex((prev) => {
+            const next = prev === null ? data.length - 1 : Math.max(prev - 1, 0)
+            return next
+          })
+          setHoveredIndex(null)
+          break
+        case 'Home':
+          e.preventDefault()
+          setFocusedIndex(0)
+          setHoveredIndex(null)
+          break
+        case 'End':
+          e.preventDefault()
+          setFocusedIndex(data.length - 1)
+          setHoveredIndex(null)
+          break
+        case 'Escape':
+          e.preventDefault()
+          setFocusedIndex(null)
+          setHoveredIndex(null)
+          break
+      }
+    },
+    [data.length]
+  )
 
   // Get unique X-axis labels based on data length
   const getXAxisLabels = () => {
@@ -126,6 +176,11 @@ export function KPIChart({
     ]
   }
 
+  // UX-05: Generate aria-label for the chart
+  const chartAriaLabel = title
+    ? `${title}: ${data.length} data points`
+    : `Chart with ${data.length} data points`
+
   const renderChart = () => {
     const maxValue = Math.max(...data.map((d) => d.value), 1)
     const minHeightPercent = 8 // Minimum 8% height for visibility
@@ -136,7 +191,12 @@ export function KPIChart({
       { value: maxValue / 2, label: formatYAxisLabel(maxValue / 2) },
       {
         value: 0,
-        label: yAxisFormat === 'currency' ? '0원' : yAxisFormat === 'percentage' ? '0%' : '0',
+        label:
+          yAxisFormat === 'currency'
+            ? `0${t('currency.suffix')}`
+            : yAxisFormat === 'percentage'
+              ? '0%'
+              : '0',
       },
     ]
 
@@ -170,15 +230,27 @@ export function KPIChart({
                 </span>
               ))}
             </div>
+            {/* UX-05: Keyboard accessible chart container */}
             <div
               className="relative flex-1 h-32 border-l border-b border-border/30 pl-2 pb-0.5"
               onMouseLeave={() => setHoveredIndex(null)}
+              tabIndex={0}
+              role="img"
+              aria-label={chartAriaLabel}
+              onKeyDown={handleKeyDown}
+              onFocus={() => {
+                if (focusedIndex === null && data.length > 0) {
+                  setFocusedIndex(0)
+                }
+              }}
+              onBlur={() => setFocusedIndex(null)}
             >
               <svg
                 width="100%"
                 height="100%"
                 viewBox={`0 0 ${svgWidth} ${svgHeight}`}
                 preserveAspectRatio="none"
+                aria-hidden="true"
               >
                 <defs>
                   <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
@@ -199,10 +271,10 @@ export function KPIChart({
                   vectorEffect="non-scaling-stroke"
                 />
                 {/* 수직 가이드라인 */}
-                {hoveredIndex !== null &&
+                {activeIndex !== null &&
                   (() => {
                     const hx =
-                      data.length > 1 ? (hoveredIndex / (data.length - 1)) * svgWidth : svgWidth / 2
+                      data.length > 1 ? (activeIndex / (data.length - 1)) * svgWidth : svgWidth / 2
                     return (
                       <line
                         x1={hx}
@@ -232,16 +304,15 @@ export function KPIChart({
                         fill="transparent"
                         onMouseEnter={() => setHoveredIndex(index)}
                       />
-                      {/* 활성 데이터 포인트는 HTML로 렌더링 (SVG non-uniform 스케일링 회피) */}
                     </g>
                   )
                 })}
               </svg>
               {/* 데이터 포인트 (HTML) + 툴팁 */}
-              {hoveredIndex !== null &&
+              {activeIndex !== null &&
                 (() => {
-                  const point = data[hoveredIndex]
-                  const xPercent = data.length > 1 ? (hoveredIndex / (data.length - 1)) * 100 : 50
+                  const point = data[activeIndex]
+                  const xPercent = data.length > 1 ? (activeIndex / (data.length - 1)) * 100 : 50
                   const yPercent = 100 - (point.value / maxValue) * (100 - 6) - 3
                   const dateLabel = formatDateLabel(point.date || point.label || '')
                   return (
@@ -259,6 +330,7 @@ export function KPIChart({
                       <div
                         className="pointer-events-none absolute -top-10 z-20 -translate-x-1/2 rounded-md bg-popover border border-border px-2.5 py-1.5 text-xs text-popover-foreground shadow-md whitespace-nowrap"
                         style={{ left: `${xPercent}%` }}
+                        role="tooltip"
                       >
                         <span className="text-muted-foreground">{dateLabel}</span>
                         <span className="mx-1.5 text-border">|</span>
@@ -307,28 +379,46 @@ export function KPIChart({
             ))}
           </div>
 
-          {/* Chart bars */}
-          <div className="flex-1 flex h-32 items-end gap-1 border-l border-b border-border/30 pl-2 pb-0.5">
+          {/* UX-05: Keyboard accessible bar chart */}
+          <div
+            className="flex-1 flex h-32 items-end gap-1 border-l border-b border-border/30 pl-2 pb-0.5"
+            tabIndex={0}
+            role="img"
+            aria-label={chartAriaLabel}
+            onKeyDown={handleKeyDown}
+            onFocus={() => {
+              if (focusedIndex === null && data.length > 0) {
+                setFocusedIndex(0)
+              }
+            }}
+            onBlur={() => setFocusedIndex(null)}
+          >
             {data.map((point, index) => {
               const heightPercent = (point.value / maxValue) * 100
               const adjustedHeight = Math.max(heightPercent, minHeightPercent)
+              const isActive = activeIndex === index
 
               return (
                 <div
                   key={index}
                   className="group relative flex-1 max-w-20 h-full flex flex-col justify-end"
                   title={`${point.date || point.label}: ${formatChartValue(point.value)}`}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
                 >
                   <div
                     className={cn(
-                      'w-full max-w-16 rounded-t transition-all hover:opacity-80',
-                      colorMap[color]
+                      'w-full max-w-16 rounded-t transition-all',
+                      colorMap[color],
+                      isActive ? 'opacity-100 ring-2 ring-ring ring-offset-1' : 'hover:opacity-80'
                     )}
                     style={{ height: `${adjustedHeight}%` }}
                   />
-                  <div className="absolute -top-8 left-1/2 hidden -translate-x-1/2 rounded bg-popover border border-border px-2 py-1 text-xs text-popover-foreground shadow-md whitespace-nowrap group-hover:block z-10">
-                    {formatChartValue(point.value)}
-                  </div>
+                  {isActive && (
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 rounded bg-popover border border-border px-2 py-1 text-xs text-popover-foreground shadow-md whitespace-nowrap z-10" role="tooltip">
+                      {formatChartValue(point.value)}
+                    </div>
+                  )}
                 </div>
               )
             })}
@@ -362,7 +452,7 @@ export function KPIChart({
 
   const renderEmptyState = () => (
     <div className="flex h-32 items-center justify-center text-muted-foreground text-sm">
-      데이터가 없습니다
+      {t('chart.noData')}
     </div>
   )
 
