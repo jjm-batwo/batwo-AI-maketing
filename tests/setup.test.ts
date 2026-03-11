@@ -8,7 +8,8 @@ describe('Test Environment', () => {
   it('should have access to path aliases', async () => {
     // This test verifies that TypeScript path aliases are working
     const utils = await import('@lib/utils')
-    expect(utils).toBeDefined()
+    expect(typeof utils).toBe('object')
+    expect(utils).toHaveProperty('cn')
     expect(typeof utils.cn).toBe('function')
   })
 })

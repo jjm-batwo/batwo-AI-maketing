@@ -59,18 +59,17 @@ describe('AnomalySegmentAnalysisService', () => {
 
       const result = service.analyzeSegments(anomalies)
 
-      expect(result).toBeDefined()
       expect(result.segmentType).toBe('campaign')
       expect(result.segments).toHaveLength(2) // 2 campaigns
-      expect(result.insights).toBeDefined()
-      expect(result.correlations).toBeDefined()
+      expect(Array.isArray(result.insights)).toBe(true)
+      expect(Array.isArray(result.correlations)).toBe(true)
     })
 
     it('should return empty segments for empty input', () => {
       const result = service.analyzeSegments([])
 
       expect(result.segments).toHaveLength(0)
-      expect(result.insights).toBeDefined()
+      expect(Array.isArray(result.insights)).toBe(true)
     })
 
     it('should sort segments by severity score (highest first)', () => {
@@ -130,7 +129,7 @@ describe('AnomalySegmentAnalysisService', () => {
 
       const result = service.compareCampaigns(anomalies)
 
-      expect(result[0].metrics.ctr).toBeDefined()
+      expect(result[0].metrics.ctr).toHaveProperty('anomalyCount')
       expect(result[0].metrics.ctr.anomalyCount).toBe(2)
       expect(result[0].metrics.ctr.avgChange).toBe(40) // (50 + 30) / 2
       expect(result[0].metrics.cpa.anomalyCount).toBe(1)
@@ -184,7 +183,7 @@ describe('AnomalySegmentAnalysisService', () => {
       const result = service.analyzeTimePatterns(anomalies)
 
       expect(result.pattern).toBe('consistent')
-      expect(result.recommendedMonitoring).toBeDefined()
+      expect(Array.isArray(result.recommendedMonitoring)).toBe(true)
       expect(result.recommendedMonitoring.length).toBeGreaterThan(0)
     })
 
@@ -195,8 +194,8 @@ describe('AnomalySegmentAnalysisService', () => {
 
       const result = service.analyzeTimePatterns(anomalies)
 
-      expect(result.recommendedMonitoring).toBeDefined()
       expect(Array.isArray(result.recommendedMonitoring)).toBe(true)
+      expect(result.recommendedMonitoring).toBeInstanceOf(Array)
     })
   })
 
@@ -300,8 +299,8 @@ describe('AnomalySegmentAnalysisService', () => {
              (c.metric1 === 'conversions' && c.metric2 === 'ctr')
       )
 
-      expect(ctrConversionsCorrelation).toBeDefined()
-      expect(ctrConversionsCorrelation?.correlationType).toBe('positive')
+      expect(ctrConversionsCorrelation).not.toBeUndefined()
+      expect(ctrConversionsCorrelation!.correlationType).toBe('positive')
     })
 
     it('should detect negative correlation between metrics', () => {
@@ -322,8 +321,8 @@ describe('AnomalySegmentAnalysisService', () => {
              (c.metric1 === 'roas' && c.metric2 === 'cpa')
       )
 
-      expect(cpaRoasCorrelation).toBeDefined()
-      expect(cpaRoasCorrelation?.correlationType).toBe('negative')
+      expect(cpaRoasCorrelation).not.toBeUndefined()
+      expect(cpaRoasCorrelation!.correlationType).toBe('negative')
     })
   })
 
@@ -353,7 +352,7 @@ describe('AnomalySegmentAnalysisService', () => {
 
       const result = service.analyzeSegments(anomalies)
 
-      expect(result.propagationPath).toBeDefined()
+      expect(result.propagationPath).not.toBeUndefined()
       expect(result.propagationPath?.rootAnomaly.metric).toBe('spend')
       expect(result.propagationPath?.propagationChain).toContain('spend')
       expect(result.propagationPath?.propagatedAnomalies.length).toBe(2)
@@ -383,9 +382,9 @@ describe('AnomalySegmentAnalysisService', () => {
       const result = service.analyzeSegments(anomalies)
 
       const highRiskInsight = result.insights.find(i => i.id === 'high-risk-campaigns')
-      expect(highRiskInsight).toBeDefined()
-      expect(highRiskInsight?.type).toBe('warning')
-      expect(highRiskInsight?.actionItems?.length).toBeGreaterThan(0)
+      expect(highRiskInsight).not.toBeUndefined()
+      expect(highRiskInsight!.type).toBe('warning')
+      expect(highRiskInsight!.actionItems!.length).toBeGreaterThan(0)
     })
 
     it('should generate metric concentration insight', () => {
@@ -399,8 +398,8 @@ describe('AnomalySegmentAnalysisService', () => {
       const result = service.analyzeSegments(anomalies)
 
       const concentrationInsight = result.insights.find(i => i.id === 'metric-concentration')
-      expect(concentrationInsight).toBeDefined()
-      expect(concentrationInsight?.title).toContain('ctr')
+      expect(concentrationInsight).not.toBeUndefined()
+      expect(concentrationInsight!.title).toContain('ctr')
     })
 
     it('should generate healthy status for low severity anomalies', () => {
@@ -412,8 +411,8 @@ describe('AnomalySegmentAnalysisService', () => {
       const result = service.analyzeSegments(anomalies)
 
       const healthyInsight = result.insights.find(i => i.id === 'healthy-status')
-      expect(healthyInsight).toBeDefined()
-      expect(healthyInsight?.type).toBe('recommendation')
+      expect(healthyInsight).not.toBeUndefined()
+      expect(healthyInsight!.type).toBe('recommendation')
     })
   })
 })

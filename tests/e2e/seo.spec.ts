@@ -82,12 +82,14 @@ test.describe('메타데이터 검증', () => {
 
     // Meta description
     const description = await page.locator('meta[name="description"]').getAttribute('content')
-    expect(description).toBeDefined()
+    expect(typeof description).toBe('string')
+    expect(description!.length).toBeGreaterThan(0)
     expect(description!.length).toBeGreaterThan(50)
 
     // Meta keywords
     const keywords = await page.locator('meta[name="keywords"]').getAttribute('content')
-    expect(keywords).toBeDefined()
+    expect(typeof keywords).toBe('string')
+    expect(keywords!.length).toBeGreaterThan(0)
   })
 
   test('홈페이지에 Open Graph 메타태그가 있어야 함', async ({ page }) => {
@@ -95,15 +97,17 @@ test.describe('메타데이터 검증', () => {
 
     // OG title
     const ogTitle = await page.locator('meta[property="og:title"]').getAttribute('content')
-    expect(ogTitle).toBeDefined()
+    expect(typeof ogTitle).toBe('string')
+    expect(ogTitle!.length).toBeGreaterThan(0)
 
     // OG description
     const ogDescription = await page.locator('meta[property="og:description"]').getAttribute('content')
-    expect(ogDescription).toBeDefined()
+    expect(typeof ogDescription).toBe('string')
+    expect(ogDescription!.length).toBeGreaterThan(0)
 
     // OG image
     const ogImage = await page.locator('meta[property="og:image"]').getAttribute('content')
-    expect(ogImage).toBeDefined()
+    expect(typeof ogImage).toBe('string')
     expect(ogImage).toMatch(/^https?:\/\//)
 
     // OG type
@@ -128,15 +132,17 @@ test.describe('메타데이터 검증', () => {
 
     // Twitter title
     const twitterTitle = await page.locator('meta[name="twitter:title"]').getAttribute('content')
-    expect(twitterTitle).toBeDefined()
+    expect(typeof twitterTitle).toBe('string')
+    expect(twitterTitle!.length).toBeGreaterThan(0)
 
     // Twitter description
     const twitterDescription = await page.locator('meta[name="twitter:description"]').getAttribute('content')
-    expect(twitterDescription).toBeDefined()
+    expect(typeof twitterDescription).toBe('string')
+    expect(twitterDescription!.length).toBeGreaterThan(0)
 
     // Twitter image
     const twitterImage = await page.locator('meta[name="twitter:image"]').getAttribute('content')
-    expect(twitterImage).toBeDefined()
+    expect(typeof twitterImage).toBe('string')
   })
 
   test('홈페이지에 JSON-LD 구조화 데이터가 있어야 함', async ({ page }) => {
@@ -158,8 +164,8 @@ test.describe('메타데이터 검증', () => {
       const jsonLd = JSON.parse(content)
       if (jsonLd['@type'] === 'Organization' || jsonLd['@type'] === 'WebSite') {
         expect(jsonLd['@context']).toBe('https://schema.org')
-        expect(jsonLd['@type']).toBeDefined()
-        expect(jsonLd.name).toBeDefined()
+        expect(typeof jsonLd['@type']).toBe('string')
+        expect(typeof jsonLd.name).toBe('string')
         foundOrganization = true
         break
       }
@@ -172,7 +178,7 @@ test.describe('메타데이터 검증', () => {
     await page.goto('/')
 
     const canonical = await page.locator('link[rel="canonical"]').getAttribute('href')
-    expect(canonical).toBeDefined()
+    expect(typeof canonical).toBe('string')
     expect(canonical).toMatch(/^https?:\/\//)
   })
 
@@ -180,7 +186,7 @@ test.describe('메타데이터 검증', () => {
     await page.goto('/')
 
     const viewport = await page.locator('meta[name="viewport"]').getAttribute('content')
-    expect(viewport).toBeDefined()
+    expect(typeof viewport).toBe('string')
     expect(viewport).toContain('width=device-width')
   })
 
@@ -197,7 +203,7 @@ test.describe('OG 이미지 접근성', () => {
     await page.goto('/')
 
     const ogImage = await page.locator('meta[property="og:image"]').getAttribute('content')
-    expect(ogImage).toBeDefined()
+    expect(typeof ogImage).toBe('string')
 
     // 절대 URL을 상대 경로로 변환 (테스트 환경에서는 localhost 사용)
     const imageUrl = ogImage?.startsWith('http')
@@ -230,7 +236,8 @@ test.describe('페이지별 SEO', () => {
     expect(title).toContain('이용약관')
 
     const description = await page.locator('meta[name="description"]').getAttribute('content')
-    expect(description).toBeDefined()
+    expect(typeof description).toBe('string')
+    expect(description!.length).toBeGreaterThan(0)
   })
 
   test('개인정보처리방침 페이지에 적절한 메타데이터가 있어야 함', async ({ page }) => {
@@ -240,6 +247,7 @@ test.describe('페이지별 SEO', () => {
     expect(title).toContain('개인정보')
 
     const description = await page.locator('meta[name="description"]').getAttribute('content')
-    expect(description).toBeDefined()
+    expect(typeof description).toBe('string')
+    expect(description!.length).toBeGreaterThan(0)
   })
 })

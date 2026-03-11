@@ -20,7 +20,8 @@ test.describe('보안 헤더 검증', () => {
     const response = await request.get('/')
 
     const hsts = response.headers()['strict-transport-security']
-    expect(hsts).toBeDefined()
+    expect(hsts).not.toBeUndefined()
+    expect(typeof hsts).toBe('string')
     expect(hsts).toContain('max-age=')
     // 최소 1년 (31536000초) 권장
     const maxAge = parseInt(hsts.match(/max-age=(\d+)/)?.[1] || '0')
@@ -31,7 +32,8 @@ test.describe('보안 헤더 검증', () => {
     const response = await request.get('/')
 
     const xFrameOptions = response.headers()['x-frame-options']
-    expect(xFrameOptions).toBeDefined()
+    expect(xFrameOptions).not.toBeUndefined()
+    expect(typeof xFrameOptions).toBe('string')
     expect(['DENY', 'SAMEORIGIN']).toContain(xFrameOptions)
   })
 
@@ -46,14 +48,16 @@ test.describe('보안 헤더 검증', () => {
     const response = await request.get('/')
 
     const xDnsPrefetch = response.headers()['x-dns-prefetch-control']
-    expect(xDnsPrefetch).toBeDefined()
+    expect(typeof xDnsPrefetch).toBe('string')
+    expect(['on', 'off']).toContain(xDnsPrefetch)
   })
 
   test('Referrer-Policy 헤더가 설정되어야 함', async ({ request }) => {
     const response = await request.get('/')
 
     const referrerPolicy = response.headers()['referrer-policy']
-    expect(referrerPolicy).toBeDefined()
+    expect(referrerPolicy).not.toBeUndefined()
+    expect(typeof referrerPolicy).toBe('string')
     // 허용되는 Referrer-Policy 값들
     const validPolicies = [
       'no-referrer',
@@ -71,7 +75,8 @@ test.describe('보안 헤더 검증', () => {
     const response = await request.get('/')
 
     const permissionsPolicy = response.headers()['permissions-policy']
-    expect(permissionsPolicy).toBeDefined()
+    expect(permissionsPolicy).not.toBeUndefined()
+    expect(typeof permissionsPolicy).toBe('string')
     // 민감한 API 제한 확인
     expect(permissionsPolicy).toContain('camera')
     expect(permissionsPolicy).toContain('microphone')
@@ -83,7 +88,9 @@ test.describe('Content Security Policy (CSP) 검증', () => {
     const response = await request.get('/')
 
     const csp = response.headers()['content-security-policy']
-    expect(csp).toBeDefined()
+    expect(csp).not.toBeUndefined()
+    expect(typeof csp).toBe('string')
+    expect(csp.length).toBeGreaterThan(0)
   })
 
   test('CSP에 default-src가 설정되어야 함', async ({ request }) => {

@@ -39,7 +39,9 @@ describe('BudgetRecommendationService', () => {
         businessScale: 'small',
       })
 
-      expect(result).toBeDefined()
+      expect(result.dailyBudget).toHaveProperty('min')
+      expect(result.dailyBudget).toHaveProperty('recommended')
+      expect(result.dailyBudget).toHaveProperty('max')
       expect(result.dailyBudget.min).toBe(MINIMUM_DAILY_BUDGET)
       expect(result.dailyBudget.recommended).toBeGreaterThanOrEqual(MINIMUM_DAILY_BUDGET)
       expect(result.source).toBe('industry')
@@ -117,7 +119,9 @@ describe('BudgetRecommendationService', () => {
       })
 
       expect(result.source).toBe('existing_data')
-      expect(result.comparison).toBeDefined()
+      expect(result.comparison).not.toBeUndefined()
+      expect(result.comparison).toHaveProperty('currentVsRecommended')
+      expect(result.comparison).toHaveProperty('potentialImpact')
     })
 
     it('should include comparison data when existing campaign data is provided', () => {
@@ -137,9 +141,9 @@ describe('BudgetRecommendationService', () => {
         existingCampaignData: existingData,
       })
 
-      expect(result.comparison).toBeDefined()
-      expect(result.comparison?.currentVsRecommended).toBeDefined()
-      expect(result.comparison?.potentialImpact).toBeDefined()
+      expect(result.comparison).not.toBeUndefined()
+      expect(typeof result.comparison?.currentVsRecommended).toBe('string')
+      expect(typeof result.comparison?.potentialImpact).toBe('string')
     })
 
     it('should generate test budget for 7 days', () => {
@@ -359,9 +363,11 @@ describe('BudgetRecommendation Value Objects', () => {
       ]
 
       industries.forEach((industry) => {
-        expect(INDUSTRY_BUDGET_BENCHMARKS[industry]).toBeDefined()
-        expect(INDUSTRY_BUDGET_BENCHMARKS[industry].label).toBeDefined()
-        expect(INDUSTRY_BUDGET_BENCHMARKS[industry].dailyBudget).toBeDefined()
+        expect(INDUSTRY_BUDGET_BENCHMARKS[industry]).not.toBeUndefined()
+        expect(typeof INDUSTRY_BUDGET_BENCHMARKS[industry].label).toBe('string')
+        expect(INDUSTRY_BUDGET_BENCHMARKS[industry].label.length).toBeGreaterThan(0)
+        expect(INDUSTRY_BUDGET_BENCHMARKS[industry].dailyBudget).toHaveProperty('recommended')
+        expect(INDUSTRY_BUDGET_BENCHMARKS[industry].dailyBudget).toHaveProperty('max')
         expect(INDUSTRY_BUDGET_BENCHMARKS[industry].averageCPA).toBeGreaterThan(0)
         expect(INDUSTRY_BUDGET_BENCHMARKS[industry].defaultAOV).toBeGreaterThan(0)
       })
