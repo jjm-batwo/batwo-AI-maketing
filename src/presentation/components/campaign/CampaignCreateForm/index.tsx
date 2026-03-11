@@ -154,7 +154,14 @@ export function CampaignCreateForm({
               </span>
             </div>
             {/* Progress bar */}
-            <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-muted">
+            <div
+              className="mt-4 h-2 w-full overflow-hidden rounded-full bg-muted"
+              role="progressbar"
+              aria-valuenow={activeStep}
+              aria-valuemin={1}
+              aria-valuemax={totalSteps}
+              aria-label={`단계 ${activeStep} / ${totalSteps}`}
+            >
               <div
                 className="h-full bg-primary transition-all duration-300"
                 style={{ width: `${(activeStep / totalSteps) * 100}%` }}

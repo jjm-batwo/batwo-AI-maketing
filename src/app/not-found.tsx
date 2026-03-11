@@ -14,10 +14,10 @@ export default function NotFoundPage() {
       <div className="container flex max-w-md flex-col items-center text-center">
         {/* 404 아이콘 및 숫자 */}
         <div className="relative mb-8">
-          <div className="text-[150px] font-bold leading-none text-muted-foreground/10 sm:text-[200px]">
+          <div className="text-[150px] font-bold leading-none text-muted-foreground/10 sm:text-[200px]" aria-hidden="true">
             404
           </div>
-          <Search className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 text-muted-foreground/50" />
+          <Search className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 text-muted-foreground/50" aria-hidden="true" />
         </div>
 
         {/* 제목 */}

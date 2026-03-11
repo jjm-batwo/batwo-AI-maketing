@@ -73,8 +73,35 @@ export const AdTable = memo(function AdTable({ ads, isLoading }: AdTableProps) {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-12 text-muted-foreground text-sm">
-        {t('common.loading')}
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="min-w-[200px]">{t('table.columns.name')}</TableHead>
+              <TableHead className="w-[100px]">{t('campaignSummary.columns.status')}</TableHead>
+              <TableHead className="text-right w-[120px]">{t('table.columns.spend')}</TableHead>
+              <TableHead className="text-right w-[100px]">{t('table.columns.impressions')}</TableHead>
+              <TableHead className="text-right w-[80px]">{t('table.columns.clicks')}</TableHead>
+              <TableHead className="text-right w-[80px]">{t('table.columns.ctr')}</TableHead>
+              <TableHead className="text-right w-[80px]">{t('table.columns.conversions')}</TableHead>
+              <TableHead className="text-right w-[80px]">{t('table.columns.roas')}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <TableRow key={i}>
+                <TableCell><div className="h-4 w-32 animate-pulse rounded bg-muted" /></TableCell>
+                <TableCell><div className="h-5 w-16 animate-pulse rounded-full bg-muted" /></TableCell>
+                <TableCell className="text-right"><div className="ml-auto h-4 w-20 animate-pulse rounded bg-muted" /></TableCell>
+                <TableCell className="text-right"><div className="ml-auto h-4 w-16 animate-pulse rounded bg-muted" /></TableCell>
+                <TableCell className="text-right"><div className="ml-auto h-4 w-14 animate-pulse rounded bg-muted" /></TableCell>
+                <TableCell className="text-right"><div className="ml-auto h-4 w-12 animate-pulse rounded bg-muted" /></TableCell>
+                <TableCell className="text-right"><div className="ml-auto h-4 w-14 animate-pulse rounded bg-muted" /></TableCell>
+                <TableCell className="text-right"><div className="ml-auto h-4 w-12 animate-pulse rounded bg-muted" /></TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     )
   }

@@ -119,11 +119,6 @@ export function KPICard({
         <div className="flex items-end justify-between gap-2">
           <div className="text-2xl font-bold tracking-tight text-foreground">
             {formattedValue}
-            {unit && (
-              <span className="ml-1 text-base font-medium text-muted-foreground align-baseline">
-                {unit}
-              </span>
-            )}
           </div>
           {sparklineData && sparklineData.length >= 2 && (
             <SparklineChart data={sparklineData} color="var(--primary)" height={32} width={80} />
