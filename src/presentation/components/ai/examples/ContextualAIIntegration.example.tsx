@@ -5,9 +5,9 @@
  * contextual AI suggestion system into your application.
  */
 
-'use client'
+'use client';
 
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 import {
   ContextualAIProvider,
   useContextTracking,
