@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
@@ -10,8 +10,8 @@ interface Caption {
   subtitle?: string
 }
 
-// Meta App Review 촬영용 캡션 시퀀스
-const captionSequence: Caption[] = [
+// Meta App Review 촬영용 캡션 시퀀스 (기본 - 5개 권한 전체)
+const defaultCaptionSequence: Caption[] = [
   // 인트로
   {
     id: 'intro',
@@ -144,19 +144,212 @@ const captionSequence: Caption[] = [
   },
 ]
 
+// Ads Management Standard Access 촬영용 캡션 시퀀스 (ads_read + ads_management 전용)
+const adsStandardAccessCaptions: Caption[] = [
+  // Scene 1: App Introduction (0:00-0:10)
+  {
+    id: 'intro',
+    text: 'Batwo — AI-Powered Marketing Platform for E-Commerce',
+    subtitle: 'Demonstrating Ads Management Standard Access',
+  },
+
+  // Scene 2: Login + OAuth (0:10-0:50)
+  {
+    id: 'login-1',
+    text: 'Step 1: User Login & Meta Authorization',
+    subtitle: 'Starting from logged-out state',
+  },
+  {
+    id: 'login-2',
+    text: 'User clicks "Continue with Meta"',
+    subtitle: 'Initiating Meta OAuth permission request',
+  },
+  {
+    id: 'oauth-1',
+    text: 'Meta OAuth Consent Screen',
+    subtitle: 'The following permissions are requested:',
+  },
+  {
+    id: 'oauth-2',
+    text: 'ads_read — Read campaign performance data',
+    subtitle: 'ROAS, spend, conversions, and CTR metrics',
+  },
+  {
+    id: 'oauth-3',
+    text: 'ads_management — Create and manage campaigns',
+    subtitle: 'Campaign creation, editing, and status management',
+  },
+  {
+    id: 'oauth-4',
+    text: 'User approves permissions',
+    subtitle: 'Both ads_read and ads_management granted',
+  },
+  {
+    id: 'oauth-5',
+    text: 'Meta account successfully connected',
+    subtitle: 'User redirected to Batwo dashboard',
+  },
+
+  // Scene 3: ads_read Demonstration (0:50-1:50)
+  {
+    id: 'ads-read-header',
+    text: 'Permission: ads_read — Campaign Performance Dashboard',
+    subtitle: 'API: GET /act_{ad-account-id}/insights',
+  },
+  {
+    id: 'ads-read-1',
+    text: '[1] User navigates to KPI Dashboard',
+    subtitle: 'Sidebar navigation to performance metrics',
+  },
+  {
+    id: 'ads-read-2',
+    text: 'Campaign data from ads_read permission',
+    subtitle: 'ROAS, Total Spend, Conversions, CTR',
+  },
+  {
+    id: 'ads-read-3',
+    text: '[2] 30-day performance trend',
+    subtitle: 'Spend and ROAS trend charts',
+  },
+  {
+    id: 'ads-read-4',
+    text: '[3] AI-driven campaign insights',
+    subtitle: 'Data-driven optimization recommendations',
+  },
+  {
+    id: 'ads-read-5',
+    text: '[4] User changes date range',
+    subtitle: 'Filtering performance data by time period',
+  },
+  {
+    id: 'ads-read-6',
+    text: '[5] User drills into campaign performance',
+    subtitle: 'Individual campaign metrics and details',
+  },
+  {
+    id: 'ads-read-done',
+    text: '✓ ads_read permission demonstrated successfully',
+    subtitle: 'All ads_read features shown end-to-end',
+  },
+
+  // Scene 4: ads_management Demonstration (1:50-3:00)
+  {
+    id: 'ads-mgmt-header',
+    text: 'Permission: ads_management — Create and Manage Campaigns',
+    subtitle: 'API: POST /act_{ad-account-id}/campaigns',
+  },
+  {
+    id: 'ads-mgmt-1',
+    text: '[1] User clicks Create Campaign',
+    subtitle: 'Starting campaign creation flow',
+  },
+  {
+    id: 'ads-mgmt-2',
+    text: '[2] User enters campaign name',
+    subtitle: 'Campaign: Spring Sale 2026',
+  },
+  {
+    id: 'ads-mgmt-3',
+    text: '[3] User selects campaign objective',
+    subtitle: 'Objective: Conversions',
+  },
+  {
+    id: 'ads-mgmt-4',
+    text: '[4] User sets daily budget',
+    subtitle: 'Budget: ₩50,000',
+  },
+  {
+    id: 'ads-mgmt-5',
+    text: '[5] User submits campaign to Meta',
+    subtitle: 'Campaign creation via ads_management permission',
+  },
+  {
+    id: 'ads-mgmt-6',
+    text: 'Campaign created successfully',
+    subtitle: 'New campaign appears in the campaign list',
+  },
+  {
+    id: 'ads-mgmt-7',
+    text: '[6] User pauses an existing campaign',
+    subtitle: 'Campaign status: ACTIVE → PAUSED',
+  },
+  {
+    id: 'ads-mgmt-8',
+    text: '[7] User resumes the paused campaign',
+    subtitle: 'Campaign status: PAUSED → ACTIVE',
+  },
+  {
+    id: 'ads-mgmt-done',
+    text: '✓ ads_management permission demonstrated successfully',
+    subtitle: 'All ads_management features shown end-to-end',
+  },
+
+  // Scene 5: Summary (3:00-3:20)
+  {
+    id: 'summary-1',
+    text: 'Ads Management Standard Access — Demonstrated',
+    subtitle: 'Both permissions actively used in this application',
+  },
+  {
+    id: 'summary-2',
+    text: '1. ads_read — Campaign performance dashboard [✓]',
+    subtitle: '2. ads_management — Create and manage campaigns [✓]',
+  },
+]
+
+// 캡션 세트 매핑
+const captionSets: Record<string, Caption[]> = {
+  default: defaultCaptionSequence,
+  'ads-standard-access': adsStandardAccessCaptions,
+}
+
 export function CaptionOverlay() {
   const searchParams = useSearchParams()
   const hideCaption = searchParams.get('hideCaption') === 'true'
+  const captionMode = searchParams.get('captionMode') || 'default'
 
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const captions = useMemo(
+    () => captionSets[captionMode] || defaultCaptionSequence,
+    [captionMode]
+  )
+
+  // sessionStorage로 캡션 인덱스 유지 (페이지 이동 시에도 유지)
+  const [currentIndex, setCurrentIndex] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = sessionStorage.getItem(`demo-caption-index-${captionMode}`)
+      return saved ? Math.min(parseInt(saved, 10), captions.length - 1) : 0
+    }
+    return 0
+  })
   const [isVisible, setIsVisible] = useState(true)
   const [isMinimized, setIsMinimized] = useState(false)
 
-  const currentCaption = captionSequence[currentIndex]
+  // sessionStorage에 인덱스 저장
+  useEffect(() => {
+    sessionStorage.setItem(`demo-caption-index-${captionMode}`, String(currentIndex))
+  }, [currentIndex, captionMode])
+
+  // Playwright에서 직접 인덱스 설정 가능하도록 글로벌 함수 노출
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).__setCaptionIndex = (index: number) => {
+      setCurrentIndex(Math.min(Math.max(0, index), captions.length - 1))
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(window as any).__getCaptionIndex = () => currentIndex
+    return () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (window as any).__setCaptionIndex
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      delete (window as any).__getCaptionIndex
+    }
+  }, [captions.length, currentIndex])
+
+  const currentCaption = captions[currentIndex]
 
   const nextCaption = useCallback(() => {
-    setCurrentIndex((prev) => Math.min(prev + 1, captionSequence.length - 1))
-  }, [])
+    setCurrentIndex((prev) => Math.min(prev + 1, captions.length - 1))
+  }, [captions.length])
 
   const prevCaption = useCallback(() => {
     setCurrentIndex((prev) => Math.max(prev - 1, 0))
@@ -222,7 +415,7 @@ export function CaptionOverlay() {
           {isMinimized ? (
             <div className="flex items-center gap-4 text-white">
               <span className="text-sm opacity-70">
-                {currentIndex + 1}/{captionSequence.length}
+                {currentIndex + 1}/{captions.length}
               </span>
               <span className="text-sm truncate max-w-xs">{currentCaption.text}</span>
               <button
@@ -259,13 +452,13 @@ export function CaptionOverlay() {
                 </button>
 
                 <span className="text-sm text-white/60">
-                  {currentIndex + 1} / {captionSequence.length}
+                  {currentIndex + 1} / {captions.length}
                 </span>
 
                 <button
                   type="button"
                   onClick={nextCaption}
-                  disabled={currentIndex === captionSequence.length - 1}
+                  disabled={currentIndex === captions.length - 1}
                   className="rounded-full bg-white/20 px-3 py-1 text-sm text-white hover:bg-white/30 disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   Next →

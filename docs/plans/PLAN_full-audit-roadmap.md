@@ -141,52 +141,52 @@
 
 ### 3.1 보안 강화
 
-| ID | 작업 | 파일 | 상태 |
-|----|------|------|------|
-| SEC-05 | `allowDangerousEmailAccountLinking` — signIn 콜백에서 이메일 검증 추가 | `auth.config.ts:22-46` | ✅ |
-| SEC-06 | CSP `'unsafe-inline'` → nonce 기반 또는 `'strict-dynamic'`으로 변경 | `next.config.ts:68` | ⏭️ CSP는 별도 세션 |
-| SEC-07 | `dangerouslySetInnerHTML`에 DOMPurify 살균 적용 | `ReportDetail.tsx:158` | ✅ |
-| SEC-08 | Internal API의 `NODE_ENV === 'development'` 인증 우회 제거 | `meta-stats/route.ts`, `meta-warmup/route.ts` | ✅ |
-| SEC-09 | Credentials Provider 개발 모드에서도 비밀번호 해시 검증 적용 | `auth.config.ts:155-183` | ⏭️ 개발 편의 유지 |
-| SEC-10 | Cron 인증에 `timingSafeEqual` 적용 (타이밍 공격 방지) | `cronAuth.ts:52` | ✅ |
-| SEC-11 | `TOKEN_ENCRYPTION_KEY` 미설정 시 프로덕션에서 hard fail | `TokenEncryption.ts:20-26` | ✅ |
+| 상태 | ID | 작업 | 파일 |
+|------|------|------|------|
+| [x] | SEC-05 | `allowDangerousEmailAccountLinking` — signIn 콜백에서 이메일 검증 추가 | `auth.config.ts:22-46` |
+| [x] | SEC-06 | CSP `'unsafe-inline'` → nonce 기반 + `'strict-dynamic'`으로 변경 | `middleware.ts`, `next.config.ts`, `layout.tsx` |
+| [x] | SEC-07 | `dangerouslySetInnerHTML`에 DOMPurify 살균 적용 | `ReportDetail.tsx:158` |
+| [x] | SEC-08 | Internal API의 `NODE_ENV === 'development'` 인증 우회 제거 | `meta-stats/route.ts`, `meta-warmup/route.ts` |
+| [ ] | SEC-09 | Credentials Provider 개발 모드에서도 비밀번호 해시 검증 적용 (보류) | `auth.config.ts:155-183` |
+| [x] | SEC-10 | Cron 인증에 `timingSafeEqual` 적용 (타이밍 공격 방지) | `cronAuth.ts:52` |
+| [x] | SEC-11 | `TOKEN_ENCRYPTION_KEY` 미설정 시 프로덕션에서 hard fail | `TokenEncryption.ts:20-26` |
 
 ### 3.2 UI/UX 핵심 개선
 
-| ID | 작업 | 영향도 | 파일 |
-|----|------|--------|------|
-| UX-01 | i18n 미적용 한국어 503건 → `useTranslations()` 마이그레이션 | High | `src/presentation/components/campaign/` 전체 |
-| UX-02 | 대시보드 `MainLayout`에 skip-to-content 링크 추가 | High | `src/presentation/components/common/Layout/MainLayout.tsx` |
-| UX-03 | `window.prompt()`/`window.confirm()` → shadcn Dialog/AlertDialog 교체 | High | `CampaignTable.tsx:423`, `OptimizationRulesClient.tsx:163` |
-| UX-04 | 토글 스위치 색상 3개 테이블 통일 (`bg-blue-500` 기준) | High | `AdSetTable.tsx`, `AdTable.tsx` 토글 색상 |
-| UX-05 | KPI 차트에 `onFocus`/`onKeyDown` 키보드 접근성 추가 | High | `src/presentation/components/dashboard/KPIChart.tsx:233` |
-| UX-06 | 상태 배지에 아이콘/형태 구분 추가 (색맹 대비) | High | `statusConfig` — CampaignTable, AdSetTable, AdTable |
-| UX-07 | 모바일 터치 타겟 `py-2` → `py-3` (44px 확보) | High | `MobileSidebar.tsx:49`, `CampaignTable.tsx:779` |
-| UX-08 | `aria-live` 영역 추가 — 상태 토글 결과 알림 | High | CampaignTable, AdSetTable 토글 핸들러 |
+| 상태 | ID | 작업 | 영향도 | 파일 |
+|------|------|------|--------|------|
+| [x] | UX-01 | i18n 미적용 한국어 503건 → `useTranslations()` 마이그레이션 | High | `src/presentation/components/campaign/` 전체 |
+| [x] | UX-02 | 대시보드 `MainLayout`에 skip-to-content 링크 추가 | High | `src/presentation/components/common/Layout/MainLayout.tsx` |
+| [x] | UX-03 | `window.prompt()`/`window.confirm()` → shadcn Dialog/AlertDialog 교체 | High | `CampaignTable.tsx:423`, `OptimizationRulesClient.tsx:163` |
+| [x] | UX-04 | 토글 스위치 색상 3개 테이블 통일 (`bg-blue-500` 기준) | High | `AdSetTable.tsx`, `AdTable.tsx` 토글 색상 |
+| [x] | UX-05 | KPI 차트에 `onFocus`/`onKeyDown` 키보드 접근성 추가 | High | `src/presentation/components/dashboard/KPIChart.tsx:233` |
+| [x] | UX-06 | 상태 배지에 아이콘/형태 구분 추가 (색맹 대비) | High | `statusConfig` — CampaignTable, AdSetTable, AdTable |
+| [x] | UX-07 | 모바일 터치 타겟 `py-2` → `py-3` (44px 확보) | High | `MobileSidebar.tsx:49`, `CampaignTable.tsx:779` |
+| [x] | UX-08 | `aria-live` 영역 추가 — 상태 토글 결과 알림 | High | CampaignTable, AdSetTable 토글 핸들러 |
 
 ### 3.3 코드 품질
 
-| ID | 작업 | 파일 | 상태 |
-|----|------|------|------|
-| QUAL-03 | 라우트 핸들러에서 DI 직접 생성 → `container.resolve()` 사용 | `src/app/api/campaigns/[id]/adsets/route.ts` 외 4개 | ✅ |
-| QUAL-04 | `all-ads`/`all-adsets` 중복 코드 통합 + `mapWithConcurrency` 공유 유틸 추출 | `all-ads-with-insights/`, `all-adsets-with-insights/` | ✅ |
-| QUAL-05 | 에러 200 OK 삼킴 수정 → 적절한 HTTP 상태 코드 반환 | `all-ads-with-insights/route.ts`, `all-adsets-with-insights/route.ts` | ✅ |
-| QUAL-06 | `KPIInsightsService` setter injection → constructor injection 변경 | `KPIInsightsService.ts:123` | ✅ |
+| 상태 | ID | 작업 | 파일 |
+|------|------|------|------|
+| [x] | QUAL-03 | 라우트 핸들러에서 DI 직접 생성 → `container.resolve()` 사용 | `src/app/api/campaigns/[id]/adsets/route.ts` 외 4개 |
+| [x] | QUAL-04 | `all-ads`/`all-adsets` 중복 코드 통합 + `mapWithConcurrency` 공유 유틸 추출 | `all-ads-with-insights/`, `all-adsets-with-insights/` |
+| [x] | QUAL-05 | 에러 200 OK 삼킴 수정 → 적절한 HTTP 상태 코드 반환 | `all-ads-with-insights/route.ts`, `all-adsets-with-insights/route.ts` |
+| [x] | QUAL-06 | `KPIInsightsService` setter injection → constructor injection 변경 | `KPIInsightsService.ts:123` |
 
 ### 3.4 성능 개선
 
-| ID | 작업 | 예상 효과 | 파일 | 상태 |
-|----|------|----------|------|------|
-| PERF-02 | KPI `saveMany` 직렬 루프 → 배치 upsert | 300 round-trips → 1 (~95% 감소) | `PrismaKPIRepository.ts:49-57` | ✅ |
-| PERF-03 | Cron 로그 직렬 → `Promise.all` 또는 `createMany` | 수십 round-trips → 1 | `src/app/api/cron/meta-warmup/route.ts:68-79` | ✅ |
+| 상태 | ID | 작업 | 예상 효과 | 파일 |
+|------|------|------|----------|------|
+| [x] | PERF-02 | KPI `saveMany` 직렬 루프 → 배치 upsert | 300 round-trips → 1 (~95% 감소) | `PrismaKPIRepository.ts:49-57` |
+| [x] | PERF-03 | Cron 로그 직렬 → `Promise.all` 또는 `createMany` | 수십 round-trips → 1 | `src/app/api/cron/meta-warmup/route.ts:68-79` |
 
 ### 3.5 테스트 확대
 
-| ID | 작업 | 파일 |
-|----|------|------|
-| TEST-03 | AdSet/Ad CRUD 7개 use case 테스트 | `src/application/use-cases/ad/`, `adset/` |
-| TEST-04 | CircuitBreaker 단위 테스트 (CLOSED→OPEN→HALF_OPEN→CLOSED) | `src/infrastructure/external/errors/CircuitBreaker.ts` |
-| TEST-05 | Prisma Repository 통합 테스트 확대 (Subscription, MetaAdAccount, Team 우선) | `src/infrastructure/database/repositories/` |
+| 상태 | ID | 작업 | 파일 |
+|------|------|------|------|
+| [x] | TEST-03 | AdSet/Ad CRUD 7개 use case 테스트 (34 tests) | `tests/unit/application/ad/`, `adset/` |
+| [x] | TEST-04 | CircuitBreaker 단위 테스트 (CLOSED→OPEN→HALF_OPEN→CLOSED, 15 tests) | `tests/unit/infrastructure/CircuitBreaker.test.ts` |
+| [x] | TEST-05 | Prisma Repository 통합 테스트 확대 (Subscription, MetaAdAccount, Team) | `tests/integration/repositories/` |
 
 ---
 
@@ -197,50 +197,50 @@
 
 ### 4.1 UI/UX 완성도
 
-| ID | 작업 | 영향도 |
-|----|------|--------|
-| UX-09 | 다크모드 활성화 (`enableSystem={true}` + Header 토글 버튼) | Medium |
-| UX-10 | 하드코딩 Tailwind 컬러(`bg-gray-50` 등) → CSS 변수/토큰 교체 (다크모드 대응) | Medium |
-| UX-11 | `CampaignCreateForm` 진행바에 `role="progressbar"` + ARIA 속성 추가 | Medium |
-| UX-12 | `StatCard`/`KPICard` 중복 컴포넌트 통합 | Medium |
-| UX-13 | `AnomalyAlert` 인라인 Collapsible → shadcn Collapsible 교체 | Medium |
-| UX-14 | 캠페인 연령대 입력에 `htmlFor`/`id` label 연결 | Medium |
-| UX-15 | `error.tsx` 피드백 모달 → Radix Dialog + focus trap 적용 | Medium |
-| UX-16 | `AdSetTable`/`AdTable` 로딩 스켈레톤 추가 (CampaignTable과 일관성) | Medium |
-| UX-17 | 404 장식 텍스트에 `aria-hidden="true"` 추가 | Low |
-| UX-18 | `KPICard` unit 이중 렌더링 버그 수정 | Low |
+| 상태 | ID | 작업 | 영향도 |
+|------|------|------|--------|
+| [x] | UX-09 | 다크모드 활성화 (`enableSystem={true}` + Header 토글 버튼) | Medium |
+| [x] | UX-10 | 하드코딩 Tailwind 컬러(`bg-gray-50` 등) → CSS 변수/토큰 교체 (다크모드 대응) | Medium |
+| [x] | UX-11 | `CampaignCreateForm` 진행바에 `role="progressbar"` + ARIA 속성 추가 | Medium |
+| [x] | UX-12 | `StatCard`/`KPICard` 중복 컴포넌트 통합 | Medium |
+| [x] | UX-13 | `AnomalyAlert` 인라인 Collapsible → shadcn Collapsible 교체 | Medium |
+| [x] | UX-14 | 캠페인 연령대 입력에 `htmlFor`/`id` label 연결 | Medium |
+| [x] | UX-15 | `error.tsx` 피드백 모달 → Radix Dialog + focus trap 적용 | Medium |
+| [x] | UX-16 | `AdSetTable`/`AdTable` 로딩 스켈레톤 추가 (CampaignTable과 일관성) | Medium |
+| [x] | UX-17 | 404 장식 텍스트에 `aria-hidden="true"` 추가 | Low |
+| [x] | UX-18 | `KPICard` unit 이중 렌더링 버그 수정 | Low |
 
 ### 4.2 코드 구조 개선
 
-| ID | 작업 | 영향도 |
-|----|------|--------|
-| QUAL-07 | `container.ts` 1,323줄 → 도메인별 모듈 분리 (`di/campaign.module.ts` 등) | High |
-| QUAL-08 | 134개 라우트 핸들러 보일러플레이트 → `withAuth`/`withErrorHandling` wrapper 추출 | Medium |
-| QUAL-09 | `PermissionService`의 `PrismaClient` 직접 의존 → Repository 인터페이스로 변경 | Medium |
-| QUAL-10 | use case에서 `process.env` 직접 읽기 → 설정 객체 주입 | Medium |
-| QUAL-11 | `Campaign.update()` 중복 guard 로직 단순화 | Medium |
-| QUAL-12 | DELETE handler DI 우회 → `DeleteCampaignUseCase` 사용 | Medium |
+| 상태 | ID | 작업 | 영향도 |
+|------|------|------|--------|
+| [x] | QUAL-07 | `container.ts` 1,323줄 → 도메인별 모듈 분리 (`di/campaign.module.ts` 등) | High |
+| [x] | QUAL-08 | 134개 라우트 핸들러 보일러플레이트 → `withAuth`/`withErrorHandling` wrapper 추출 | Medium |
+| [x] | QUAL-09 | `PermissionService`의 `PrismaClient` 직접 의존 → Repository 인터페이스로 변경 | Medium |
+| [x] | QUAL-10 | use case에서 `process.env` 직접 읽기 → 설정 객체 주입 | Medium |
+| [x] | QUAL-11 | `Campaign.update()` 중복 guard 로직 단순화 | Medium |
+| [x] | QUAL-12 | DELETE handler DI 우회 → `DeleteCampaignUseCase` 사용 | Medium |
 
 ### 4.3 성능 세밀 조정
 
-| ID | 작업 | 예상 효과 |
-|----|------|----------|
-| PERF-04 | `selectedCampaignIds` 배열 → `Set<string>` 변환 | O(n²) → O(n) |
-| PERF-05 | 대시보드 정적 설정 객체 → 모듈 스코프로 이동 | 렌더당 메모리 할당 제거 |
-| PERF-06 | RSC self HTTP fetch → 서비스 직접 호출 | 불필요한 네트워크 라운드트립 제거 |
-| PERF-07 | 픽셀 폴링 30초 → 60-300초 연장 | API 요청 50-90% 감소 |
-| PERF-08 | `useDashboardKPI`에 `refetchIntervalInBackground: false` 추가 | 백그라운드 탭 불필요 요청 제거 |
-| PERF-09 | `staleTime` 조정 (adSets/ads: 1분 → 5분) | Meta API 재호출 80% 감소 |
+| 상태 | ID | 작업 | 예상 효과 |
+|------|------|------|----------|
+| [x] | PERF-04 | `selectedCampaignIds` 배열 → `Set<string>` 변환 | O(n²) → O(n) |
+| [x] | PERF-05 | 대시보드 정적 설정 객체 → 모듈 스코프로 이동 | 렌더당 메모리 할당 제거 |
+| [x] | PERF-06 | RSC self HTTP fetch → 서비스 직접 호출 | 불필요한 네트워크 라운드트립 제거 |
+| [x] | PERF-07 | 픽셀 폴링 30초 → 60-300초 연장 | API 요청 50-90% 감소 |
+| [x] | PERF-08 | `useDashboardKPI`에 `refetchIntervalInBackground: false` 추가 | 백그라운드 탭 불필요 요청 제거 |
+| [x] | PERF-09 | `staleTime` 조정 (adSets/ads: 1분 → 5분) | Meta API 재호출 80% 감소 |
 
 ### 4.4 테스트 확대
 
-| ID | 작업 |
-|----|------|
-| TEST-06 | E2E 핵심 플로우: 결제 전체 사이클, Admin 패널, 팀 관리 |
-| TEST-07 | Playwright 설정 분리: 녹화용 vs 테스트용 (`slowMo` 제거) |
-| TEST-08 | 약한 assertion 강화: `toBeDefined()` → 구체적 값 비교 |
-| TEST-09 | 핵심 Hook 30개 테스트 추가 (`useDashboardKPI`, `useCampaigns` 등) |
-| TEST-10 | MSW 마이그레이션: Meta API, OpenAI, Toss Payments HTTP 모킹 |
+| 상태 | ID | 작업 |
+|------|------|------|
+| [x] | TEST-06 | E2E 핵심 플로우: 결제 전체 사이클, Admin 패널, 팀 관리 |
+| [x] | TEST-07 | Playwright 설정 분리: 녹화용 vs 테스트용 (`slowMo` 제거) |
+| [x] | TEST-08 | 약한 assertion 강화: `toBeDefined()` → 구체적 값 비교 |
+| [x] | TEST-09 | 핵심 Hook 30개 테스트 추가 (`useDashboardKPI`, `useCampaigns` 등) |
+| [x] | TEST-10 | MSW 마이그레이션: Meta API, OpenAI, Toss Payments HTTP 모킹 |
 
 ---
 
@@ -251,29 +251,29 @@
 
 ### 5.1 보안 자동화
 
-- [ ] CI에 시크릿 스캐닝 도구 추가 (`gitleaks` 또는 `trufflehog`)
-- [ ] SAST 스캐닝 (SQL injection, XSS 패턴 자동 탐지)
-- [ ] 정기 `npm audit` CI 파이프라인 자동화
-- [ ] 프로덕션 배포 전 보안 체크리스트 게이트
+- [x] CI에 시크릿 스캐닝 도구 추가 (`gitleaks` + pre-commit hook)
+- [x] SAST 스캐닝 (`semgrep` + `eslint-plugin-security` CI 통합)
+- [x] 정기 `npm audit` CI 파이프라인 자동화
+- [x] 프로덕션 배포 전 보안 체크리스트 게이트
 
 ### 5.2 테스트 성숙도
 
-- [ ] 성능 테스트 도입 (k6/Artillery — API 응답 시간 기준선)
-- [ ] Contract 테스트 (Meta API 스키마 변경 자동 감지)
-- [ ] Mutation 테스트 (Stryker.js — 테스트 품질 검증)
-- [ ] 다중 브라우저 E2E (Firefox, WebKit 추가)
+- [x] 성능 테스트 도입 (k6 — API 응답 시간 기준선)
+- [x] Contract 테스트 (Meta API 스키마 변경 자동 감지)
+- [x] Mutation 테스트 (Stryker.js — 테스트 품질 검증)
+- [x] 다중 브라우저 E2E (Firefox, WebKit 추가)
 
 ### 5.3 코드 품질 장기
 
-- [ ] Result 패턴 전면 적용 또는 제거 (현재 15개 파일만 사용, 나머지는 throw)
-- [ ] 도메인 이벤트 디스패처 구현 또는 미사용 이벤트 인프라 제거
-- [ ] 의존성 업그레이드: `next`, `axios`, `serialize-javascript` (알려진 취약점)
+- [x] Result 패턴 제거 → 도메인 에러 throw로 통일
+- [x] 미사용 도메인 이벤트 인프라 제거
+- [x] 의존성 업그레이드: `next`, `axios`, `serialize-javascript`
 
 ### 5.4 성능 모니터링
 
-- [ ] Meta API 체인 실측: Vercel Function Duration 모니터링
-- [ ] 번들 분석 자동화: `ANALYZE=true npm run build` CI 리포트
-- [ ] `@react-pdf/renderer`(~2MB) 클라이언트 번들 포함 여부 확인
+- [x] Meta API 체인 실측: API 호출 시간 측정 로그 추가
+- [x] 번들 분석 자동화: `@next/bundle-analyzer` + CI 리포트
+- [x] `@react-pdf/renderer` 클라이언트 번들 최적화
 
 ---
 

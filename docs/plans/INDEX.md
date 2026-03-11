@@ -1,7 +1,7 @@
 # Plans Index
 
 > 모든 구현 계획의 상태를 한눈에 관리합니다.
-> 새 계획 생성 시 이 파일에 항목을 추가하세요.
+> **👉 통합 인덱스는 [MASTER_INDEX.md](./MASTER_INDEX.md)를 참조하세요.**
 
 ---
 
@@ -9,8 +9,9 @@
 
 | 계획 | 생성일 | 요약 | 규모 |
 |------|--------|------|------|
-
-(현재 미구현 계획 없음)
+| [rag-2026-algorithm-alignment](PLAN_rag-2026-algorithm-alignment.md) | 2026-03-09 | Meta Trinity 기반 RAG 정렬 | 대형 |
+| [conversational-ai-pivot](PLAN_conversational-ai-pivot.md) | 2026-02-06 | 대화형 AI 에이전트 전환 | 대형 |
+| [backend-completion](PLAN_backend-completion.md) | 2026-02-06 | 백엔드 기능 완성 + Mock 모드 | 대형 |
 
 ## 진행 중 (In Progress)
 
@@ -22,6 +23,7 @@
 
 | 계획 | 완료일 | 요약 |
 |------|--------|------|
+| [full-audit-roadmap](PLAN_full-audit-roadmap.md) | 2026-03-11 | 전면 감사 기반 개선 (5영역, 4 Phase) |
 | [audit-account-selector](PLAN_audit-account-selector.md) | 2026-02-27 | 광고 진단 계정 선택 기능 (3 Phase 전체) |
 | [audit-improvements](PLAN_audit-improvements.md) | 2026-02-27 | 무료검사 종합 개선 (6 Phase, 품질게이트 통과) |
 | ax-experience-optimization | 2026-02 | AX(AI Experience) 최적화 — 스트리밍 AI 경험 |
@@ -32,6 +34,7 @@
 | [ryze-inspired-features](PLAN_ryze-inspired-features.md) | 2026-02-25 | Ryze AI 레퍼런스 P0 기능 도입 |
 | claude-md-modularization | 2026-02-25 | CLAUDE.md 모듈화 (.claude/rules/ 분리) |
 | meta-oauth-fix | 2026-02 | Meta OAuth 로그인 수정 |
+| [improvement-roadmap](PLAN_improvement-roadmap.md) | 2026-02-05 | 개선 로드맵 (3 Phase 전체 완료) |
 | [phase5_ux_improvement](PLAN_phase5_ux_improvement.md) | 2026-01 | UX 개선 |
 | [phase1_dashboard_chart_data](PLAN_phase1_dashboard_chart_data.md) | 2026-01-07 | 대시보드 차트 데이터 구현 |
 | [production-deployment](PLAN_production-deployment.md) | 2025-12-29 | 프로덕션 배포 |

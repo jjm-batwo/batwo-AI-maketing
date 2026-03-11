@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser } from '@/lib/auth'
 import { MetaAdsClient } from '@/infrastructure/external/meta-ads/MetaAdsClient'
 import { MetaAdsApiError } from '@/infrastructure/external/errors'
+import type { MetaCampaignListItem } from '@application/ports/IMetaAdsService'
 import { prisma } from '@/lib/prisma'
 import { mapWithConcurrency } from '@/lib/utils/mapWithConcurrency'
 import { safeDecryptToken } from '@application/utils/TokenEncryption'
@@ -58,7 +59,7 @@ export async function GET(request: NextRequest) {
         const metaAdsClient = new MetaAdsClient()
 
         // 2. Get all campaigns (권한 박탈/토큰 만료 감지)
-        let campaigns: any[]
+        let campaigns: MetaCampaignListItem[]
         try {
             const result = await metaAdsClient.listCampaigns(
                 decryptedToken,
@@ -93,7 +94,7 @@ export async function GET(request: NextRequest) {
 
         // 4. Map all ad sets across all campaigns (conc 2) - rate limit graceful degradation
         let rateLimitHit = false
-        const allAdSets = await mapWithConcurrency(campaigns, 2, async (campaign: any) => {
+        const allAdSets = await mapWithConcurrency(campaigns, 2, async (campaign) => {
             try {
                 const adSets = await metaAdsClient.listAdSets(decryptedToken, campaign.id)
                 return adSets.map((as) => ({ ...as, campaignId: campaign.id }))
@@ -115,7 +116,7 @@ export async function GET(request: NextRequest) {
 
         // 5. 빈 광고 세트 → early return
         if (flattenedAdSets.length === 0) {
-            return NextResponse.json({ adSets: [], ...(rateLimitHit && { _rateLimited: true }) })
+            return NextResponse.json({ adSets: [], ...(rateLimitHit ? { _rateLimited: true } : {}) })
         }
 
         // 6. Map all insights (conc 2) - rate limit graceful degradation
@@ -124,7 +125,7 @@ export async function GET(request: NextRequest) {
                 const insights = await metaAdsClient.getAdSetInsights(
                     decryptedToken,
                     adSet.id,
-                    datePreset as any
+                    datePreset as 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d'
                 )
 
                 return {
@@ -162,9 +163,9 @@ export async function GET(request: NextRequest) {
 
         return NextResponse.json({
             adSets: adSetsWithInsights,
-            ...(rateLimitHit && { _rateLimited: true }),
+            ...(rateLimitHit ? { _rateLimited: true } : {}),
         })
-    } catch (error: any) {
+    } catch (error: unknown) {
         // Auth 에러가 최외부까지 전파된 경우
         if (error instanceof MetaAdsApiError && MetaAdsApiError.isAuthError(error)) {
             console.warn(`${LOG_PREFIX} Auth error propagated`, error.message)

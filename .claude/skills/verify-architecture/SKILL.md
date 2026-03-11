@@ -54,6 +54,16 @@ description: 클린 아키텍처 레이어 의존성 규칙을 검증합니다. 
 | `src/infrastructure/cache/audit/MemoryAuditCache.ts` | 인메모리 캐시 어댑터 |
 | `src/infrastructure/cache/audit/UpstashAuditCache.ts` | Upstash Redis 캐시 어댑터 |
 | `src/infrastructure/cache/audit/auditCacheFactory.ts` | 캐시 어댑터 팩토리 |
+| `src/application/ports/IEmbeddingService.ts` | 임베딩 서비스 포트 인터페이스 (RAG) |
+| `src/application/ports/IKnowledgeBaseRepository.ts` | 벡터 검색 저장소 포트 인터페이스 (RAG) |
+| `src/application/services/KnowledgeIngestionService.ts` | 지식 적재 파이프라인 서비스 (RAG, application 레이어) |
+| `src/application/tools/queries/searchKnowledgeBase.tool.ts` | RAG 검색 도구 (application 레이어) |
+| `src/infrastructure/database/repositories/PrismaKnowledgeBaseRepository.ts` | pgvector 벡터 검색 저장소 구현 (infrastructure 레이어) |
+| `src/infrastructure/external/openai/OpenAIEmbeddingService.ts` | OpenAI 임베딩 서비스 구현 (infrastructure 레이어) |
+| `src/lib/middleware/routeWrapper.ts`                           | 라우트 핸들러 wrapper (`withAuth`/`withErrorHandling`) — lib 레이어 |
+| `src/domain/repositories/IPermissionRepository.ts`            | 권한 리포지토리 포트 인터페이스 (domain 레이어) |
+| `src/infrastructure/database/repositories/PrismaPermissionRepository.ts` | 권한 리포지토리 Prisma 구현체 (infrastructure 레이어) |
+| `src/application/ports/IAppConfig.ts`                         | 앱 설정 포트 인터페이스 (application 레이어) |
 
 ## Workflow
 
@@ -132,6 +142,7 @@ grep -rn "from ['\"]@prisma\|from ['\"]next\|from ['\"]react" src/domain/ --incl
 1. **domain 내부 import** — `src/domain/` 내에서 다른 `src/domain/` 파일을 import하는 것은 허용
 2. **application의 포트 import** — `src/application/ports/` 파일에서 타입 정의를 위해 domain을 import하는 것은 정상
 3. **테스트 파일** — `tests/` 디렉토리 내 파일은 모든 레이어를 import 가능
-4. **DI 컨테이너** — `src/lib/di/container.ts`는 의존성 주입을 위해 모든 레이어를 import하는 것이 허용
+4. **DI 컨테이너 및 모듈** — `src/lib/di/container.ts`와 `src/lib/di/modules/*.module.ts`는 의존성 주입을 위해 모든 레이어를 import하는 것이 허용
 5. **type-only import** — `import type`으로 타입만 가져오는 경우는 런타임 의존이 아니므로 경고만 표시
 6. **domain의 유틸리티 라이브러리** — uuid, zod, date-fns 등 순수 유틸리티는 허용
+7. **routeWrapper** — `src/lib/middleware/routeWrapper.ts`는 lib 레이어로 infrastructure/application을 import 가능 (Express 미들웨어 패턴)

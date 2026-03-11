@@ -55,7 +55,7 @@ ls .worktrees/ 2>/dev/null || echo "No worktrees"
 ### Step 2: 워크트리 생성 (필요 시)
 
 ```bash
-bash .claude/skills/git-worktree/scripts/worktree-manager.sh create <task-slug>
+bash .agent/skills/git-worktree/scripts/worktree-manager.sh create <task-slug>
 ```
 
 **자동 수행 사항:**
@@ -74,18 +74,18 @@ bash .claude/skills/git-worktree/scripts/worktree-manager.sh create <task-slug>
 #### 옵션 A — Merge 후 정리 (권장)
 
 ```bash
-bash .claude/skills/git-worktree/scripts/worktree-manager.sh merge <task-slug> main
-bash .claude/skills/git-worktree/scripts/worktree-manager.sh remove <task-slug>
+bash .agent/skills/git-worktree/scripts/worktree-manager.sh merge <task-slug> main
+bash .agent/skills/git-worktree/scripts/worktree-manager.sh remove <task-slug>
 ```
 
 #### 옵션 B — 수동 검토
 
 ```bash
 # 워크트리 목록 확인
-bash .claude/skills/git-worktree/scripts/worktree-manager.sh list
+bash .agent/skills/git-worktree/scripts/worktree-manager.sh list
 
 # 전체 정리
-bash .claude/skills/git-worktree/scripts/worktree-manager.sh cleanup
+bash .agent/skills/git-worktree/scripts/worktree-manager.sh cleanup
 ```
 
 ## Script Commands
@@ -114,8 +114,8 @@ bash .claude/skills/git-worktree/scripts/worktree-manager.sh cleanup
 
 | File                                                      | Purpose                   |
 | --------------------------------------------------------- | ------------------------- |
-| `.claude/skills/git-worktree/scripts/worktree-manager.sh` | 워크트리 관리 스크립트    |
-| `.claude/rules/worktree.md`                               | 워크트리 자동 트리거 규칙 |
+| `.agent/skills/git-worktree/scripts/worktree-manager.sh` | 워크트리 관리 스크립트    |
+| `.agent/rules/worktree.md`                               | 워크트리 자동 트리거 규칙 |
 | `.gitignore`                                              | `.worktrees/` 제외        |
 
 ## Architecture

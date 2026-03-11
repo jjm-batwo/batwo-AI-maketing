@@ -25,9 +25,18 @@ DI(Dependency Injection) 컨테이너의 일관성을 검증합니다:
 | File                                                          | Purpose                                                      |
 | ------------------------------------------------------------- | ------------------------------------------------------------ |
 | `src/lib/di/types.ts`                                         | DI 토큰 정의 (`DI_TOKENS` 객체)                              |
-| `src/lib/di/container.ts`                                     | DI 컨테이너 구현 (토큰별 팩토리 등록)                        |
+| `src/lib/di/container.ts`                                     | DI 컨테이너 구현 (모듈 조합 + 편의 함수)                       |
+| `src/lib/di/modules/campaign.module.ts`                       | DI 모듈: 캠페인 도메인 등록                                |
+| `src/lib/di/modules/report.module.ts`                         | DI 모듈: 리포트 도메인 등록                                  |
+| `src/lib/di/modules/kpi.module.ts`                            | DI 모듈: KPI 도메인 등록                                     |
+| `src/lib/di/modules/payment.module.ts`                        | DI 모듈: 결제 도메인 등록                                  |
+| `src/lib/di/modules/meta.module.ts`                           | DI 모듈: Meta API 도메인 등록                               |
+| `src/lib/di/modules/auth.module.ts`                           | DI 모듈: 인증/권한 도메인 등록                              |
+| `src/lib/di/modules/common.module.ts`                         | DI 모듈: 공통 서비스 등록                                   |
 | `src/domain/repositories/I*.ts`                               | 리포지토리 인터페이스                                        |
+| `src/domain/repositories/IPermissionRepository.ts`            | 권한 리포지토리 인터페이스 (Phase 3 추가)                    |
 | `src/application/ports/I*.ts`                                 | 외부 서비스 포트 인터페이스                                  |
+| `src/application/ports/IAppConfig.ts`                         | 앱 설정 포트 인터페이스 (Phase 3 추가)                      |
 | `src/domain/repositories/IOptimizationRuleRepository.ts`      | 최적화 규칙 리포지토리 인터페이스                            |
 | `src/application/ports/IFallbackResponseService.ts`           | 폴백 응답 서비스 포트 — DI 등록 대상                         |
 | `src/application/ports/IFewShotExampleRegistry.ts`            | 퓨샷 예시 레지스트리 포트 — DI 등록 대상                     |
@@ -37,8 +46,10 @@ DI(Dependency Injection) 컨테이너의 일관성을 검증합니다:
 | `src/application/use-cases/ai/GetFeedbackAnalyticsUseCase.ts` | 피드백 분석 유스케이스 — DI 등록 대상                        |
 | `src/application/ports/IAuditCache.ts`                        | 감사 캐시 포트 인터페이스 — 캐시 팩토리 패턴 사용            |
 | `src/application/services/KPIInsightsService.ts`              | KPI 인사이트 서비스 — DI 등록 대상 (KPIInsightsService 토큰) |
-| `src/application/ports/IEmbeddingService.ts`                  | 임베딩 서비스 포트 인터페이스 — 의도적 미등록 (수동 주입)    |
-| `src/application/ports/IKnowledgeBaseRepository.ts`           | 지식 베이스 리포지토리 인터페이스 — 의도적 미등록 (수동 주입)|
+| `src/application/ports/IEmbeddingService.ts`                   | 임베딩 서비스 포트 — RAG 시스템, DI 등록 대상                |
+| `src/application/ports/IKnowledgeBaseRepository.ts`            | 벡터 검색 저장소 포트 — RAG 시스템, DI 등록 대상             |
+| `src/application/services/KnowledgeIngestionService.ts`        | 지식 적재 서비스 — RAG 시스템, DI 등록 대상                  |
+| `src/infrastructure/database/repositories/PrismaPermissionRepository.ts` | 권한 리포지토리 Prisma 구현체 (Phase 3 추가) |
 
 ## Workflow
 
@@ -54,14 +65,14 @@ grep -oP '^\s+(\w+):\s*Symbol' src/lib/di/types.ts | sed 's/:.*//' | sed 's/^\s*
 
 **결과:** 토큰 이름 목록
 
-### Step 2: container.ts에서 등록된 토큰 목록 추출
+### Step 2: container.ts 및 모듈에서 등록된 토큰 목록 추출
 
-**파일:** `src/lib/di/container.ts`
+**파일:** `src/lib/di/container.ts`, `src/lib/di/modules/*.module.ts`
 
-**검사:** `container.register` 또는 `container.registerSingleton` 호출의 첫 인자 토큰을 추출합니다.
+**검사:** `container.register` 또는 `container.registerSingleton` 호출의 첫 인자 토큰을 container.ts와 모듈 파일들에서 모두 추출합니다.
 
 ```bash
-grep -P 'container\.(register|registerSingleton)\s*[<(]' src/lib/di/container.ts | grep -oP 'DI_TOKENS\.(\w+)' | sed 's/DI_TOKENS\.//' | sort -u
+grep -rP 'container\.(register|registerSingleton)\s*[<(]' src/lib/di/container.ts src/lib/di/modules/*.module.ts | grep -oP 'DI_TOKENS\.(\w+)' | sed 's/DI_TOKENS\.//' | sort -u
 ```
 
 **결과:** 등록에 사용된 토큰 이름 목록
@@ -193,6 +204,29 @@ grep -n "KPIInsightsService" src/lib/di/container.ts
 **PASS 기준:** KPIInsightsService가 container.registerSingleton으로 등록됨
 **FAIL 기준:** 누락된 등록이 있음
 
+---
+
+### New Pattern: RAG Service Registration Check
+
+**Context:** Hybrid RAG Integration으로 임베딩/벡터검색/지식적재 서비스가 추가됨.
+
+**검사:** 다음 서비스들이 DI에 등록되었는지 확인합니다:
+
+- EmbeddingService (OpenAIEmbeddingService 구현체)
+- KnowledgeBaseRepository (PrismaKnowledgeBaseRepository 구현체)
+
+```bash
+# RAG service 등록 확인
+grep -n "EmbeddingService\|KnowledgeBaseRepository" src/lib/di/container.ts
+```
+
+**PASS 기준:** 모든 RAG 서비스가 container에 등록됨
+**FAIL 기준:** 누락된 등록이 있음
+
+**수정 방법:**
+1. `src/lib/di/types.ts`에 `EmbeddingService`, `KnowledgeBaseRepository` 토큰 추가
+2. `src/lib/di/container.ts`에 구현체 등록
+
 ## Output Format
 
 ```markdown
@@ -219,7 +253,6 @@ grep -n "KPIInsightsService" src/lib/di/container.ts
 4. **인터페이스 파일명과 토큰명 불일치** — `IPaymentGateway.ts` ↔ `PaymentGateway` 토큰처럼 `I` 접두사 제거 형태는 정상
 5. **IConversationalAgent.ts의 IToolRegistry** — 파일명과 인터페이스명이 다를 수 있음 (하나의 파일에 여러 인터페이스 정의)
 6. **IAuditCache.ts** — 캐시 팩토리 패턴(`createUpstashAuditCache`)으로 인스턴스를 직접 생성하며, DI 컨테이너를 통하지 않음. 포트 인터페이스이지만 DI 토큰 미등록은 의도적 설계
-7. **IEmbeddingService.ts, IKnowledgeBaseRepository.ts** — RAG 시스템의 시드 스크립트(`seed-knowledge-base.ts`) 또는 독립적인 AI 도구(`searchKnowledgeBase.tool.ts`) 내부에서 수동으로 인스턴스화하여 주입하는 객체이므로 DI 토큰 미등록은 의도적 설계
 
 ## Reserved Token Policy
 

@@ -31,16 +31,13 @@ argument-hint: "[선택사항: 특정 스킬 이름 또는 집중할 영역]"
 | 스킬 | 설명 | 커버 파일 패턴 |
 |------|------|---------------|
 | `verify-architecture` | 클린 아키텍처 레이어 의존성 규칙 검증 | `src/domain/**`, `src/application/**`, `src/infrastructure/**` |
-| `verify-di-registration` | DI 컨테이너 토큰-등록 동기화 검증 (Optimization/Audit/AI Chatbot 포함) | `src/lib/di/types.ts`, `src/lib/di/container.ts`, `src/domain/repositories/**`, `src/application/ports/**` |
+| `verify-di-registration` | DI 컨테이너 토큰-등록 동기화 검증 (모듈 분리 포함) | `src/lib/di/types.ts`, `src/lib/di/container.ts`, `src/lib/di/modules/*.module.ts`, `src/domain/repositories/**`, `src/application/ports/**` |
 | `verify-cache-tags` | ISR 캐시 태그와 revalidateTag 매핑 일관성 검증 | `src/app/api/**`, `src/app/(dashboard)/**/page.tsx`, `src/app/(admin)/**/page.tsx` |
 | `verify-bundle` | 번들 최적화 검증 (namespace import, dev-only 누출, ssr:false) | `src/**/*.ts`, `src/**/*.tsx`, `package.json` |
 | `verify-meta-api-version` | Meta Graph API v25.0 버전 통일성 검증 | `src/infrastructure/external/meta-*/**`, `src/infrastructure/auth/**`, `src/app/api/meta/**`, `scripts/*` |
 | `verify-token-encryption` | DB accessToken 암복호화 적용 일관성 검증 | `src/app/api/meta/**`, `src/application/use-cases/**`, `src/application/utils/TokenEncryption.ts`, `src/infrastructure/database/repositories/**` |
 | `verify-ui-components` | UI 컴포넌트 일관성, 접근성, 성능 패턴 검증 (랜딩/대시보드/캠페인/채팅/최적화/픽셀/온보딩/감사 포함) | `src/presentation/components/landing/**`, `src/presentation/components/dashboard/**`, `src/presentation/components/campaign/**`, `src/presentation/components/chat/**`, `src/presentation/components/optimization/**`, `src/presentation/components/pixel/**`, `src/presentation/components/onboarding/**`, `src/presentation/components/audit/**`, `src/presentation/hooks/**`, `src/presentation/utils/**`, `src/app/(dashboard)/campaigns/**/*Client.tsx` |
 | `verify-audit-security` | 감사 보고서 HMAC 서명/검증 일관성 검증 | `src/lib/security/**`, `src/app/api/audit/**` |
-| `verify-chat-intents` | ChatIntent 열거형이 프롬프트 제어 분기 및 UI 질문에 올바르게 매핑되어 있는지 검증 | `src/domain/value-objects/ChatIntent.ts`, `src/application/services/ConversationalAgentService.ts`, `src/application/services/GuideQuestionService.ts` |
-| `verify-domain-analyzers` | 도메인 분석기 클래스의 존재성과 레지스트리 확인 및 가중치 합 1.0 검증 | `src/domain/value-objects/MarketingScience.ts`, `src/infrastructure/knowledge/analyzers/**`, `src/infrastructure/knowledge/KnowledgeBaseService.ts` |
-| `verify-knowledge-documents` | 마크다운 파일(지식 베이스 문서)의 파일명 규칙(숫자 두자리 접두사)과 첫 헤더(#) 존재 유무 검증 | `prisma/seeds/marketing-knowledge/*.md` |
 
 ## 워크플로우
 
@@ -86,7 +83,7 @@ git diff main...HEAD --name-only 2>/dev/null
 
 등록된 스킬이 0개인 경우, Step 4 (CREATE vs UPDATE 결정)로 바로 이동합니다. 모든 변경 파일이 "UNCOVERED"로 처리됩니다.
 
-등록된 스킬이 1개 이상인 경우, 각 스킬의 `.claude/skills/verify-<name>/SKILL.md`를 읽고 다음에서 추가 파일 경로 패턴을 추출합니다:
+등록된 스킬이 1개 이상인 경우, 각 스킬의 `.agent/skills/verify-<name>/SKILL.md`를 읽고 다음에서 추가 파일 경로 패턴을 추출합니다:
 
 1. **Related Files** 섹션 — 테이블을 파싱하여 파일 경로 및 glob 패턴 추출
 2. **Workflow** 섹션 — grep/glob/read 명령어에서 파일 경로 추출
@@ -226,7 +223,7 @@ grep -n "pattern" path/to/file.ts
    - 사용자가 `verify-` 접두사 없이 이름을 제공하면 자동으로 앞에 추가하고 사용자에게 알립니다
    - kebab-case를 사용합니다 (예: `verify-error-handling`, `verify_error_handling` 아님)
 
-3. **생성** — `.claude/skills/verify-<name>/SKILL.md`를 다음 템플릿에 따라 생성합니다:
+3. **생성** — `.agent/skills/verify-<name>/SKILL.md`를 다음 템플릿에 따라 생성합니다:
 
 ```yaml
 ---
@@ -324,10 +321,10 @@ ls <file-path> 2>/dev/null || echo "MISSING: <file-path>"
 
 | File | Purpose |
 |------|---------|
-| `.claude/skills/verify-implementation/SKILL.md` | 통합 검증 스킬 (이 스킬이 실행 대상 목록을 관리) |
-| `.claude/skills/manage-skills/SKILL.md` | 이 파일 자체 (등록된 검증 스킬 목록을 관리) |
+| `.agent/skills/verify-implementation/SKILL.md` | 통합 검증 스킬 (이 스킬이 실행 대상 목록을 관리) |
+| `.agent/skills/manage-skills/SKILL.md` | 이 파일 자체 (등록된 검증 스킬 목록을 관리) |
 | `AGENTS.md` | 프로젝트 지침 문서 (검증 스킬 인덱스가 있으면 동기화) |
-| `.claude/rules/*.md` | 모듈화된 규칙 파일 (기능별 조건부 로딩) |
+| `.agent/rules/*.md` | 모듈화된 규칙 파일 (기능별 조건부 로딩) |
 
 ## 예외사항
 
