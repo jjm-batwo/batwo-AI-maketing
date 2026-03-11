@@ -26,6 +26,8 @@ import {
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 import { InsightDetailModal } from './InsightDetailModal'
+import { ApplyOptimizationButton } from './ApplyOptimizationButton'
+import type { ApplyAction } from '@/domain/value-objects/ApplyAction'
 
 // ============================================================================
 // Types
@@ -63,6 +65,7 @@ interface Insight {
     reasoning: string
   }
   actionUrl?: string
+  applyAction?: ApplyAction
 }
 
 interface AIInsightsProps {
@@ -418,12 +421,16 @@ export const AIInsights = memo(function AIInsights({
                       </div>
                     )}
 
-                    {/* Action Button */}
                     {insight.action && (
                       <div className="mt-2" onClick={(e) => e.stopPropagation()}>
                         <Button variant="outline" size="sm" className="h-6 text-xs px-2" asChild>
                           <Link href={insight.action.href}>{insight.action.label}</Link>
                         </Button>
+                      </div>
+                    )}
+                    {insight.applyAction && (
+                      <div className="mt-2" onClick={(e) => e.stopPropagation()}>
+                        <ApplyOptimizationButton action={insight.applyAction} onApplied={onRefresh} />
                       </div>
                     )}
                   </div>
