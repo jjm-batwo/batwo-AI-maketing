@@ -40,6 +40,8 @@ export const DI_TOKENS = {
   AnomalyDetectionService: Symbol.for('AnomalyDetectionService'),
   AnomalyRootCauseService: Symbol.for('AnomalyRootCauseService'),
   AnomalySegmentAnalysisService: Symbol.for('AnomalySegmentAnalysisService'),
+  AdAccountAuditService: Symbol.for('AdAccountAuditService'),
+  PortfolioOptimizationService: Symbol.for('PortfolioOptimizationService'),
   CopyLearningService: Symbol.for('CopyLearningService'),
   CampaignAnalyzer: Symbol.for('CampaignAnalyzer'),
   CompetitorBenchmarkService: Symbol.for('CompetitorBenchmarkService'),

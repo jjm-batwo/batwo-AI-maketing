@@ -32,6 +32,7 @@ import { BudgetAlertService } from '@application/services/BudgetAlertService'
 import { AnomalyDetectionService } from '@application/services/AnomalyDetectionService'
 import { AnomalyRootCauseService } from '@application/services/AnomalyRootCauseService'
 import { AnomalySegmentAnalysisService } from '@application/services/AnomalySegmentAnalysisService'
+import { AdAccountAuditService } from '@application/services/AdAccountAuditService'
 import { CopyLearningService } from '@application/services/CopyLearningService'
 import { CampaignAnalyzer } from '@application/services/CampaignAnalyzer'
 import { CompetitorBenchmarkService } from '@application/services/CompetitorBenchmarkService'
@@ -161,6 +162,16 @@ export function registerCampaignModule(container: Container): void {
   container.registerSingleton(
     DI_TOKENS.AnomalySegmentAnalysisService,
     () => new AnomalySegmentAnalysisService()
+  )
+
+  container.registerSingleton(
+    DI_TOKENS.AdAccountAuditService,
+    () => new AdAccountAuditService(
+      container.resolve(DI_TOKENS.AnomalyDetectionService),
+      container.resolve(DI_TOKENS.PortfolioOptimizationService),
+      container.resolve(DI_TOKENS.KPIRepository),
+      container.resolve(DI_TOKENS.CampaignRepository)
+    )
   )
 
   container.registerSingleton(DI_TOKENS.CopyLearningService, () => new CopyLearningService())
