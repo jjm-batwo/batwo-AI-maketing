@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useState } from 'react';
-import { useCampaignStore } from '@/presentation/stores/useCampaignStore';
+import { useCampaignStore } from '@/presentation/stores';
 import { BulkAction } from '@/application/use-cases/campaign/BulkUpdateCampaignsUseCase';
 import { BulkBudgetModal } from './BulkBudgetModal';
 
