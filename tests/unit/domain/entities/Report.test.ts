@@ -139,6 +139,7 @@ describe('Report', () => {
         dateRange: DateRange.create(new Date('2025-01-13'), new Date('2025-01-19')),
       })
 
+      // ... existing metrics code 
       report = report.addSection({
         title: 'Campaign 1',
         content: 'Performance data',
@@ -172,6 +173,33 @@ describe('Report', () => {
       expect(summary.totalRevenue).toBe(400000)
       expect(summary.overallROAS).toBe(5) // 400000 / 80000
       expect(summary.averageCTR).toBeCloseTo(5) // (2500 / 50000) * 100
+    })
+  })
+
+  describe('share token', () => {
+    it('should generate a share token with 30-day expiry', () => {
+      const report = Report.createWeekly({
+        userId: 'user-123',
+        campaignIds: ['campaign-1'],
+        dateRange: DateRange.create(new Date('2025-01-13'), new Date('2025-01-19')),
+      })
+      const shared = report.generateShareToken()
+
+      expect(shared.shareToken).toHaveLength(32)
+      expect(shared.isShareValid()).toBe(true)
+    })
+
+    it('should revoke share token', () => {
+      const report = Report.createWeekly({
+        userId: 'user-123',
+        campaignIds: ['campaign-1'],
+        dateRange: DateRange.create(new Date('2025-01-13'), new Date('2025-01-19')),
+      })
+      const shared = report.generateShareToken()
+      const revoked = shared.revokeShareToken()
+
+      expect(revoked.shareToken).toBeNull()
+      expect(revoked.isShareValid()).toBe(false)
     })
   })
 
