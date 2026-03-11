@@ -60,4 +60,15 @@ export interface IEmailService {
     userName: string
     digest: TrendAlert
   }): Promise<SendEmailResult>
+
+  /**
+   * Send an automated report email
+   */
+  sendReportEmail(params: {
+    to: string[]
+    subject: string
+    reportId: string
+    reportSummary: import('../../domain/entities/Report').ReportSummaryMetrics
+    shareUrl?: string
+  }): Promise<{ success: boolean; messageId?: string }>
 }
