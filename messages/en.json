@@ -16,6 +16,7 @@
   },
   "navigation": {
     "dashboard": "Dashboard",
+    "audit": "Ad Audit",
     "campaigns": "Campaigns",
     "reports": "Reports",
     "settings": "Settings",

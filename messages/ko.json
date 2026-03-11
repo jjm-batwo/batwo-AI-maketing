@@ -16,6 +16,7 @@
   },
   "navigation": {
     "dashboard": "대시보드",
+    "audit": "광고 진단",
     "campaigns": "캠페인",
     "reports": "보고서",
     "settings": "설정",
