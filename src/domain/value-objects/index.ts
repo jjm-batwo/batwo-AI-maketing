@@ -150,3 +150,4 @@ export {
 export { ChatIntent } from './ChatIntent'
 export { IntentClassificationResult } from './IntentClassificationResult'
 export type { FewShotExample } from './FewShotExample'
+export * from './FunnelStage'
