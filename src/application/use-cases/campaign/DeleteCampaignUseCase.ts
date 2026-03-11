@@ -4,17 +4,13 @@ import {
   ForbiddenError,
   ExternalServiceError,
   ValidationError,
-  Result,
-  success,
-  failure,
-  tryCatch,
 } from '@application/errors'
 
 /**
  * Delete Campaign Use Case
  *
- * Demonstrates Result pattern usage for expected error cases.
- * This approach is useful when errors are part of normal business flow.
+ * Uses domain error throw pattern for error handling.
+ * Errors are caught by API routes / tool callers.
  */
 export class DeleteCampaignUseCase {
   constructor(private readonly campaignRepository: ICampaignRepository) {}
@@ -22,71 +18,12 @@ export class DeleteCampaignUseCase {
   /**
    * Execute campaign deletion
    *
-   * @returns Result with void on success, or specific error on failure
+   * @throws ValidationError - if campaignId or userId is missing
+   * @throws NotFoundError - if campaign does not exist
+   * @throws ForbiddenError - if user does not own the campaign
+   * @throws ExternalServiceError - if database operation fails
    */
-  async execute(
-    campaignId: string,
-    userId: string
-  ): Promise<
-    Result<void, ValidationError | NotFoundError | ForbiddenError | ExternalServiceError>
-  > {
-    // Validate input
-    if (!campaignId || campaignId.trim() === '') {
-      return failure(ValidationError.missingField('campaignId'))
-    }
-
-    if (!userId || userId.trim() === '') {
-      return failure(ValidationError.missingField('userId'))
-    }
-
-    // Fetch campaign
-    const campaign = await tryCatch(
-      () => this.campaignRepository.findById(campaignId),
-      (error: unknown) =>
-        ExternalServiceError.database(
-          'fetch campaign',
-          error instanceof Error ? error.message : undefined
-        )
-    )
-
-    if (!campaign.ok) {
-      return campaign // Return failure
-    }
-
-    // Check if campaign exists
-    if (!campaign.value) {
-      return failure(NotFoundError.entity('Campaign', campaignId))
-    }
-
-    // Check ownership
-    if (campaign.value.userId !== userId) {
-      return failure(ForbiddenError.resourceAccess('Campaign', campaignId))
-    }
-
-    // Delete campaign
-    const deleteResult = await tryCatch(
-      () => this.campaignRepository.delete(campaignId),
-      (error: unknown) =>
-        ExternalServiceError.database(
-          'delete campaign',
-          error instanceof Error ? error.message : undefined
-        )
-    )
-
-    if (!deleteResult.ok) {
-      return deleteResult
-    }
-
-    return success(undefined)
-  }
-
-  /**
-   * Execute with exceptions (alternative approach)
-   *
-   * Use this when you want to throw errors instead of returning Result.
-   * Useful for API routes that have error middleware.
-   */
-  async executeWithExceptions(campaignId: string, userId: string): Promise<void> {
+  async execute(campaignId: string, userId: string): Promise<void> {
     // Validate input
     if (!campaignId || campaignId.trim() === '') {
       throw ValidationError.missingField('campaignId')
