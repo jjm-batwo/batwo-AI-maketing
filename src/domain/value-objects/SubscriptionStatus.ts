@@ -18,7 +18,11 @@ export enum SubscriptionStatus {
  * 상태 전이 규칙
  */
 export const SUBSCRIPTION_STATUS_TRANSITIONS: Record<SubscriptionStatus, SubscriptionStatus[]> = {
-  [SubscriptionStatus.TRIALING]: [SubscriptionStatus.ACTIVE, SubscriptionStatus.CANCELLED],
+  [SubscriptionStatus.TRIALING]: [
+    SubscriptionStatus.ACTIVE,
+    SubscriptionStatus.CANCELLED,
+    SubscriptionStatus.EXPIRED,
+  ],
   [SubscriptionStatus.ACTIVE]: [SubscriptionStatus.PAST_DUE, SubscriptionStatus.CANCELLED],
   [SubscriptionStatus.PAST_DUE]: [
     SubscriptionStatus.ACTIVE,

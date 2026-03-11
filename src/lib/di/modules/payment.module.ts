@@ -28,6 +28,7 @@ import { CancelSubscriptionUseCase } from '@application/use-cases/payment/Cancel
 import { ChangePlanUseCase } from '@application/use-cases/payment/ChangePlanUseCase'
 import { GetPaymentHistoryUseCase } from '@application/use-cases/payment/GetPaymentHistoryUseCase'
 import { StartTrialUseCase } from '@application/use-cases/payment/StartTrialUseCase'
+import { ExpireTrialsUseCase } from '@application/use-cases/payment/ExpireTrialsUseCase'
 
 import { prisma } from '@/lib/prisma'
 
@@ -109,5 +110,10 @@ export function registerPaymentModule(container: Container): void {
   container.register(
     DI_TOKENS.StartTrialUseCase,
     () => new StartTrialUseCase(container.resolve(DI_TOKENS.SubscriptionRepository))
+  )
+
+  container.register(
+    DI_TOKENS.ExpireTrialsUseCase,
+    () => new ExpireTrialsUseCase(container.resolve(DI_TOKENS.SubscriptionRepository))
   )
 }

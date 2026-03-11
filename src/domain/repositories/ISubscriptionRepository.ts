@@ -32,4 +32,5 @@ export interface ISubscriptionRepository {
   getStats(): Promise<SubscriptionStats>
   findExpiringSoon(days: number): Promise<Subscription[]>
   findPastDue(): Promise<Subscription[]>
+  findExpiredTrials(): Promise<Subscription[]>
 }

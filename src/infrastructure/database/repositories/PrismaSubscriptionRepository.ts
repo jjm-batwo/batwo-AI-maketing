@@ -110,6 +110,8 @@ export class PrismaSubscriptionRepository implements ISubscriptionRepository {
         cancelledAt: data.cancelledAt,
         createdAt: data.createdAt,
         updatedAt: data.updatedAt,
+        trialEndDate: data.trialEndDate,
+        trialStartedAt: data.trialStartedAt,
         user: {
           connect: { id: data.userId },
         },
@@ -227,6 +229,19 @@ export class PrismaSubscriptionRepository implements ISubscriptionRepository {
         status: 'PAST_DUE',
       },
       orderBy: { currentPeriodEnd: 'asc' },
+    })
+
+    return subscriptions.map(SubscriptionMapper.toDomain)
+  }
+
+  async findExpiredTrials(): Promise<Subscription[]> {
+    const subscriptions = await this.prisma.subscription.findMany({
+      where: {
+        status: 'TRIALING',
+        trialEndDate: {
+          lt: new Date(),
+        },
+      },
     })
 
     return subscriptions.map(SubscriptionMapper.toDomain)

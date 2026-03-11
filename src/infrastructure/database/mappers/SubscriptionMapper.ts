@@ -19,6 +19,8 @@ export class SubscriptionMapper {
       cancelledAt: prisma.cancelledAt ?? undefined,
       createdAt: prisma.createdAt,
       updatedAt: prisma.updatedAt,
+      trialEndDate: prisma.trialEndDate,
+      trialStartedAt: prisma.trialStartedAt,
     })
   }
 
@@ -33,6 +35,8 @@ export class SubscriptionMapper {
       cancelledAt: subscription.cancelledAt ?? null,
       createdAt: subscription.createdAt,
       updatedAt: subscription.updatedAt,
+      trialEndDate: subscription.trialEndDate,
+      trialStartedAt: subscription.trialStartedAt,
     }
   }
 
@@ -44,6 +48,8 @@ export class SubscriptionMapper {
       currentPeriodEnd: subscription.currentPeriodEnd,
       cancelledAt: subscription.cancelledAt ?? null,
       updatedAt: subscription.updatedAt,
+      trialEndDate: subscription.trialEndDate,
+      trialStartedAt: subscription.trialStartedAt,
     }
   }
 }
