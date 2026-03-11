@@ -83,6 +83,7 @@ import { ListOptimizationRulesUseCase } from '@application/use-cases/optimizatio
 import { EvaluateOptimizationRulesUseCase } from '@application/use-cases/optimization/EvaluateOptimizationRulesUseCase'
 import { AutoOptimizeCampaignUseCase } from '@application/use-cases/optimization/AutoOptimizeCampaignUseCase'
 import { CalculateSavingsUseCase } from '@application/use-cases/optimization/CalculateSavingsUseCase'
+import { ApplyOptimizationUseCase } from '@application/use-cases/ai/ApplyOptimizationUseCase'
 
 import { prisma } from '@/lib/prisma'
 
@@ -388,6 +389,16 @@ export function registerCampaignModule(container: Container): void {
         container.resolve(DI_TOKENS.OptimizationRuleRepository),
         container.resolve(DI_TOKENS.CampaignRepository),
         container.resolve(DI_TOKENS.KPIRepository)
+      )
+  )
+
+  container.register(
+    DI_TOKENS.ApplyOptimizationUseCase,
+    () =>
+      new ApplyOptimizationUseCase(
+        container.resolve(DI_TOKENS.PendingActionRepository),
+        container.resolve(DI_TOKENS.CampaignRepository),
+        container.resolve(DI_TOKENS.ConversationRepository)
       )
   )
 }
