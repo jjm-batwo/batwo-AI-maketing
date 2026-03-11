@@ -94,6 +94,8 @@ export const DI_TOKENS = {
   CancelSubscriptionUseCase: Symbol.for('CancelSubscriptionUseCase'),
   ChangePlanUseCase: Symbol.for('ChangePlanUseCase'),
   GetPaymentHistoryUseCase: Symbol.for('GetPaymentHistoryUseCase'),
+  StartTrialUseCase: Symbol.for('StartTrialUseCase'),
+  ExpireTrialsUseCase: Symbol.for('ExpireTrialsUseCase'),
 
   // AdSet
   AdSetRepository: Symbol.for('AdSetRepository'),
