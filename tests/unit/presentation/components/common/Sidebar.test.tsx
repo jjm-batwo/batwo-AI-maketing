@@ -73,7 +73,7 @@ describe('Sidebar', () => {
       expect(screen.getByText('Beta')).toBeInTheDocument()
     })
 
-    it('should render 5 main navigation items', () => {
+    it('should render 6 main navigation items', () => {
       vi.mocked(usePathname).mockReturnValue('/dashboard')
 
       render(<Sidebar />, { wrapper: Wrapper })
@@ -189,7 +189,7 @@ describe('Sidebar', () => {
 
       // Each nav item should have an icon (svg)
       const navIcons = container.querySelectorAll('nav svg')
-      expect(navIcons.length).toBe(5) // 5 main nav items
+      expect(navIcons.length).toBe(6) // 6 main nav items
     })
 
     it('should have proper icon styling', () => {

@@ -575,7 +575,7 @@ git commit -m "feat(ui): add trial start button to pricing page"
 - Create: `src/domain/value-objects/AuditReport.ts`
 - Test: `tests/unit/application/services/AdAccountAuditService.test.ts`
 
-- [ ] **Step 1: AuditReport 밸류 오브젝트 작성**
+- [x] **Step 1: AuditReport 밸류 오브젝트(Value Object) 작성**
 
 ```typescript
 // src/domain/value-objects/AuditReport.ts
@@ -611,7 +611,7 @@ export function calculateOverallGrade(score: number): AuditGrade {
 }
 ```
 
-- [ ] **Step 2: AdAccountAuditService 테스트 작성**
+- [x] **Step 2: AdAccountAuditService 애플리케이션 서비스 구현**
 
 ```typescript
 describe('AdAccountAuditService', () => {
@@ -731,7 +731,7 @@ export async function GET() {
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add src/app/api/audit/account/route.ts
@@ -749,7 +749,7 @@ git commit -m "feat(api): add GET /api/audit/account endpoint"
 - Create: `src/presentation/components/audit/AuditUpgradeCTA.tsx`
 - Create: `src/presentation/hooks/useAccountAudit.ts`
 
-- [ ] **Step 1: useAccountAudit 훅 작성**
+- [x] **Step 1: useAccountAudit 훅 작성**
 
 ```typescript
 // src/presentation/hooks/useAccountAudit.ts
@@ -770,7 +770,7 @@ export function useAccountAudit() {
 }
 ```
 
-- [ ] **Step 2: AuditScoreCard 컴포넌트**
+- [x] **Step 2: AuditScoreCard 컴포넌트**
 
 ```tsx
 // src/presentation/components/audit/AuditScoreCard.tsx
@@ -812,15 +812,15 @@ export const AuditScoreCard = memo(function AuditScoreCard({ report }: { report:
 });
 ```
 
-- [ ] **Step 3: AuditCategoryBreakdown 컴포넌트**
+- [x] **Step 3: AuditCategoryBreakdown 컴포넌트**
 
 5가지 진단 카테고리를 카드로 표시. 각 카테고리별 score, findings, recommendations 표시.
 
-- [ ] **Step 4: AuditUpgradeCTA 컴포넌트**
+- [x] **Step 4: AuditUpgradeCTA 컴포넌트**
 
 무료 사용자에게 "Pro 플랜으로 AI 최적화 시작" CTA 표시.
 
-- [ ] **Step 5: audit/page.tsx 페이지 조합**
+- [x] **Step 5: audit/page.tsx 페이지 조합**
 
 ```tsx
 // src/app/(dashboard)/audit/page.tsx
@@ -848,7 +848,7 @@ export default function AuditPage() {
 }
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git commit -m "feat(ui): add ad account audit result page with score, breakdown, CTA"
@@ -861,7 +861,7 @@ git commit -m "feat(ui): add ad account audit result page with score, breakdown,
 **Files:**
 - Modify: 온보딩 완료 시 `/audit` 페이지로 리다이렉트
 
-- [ ] **Step 1: Meta 계정 연결 완료 후 진단 페이지로 이동**
+- [x] **Step 1: Meta 계정 연결 완료 후 진단 페이지로 이동**
 
 온보딩 위자드 완료 콜백에서 `router.push('/audit')` 추가.
 
@@ -878,9 +878,9 @@ git commit -m "feat(onboarding): redirect to audit page after Meta account conne
 **Files:**
 - Modify: 사이드바/네비게이션 컴포넌트
 
-- [ ] **Step 1: 사이드바에 "광고 진단" 메뉴 아이템 추가**
+- [x] **Step 1: 사이드바에 "광고 진단" 메뉴 아이템 추가**
 
-- [ ] **Step 2: 전체 테스트 확인**
+- [x] **Step 2: 전체 테스트 확인**
 
 Run: `npx tsc --noEmit && npx vitest run`
 
@@ -900,7 +900,7 @@ git commit -m "feat(ui): add audit menu to sidebar navigation"
 - Create: `src/domain/value-objects/ApplyAction.ts`
 - Test: `tests/unit/domain/value-objects/ApplyAction.test.ts`
 
-- [ ] **Step 1: ApplyAction 밸류 오브젝트 작성**
+- [x] **Step 1: ApplyAction 밸류 오브젝트 작성**
 
 ```typescript
 // src/domain/value-objects/ApplyAction.ts
@@ -921,9 +921,9 @@ export function isHighConfidenceAction(action: ApplyAction): boolean {
 }
 ```
 
-- [ ] **Step 2: 테스트 작성 및 통과 확인**
+- [x] **Step 2: 테스트 작성 및 통과 확인**
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git commit -m "feat(domain): add ApplyAction value object for one-click optimization"
@@ -1017,9 +1017,9 @@ export class ApplyOptimizationUseCase {
 }
 ```
 
-- [ ] **Step 3: DI 토큰 및 바인딩 추가**
+- [x] **Step 3: DI 토큰 및 바인딩 추가**
 
-- [ ] **Step 4: 테스트 통과 확인 후 Commit**
+- [x] **Step 4: 테스트 통과 확인 후 Commit**
 
 ```bash
 git commit -m "feat(ai): add ApplyOptimizationUseCase with PendingAction workflow"
@@ -1032,7 +1032,7 @@ git commit -m "feat(ai): add ApplyOptimizationUseCase with PendingAction workflo
 **Files:**
 - Create: `src/app/api/ai/optimization/apply/route.ts`
 
-- [ ] **Step 1: API 라우트 구현**
+- [x] **Step 1: API 라우트 구현**
 
 ```typescript
 // src/app/api/ai/optimization/apply/route.ts
@@ -1077,7 +1077,7 @@ export async function POST(request: NextRequest) {
 }
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add src/app/api/ai/optimization/apply/route.ts
@@ -1093,7 +1093,7 @@ git commit -m "feat(api): add POST /api/ai/optimization/apply endpoint"
 - Create: `src/presentation/components/dashboard/ApplyOptimizationButton.tsx`
 - Create: `src/presentation/components/dashboard/OptimizationConfirmDialog.tsx`
 
-- [ ] **Step 1: ApplyOptimizationButton 컴포넌트**
+- [x] **Step 1: ApplyOptimizationButton 컴포넌트**
 
 ```tsx
 // src/presentation/components/dashboard/ApplyOptimizationButton.tsx
@@ -1146,15 +1146,15 @@ export const ApplyOptimizationButton = memo(function ApplyOptimizationButton({ a
 });
 ```
 
-- [ ] **Step 2: OptimizationConfirmDialog 컴포넌트**
+- [x] **Step 2: OptimizationConfirmDialog 컴포넌트**
 
 변경 전/후 비교 표시, 경고 사항, 확인/취소 버튼.
 
-- [ ] **Step 3: AIInsights 컴포넌트에 버튼 통합**
+- [x] **Step 3: AIInsights 컴포넌트에 버튼 통합**
 
 각 인사이트 카드에 `action` 필드가 있으면 `<ApplyOptimizationButton>` 렌더.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git commit -m "feat(ui): add one-click optimization button to AI insights"
@@ -1169,7 +1169,7 @@ git commit -m "feat(ui): add one-click optimization button to AI insights"
 - Create: `src/app/api/ai/optimization/track/[actionId]/route.ts`
 - Create: `src/presentation/components/dashboard/OptimizationResultCard.tsx`
 
-- [ ] **Step 1: OptimizationTrackerService 구현**
+- [x] **Step 1: OptimizationTrackerService 구현**
 
 ```typescript
 export class OptimizationTrackerService {
@@ -1214,13 +1214,13 @@ export class OptimizationTrackerService {
 }
 ```
 
-- [ ] **Step 2: API 라우트 및 UI 컴포넌트 구현**
+- [x] **Step 2: API 라우트 및 UI 컴포넌트 구현**
 
-- [ ] **Step 3: 전체 테스트 확인**
+- [x] **Step 3: 전체 테스트 확인**
 
 Run: `npx tsc --noEmit && npx vitest run`
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git commit -m "feat(ai): add optimization result tracking (7-day before/after comparison)"
