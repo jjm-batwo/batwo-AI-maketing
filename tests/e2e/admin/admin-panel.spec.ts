@@ -10,7 +10,6 @@
 
 import { test, expect } from '@playwright/test'
 import { authFixture } from '../fixtures/auth'
-import { MockHelper } from '../helpers/mock.helper'
 
 test.describe('Admin Panel', () => {
   test.describe('Admin Dashboard', () => {

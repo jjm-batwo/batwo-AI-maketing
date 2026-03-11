@@ -86,7 +86,7 @@ export const tossPaymentsHandlers = [
   }),
 
   // Auto-pay with billing key
-  http.post(`${TOSS_API_BASE}/billing/:billingKey`, async ({ params, request }) => {
+  http.post(`${TOSS_API_BASE}/billing/:billingKey`, async ({ request }) => {
     const body = await request.json() as {
       customerKey: string
       amount: number

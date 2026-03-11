@@ -13,7 +13,6 @@ import {
   useReports,
   useReport,
   useGenerateReport,
-  useDownloadReport,
   useShareReport,
 } from '@/presentation/hooks/useReports'
 

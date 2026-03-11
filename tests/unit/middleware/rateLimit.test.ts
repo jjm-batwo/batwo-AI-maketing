@@ -4,7 +4,7 @@
  * 메모리 스토어의 윈도우 기반 Rate Limiting 로직을 검증합니다.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // Upstash 의존성을 모킹하여 순수 메모리 기반 동작만 테스트
 vi.mock('@/lib/security/config', () => ({

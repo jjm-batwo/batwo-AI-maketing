@@ -27,6 +27,13 @@ const eslintConfig = defineConfig([
       'security/detect-possible-timing-attacks': 'warn',
     },
   },
+  // Test & MSW files: relax strict rules (mocking patterns require `any`)
+  {
+    files: ['tests/**/*.{ts,tsx}', 'tests/msw/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'warn',
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
@@ -39,6 +46,11 @@ const eslintConfig = defineConfig([
     'coverage/**',
     // Git worktrees (isolated working directories):
     '.worktrees/**',
+    // Playwright reports & traces (auto-generated bundles):
+    'playwright-report/**',
+    'test-results/**',
+    // Performance test scripts (k6/Artillery, non-standard JS):
+    'tests/performance/**',
   ]),
 ])
 

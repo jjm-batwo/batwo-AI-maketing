@@ -9,7 +9,6 @@
 
 import { test, expect } from '@playwright/test'
 import { authFixture } from '../fixtures/auth'
-import { MockHelper } from '../helpers/mock.helper'
 
 test.describe('Payment Full Cycle', () => {
   test.describe('Plan Selection → Checkout → Activation', () => {

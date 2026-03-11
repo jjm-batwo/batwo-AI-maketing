@@ -14,7 +14,6 @@ import { useDashboardKPI } from '@/presentation/hooks'
 import { useAdSetsWithInsights } from '@/presentation/hooks/useAdSetsWithInsights'
 import { useAdsWithInsights } from '@/presentation/hooks/useAdsWithInsights'
 import {
-  CAMPAIGN_KPI_PERIOD_LABELS,
   type CampaignKPIPeriod,
   mapDetailPeriodToDatePreset,
 } from '@/presentation/utils/campaignPeriod'
@@ -82,7 +81,7 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
   const { openChatPanel } = useUIStore()
   const [period, setPeriod] = useState<CampaignKPIPeriod>('today')
 
-  const datePreset = useMemo(() => mapDetailPeriodToDatePreset(period as any), [period])
+  const datePreset = useMemo(() => mapDetailPeriodToDatePreset(period), [period])
 
   // 기간별 KPI 데이터 (클라이언트 사이드 fetch)
   const { data: kpiData, isLoading: isKpiLoading } = useDashboardKPI({
@@ -159,7 +158,7 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
   }, [rawCampaigns, filters.status])
 
   // 캠페인/광고세트 선택 핸들러
-  const handleCampaignClick = (id: string, name: string) => {
+  const handleCampaignClick = (id: string, _name: string) => {
     setSelectedCampaignForDrilldown(id)
     setActiveTab('adsets')
   }
@@ -275,7 +274,7 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
         <Tabs
           value={activeTab}
           onValueChange={(v) => {
-            setActiveTab(v as any)
+            setActiveTab(v as 'campaigns' | 'adsets' | 'ads')
             if (v === 'campaigns') {
               setSelectedCampaignForDrilldown(null)
               setSelectedAdSetForDrilldown(null)

@@ -37,7 +37,7 @@ export const metaApiHandlers = [
   }),
 
   // Get Campaigns
-  http.get(`${META_API_BASE}/act_:accountId/campaigns`, ({ params }) => {
+  http.get(`${META_API_BASE}/act_:accountId/campaigns`, ({ params: _params }) => {
     return HttpResponse.json({
       data: [
         {
