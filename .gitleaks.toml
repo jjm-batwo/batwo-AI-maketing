@@ -35,3 +35,4 @@ regex = '''test-secret-for-ci-only'''
 [rules.allowlist]
 description = "CI test constants"
 regexTarget = "match"
+regexes = ['''test-secret-for-ci-only''']

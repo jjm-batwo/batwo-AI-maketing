@@ -47,6 +47,10 @@ jobs:
         env:
           ANALYZE: 'true'
           SKIP_ENV_VALIDATION: 'true'
+          # 빌드 시 env.ts 검증 통과를 위한 더미 값
+          DATABASE_URL: 'postgresql://ci:ci@localhost:5432/ci'
+          NEXTAUTH_URL: 'http://localhost:3000'
+          NEXTAUTH_SECRET: 'ci-bundle-analysis-dummy-secret-32chars!'
           # Sentry를 비활성화하여 클린 번들 분석
           SENTRY_DSN: ''
           NEXT_PUBLIC_SENTRY_DSN: ''

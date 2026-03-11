@@ -9,12 +9,15 @@ export class PrismaTeamRepository implements ITeamRepository {
   async save(team: Team): Promise<Team> {
     const { team: teamData, members } = TeamMapper.toPrismaCreate(team)
 
+    // Nested createMany는 parent FK(teamId)를 자동 주입하므로 제외
+    const membersWithoutTeamId = members.map(({ teamId: _teamId, ...rest }) => rest)
+
     const createdTeam = await this.prisma.team.create({
       data: {
         ...teamData,
         members: {
           createMany: {
-            data: members,
+            data: membersWithoutTeamId,
           },
         },
       },
