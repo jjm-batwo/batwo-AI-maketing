@@ -5,14 +5,11 @@ import type {
   IMetaAdAccountRepository,
   MetaAdAccountTokenRecord,
 } from '../../../../../src/application/ports/IMetaAdAccountRepository'
+import type { IAppConfig } from '../../../../../src/application/ports/IAppConfig'
 
 // fetch 모킹
 const mockFetch = vi.fn()
 vi.stubGlobal('fetch', mockFetch)
-
-// 환경변수 설정
-vi.stubEnv('META_APP_ID', 'test-app-id')
-vi.stubEnv('META_APP_SECRET', 'test-app-secret')
 
 describe('RefreshMetaTokenUseCase', () => {
   let useCase: RefreshMetaTokenUseCase
@@ -25,9 +22,16 @@ describe('RefreshMetaTokenUseCase', () => {
     updateToken: updateTokenMock,
   }
 
+  const mockAppConfig: IAppConfig = {
+    nodeEnv: 'test',
+    metaAppId: 'test-app-id',
+    metaAppSecret: 'test-app-secret',
+    appUrl: 'https://batwo.ai',
+  }
+
   beforeEach(() => {
     vi.clearAllMocks()
-    useCase = new RefreshMetaTokenUseCase(mockMetaAdAccountRepository)
+    useCase = new RefreshMetaTokenUseCase(mockMetaAdAccountRepository, mockAppConfig)
   })
 
   describe('execute', () => {

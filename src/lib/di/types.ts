@@ -45,6 +45,7 @@ export const DI_TOKENS = {
   CompetitorBenchmarkService: Symbol.for('CompetitorBenchmarkService'),
   TargetingRecommendationService: Symbol.for('TargetingRecommendationService'),
   PermissionService: Symbol.for('PermissionService'),
+  PermissionRepository: Symbol.for('PermissionRepository'),
   ABTestAnalysisService: Symbol.for('ABTestAnalysisService'),
   ToolRegistry: Symbol.for('ToolRegistry'),
   ConversationalAgentService: Symbol.for('ConversationalAgentService'),
@@ -166,6 +167,9 @@ export const DI_TOKENS = {
 
   // Conversation Summarizer
   ConversationSummarizerService: Symbol.for('ConversationSummarizerService'),
+
+  // App Configuration (QUAL-10)
+  AppConfig: Symbol.for('AppConfig'),
 } as const
 
 export type DIToken = (typeof DI_TOKENS)[keyof typeof DI_TOKENS]

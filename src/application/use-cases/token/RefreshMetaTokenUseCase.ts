@@ -9,6 +9,7 @@
 
 import { IMetaAdAccountRepository } from '@application/ports/IMetaAdAccountRepository'
 import { safeDecryptToken, encryptToken } from '@application/utils/TokenEncryption'
+import type { IAppConfig } from '@application/ports/IAppConfig'
 
 const META_API_VERSION = 'v25.0'
 const META_GRAPH_URL = `https://graph.facebook.com/${META_API_VERSION}`
@@ -35,7 +36,10 @@ interface MetaTokenResponse {
 }
 
 export class RefreshMetaTokenUseCase {
-  constructor(private readonly metaAdAccountRepository: IMetaAdAccountRepository) {}
+  constructor(
+    private readonly metaAdAccountRepository: IMetaAdAccountRepository,
+    private readonly appConfig: IAppConfig
+  ) {}
 
   async execute(): Promise<TokenRefreshResult> {
     const result: TokenRefreshResult = {
@@ -45,8 +49,8 @@ export class RefreshMetaTokenUseCase {
       errors: [],
     }
 
-    const appId = process.env.META_APP_ID
-    const appSecret = process.env.META_APP_SECRET
+    const appId = this.appConfig.metaAppId
+    const appSecret = this.appConfig.metaAppSecret
 
     if (!appId || !appSecret) {
       throw new Error('META_APP_ID 또는 META_APP_SECRET이 설정되지 않았습니다')

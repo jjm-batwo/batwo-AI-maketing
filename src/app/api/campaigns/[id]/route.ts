@@ -7,9 +7,9 @@ import {
   CampaignNotFoundError,
   UnauthorizedCampaignAccessError,
 } from '@application/use-cases/campaign/UpdateCampaignUseCase'
+import { DeleteCampaignUseCase } from '@application/use-cases/campaign/DeleteCampaignUseCase'
 import { DuplicateCampaignNameError } from '@application/use-cases/campaign/CreateCampaignUseCase'
 import { InvalidCampaignError } from '@domain/errors/InvalidCampaignError'
-import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import { invalidateCache, getUserPattern } from '@/lib/cache/kpiCache'
 import { revalidateTag } from 'next/cache'
 import { updateCampaignSchema, validateBody } from '@/lib/validations'
@@ -106,20 +106,23 @@ export async function DELETE(
   try {
     const { id } = await params
 
-    const campaignRepository = container.resolve<ICampaignRepository>(DI_TOKENS.CampaignRepository)
+    const deleteCampaign = container.resolve<DeleteCampaignUseCase>(DI_TOKENS.DeleteCampaignUseCase)
 
-    const campaign = await campaignRepository.findById(id)
+    const result = await deleteCampaign.execute(id, user.id)
 
-    if (!campaign) {
-      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
+    if (!result.ok) {
+      const error = result.error
+      if (error.name === 'NotFoundError') {
+        return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
+      }
+      if (error.name === 'ForbiddenError') {
+        return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
+      }
+      if (error.name === 'ValidationError') {
+        return NextResponse.json({ message: error.message }, { status: 400 })
+      }
+      return NextResponse.json({ message: error.message }, { status: 500 })
     }
-
-    // Check ownership
-    if (campaign.userId !== user.id) {
-      return NextResponse.json({ message: '캠페인을 찾을 수 없습니다' }, { status: 404 })
-    }
-
-    await campaignRepository.delete(id)
 
     // Invalidate KPI cache for this user
     invalidateCache(getUserPattern(user.id))
