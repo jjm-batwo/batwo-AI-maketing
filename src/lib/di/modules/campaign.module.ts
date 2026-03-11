@@ -84,6 +84,7 @@ import { EvaluateOptimizationRulesUseCase } from '@application/use-cases/optimiz
 import { AutoOptimizeCampaignUseCase } from '@application/use-cases/optimization/AutoOptimizeCampaignUseCase'
 import { CalculateSavingsUseCase } from '@application/use-cases/optimization/CalculateSavingsUseCase'
 import { ApplyOptimizationUseCase } from '@application/use-cases/ai/ApplyOptimizationUseCase'
+import { OptimizationTrackerService } from '@application/services/OptimizationTrackerService'
 
 import { prisma } from '@/lib/prisma'
 
@@ -399,6 +400,15 @@ export function registerCampaignModule(container: Container): void {
         container.resolve(DI_TOKENS.PendingActionRepository),
         container.resolve(DI_TOKENS.CampaignRepository),
         container.resolve(DI_TOKENS.ConversationRepository)
+      )
+  )
+
+  container.registerSingleton(
+    DI_TOKENS.OptimizationTrackerService,
+    () =>
+      new OptimizationTrackerService(
+        container.resolve(DI_TOKENS.KPIRepository),
+        container.resolve(DI_TOKENS.PendingActionRepository)
       )
   )
 }

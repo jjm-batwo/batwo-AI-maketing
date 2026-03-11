@@ -148,6 +148,7 @@ export const DI_TOKENS = {
   AutoOptimizeCampaignUseCase: Symbol.for('AutoOptimizeCampaignUseCase'),
   CalculateSavingsUseCase: Symbol.for('CalculateSavingsUseCase'),
   ApplyOptimizationUseCase: Symbol.for('ApplyOptimizationUseCase'),
+  OptimizationTrackerService: Symbol.for('OptimizationTrackerService'),
 
   // Audit Use Cases
   AuditAdAccountUseCase: Symbol.for('AuditAdAccountUseCase'),
