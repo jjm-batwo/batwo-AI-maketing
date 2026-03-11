@@ -11,6 +11,7 @@ import {
   OptimizationTimeline,
 } from '@/presentation/components/dashboard'
 import { DonutChart } from '@/presentation/components/dashboard/DonutChart'
+import { FunnelChartWidget } from '@/presentation/components/analytics/FunnelChartWidget'
 import type { CampaignMetricColumn } from '@/presentation/components/dashboard/CampaignSummaryTable'
 import {
   useDashboardKPI,
@@ -870,6 +871,11 @@ export default function DashboardPage() {
           events={savingsData?.recentOptimizations ?? []}
           isLoading={isSavingsLoading}
         />
+      </div>
+
+      {/* 퍼널 시각화 및 기타 메트릭 */}
+      <div className="grid gap-6 mb-6">
+        <FunnelChartWidget pixelId="mock-pixel" period={dashboardPeriod} />
       </div>
 
       {/* AI Insights & Campaign Summary */}

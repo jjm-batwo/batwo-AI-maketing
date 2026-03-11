@@ -54,4 +54,12 @@ export interface IConversionEventRepository {
    * @param pixelId 픽셀 ID
    */
   countByPixelIdGrouped(pixelId: string): Promise<{ sent: number; failed: number; expired: number }>
+
+  /**
+   * 특정 이벤트 이름에 대한 발생 횟수와 금액 합계 조회 (퍼널 시각화용)
+   * @param pixelId 픽셀 ID
+   * @param eventName 이벤트 이름 (e.g., PageView, Purchase)
+   * @param since 조회 시작 시간
+   */
+  countByEventName(pixelId: string, eventName: string, since: Date): Promise<{ count: number; value: number }>
 }

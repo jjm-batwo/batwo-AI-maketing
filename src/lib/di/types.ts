@@ -176,6 +176,9 @@ export const DI_TOKENS = {
 
   // App Configuration (QUAL-10)
   AppConfig: Symbol.for('AppConfig'),
+
+  // Analytics
+  ConversionFunnelService: Symbol.for('ConversionFunnelService'),
 } as const
 
 export type DIToken = (typeof DI_TOKENS)[keyof typeof DI_TOKENS]

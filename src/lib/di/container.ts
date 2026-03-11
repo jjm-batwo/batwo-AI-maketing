@@ -68,6 +68,7 @@ import type { ProactiveAlertService } from '@application/services/ProactiveAlert
 import type { MarketingIntelligenceService } from '@application/services/MarketingIntelligenceService'
 import type { ConversationSummarizerService } from '@application/services/ConversationSummarizerService'
 import type { KPIInsightsService } from '@application/services/KPIInsightsService'
+import type { ConversionFunnelService } from '@application/services/ConversionFunnelService'
 
 import type { CreateCampaignUseCase } from '@application/use-cases/campaign/CreateCampaignUseCase'
 import type { UpdateCampaignUseCase } from '@application/use-cases/campaign/UpdateCampaignUseCase'
@@ -503,4 +504,8 @@ export function getConversationSummarizerService(): ConversationSummarizerServic
 
 export function getKPIInsightsService(): KPIInsightsService {
   return container.resolve(DI_TOKENS.KPIInsightsService)
+}
+
+export function getConversionFunnelService(): ConversionFunnelService {
+  return container.resolve(DI_TOKENS.ConversionFunnelService)
 }

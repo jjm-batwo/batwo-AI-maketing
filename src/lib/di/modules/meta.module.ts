@@ -34,6 +34,7 @@ import { SelectPixelUseCase } from '@application/use-cases/pixel/SelectPixelUseC
 import { SendCAPIEventsUseCase } from '@application/use-cases/pixel/SendCAPIEventsUseCase'
 import { GetTrackingHealthUseCase } from '@application/use-cases/pixel/GetTrackingHealthUseCase'
 import { RefreshMetaTokenUseCase } from '@application/use-cases/token/RefreshMetaTokenUseCase'
+import { ConversionFunnelService } from '@application/services/ConversionFunnelService'
 
 import { safeDecryptToken } from '@application/utils/TokenEncryption'
 import { prisma } from '@/lib/prisma'
@@ -113,6 +114,11 @@ export function registerMetaModule(container: Container): void {
         container.resolve(DI_TOKENS.ConversionEventRepository),
         container.resolve(DI_TOKENS.CAPIService)
       )
+  )
+
+  container.registerSingleton(
+    DI_TOKENS.ConversionFunnelService,
+    () => new ConversionFunnelService(container.resolve(DI_TOKENS.ConversionEventRepository))
   )
 
   // --- Token Management Use Cases (Transient) ---
