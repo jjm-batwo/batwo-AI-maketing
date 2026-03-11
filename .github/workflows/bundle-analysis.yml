@@ -1,0 +1,135 @@
+# Bundle Size Analysis for 바투 AI 마케팅 솔루션
+# PR마다 번들 크기를 분석하고 리포트를 생성합니다.
+
+name: Bundle Analysis
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main]
+
+concurrency:
+  group: bundle-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  NPM_VERSION: '11.9.0'
+
+jobs:
+  analyze:
+    name: Analyze Bundle Size
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Setup npm
+        run: npm install -g npm@${{ env.NPM_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Build with Bundle Analyzer
+        run: npm run analyze
+        env:
+          ANALYZE: 'true'
+          SKIP_ENV_VALIDATION: 'true'
+          # Sentry를 비활성화하여 클린 번들 분석
+          SENTRY_DSN: ''
+          NEXT_PUBLIC_SENTRY_DSN: ''
+
+      - name: Generate Bundle Size Report
+        id: bundle-report
+        run: |
+          echo "## 📦 Bundle Size Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Build Output" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          # .next/build-manifest.json에서 페이지별 번들 정보 추출
+          if [ -f ".next/build-manifest.json" ]; then
+            echo "✅ Build manifest found" >> $GITHUB_STEP_SUMMARY
+            # 페이지 수 계산
+            PAGE_COUNT=$(cat .next/build-manifest.json | python3 -c "import sys,json; d=json.load(sys.stdin); print(len(d.get('pages', {})))" 2>/dev/null || echo "N/A")
+            echo "Total pages: $PAGE_COUNT" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # .next/server 디렉토리 크기
+          if [ -d ".next/server" ]; then
+            SERVER_SIZE=$(du -sh .next/server | cut -f1)
+            echo "Server bundle: $SERVER_SIZE" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # .next/static 디렉토리 크기
+          if [ -d ".next/static" ]; then
+            STATIC_SIZE=$(du -sh .next/static | cut -f1)
+            echo "Client bundle: $STATIC_SIZE" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          # 큰 청크 파일 리포트 (500KB 이상)
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ⚠️ Large Chunks (>500KB)" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          LARGE_FILES=$(find .next/static -name "*.js" -size +500k -exec ls -lh {} \; 2>/dev/null | awk '{print $5, $NF}' | sort -rh)
+          if [ -z "$LARGE_FILES" ]; then
+            echo "✅ No chunks exceed 500KB" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "$LARGE_FILES" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          # JS 파일 총 크기
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 JavaScript Files Summary" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          TOTAL_JS_SIZE=$(find .next/static -name "*.js" -exec du -cb {} + 2>/dev/null | tail -1 | cut -f1)
+          if [ -n "$TOTAL_JS_SIZE" ]; then
+            TOTAL_JS_KB=$((TOTAL_JS_SIZE / 1024))
+            echo "Total client JS: ${TOTAL_JS_KB}KB ($(echo "scale=2; $TOTAL_JS_KB / 1024" | bc)MB)" >> $GITHUB_STEP_SUMMARY
+          fi
+          JS_FILE_COUNT=$(find .next/static -name "*.js" | wc -l | tr -d ' ')
+          echo "Total JS files: $JS_FILE_COUNT" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload bundle analysis artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-analysis
+          path: |
+            .next/analyze/
+            .next/build-manifest.json
+          retention-days: 14
+        continue-on-error: true
+
+      - name: Check for @react-pdf/renderer in client bundle
+        run: |
+          echo "### 🔍 @react-pdf/renderer Client Bundle Check" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+          # 클라이언트 번들에서 react-pdf 참조 확인
+          REACT_PDF_IN_CLIENT=$(grep -rl "react-pdf" .next/static/ 2>/dev/null || true)
+          if [ -z "$REACT_PDF_IN_CLIENT" ]; then
+            echo "✅ @react-pdf/renderer is NOT in the client bundle" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ @react-pdf/renderer found in client bundle:" >> $GITHUB_STEP_SUMMARY
+            echo "$REACT_PDF_IN_CLIENT" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "ACTION: Ensure dynamic import with ssr: false or serverExternalPackages" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo '```' >> $GITHUB_STEP_SUMMARY
