@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { DI_TOKENS, container } from '@/lib/di/container'
+import { ExpireTrialsUseCase } from '@application/use-cases/payment/ExpireTrialsUseCase'
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,7 +9,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const expireTrialsUseCase = container.resolve(DI_TOKENS.ExpireTrialsUseCase)
+    const expireTrialsUseCase = container.resolve<ExpireTrialsUseCase>(DI_TOKENS.ExpireTrialsUseCase)
     const result = await expireTrialsUseCase.execute()
 
     return NextResponse.json(result)
@@ -25,7 +26,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const expireTrialsUseCase = container.resolve(DI_TOKENS.ExpireTrialsUseCase)
+    const expireTrialsUseCase = container.resolve<ExpireTrialsUseCase>(DI_TOKENS.ExpireTrialsUseCase)
     const result = await expireTrialsUseCase.execute()
 
     return NextResponse.json(result)

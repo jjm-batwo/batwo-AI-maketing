@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { DI_TOKENS, container } from '@/lib/di/container'
-import { auth } from '@/lib/auth'
+import { getAuthenticatedUser } from '@/lib/auth'
+import { StartTrialUseCase } from '@application/use-cases/payment/StartTrialUseCase'
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth()
-    if (!session || !session.user || !session.user.id) {
+    const user = await getAuthenticatedUser()
+    if (!user || !user.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const startTrialUseCase = container.resolve(DI_TOKENS.StartTrialUseCase)
+    const startTrialUseCase = container.resolve<StartTrialUseCase>(DI_TOKENS.StartTrialUseCase)
     const result = await startTrialUseCase.execute({
-      userId: session.user.id,
+      userId: user.id,
     })
 
     return NextResponse.json(result)

@@ -17,6 +17,16 @@ vi.mock('next-auth/react', () => ({
   })),
 }))
 
+// Mock next/navigation
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+  })),
+}))
+
 // Mock next-intl with Korean translations
 const mockTranslations: Record<string, Record<string, string>> = {
   'onboarding': {

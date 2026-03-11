@@ -29,30 +29,22 @@ export function ReportDetailClient({ report, reportId }: ReportDetailClientProps
     }
   }
 
-  const handleShare = async () => {
-    const email = prompt('보고서를 공유할 이메일 주소를 입력하세요:')
-    if (!email) return
 
-    try {
-      await shareReport.mutateAsync({ id: reportId, email })
-      addToast({
-        type: 'success',
-        message: `${email}로 보고서가 공유되었습니다`,
-      })
-    } catch (error) {
-      addToast({
-        type: 'error',
-        message: error instanceof Error ? error.message : '공유에 실패했습니다',
-      })
-    }
-  }
 
   return (
     <ReportDetail
       report={report}
       isLoading={false}
       onDownload={handleDownload}
-      onShare={handleShare}
+      onShareCreated={(url) => {
+        addToast({ type: 'success', message: '공유 링크가 생성되었습니다.' })
+      }}
+      onShareRevoked={() => {
+        addToast({ type: 'success', message: '공유 링크가 취소되었습니다.' })
+      }}
+      onScheduleCreated={() => {
+        addToast({ type: 'success', message: '보고서 일정이 등록되었습니다.' })
+      }}
     />
   )
 }
