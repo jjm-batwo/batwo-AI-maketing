@@ -168,17 +168,17 @@
 
 | ID | 작업 | 파일 | 상태 |
 |----|------|------|------|
-| QUAL-03 | 라우트 핸들러에서 DI 직접 생성 → `container.resolve()` 사용 | `src/app/api/campaigns/[id]/adsets/route.ts` 외 4개 | ⏭️ |
-| QUAL-04 | `all-ads`/`all-adsets` 중복 코드 통합 + `mapWithConcurrency` 공유 유틸 추출 | `all-ads-with-insights/`, `all-adsets-with-insights/` | ⏭️ |
+| QUAL-03 | 라우트 핸들러에서 DI 직접 생성 → `container.resolve()` 사용 | `src/app/api/campaigns/[id]/adsets/route.ts` 외 4개 | ✅ |
+| QUAL-04 | `all-ads`/`all-adsets` 중복 코드 통합 + `mapWithConcurrency` 공유 유틸 추출 | `all-ads-with-insights/`, `all-adsets-with-insights/` | ✅ |
 | QUAL-05 | 에러 200 OK 삼킴 수정 → 적절한 HTTP 상태 코드 반환 | `all-ads-with-insights/route.ts`, `all-adsets-with-insights/route.ts` | ✅ |
-| QUAL-06 | `KPIInsightsService` setter injection → constructor injection 변경 | `KPIInsightsService.ts:123` | ⏭️ |
+| QUAL-06 | `KPIInsightsService` setter injection → constructor injection 변경 | `KPIInsightsService.ts:123` | ✅ |
 
 ### 3.4 성능 개선
 
 | ID | 작업 | 예상 효과 | 파일 | 상태 |
 |----|------|----------|------|------|
 | PERF-02 | KPI `saveMany` 직렬 루프 → 배치 upsert | 300 round-trips → 1 (~95% 감소) | `PrismaKPIRepository.ts:49-57` | ✅ |
-| PERF-03 | Cron 로그 직렬 → `Promise.all` 또는 `createMany` | 수십 round-trips → 1 | `src/app/api/cron/meta-warmup/route.ts:68-79` | ⏭️ |
+| PERF-03 | Cron 로그 직렬 → `Promise.all` 또는 `createMany` | 수십 round-trips → 1 | `src/app/api/cron/meta-warmup/route.ts:68-79` | ✅ |
 
 ### 3.5 테스트 확대
 
