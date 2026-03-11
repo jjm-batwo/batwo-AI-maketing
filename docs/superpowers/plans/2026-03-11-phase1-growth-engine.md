@@ -1230,7 +1230,7 @@ git commit -m "feat(ai): add optimization result tracking (7-day before/after co
 
 ### Task 6: Feature 3 최종 통합 테스트
 
-- [ ] **Step 1: E2E 시나리오 확인**
+- [x] **Step 1: E2E 시나리오 확인**
 
 1. 대시보드에서 AI 인사이트 로드
 2. "적용하기" 버튼 클릭
@@ -1238,11 +1238,11 @@ git commit -m "feat(ai): add optimization result tracking (7-day before/after co
 4. 확인 후 PendingAction 실행
 5. 7일 후 성과 추적 카드 표시
 
-- [ ] **Step 2: 전체 빌드 확인**
+- [x] **Step 2: 전체 빌드 확인**
 
 Run: `npx tsc --noEmit && npx vitest run && npx next build`
 
-- [ ] **Step 3: Final Commit**
+- [x] **Step 3: Final Commit**
 
 ```bash
 git commit -m "feat: complete Phase 1 - trial + audit + one-click optimization"
