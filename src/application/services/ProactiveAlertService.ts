@@ -1,11 +1,14 @@
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
 import type { IAlertRepository } from '@domain/repositories/IAlertRepository'
+import type { NotificationDispatcherService } from './NotificationDispatcherService'
 import { Alert } from '@domain/entities/Alert'
+import type { AlertSeverity, AlertType } from '@domain/entities/Alert'
 import { CampaignStatus } from '@domain/value-objects/CampaignStatus'
 
 interface AlertCheckResult {
   created: number
+  notified: number
   types: { anomaly: number; budget: number; milestone: number }
 }
 
@@ -13,8 +16,39 @@ export class ProactiveAlertService {
   constructor(
     private readonly campaignRepo: ICampaignRepository,
     private readonly kpiRepo: IKPIRepository,
-    private readonly alertRepo: IAlertRepository
+    private readonly alertRepo: IAlertRepository,
+    private readonly notificationDispatcher?: NotificationDispatcherService
   ) {}
+
+  /**
+   * 알림 저장 후 NotificationDispatcher를 통해 외부 알림 발송
+   */
+  private async saveAndNotify(
+    alert: Alert,
+    userId: string,
+    campaignId?: string,
+  ): Promise<void> {
+    await this.alertRepo.save(alert)
+
+    // 외부 알림 발송 (Slack, KakaoTalk 등)
+    if (this.notificationDispatcher) {
+      try {
+        await this.notificationDispatcher.dispatch({
+          userId,
+          alertType: alert.type,
+          severity: alert.severity as 'INFO' | 'WARNING' | 'CRITICAL',
+          title: alert.title,
+          message: alert.message,
+          actionUrl: campaignId
+            ? `${process.env.NEXT_PUBLIC_APP_URL || 'https://batwo.ai'}/campaigns/${campaignId}`
+            : undefined,
+        })
+      } catch (error) {
+        // 외부 알림 발송 실패는 Alert 저장에 영향을 주지 않음
+        console.error('[ProactiveAlertService] notification dispatch failed:', error)
+      }
+    }
+  }
 
   /**
    * 모든 사용자의 캠페인을 체크하여 알림 생성
@@ -23,6 +57,7 @@ export class ProactiveAlertService {
   async checkForUser(userId: string): Promise<AlertCheckResult> {
     const result: AlertCheckResult = {
       created: 0,
+      notified: 0,
       types: { anomaly: 0, budget: 0, milestone: 0 },
     }
 
@@ -75,7 +110,7 @@ export class ProactiveAlertService {
               },
               campaignId: campaign.id,
             })
-            await this.alertRepo.save(alert)
+            await this.saveAndNotify(alert, userId, campaign.id)
             result.types.anomaly++
             result.created++
           }
@@ -103,7 +138,7 @@ export class ProactiveAlertService {
               },
               campaignId: campaign.id,
             })
-            await this.alertRepo.save(alert)
+            await this.saveAndNotify(alert, userId, campaign.id)
             result.types.anomaly++
             result.created++
           }
@@ -129,7 +164,7 @@ export class ProactiveAlertService {
               },
               campaignId: campaign.id,
             })
-            await this.alertRepo.save(alert)
+            await this.saveAndNotify(alert, userId, campaign.id)
             result.types.budget++
             result.created++
           }
@@ -151,7 +186,7 @@ export class ProactiveAlertService {
             },
             campaignId: campaign.id,
           })
-          await this.alertRepo.save(alert)
+          await this.saveAndNotify(alert, userId, campaign.id)
           result.types.milestone++
           result.created++
         }

@@ -59,5 +59,15 @@ export { OptimizationRule, type OptimizationRuleProps, type RuleType } from './O
 
 export { DashboardLayout, type DashboardLayoutProps } from './DashboardLayout'
 
+export {
+  NotificationChannel,
+  type NotificationChannelProps,
+  type NotificationChannelType,
+  type SlackConfig,
+  type KakaoConfig,
+  type EmailConfig,
+  type ChannelConfig,
+} from './NotificationChannel'
+
 // Re-export domain events for convenience
 export * from '../events'

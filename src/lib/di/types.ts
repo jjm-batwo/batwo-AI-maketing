@@ -183,6 +183,13 @@ export const DI_TOKENS = {
 
   // Analytics
   ConversionFunnelService: Symbol.for('ConversionFunnelService'),
+
+  // Notification (Slack/KakaoTalk)
+  NotificationChannelRepository: Symbol.for('NotificationChannelRepository'),
+  NotificationPreferenceRepository: Symbol.for('NotificationPreferenceRepository'),
+  NotificationDispatcherService: Symbol.for('NotificationDispatcherService'),
+  SlackNotificationSender: Symbol.for('SlackNotificationSender'),
+  KakaoNotificationSender: Symbol.for('KakaoNotificationSender'),
 } as const
 
 export type DIToken = (typeof DI_TOKENS)[keyof typeof DI_TOKENS]

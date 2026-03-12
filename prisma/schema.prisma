@@ -53,6 +53,8 @@ model User {
   competitorTrackings   CompetitorTracking[]
   optimizationRules     OptimizationRule[]
   dashboardLayouts      DashboardLayout[]
+  notificationChannels  NotificationChannel[]
+  notificationPreferences NotificationPreference[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
@@ -991,4 +993,42 @@ model DashboardLayout {
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+}
+
+// ========================================
+// Notification Integration (Slack/KakaoTalk)
+// ========================================
+
+enum NotificationChannelType {
+  SLACK
+  KAKAO
+  EMAIL
+}
+
+model NotificationChannel {
+  id        String                  @id @default(cuid())
+  userId    String
+  user      User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationChannelType
+  config    Json                    // { webhookUrl } | { phoneNumber } | { email }
+  isActive  Boolean                 @default(true)
+  createdAt DateTime                @default(now())
+  updatedAt DateTime                @updatedAt
+
+  @@unique([userId, type])
+  @@index([userId])
+}
+
+model NotificationPreference {
+  id           String                  @id @default(cuid())
+  userId       String
+  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  alertType    String                  // 'anomaly' | 'budget' | 'milestone' | 'recommendation'
+  channels     NotificationChannelType[]
+  minSeverity  String                  @default("WARNING") // INFO | WARNING | CRITICAL
+  isActive     Boolean                 @default(true)
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+
+  @@unique([userId, alertType])
 }

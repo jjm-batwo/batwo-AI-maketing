@@ -19,6 +19,7 @@ import { registerKPIModule } from './modules/kpi.module'
 import { registerPaymentModule } from './modules/payment.module'
 import { registerMetaModule } from './modules/meta.module'
 import { registerAuthModule } from './modules/auth.module'
+import { registerNotificationModule } from './modules/notification.module'
 
 // Type-only imports for convenience function signatures
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
@@ -70,6 +71,9 @@ import type { MarketingIntelligenceService } from '@application/services/Marketi
 import type { ConversationSummarizerService } from '@application/services/ConversationSummarizerService'
 import type { KPIInsightsService } from '@application/services/KPIInsightsService'
 import type { ConversionFunnelService } from '@application/services/ConversionFunnelService'
+import type { NotificationDispatcherService } from '@application/services/NotificationDispatcherService'
+import type { INotificationChannelRepository } from '@domain/repositories/INotificationChannelRepository'
+import type { INotificationPreferenceRepository } from '@domain/repositories/INotificationPreferenceRepository'
 
 import type { CreateCampaignUseCase } from '@application/use-cases/campaign/CreateCampaignUseCase'
 import type { UpdateCampaignUseCase } from '@application/use-cases/campaign/UpdateCampaignUseCase'
@@ -160,7 +164,9 @@ registerPaymentModule(container)
 registerCommonModule(container)
 // 6. Report (GenerateWeeklyReportUseCase – Auth에서 의존)
 registerReportModule(container)
-// 7. Auth (ToolRegistry, ConversationalAgent – 모든 Use Case 의존)
+// 7. Notification (Slack/Kakao – ProactiveAlertService에서 의존)
+registerNotificationModule(container)
+// 8. Auth (ToolRegistry, ConversationalAgent – 모든 Use Case 의존)
 registerAuthModule(container)
 
 export { container, DI_TOKENS }
@@ -518,4 +524,16 @@ export function getKPIInsightsService(): KPIInsightsService {
 
 export function getConversionFunnelService(): ConversionFunnelService {
   return container.resolve(DI_TOKENS.ConversionFunnelService)
+}
+
+export function getNotificationDispatcherService(): NotificationDispatcherService {
+  return container.resolve(DI_TOKENS.NotificationDispatcherService)
+}
+
+export function getNotificationChannelRepository(): INotificationChannelRepository {
+  return container.resolve(DI_TOKENS.NotificationChannelRepository)
+}
+
+export function getNotificationPreferenceRepository(): INotificationPreferenceRepository {
+  return container.resolve(DI_TOKENS.NotificationPreferenceRepository)
 }
