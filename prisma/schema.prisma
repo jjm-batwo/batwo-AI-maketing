@@ -52,6 +52,7 @@ model User {
   creativeAssets        CreativeAsset[]
   competitorTrackings   CompetitorTracking[]
   optimizationRules     OptimizationRule[]
+  dashboardLayouts      DashboardLayout[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
@@ -973,4 +974,21 @@ model OptimizationLog {
   @@index([ruleId])
   @@index([campaignId])
   @@map("optimization_logs")
+}
+
+// ========================================
+// Custom Dashboard Layouts
+// ========================================
+
+model DashboardLayout {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  widgets   Json     // DashboardWidget[]
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }

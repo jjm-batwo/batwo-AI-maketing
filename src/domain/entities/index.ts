@@ -57,5 +57,7 @@ export { TeamRoleEntity, type TeamRoleName, type TeamRoleProps } from './TeamRol
 
 export { OptimizationRule, type OptimizationRuleProps, type RuleType } from './OptimizationRule'
 
+export { DashboardLayout, type DashboardLayoutProps } from './DashboardLayout'
+
 // Re-export domain events for convenience
 export * from '../events'
