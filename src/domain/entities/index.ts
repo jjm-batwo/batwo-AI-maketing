@@ -57,5 +57,15 @@ export { TeamRoleEntity, type TeamRoleName, type TeamRoleProps } from './TeamRol
 
 export { OptimizationRule, type OptimizationRuleProps, type RuleType } from './OptimizationRule'
 
+export {
+  NotificationChannel,
+  type NotificationChannelProps,
+  type NotificationChannelType,
+  type SlackConfig,
+  type KakaoConfig,
+  type EmailConfig,
+  type ChannelConfig,
+} from './NotificationChannel'
+
 // Re-export domain events for convenience
 export * from '../events'

@@ -31,3 +31,5 @@ export type {
 } from './IAIFeedbackRepository'
 export type { ITeamRoleRepository } from './ITeamRoleRepository'
 export type { IOptimizationRuleRepository } from './IOptimizationRuleRepository'
+export type { INotificationChannelRepository } from './INotificationChannelRepository'
+export type { INotificationPreferenceRepository } from './INotificationPreferenceRepository'
