@@ -151,3 +151,21 @@ export { ChatIntent } from './ChatIntent'
 export { IntentClassificationResult } from './IntentClassificationResult'
 export type { FewShotExample } from './FewShotExample'
 export * from './FunnelStage'
+export {
+  type WidgetType,
+  type WidgetPosition,
+  type WidgetConfig,
+  type DashboardWidget,
+  type LayoutPreset,
+  WIDGET_TYPE_LABELS,
+  ALL_WIDGET_TYPES,
+  WIDGET_DEFAULT_SIZES,
+  WIDGET_MIN_SIZES,
+  MAX_WIDGETS,
+  DEFAULT_WIDGETS,
+  MINIMAL_PRESET_WIDGETS,
+  ANALYTICS_PRESET_WIDGETS,
+  LAYOUT_PRESETS,
+  isValidWidgetType,
+  isValidWidgetPosition,
+} from './DashboardWidget'
