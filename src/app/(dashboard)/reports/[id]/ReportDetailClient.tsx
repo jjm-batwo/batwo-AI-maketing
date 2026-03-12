@@ -1,7 +1,7 @@
 'use client'
 
 import { ReportDetail } from '@/presentation/components/report'
-import { useDownloadReport, useShareReport } from '@/presentation/hooks'
+import { useDownloadReport } from '@/presentation/hooks'
 import { useUIStore } from '@/presentation/stores'
 
 interface ReportDetailClientProps {
@@ -12,7 +12,6 @@ interface ReportDetailClientProps {
 export function ReportDetailClient({ report, reportId }: ReportDetailClientProps) {
   const { addToast } = useUIStore()
   const downloadReport = useDownloadReport()
-  const shareReport = useShareReport()
 
   const handleDownload = async () => {
     try {
@@ -34,7 +33,7 @@ export function ReportDetailClient({ report, reportId }: ReportDetailClientProps
       report={report}
       isLoading={false}
       onDownload={handleDownload}
-      onShareCreated={(url) => {
+      onShareCreated={(_url) => {
         addToast({ type: 'success', message: '공유 링크가 생성되었습니다.' })
       }}
       onShareRevoked={() => {

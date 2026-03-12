@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const industry = searchParams.get('industry') || 'ECOMMERCE' // from User model if available, but default ECOMMERCE
     const period = parseInt(searchParams.get('period') || '30')
 
-    const benchmarkService = container.resolve<any>(DI_TOKENS.PerformanceBenchmarkService)
+    const benchmarkService = container.resolve(DI_TOKENS.PerformanceBenchmarkService) as { getBenchmark: (userId: string, industry: string, period: number) => Promise<unknown> }
     const data = await benchmarkService.getBenchmark(user.id, industry, period)
 
     return NextResponse.json({ success: true, data })

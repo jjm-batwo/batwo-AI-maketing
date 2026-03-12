@@ -3,7 +3,7 @@ import { DI_TOKENS, container } from '@/lib/di/container'
 import { auth } from '@/infrastructure/auth/auth'
 import { StartTrialUseCase } from '@/application/use-cases/payment/StartTrialUseCase'
 
-export async function POST(req: NextRequest) {
+export async function POST(_req: NextRequest) {
   try {
     const session = await auth()
     if (!session || !session.user || !session.user.id) {
@@ -16,8 +16,8 @@ export async function POST(req: NextRequest) {
     })
 
     return NextResponse.json(result)
-  } catch (error: any) {
-    if (error.name === 'InvalidSubscriptionError') {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === 'InvalidSubscriptionError') {
       return NextResponse.json({ error: error.message }, { status: 400 })
     }
 

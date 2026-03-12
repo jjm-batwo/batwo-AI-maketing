@@ -72,7 +72,7 @@ export default function NotificationSettingsPage() {
         const data = await res.json()
         alert(data.message || '채널 저장 실패')
       }
-    } catch (error) {
+    } catch (_error) {
       alert('채널 저장 중 오류가 발생했습니다')
     } finally {
       setIsSaving(false)
@@ -86,7 +86,7 @@ export default function NotificationSettingsPage() {
       if (res.ok) {
         await fetchData()
       }
-    } catch (error) {
+    } catch (_error) {
       alert('채널 삭제 중 오류가 발생했습니다')
     }
   }
@@ -110,7 +110,7 @@ export default function NotificationSettingsPage() {
         const data = await res.json()
         alert(data.message || '선호도 저장 실패')
       }
-    } catch (error) {
+    } catch (_error) {
       alert('선호도 저장 중 오류가 발생했습니다')
     } finally {
       setIsSaving(false)
@@ -140,7 +140,7 @@ export default function NotificationSettingsPage() {
               : '⚠️ 발송된 알림이 없습니다. 채널과 선호도를 확인하세요.',
         })
       }
-    } catch (error) {
+    } catch (_error) {
       setTestResult({ type: 'error', message: '❌ 테스트 알림 발송 중 오류가 발생했습니다' })
     }
   }

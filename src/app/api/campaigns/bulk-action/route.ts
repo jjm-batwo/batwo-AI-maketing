@@ -3,6 +3,10 @@ import { z } from 'zod'
 import { container, DI_TOKENS } from '@/lib/di'
 import { getAuthenticatedUser } from '@/lib/auth'
 import { revalidateTag } from 'next/cache'
+import type {
+  BulkUpdateCampaignsUseCase,
+  BulkAction,
+} from '@/application/use-cases/campaign/BulkUpdateCampaignsUseCase'
 
 const bulkActionSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('status_change'), status: z.enum(['ACTIVE', 'PAUSED']) }),
@@ -36,12 +40,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const useCase = container.resolve(DI_TOKENS.BulkUpdateCampaignsUseCase) as any
+    const useCase = container.resolve(DI_TOKENS.BulkUpdateCampaignsUseCase) as BulkUpdateCampaignsUseCase
 
     const result = await useCase.execute({
       userId: user.id,
       campaignIds: parsed.data.campaignIds,
-      action: parsed.data.action as any,
+      action: parsed.data.action as BulkAction,
     })
 
     revalidateTag('campaigns', 'default')
