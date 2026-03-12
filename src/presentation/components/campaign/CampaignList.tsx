@@ -10,9 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Plus, Filter } from 'lucide-react'
+import { Plus, Filter, Megaphone } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
+import { EmptyState, SkeletonList } from '@/presentation/components/common'
 
 interface Campaign {
   id: string
@@ -54,13 +55,7 @@ export const CampaignList = memo(function CampaignList({
   })
 
   if (isLoading) {
-    return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="h-48 animate-pulse rounded-lg bg-muted" />
-        ))}
-      </div>
-    )
+    return <SkeletonList variant="card-grid" count={6} />
   }
 
   return (
@@ -101,16 +96,20 @@ export const CampaignList = memo(function CampaignList({
       </div>
 
       {filteredCampaigns.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
-          <h3 className="text-lg font-semibold">{t('campaigns.empty.title')}</h3>
-          <p className="mt-2 text-sm text-muted-foreground">{t('campaigns.empty.description')}</p>
-          <Button asChild className="mt-4" disabled={quotaRemaining === 0}>
-            <Link href="/campaigns/new">
-              <Plus className="mr-1 h-4 w-4" />
-              {t('campaigns.empty.button')}
-            </Link>
-          </Button>
-        </div>
+        <EmptyState
+          icon={Megaphone}
+          title={t('campaigns.empty.title')}
+          description={t('campaigns.empty.description')}
+          variant="dashed"
+          action={
+            <Button asChild disabled={quotaRemaining === 0}>
+              <Link href="/campaigns/new">
+                <Plus className="mr-1 h-4 w-4" />
+                {t('campaigns.empty.button')}
+              </Link>
+            </Button>
+          }
+        />
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredCampaigns.map((campaign) => (

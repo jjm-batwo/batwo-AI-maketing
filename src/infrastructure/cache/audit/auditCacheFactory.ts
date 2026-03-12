@@ -30,5 +30,5 @@ export function createAuditCache<T>(
     return new UpstashAuditCache<T>(namespace, redis)
   }
 
-  return new MemoryAuditCache<T>(options)
+  return new MemoryAuditCache<T>({ ...options, namespace })
 }

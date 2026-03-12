@@ -130,6 +130,46 @@ export interface MetaAdData {
   status: string
 }
 
+export interface MetaAdDetailData {
+  id: string
+  name: string
+  status: string
+  creative: {
+    id: string
+    name: string
+    pageId: string
+    instagramActorId?: string
+    linkUrl?: string
+    message?: string
+    callToAction?: string
+    imageUrl?: string
+    videoUrl?: string
+    thumbnailUrl?: string
+  }
+}
+
+export interface UpdateMetaAdInput {
+  name?: string
+  status?: string
+  creative?: {
+    name?: string
+    message?: string
+    linkUrl?: string
+    callToAction?: string
+  }
+}
+
+export interface MetaPageData {
+  id: string
+  name: string
+  picture?: string
+}
+
+export interface MetaInstagramAccountData {
+  id: string
+  username: string
+}
+
 // --- Creative 관련 ---
 export interface CreateMetaCreativeInput {
   name: string
@@ -235,12 +275,21 @@ export interface IMetaAdsService {
   // Ad
   createAd(accessToken: string, adAccountId: string, input: CreateMetaAdInput): Promise<MetaAdData>
 
+  getAdDetail(accessToken: string, adId: string): Promise<MetaAdDetailData>
+
+  updateAd(accessToken: string, adId: string, input: UpdateMetaAdInput): Promise<void>
+
   // Creative
   createAdCreative(
     accessToken: string,
     adAccountId: string,
     input: CreateMetaCreativeInput
   ): Promise<MetaCreativeData>
+
+  // Pages & Instagram
+  listPages(accessToken: string): Promise<MetaPageData[]>
+
+  listInstagramAccounts(accessToken: string, pageId: string): Promise<MetaInstagramAccountData[]>
 
   // Asset 업로드
   uploadImage(

@@ -12,6 +12,10 @@ import {
   UpdateMetaAdSetInput,
   CreateMetaAdInput,
   MetaAdData,
+  MetaAdDetailData,
+  UpdateMetaAdInput,
+  MetaPageData,
+  MetaInstagramAccountData,
   CreateMetaCreativeInput,
   MetaCreativeData,
 } from '@application/ports/IMetaAdsService'
@@ -847,6 +851,128 @@ export class MetaAdsClient implements IMetaAdsService {
     )
   }
 
+  async getAdDetail(accessToken: string, adId: string): Promise<MetaAdDetailData> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] getAdDetail called with mock mode')
+      return {
+        id: adId,
+        name: 'Mock Ad',
+        status: 'ACTIVE',
+        creative: {
+          id: 'mock_creative_1',
+          name: 'Mock Creative',
+          pageId: 'mock_page_1',
+          instagramActorId: 'mock_ig_1',
+          linkUrl: 'https://example.com',
+          message: '지금 바로 확인하세요!',
+          callToAction: 'SHOP_NOW',
+          imageUrl: 'https://via.placeholder.com/600x315',
+          thumbnailUrl: 'https://via.placeholder.com/150',
+        },
+      }
+    }
+
+    return withSpan(
+      'meta.getAdDetail',
+      async () => {
+        // object_story_spec + top-level readable fields (body, link_url, image_url 등)
+        const fields = 'id,name,status,creative{id,name,body,link_url,image_url,image_hash,call_to_action_type,object_story_spec,thumbnail_url,effective_object_story_id,instagram_actor_id}'
+        const response = await this.requestWithRetry<{
+          id: string
+          name: string
+          status: string
+          creative: {
+            id: string
+            name: string
+            body?: string
+            link_url?: string
+            image_url?: string
+            image_hash?: string
+            call_to_action_type?: string
+            thumbnail_url?: string
+            instagram_actor_id?: string
+            effective_object_story_id?: string
+            object_story_spec?: {
+              page_id?: string
+              instagram_actor_id?: string
+              link_data?: {
+                link?: string
+                message?: string
+                call_to_action?: { type: string }
+                image_hash?: string
+                picture?: string
+              }
+              video_data?: {
+                video_id?: string
+                message?: string
+                call_to_action?: { type: string }
+                image_url?: string
+              }
+            }
+          }
+        }>(accessToken, `/${adId}?fields=${fields}`, { method: 'GET' })
+
+        const creative = response.creative
+        const spec = creative?.object_story_spec
+        const linkData = spec?.link_data
+        const videoData = spec?.video_data
+
+        // Fallback: object_story_spec → top-level creative fields
+        const message = linkData?.message || videoData?.message || creative?.body || ''
+        const linkUrl = linkData?.link || creative?.link_url || ''
+        const callToAction = linkData?.call_to_action?.type || videoData?.call_to_action?.type || creative?.call_to_action_type || ''
+        const imageUrl = linkData?.picture || creative?.image_url || ''
+        const pageId = spec?.page_id || ''
+        const instagramActorId = spec?.instagram_actor_id || creative?.instagram_actor_id || undefined
+
+        return {
+          id: response.id,
+          name: response.name,
+          status: response.status,
+          creative: {
+            id: creative?.id || '',
+            name: creative?.name || '',
+            pageId,
+            instagramActorId,
+            linkUrl,
+            message,
+            callToAction,
+            imageUrl,
+            videoUrl: videoData?.video_id ? `https://www.facebook.com/${videoData.video_id}` : undefined,
+            thumbnailUrl: creative?.thumbnail_url || videoData?.image_url || '',
+          },
+        }
+      },
+      { 'meta.adId': adId }
+    )
+  }
+
+  async updateAd(accessToken: string, adId: string, input: UpdateMetaAdInput): Promise<void> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] updateAd called with mock mode')
+      return
+    }
+
+    await withSpan(
+      'meta.updateAd',
+      async () => {
+        const body: Record<string, unknown> = {}
+        if (input.name !== undefined) body.name = input.name
+        if (input.status !== undefined) body.status = input.status
+
+        // Creative 필드 업데이트는 별도 API 호출 필요
+        // Meta API에서는 creative를 직접 수정하는 대신 새로운 creative를 만들어야 함
+        // 하지만 ad의 name/status는 직접 수정 가능
+
+        await this.requestWithRetry<{ success: boolean }>(accessToken, `/${adId}`, {
+          method: 'POST',
+          body: JSON.stringify(body),
+        })
+      },
+      { 'meta.adId': adId }
+    )
+  }
+
   // --- AdSet Insights ---
 
   async getAdSetInsights(
@@ -1157,6 +1283,65 @@ export class MetaAdsClient implements IMetaAdsService {
         }
       },
       { 'meta.adAccountId': adAccountId, 'meta.creative.name': input.name }
+    )
+  }
+
+  // --- Pages & Instagram ---
+
+  async listPages(accessToken: string): Promise<MetaPageData[]> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] listPages called with mock mode')
+      return [
+        { id: 'mock_page_1', name: '바투 공식 페이지', picture: 'https://via.placeholder.com/50' },
+        { id: 'mock_page_2', name: '바투 브랜드 스토어' },
+      ]
+    }
+
+    return withSpan(
+      'meta.listPages',
+      async () => {
+        const response = await this.requestWithRetry<{
+          data: {
+            id: string
+            name: string
+            picture?: { data?: { url?: string } }
+          }[]
+        }>(accessToken, `/me/accounts?fields=id,name,picture`, { method: 'GET' })
+
+        return response.data.map((page) => ({
+          id: page.id,
+          name: page.name,
+          picture: page.picture?.data?.url,
+        }))
+      },
+      {}
+    )
+  }
+
+  async listInstagramAccounts(accessToken: string, pageId: string): Promise<MetaInstagramAccountData[]> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] listInstagramAccounts called with mock mode')
+      return [
+        { id: 'mock_ig_1', username: 'batwo_official' },
+      ]
+    }
+
+    return withSpan(
+      'meta.listInstagramAccounts',
+      async () => {
+        const response = await this.requestWithRetry<{
+          data: {
+            id: string
+            username: string
+          }[]
+        }>(accessToken, `/${pageId}/instagram_accounts?fields=id,username`, { method: 'GET' })
+
+        return response.data.map((account) => ({
+          id: account.id,
+          username: account.username,
+        }))
+      },
+      { 'meta.pageId': pageId }
     )
   }
 

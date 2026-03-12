@@ -131,7 +131,7 @@ export function PartialSuccessUI({
                         className={cn(
                           'text-xs px-2 py-0.5 rounded-full',
                           config.color,
-                          'bg-white/50'
+                          'bg-card/50'
                         )}
                       >
                         {config.label}
@@ -151,7 +151,7 @@ export function PartialSuccessUI({
                     onClick={() => onRetryFailed(result.field)}
                     className={cn(
                       'flex items-center gap-1 px-3 py-1.5 text-sm rounded-md',
-                      'bg-white hover:bg-muted border border-border',
+                      'bg-card hover:bg-muted border border-border',
                       'transition-colors flex-shrink-0'
                     )}
                   >

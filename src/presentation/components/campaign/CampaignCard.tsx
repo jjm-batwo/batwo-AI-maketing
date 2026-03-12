@@ -13,6 +13,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
 import { formatMultiplier, formatNumber } from '@/lib/utils/format'
+import { StatusBadge } from '@/presentation/components/common'
+import type { StatusVariant } from '@/presentation/components/common'
 import {
   MoreVertical,
   Play,
@@ -36,12 +38,12 @@ interface CampaignCardProps {
   className?: string
 }
 
-const statusConfig = {
-  ACTIVE: { label: '진행 중', className: 'bg-green-500/15 text-green-500' },
-  PAUSED: { label: '일시정지', className: 'bg-yellow-500/15 text-yellow-500' },
-  COMPLETED: { label: '완료', className: 'bg-muted text-muted-foreground' },
-  DRAFT: { label: '초안', className: 'bg-primary/15 text-primary' },
-  PENDING_REVIEW: { label: '검토 중', className: 'bg-purple-500/15 text-purple-500' },
+const statusConfig: Record<string, { label: string; variant: StatusVariant }> = {
+  ACTIVE: { label: '진행 중', variant: 'success' },
+  PAUSED: { label: '일시정지', variant: 'warning' },
+  COMPLETED: { label: '완료', variant: 'neutral' },
+  DRAFT: { label: '초안', variant: 'primary' },
+  PENDING_REVIEW: { label: '검토 중', variant: 'purple' },
 }
 
 const objectiveLabels: Record<string, string> = {
@@ -90,9 +92,7 @@ export const CampaignCard = memo(function CampaignCard({
           <span className="text-sm text-muted-foreground">{objectiveLabel}</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className={cn('rounded-full px-2 py-1 text-xs font-medium', statusInfo.className)}>
-            {statusInfo.label}
-          </span>
+          <StatusBadge label={statusInfo.label} variant={statusInfo.variant} />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8">

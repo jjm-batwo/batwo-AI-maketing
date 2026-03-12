@@ -4,18 +4,18 @@ import { Card, CardContent } from '@/components/ui/card'
 import { SparklineChart } from './SparklineChart'
 import { cn } from '@/lib/utils'
 import {
-  TrendingUp,
-  TrendingDown,
-  Minus,
   BarChart3,
   DollarSign,
   MousePointerClick,
   Target,
   Eye,
 } from 'lucide-react'
+import { MetricChange } from '@/presentation/components/common'
 
 export type KPIFormat = 'number' | 'currency' | 'percentage' | 'multiplier'
 export type ChangeType = 'increase' | 'decrease' | 'neutral' | 'positive' | 'negative'
+
+// formatChange는 MetricChange 컴포넌트로 대체되었으므로 내부에서만 사용
 export type KPIIconType = 'chart' | 'dollar' | 'click' | 'target' | 'eye'
 
 interface KPICardProps {
@@ -126,26 +126,11 @@ export function KPICard({
         </div>
 
         <div className="flex items-center gap-2">
-          <div
-            className={cn(
-              'flex items-center text-xs font-medium px-2 py-0.5 rounded-full ring-1 inset-ring-1',
-              (changeType === 'increase' || changeType === 'positive') &&
-                'text-green-700 bg-green-50 ring-green-600/20 dark:bg-green-900/20 dark:text-green-400 dark:ring-green-500/30',
-              (changeType === 'decrease' || changeType === 'negative') &&
-                'text-red-700 bg-red-50 ring-red-600/20 dark:bg-red-900/20 dark:text-red-400 dark:ring-red-500/30',
-              changeType === 'neutral' &&
-                'text-muted-foreground bg-muted ring-border'
-            )}
-          >
-            {(changeType === 'increase' || changeType === 'positive') && (
-              <TrendingUp className="h-3 w-3 mr-1" />
-            )}
-            {(changeType === 'decrease' || changeType === 'negative') && (
-              <TrendingDown className="h-3 w-3 mr-1" />
-            )}
-            {changeType === 'neutral' && <Minus className="h-3 w-3 mr-1" />}
-            {formatChange(change)}
-          </div>
+          <MetricChange
+            value={change}
+            inverse={changeType === 'decrease' || changeType === 'negative'}
+            badge
+          />
           <span className="text-xs text-muted-foreground">이전 기간 대비</span>
         </div>
       </div>

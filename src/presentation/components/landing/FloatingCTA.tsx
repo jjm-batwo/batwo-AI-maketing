@@ -40,7 +40,7 @@ export function FloatingCTA() {
       role="banner"
       aria-label="Floating call-to-action"
     >
-      <div className="bg-white/95 backdrop-blur-md border-t border-slate-200 shadow-2xl">
+      <div className="bg-background/95 backdrop-blur-md border-t border-border shadow-2xl">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between gap-4">
             {/* Left: Value proposition */}
@@ -49,8 +49,8 @@ export function FloatingCTA() {
                 <span className="text-lg">🚀</span>
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-900">14일 무료 체험</p>
-                <p className="text-xs text-slate-500">신용카드 불필요</p>
+                <p className="text-sm font-semibold text-foreground">14일 무료 체험</p>
+                <p className="text-xs text-muted-foreground">신용카드 불필요</p>
               </div>
             </div>
 
@@ -72,7 +72,7 @@ export function FloatingCTA() {
             <button
               type="button"
               onClick={handleDismiss}
-              className="p-2 text-slate-400 hover:text-slate-600 transition-colors rounded-full hover:bg-slate-100"
+              className="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-muted"
               aria-label="닫기"
             >
               <X className="h-5 w-5" aria-hidden="true" />

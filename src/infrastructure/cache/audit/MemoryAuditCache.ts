@@ -30,6 +30,8 @@ export interface MemoryAuditCacheOptions {
   maxEntries?: number
   /** 만료 항목 정리 주기 ms (기본값: 60_000) */
   cleanupIntervalMs?: number
+  /** globalThis 키 네임스페이스 (HMR 보호용, 기본값: 'default') */
+  namespace?: string
 }
 
 // ---------------------------------------------------------------------------
@@ -37,13 +39,21 @@ export interface MemoryAuditCacheOptions {
 // ---------------------------------------------------------------------------
 
 export class MemoryAuditCache<T> implements IAuditCache<T> {
-  private readonly store = new Map<string, CacheEntry<T>>()
+  private readonly store: Map<string, CacheEntry<T>>
   private readonly maxEntries: number
   private readonly intervalId: ReturnType<typeof setInterval> | null = null
 
   constructor(options: MemoryAuditCacheOptions = {}) {
     this.maxEntries = options.maxEntries ?? 1_000
     const cleanupIntervalMs = options.cleanupIntervalMs ?? 60_000
+
+    // HMR 시 Map 데이터 유실 방지: globalThis에 Map을 직접 캐싱
+    const globalKey = `__memoryAuditCache_${options.namespace ?? 'default'}` as const
+    const g = globalThis as Record<string, unknown>
+    if (!g[globalKey]) {
+      g[globalKey] = new Map<string, CacheEntry<T>>()
+    }
+    this.store = g[globalKey] as Map<string, CacheEntry<T>>
 
     // 서버 환경에서만 주기적 정리 실행
     if (typeof setInterval !== 'undefined') {

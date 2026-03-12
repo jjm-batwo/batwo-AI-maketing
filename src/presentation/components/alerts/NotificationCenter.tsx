@@ -28,18 +28,18 @@ const severityStyles: Record<
 > = {
   critical: {
     icon: AlertCircle,
-    color: 'text-red-600',
-    bgColor: 'bg-red-50',
+    color: 'text-red-600 dark:text-red-400',
+    bgColor: 'bg-red-50 dark:bg-red-900/20',
   },
   warning: {
     icon: AlertTriangle,
-    color: 'text-yellow-600',
-    bgColor: 'bg-yellow-50',
+    color: 'text-yellow-600 dark:text-yellow-400',
+    bgColor: 'bg-yellow-50 dark:bg-yellow-900/20',
   },
   info: {
     icon: Info,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50',
+    color: 'text-blue-600 dark:text-blue-400',
+    bgColor: 'bg-blue-50 dark:bg-blue-900/20',
   },
 }
 
@@ -180,7 +180,7 @@ function AlertItem({ alert, onNavigate, locale }: AlertItemProps) {
       <div className="flex items-start gap-3">
         <div
           className={cn(
-            'flex h-10 w-10 items-center justify-center rounded-full bg-white',
+            'flex h-10 w-10 items-center justify-center rounded-full bg-card',
             severityStyle.color
           )}
         >

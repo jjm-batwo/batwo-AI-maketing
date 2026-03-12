@@ -74,22 +74,24 @@ export function NotificationChannelCard({
     setIsEditing(false)
   }
 
+  const inputClass = 'w-full rounded-lg border border-input bg-background text-foreground px-3 py-2 text-sm focus:border-ring focus:ring-1 focus:ring-ring focus:outline-none transition-colors'
+
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md dark:border-gray-700 dark:bg-gray-800">
+    <div className="rounded-xl border border-border bg-card p-6 shadow-sm transition hover:shadow-md">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <span className="text-2xl">{info.icon}</span>
           <div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100">{info.label}</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{info.description}</p>
+            <h3 className="font-semibold text-foreground">{info.label}</h3>
+            <p className="text-sm text-muted-foreground">{info.description}</p>
           </div>
         </div>
         {channel && (
           <span
             className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
               channel.isActive
-                ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                : 'bg-muted text-muted-foreground'
             }`}
           >
             {channel.isActive ? '연결됨' : '비활성'}
@@ -102,7 +104,7 @@ export function NotificationChannelCard({
           {channelType === 'SLACK' && (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   Webhook URL
                 </label>
                 <input
@@ -110,11 +112,11 @@ export function NotificationChannelCard({
                   value={webhookUrl}
                   onChange={(e) => setWebhookUrl(e.target.value)}
                   placeholder="https://hooks.slack.com/services/T00/B00/xxx"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                  className={inputClass}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label className="block text-sm font-medium text-foreground mb-1">
                   채널 이름 (선택)
                 </label>
                 <input
@@ -122,14 +124,14 @@ export function NotificationChannelCard({
                   value={channelName}
                   onChange={(e) => setChannelName(e.target.value)}
                   placeholder="#alerts"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                  className={inputClass}
                 />
               </div>
             </>
           )}
           {channelType === 'KAKAO' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 전화번호
               </label>
               <input
@@ -137,13 +139,13 @@ export function NotificationChannelCard({
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="01012345678"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                className={inputClass}
               />
             </div>
           )}
           {channelType === 'EMAIL' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 이메일 주소
               </label>
               <input
@@ -151,7 +153,7 @@ export function NotificationChannelCard({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="alert@example.com"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                className={inputClass}
               />
             </div>
           )}
@@ -159,14 +161,14 @@ export function NotificationChannelCard({
             <button
               onClick={handleSave}
               disabled={isLoading}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 transition"
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition"
             >
               {isLoading ? '저장 중...' : '저장'}
             </button>
             {channel && (
               <button
                 onClick={() => setIsEditing(false)}
-                className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition"
+                className="rounded-lg bg-muted px-4 py-2 text-sm font-medium text-foreground hover:bg-muted/80 transition"
               >
                 취소
               </button>
@@ -175,7 +177,7 @@ export function NotificationChannelCard({
         </div>
       ) : (
         <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-600 dark:text-gray-400">
+          <div className="text-sm text-muted-foreground">
             {channelType === 'SLACK' && channel?.config?.webhookUrl && (
               <span>Webhook: ...{channel.config.webhookUrl.slice(-12)}</span>
             )}
@@ -189,7 +191,7 @@ export function NotificationChannelCard({
           <div className="flex gap-2">
             <button
               onClick={() => setIsEditing(true)}
-              className="rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition"
+              className="rounded-lg bg-muted px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted/80 transition"
             >
               수정
             </button>

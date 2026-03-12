@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Sparkles } from 'lucide-react'
+
 
 const footerLinks = {
   제품: [
@@ -32,19 +32,13 @@ export function LandingFooter() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-white border-t border-border">
+    <footer className="bg-background border-t border-border">
       <div className="container mx-auto px-4 py-12 md:py-16">
         {/* Top row: Logo + columns */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
           {/* Logo & tagline */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <Sparkles
-                  className="w-4 w-4 text-primary-foreground fill-current"
-                  aria-hidden="true"
-                />
-              </div>
               <span className="text-lg font-bold text-foreground">바투</span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">

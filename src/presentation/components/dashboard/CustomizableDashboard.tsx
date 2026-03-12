@@ -142,7 +142,7 @@ export const CustomizableDashboard = memo(function CustomizableDashboard({
             <div
               key={widget.id}
               className={cn(
-                'relative rounded-xl border bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm overflow-hidden transition-all',
+                'relative rounded-xl border bg-card/80 backdrop-blur-sm shadow-sm overflow-hidden transition-all',
                 isEditing && 'ring-1 ring-blue-200 dark:ring-blue-800 cursor-move',
                 !isEditing && 'hover:shadow-md',
               )}

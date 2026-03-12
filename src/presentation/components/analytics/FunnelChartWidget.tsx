@@ -15,8 +15,8 @@ export function FunnelChartWidget({ pixelId, period = '30d' }: { pixelId?: strin
 
   if (error || !data) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border p-6 flex items-center justify-center h-[300px]">
-        <p className="text-gray-500">퍼널 데이터를 불러오지 못했습니다.</p>
+      <div className="bg-card rounded-xl shadow-sm border border-border p-6 flex items-center justify-center h-[300px]">
+        <p className="text-muted-foreground">퍼널 데이터를 불러오지 못했습니다.</p>
       </div>
     );
   }

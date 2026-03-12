@@ -1,7 +1,8 @@
 'use client'
 
 import { useIntersectionObserver } from '@/presentation/hooks'
-import { SectionLabel } from './SectionLabel'
+import { SectionHeader } from '@/presentation/components/common'
+import { BrowserChrome } from './HeroSection/BrowserChrome'
 
 const steps = [
   {
@@ -43,15 +44,11 @@ export function HowItWorksSection({ id = 'how-it-works' }: HowItWorksSectionProp
         }`}
       >
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <SectionLabel className="text-center">작동 방식</SectionLabel>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
-            3단계로 시작하세요
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            복잡한 설정 없이 빠르게 광고를 시작할 수 있습니다.
-          </p>
-        </div>
+        <SectionHeader
+          label="작동 방식"
+          title="3단계로 시작하세요"
+          description="복잡한 설정 없이 빠르게 광고를 시작할 수 있습니다."
+        />
 
         {/* Steps */}
         <div className="max-w-5xl mx-auto space-y-20">
@@ -96,18 +93,8 @@ export function HowItWorksSection({ id = 'how-it-works' }: HowItWorksSectionProp
 
 function PreviewShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-border shadow-lg overflow-hidden bg-white">
-      {/* Browser bar */}
-      <div className="flex items-center gap-2 px-4 py-3 bg-muted border-b border-border">
-        <div className="flex gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-red-400" aria-hidden="true" />
-          <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" aria-hidden="true" />
-          <div className="w-2.5 h-2.5 rounded-full bg-green-400" aria-hidden="true" />
-        </div>
-        <div className="flex-1 mx-3">
-          <div className="bg-white border border-border rounded h-5 max-w-xs mx-auto" />
-        </div>
-      </div>
+    <div className="rounded-xl border border-border shadow-lg overflow-hidden bg-card">
+      <BrowserChrome />
       <div className="p-5">{children}</div>
     </div>
   )
@@ -165,12 +152,12 @@ function StepTwoPreview() {
           <div key={item.label} className="flex items-center gap-2.5 py-1.5">
             <div
               className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
-                item.done ? 'bg-green-100' : 'bg-muted'
+                item.done ? 'bg-green-500/20' : 'bg-muted'
               }`}
             >
               {item.done ? (
                 <svg
-                  className="w-3 h-3 text-green-600"
+                  className="w-3 h-3 text-green-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

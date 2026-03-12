@@ -17,10 +17,10 @@ export const FunnelChart = memo(function FunnelChart({ data }: { data: FunnelDat
   const maxCount = Math.max(...data.stages.map(s => s.count), 1);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border p-6">
+    <div className="bg-card rounded-xl shadow-sm border border-border p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold">전환 퍼널</h3>
-        <span className="text-sm text-gray-500">
+        <h3 className="text-lg font-semibold text-foreground">전환 퍼널</h3>
+        <span className="text-sm text-muted-foreground">
           전체 전환율: <strong>{data.overallConversionRate}%</strong>
         </span>
       </div>
@@ -50,7 +50,7 @@ function FunnelStageBar({ stage, label, color, widthPercent, isFirst }: {
 }) {
   return (
     <div className="flex items-center gap-4">
-      <div className="w-28 text-sm text-gray-600 text-right">{label}</div>
+      <div className="w-28 text-sm text-muted-foreground text-right">{label}</div>
       <div className="flex-1">
         <div
           className="h-10 rounded-md flex items-center px-3 text-white text-sm font-medium transition-all"
@@ -61,7 +61,7 @@ function FunnelStageBar({ stage, label, color, widthPercent, isFirst }: {
       </div>
       <div className="w-20 text-right">
         {!isFirst && (
-          <span className={`text-sm font-medium ${stage.dropOffRate > 70 ? 'text-red-600' : 'text-gray-500'}`}>
+          <span className={`text-sm font-medium ${stage.dropOffRate > 70 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'}`}>
             {stage.conversionRate}%
           </span>
         )}

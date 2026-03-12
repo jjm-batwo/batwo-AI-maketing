@@ -213,6 +213,16 @@ export async function checkRateLimit(
 ): Promise<RateLimitResult> {
   const config = RATE_LIMIT_CONFIG[type]
 
+  // 개발 환경에서는 Rate Limit 우회 (테스트 편의)
+  if (process.env.NODE_ENV === 'development') {
+    return {
+      success: true,
+      limit: config.tokens,
+      remaining: config.tokens - 1,
+      reset: Date.now() + config.interval,
+    }
+  }
+
   // Upstash 초기화 시도
   await initUpstash()
 

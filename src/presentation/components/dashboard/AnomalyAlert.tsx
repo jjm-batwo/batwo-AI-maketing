@@ -26,6 +26,7 @@ import {
   HelpCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { EmptyState, SkeletonList } from '@/presentation/components/common'
 
 // ============================================
 // Types
@@ -420,14 +421,7 @@ export function AnomalyAlert({ className, maxItems = 5, showRootCause = true }: 
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2">
-            {Array.from({ length: 2 }).map((_, i) => (
-              <div key={i} className="animate-pulse rounded-lg border p-4">
-                <div className="mb-2 h-4 w-24 rounded bg-muted" />
-                <div className="h-3 w-full rounded bg-muted" />
-              </div>
-            ))}
-          </div>
+          <SkeletonList variant="row" count={2} />
         </CardContent>
       </Card>
     )
@@ -481,11 +475,11 @@ export function AnomalyAlert({ className, maxItems = 5, showRootCause = true }: 
         )}
 
         {anomalies.length === 0 && !isError && (
-          <div className="text-center py-4 text-muted-foreground">
-            <Bell className="mx-auto h-8 w-8 mb-2 opacity-50" />
-            <p className="text-sm">현재 감지된 이상이 없습니다.</p>
-            <p className="text-xs mt-1">캠페인이 정상적으로 운영되고 있습니다.</p>
-          </div>
+          <EmptyState
+            icon={Bell}
+            title="현재 감지된 이상이 없습니다."
+            description="캠페인이 정상적으로 운영되고 있습니다."
+          />
         )}
 
         {displayedAnomalies.map((anomaly) => (

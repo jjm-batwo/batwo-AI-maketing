@@ -1,25 +1,22 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+
 // 프로덕션에서는 SwaggerUI와 CSS를 로드하지 않음 (번들 크기 ~1.1MB 절감)
+// CSS는 별도 import — Turbopack은 dynamic() 내부 CSS import를 지원하지 않음
+if (process.env.NODE_ENV !== 'production') {
+  import('swagger-ui-react/swagger-ui.css')
+}
 
 const SwaggerUI =
   process.env.NODE_ENV === 'production'
     ? () => null
-    : dynamic(
-        () =>
-          import('swagger-ui-react').then((mod) => {
-            // CSS를 동적으로 로드 (dev/staging에서만)
-            import('swagger-ui-react/swagger-ui.css')
-            return mod
-          }),
-        {
-          ssr: false,
-          loading: () => (
-            <div className="p-8 text-center text-muted-foreground">API 문서 로딩 중...</div>
-          ),
-        }
-      )
+    : dynamic(() => import('swagger-ui-react'), {
+        ssr: false,
+        loading: () => (
+          <div className="p-8 text-center text-muted-foreground">API 문서 로딩 중...</div>
+        ),
+      })
 
 /**
  * API Documentation Page - Swagger UI

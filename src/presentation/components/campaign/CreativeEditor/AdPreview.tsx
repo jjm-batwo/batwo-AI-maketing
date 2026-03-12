@@ -24,7 +24,7 @@ export function AdPreview() {
   return (
     <div className="space-y-2">
       <p className="text-sm font-medium text-muted-foreground">광고 미리보기</p>
-      <div className="rounded-lg border bg-white shadow-sm">
+      <div className="rounded-lg border border-border bg-card shadow-sm">
         {/* 페이지 헤더 */}
         <div className="flex items-center gap-3 p-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">

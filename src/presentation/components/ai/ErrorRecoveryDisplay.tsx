@@ -30,24 +30,24 @@ export interface ErrorRecoveryDisplayProps {
 
 const SEVERITY_CONFIG = {
   error: {
-    bgColor: 'bg-red-50',
-    borderColor: 'border-red-200',
-    iconColor: 'text-red-600',
-    titleColor: 'text-red-900',
+    bgColor: 'bg-red-50 dark:bg-red-900/20',
+    borderColor: 'border-red-200 dark:border-red-800',
+    iconColor: 'text-red-600 dark:text-red-400',
+    titleColor: 'text-red-900 dark:text-red-300',
     icon: AlertTriangle,
   },
   warning: {
-    bgColor: 'bg-amber-50',
-    borderColor: 'border-amber-200',
-    iconColor: 'text-amber-600',
-    titleColor: 'text-amber-900',
+    bgColor: 'bg-amber-50 dark:bg-amber-900/20',
+    borderColor: 'border-amber-200 dark:border-amber-800',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+    titleColor: 'text-amber-900 dark:text-amber-300',
     icon: AlertTriangle,
   },
   info: {
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-200',
-    iconColor: 'text-blue-600',
-    titleColor: 'text-blue-900',
+    bgColor: 'bg-blue-50 dark:bg-blue-900/20',
+    borderColor: 'border-blue-200 dark:border-blue-800',
+    iconColor: 'text-blue-600 dark:text-blue-400',
+    titleColor: 'text-blue-900 dark:text-blue-300',
     icon: Info,
   },
 } as const
@@ -89,7 +89,7 @@ export function ErrorRecoveryDisplay({
           <button
             type="button"
             onClick={onDismiss}
-            className="p-1 hover:bg-white/50 rounded-md transition-colors flex-shrink-0"
+            className="p-1 hover:bg-muted/50 rounded-md transition-colors flex-shrink-0"
             aria-label="닫기"
           >
             <X className="h-5 w-5 text-muted-foreground" />
@@ -108,8 +108,8 @@ export function ErrorRecoveryDisplay({
             onClick={recommendedOption.action}
             className={cn(
               'w-full text-left p-3 rounded-lg border-2',
-              'bg-white hover:bg-muted',
-              'border-blue-300 hover:border-blue-400',
+              'bg-card hover:bg-muted',
+              'border-blue-300 dark:border-blue-700 hover:border-blue-400',
               'transition-all group'
             )}
           >
@@ -144,7 +144,7 @@ export function ErrorRecoveryDisplay({
                 onClick={option.action}
                 className={cn(
                   'w-full text-left p-3 rounded-lg border',
-                  'bg-white hover:bg-muted',
+                   'bg-card hover:bg-muted',
                   'border-border hover:border-border',
                   'transition-all group'
                 )}

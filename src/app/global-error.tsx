@@ -21,11 +21,11 @@ export default function GlobalErrorPage({ error, reset }: GlobalErrorPageProps) 
   }, [error])
 
   const content = (
-    <main className="flex min-h-screen flex-col items-center justify-center px-4">
+    <main className="flex min-h-screen flex-col items-center justify-center px-4 bg-background text-foreground">
       <div className="flex max-w-md flex-col items-center text-center">
-        <div className="mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-red-100">
+        <div className="mb-8 flex h-20 w-20 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
           <svg
-            className="h-10 w-10 text-red-600"
+            className="h-10 w-10 text-red-600 dark:text-red-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -39,9 +39,9 @@ export default function GlobalErrorPage({ error, reset }: GlobalErrorPageProps) 
           </svg>
         </div>
 
-        <h1 className="mb-4 text-2xl font-bold text-slate-900">심각한 오류가 발생했습니다</h1>
+        <h1 className="mb-4 text-2xl font-bold text-foreground">심각한 오류가 발생했습니다</h1>
 
-        <p className="mb-8 text-slate-600">
+        <p className="mb-8 text-muted-foreground">
           애플리케이션에 예상치 못한 문제가 발생했습니다.
           <br />
           페이지를 새로고침하거나 다시 시도해주세요.
@@ -64,18 +64,25 @@ export default function GlobalErrorPage({ error, reset }: GlobalErrorPageProps) 
           </button>
         </div>
 
-        {error.digest && <p className="mt-6 text-xs text-slate-400">Error ID: {error.digest}</p>}
+        {error.digest && <p className="mt-6 text-xs text-muted-foreground">Error ID: {error.digest}</p>}
       </div>
     </main>
   )
 
   if (process.env.NODE_ENV === 'test') {
-    return <div className="bg-slate-50">{content}</div>
+    return <div className="bg-background">{content}</div>
   }
 
   return (
-    <html lang="ko">
-      <body className="bg-slate-50">{content}</body>
+    <html lang="ko" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(t==='dark'||(t!=='light'&&d)){document.documentElement.classList.add('dark')}}catch(e){}})()`,
+          }}
+        />
+      </head>
+      <body className="bg-background">{content}</body>
     </html>
   )
 }

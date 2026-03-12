@@ -14,7 +14,7 @@ export const HeroSection = memo(function HeroSection() {
   return (
     // 레이아웃: 고정 패딩 → min-h-[100dvh] + flex center로 풀스크린 정렬
     <section
-      className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden pt-20"
+      className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden pt-20 pb-20"
       aria-labelledby="hero-heading"
     >
       <GradientBackground />

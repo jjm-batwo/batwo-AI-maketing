@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
 
     // 3. 임시 캐시에 저장 (15분 TTL, DB 저장 없음)
     // adAccountId는 프론트에서 계정 선택 후 결정 (빈 문자열로 초기화)
-    const sessionId = auditTokenCache.set({
+    const sessionId = await auditTokenCache.set({
       accessToken: tokenData.access_token,
       adAccountId: '',
       adAccounts: accounts.map((a) => ({

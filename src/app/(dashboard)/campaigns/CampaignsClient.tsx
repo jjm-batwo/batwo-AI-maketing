@@ -290,23 +290,55 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
           }}
           className="w-full"
         >
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
-            <TabsList className="bg-muted/50 dark:bg-muted/20">
-              <TabsTrigger value="campaigns">캠페인</TabsTrigger>
-              <TabsTrigger value="adsets">광고 세트</TabsTrigger>
-              <TabsTrigger value="ads">광고</TabsTrigger>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end justify-between mb-6 border-b border-border/50">
+            <TabsList className="bg-transparent h-auto p-0 flex gap-1 w-full justify-start overflow-x-auto">
+              <TabsTrigger
+                value="campaigns"
+                className="rounded-t-md rounded-b-none border border-transparent data-[state=active]:border-border/50 data-[state=active]:border-b-transparent data-[state=active]:bg-card bg-muted/30 py-2 px-5 font-semibold text-sm transition-none data-[state=active]:z-10 relative -mb-px"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 rounded-sm border-2 border-current opacity-70" />
+                  캠페인
+                </div>
+              </TabsTrigger>
+              <TabsTrigger
+                value="adsets"
+                className="rounded-t-md rounded-b-none border border-transparent data-[state=active]:border-border/50 data-[state=active]:border-b-transparent data-[state=active]:bg-card bg-muted/30 py-2 px-5 font-semibold text-sm transition-none data-[state=active]:z-10 relative -mb-px"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="grid grid-cols-2 gap-0.5 h-4 w-4 opacity-70">
+                    <div className="border border-current rounded-[1px]" />
+                    <div className="border border-current rounded-[1px]" />
+                    <div className="border border-current rounded-[1px]" />
+                    <div className="border border-current rounded-[1px]" />
+                  </div>
+                  광고 세트
+                </div>
+              </TabsTrigger>
+              <TabsTrigger
+                value="ads"
+                className="rounded-t-md rounded-b-none border border-transparent data-[state=active]:border-border/50 data-[state=active]:border-b-transparent data-[state=active]:bg-card bg-muted/30 py-2 px-5 font-semibold text-sm transition-none data-[state=active]:z-10 relative -mb-px"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 border-2 border-current opacity-70 flex flex-col items-center justify-center gap-0.5">
+                    <div className="h-0.5 w-2 bg-current" />
+                    <div className="h-0.5 w-2 bg-current" />
+                  </div>
+                  광고
+                </div>
+              </TabsTrigger>
             </TabsList>
 
-            <div className="flex items-center gap-4 border p-1 rounded-lg bg-muted/20">
+            <div className="flex items-center gap-4 py-1.5 mb-2">
               <Tabs
                 value={period}
                 onValueChange={(v) => setPeriod(v as CampaignKPIPeriod)}
               >
-                <TabsList className="grid grid-cols-4 h-8">
-                  <TabsTrigger value="today" className="text-xs">오늘</TabsTrigger>
-                  <TabsTrigger value="yesterday" className="text-xs">어제</TabsTrigger>
-                  <TabsTrigger value="7d" className="text-xs">7일</TabsTrigger>
-                  <TabsTrigger value="30d" className="text-xs">30일</TabsTrigger>
+                <TabsList className="grid grid-cols-4 h-8 bg-muted/20 border">
+                  <TabsTrigger value="today" className="text-[13px]">오늘</TabsTrigger>
+                  <TabsTrigger value="yesterday" className="text-[13px]">어제</TabsTrigger>
+                  <TabsTrigger value="7d" className="text-[13px]">7일</TabsTrigger>
+                  <TabsTrigger value="30d" className="text-[13px]">30일</TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
@@ -368,23 +400,23 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
 
           {/* Bulk Action Bar */}
           {activeTab === 'campaigns' && selectedCampaignIds.size > 0 && (
-            <div className="flex items-center gap-3 rounded-lg border border-primary/20 bg-primary/5 p-3 mb-6">
-              <span className="text-sm font-medium">{selectedCampaignIds.size}개 선택됨</span>
-              <div className="flex gap-2 ml-auto">
-                <Button variant="outline" size="sm">
-                  <Pause className="mr-1 h-3 w-3" />
+            <div className="flex items-center gap-3 rounded-md border border-primary/20 bg-primary/5 p-2 mb-6 shadow-sm">
+              <span className="text-[13px] font-medium ml-2">{selectedCampaignIds.size}개 선택됨</span>
+              <div className="flex gap-1.5 ml-auto">
+                <Button variant="outline" size="sm" className="h-8 text-[13px]">
+                  <Pause className="mr-1.5 h-3.5 w-3.5" />
                   일시정지
                 </Button>
-                <Button variant="outline" size="sm">
-                  <Play className="mr-1 h-3 w-3" />
+                <Button variant="outline" size="sm" className="h-8 text-[13px]">
+                  <Play className="mr-1.5 h-3.5 w-3.5" />
                   재개
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-destructive hover:text-destructive"
+                  className="h-8 text-[13px] text-destructive hover:text-destructive"
                 >
-                  <Trash2 className="mr-1 h-3 w-3" />
+                  <Trash2 className="mr-1.5 h-3.5 w-3.5" />
                   삭제
                 </Button>
               </div>

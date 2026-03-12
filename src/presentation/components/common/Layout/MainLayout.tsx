@@ -19,7 +19,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   const t = useTranslations()
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden relative selection:bg-primary/20">
+    <div className="flex h-screen bg-background overflow-hidden relative selection:bg-primary/20">
       {/* UX-02: Skip to content link (WCAG 2.4.1) */}
       <a
         href="#main-content"

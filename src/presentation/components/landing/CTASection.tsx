@@ -1,19 +1,19 @@
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { SectionLabel } from './SectionLabel'
+import { SectionHeader } from '@/presentation/components/common'
 
 export function CTASection() {
   return (
     <section className="py-20 md:py-32 bg-primary/5">
       <div className="container mx-auto px-4 text-center">
-        <SectionLabel className="text-center">지금 시작하세요</SectionLabel>
-        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
-          지금 바로 AI 마케팅을 시작하세요
-        </h2>
-        <p className="text-muted-foreground md:text-lg mb-10 max-w-xl mx-auto leading-relaxed">
-          마케팅 전문가가 아니어도 괜찮습니다. 바투가 당신의 광고를 성공으로 이끕니다.
-        </p>
+        <SectionHeader
+          label="지금 시작하세요"
+          title="지금 바로 AI 마케팅을 시작하세요"
+          description="마케팅 전문가가 아니어도 괜찮습니다. 바투가 당신의 광고를 성공으로 이끕니다."
+          noMargin
+          className="mb-10"
+        />
         <Button
           size="lg"
           className="gap-2 h-12 px-8 bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"

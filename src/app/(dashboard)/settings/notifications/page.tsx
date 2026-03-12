@@ -141,10 +141,10 @@ export default function NotificationSettingsPage() {
   if (isLoading) {
     return (
       <div className="space-y-6 p-6">
-        <div className="h-8 w-48 animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700" />
+        <div className="h-8 w-48 animate-pulse rounded-lg bg-muted" />
         <div className="grid gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-32 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700" />
+            <div key={i} className="h-32 animate-pulse rounded-xl bg-muted" />
           ))}
         </div>
       </div>
@@ -157,15 +157,15 @@ export default function NotificationSettingsPage() {
     <div className="mx-auto max-w-3xl space-y-8 p-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">알림 설정</h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        <h1 className="text-2xl font-bold text-foreground">알림 설정</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Slack, 카카오톡, 이메일로 캠페인 알림을 받아보세요
         </p>
       </div>
 
       {/* 채널 연결 */}
       <section>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">알림 채널</h2>
+        <h2 className="text-lg font-semibold text-foreground mb-4">알림 채널</h2>
         <div className="grid gap-4">
           {CHANNEL_TYPES.map((type) => {
             const channel = channels.find((ch) => ch.type === type)
@@ -194,17 +194,17 @@ export default function NotificationSettingsPage() {
       </section>
 
       {/* 테스트 알림 */}
-      <section className="rounded-xl border border-dashed border-gray-300 bg-gray-50 p-6 dark:border-gray-600 dark:bg-gray-800/50">
+      <section className="rounded-xl border border-dashed border-border bg-muted/30 p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-medium text-gray-900 dark:text-gray-100">테스트 알림 발송</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <h3 className="font-medium text-foreground">테스트 알림 발송</h3>
+            <p className="text-sm text-muted-foreground">
               설정된 채널로 테스트 알림을 보내 연결을 확인합니다
             </p>
           </div>
           <button
             onClick={handleTestNotification}
-            className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-200 transition"
+            className="rounded-lg bg-foreground px-4 py-2 text-sm font-medium text-background hover:bg-foreground/90 transition"
           >
             🔔 테스트 발송
           </button>

@@ -311,7 +311,7 @@ export function FirstUseGuide({
           <button
             type="button"
             onClick={handleDismiss}
-            className="p-1.5 hover:bg-white/50 dark:hover:bg-gray-800/50 rounded-lg transition-colors"
+            className="p-1.5 hover:bg-muted/50 rounded-lg transition-colors"
             aria-label="닫기"
           >
             <X className="w-4 h-4 text-muted-foreground" />

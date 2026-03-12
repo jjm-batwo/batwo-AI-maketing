@@ -81,20 +81,20 @@ function FindingIcon({ type }: { type: string }) {
 function PriorityBadge({ priority }: { priority: string }) {
   if (priority === 'high') {
     return (
-      <Badge variant="outline" className="text-xs bg-red-50 text-red-600 border-red-200">
+      <Badge variant="outline" className="text-xs bg-red-50 text-red-600 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800">
         높음
       </Badge>
     )
   }
   if (priority === 'medium') {
     return (
-      <Badge variant="outline" className="text-xs bg-amber-50 text-amber-600 border-amber-200">
+      <Badge variant="outline" className="text-xs bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800">
         중간
       </Badge>
     )
   }
   return (
-    <Badge variant="outline" className="text-xs bg-slate-50 text-slate-600 border-slate-200">
+    <Badge variant="outline" className="text-xs bg-muted text-muted-foreground border-border">
       낮음
     </Badge>
   )

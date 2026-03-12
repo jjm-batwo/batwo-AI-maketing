@@ -94,7 +94,7 @@ export const PricingSection = memo(function PricingSection({
           >
             <span
               className={cn(
-                'inline-block h-4 w-4 rounded-full bg-white transition-transform',
+                'inline-block h-4 w-4 rounded-full bg-background transition-transform',
                 billingPeriod === 'annual' ? 'translate-x-6' : 'translate-x-1'
               )}
             />
@@ -120,10 +120,10 @@ export const PricingSection = memo(function PricingSection({
               <Card
                 key={plan}
                 className={cn(
-                  'flex flex-col h-full relative overflow-hidden transition-all duration-300 bg-white shadow-sm hover:shadow-lg hover:-translate-y-1',
+                  'flex flex-col h-full relative overflow-hidden transition-all duration-300 bg-card shadow-sm hover:shadow-lg hover:-translate-y-1',
                   isPopular
                     ? 'border-primary ring-1 ring-primary shadow-md transform lg:-translate-y-2 lg:scale-105 z-10 hover:shadow-primary/20'
-                    : 'border-gray-100 hover:border-border'
+                    : 'border-border hover:border-primary/30'
                 )}
               >
                 {/* Popular Badge */}

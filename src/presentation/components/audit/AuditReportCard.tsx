@@ -144,7 +144,7 @@ export function AuditReportCard({
 
           {/* 주요 지표 */}
           <div className="flex-1 grid grid-cols-2 gap-4 w-full">
-            <div className="rounded-lg bg-white/80 border border-border p-4 text-center">
+            <div className="rounded-lg bg-card/80 border border-border p-4 text-center">
               <p className="text-xs text-muted-foreground mb-1">낭비 예상 비용</p>
               <p className="text-lg font-bold text-destructive">
                 {formatAmount(estimatedWaste.amount, estimatedWaste.currency)}
@@ -152,21 +152,21 @@ export function AuditReportCard({
               <p className="text-xs text-muted-foreground">월 추정</p>
             </div>
 
-            <div className="rounded-lg bg-white/80 border border-border p-4 text-center">
+            <div className="rounded-lg bg-card/80 border border-border p-4 text-center">
               <p className="text-xs text-muted-foreground mb-1">개선 가능 효과</p>
-              <p className="text-lg font-bold text-emerald-600">
+              <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
                 +{formatAmount(estimatedImprovement.amount, estimatedImprovement.currency)}
               </p>
               <p className="text-xs text-muted-foreground">월 추정</p>
             </div>
 
-            <div className="rounded-lg bg-white/80 border border-border p-4 text-center">
+            <div className="rounded-lg bg-card/80 border border-border p-4 text-center">
               <p className="text-xs text-muted-foreground mb-1">전체 캠페인</p>
               <p className="text-2xl font-bold text-foreground">{totalCampaigns}</p>
               <p className="text-xs text-muted-foreground">개</p>
             </div>
 
-            <div className="rounded-lg bg-white/80 border border-border p-4 text-center">
+            <div className="rounded-lg bg-card/80 border border-border p-4 text-center">
               <p className="text-xs text-muted-foreground mb-1">활성 캠페인</p>
               <p className="text-2xl font-bold text-foreground">{activeCampaigns}</p>
               <p className="text-xs text-muted-foreground">개</p>

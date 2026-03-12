@@ -15,16 +15,14 @@ import {
 import {
   Sparkles,
   TrendingUp,
-  // TrendingDown,
   AlertTriangle,
   Lightbulb,
   RefreshCw,
   Clock,
-  ArrowUpRight,
-  ArrowDownRight,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
+import { EmptyState, MetricChange, SkeletonList } from '@/presentation/components/common'
 import { InsightDetailModal } from './InsightDetailModal'
 import { ApplyOptimizationButton } from './ApplyOptimizationButton'
 import type { ApplyAction } from '@/domain/value-objects/ApplyAction'
@@ -208,18 +206,7 @@ export const AIInsights = memo(function AIInsights({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="animate-pulse rounded-lg border p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="h-4 w-12 rounded bg-muted" />
-                  <div className="h-4 w-24 rounded bg-muted" />
-                </div>
-                <div className="h-3 w-full rounded bg-muted" />
-                <div className="mt-1 h-3 w-3/4 rounded bg-muted" />
-              </div>
-            ))}
-          </div>
+          <SkeletonList variant="card" count={3} />
         </CardContent>
       </Card>
     )
@@ -243,10 +230,7 @@ export const AIInsights = memo(function AIInsights({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col items-center justify-center py-8 text-center">
-            <Sparkles className="h-12 w-12 text-muted-foreground/30 mb-4" />
-            <p className="text-sm text-muted-foreground">{t('empty')}</p>
-          </div>
+          <EmptyState icon={Sparkles} title={t('empty')} />
         </CardContent>
       </Card>
     )
@@ -401,22 +385,8 @@ export const AIInsights = memo(function AIInsights({
                             {formatValue(insight.currentValue, insight.metric)}
                           </span>
                         )}
-                        {hasChange && (
-                          <span
-                            className={cn(
-                              'flex items-center text-xs font-medium',
-                              isPositiveChange
-                                ? 'text-green-600 dark:text-green-400'
-                                : 'text-red-600 dark:text-red-400'
-                            )}
-                          >
-                            {isPositiveChange ? (
-                              <ArrowUpRight className="h-3 w-3" />
-                            ) : (
-                              <ArrowDownRight className="h-3 w-3" />
-                            )}
-                            {formatChangePercent(insight.changePercent)}
-                          </span>
+                        {hasChange && insight.changePercent !== undefined && (
+                          <MetricChange value={insight.changePercent} />
                         )}
                       </div>
                     )}

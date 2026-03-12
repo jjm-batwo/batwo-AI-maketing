@@ -63,8 +63,8 @@ export function NotificationPreferenceForm({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">알림 유형별 설정</h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <h2 className="text-lg font-semibold text-foreground">알림 유형별 설정</h2>
+        <p className="text-sm text-muted-foreground">
           각 유형에 대해 수신할 채널과 최소 심각도를 설정하세요
         </p>
       </div>
@@ -130,13 +130,13 @@ function PreferenceRow({
   }
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+    <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <span className="text-xl">{icon}</span>
           <div>
-            <h3 className="font-medium text-gray-900 dark:text-gray-100">{label}</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{description}</p>
+            <h3 className="font-medium text-foreground">{label}</h3>
+            <p className="text-sm text-muted-foreground">{description}</p>
           </div>
         </div>
         <label className="relative inline-flex cursor-pointer items-center">
@@ -149,14 +149,14 @@ function PreferenceRow({
             }}
             className="peer sr-only"
           />
-          <div className="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none dark:bg-gray-600" />
+          <div className="peer h-6 w-11 rounded-full bg-muted after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-border after:bg-background after:transition-all after:content-[''] peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none" />
         </label>
       </div>
 
       {isActive && (
         <div className="space-y-3 ml-10">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               수신 채널
             </label>
             <div className="flex gap-2 flex-wrap">
@@ -166,21 +166,21 @@ function PreferenceRow({
                   onClick={() => handleChannelToggle(opt.value)}
                   className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
                     channels.includes(opt.value)
-                      ? 'bg-blue-100 text-blue-700 ring-1 ring-blue-500 dark:bg-blue-900/30 dark:text-blue-300'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600'
+                      ? 'bg-primary/10 text-primary ring-1 ring-primary'
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
                   }`}
                 >
                   {opt.label}
                 </button>
               ))}
               {availableChannels.length === 0 && (
-                <p className="text-sm text-gray-400 italic">먼저 알림 채널을 등록하세요</p>
+                <p className="text-sm text-muted-foreground italic">먼저 알림 채널을 등록하세요</p>
               )}
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-foreground mb-2">
               최소 심각도
             </label>
             <div className="flex gap-2">
@@ -193,8 +193,8 @@ function PreferenceRow({
                   }}
                   className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
                     minSeverity === opt.value
-                      ? 'bg-blue-100 text-blue-700 ring-1 ring-blue-500 dark:bg-blue-900/30 dark:text-blue-300'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600'
+                      ? 'bg-primary/10 text-primary ring-1 ring-primary'
+                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
                   }`}
                 >
                   {opt.label}
@@ -207,7 +207,7 @@ function PreferenceRow({
             <button
               onClick={handleSave}
               disabled={isLoading || channels.length === 0}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 transition"
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 transition"
             >
               {isLoading ? '저장 중...' : '저장'}
             </button>

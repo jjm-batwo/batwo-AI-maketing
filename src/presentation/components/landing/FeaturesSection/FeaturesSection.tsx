@@ -2,7 +2,8 @@
 
 import { memo, useRef } from 'react'
 import { useScrollAnimation } from '@/presentation/hooks'
-import { SectionLabel } from '../SectionLabel'
+import { SectionHeader } from '@/presentation/components/common'
+import { BrowserChrome } from '../HeroSection/BrowserChrome'
 import { FEATURES } from './featuresData'
 
 interface FeaturesSectionProps {
@@ -24,15 +25,11 @@ export const FeaturesSection = memo(function FeaturesSection({
         }`}
       >
         {/* Section Header */}
-        <header className="text-center mb-16">
-          <SectionLabel className="text-center">기능</SectionLabel>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
-            왜 바투인가요?
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            복잡한 광고 운영을 AI가 대신합니다. 당신은 비즈니스에만 집중하세요.
-          </p>
-        </header>
+        <SectionHeader
+          label="기능"
+          title="왜 바투인가요?"
+          description="복잡한 광고 운영을 AI가 대신합니다. 당신은 비즈니스에만 집중하세요."
+        />
 
         {/* Feature Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto mb-16">
@@ -67,37 +64,11 @@ export const FeaturesSection = memo(function FeaturesSection({
 function DashboardMock() {
   return (
     <div
-      className="rounded-2xl border border-border shadow-2xl overflow-hidden bg-white"
+      className="rounded-2xl border border-border shadow-2xl overflow-hidden bg-card"
       role="img"
       aria-label="바투 대시보드 미리보기"
     >
-      {/* Browser Chrome */}
-      <div className="flex items-center gap-2 px-4 py-3 bg-muted border-b border-border">
-        <div className="flex gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-red-400" aria-hidden="true" />
-          <div className="w-3 h-3 rounded-full bg-yellow-400" aria-hidden="true" />
-          <div className="w-3 h-3 rounded-full bg-green-400" aria-hidden="true" />
-        </div>
-        <div className="flex-1 mx-4">
-          <div className="bg-white border border-border rounded-md h-7 flex items-center px-3 max-w-xs mx-auto">
-            <svg
-              className="w-3 h-3 text-green-500 mr-2 shrink-0"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-              />
-            </svg>
-            <span className="text-xs text-muted-foreground font-mono">app.batwo.io/dashboard</span>
-          </div>
-        </div>
-      </div>
+      <BrowserChrome />
 
       {/* Dashboard Content */}
       <div className="p-6 bg-muted/50">
@@ -107,7 +78,7 @@ function DashboardMock() {
             <h4 className="font-semibold text-foreground">광고 성과 대시보드</h4>
             <p className="text-xs text-muted-foreground mt-0.5">최근 7일 기준</p>
           </div>
-          <div className="flex items-center gap-1.5 text-xs font-medium text-green-600 bg-green-50 border border-green-100 px-3 py-1.5 rounded-full">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-green-600 bg-green-500/10 border border-green-500/20 px-3 py-1.5 rounded-full">
             <span
               className="w-1.5 h-1.5 rounded-full bg-green-500 animate-ping"
               aria-hidden="true"

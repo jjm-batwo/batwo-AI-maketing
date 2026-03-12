@@ -172,27 +172,27 @@ export const CampaignTable = memo(function CampaignTable({
       ({
         ACTIVE: {
           label: t('table.status.active'),
-          className: 'bg-green-500/15 text-green-500',
+          className: 'text-foreground font-medium',
           dot: 'bg-green-500',
         },
         PAUSED: {
           label: t('table.status.paused'),
-          className: 'bg-yellow-500/15 text-yellow-500',
-          dot: 'bg-yellow-500',
+          className: 'text-muted-foreground',
+          dot: 'bg-transparent border-[1.5px] border-muted-foreground',
         },
         COMPLETED: {
           label: t('table.status.completed'),
-          className: 'bg-muted text-muted-foreground',
+          className: 'text-muted-foreground',
           dot: 'bg-muted-foreground',
         },
         DRAFT: {
           label: t('table.status.draft'),
-          className: 'bg-primary/15 text-primary',
+          className: 'text-primary',
           dot: 'bg-primary',
         },
         PENDING_REVIEW: {
           label: t('table.status.pendingReview'),
-          className: 'bg-purple-500/15 text-purple-500',
+          className: 'text-purple-500',
           dot: 'bg-purple-500',
         },
       }) as Record<CampaignStatus, { label: string; className: string; dot: string }>,
@@ -632,15 +632,15 @@ export const CampaignTable = memo(function CampaignTable({
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead className="w-[72px] text-center">{t('table.columns.activation')}</TableHead>
-              <TableHead className="w-[40px]">
+            <TableRow className="hover:bg-transparent border-b bg-muted/30 text-xs text-muted-foreground font-medium h-10">
+              <TableHead className="w-[40px] pl-4">
                 <Checkbox
                   checked={allSelected ? true : someSelected ? 'indeterminate' : false}
                   onCheckedChange={handleSelectAll}
                   aria-label={t('table.columnConfig.selectAll')}
                 />
               </TableHead>
+              <TableHead className="w-[60px] text-center">{t('table.columns.activation')}</TableHead>
               <TableHead>
                 <button
                   type="button"
@@ -719,11 +719,25 @@ export const CampaignTable = memo(function CampaignTable({
               return (
                 <TableRow
                   key={campaign.id}
-                  className={cn('cursor-pointer transition-colors', isSelected && 'bg-primary/5')}
+                  className={cn('cursor-pointer transition-colors hover:bg-muted/30', isSelected && 'bg-primary/5')}
                   onClick={(e) => handleRowClick(campaign.id, e)}
                 >
-                  <TableCell>
-                    {/* UX-04: Toggle switch with unified bg-blue-500 color */}
+                  <TableCell className="pl-4">
+                    <Checkbox
+                      checked={isSelected}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          selectCampaign(campaign.id)
+                        } else {
+                          deselectCampaign(campaign.id)
+                        }
+                      }}
+                      aria-label={`${campaign.name} ${t('table.columnConfig.selectAll')}`}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {/* UX-04: Toggle switch with Meta Ads styling */}
                     <button
                       type="button"
                       role="switch"
@@ -735,10 +749,10 @@ export const CampaignTable = memo(function CampaignTable({
                         handleActivationToggle(campaign)
                       }}
                       className={cn(
-                        'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
+                        'relative inline-flex h-[18px] w-8 flex-shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus-visible:outline-none',
                         campaign.status === 'ACTIVE'
-                          ? 'bg-blue-500'
-                          : 'bg-accent dark:bg-gray-600',
+                          ? 'bg-[#1877F2]'
+                          : 'bg-muted-foreground/30',
                         campaign.status !== 'ACTIVE' &&
                         campaign.status !== 'PAUSED' &&
                         'cursor-not-allowed opacity-50'
@@ -746,50 +760,52 @@ export const CampaignTable = memo(function CampaignTable({
                     >
                       <span
                         className={cn(
-                          'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition-transform duration-200 ease-in-out',
-                          campaign.status === 'ACTIVE' ? 'translate-x-5' : 'translate-x-0.5'
+                          'pointer-events-none inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow-sm ring-0 transition-transform duration-200 ease-in-out',
+                          campaign.status === 'ACTIVE' ? 'translate-x-[16px]' : 'translate-x-[2px]'
                         )}
                       />
                     </button>
                   </TableCell>
                   <TableCell>
-                    <Checkbox
-                      checked={isSelected}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          selectCampaign(campaign.id)
-                        } else {
-                          deselectCampaign(campaign.id)
-                        }
-                      }}
-                      aria-label={`${campaign.name} ${t('table.columnConfig.selectAll')}`}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <Link
-                        href={`/campaigns/${campaign.id}`}
-                        className="font-medium hover:underline"
-                        onClick={(e) => e.stopPropagation()}
+                    <div className="group flex flex-col justify-center">
+                      <button
+                        type="button"
+                        className="font-medium text-[14px] text-left hover:underline text-[#1877F2]"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (onRowClick) {
+                            onRowClick(campaign.id, campaign.name)
+                          } else {
+                            router.push(`/campaigns/${campaign.id}`)
+                          }
+                        }}
                       >
                         {campaign.name}
-                      </Link>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {objectiveLabels[campaign.objective as keyof typeof objectiveLabels] || campaign.objective}
-                      </p>
+                      </button>
+                      <div className="h-4 flex items-center mt-0.5">
+                        <span className="text-[11px] text-muted-foreground group-hover:hidden">
+                          {objectiveLabels[campaign.objective as keyof typeof objectiveLabels] || campaign.objective}
+                        </span>
+                        <div className="hidden group-hover:flex items-center gap-2 text-[11px] text-muted-foreground">
+                          <Link href={`/campaigns/${campaign.id}/edit`} className="hover:underline" onClick={(e) => e.stopPropagation()}>
+                            수정
+                          </Link>
+                          <span>·</span>
+                          <Link href={`/campaigns/${campaign.id}/analytics`} className="hover:underline" onClick={(e) => e.stopPropagation()}>
+                            차트 보기
+                          </Link>
+                        </div>
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    {/* UX-06: Status badge with icon for color-blind accessibility */}
-                    <span
-                      className={cn(
-                        'inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium',
-                        status.className
-                      )}
-                    >
-                      <StatusIcon className="h-3 w-3" />
-                      {status.label}
-                    </span>
+                    {/* UX-06: Status dot with text */}
+                    <div className="flex items-center gap-2">
+                      <div className={cn("h-2 w-2 rounded-full", status.dot)} />
+                      <span className={cn("text-[13px]", status.className)}>
+                        {status.label}
+                      </span>
+                    </div>
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
                     {formatNumber(campaign.dailyBudget)}

@@ -163,12 +163,12 @@ export function BudgetRecommender({
 
         {/* 기존 광고 성과 표시 (있는 경우) */}
         {existingCampaignData && (
-          <div className="rounded-lg bg-blue-50 p-4">
+        <div className="rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 p-4">
             <div className="flex items-start gap-2">
-              <TrendingUp className="mt-0.5 h-4 w-4 text-blue-600" />
+              <TrendingUp className="mt-0.5 h-4 w-4 text-blue-600 dark:text-blue-400" />
               <div className="flex-1">
-                <p className="text-sm font-medium text-blue-800">기존 광고 성과 (최근 30일)</p>
-                <div className="mt-2 grid grid-cols-2 gap-2 text-sm text-blue-700">
+                <p className="text-sm font-medium text-blue-800 dark:text-blue-300">기존 광고 성과 (최근 30일)</p>
+                <div className="mt-2 grid grid-cols-2 gap-2 text-sm text-blue-700 dark:text-blue-400">
                   <div>평균 일일 지출: {formatBudget(existingCampaignData.avgDailySpend)}</div>
                   <div>평균 ROAS: {formatROAS(existingCampaignData.avgROAS)}</div>
                   <div>평균 객단가: {formatBudget(existingCampaignData.avgAOV)}</div>
@@ -344,7 +344,7 @@ export function BudgetRecommender({
             </div>
 
             {/* 추천 근거 */}
-            <div className="text-sm text-muted-foreground bg-white/50 rounded p-3">
+            <div className="text-sm text-muted-foreground bg-muted/50 rounded p-3">
               <p className="flex items-start gap-2">
                 {recommendation.comparison ? (
                   <TrendingUp className="h-4 w-4 mt-0.5 text-blue-500 flex-shrink-0" />
@@ -357,7 +357,7 @@ export function BudgetRecommender({
 
             {/* 비교 분석 (기존 데이터 있는 경우) */}
             {recommendation.comparison && (
-              <div className="text-sm bg-white/50 rounded p-3 space-y-1">
+              <div className="text-sm bg-muted/50 rounded p-3 space-y-1">
                 <p className="font-medium text-foreground">
                   {recommendation.comparison.currentVsRecommended}
                 </p>
