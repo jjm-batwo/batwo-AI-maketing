@@ -137,6 +137,9 @@ export function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers)
   requestHeaders.set('x-nonce', nonce)
   requestHeaders.set('Content-Security-Policy', cspHeaderValue)
+  // Server Component에서 현재 요청 경로를 읽을 수 있도록 헤더에 추가
+  requestHeaders.set('x-pathname', request.nextUrl.pathname)
+  requestHeaders.set('x-search', request.nextUrl.search)
 
   const response = NextResponse.next({
     request: {

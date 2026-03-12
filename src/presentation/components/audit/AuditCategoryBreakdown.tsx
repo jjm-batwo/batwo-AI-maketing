@@ -101,6 +101,23 @@ function PriorityBadge({ priority }: { priority: string }) {
 }
 
 export function AuditCategoryBreakdown({ categories }: AuditCategoryBreakdownProps) {
+  if (!categories || categories.length === 0) {
+    return (
+      <div className="w-full space-y-2">
+        <h2 className="text-lg font-bold text-foreground mb-4">카테고리별 분석</h2>
+        <div className="flex flex-col items-center justify-center py-16 text-center rounded-lg border border-dashed border-border bg-muted/30">
+          <span className="text-4xl mb-4" aria-hidden="true">📊</span>
+          <p className="text-base font-medium text-foreground mb-2">
+            아직 분석할 카테고리 데이터가 없습니다
+          </p>
+          <p className="text-sm text-muted-foreground max-w-xs">
+            Meta 계정을 연결하면 카테고리별 상세 분석을 확인할 수 있습니다
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="w-full space-y-2">
       <h2 className="text-lg font-bold text-foreground mb-4">카테고리별 분석</h2>

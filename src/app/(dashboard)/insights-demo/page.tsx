@@ -20,29 +20,29 @@ export default function InsightsDemoPage() {
   return (
     <div className="container mx-auto py-8 space-y-8">
       <div>
-        <h1 className="text-3xl font-bold mb-2">AI Insights Demo</h1>
-        <p className="text-muted-foreground">Real-time anomaly detection and trend analysis</p>
+        <h1 className="text-3xl font-bold mb-2">AI 인사이트 데모</h1>
+        <p className="text-muted-foreground">실시간 이상 탐지 및 트렌드 분석</p>
       </div>
 
-      {/* Default industry */}
+      {/* 전체 업종 */}
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold">All Industries</h2>
+        <h2 className="text-xl font-semibold">전체 업종</h2>
         <Suspense fallback={<InsightsSkeleton />}>
           <AIInsights enabled />
         </Suspense>
       </section>
 
-      {/* E-commerce industry */}
+      {/* 이커머스 집중 */}
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold">E-commerce Focus</h2>
+        <h2 className="text-xl font-semibold">이커머스 집중</h2>
         <Suspense fallback={<InsightsSkeleton />}>
           <AIInsights industry="ecommerce" enabled />
         </Suspense>
       </section>
 
-      {/* With auto-refresh */}
+      {/* 자동 새로고침 */}
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Auto-Refresh (30s)</h2>
+        <h2 className="text-xl font-semibold">자동 새로고침 (30초)</h2>
         <Suspense fallback={<InsightsSkeleton />}>
           <AIInsights industry="fashion" enabled refetchInterval={30000} />
         </Suspense>

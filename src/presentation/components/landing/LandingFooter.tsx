@@ -3,28 +3,28 @@ import Link from 'next/link'
 
 const footerLinks = {
   제품: [
-    { label: '기능', href: '#features' },
-    { label: '가격', href: '#pricing' },
-    { label: '보안', href: '/security' },
-    { label: '문서', href: '/docs' },
+    { label: '기능', href: '#features', disabled: false },
+    { label: '가격', href: '#pricing', disabled: false },
+    { label: '보안', href: '#', disabled: true },
+    { label: '문서', href: '/docs', disabled: false },
   ],
   회사: [
-    { label: '소개', href: '/about' },
-    { label: '블로그', href: '/blog' },
-    { label: '채용', href: '/careers' },
-    { label: '파트너', href: '/partners' },
+    { label: '소개', href: '#', disabled: true },
+    { label: '블로그', href: '#', disabled: true },
+    { label: '채용', href: '#', disabled: true },
+    { label: '파트너', href: '#', disabled: true },
   ],
   리소스: [
-    { label: '고객 사례', href: '/case-studies' },
-    { label: '튜토리얼', href: '/tutorials' },
-    { label: '커뮤니티', href: '/community' },
-    { label: '지원', href: 'mailto:support@batwo.io' },
+    { label: '고객 사례', href: '#', disabled: true },
+    { label: '튜토리얼', href: '#', disabled: true },
+    { label: '커뮤니티', href: '#', disabled: true },
+    { label: '지원', href: 'mailto:support@batwo.io', disabled: false },
   ],
   소셜: [
-    { label: 'Twitter', href: 'https://twitter.com/batwo_ai' },
-    { label: 'Instagram', href: 'https://instagram.com/batwo_ai' },
-    { label: 'LinkedIn', href: 'https://linkedin.com/company/batwo' },
-    { label: 'GitHub', href: 'https://github.com/batwo-ai' },
+    { label: 'Twitter', href: 'https://twitter.com/batwo_ai', disabled: false },
+    { label: 'Instagram', href: 'https://instagram.com/batwo_ai', disabled: false },
+    { label: 'LinkedIn', href: 'https://linkedin.com/company/batwo', disabled: false },
+    { label: 'GitHub', href: 'https://github.com/batwo-ai', disabled: false },
   ],
 }
 
@@ -55,8 +55,10 @@ export function LandingFooter() {
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                      className={`text-sm text-muted-foreground transition-colors${link.disabled ? ' opacity-50 cursor-not-allowed pointer-events-none' : ' hover:text-primary'}`}
                       aria-label={link.label}
+                      aria-disabled={link.disabled || undefined}
+                      tabIndex={link.disabled ? -1 : undefined}
                     >
                       {link.label}
                     </a>

@@ -9,24 +9,24 @@ export default async function CheckoutPage({
 }: {
   searchParams: Promise<{ plan?: string; period?: string }>
 }) {
-  const session = await auth()
   const { plan: planParam, period: periodParam } = await searchParams
 
-  if (!session?.user) {
-    const callbackUrl = `/checkout?plan=${planParam || ''}&period=${periodParam || ''}`
-    redirect(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`)
-  }
-
-  // Validate plan
+  // Validate plan before checking auth — invalid params always redirect to pricing
   const plan = planParam?.toUpperCase() as SubscriptionPlan
   if (!plan || !Object.values(SubscriptionPlan).includes(plan) || plan === SubscriptionPlan.FREE) {
     redirect('/#pricing')
   }
 
-  // Validate period
+  // Validate period before checking auth
   const period = (periodParam?.toUpperCase() || 'MONTHLY') as BillingPeriod
   if (!Object.values(BillingPeriod).includes(period)) {
     redirect('/#pricing')
+  }
+
+  const session = await auth()
+  if (!session?.user) {
+    const callbackUrl = `/checkout?plan=${planParam}&period=${period}`
+    redirect(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`)
   }
 
   const planConfig = PLAN_CONFIGS[plan]

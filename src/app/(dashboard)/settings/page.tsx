@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ChevronRight, Radio, CreditCard } from 'lucide-react'
+import { ChevronRight, Radio, CreditCard, Bell, Users } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: '설정 | 바투',
@@ -30,6 +30,18 @@ const settingsItems = [
     description: '구독 플랜, 결제 수단, 결제 내역을 관리하세요',
     href: '/settings/billing',
     icon: <CreditCard className="h-6 w-6 text-green-500" />,
+  },
+  {
+    title: '알림 설정',
+    description: '이메일, 슬랙 등 알림 채널과 알림 조건을 설정하세요',
+    href: '/settings/notifications',
+    icon: <Bell className="h-6 w-6 text-yellow-500" />,
+  },
+  {
+    title: '팀 관리',
+    description: '팀 멤버를 초대하고 권한을 관리하세요',
+    href: '/settings/teams',
+    icon: <Users className="h-6 w-6 text-blue-500" />,
   },
 ]
 

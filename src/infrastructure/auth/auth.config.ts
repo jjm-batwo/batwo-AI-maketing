@@ -49,6 +49,14 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user
       const isLandingPage = nextUrl.pathname === '/'
+      // 퍼블릭 페이지: 로그인 여부와 무관하게 항상 접근 가능
+      const isPublicPage =
+        nextUrl.pathname.startsWith('/privacy') ||
+        nextUrl.pathname.startsWith('/terms') ||
+        nextUrl.pathname.startsWith('/docs') ||
+        nextUrl.pathname.startsWith('/pricing') ||
+        nextUrl.pathname.startsWith('/audit') ||
+        nextUrl.pathname.startsWith('/checkout')
       const isOnDashboard =
         nextUrl.pathname.startsWith('/dashboard') ||
         nextUrl.pathname.startsWith('/campaigns') ||
@@ -63,12 +71,18 @@ export const authConfig = {
           pathname: nextUrl.pathname,
           isLoggedIn,
           isLandingPage,
+          isPublicPage,
           isOnDashboard,
           isOnAuth,
           isOnAdmin,
           authUser: auth?.user?.email,
           globalRole: auth?.user?.globalRole,
         })
+      }
+
+      // 퍼블릭 페이지는 로그인 여부와 무관하게 항상 접근 허용
+      if (isPublicPage) {
+        return true
       }
 
       // 랜딩 페이지는 누구나 접근 가능
