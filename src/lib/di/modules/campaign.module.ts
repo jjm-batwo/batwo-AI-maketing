@@ -33,6 +33,7 @@ import { AnomalyDetectionService } from '@application/services/AnomalyDetectionS
 import { AnomalyRootCauseService } from '@application/services/AnomalyRootCauseService'
 import { AnomalySegmentAnalysisService } from '@application/services/AnomalySegmentAnalysisService'
 import { AdAccountAuditService } from '@application/services/AdAccountAuditService'
+import { PortfolioOptimizationService } from '@application/services/PortfolioOptimizationService'
 import { CopyLearningService } from '@application/services/CopyLearningService'
 import { CampaignAnalyzer } from '@application/services/CampaignAnalyzer'
 import { CompetitorBenchmarkService } from '@application/services/CompetitorBenchmarkService'
@@ -165,6 +166,14 @@ export function registerCampaignModule(container: Container): void {
   container.registerSingleton(
     DI_TOKENS.AnomalySegmentAnalysisService,
     () => new AnomalySegmentAnalysisService()
+  )
+
+  container.registerSingleton(
+    DI_TOKENS.PortfolioOptimizationService,
+    () => new PortfolioOptimizationService(
+      container.resolve(DI_TOKENS.CampaignRepository),
+      container.resolve(DI_TOKENS.KPIRepository)
+    )
   )
 
   container.registerSingleton(

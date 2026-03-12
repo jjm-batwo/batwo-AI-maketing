@@ -15,7 +15,10 @@ export async function GET() {
 
     return NextResponse.json({ success: true, data: report })
   } catch (error) {
-    console.error('[AccountAuditAPI] Error generating audit:', error)
-    return NextResponse.json({ error: '진단에 실패했습니다' }, { status: 500 })
+    const errMsg = error instanceof Error ? error.message : String(error)
+    const errStack = error instanceof Error ? error.stack : ''
+    console.error('[AccountAuditAPI] Error generating audit:', errMsg)
+    console.error('[AccountAuditAPI] Stack:', errStack)
+    return NextResponse.json({ error: '진단에 실패했습니다', detail: errMsg }, { status: 500 })
   }
 }
