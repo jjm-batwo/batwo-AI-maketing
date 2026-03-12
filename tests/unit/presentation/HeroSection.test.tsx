@@ -24,7 +24,7 @@ describe('HeroSection 전환율 개선', () => {
 
       const ctaButton = screen.getByRole('link', { name: /14일 무료로 시작하기/i })
       expect(ctaButton).toBeInTheDocument()
-      expect(ctaButton).toHaveAttribute('href', '/register')
+      expect(ctaButton).toHaveAttribute('href', '/login')
     })
 
     it('Secondary CTA "서비스 소개 영상"이 표시된다', () => {

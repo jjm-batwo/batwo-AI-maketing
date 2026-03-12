@@ -38,6 +38,7 @@ const CHANNEL_INFO: Record<NotificationChannelType, { label: string; icon: strin
 
 export function NotificationChannelCard({
   channel,
+  type,
   onSave,
   onDelete,
   isLoading,
@@ -48,8 +49,8 @@ export function NotificationChannelCard({
   onDelete?: (id: string) => void
   isLoading?: boolean
 }) {
-  const type = channel?.type ?? 'SLACK'
-  const info = CHANNEL_INFO[type]
+  const channelType = channel?.type ?? type
+  const info = CHANNEL_INFO[channelType]
   const [isEditing, setIsEditing] = useState(!channel)
   const [webhookUrl, setWebhookUrl] = useState(channel?.config?.webhookUrl ?? '')
   const [channelName, setChannelName] = useState(channel?.config?.channelName ?? '')
@@ -58,7 +59,7 @@ export function NotificationChannelCard({
 
   const handleSave = () => {
     let config: ChannelConfig = {}
-    switch (type) {
+    switch (channelType) {
       case 'SLACK':
         config = { webhookUrl, channelName: channelName || undefined }
         break
@@ -69,7 +70,7 @@ export function NotificationChannelCard({
         config = { email }
         break
     }
-    onSave(type, config)
+    onSave(channelType, config)
     setIsEditing(false)
   }
 
@@ -98,7 +99,7 @@ export function NotificationChannelCard({
 
       {isEditing ? (
         <div className="space-y-3">
-          {type === 'SLACK' && (
+          {channelType === 'SLACK' && (
             <>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -126,7 +127,7 @@ export function NotificationChannelCard({
               </div>
             </>
           )}
-          {type === 'KAKAO' && (
+          {channelType === 'KAKAO' && (
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 전화번호
@@ -140,7 +141,7 @@ export function NotificationChannelCard({
               />
             </div>
           )}
-          {type === 'EMAIL' && (
+          {channelType === 'EMAIL' && (
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 이메일 주소
@@ -175,13 +176,13 @@ export function NotificationChannelCard({
       ) : (
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-600 dark:text-gray-400">
-            {type === 'SLACK' && channel?.config?.webhookUrl && (
+            {channelType === 'SLACK' && channel?.config?.webhookUrl && (
               <span>Webhook: ...{channel.config.webhookUrl.slice(-12)}</span>
             )}
-            {type === 'KAKAO' && channel?.config?.phoneNumber && (
+            {channelType === 'KAKAO' && channel?.config?.phoneNumber && (
               <span>전화번호: {channel.config.phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-****-$3')}</span>
             )}
-            {type === 'EMAIL' && channel?.config?.email && (
+            {channelType === 'EMAIL' && channel?.config?.email && (
               <span>이메일: {channel.config.email}</span>
             )}
           </div>

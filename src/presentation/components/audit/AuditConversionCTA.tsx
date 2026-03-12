@@ -48,9 +48,9 @@ export function AuditConversionCTA({ estimatedImprovement }: AuditConversionCTAP
               className="group w-full h-12 px-6 bg-primary hover:bg-primary/90 shadow-sm transition-all"
             >
               <Link
-                href="/register"
+                href="/login"
                 className="gap-2 font-semibold"
-                aria-label="14일 무료 체험 시작하기 - 회원가입 페이지로 이동"
+                aria-label="14일 무료 체험 시작하기 - 로그인 페이지로 이동"
               >
                 14일 무료 체험 시작
                 <ArrowRight

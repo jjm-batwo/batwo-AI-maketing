@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { LayoutDashboard, Megaphone, FileText, Users, PieChart, ActivitySquare } from 'lucide-react'
+import { LayoutDashboard, Megaphone, FileText, Users, ActivitySquare } from 'lucide-react'
 import { useUIStore } from '@presentation/stores/uiStore'
 import { AccountPopover } from './AccountPopover'
 
@@ -20,7 +20,6 @@ export function MobileSidebar() {
     { name: t('navigation.campaigns'), href: '/campaigns', icon: Megaphone },
     { name: t('navigation.reports'), href: '/reports', icon: FileText },
     { name: t('navigation.competitors'), href: '/competitors', icon: Users },
-    { name: t('navigation.portfolio'), href: '/portfolio', icon: PieChart },
   ]
 
   return (

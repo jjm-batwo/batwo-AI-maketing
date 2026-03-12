@@ -16,7 +16,7 @@ describe('CTASection 전환율 개선', () => {
 
       const ctaButton = screen.getByRole('link', { name: /14일 무료 체험 시작하기/i })
       expect(ctaButton).toBeInTheDocument()
-      expect(ctaButton).toHaveAttribute('href', '/register')
+      expect(ctaButton).toHaveAttribute('href', '/login')
     })
 
     it('로그인 버튼 대신 단일 CTA로 통합되었다', () => {
@@ -24,7 +24,7 @@ describe('CTASection 전환율 개선', () => {
 
       const links = screen.getAllByRole('link')
       expect(links).toHaveLength(1)
-      expect(links[0]).toHaveAttribute('href', '/register')
+      expect(links[0]).toHaveAttribute('href', '/login')
     })
   })
 

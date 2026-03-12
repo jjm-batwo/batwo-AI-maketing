@@ -118,18 +118,16 @@ export function useAgentChat(initialConversationId?: string): UseAgentChatReturn
   const isSendingRef = useRef(false)
   const pathname = usePathname()
 
-  const uiContext: 'dashboard' | 'campaigns' | 'reports' | 'competitors' | 'portfolio' | 'general' =
+  const uiContext: 'dashboard' | 'campaigns' | 'reports' | 'competitors' | 'general' =
     pathname?.includes('/reports')
       ? 'reports'
       : pathname?.includes('/competitors')
         ? 'competitors'
-        : pathname?.includes('/portfolio')
-          ? 'portfolio'
-          : pathname?.includes('/dashboard')
-            ? 'dashboard'
-            : pathname?.includes('/campaigns')
-              ? 'campaigns'
-              : 'general'
+        : pathname?.includes('/dashboard')
+          ? 'dashboard'
+          : pathname?.includes('/campaigns')
+            ? 'campaigns'
+            : 'general'
 
   const sendMessage = useCallback(
     async (message: string) => {

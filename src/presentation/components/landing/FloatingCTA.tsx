@@ -61,7 +61,7 @@ export function FloatingCTA() {
                 className="w-full sm:w-auto gap-2 bg-primary hover:bg-primary/90 shadow-lg px-8"
                 asChild
               >
-                <Link href="/register" aria-label="14일 무료 체험 시작하기">
+                <Link href="/login" aria-label="14일 무료 체험 시작하기">
                   지금 바로 시작하기
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>

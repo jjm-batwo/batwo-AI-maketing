@@ -19,7 +19,7 @@ export function CTASection() {
           className="gap-2 h-12 px-8 bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
           asChild
         >
-          <Link href="/register" aria-label="14일 무료 체험 시작하기">
+          <Link href="/login" aria-label="14일 무료 체험 시작하기">
             14일 무료 체험 시작하기
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>

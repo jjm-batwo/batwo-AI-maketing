@@ -147,7 +147,7 @@ export function LandingHeader() {
                     <Link href="/login">로그인</Link>
                   </Button>
                   <Button asChild className="shadow-sm transition-all hover:-translate-y-0.5">
-                    <Link href="/register">무료로 시작하기</Link>
+                    <Link href="/login">무료로 시작하기</Link>
                   </Button>
                 </>
               )}
@@ -212,7 +212,7 @@ export function LandingHeader() {
                     <Link href="/login">로그인</Link>
                   </Button>
                   <Button className="w-full justify-center shadow-sm bg-primary border-0" asChild>
-                    <Link href="/register">무료로 시작하기</Link>
+                    <Link href="/login">무료로 시작하기</Link>
                   </Button>
                 </>
               )}

@@ -55,7 +55,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     if (currentStep === totalSteps) {
       completeOnboarding()
       onComplete?.()
-      router.push('/audit')
+      router.push('/dashboard')
     } else {
       nextStep()
     }
@@ -64,7 +64,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const handleSkip = () => {
     skipOnboarding()
     onComplete?.()
-    router.push('/audit')
+    router.push('/dashboard')
   }
 
   const renderStep = () => {

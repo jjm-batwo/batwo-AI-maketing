@@ -287,7 +287,7 @@ export function ProductShowcaseSection() {
           </p>
           {/* 중간 CTA 버튼 - 이탈 위험 지점 개선 */}
           <Button size="lg" className="gap-2 bg-primary hover:bg-primary/90 shadow-lg" asChild>
-            <Link href="/register" aria-label="14일 묶료 체험 시작하기">
+            <Link href="/login" aria-label="14일 무료 체험 시작하기">
               14일 묶료 체험 시작하기
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>

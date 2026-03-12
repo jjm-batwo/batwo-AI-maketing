@@ -81,9 +81,9 @@ const CTAButtons = memo(function CTAButtons() {
           className="group h-12 px-6 lg:h-14 lg:px-8 xl:h-16 xl:px-10 text-sm lg:text-base bg-primary hover:bg-primary/90 shadow-sm transition-all w-full sm:w-auto"
         >
           <Link
-            href="/register"
+            href="/login"
             className="gap-2 font-semibold"
-            aria-label="14일 무료 체험 시작하기 - 회원가입 페이지로 이동"
+            aria-label="14일 무료 체험 시작하기 - 로그인 페이지로 이동"
           >
             14일 무료로 시작하기
             <ArrowRight

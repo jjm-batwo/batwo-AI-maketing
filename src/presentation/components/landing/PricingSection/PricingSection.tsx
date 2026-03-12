@@ -26,7 +26,7 @@ export const PricingSection = memo(function PricingSection({
   const getCTALink = (plan: SubscriptionPlan): string => {
     switch (plan) {
       case SubscriptionPlan.FREE:
-        return '/register'
+        return '/login'
       case SubscriptionPlan.STARTER:
         return `/checkout?plan=starter&period=${billingPeriod}`
       case SubscriptionPlan.PRO:
@@ -34,7 +34,7 @@ export const PricingSection = memo(function PricingSection({
       case SubscriptionPlan.ENTERPRISE:
         return 'mailto:contact@batwo.ai'
       default:
-        return '/register'
+        return '/login'
     }
   }
 
