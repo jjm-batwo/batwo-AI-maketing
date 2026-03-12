@@ -1,11 +1,3 @@
-/**
- * KPI 기반 실시간 인사이트 API
- *
- * GET /api/ai/kpi-insights
- * - 사용자의 캠페인 KPI 데이터를 분석하여 실시간 인사이트 제공
- * - Meta API 라이브 데이터 우선 사용 (DB 폴백)
- */
-
 import { NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import type { CampaignAggregate, LiveDataOverrides } from '@application/services/KPIInsightsService'
@@ -13,8 +5,7 @@ import { container, DI_TOKENS, getKPIInsightsService, getQuotaService } from '@/
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import type { InsightCategory } from '@domain/types/InsightCategory'
 import type { IMetaAdsService } from '@application/ports/IMetaAdsService'
-import { prisma } from '@/lib/prisma'
-import { safeDecryptToken } from '@application/utils/TokenEncryption'
+import { getMetaAccountForUser } from '@/lib/meta/metaAccountHelper'
 
 /**
  * Meta API에서 캠페인별 오늘/어제 라이브 데이터를 가져와
@@ -24,13 +15,11 @@ async function fetchLiveOverrides(
   userId: string,
   campaignRepository: ICampaignRepository
 ): Promise<LiveDataOverrides | undefined> {
-  const metaAccount = await prisma.metaAdAccount.findUnique({
-    where: { userId },
-  })
-  if (!metaAccount?.accessToken) return undefined
+  const metaAccount = await getMetaAccountForUser(userId)
+  if (!metaAccount) return undefined
 
   try {
-    const token = safeDecryptToken(metaAccount.accessToken)
+    const token = metaAccount.accessToken
     const metaService = container.resolve<IMetaAdsService>(DI_TOKENS.MetaAdsService)
 
     const campaigns = await campaignRepository.findByUserId(userId)

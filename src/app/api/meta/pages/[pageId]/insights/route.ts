@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
 import { MetaPagesClient } from '@/infrastructure/external/meta-pages'
-import { safeDecryptToken } from '@application/utils/TokenEncryption'
+import { getMetaAccountForUser } from '@/lib/meta/metaAccountHelper'
 
 /**
  * GET /api/meta/pages/[pageId]/insights
@@ -16,17 +15,12 @@ export async function GET(_request: NextRequest, context: { params: Promise<{ pa
   const { pageId } = await context.params
 
   try {
-    // 사용자의 Meta 토큰 조회
-    const metaAccount = await prisma.metaAdAccount.findFirst({
-      where: { userId: user.id },
-      select: { accessToken: true },
-    })
-
-    if (!metaAccount?.accessToken) {
+    const metaAccount = await getMetaAccountForUser(user.id)
+    if (!metaAccount) {
       return NextResponse.json({ message: 'Meta 계정이 연결되어 있지 않습니다' }, { status: 400 })
     }
 
-    const client = new MetaPagesClient(safeDecryptToken(metaAccount.accessToken))
+    const client = new MetaPagesClient(metaAccount.accessToken)
 
     // 페이지 정보 조회하여 page access token 획득
     const page = await client.getPage(pageId)

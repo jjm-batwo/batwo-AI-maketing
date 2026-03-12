@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS } from '@/lib/di/container'
 import type { IMetaAdsService } from '@application/ports/IMetaAdsService'
-import { prisma } from '@/lib/prisma'
-import { safeDecryptToken } from '@application/utils/TokenEncryption'
+import { getMetaAccountForUser } from '@/lib/meta/metaAccountHelper'
 
 type DatePreset = 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d'
 
@@ -18,17 +17,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     const metaAdsService = container.resolve<IMetaAdsService>(DI_TOKENS.MetaAdsService)
 
-    const account = await prisma.metaAdAccount.findFirst({
-      where: { userId: user.id },
-      select: { accessToken: true },
-    })
-
-    if (!account?.accessToken) {
+    const metaAccount = await getMetaAccountForUser(user.id)
+    if (!metaAccount) {
       return NextResponse.json({ message: 'Meta 계정 연결이 필요합니다' }, { status: 400 })
     }
 
-    const accessToken = safeDecryptToken(account.accessToken)
-    const insights = await metaAdsService.getAdInsights(accessToken, adId, datePreset)
+    const insights = await metaAdsService.getAdInsights(metaAccount.accessToken, adId, datePreset)
 
     return NextResponse.json(insights)
   } catch (error) {

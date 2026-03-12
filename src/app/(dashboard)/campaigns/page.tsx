@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { getAuthenticatedUser } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import { prisma } from '@/lib/prisma'
 import { container, DI_TOKENS } from '@/lib/di/container'
 import { ListCampaignsUseCase } from '@application/use-cases/campaign/ListCampaignsUseCase'
 import { CampaignsClient } from './CampaignsClient'
@@ -9,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Link2 } from 'lucide-react'
 import Link from 'next/link'
+import { isMetaConnected } from '@/lib/meta/metaAccountHelper'
 
 export const metadata: Metadata = {
   title: '캠페인 관리 | 바투',
@@ -21,18 +21,9 @@ export default async function CampaignsPage() {
     redirect('/login')
   }
 
-  // PERF-06: self HTTP fetch 대신 Prisma 직접 호출로 Meta 연결 상태 확인
-  let isConnected = false
-  try {
-    const account = await prisma.metaAdAccount.findFirst({
-      where: { userId: user.id },
-      select: { id: true, tokenExpiry: true },
-    })
-    const isExpired = account?.tokenExpiry ? new Date(account.tokenExpiry) < new Date() : false
-    isConnected = !!account && !isExpired
-  } catch {
-    isConnected = false
-  }
+  // 중앙 헬퍼로 Meta 연결 상태 확인
+  const metaStatus = await isMetaConnected(user.id)
+  const isConnected = metaStatus.isConnected
 
   // Meta 미연결 시 안내 UI
   if (!isConnected) {

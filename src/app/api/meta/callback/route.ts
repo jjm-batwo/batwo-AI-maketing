@@ -111,37 +111,26 @@ export async function GET(request: NextRequest) {
       const singleAccountTokenExpiry = longLivedTokenResponse.expires_in || 5184000
 
       try {
-        // Check if account already exists
-        const existingAccount = await prisma.metaAdAccount.findFirst({
-          where: {
-            userId: user.id,
-            metaAccountId: primaryAdAccount.id,
-          },
-        })
-
         const encryptedToken = encryptToken(longLivedTokenResponse.access_token)
 
-        if (existingAccount) {
-          // Update existing account
-          await prisma.metaAdAccount.update({
-            where: { id: existingAccount.id },
-            data: {
-              accessToken: encryptedToken,
-              tokenExpiry: new Date(Date.now() + singleAccountTokenExpiry * 1000),
-            },
-          })
-        } else {
-          // Create new account
-          await prisma.metaAdAccount.create({
-            data: {
-              userId: user.id,
-              metaAccountId: primaryAdAccount.id,
-              businessName: primaryAdAccount.name,
-              accessToken: encryptedToken,
-              tokenExpiry: new Date(Date.now() + singleAccountTokenExpiry * 1000),
-            },
-          })
-        }
+        // userId는 @unique이므로 upsert로 안전하게 처리
+        // 기존 계정이 있으면 토큰+계정정보 업데이트, 없으면 새로 생성
+        await prisma.metaAdAccount.upsert({
+          where: { userId: user.id },
+          update: {
+            metaAccountId: primaryAdAccount.id,
+            businessName: primaryAdAccount.name,
+            accessToken: encryptedToken,
+            tokenExpiry: new Date(Date.now() + singleAccountTokenExpiry * 1000),
+          },
+          create: {
+            userId: user.id,
+            metaAccountId: primaryAdAccount.id,
+            businessName: primaryAdAccount.name,
+            accessToken: encryptedToken,
+            tokenExpiry: new Date(Date.now() + singleAccountTokenExpiry * 1000),
+          },
+        })
         dbSuccess = true
       } catch (dbError) {
         console.error('Failed to store Meta account in database:', dbError)

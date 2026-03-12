@@ -5,8 +5,7 @@ import type { ICampaignRepository } from '@domain/repositories/ICampaignReposito
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
 import type { IMetaAdsService } from '@application/ports/IMetaAdsService'
 import { KPI, KPISnapshot } from '@domain/entities/KPI'
-import { prisma } from '@/lib/prisma'
-import { safeDecryptToken } from '@application/utils/TokenEncryption'
+import { getMetaAccountForUser } from '@/lib/meta/metaAccountHelper'
 
 // 날짜 유틸리티
 function daysAgoStr(n: number): string {
@@ -37,11 +36,11 @@ function calcChange(cur: number, pre: number): number {
  * Meta API에서 특정 캠페인의 라이브 KPI 데이터 조회
  */
 async function fetchLiveCampaignKPI(userId: string, metaCampaignId: string, period: LivePeriod) {
-  const metaAccount = await prisma.metaAdAccount.findUnique({ where: { userId } })
-  if (!metaAccount?.accessToken) return null
+  const metaAccount = await getMetaAccountForUser(userId)
+  if (!metaAccount) return null
 
   const metaService = container.resolve<IMetaAdsService>(DI_TOKENS.MetaAdsService)
-  const token = safeDecryptToken(metaAccount.accessToken)
+  const token = metaAccount.accessToken
   const todayStr = new Date().toISOString().split('T')[0]
 
   type Preset = 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d'

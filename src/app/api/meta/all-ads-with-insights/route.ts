@@ -3,9 +3,8 @@ import { getAuthenticatedUser } from '@/lib/auth'
 import { MetaAdsClient } from '@/infrastructure/external/meta-ads/MetaAdsClient'
 import { MetaAdsApiError } from '@/infrastructure/external/errors'
 import type { MetaCampaignListItem } from '@application/ports/IMetaAdsService'
-import { prisma } from '@/lib/prisma'
 import { mapWithConcurrency } from '@/lib/utils/mapWithConcurrency'
-import { safeDecryptToken } from '@application/utils/TokenEncryption'
+import { getMetaAccountForUser } from '@/lib/meta/metaAccountHelper'
 
 const LOG_PREFIX = '[AllAds API]'
 
@@ -27,33 +26,12 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url)
         const datePreset = searchParams.get('datePreset') || 'last_7d'
 
-        const metaAccount = await prisma.metaAdAccount.findFirst({
-            where: { userId: user.id },
-            orderBy: { createdAt: 'desc' },
-        })
-
-        if (!metaAccount || !metaAccount.accessToken || !metaAccount.metaAccountId) {
+        const metaAccount = await getMetaAccountForUser(user.id)
+        if (!metaAccount) {
             return NextResponse.json({ ads: [] })
         }
 
-        // 1. accessToken 복호화 (실패 시 토큰 만료로 처리)
-        let decryptedToken: string
-        try {
-            decryptedToken = safeDecryptToken(metaAccount.accessToken)
-        } catch (error) {
-            console.error(`${LOG_PREFIX} Token decryption failed for user ${user.id}`, error)
-            return NextResponse.json(
-                { error: 'Token decryption failed. Please reconnect your Meta account.', ads: [] },
-                { status: 401 }
-            )
-        }
-
-        if (!decryptedToken) {
-            return NextResponse.json(
-                { error: 'Invalid access token. Please reconnect your Meta account.', ads: [] },
-                { status: 401 }
-            )
-        }
+        const decryptedToken = metaAccount.accessToken
 
         const metaAdsClient = new MetaAdsClient()
 
