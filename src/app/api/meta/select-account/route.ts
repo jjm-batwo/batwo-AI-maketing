@@ -40,36 +40,26 @@ export async function POST(request: NextRequest) {
     // DB에 저장 (기존 계정이 있으면 업데이트)
     let dbSuccess = false
     try {
-      const existingAccount = await prisma.metaAdAccount.findFirst({
-        where: {
-          userId: user.id,
-          metaAccountId: selectedAccount.id,
-        },
-      })
-
       const encryptedToken = encryptToken(oauthData.accessToken)
 
-      if (existingAccount) {
-        // Update existing account
-        await prisma.metaAdAccount.update({
-          where: { id: existingAccount.id },
-          data: {
-            accessToken: encryptedToken,
-            tokenExpiry: new Date(Date.now() + oauthData.tokenExpiry * 1000),
-          },
-        })
-      } else {
-        // Create new account
-        await prisma.metaAdAccount.create({
-          data: {
-            userId: user.id,
-            metaAccountId: selectedAccount.id,
-            businessName: selectedAccount.name,
-            accessToken: encryptedToken,
-            tokenExpiry: new Date(Date.now() + oauthData.tokenExpiry * 1000),
-          },
-        })
-      }
+      // userId는 @unique이므로 한 사용자에 하나의 계정만 허용
+      // 기존 계정이 있으면 전체 업데이트, 없으면 새로 생성
+      await prisma.metaAdAccount.upsert({
+        where: { userId: user.id },
+        update: {
+          metaAccountId: selectedAccount.id,
+          businessName: selectedAccount.name,
+          accessToken: encryptedToken,
+          tokenExpiry: new Date(Date.now() + oauthData.tokenExpiry * 1000),
+        },
+        create: {
+          userId: user.id,
+          metaAccountId: selectedAccount.id,
+          businessName: selectedAccount.name,
+          accessToken: encryptedToken,
+          tokenExpiry: new Date(Date.now() + oauthData.tokenExpiry * 1000),
+        },
+      })
       dbSuccess = true
     } catch (dbError) {
       console.error('Failed to store Meta account in database:', dbError)
