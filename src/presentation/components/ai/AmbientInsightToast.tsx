@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { X, TrendingUp, AlertTriangle, Lightbulb, Target } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 type AnalysisTaskType = 'anomaly' | 'trend' | 'opportunity' | 'recommendation'
 
@@ -79,13 +80,13 @@ export function AmbientInsightToast({ insight, onDismiss, onSeen }: AmbientInsig
 
   return (
     <div
-      className={`
-        fixed bottom-6 right-6 z-50
-        w-[380px] max-w-[calc(100vw-3rem)]
-        transition-all duration-300 ease-out
-        ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}
-        ${isHovered ? 'scale-[1.02]' : 'scale-100'}
-      `}
+      className={cn(
+        'fixed bottom-6 right-6 z-50',
+        'w-[380px] max-w-[calc(100vw-3rem)]',
+        'transition-all duration-300 ease-out',
+        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0',
+        isHovered ? 'scale-[1.02]' : 'scale-100'
+      )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       role="alert"

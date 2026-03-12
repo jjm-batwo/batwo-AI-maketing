@@ -3,6 +3,8 @@
  *
  * 텍스트를 벡터 임베딩으로 변환하는 서비스 인터페이스.
  * RAG 검색에서 쿼리와 문서를 벡터로 변환하는 데 사용됩니다.
+ *
+ * @note DI 미등록 의도적 — KnowledgeBaseService가 퍼사드로 내부 통합 관리
  */
 
 export interface IEmbeddingService {

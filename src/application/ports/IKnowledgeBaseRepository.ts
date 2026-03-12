@@ -3,6 +3,8 @@
  *
  * RAG(Retrieval-Augmented Generation)를 위한 벡터 검색 저장소 인터페이스.
  * pgvector 기반 유사도 검색을 추상화합니다.
+ *
+ * @note DI 미등록 의도적 — KnowledgeBaseService가 퍼사드로 내부 통합 관리
  */
 
 export interface KnowledgeDocumentDTO {

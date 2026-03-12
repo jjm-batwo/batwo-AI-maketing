@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { cn } from '@/lib/utils'
 import { useInviteMember } from '@/presentation/hooks/useTeams'
 import { TeamRole, TeamPermission, DEFAULT_ROLE_PERMISSIONS } from '@/domain/entities/Team'
 import { Button } from '@/components/ui/button'
@@ -205,7 +206,7 @@ export function InviteMemberDialog({ teamId, open, onOpenChange }: InviteMemberD
                         />
                         <Label
                           htmlFor={permission}
-                          className={`text-xs font-normal ${!isDefault ? 'text-muted-foreground' : ''}`}
+                          className={cn('text-xs font-normal', !isDefault && 'text-muted-foreground')}
                         >
                           {PERMISSION_LABELS[permission]}
                         </Label>

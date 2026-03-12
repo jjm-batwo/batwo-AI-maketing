@@ -2,6 +2,7 @@
 
 import { memo } from 'react';
 import type { FunnelData, FunnelStageData } from '@/domain/value-objects/FunnelStage';
+import { cn } from '@/lib/utils';
 
 const STAGE_LABELS: Record<string, string> = {
   PageView: '페이지 조회',
@@ -61,7 +62,7 @@ function FunnelStageBar({ stage, label, color, widthPercent, isFirst }: {
       </div>
       <div className="w-20 text-right">
         {!isFirst && (
-          <span className={`text-sm font-medium ${stage.dropOffRate > 70 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'}`}>
+          <span className={cn('text-sm font-medium', stage.dropOffRate > 70 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground')}>
             {stage.conversionRate}%
           </span>
         )}
