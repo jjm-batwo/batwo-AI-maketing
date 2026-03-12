@@ -668,7 +668,11 @@ git commit -m "feat: complete Slack and KakaoTalk notification integration"
 
 ---
 
-## Feature 10: 크리에이티브 AI 이미지 생성
+## Feature 10: 크리에이티브 AI 이미지 생성 (작업 범위로 인한 임시 보류)
+
+> **[Notice]**
+> 해당 기능은 연결해야 할 포트와 테스트 시나리오, 외부 리소스 보장이 과다하여 **현재 우선순위에서 제외(보류)**되었습니다.
+> 당분간은 Feature 8(대시보드), 9(알림)만 먼저 진행하시기 바랍니다.
 
 ### Task 1: IImageGenerationService 포트 + DALL-E 어댑터
 
