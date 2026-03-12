@@ -81,14 +81,20 @@ function FindingIcon({ type }: { type: string }) {
 function PriorityBadge({ priority }: { priority: string }) {
   if (priority === 'high') {
     return (
-      <Badge variant="outline" className="text-xs bg-red-50 text-red-600 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800">
+      <Badge
+        variant="outline"
+        className="text-xs bg-red-50 text-red-600 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800"
+      >
         높음
       </Badge>
     )
   }
   if (priority === 'medium') {
     return (
-      <Badge variant="outline" className="text-xs bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800">
+      <Badge
+        variant="outline"
+        className="text-xs bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800"
+      >
         중간
       </Badge>
     )
@@ -106,7 +112,9 @@ export function AuditCategoryBreakdown({ categories }: AuditCategoryBreakdownPro
       <div className="w-full space-y-2">
         <h2 className="text-lg font-bold text-foreground mb-4">카테고리별 분석</h2>
         <div className="flex flex-col items-center justify-center py-16 text-center rounded-lg border border-dashed border-border bg-muted/30">
-          <span className="text-4xl mb-4" aria-hidden="true">📊</span>
+          <span className="text-4xl mb-4" aria-hidden="true">
+            📊
+          </span>
           <p className="text-base font-medium text-foreground mb-2">
             아직 분석할 카테고리 데이터가 없습니다
           </p>

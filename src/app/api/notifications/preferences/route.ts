@@ -17,7 +17,7 @@ export async function GET() {
 
     return NextResponse.json(
       preferences.map((p) => p.toJSON()),
-      { status: 200 },
+      { status: 200 }
     )
   } catch (error) {
     if (error instanceof AuthenticationError) return unauthorizedResponse()
@@ -42,10 +42,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!alertType || !channels) {
-      return NextResponse.json(
-        { message: 'alertType과 channels는 필수입니다' },
-        { status: 400 },
-      )
+      return NextResponse.json({ message: 'alertType과 channels는 필수입니다' }, { status: 400 })
     }
 
     const repo = getNotificationPreferenceRepository()

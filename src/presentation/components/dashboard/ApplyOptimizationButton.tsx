@@ -11,7 +11,10 @@ interface Props {
   onApplied?: () => void
 }
 
-export const ApplyOptimizationButton = memo(function ApplyOptimizationButton({ action, onApplied }: Props) {
+export const ApplyOptimizationButton = memo(function ApplyOptimizationButton({
+  action,
+  onApplied,
+}: Props) {
   const [showConfirm, setShowConfirm] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -26,16 +29,16 @@ export const ApplyOptimizationButton = memo(function ApplyOptimizationButton({ a
       if (!res.ok) {
         throw new Error('최적화 요청 실패')
       }
-      
+
       const data = await res.json()
-      
+
       // Execute the pending action
       const confirmRes = await fetch(`/api/agent/actions/${data.pendingActionId}/confirm`, {
         method: 'POST',
       })
-      
+
       if (!confirmRes.ok) {
-         throw new Error('최적화 진행 중 오류 발생')
+        throw new Error('최적화 진행 중 오류 발생')
       }
 
       toast.success('최적화가 성공적으로 적용되었습니다.')
@@ -50,11 +53,7 @@ export const ApplyOptimizationButton = memo(function ApplyOptimizationButton({ a
 
   return (
     <>
-      <Button
-        size="sm"
-        onClick={() => setShowConfirm(true)}
-        disabled={loading}
-      >
+      <Button size="sm" onClick={() => setShowConfirm(true)} disabled={loading}>
         {loading ? '적용 중...' : '적용하기'}
       </Button>
       {showConfirm && (

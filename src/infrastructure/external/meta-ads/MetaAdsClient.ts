@@ -876,7 +876,8 @@ export class MetaAdsClient implements IMetaAdsService {
       'meta.getAdDetail',
       async () => {
         // object_story_spec + top-level readable fields (body, link_url, image_url 등)
-        const fields = 'id,name,status,creative{id,name,body,link_url,image_url,image_hash,call_to_action_type,object_story_spec,thumbnail_url,effective_object_story_id,instagram_actor_id}'
+        const fields =
+          'id,name,status,creative{id,name,body,link_url,image_url,image_hash,call_to_action_type,object_story_spec,thumbnail_url,effective_object_story_id,instagram_actor_id}'
         const response = await this.requestWithRetry<{
           id: string
           name: string
@@ -920,10 +921,15 @@ export class MetaAdsClient implements IMetaAdsService {
         // Fallback: object_story_spec → top-level creative fields
         const message = linkData?.message || videoData?.message || creative?.body || ''
         const linkUrl = linkData?.link || creative?.link_url || ''
-        const callToAction = linkData?.call_to_action?.type || videoData?.call_to_action?.type || creative?.call_to_action_type || ''
+        const callToAction =
+          linkData?.call_to_action?.type ||
+          videoData?.call_to_action?.type ||
+          creative?.call_to_action_type ||
+          ''
         const imageUrl = linkData?.picture || creative?.image_url || ''
         const pageId = spec?.page_id || ''
-        const instagramActorId = spec?.instagram_actor_id || creative?.instagram_actor_id || undefined
+        const instagramActorId =
+          spec?.instagram_actor_id || creative?.instagram_actor_id || undefined
 
         return {
           id: response.id,
@@ -938,7 +944,9 @@ export class MetaAdsClient implements IMetaAdsService {
             message,
             callToAction,
             imageUrl,
-            videoUrl: videoData?.video_id ? `https://www.facebook.com/${videoData.video_id}` : undefined,
+            videoUrl: videoData?.video_id
+              ? `https://www.facebook.com/${videoData.video_id}`
+              : undefined,
             thumbnailUrl: creative?.thumbnail_url || videoData?.image_url || '',
           },
         }
@@ -1318,12 +1326,13 @@ export class MetaAdsClient implements IMetaAdsService {
     )
   }
 
-  async listInstagramAccounts(accessToken: string, pageId: string): Promise<MetaInstagramAccountData[]> {
+  async listInstagramAccounts(
+    accessToken: string,
+    pageId: string
+  ): Promise<MetaInstagramAccountData[]> {
     if (this.mockMode) {
       console.log('[MetaAdsClient:MOCK] listInstagramAccounts called with mock mode')
-      return [
-        { id: 'mock_ig_1', username: 'batwo_official' },
-      ]
+      return [{ id: 'mock_ig_1', username: 'batwo_official' }]
     }
 
     return withSpan(

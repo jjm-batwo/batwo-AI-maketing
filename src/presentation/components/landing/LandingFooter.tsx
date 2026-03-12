@@ -1,6 +1,5 @@
 import Link from 'next/link'
 
-
 const footerLinks = {
   제품: [
     { label: '기능', href: '#features', disabled: false },

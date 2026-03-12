@@ -54,7 +54,10 @@ export class NotificationChannel {
     switch (type) {
       case 'SLACK': {
         const slackConfig = config as SlackConfig
-        if (!slackConfig.webhookUrl || !slackConfig.webhookUrl.startsWith('https://hooks.slack.com/')) {
+        if (
+          !slackConfig.webhookUrl ||
+          !slackConfig.webhookUrl.startsWith('https://hooks.slack.com/')
+        ) {
           throw new Error('유효한 Slack Webhook URL이 필요합니다')
         }
         break
@@ -103,13 +106,27 @@ export class NotificationChannel {
     })
   }
 
-  get id(): string { return this.props.id }
-  get userId(): string { return this.props.userId }
-  get type(): NotificationChannelType { return this.props.type }
-  get config(): ChannelConfig { return this.props.config }
-  get isActive(): boolean { return this.props.isActive }
-  get createdAt(): Date { return this.props.createdAt }
-  get updatedAt(): Date { return this.props.updatedAt }
+  get id(): string {
+    return this.props.id
+  }
+  get userId(): string {
+    return this.props.userId
+  }
+  get type(): NotificationChannelType {
+    return this.props.type
+  }
+  get config(): ChannelConfig {
+    return this.props.config
+  }
+  get isActive(): boolean {
+    return this.props.isActive
+  }
+  get createdAt(): Date {
+    return this.props.createdAt
+  }
+  get updatedAt(): Date {
+    return this.props.updatedAt
+  }
 
   toJSON(): NotificationChannelProps {
     return { ...this.props }

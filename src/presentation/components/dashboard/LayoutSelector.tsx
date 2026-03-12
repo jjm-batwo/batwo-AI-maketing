@@ -20,16 +20,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import {
-  Layout,
-  ChevronDown,
-  Star,
-  Plus,
-  Trash2,
-  PenLine,
-  Copy,
-  LayoutGrid,
-} from 'lucide-react'
+import { Layout, ChevronDown, Star, Plus, Trash2, PenLine, Copy, LayoutGrid } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   LAYOUT_PRESETS,
@@ -74,7 +65,7 @@ export const LayoutSelector = memo(function LayoutSelector({
   const [dialogLayoutId, setDialogLayoutId] = useState<string | null>(null)
   const [newName, setNewName] = useState('')
 
-  const activeLayout = layouts.find(l => l.id === activeLayoutId)
+  const activeLayout = layouts.find((l) => l.id === activeLayoutId)
 
   const handleCreate = useCallback(() => {
     if (newName.trim()) {
@@ -131,20 +122,18 @@ export const LayoutSelector = memo(function LayoutSelector({
             <DropdownMenuLabel>내 레이아웃</DropdownMenuLabel>
             <DropdownMenuSeparator />
 
-            {layouts.map(layout => (
+            {layouts.map((layout) => (
               <DropdownMenuItem
                 key={layout.id}
                 onClick={() => onSelectLayout(layout.id)}
                 className={cn(
                   'flex items-center gap-2 cursor-pointer',
-                  layout.id === activeLayoutId && 'bg-accent',
+                  layout.id === activeLayoutId && 'bg-accent'
                 )}
               >
                 <Layout className="h-4 w-4 shrink-0" />
                 <span className="flex-1 truncate">{layout.name}</span>
-                {layout.isDefault && (
-                  <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                )}
+                {layout.isDefault && <Star className="h-3 w-3 text-amber-500 fill-amber-500" />}
                 <div className="flex items-center gap-1 ml-auto shrink-0">
                   <Badge variant="secondary" className="text-xs">
                     {layout.widgets.length}
@@ -160,8 +149,7 @@ export const LayoutSelector = memo(function LayoutSelector({
               onClick={() => setShowNewDialog(true)}
               className="gap-2 cursor-pointer"
             >
-              <Plus className="h-4 w-4" />
-              새 레이아웃
+              <Plus className="h-4 w-4" />새 레이아웃
             </DropdownMenuItem>
 
             <DropdownMenuItem
@@ -223,16 +211,14 @@ export const LayoutSelector = memo(function LayoutSelector({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>새 레이아웃 만들기</DialogTitle>
-            <DialogDescription>
-              빈 레이아웃을 만든 후 위젯을 추가하세요
-            </DialogDescription>
+            <DialogDescription>빈 레이아웃을 만든 후 위젯을 추가하세요</DialogDescription>
           </DialogHeader>
           <div className="py-4">
             <Input
               placeholder="레이아웃 이름"
               value={newName}
-              onChange={e => setNewName(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleCreate()}
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
               autoFocus
             />
           </div>
@@ -257,8 +243,8 @@ export const LayoutSelector = memo(function LayoutSelector({
             <Input
               placeholder="새 이름"
               value={newName}
-              onChange={e => setNewName(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleRename()}
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleRename()}
               autoFocus
             />
           </div>
@@ -298,12 +284,10 @@ export const LayoutSelector = memo(function LayoutSelector({
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>레이아웃 프리셋</DialogTitle>
-            <DialogDescription>
-              미리 구성된 레이아웃을 적용하세요
-            </DialogDescription>
+            <DialogDescription>미리 구성된 레이아웃을 적용하세요</DialogDescription>
           </DialogHeader>
           <div className="space-y-3 py-4">
-            {LAYOUT_PRESETS.map(preset => (
+            {LAYOUT_PRESETS.map((preset) => (
               <button
                 key={preset.id}
                 type="button"
@@ -323,9 +307,7 @@ export const LayoutSelector = memo(function LayoutSelector({
                       {preset.widgets.length}개 위젯
                     </Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {preset.description}
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">{preset.description}</p>
                 </div>
               </button>
             ))}

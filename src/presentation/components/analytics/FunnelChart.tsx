@@ -1,8 +1,8 @@
-'use client';
+'use client'
 
-import { memo } from 'react';
-import type { FunnelData, FunnelStageData } from '@/domain/value-objects/FunnelStage';
-import { cn } from '@/lib/utils';
+import { memo } from 'react'
+import type { FunnelData, FunnelStageData } from '@/domain/value-objects/FunnelStage'
+import { cn } from '@/lib/utils'
 
 const STAGE_LABELS: Record<string, string> = {
   PageView: '페이지 조회',
@@ -10,12 +10,12 @@ const STAGE_LABELS: Record<string, string> = {
   AddToCart: '장바구니 추가',
   InitiateCheckout: '결제 시작',
   Purchase: '구매 완료',
-};
+}
 
-const STAGE_COLORS = ['#3B82F6', '#6366F1', '#8B5CF6', '#A855F7', '#22C55E'];
+const STAGE_COLORS = ['#3B82F6', '#6366F1', '#8B5CF6', '#A855F7', '#22C55E']
 
 export const FunnelChart = memo(function FunnelChart({ data }: { data: FunnelData }) {
-  const maxCount = Math.max(...data.stages.map(s => s.count), 1);
+  const maxCount = Math.max(...data.stages.map((s) => s.count), 1)
 
   return (
     <div className="bg-card rounded-xl shadow-sm border border-border p-6">
@@ -39,15 +39,21 @@ export const FunnelChart = memo(function FunnelChart({ data }: { data: FunnelDat
         ))}
       </div>
     </div>
-  );
-});
+  )
+})
 
-function FunnelStageBar({ stage, label, color, widthPercent, isFirst }: {
-  stage: FunnelStageData;
-  label: string;
-  color: string;
-  widthPercent: number;
-  isFirst: boolean;
+function FunnelStageBar({
+  stage,
+  label,
+  color,
+  widthPercent,
+  isFirst,
+}: {
+  stage: FunnelStageData
+  label: string
+  color: string
+  widthPercent: number
+  isFirst: boolean
 }) {
   return (
     <div className="flex items-center gap-4">
@@ -62,11 +68,16 @@ function FunnelStageBar({ stage, label, color, widthPercent, isFirst }: {
       </div>
       <div className="w-20 text-right">
         {!isFirst && (
-          <span className={cn('text-sm font-medium', stage.dropOffRate > 70 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground')}>
+          <span
+            className={cn(
+              'text-sm font-medium',
+              stage.dropOffRate > 70 ? 'text-red-600 dark:text-red-400' : 'text-muted-foreground'
+            )}
+          >
             {stage.conversionRate}%
           </span>
         )}
       </div>
     </div>
-  );
+  )
 }

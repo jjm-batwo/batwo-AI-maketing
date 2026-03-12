@@ -58,4 +58,3 @@ export function Header({ quotaStatus }: HeaderProps) {
     </header>
   )
 }
-

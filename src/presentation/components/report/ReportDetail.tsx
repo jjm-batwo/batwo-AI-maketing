@@ -66,9 +66,10 @@ export function ReportDetail({
   const { summaryMetrics, aiInsights } = report
 
   // Determine an existing share URL if a token exists and is valid
-  const existingShareUrl = report.shareToken && report.shareExpiresAt && new Date(report.shareExpiresAt) > new Date()
-    ? `${process.env.NEXT_PUBLIC_APP_URL || ''}/reports/share/${report.shareToken}`
-    : undefined
+  const existingShareUrl =
+    report.shareToken && report.shareExpiresAt && new Date(report.shareExpiresAt) > new Date()
+      ? `${process.env.NEXT_PUBLIC_APP_URL || ''}/reports/share/${report.shareToken}`
+      : undefined
 
   return (
     <div className="space-y-6">
@@ -84,8 +85,8 @@ export function ReportDetail({
         </div>
         <div className="flex gap-2">
           <ReportScheduleForm onScheduleCreated={onScheduleCreated} />
-          
-          <ShareReportButton 
+
+          <ShareReportButton
             reportId={report.id}
             existingShareUrl={existingShareUrl}
             existingShareExpiresAt={report.shareExpiresAt || undefined}
@@ -146,12 +147,13 @@ export function ReportDetail({
             {aiInsights.map((insight, index) => (
               <div
                 key={index}
-                className={`rounded-lg p-4 ${insight.type === 'POSITIVE'
+                className={`rounded-lg p-4 ${
+                  insight.type === 'POSITIVE'
                     ? 'bg-green-50 text-green-800'
                     : insight.type === 'NEGATIVE'
                       ? 'bg-red-50 text-red-800'
                       : 'bg-blue-50 text-blue-800'
-                  }`}
+                }`}
               >
                 <p className="text-sm">{insight.message}</p>
                 <p className="mt-1 text-xs opacity-70">

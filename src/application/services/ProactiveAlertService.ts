@@ -23,11 +23,7 @@ export class ProactiveAlertService {
   /**
    * 알림 저장 후 NotificationDispatcher를 통해 외부 알림 발송
    */
-  private async saveAndNotify(
-    alert: Alert,
-    userId: string,
-    campaignId?: string,
-  ): Promise<void> {
+  private async saveAndNotify(alert: Alert, userId: string, campaignId?: string): Promise<void> {
     await this.alertRepo.save(alert)
 
     // 외부 알림 발송 (Slack, KakaoTalk 등)

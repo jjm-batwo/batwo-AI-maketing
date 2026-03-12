@@ -12,14 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import {
-  Sparkles,
-  TrendingUp,
-  AlertTriangle,
-  Lightbulb,
-  RefreshCw,
-  Clock,
-} from 'lucide-react'
+import { Sparkles, TrendingUp, AlertTriangle, Lightbulb, RefreshCw, Clock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 import { EmptyState, MetricChange, SkeletonList } from '@/presentation/components/common'
@@ -400,7 +393,10 @@ export const AIInsights = memo(function AIInsights({
                     )}
                     {insight.applyAction && (
                       <div className="mt-2" onClick={(e) => e.stopPropagation()}>
-                        <ApplyOptimizationButton action={insight.applyAction} onApplied={onRefresh} />
+                        <ApplyOptimizationButton
+                          action={insight.applyAction}
+                          onApplied={onRefresh}
+                        />
                       </div>
                     )}
                   </div>

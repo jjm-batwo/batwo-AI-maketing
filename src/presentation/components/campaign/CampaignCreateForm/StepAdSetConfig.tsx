@@ -69,7 +69,9 @@ export function StepAdSetConfig() {
                     : 'border-border hover:border-border'
                 )}
               >
-                <Icon className={cn('h-6 w-6', isSelected ? 'text-primary' : 'text-muted-foreground')} />
+                <Icon
+                  className={cn('h-6 w-6', isSelected ? 'text-primary' : 'text-muted-foreground')}
+                />
                 <span
                   className={cn(
                     'text-sm font-semibold',

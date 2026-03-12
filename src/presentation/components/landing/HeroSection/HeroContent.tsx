@@ -17,7 +17,6 @@ export const HeroContent = memo(function HeroContent({ isVisible }: HeroContentP
         isVisible ? 'animate-slide-in-left' : 'opacity-0'
       }`}
     >
-
       {/* Headline */}
       <h1
         id="hero-heading"
@@ -36,7 +35,6 @@ export const HeroContent = memo(function HeroContent({ isVisible }: HeroContentP
 
       {/* CTA Buttons */}
       <CTAButtons />
-
 
       {/* Social Proof Badge */}
       <SocialProofBadge />

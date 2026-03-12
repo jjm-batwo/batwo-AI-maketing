@@ -55,7 +55,12 @@ export function NotificationPreferenceForm({
 }: {
   preferences: PreferenceData[]
   availableChannels: NotificationChannelType[]
-  onSave: (alertType: AlertType, channels: NotificationChannelType[], minSeverity: MinSeverity, isActive: boolean) => void
+  onSave: (
+    alertType: AlertType,
+    channels: NotificationChannelType[],
+    minSeverity: MinSeverity,
+    isActive: boolean
+  ) => void
   isLoading?: boolean
 }) {
   const alertTypes: AlertType[] = ['anomaly', 'budget', 'milestone', 'recommendation']
@@ -107,7 +112,12 @@ function PreferenceRow({
   description: string
   preference?: PreferenceData
   availableChannels: NotificationChannelType[]
-  onSave: (alertType: AlertType, channels: NotificationChannelType[], minSeverity: MinSeverity, isActive: boolean) => void
+  onSave: (
+    alertType: AlertType,
+    channels: NotificationChannelType[],
+    minSeverity: MinSeverity,
+    isActive: boolean
+  ) => void
   isLoading?: boolean
 }) {
   const [channels, setChannels] = useState<NotificationChannelType[]>(preference?.channels ?? [])
@@ -156,9 +166,7 @@ function PreferenceRow({
       {isActive && (
         <div className="space-y-3 ml-10">
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
-              수신 채널
-            </label>
+            <label className="block text-sm font-medium text-foreground mb-2">수신 채널</label>
             <div className="flex gap-2 flex-wrap">
               {CHANNEL_OPTIONS.filter((opt) => availableChannels.includes(opt.value)).map((opt) => (
                 <button
@@ -180,9 +188,7 @@ function PreferenceRow({
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-foreground mb-2">
-              최소 심각도
-            </label>
+            <label className="block text-sm font-medium text-foreground mb-2">최소 심각도</label>
             <div className="flex gap-2">
               {SEVERITY_OPTIONS.map((opt) => (
                 <button

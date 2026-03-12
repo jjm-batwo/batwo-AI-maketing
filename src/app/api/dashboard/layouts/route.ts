@@ -26,7 +26,7 @@ const createLayoutSchema = z.object({
           chartType: z.string().optional(),
           title: z.string().optional(),
         }),
-      }),
+      })
     )
     .optional(),
 })
@@ -64,7 +64,7 @@ export async function GET() {
     console.error('Failed to fetch dashboard layouts:', error)
     return NextResponse.json(
       { message: '대시보드 레이아웃을 불러오지 못했습니다' },
-      { status: 500 },
+      { status: 500 }
     )
   }
 }
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     if (!validation.success) {
       return NextResponse.json(
         { message: '유효하지 않은 요청입니다', errors: validation.error.flatten() },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     if (count >= 10) {
       return NextResponse.json(
         { message: '레이아웃은 최대 10개까지 생성할 수 있습니다' },
-        { status: 400 },
+        { status: 400 }
       )
     }
 
@@ -128,9 +128,6 @@ export async function POST(request: NextRequest) {
     }
 
     console.error('Failed to create dashboard layout:', error)
-    return NextResponse.json(
-      { message: '레이아웃 생성에 실패했습니다' },
-      { status: 500 },
-    )
+    return NextResponse.json({ message: '레이아웃 생성에 실패했습니다' }, { status: 500 })
   }
 }

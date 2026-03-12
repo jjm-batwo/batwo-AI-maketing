@@ -308,10 +308,7 @@ export function CaptionOverlay() {
   const hideCaption = searchParams.get('hideCaption') === 'true'
   const captionMode = searchParams.get('captionMode') || 'default'
 
-  const captions = useMemo(
-    () => captionSets[captionMode] || defaultCaptionSequence,
-    [captionMode]
-  )
+  const captions = useMemo(() => captionSets[captionMode] || defaultCaptionSequence, [captionMode])
 
   // sessionStorage로 캡션 인덱스 유지 (페이지 이동 시에도 유지)
   const [currentIndex, setCurrentIndex] = useState(() => {
@@ -332,7 +329,7 @@ export function CaptionOverlay() {
   // Playwright에서 직접 인덱스 설정 가능하도록 글로벌 함수 노출
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).__setCaptionIndex = (index: number) => {
+    ;(window as any).__setCaptionIndex = (index: number) => {
       setCurrentIndex(Math.min(Math.max(0, index), captions.length - 1))
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

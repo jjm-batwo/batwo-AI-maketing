@@ -9,69 +9,80 @@ import { useSavings } from '@/presentation/hooks/useSavings'
 
 // Lazy load widget components for better performance
 const KPICard = dynamic(
-  () => import('@/presentation/components/dashboard/KPICard').then(m => ({ default: m.KPICard })),
-  { loading: () => <WidgetSkeleton /> },
+  () => import('@/presentation/components/dashboard/KPICard').then((m) => ({ default: m.KPICard })),
+  { loading: () => <WidgetSkeleton /> }
 )
 
 const KPIChart = dynamic(
-  () => import('@/presentation/components/dashboard/KPIChart').then(m => ({ default: m.KPIChart })),
-  { loading: () => <WidgetSkeleton /> },
+  () =>
+    import('@/presentation/components/dashboard/KPIChart').then((m) => ({ default: m.KPIChart })),
+  { loading: () => <WidgetSkeleton /> }
 )
 
 const AIInsights = dynamic(
-  () => import('@/presentation/components/dashboard/AIInsights').then(m => ({ default: m.AIInsights })),
-  { loading: () => <WidgetSkeleton /> },
+  () =>
+    import('@/presentation/components/dashboard/AIInsights').then((m) => ({
+      default: m.AIInsights,
+    })),
+  { loading: () => <WidgetSkeleton /> }
 )
 
 const CampaignSummaryTable = dynamic(
   () =>
-    import('@/presentation/components/dashboard/CampaignSummaryTable').then(m => ({
+    import('@/presentation/components/dashboard/CampaignSummaryTable').then((m) => ({
       default: m.CampaignSummaryTable,
     })),
-  { loading: () => <WidgetSkeleton /> },
+  { loading: () => <WidgetSkeleton /> }
 )
 
 const SavingsWidget = dynamic(
   () =>
-    import('@/presentation/components/dashboard/SavingsWidget').then(m => ({
+    import('@/presentation/components/dashboard/SavingsWidget').then((m) => ({
       default: m.SavingsWidget,
     })),
-  { loading: () => <WidgetSkeleton /> },
+  { loading: () => <WidgetSkeleton /> }
 )
 
 const AnomalyAlert = dynamic(
   () =>
-    import('@/presentation/components/dashboard/AnomalyAlert').then(m => ({
+    import('@/presentation/components/dashboard/AnomalyAlert').then((m) => ({
       default: m.AnomalyAlert,
     })),
-  { loading: () => <WidgetSkeleton /> },
+  { loading: () => <WidgetSkeleton /> }
 )
 
 const DonutChart = dynamic(
   () =>
-    import('@/presentation/components/dashboard/DonutChart').then(m => ({
+    import('@/presentation/components/dashboard/DonutChart').then((m) => ({
       default: m.DonutChart,
     })),
-  { loading: () => <WidgetSkeleton /> },
+  { loading: () => <WidgetSkeleton /> }
 )
 
 const FunnelChartWidget = dynamic(
   () =>
-    import('@/presentation/components/analytics/FunnelChartWidget').then(m => ({
+    import('@/presentation/components/analytics/FunnelChartWidget').then((m) => ({
       default: m.FunnelChartWidget,
     })),
-  { loading: () => <WidgetSkeleton /> },
+  { loading: () => <WidgetSkeleton /> }
 )
 
 const BenchmarkCard = dynamic(
   () =>
-    import('@/presentation/components/analytics/BenchmarkCard').then(m => ({
+    import('@/presentation/components/analytics/BenchmarkCard').then((m) => ({
       default: m.BenchmarkCard,
     })),
-  { loading: () => <WidgetSkeleton /> },
+  { loading: () => <WidgetSkeleton /> }
 )
 
-const METRIC_CONFIG: Record<string, { title: string; format: 'number' | 'currency' | 'percentage' | 'multiplier'; icon: 'chart' | 'dollar' | 'click' | 'target' | 'eye' }> = {
+const METRIC_CONFIG: Record<
+  string,
+  {
+    title: string
+    format: 'number' | 'currency' | 'percentage' | 'multiplier'
+    icon: 'chart' | 'dollar' | 'click' | 'target' | 'eye'
+  }
+> = {
   roas: { title: 'ROAS', format: 'multiplier', icon: 'target' },
   ctr: { title: 'CTR', format: 'percentage', icon: 'click' },
   cpa: { title: 'CPA', format: 'currency', icon: 'dollar' },
@@ -86,11 +97,7 @@ function WidgetSkeleton() {
 }
 
 function WidgetErrorBoundary({ children }: { children: React.ReactNode }) {
-  return (
-    <Suspense fallback={<WidgetSkeleton />}>
-      {children}
-    </Suspense>
-  )
+  return <Suspense fallback={<WidgetSkeleton />}>{children}</Suspense>
 }
 
 /** BenchmarkCard wrapper that fetches its own data */

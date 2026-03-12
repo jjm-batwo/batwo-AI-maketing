@@ -14,9 +14,7 @@ interface StartTrialResult {
 }
 
 export class StartTrialUseCase {
-  constructor(
-    private readonly subscriptionRepository: ISubscriptionRepository,
-  ) {}
+  constructor(private readonly subscriptionRepository: ISubscriptionRepository) {}
 
   async execute(dto: StartTrialDTO): Promise<StartTrialResult> {
     const existing = await this.subscriptionRepository.findByUserId(dto.userId)

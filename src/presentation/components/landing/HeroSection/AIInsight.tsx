@@ -13,17 +13,12 @@ export const AIInsight = memo(function AIInsight({ title, content }: AIInsightPr
       aria-live="polite"
     >
       <div className="flex items-start gap-2.5">
-        <div
-          className="p-1 bg-green-100 rounded-full mt-0.5 shrink-0"
-          aria-hidden="true"
-        >
+        <div className="p-1 bg-green-100 rounded-full mt-0.5 shrink-0" aria-hidden="true">
           <Sparkles className="h-3.5 w-3.5 text-green-600" />
         </div>
         <div>
           <p className="text-xs font-medium text-green-800 mb-0.5">{title}</p>
-          <p className="text-[11px] leading-relaxed text-green-700">
-            {content}
-          </p>
+          <p className="text-[11px] leading-relaxed text-green-700">{content}</p>
         </div>
       </div>
     </div>

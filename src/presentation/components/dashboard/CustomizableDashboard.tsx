@@ -1,7 +1,13 @@
 'use client'
 
 import { memo, useCallback, useRef } from 'react'
-import { GridLayout, useContainerWidth, verticalCompactor, type Layout, type LayoutItem } from 'react-grid-layout'
+import {
+  GridLayout,
+  useContainerWidth,
+  verticalCompactor,
+  type Layout,
+  type LayoutItem,
+} from 'react-grid-layout'
 import { WidgetRenderer } from './WidgetRenderer'
 import { WIDGET_MIN_SIZES, type DashboardWidget } from '@domain/value-objects/DashboardWidget'
 import { Button } from '@/components/ui/button'
@@ -29,7 +35,7 @@ export const CustomizableDashboard = memo(function CustomizableDashboard({
   const isLayoutChanging = useRef(false)
   const { containerRef, width } = useContainerWidth()
 
-  const gridLayout: LayoutItem[] = widgets.map(w => {
+  const gridLayout: LayoutItem[] = widgets.map((w) => {
     const minSize = WIDGET_MIN_SIZES[w.type] ?? { w: 2, h: 2 }
     return {
       i: w.id,
@@ -48,8 +54,8 @@ export const CustomizableDashboard = memo(function CustomizableDashboard({
       if (!isEditing || isLayoutChanging.current) return
       isLayoutChanging.current = true
 
-      const updatedWidgets = widgets.map(widget => {
-        const item = newLayout.find(l => l.i === widget.id)
+      const updatedWidgets = widgets.map((widget) => {
+        const item = newLayout.find((l) => l.i === widget.id)
         if (!item) return widget
         return {
           ...widget,
@@ -68,7 +74,7 @@ export const CustomizableDashboard = memo(function CustomizableDashboard({
         isLayoutChanging.current = false
       })
     },
-    [isEditing, widgets, onLayoutChange],
+    [isEditing, widgets, onLayoutChange]
   )
 
   return (
@@ -76,12 +82,7 @@ export const CustomizableDashboard = memo(function CustomizableDashboard({
       {/* Toolbar */}
       <div className="flex items-center justify-end gap-2 mb-4">
         {isEditing && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onAddWidget}
-            className="gap-2"
-          >
+          <Button variant="outline" size="sm" onClick={onAddWidget} className="gap-2">
             <Plus className="h-4 w-4" />
             위젯 추가
           </Button>
@@ -138,13 +139,13 @@ export const CustomizableDashboard = memo(function CustomizableDashboard({
           compactor={verticalCompactor}
           onLayoutChange={handleLayoutChange}
         >
-          {widgets.map(widget => (
+          {widgets.map((widget) => (
             <div
               key={widget.id}
               className={cn(
                 'relative rounded-xl border bg-card/80 backdrop-blur-sm shadow-sm overflow-hidden transition-all',
                 isEditing && 'ring-1 ring-blue-200 dark:ring-blue-800 cursor-move',
-                !isEditing && 'hover:shadow-md',
+                !isEditing && 'hover:shadow-md'
               )}
             >
               <WidgetRenderer widget={widget} />

@@ -110,9 +110,7 @@ export function FeatureDiscoveryHint({
         </div>
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-foreground font-medium mb-1">
-          새로운 AI 기능을 발견하셨어요!
-        </p>
+        <p className="text-sm text-foreground font-medium mb-1">새로운 AI 기능을 발견하셨어요!</p>
         <p className="text-sm text-muted-foreground">{hint}</p>
       </div>
       <button

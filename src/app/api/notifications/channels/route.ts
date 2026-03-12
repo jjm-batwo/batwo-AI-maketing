@@ -16,7 +16,7 @@ export async function GET() {
 
     return NextResponse.json(
       channels.map((ch) => ch.toJSON()),
-      { status: 200 },
+      { status: 200 }
     )
   } catch (error) {
     if (error instanceof AuthenticationError) return unauthorizedResponse()

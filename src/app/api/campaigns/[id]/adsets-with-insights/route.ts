@@ -39,7 +39,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const adSets = await metaAdsService.listAdSets(metaAccount.accessToken, campaign.metaCampaignId)
 
     const settledInsights = await Promise.allSettled(
-      adSets.map((adSet) => metaAdsService.getAdSetInsights(metaAccount.accessToken, adSet.id, datePreset))
+      adSets.map((adSet) =>
+        metaAdsService.getAdSetInsights(metaAccount.accessToken, adSet.id, datePreset)
+      )
     )
 
     const adSetsWithInsights = adSets.map((adSet, index) => {

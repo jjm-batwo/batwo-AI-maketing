@@ -124,11 +124,17 @@ export function ReportScheduleForm({ onScheduleCreated, disabled }: ReportSchedu
                   }
                 }}
               />
-              <Button type="button" onClick={handleAddEmail}>추가</Button>
+              <Button type="button" onClick={handleAddEmail}>
+                추가
+              </Button>
             </div>
             <div className="flex flex-wrap gap-2 mt-2">
               {recipients.map((email) => (
-                <Badge key={email} variant="secondary" className="flex items-center gap-1 py-1 px-2">
+                <Badge
+                  key={email}
+                  variant="secondary"
+                  className="flex items-center gap-1 py-1 px-2"
+                >
                   <Mail className="h-3 w-3" />
                   {email}
                   <button

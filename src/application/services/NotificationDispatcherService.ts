@@ -40,7 +40,7 @@ export class NotificationDispatcherService {
     private readonly channelRepository: INotificationChannelRepository,
     private readonly preferenceRepository: INotificationPreferenceRepository,
     slackSender: INotificationSender,
-    kakaoSender: INotificationSender,
+    kakaoSender: INotificationSender
   ) {
     this.senders = new Map<NotificationChannelType, INotificationSender>([
       ['SLACK', slackSender],
@@ -55,7 +55,7 @@ export class NotificationDispatcherService {
       // 1. 사용자 선호도 조회
       const preference = await this.preferenceRepository.findByUserAndType(
         params.userId,
-        params.alertType,
+        params.alertType
       )
 
       if (!preference || !preference.isActive) {
@@ -69,10 +69,7 @@ export class NotificationDispatcherService {
 
       // 3. 설정된 채널로 발송
       for (const channelType of preference.channels) {
-        const channel = await this.channelRepository.findByUserAndType(
-          params.userId,
-          channelType,
-        )
+        const channel = await this.channelRepository.findByUserAndType(params.userId, channelType)
 
         if (!channel || !channel.isActive) continue
 

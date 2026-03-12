@@ -148,10 +148,7 @@ export function CitationList({
         )}
       >
         <CardContent className="p-8 text-center">
-          <Sparkles
-            className="h-12 w-12 mx-auto mb-3 text-muted-foreground"
-            aria-hidden="true"
-          />
+          <Sparkles className="h-12 w-12 mx-auto mb-3 text-muted-foreground" aria-hidden="true" />
           <p className="text-sm text-muted-foreground">인용 정보가 없습니다</p>
         </CardContent>
       </Card>

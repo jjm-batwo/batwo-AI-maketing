@@ -5,9 +5,7 @@ export interface ExpireTrialsResult {
 }
 
 export class ExpireTrialsUseCase {
-  constructor(
-    private readonly subscriptionRepository: ISubscriptionRepository,
-  ) {}
+  constructor(private readonly subscriptionRepository: ISubscriptionRepository) {}
 
   async execute(): Promise<ExpireTrialsResult> {
     const expiredTrials = await this.subscriptionRepository.findExpiredTrials()

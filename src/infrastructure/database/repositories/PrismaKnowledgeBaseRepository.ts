@@ -1,8 +1,8 @@
 import type { PrismaClient } from '@/generated/prisma'
 import type {
-    IKnowledgeBaseRepository,
-    KnowledgeDocumentDTO,
-    KnowledgeSearchResult,
+  IKnowledgeBaseRepository,
+  KnowledgeDocumentDTO,
+  KnowledgeSearchResult,
 } from '@application/ports/IKnowledgeBaseRepository'
 
 /**
@@ -13,17 +13,17 @@ import type {
  * 벡터 연산은 cosine distance (<=>)를 사용합니다.
  */
 export class PrismaKnowledgeBaseRepository implements IKnowledgeBaseRepository {
-    constructor(private readonly prisma: PrismaClient) { }
+  constructor(private readonly prisma: PrismaClient) {}
 
-    async findSimilar(
-        embedding: number[],
-        limit: number,
-        similarityThreshold: number = 0.7
-    ): Promise<KnowledgeSearchResult[]> {
-        const vectorString = `[${embedding.join(',')}]`
+  async findSimilar(
+    embedding: number[],
+    limit: number,
+    similarityThreshold: number = 0.7
+  ): Promise<KnowledgeSearchResult[]> {
+    const vectorString = `[${embedding.join(',')}]`
 
-        const results = await this.prisma.$queryRawUnsafe<KnowledgeSearchResult[]>(
-            `SELECT
+    const results = await this.prisma.$queryRawUnsafe<KnowledgeSearchResult[]>(
+      `SELECT
         id,
         title,
         content,
@@ -34,38 +34,35 @@ export class PrismaKnowledgeBaseRepository implements IKnowledgeBaseRepository {
       WHERE 1 - (embedding <=> $1::vector) >= $3
       ORDER BY similarity DESC
       LIMIT $2`,
-            vectorString,
-            limit,
-            similarityThreshold
-        )
+      vectorString,
+      limit,
+      similarityThreshold
+    )
 
-        return results
-    }
+    return results
+  }
 
-    async insert(document: KnowledgeDocumentDTO): Promise<void> {
-        const vectorString = `[${document.embedding.join(',')}]`
+  async insert(document: KnowledgeDocumentDTO): Promise<void> {
+    const vectorString = `[${document.embedding.join(',')}]`
 
-        await this.prisma.$executeRawUnsafe(
-            `INSERT INTO knowledge_documents (id, source, title, content, embedding, metadata, "createdAt", "updatedAt")
+    await this.prisma.$executeRawUnsafe(
+      `INSERT INTO knowledge_documents (id, source, title, content, embedding, metadata, "createdAt", "updatedAt")
        VALUES (gen_random_uuid(), $1, $2, $3, $4::vector, $5::jsonb, NOW(), NOW())`,
-            document.source,
-            document.title,
-            document.content,
-            vectorString,
-            document.metadata ? JSON.stringify(document.metadata) : null
-        )
-    }
+      document.source,
+      document.title,
+      document.content,
+      vectorString,
+      document.metadata ? JSON.stringify(document.metadata) : null
+    )
+  }
 
-    async bulkInsert(documents: KnowledgeDocumentDTO[]): Promise<void> {
-        for (const doc of documents) {
-            await this.insert(doc)
-        }
+  async bulkInsert(documents: KnowledgeDocumentDTO[]): Promise<void> {
+    for (const doc of documents) {
+      await this.insert(doc)
     }
+  }
 
-    async deleteBySource(source: string): Promise<void> {
-        await this.prisma.$executeRawUnsafe(
-            'DELETE FROM knowledge_documents WHERE source = $1',
-            source
-        )
-    }
+  async deleteBySource(source: string): Promise<void> {
+    await this.prisma.$executeRawUnsafe('DELETE FROM knowledge_documents WHERE source = $1', source)
+  }
 }

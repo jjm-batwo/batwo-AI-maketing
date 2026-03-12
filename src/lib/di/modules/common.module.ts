@@ -84,7 +84,9 @@ export function registerCommonModule(container: Container): void {
   container.registerSingleton<IFallbackResponseService>(
     DI_TOKENS.FallbackResponseService,
     () =>
-      new FallbackResponseService(container.resolve<IResilienceService>(DI_TOKENS.ResilienceService))
+      new FallbackResponseService(
+        container.resolve<IResilienceService>(DI_TOKENS.ResilienceService)
+      )
   )
 
   container.registerSingleton<IFewShotExampleRegistry>(
@@ -169,6 +171,9 @@ export function registerCommonModule(container: Container): void {
 
   container.registerSingleton(
     DI_TOKENS.PermissionService,
-    () => new PermissionService(container.resolve<IPermissionRepository>(DI_TOKENS.PermissionRepository))
+    () =>
+      new PermissionService(
+        container.resolve<IPermissionRepository>(DI_TOKENS.PermissionRepository)
+      )
   )
 }

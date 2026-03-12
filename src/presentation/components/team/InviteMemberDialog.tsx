@@ -206,7 +206,10 @@ export function InviteMemberDialog({ teamId, open, onOpenChange }: InviteMemberD
                         />
                         <Label
                           htmlFor={permission}
-                          className={cn('text-xs font-normal', !isDefault && 'text-muted-foreground')}
+                          className={cn(
+                            'text-xs font-normal',
+                            !isDefault && 'text-muted-foreground'
+                          )}
                         >
                           {PERMISSION_LABELS[permission]}
                         </Label>

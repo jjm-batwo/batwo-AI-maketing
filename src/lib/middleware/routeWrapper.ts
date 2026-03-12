@@ -7,11 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { InvalidCampaignError } from '@domain/errors/InvalidCampaignError'
-import {
-  NotFoundError,
-  ForbiddenError,
-  ValidationError,
-} from '@application/errors'
+import { NotFoundError, ForbiddenError, ValidationError } from '@application/errors'
 
 type AuthenticatedUser = {
   id: string
@@ -94,9 +90,6 @@ async function withErrorHandling(fn: () => Promise<NextResponse>): Promise<NextR
 
     // Unexpected errors
     console.error('Unhandled route error:', error)
-    return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 })
   }
 }

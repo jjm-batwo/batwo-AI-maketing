@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
         failed: result.failed,
         errors: result.errors,
       },
-      { status: 200 },
+      { status: 200 }
     )
   } catch (error) {
     if (error instanceof AuthenticationError) return unauthorizedResponse()

@@ -235,17 +235,16 @@ export class Report extends AggregateRoot {
     }
   }
 
-
   generateShareToken(expiryDays: number = 30): Report {
-    const token = crypto.randomUUID().replace(/-/g, '');
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + expiryDays);
+    const token = crypto.randomUUID().replace(/-/g, '')
+    const expiresAt = new Date()
+    expiresAt.setDate(expiresAt.getDate() + expiryDays)
 
     return Report.restore({
       ...this.toJSON(),
       shareToken: token,
       shareExpiresAt: expiresAt,
-    });
+    })
   }
 
   revokeShareToken(): Report {
@@ -253,16 +252,20 @@ export class Report extends AggregateRoot {
       ...this.toJSON(),
       shareToken: null,
       shareExpiresAt: null,
-    });
+    })
   }
 
   isShareValid(): boolean {
-    if (!this._shareToken || !this._shareExpiresAt) return false;
-    return new Date() < this._shareExpiresAt;
+    if (!this._shareToken || !this._shareExpiresAt) return false
+    return new Date() < this._shareExpiresAt
   }
 
-  get shareToken(): string | null { return this._shareToken ?? null; }
-  get shareExpiresAt(): Date | null { return this._shareExpiresAt ?? null; }
+  get shareToken(): string | null {
+    return this._shareToken ?? null
+  }
+  get shareExpiresAt(): Date | null {
+    return this._shareExpiresAt ?? null
+  }
 
   // Getters
   get id(): string {

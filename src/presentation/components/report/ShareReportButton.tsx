@@ -52,7 +52,8 @@ export function ShareReportButton({
   }
 
   const handleRevokeLink = async () => {
-    if (!confirm('정말로 공유 링크를 취소하시겠습니까? 기존 링크는 더 이상 작동하지 않습니다.')) return
+    if (!confirm('정말로 공유 링크를 취소하시겠습니까? 기존 링크는 더 이상 작동하지 않습니다.'))
+      return
 
     try {
       setIsLoading(true)
@@ -96,12 +97,7 @@ export function ShareReportButton({
           {existingShareUrl ? (
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
-                <Input
-                  id="link"
-                  defaultValue={existingShareUrl}
-                  readOnly
-                  className="w-full"
-                />
+                <Input id="link" defaultValue={existingShareUrl} readOnly className="w-full" />
                 <Button size="sm" className="px-3" onClick={handleCopy}>
                   {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </Button>

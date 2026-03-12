@@ -127,7 +127,14 @@ function LoginForm() {
               <Button
                 type="button"
                 className="w-full h-12 bg-slate-800 text-white hover:bg-slate-700 font-medium"
-                onClick={() => signIn('credentials', { email: 'demo@batwo.ai', password: 'password', callbackUrl, redirect: true })}
+                onClick={() =>
+                  signIn('credentials', {
+                    email: 'demo@batwo.ai',
+                    password: 'password',
+                    callbackUrl,
+                    redirect: true,
+                  })
+                }
               >
                 데모 계정으로 로그인 (demo@batwo.ai)
               </Button>

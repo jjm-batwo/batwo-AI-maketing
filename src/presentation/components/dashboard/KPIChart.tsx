@@ -415,7 +415,10 @@ export function KPIChart({
                     style={{ height: `${adjustedHeight}%` }}
                   />
                   {isActive && (
-                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 rounded bg-popover border border-border px-2 py-1 text-xs text-popover-foreground shadow-md whitespace-nowrap z-10" role="tooltip">
+                    <div
+                      className="absolute -top-8 left-1/2 -translate-x-1/2 rounded bg-popover border border-border px-2 py-1 text-xs text-popover-foreground shadow-md whitespace-nowrap z-10"
+                      role="tooltip"
+                    >
                       {formatChartValue(point.value)}
                     </div>
                   )}

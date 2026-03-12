@@ -29,8 +29,6 @@ export function ReportDetailClient({ report, reportId }: ReportDetailClientProps
     }
   }
 
-
-
   return (
     <ReportDetail
       report={report}

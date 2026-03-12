@@ -10,7 +10,9 @@ export type CampaignDatePreset =
   | 'last_30d'
   | 'last_90d'
 
-export function mapDetailPeriodToDatePreset(period: CampaignDetailPeriod | CampaignKPIPeriod): CampaignDatePreset {
+export function mapDetailPeriodToDatePreset(
+  period: CampaignDetailPeriod | CampaignKPIPeriod
+): CampaignDatePreset {
   if (period === 'today') return 'today'
   if (period === 'yesterday') return 'yesterday'
   if (period === '3d') return 'last_3d'

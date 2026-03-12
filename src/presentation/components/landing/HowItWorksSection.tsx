@@ -113,7 +113,9 @@ function StepOnePreview() {
           { label: '타겟 고객', placeholder: '예) 20-35세 여성' },
         ].map((field) => (
           <div key={field.label}>
-            <label className="text-xs text-muted-foreground font-medium mb-1 block">{field.label}</label>
+            <label className="text-xs text-muted-foreground font-medium mb-1 block">
+              {field.label}
+            </label>
             <div className="h-9 bg-muted border border-border rounded-lg flex items-center px-3">
               <span className="text-sm text-muted-foreground">{field.placeholder}</span>
             </div>
@@ -174,7 +176,9 @@ function StepTwoPreview() {
                 <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               )}
             </div>
-            <span className={`text-sm ${item.done ? 'text-muted-foreground' : 'text-primary font-medium'}`}>
+            <span
+              className={`text-sm ${item.done ? 'text-muted-foreground' : 'text-primary font-medium'}`}
+            >
               {item.label}
             </span>
           </div>

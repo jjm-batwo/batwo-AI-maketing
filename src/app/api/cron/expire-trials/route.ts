@@ -9,7 +9,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const expireTrialsUseCase: ExpireTrialsUseCase = container.resolve(DI_TOKENS.ExpireTrialsUseCase)
+    const expireTrialsUseCase: ExpireTrialsUseCase = container.resolve(
+      DI_TOKENS.ExpireTrialsUseCase
+    )
     const result = await expireTrialsUseCase.execute()
 
     return NextResponse.json(result)
@@ -26,7 +28,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const expireTrialsUseCase: ExpireTrialsUseCase = container.resolve(DI_TOKENS.ExpireTrialsUseCase)
+    const expireTrialsUseCase: ExpireTrialsUseCase = container.resolve(
+      DI_TOKENS.ExpireTrialsUseCase
+    )
     const result = await expireTrialsUseCase.execute()
 
     return NextResponse.json(result)

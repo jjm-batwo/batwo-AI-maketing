@@ -49,13 +49,15 @@ export default function AuditPage() {
     <div className="space-y-8 max-w-4xl mx-auto py-8 px-4">
       <div>
         <h1 className="text-3xl font-bold tracking-tight mb-2">광고 계정 진단 리포트</h1>
-        <p className="text-muted-foreground">현재 광고 계정의 핵심 지표와 최적화 가능성을 무료로 분석해 드립니다.</p>
+        <p className="text-muted-foreground">
+          현재 광고 계정의 핵심 지표와 최적화 가능성을 무료로 분석해 드립니다.
+        </p>
       </div>
-      
+
       <AuditScoreCard report={report} />
-      
+
       <AuditCategoryBreakdown categories={mappedCategories} />
-      
+
       <AuditUpgradeCTA wasteEstimate={report.totalWasteEstimate} />
     </div>
   )

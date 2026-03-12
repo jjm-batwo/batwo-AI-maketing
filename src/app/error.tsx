@@ -141,7 +141,9 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
               className="space-y-4"
             >
               <div>
-                <label htmlFor="feedback-name" className="mb-1 block text-sm font-medium">이름 (선택)</label>
+                <label htmlFor="feedback-name" className="mb-1 block text-sm font-medium">
+                  이름 (선택)
+                </label>
                 <input
                   id="feedback-name"
                   type="text"
@@ -151,7 +153,9 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
                 />
               </div>
               <div>
-                <label htmlFor="feedback-email" className="mb-1 block text-sm font-medium">이메일 (선택)</label>
+                <label htmlFor="feedback-email" className="mb-1 block text-sm font-medium">
+                  이메일 (선택)
+                </label>
                 <input
                   id="feedback-email"
                   type="email"
@@ -161,7 +165,9 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
                 />
               </div>
               <div>
-                <label htmlFor="feedback-comments" className="mb-1 block text-sm font-medium">무엇이 잘못되었나요?</label>
+                <label htmlFor="feedback-comments" className="mb-1 block text-sm font-medium">
+                  무엇이 잘못되었나요?
+                </label>
                 <textarea
                   id="feedback-comments"
                   name="comments"

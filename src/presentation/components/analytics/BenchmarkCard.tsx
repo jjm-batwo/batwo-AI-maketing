@@ -1,29 +1,56 @@
-'use client';
+'use client'
 
-import { memo } from 'react';
-import type { IndustryBenchmarkData, MetricBenchmark } from '@/domain/value-objects/IndustryBenchmark';
+import { memo } from 'react'
+import type {
+  IndustryBenchmarkData,
+  MetricBenchmark,
+} from '@/domain/value-objects/IndustryBenchmark'
 
 const GRADE_CONFIG = {
-  top10: { label: '상위 10%', color: 'text-green-700 bg-green-100 dark:text-green-400 dark:bg-green-900/30' },
-  top25: { label: '상위 25%', color: 'text-blue-700 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/30' },
-  above_average: { label: '평균 이상', color: 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20' },
+  top10: {
+    label: '상위 10%',
+    color: 'text-green-700 bg-green-100 dark:text-green-400 dark:bg-green-900/30',
+  },
+  top25: {
+    label: '상위 25%',
+    color: 'text-blue-700 bg-blue-100 dark:text-blue-400 dark:bg-blue-900/30',
+  },
+  above_average: {
+    label: '평균 이상',
+    color: 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20',
+  },
   average: { label: '평균', color: 'text-muted-foreground bg-muted' },
-  below_average: { label: '평균 이하', color: 'text-orange-600 bg-orange-100 dark:text-orange-400 dark:bg-orange-900/30' },
-  bottom25: { label: '하위 25%', color: 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/30' },
-};
-
-const METRIC_LABELS: Record<string, string> = {
-  roas: 'ROAS', ctr: 'CTR', cpa: 'CPA', cvr: '전환율', cpc: 'CPC', cpm: 'CPM',
-};
-
-function formatMetricValue(metric: string, value: number): string {
-  if (metric === 'roas') return value.toFixed(2) + 'x';
-  if (metric === 'ctr' || metric === 'cvr') return value.toFixed(2) + '%';
-  return '₩' + Math.round(value).toLocaleString();
+  below_average: {
+    label: '평균 이하',
+    color: 'text-orange-600 bg-orange-100 dark:text-orange-400 dark:bg-orange-900/30',
+  },
+  bottom25: {
+    label: '하위 25%',
+    color: 'text-red-600 bg-red-100 dark:text-red-400 dark:bg-red-900/30',
+  },
 }
 
-export const BenchmarkCard = memo(function BenchmarkCard({ data }: { data: IndustryBenchmarkData }) {
-  const grade = GRADE_CONFIG[data.overallGrade] || GRADE_CONFIG.average;
+const METRIC_LABELS: Record<string, string> = {
+  roas: 'ROAS',
+  ctr: 'CTR',
+  cpa: 'CPA',
+  cvr: '전환율',
+  cpc: 'CPC',
+  cpm: 'CPM',
+}
+
+function formatMetricValue(metric: string, value: number): string {
+  if (metric === 'roas') return value.toFixed(2) + 'x'
+  if (metric === 'ctr' || metric === 'cvr') return value.toFixed(2) + '%'
+  return '₩' + Math.round(value).toLocaleString()
+}
+
+export const BenchmarkCard = memo(function BenchmarkCard({
+  data,
+}: {
+  data: IndustryBenchmarkData
+}) {
+  const grade = GRADE_CONFIG[data.overallGrade] || GRADE_CONFIG.average
 
   return (
     <div className="bg-card rounded-xl shadow-sm border border-border p-6">
@@ -43,16 +70,18 @@ export const BenchmarkCard = memo(function BenchmarkCard({ data }: { data: Indus
         ))}
       </div>
     </div>
-  );
-});
+  )
+})
 
 function MetricRow({ metric }: { metric: MetricBenchmark }) {
-  const grade = GRADE_CONFIG[metric.grade] || GRADE_CONFIG.average;
+  const grade = GRADE_CONFIG[metric.grade] || GRADE_CONFIG.average
 
   return (
     <div>
       <div className="flex items-center justify-between mb-1">
-        <span className="text-sm font-medium text-foreground">{METRIC_LABELS[metric.metric] || metric.metric.toUpperCase()}</span>
+        <span className="text-sm font-medium text-foreground">
+          {METRIC_LABELS[metric.metric] || metric.metric.toUpperCase()}
+        </span>
         <span className={`text-xs px-2 py-0.5 rounded-full ${grade.color}`}>
           상위 {100 - Math.round(metric.percentile)}%
         </span>
@@ -73,5 +102,5 @@ function MetricRow({ metric }: { metric: MetricBenchmark }) {
         <p className="text-xs text-muted-foreground mt-1">{metric.recommendation}</p>
       )}
     </div>
-  );
+  )
 }

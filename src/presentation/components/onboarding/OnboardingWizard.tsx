@@ -127,7 +127,12 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         </div>
 
         <div className="flex items-center justify-between border-t pt-4">
-          <Button type="button" variant="ghost" onClick={handleSkip} className="text-muted-foreground">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={handleSkip}
+            className="text-muted-foreground"
+          >
             {t('buttons.skip')}
           </Button>
 

@@ -64,7 +64,9 @@ export default function GlobalErrorPage({ error, reset }: GlobalErrorPageProps) 
           </button>
         </div>
 
-        {error.digest && <p className="mt-6 text-xs text-muted-foreground">Error ID: {error.digest}</p>}
+        {error.digest && (
+          <p className="mt-6 text-xs text-muted-foreground">Error ID: {error.digest}</p>
+        )}
       </div>
     </main>
   )

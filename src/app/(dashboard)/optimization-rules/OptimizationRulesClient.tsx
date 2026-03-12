@@ -146,7 +146,7 @@ export function OptimizationRulesClient({
           )
         }
       })
-      .catch(() => { })
+      .catch(() => {})
   }, [])
 
   const { rules, isLoading, refetch, createRule, updateRule, deleteRule, toggleRule } =
@@ -244,9 +244,7 @@ export function OptimizationRulesClient({
       <div className="flex items-end justify-between border-b border-border/10 pb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">{t('optimizationRules.title')}</h1>
-          <p className="text-muted-foreground mt-2">
-            {t('optimizationRules.description')}
-          </p>
+          <p className="text-muted-foreground mt-2">{t('optimizationRules.description')}</p>
         </div>
         <Button size="lg" className="shadow-sm transition-all" onClick={handleOpenCreate}>
           <Plus className="mr-2 h-4 w-4" />
@@ -283,7 +281,9 @@ export function OptimizationRulesClient({
         {/* Campaign Filter */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">{t('optimizationRules.campaignFilter')}</span>
+            <span className="text-sm text-muted-foreground">
+              {t('optimizationRules.campaignFilter')}
+            </span>
             <Select value={selectedCampaignId} onValueChange={handleCampaignChange}>
               <SelectTrigger className="w-[220px] bg-white/50 dark:bg-black/10 border-border/50">
                 <SelectValue placeholder={t('optimizationRules.allCampaigns')} />
@@ -299,7 +299,9 @@ export function OptimizationRulesClient({
             </Select>
           </div>
           <span className="text-xs text-muted-foreground">
-            {isLoading ? t('optimizationRules.loadingRules') : t('optimizationRules.ruleCount', { count: filteredRules.length })}
+            {isLoading
+              ? t('optimizationRules.loadingRules')
+              : t('optimizationRules.ruleCount', { count: filteredRules.length })}
           </span>
         </div>
 

@@ -333,12 +333,18 @@ export const CampaignTable = memo(function CampaignTable({
       if (campaign.status === 'ACTIVE') {
         onStatusChange(campaign.id, 'PAUSED')
         announceToScreenReader(
-          t('accessibility.statusToggled', { name: campaign.name, status: t('table.status.paused') })
+          t('accessibility.statusToggled', {
+            name: campaign.name,
+            status: t('table.status.paused'),
+          })
         )
       } else if (campaign.status === 'PAUSED') {
         onStatusChange(campaign.id, 'ACTIVE')
         announceToScreenReader(
-          t('accessibility.statusToggled', { name: campaign.name, status: t('table.status.active') })
+          t('accessibility.statusToggled', {
+            name: campaign.name,
+            status: t('table.status.active'),
+          })
         )
       }
     },
@@ -504,12 +510,15 @@ export const CampaignTable = memo(function CampaignTable({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button type="button" variant="outline" size="sm" className="h-8">
-                <Settings2 className="mr-1.5 h-3.5 w-3.5" />{t('table.columnConfig.columnSettings')}
+                <Settings2 className="mr-1.5 h-3.5 w-3.5" />
+                {t('table.columnConfig.columnSettings')}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56 p-2">
               <DropdownMenuLabel className="flex items-center justify-between gap-2 px-2 py-1.5">
-                <span className="text-sm font-semibold">{t('table.columnConfig.metricsToShow')}</span>
+                <span className="text-sm font-semibold">
+                  {t('table.columnConfig.metricsToShow')}
+                </span>
                 <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
                   {t('table.columnConfig.countLabel', { count: visibleMetricCount })}
                 </span>
@@ -572,11 +581,11 @@ export const CampaignTable = memo(function CampaignTable({
                   className="h-8 px-3 text-xs font-medium text-primary hover:bg-primary/10 hover:text-primary transition-colors"
                   onClick={(e) => {
                     e.preventDefault()
-                      ; (Object.keys(columnLabels) as ColumnKey[]).forEach((key) => {
-                        if (!visibleColumns[key]) {
-                          setVisibleColumn(key, true)
-                        }
-                      })
+                    ;(Object.keys(columnLabels) as ColumnKey[]).forEach((key) => {
+                      if (!visibleColumns[key]) {
+                        setVisibleColumn(key, true)
+                      }
+                    })
                   }}
                 >
                   <svg
@@ -602,11 +611,11 @@ export const CampaignTable = memo(function CampaignTable({
                   className="h-8 px-3 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
                   onClick={(e) => {
                     e.preventDefault()
-                      ; (Object.keys(columnLabels) as ColumnKey[]).forEach((key) => {
-                        if (visibleColumns[key]) {
-                          setVisibleColumn(key, false)
-                        }
-                      })
+                    ;(Object.keys(columnLabels) as ColumnKey[]).forEach((key) => {
+                      if (visibleColumns[key]) {
+                        setVisibleColumn(key, false)
+                      }
+                    })
                   }}
                 >
                   <svg
@@ -640,7 +649,9 @@ export const CampaignTable = memo(function CampaignTable({
                   aria-label={t('table.columnConfig.selectAll')}
                 />
               </TableHead>
-              <TableHead className="w-[60px] text-center">{t('table.columns.activation')}</TableHead>
+              <TableHead className="w-[60px] text-center">
+                {t('table.columns.activation')}
+              </TableHead>
               <TableHead>
                 <button
                   type="button"
@@ -719,7 +730,10 @@ export const CampaignTable = memo(function CampaignTable({
               return (
                 <TableRow
                   key={campaign.id}
-                  className={cn('cursor-pointer transition-colors hover:bg-muted/30', isSelected && 'bg-primary/5')}
+                  className={cn(
+                    'cursor-pointer transition-colors hover:bg-muted/30',
+                    isSelected && 'bg-primary/5'
+                  )}
                   onClick={(e) => handleRowClick(campaign.id, e)}
                 >
                   <TableCell className="pl-4">
@@ -750,12 +764,10 @@ export const CampaignTable = memo(function CampaignTable({
                       }}
                       className={cn(
                         'relative inline-flex h-[18px] w-8 flex-shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus-visible:outline-none',
-                        campaign.status === 'ACTIVE'
-                          ? 'bg-[#1877F2]'
-                          : 'bg-muted-foreground/30',
+                        campaign.status === 'ACTIVE' ? 'bg-[#1877F2]' : 'bg-muted-foreground/30',
                         campaign.status !== 'ACTIVE' &&
-                        campaign.status !== 'PAUSED' &&
-                        'cursor-not-allowed opacity-50'
+                          campaign.status !== 'PAUSED' &&
+                          'cursor-not-allowed opacity-50'
                       )}
                     >
                       <span
@@ -770,7 +782,7 @@ export const CampaignTable = memo(function CampaignTable({
                     <div className="group flex flex-col justify-center">
                       <button
                         type="button"
-                        className="font-medium text-[14px] text-left hover:underline text-[#1877F2]"
+                        className="font-medium text-[14px] text-left hover:underline text-[#1877F2] cursor-pointer"
                         onClick={(e) => {
                           e.stopPropagation()
                           if (onRowClick) {
@@ -784,14 +796,23 @@ export const CampaignTable = memo(function CampaignTable({
                       </button>
                       <div className="h-4 flex items-center mt-0.5">
                         <span className="text-[11px] text-muted-foreground group-hover:hidden">
-                          {objectiveLabels[campaign.objective as keyof typeof objectiveLabels] || campaign.objective}
+                          {objectiveLabels[campaign.objective as keyof typeof objectiveLabels] ||
+                            campaign.objective}
                         </span>
                         <div className="hidden group-hover:flex items-center gap-2 text-[11px] text-muted-foreground">
-                          <Link href={`/campaigns/${campaign.id}/edit`} className="hover:underline" onClick={(e) => e.stopPropagation()}>
+                          <Link
+                            href={`/campaigns/${campaign.id}/edit`}
+                            className="hover:underline"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             수정
                           </Link>
                           <span>·</span>
-                          <Link href={`/campaigns/${campaign.id}/analytics`} className="hover:underline" onClick={(e) => e.stopPropagation()}>
+                          <Link
+                            href={`/campaigns/${campaign.id}/analytics`}
+                            className="hover:underline"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             차트 보기
                           </Link>
                         </div>
@@ -801,10 +822,8 @@ export const CampaignTable = memo(function CampaignTable({
                   <TableCell>
                     {/* UX-06: Status dot with text */}
                     <div className="flex items-center gap-2">
-                      <div className={cn("h-2 w-2 rounded-full", status.dot)} />
-                      <span className={cn("text-[13px]", status.className)}>
-                        {status.label}
-                      </span>
+                      <div className={cn('h-2 w-2 rounded-full', status.dot)} />
+                      <span className={cn('text-[13px]', status.className)}>{status.label}</span>
                     </div>
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
@@ -856,9 +875,9 @@ export const CampaignTable = memo(function CampaignTable({
                         {key === 'createdAt' &&
                           (campaign.createdAt
                             ? new Date(campaign.createdAt).toLocaleDateString('ko-KR', {
-                              month: 'short',
-                              day: 'numeric',
-                            })
+                                month: 'short',
+                                day: 'numeric',
+                              })
                             : '-')}
                       </TableCell>
                     ))}
@@ -916,9 +935,7 @@ export const CampaignTable = memo(function CampaignTable({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>{t('table.columnConfig.savedPresets')}</DialogTitle>
-            <DialogDescription>
-              {t('table.columnConfig.presetNamePrompt')}
-            </DialogDescription>
+            <DialogDescription>{t('table.columnConfig.presetNamePrompt')}</DialogDescription>
           </DialogHeader>
           <div className="py-4">
             <Input

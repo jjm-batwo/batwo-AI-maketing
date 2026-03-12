@@ -22,23 +22,23 @@ export function registerNotificationModule(container: Container): void {
   // --- Repositories ---
   container.registerSingleton<INotificationChannelRepository>(
     DI_TOKENS.NotificationChannelRepository,
-    () => new PrismaNotificationChannelRepository(prisma),
+    () => new PrismaNotificationChannelRepository(prisma)
   )
 
   container.registerSingleton<INotificationPreferenceRepository>(
     DI_TOKENS.NotificationPreferenceRepository,
-    () => new PrismaNotificationPreferenceRepository(prisma),
+    () => new PrismaNotificationPreferenceRepository(prisma)
   )
 
   // --- Notification Senders ---
   container.registerSingleton<INotificationSender>(
     DI_TOKENS.SlackNotificationSender,
-    () => new SlackNotificationSender(),
+    () => new SlackNotificationSender()
   )
 
   container.registerSingleton<INotificationSender>(
     DI_TOKENS.KakaoNotificationSender,
-    () => new KakaoNotificationSender(),
+    () => new KakaoNotificationSender()
   )
 
   // --- Dispatcher Service ---
@@ -47,9 +47,11 @@ export function registerNotificationModule(container: Container): void {
     () =>
       new NotificationDispatcherService(
         container.resolve<INotificationChannelRepository>(DI_TOKENS.NotificationChannelRepository),
-        container.resolve<INotificationPreferenceRepository>(DI_TOKENS.NotificationPreferenceRepository),
+        container.resolve<INotificationPreferenceRepository>(
+          DI_TOKENS.NotificationPreferenceRepository
+        ),
         container.resolve<INotificationSender>(DI_TOKENS.SlackNotificationSender),
-        container.resolve<INotificationSender>(DI_TOKENS.KakaoNotificationSender),
-      ),
+        container.resolve<INotificationSender>(DI_TOKENS.KakaoNotificationSender)
+      )
   )
 }

@@ -24,7 +24,7 @@ export class DashboardLayout {
     private _widgets: DashboardWidget[],
     private _isDefault: boolean,
     private readonly _createdAt: Date,
-    private _updatedAt: Date,
+    private _updatedAt: Date
   ) {}
 
   static create(props: {
@@ -44,7 +44,7 @@ export class DashboardLayout {
       widgets,
       true,
       new Date(),
-      new Date(),
+      new Date()
     )
   }
 
@@ -56,7 +56,7 @@ export class DashboardLayout {
       props.widgets,
       props.isDefault,
       props.createdAt,
-      props.updatedAt,
+      props.updatedAt
     )
   }
 
@@ -70,7 +70,7 @@ export class DashboardLayout {
       widgets,
       this._isDefault,
       this._createdAt,
-      new Date(),
+      new Date()
     )
   }
 
@@ -85,7 +85,7 @@ export class DashboardLayout {
   }
 
   removeWidget(widgetId: string): DashboardLayout {
-    const filtered = this._widgets.filter(w => w.id !== widgetId)
+    const filtered = this._widgets.filter((w) => w.id !== widgetId)
     if (filtered.length === this._widgets.length) {
       throw new Error(`위젯을 찾을 수 없습니다: ${widgetId}`)
     }
@@ -96,7 +96,7 @@ export class DashboardLayout {
       filtered,
       this._isDefault,
       this._createdAt,
-      new Date(),
+      new Date()
     )
   }
 
@@ -110,7 +110,7 @@ export class DashboardLayout {
       this._widgets,
       this._isDefault,
       this._createdAt,
-      new Date(),
+      new Date()
     )
   }
 
@@ -122,7 +122,7 @@ export class DashboardLayout {
       this._widgets,
       isDefault,
       this._createdAt,
-      new Date(),
+      new Date()
     )
   }
 
@@ -169,7 +169,7 @@ export class DashboardLayout {
       throw new Error(`위젯은 최대 ${MAX_WIDGETS}개까지 추가 가능합니다`)
     }
 
-    const ids = widgets.map(w => w.id)
+    const ids = widgets.map((w) => w.id)
     const uniqueIds = new Set(ids)
     if (ids.length !== uniqueIds.size) {
       throw new Error('위젯 ID가 중복됩니다')

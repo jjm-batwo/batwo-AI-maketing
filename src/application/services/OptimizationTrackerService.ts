@@ -20,7 +20,7 @@ export interface OptimizationResult {
 export class OptimizationTrackerService {
   constructor(
     private readonly kpiRepository: IKPIRepository,
-    private readonly pendingActionRepository: IPendingActionRepository,
+    private readonly pendingActionRepository: IPendingActionRepository
   ) {}
 
   async getOptimizationResult(actionId: string): Promise<OptimizationResult | null> {
@@ -33,18 +33,26 @@ export class OptimizationTrackerService {
     const beforeTotals = await this.kpiRepository.aggregateByCampaignId(
       campaignId,
       new Date(executedAt.getTime() - 7 * 24 * 60 * 60 * 1000),
-      executedAt,
+      executedAt
     )
-    
+
     const now = new Date()
-    const trackingEndDate = new Date(Math.min(now.getTime(), executedAt.getTime() + 7 * 24 * 60 * 60 * 1000))
+    const trackingEndDate = new Date(
+      Math.min(now.getTime(), executedAt.getTime() + 7 * 24 * 60 * 60 * 1000)
+    )
     const afterTotals = await this.kpiRepository.aggregateByCampaignId(
       campaignId,
       executedAt,
-      trackingEndDate,
+      trackingEndDate
     )
 
-    const calculateMetrics = (totals: { totalImpressions: number, totalClicks: number, totalConversions: number, totalSpend: number, totalRevenue: number }): OptimizationMetrics => {
+    const calculateMetrics = (totals: {
+      totalImpressions: number
+      totalClicks: number
+      totalConversions: number
+      totalSpend: number
+      totalRevenue: number
+    }): OptimizationMetrics => {
       return {
         roas: totals.totalSpend > 0 ? totals.totalRevenue / totals.totalSpend : 0,
         cpa: totals.totalConversions > 0 ? totals.totalSpend / totals.totalConversions : 0,
@@ -63,11 +71,14 @@ export class OptimizationTrackerService {
       after: afterKPI,
       improvement: {
         roas: afterKPI.roas - beforeKPI.roas,
-        cpa: beforeKPI.cpa - afterKPI.cpa, // lower CPA is better, so maybe positive means improvement in the UI? 
+        cpa: beforeKPI.cpa - afterKPI.cpa, // lower CPA is better, so maybe positive means improvement in the UI?
         // to keep it simple, math difference:
         ctr: afterKPI.ctr - beforeKPI.ctr,
       },
-      daysTracked: Math.min(7, Math.max(0, Math.floor((now.getTime() - executedAt.getTime()) / (24 * 60 * 60 * 1000)))),
+      daysTracked: Math.min(
+        7,
+        Math.max(0, Math.floor((now.getTime() - executedAt.getTime()) / (24 * 60 * 60 * 1000)))
+      ),
     }
   }
 }

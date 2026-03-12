@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useCallback } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ApiSourceBadge } from '@/presentation/components/common/ApiSourceBadge'
 import Link from 'next/link'
@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl'
 import { CampaignTable } from '@/presentation/components/campaign'
 import { AdSetTable } from '@/presentation/components/campaign/AdSetTable'
 import { AdTable } from '@/presentation/components/campaign/AdTable'
+import { AdDetailPanel } from '@/presentation/components/campaign/AdDetailPanel'
 import { useCampaignStore, useUIStore } from '@/presentation/stores'
 import { useDashboardKPI } from '@/presentation/hooks'
 import { useAdSetsWithInsights } from '@/presentation/hooks/useAdSetsWithInsights'
@@ -65,6 +66,7 @@ interface CampaignsClientProps {
 
 export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
   const t = useTranslations()
+  const router = useRouter()
   const searchParams = useSearchParams()
   const showApiSource = searchParams.get('showApiSource') === 'true'
   const {
@@ -81,6 +83,10 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
   const { openChatPanel } = useUIStore()
   const [period, setPeriod] = useState<CampaignKPIPeriod>('today')
 
+  // Ad detail panel state (for ad "수정" button)
+  const [editAdId, setEditAdId] = useState<string | null>(null)
+  const [detailPanelOpen, setDetailPanelOpen] = useState(false)
+
   const datePreset = useMemo(() => mapDetailPeriodToDatePreset(period), [period])
 
   // 기간별 KPI 데이터 (클라이언트 사이드 fetch)
@@ -90,7 +96,11 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
   })
 
   // Data Queries for Drill-down / All views
-  const adSetsQuery = useAdSetsWithInsights(selectedCampaignForDrilldown, datePreset, activeTab === 'adsets')
+  const adSetsQuery = useAdSetsWithInsights(
+    selectedCampaignForDrilldown,
+    datePreset,
+    activeTab === 'adsets'
+  )
   const adsQuery = useAdsWithInsights(selectedAdSetForDrilldown, datePreset, activeTab === 'ads')
 
   // 캠페인 데이터에 KPI 지출/ROAS/CTR 병합
@@ -167,6 +177,35 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
     setSelectedAdSetForDrilldown(id)
     setActiveTab('ads')
   }
+
+  // AdSet: "수정" → drill down into that ad set's ads
+  const handleAdSetEdit = useCallback(
+    (adSetId: string) => {
+      setSelectedAdSetForDrilldown(adSetId)
+      setActiveTab('ads')
+    },
+    [setSelectedAdSetForDrilldown, setActiveTab]
+  )
+
+  // AdSet: "차트 보기" → navigate to campaign analytics
+  const handleAdSetViewChart = useCallback(() => {
+    if (selectedCampaignForDrilldown) {
+      router.push(`/campaigns/${selectedCampaignForDrilldown}/analytics`)
+    }
+  }, [router, selectedCampaignForDrilldown])
+
+  // Ad: "수정" → open AdDetailPanel
+  const handleAdEdit = useCallback((adId: string) => {
+    setEditAdId(adId)
+    setDetailPanelOpen(true)
+  }, [])
+
+  // Ad: "차트 보기" → navigate to campaign analytics
+  const handleAdViewChart = useCallback(() => {
+    if (selectedCampaignForDrilldown) {
+      router.push(`/campaigns/${selectedCampaignForDrilldown}/analytics`)
+    }
+  }, [router, selectedCampaignForDrilldown])
 
   // Status toggle mutation
   const queryClient = useQueryClient()
@@ -330,15 +369,20 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
             </TabsList>
 
             <div className="flex items-center gap-4 py-1.5 mb-2">
-              <Tabs
-                value={period}
-                onValueChange={(v) => setPeriod(v as CampaignKPIPeriod)}
-              >
+              <Tabs value={period} onValueChange={(v) => setPeriod(v as CampaignKPIPeriod)}>
                 <TabsList className="grid grid-cols-4 h-8 bg-muted/20 border">
-                  <TabsTrigger value="today" className="text-[13px]">오늘</TabsTrigger>
-                  <TabsTrigger value="yesterday" className="text-[13px]">어제</TabsTrigger>
-                  <TabsTrigger value="7d" className="text-[13px]">7일</TabsTrigger>
-                  <TabsTrigger value="30d" className="text-[13px]">30일</TabsTrigger>
+                  <TabsTrigger value="today" className="text-[13px]">
+                    오늘
+                  </TabsTrigger>
+                  <TabsTrigger value="yesterday" className="text-[13px]">
+                    어제
+                  </TabsTrigger>
+                  <TabsTrigger value="7d" className="text-[13px]">
+                    7일
+                  </TabsTrigger>
+                  <TabsTrigger value="30d" className="text-[13px]">
+                    30일
+                  </TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
@@ -401,7 +445,9 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
           {/* Bulk Action Bar */}
           {activeTab === 'campaigns' && selectedCampaignIds.size > 0 && (
             <div className="flex items-center gap-3 rounded-md border border-primary/20 bg-primary/5 p-2 mb-6 shadow-sm">
-              <span className="text-[13px] font-medium ml-2">{selectedCampaignIds.size}개 선택됨</span>
+              <span className="text-[13px] font-medium ml-2">
+                {selectedCampaignIds.size}개 선택됨
+              </span>
               <div className="flex gap-1.5 ml-auto">
                 <Button variant="outline" size="sm" className="h-8 text-[13px]">
                   <Pause className="mr-1.5 h-3.5 w-3.5" />
@@ -437,6 +483,8 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
               adSets={adSetsQuery.data ?? []}
               isLoading={adSetsQuery.isLoading}
               onAdSetClick={handleAdSetClick}
+              onEdit={handleAdSetEdit}
+              onViewChart={handleAdSetViewChart}
             />
           )}
 
@@ -444,11 +492,15 @@ export function CampaignsClient({ initialCampaigns }: CampaignsClientProps) {
             <AdTable
               ads={adsQuery.data ?? []}
               isLoading={adsQuery.isLoading}
+              onEdit={handleAdEdit}
+              onViewChart={handleAdViewChart}
             />
           )}
         </Tabs>
       </div>
+
+      {/* Ad Detail Slide Panel */}
+      <AdDetailPanel adId={editAdId} open={detailPanelOpen} onOpenChange={setDetailPanelOpen} />
     </div>
   )
 }
-

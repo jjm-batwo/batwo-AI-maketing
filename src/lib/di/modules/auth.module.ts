@@ -107,7 +107,9 @@ export function registerAuthModule(container: Container): void {
           })
           return {
             userId,
-            accessToken: metaAccount?.accessToken ? safeDecryptToken(metaAccount.accessToken) : null,
+            accessToken: metaAccount?.accessToken
+              ? safeDecryptToken(metaAccount.accessToken)
+              : null,
             adAccountId: metaAccount?.metaAccountId ?? null,
             conversationId: '',
           }

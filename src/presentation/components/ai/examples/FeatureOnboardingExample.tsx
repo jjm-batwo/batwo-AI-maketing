@@ -102,9 +102,7 @@ export function FeatureOnboardingExample() {
   return (
     <div className="p-8 max-w-6xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-foreground mb-2">
-          AI 기능 발견 & 온보딩 예시
-        </h1>
+        <h1 className="text-2xl font-bold text-foreground mb-2">AI 기능 발견 & 온보딩 예시</h1>
         <p className="text-muted-foreground">
           사용자가 AI 기능을 자연스럽게 발견하고 학습할 수 있도록 돕습니다.
         </p>
@@ -129,9 +127,7 @@ export function FeatureOnboardingExample() {
               <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
                 <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground">
-                AI 광고 카피 생성
-              </h3>
+              <h3 className="text-lg font-semibold text-foreground">AI 광고 카피 생성</h3>
               {!isDiscovered('copy_generation') && (
                 <FeatureDiscoveryHint
                   feature="copy_generation"
@@ -157,9 +153,7 @@ export function FeatureOnboardingExample() {
               <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
                 <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground">
-                AI 캠페인 분석
-              </h3>
+              <h3 className="text-lg font-semibold text-foreground">AI 캠페인 분석</h3>
               {!isDiscovered('analysis') && (
                 <FeatureDiscoveryHint
                   feature="analysis"
@@ -169,9 +163,7 @@ export function FeatureOnboardingExample() {
                 />
               )}
             </div>
-            <p className="text-sm text-muted-foreground">
-              성과 분석 및 개선 방향 자동 제시
-            </p>
+            <p className="text-sm text-muted-foreground">성과 분석 및 개선 방향 자동 제시</p>
           </div>
         </div>
 
@@ -185,9 +177,7 @@ export function FeatureOnboardingExample() {
               <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
                 <Sparkles className="w-5 h-5 text-green-600 dark:text-green-400" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground">
-                AI 인사이트
-              </h3>
+              <h3 className="text-lg font-semibold text-foreground">AI 인사이트</h3>
               {!isDiscovered('insights') && (
                 <FeatureDiscoveryHint
                   feature="insights"
@@ -211,9 +201,7 @@ export function FeatureOnboardingExample() {
               <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
                 <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-400" />
               </div>
-              <h3 className="text-lg font-semibold text-foreground">
-                AI 마케팅 어시스턴트
-              </h3>
+              <h3 className="text-lg font-semibold text-foreground">AI 마케팅 어시스턴트</h3>
               {!isDiscovered('chat') && (
                 <FeatureDiscoveryHint
                   feature="chat"
@@ -223,18 +211,14 @@ export function FeatureOnboardingExample() {
                 />
               )}
             </div>
-            <p className="text-sm text-muted-foreground">
-              24/7 마케팅 전략 자문 및 아이디어
-            </p>
+            <p className="text-sm text-muted-foreground">24/7 마케팅 전략 자문 및 아이디어</p>
           </div>
         </div>
       </div>
 
       {/* Inline discovery hint example */}
       <div className="mb-8">
-        <h2 className="text-lg font-semibold text-foreground mb-4">
-          인라인 발견 힌트 예시
-        </h2>
+        <h2 className="text-lg font-semibold text-foreground mb-4">인라인 발견 힌트 예시</h2>
         {!isDiscovered('proactive_insights') && (
           <FeatureDiscoveryHint
             feature="proactive_insights"

@@ -22,7 +22,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ message: 'Meta 계정 연결이 필요합니다' }, { status: 400 })
     }
 
-    const insights = await metaAdsService.getAdInsights(metaAccount.accessToken, adId, datePreset)
+    // getMetaAccountForUser가 내부적으로 safeDecryptToken 적용
+    const decryptedToken = metaAccount.accessToken
+    const insights = await metaAdsService.getAdInsights(decryptedToken, adId, datePreset)
 
     return NextResponse.json(insights)
   } catch (error) {

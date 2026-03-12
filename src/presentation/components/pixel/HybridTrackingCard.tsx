@@ -131,7 +131,9 @@ export function HybridTrackingCard({ pixelId }: HybridTrackingCardProps) {
               <Server className="h-5 w-5 text-indigo-700 dark:text-indigo-400" />
             </div>
             <div>
-              <h4 className="font-semibold text-indigo-900 dark:text-indigo-300">서버 전환 API (CAPI)</h4>
+              <h4 className="font-semibold text-indigo-900 dark:text-indigo-300">
+                서버 전환 API (CAPI)
+              </h4>
               <p className="text-xs text-muted-foreground">서버 사이드 방어 데이터</p>
             </div>
           </div>
@@ -150,7 +152,9 @@ export function HybridTrackingCard({ pixelId }: HybridTrackingCardProps) {
                 <span
                   className={cn(
                     'font-medium',
-                    health.capiEventsFailed > 0 ? 'text-red-500 dark:text-red-400' : 'text-muted-foreground'
+                    health.capiEventsFailed > 0
+                      ? 'text-red-500 dark:text-red-400'
+                      : 'text-muted-foreground'
                   )}
                 >
                   {health.capiEventsFailed.toLocaleString()}
@@ -161,7 +165,9 @@ export function HybridTrackingCard({ pixelId }: HybridTrackingCardProps) {
                 <span
                   className={cn(
                     'font-medium',
-                    health.capiEventsExpired > 0 ? 'text-amber-500 dark:text-amber-400' : 'text-muted-foreground'
+                    health.capiEventsExpired > 0
+                      ? 'text-amber-500 dark:text-amber-400'
+                      : 'text-muted-foreground'
                   )}
                 >
                   {health.capiEventsExpired.toLocaleString()}

@@ -3,13 +3,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { SparklineChart } from './SparklineChart'
 import { cn } from '@/lib/utils'
-import {
-  BarChart3,
-  DollarSign,
-  MousePointerClick,
-  Target,
-  Eye,
-} from 'lucide-react'
+import { BarChart3, DollarSign, MousePointerClick, Target, Eye } from 'lucide-react'
 import { MetricChange } from '@/presentation/components/common'
 
 export type KPIFormat = 'number' | 'currency' | 'percentage' | 'multiplier'
@@ -117,9 +111,7 @@ export function KPICard({
 
       <div className="relative z-10 space-y-2">
         <div className="flex items-end justify-between gap-2">
-          <div className="text-2xl font-bold tracking-tight text-foreground">
-            {formattedValue}
-          </div>
+          <div className="text-2xl font-bold tracking-tight text-foreground">{formattedValue}</div>
           {sparklineData && sparklineData.length >= 2 && (
             <SparklineChart data={sparklineData} color="var(--primary)" height={32} width={80} />
           )}

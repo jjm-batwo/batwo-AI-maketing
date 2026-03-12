@@ -96,14 +96,30 @@ export class NotificationPreference {
     })
   }
 
-  get id(): string { return this.props.id }
-  get userId(): string { return this.props.userId }
-  get alertType(): AlertType { return this.props.alertType }
-  get channels(): NotificationChannelType[] { return [...this.props.channels] }
-  get minSeverity(): MinSeverity { return this.props.minSeverity }
-  get isActive(): boolean { return this.props.isActive }
-  get createdAt(): Date { return this.props.createdAt }
-  get updatedAt(): Date { return this.props.updatedAt }
+  get id(): string {
+    return this.props.id
+  }
+  get userId(): string {
+    return this.props.userId
+  }
+  get alertType(): AlertType {
+    return this.props.alertType
+  }
+  get channels(): NotificationChannelType[] {
+    return [...this.props.channels]
+  }
+  get minSeverity(): MinSeverity {
+    return this.props.minSeverity
+  }
+  get isActive(): boolean {
+    return this.props.isActive
+  }
+  get createdAt(): Date {
+    return this.props.createdAt
+  }
+  get updatedAt(): Date {
+    return this.props.updatedAt
+  }
 
   toJSON(): NotificationPreferenceProps {
     return { ...this.props, channels: [...this.props.channels] }

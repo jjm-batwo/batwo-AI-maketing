@@ -1,4 +1,8 @@
-import type { INotificationSender, NotificationSendParams, NotificationSendResult } from '@application/ports/INotificationSender'
+import type {
+  INotificationSender,
+  NotificationSendParams,
+  NotificationSendResult,
+} from '@application/ports/INotificationSender'
 import type { SlackConfig } from '@domain/entities/NotificationChannel'
 
 /**

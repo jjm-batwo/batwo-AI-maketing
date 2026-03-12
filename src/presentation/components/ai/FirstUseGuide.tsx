@@ -179,9 +179,7 @@ export function FirstUseGuide({
                   <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-foreground">
-                    {guide.title}
-                  </h2>
+                  <h2 className="text-lg font-semibold text-foreground">{guide.title}</h2>
                   <p className="text-sm text-muted-foreground">처음 사용하시는군요!</p>
                 </div>
               </div>
@@ -207,16 +205,11 @@ export function FirstUseGuide({
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <BookOpen className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                <h3 className="text-sm font-semibold text-foreground">
-                  이런 것들을 할 수 있어요
-                </h3>
+                <h3 className="text-sm font-semibold text-foreground">이런 것들을 할 수 있어요</h3>
               </div>
               <ul className="space-y-2">
                 {guide.capabilities.map((capability, index) => (
-                  <li
-                    key={index}
-                    className="flex items-start gap-2 text-sm text-muted-foreground"
-                  >
+                  <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
                     <ChevronRight className="w-4 h-4 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
                     <span>{capability}</span>
                   </li>
@@ -228,16 +221,11 @@ export function FirstUseGuide({
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Lightbulb className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                <h3 className="text-sm font-semibold text-foreground">
-                  더 잘 사용하는 팁
-                </h3>
+                <h3 className="text-sm font-semibold text-foreground">더 잘 사용하는 팁</h3>
               </div>
               <ul className="space-y-2">
                 {guide.tips.map((tip, index) => (
-                  <li
-                    key={index}
-                    className="flex items-start gap-2 text-sm text-muted-foreground"
-                  >
+                  <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
                     <span className="flex-shrink-0 w-5 h-5 flex items-center justify-center bg-amber-100 dark:bg-amber-900/30 rounded-full text-xs font-medium text-amber-700 dark:text-amber-400">
                       {index + 1}
                     </span>
@@ -302,9 +290,7 @@ export function FirstUseGuide({
               <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <h2 className="text-base font-semibold text-foreground">
-                {guide.title}
-              </h2>
+              <h2 className="text-base font-semibold text-foreground">{guide.title}</h2>
               <p className="text-sm text-muted-foreground">처음 사용하시는군요!</p>
             </div>
           </div>
@@ -325,15 +311,10 @@ export function FirstUseGuide({
 
         {/* Capabilities */}
         <div>
-          <h3 className="text-xs font-semibold text-foreground mb-2">
-            이런 것들을 할 수 있어요
-          </h3>
+          <h3 className="text-xs font-semibold text-foreground mb-2">이런 것들을 할 수 있어요</h3>
           <ul className="space-y-1.5">
             {guide.capabilities.map((capability, index) => (
-              <li
-                key={index}
-                className="flex items-start gap-2 text-xs text-muted-foreground"
-              >
+              <li key={index} className="flex items-start gap-2 text-xs text-muted-foreground">
                 <ChevronRight className="w-3 h-3 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
                 <span>{capability}</span>
               </li>
@@ -343,15 +324,10 @@ export function FirstUseGuide({
 
         {/* Tips */}
         <div>
-          <h3 className="text-xs font-semibold text-foreground mb-2">
-            더 잘 사용하는 팁
-          </h3>
+          <h3 className="text-xs font-semibold text-foreground mb-2">더 잘 사용하는 팁</h3>
           <ul className="space-y-1.5">
             {guide.tips.slice(0, 2).map((tip, index) => (
-              <li
-                key={index}
-                className="flex items-start gap-2 text-xs text-muted-foreground"
-              >
+              <li key={index} className="flex items-start gap-2 text-xs text-muted-foreground">
                 <span className="flex-shrink-0 w-4 h-4 flex items-center justify-center bg-amber-100 dark:bg-amber-900/30 rounded-full text-xs font-medium text-amber-700 dark:text-amber-400">
                   {index + 1}
                 </span>

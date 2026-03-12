@@ -131,4 +131,3 @@ export async function DELETE(
     return NextResponse.json({ message: 'Failed to delete campaign' }, { status: 500 })
   }
 }
-

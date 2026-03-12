@@ -40,7 +40,7 @@ export function useDashboardLayout() {
   })
 
   const layouts = layoutData?.layouts ?? []
-  const activeLayout = layouts.find(l => l.isDefault) ?? layouts[0] ?? null
+  const activeLayout = layouts.find((l) => l.isDefault) ?? layouts[0] ?? null
 
   // 위젯 위치/설정 업데이트
   const updateMutation = useMutation({

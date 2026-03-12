@@ -84,9 +84,7 @@ export function AISuggestionBubble({
               <Sparkles className="w-4 h-4 text-white" />
             </div>
             <div className="flex-1">
-              <p className="text-xs font-medium text-foreground">
-                AI가 도움을 드릴까요?
-              </p>
+              <p className="text-xs font-medium text-foreground">AI가 도움을 드릴까요?</p>
               <p className="text-xs text-muted-foreground">{context}</p>
             </div>
             <button
@@ -190,17 +188,10 @@ export function TooltipAISuggestion({
   className,
 }: TooltipAISuggestionProps) {
   return (
-    <div
-      className={cn(
-        'bg-background rounded-lg shadow-xl border border-border p-3',
-        className
-      )}
-    >
+    <div className={cn('bg-background rounded-lg shadow-xl border border-border p-3', className)}>
       <div className="flex items-start gap-2 mb-3">
         <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
-        <p className="flex-1 text-xs text-foreground leading-relaxed">
-          {suggestion}
-        </p>
+        <p className="flex-1 text-xs text-foreground leading-relaxed">{suggestion}</p>
         <button
           type="button"
           onClick={onDismiss}

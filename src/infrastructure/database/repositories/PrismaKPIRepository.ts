@@ -4,7 +4,7 @@ import { KPI } from '@domain/entities/KPI'
 import { KPIMapper } from '../mappers/KPIMapper'
 
 export class PrismaKPIRepository implements IKPIRepository {
-  constructor(private readonly prisma: PrismaClient) { }
+  constructor(private readonly prisma: PrismaClient) {}
 
   async save(kpi: KPI): Promise<KPI> {
     const data = KPIMapper.toCreateInput(kpi)
@@ -356,10 +356,25 @@ export class PrismaKPIRepository implements IKPIRepository {
     const r = result[0] || {}
 
     return {
-      roas: { p25: Number(r.roas_p25) || 0, p50: Number(r.roas_p50) || 0, p75: Number(r.roas_p75) || 0, p90: Number(r.roas_p90) || 0 },
-      ctr: { p25: Number(r.ctr_p25) || 0, p50: Number(r.ctr_p50) || 0, p75: Number(r.ctr_p75) || 0, p90: Number(r.ctr_p90) || 0 },
-      cpa: { p25: Number(r.cpa_p25) || 0, p50: Number(r.cpa_p50) || 0, p75: Number(r.cpa_p75) || 0, p90: Number(r.cpa_p90) || 0 },
-      _sampleSize: Number(r.sample_size) || 0
+      roas: {
+        p25: Number(r.roas_p25) || 0,
+        p50: Number(r.roas_p50) || 0,
+        p75: Number(r.roas_p75) || 0,
+        p90: Number(r.roas_p90) || 0,
+      },
+      ctr: {
+        p25: Number(r.ctr_p25) || 0,
+        p50: Number(r.ctr_p50) || 0,
+        p75: Number(r.ctr_p75) || 0,
+        p90: Number(r.ctr_p90) || 0,
+      },
+      cpa: {
+        p25: Number(r.cpa_p25) || 0,
+        p50: Number(r.cpa_p50) || 0,
+        p75: Number(r.cpa_p75) || 0,
+        p90: Number(r.cpa_p90) || 0,
+      },
+      _sampleSize: Number(r.sample_size) || 0,
     }
   }
 
@@ -385,10 +400,10 @@ export class PrismaKPIRepository implements IKPIRepository {
     if (filters.dateFrom || filters.dateTo) {
       where.date = {}
       if (filters.dateFrom) {
-        ; (where.date as Record<string, Date>).gte = filters.dateFrom
+        ;(where.date as Record<string, Date>).gte = filters.dateFrom
       }
       if (filters.dateTo) {
-        ; (where.date as Record<string, Date>).lte = filters.dateTo
+        ;(where.date as Record<string, Date>).lte = filters.dateTo
       }
     }
 

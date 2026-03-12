@@ -89,7 +89,7 @@ export class UpdateCampaignUseCase {
       await this.metaAdsService.updateCampaign(dto.accessToken, campaign.metaCampaignId, {
         name: dto.name,
         dailyBudget: dto.dailyBudget,
-        status: (dto.status === 'ACTIVE' || dto.status === 'PAUSED') ? dto.status : undefined,
+        status: dto.status === 'ACTIVE' || dto.status === 'PAUSED' ? dto.status : undefined,
         endTime: dto.endDate === null ? null : dto.endDate ? new Date(dto.endDate) : undefined,
       })
     }

@@ -60,10 +60,7 @@ export function validateCronAuth(request: NextRequest): CronAuthResult {
     }
   }
 
-  const isValid = timingSafeEqual(
-    Buffer.from(authHeader),
-    Buffer.from(expectedValue)
-  )
+  const isValid = timingSafeEqual(Buffer.from(authHeader), Buffer.from(expectedValue))
 
   if (!isValid) {
     console.warn('[Cron Auth] Unauthorized cron request attempt')

@@ -41,9 +41,7 @@ export function FreeAuditButton() {
         <p className="text-sm font-semibold text-foreground">
           {loading ? '연결 중...' : '내 광고 계정, 몇 점일까?'}
         </p>
-        <p className="text-xs text-muted-foreground mt-0.5">
-          Meta 계정 연결로 무료 AI 진단 받기
-        </p>
+        <p className="text-xs text-muted-foreground mt-0.5">Meta 계정 연결로 무료 AI 진단 받기</p>
       </div>
       <ArrowRight
         className="h-4 w-4 text-amber-500 shrink-0 group-hover:translate-x-1 transition-transform duration-300"

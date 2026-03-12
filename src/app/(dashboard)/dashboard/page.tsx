@@ -426,8 +426,6 @@ export default function DashboardPage() {
     )
   }
 
-
-
   // KPI Configuration interface
   interface KPIConfigItem {
     key: string
@@ -711,7 +709,6 @@ export default function DashboardPage() {
   const currentKPIConfig = objectiveKPIConfig[dashboardObjective] || objectiveKPIConfig.ALL
 
   const currentCharts = objectiveChartConfig[dashboardObjective] || objectiveChartConfig.ALL
-
 
   const currentTableColumns = objectiveTableColumns[dashboardObjective] || objectiveTableColumns.ALL
 

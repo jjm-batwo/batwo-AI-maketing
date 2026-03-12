@@ -34,7 +34,10 @@ export default function NotificationSettingsPage() {
   const [preferences, setPreferences] = useState<PreferenceData[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
-  const [testResult, setTestResult] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+  const [testResult, setTestResult] = useState<{
+    type: 'success' | 'error'
+    message: string
+  } | null>(null)
 
   const fetchData = useCallback(async () => {
     try {
@@ -92,7 +95,7 @@ export default function NotificationSettingsPage() {
     alertType: AlertType,
     selectedChannels: NotificationChannelType[],
     minSeverity: MinSeverity,
-    isActive: boolean,
+    isActive: boolean
   ) => {
     setIsSaving(true)
     try {
@@ -124,13 +127,17 @@ export default function NotificationSettingsPage() {
       })
       const data = await res.json()
       if (data.sent > 0) {
-        setTestResult({ type: 'success', message: `✅ ${data.sent}개 채널로 테스트 알림이 발송되었습니다!` })
+        setTestResult({
+          type: 'success',
+          message: `✅ ${data.sent}개 채널로 테스트 알림이 발송되었습니다!`,
+        })
       } else {
         setTestResult({
           type: 'error',
-          message: data.errors?.length > 0
-            ? `❌ 발송 실패: ${data.errors.join(', ')}`
-            : '⚠️ 발송된 알림이 없습니다. 채널과 선호도를 확인하세요.',
+          message:
+            data.errors?.length > 0
+              ? `❌ 발송 실패: ${data.errors.join(', ')}`
+              : '⚠️ 발송된 알림이 없습니다. 채널과 선호도를 확인하세요.',
         })
       }
     } catch (error) {

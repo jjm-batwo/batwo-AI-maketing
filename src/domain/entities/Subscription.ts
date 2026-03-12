@@ -369,7 +369,7 @@ export class Subscription {
       this._trialStartedAt
     )
   }
-  
+
   /**
    * 만료됨으로 표시
    */

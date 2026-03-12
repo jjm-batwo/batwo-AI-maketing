@@ -1,6 +1,6 @@
-import { PrismaClient, ReportSchedule as PrismaReportSchedule } from '@/generated/prisma';
-import { IReportScheduleRepository } from '@domain/repositories/IReportScheduleRepository';
-import { ReportSchedule } from '@domain/entities/ReportSchedule';
+import { PrismaClient, ReportSchedule as PrismaReportSchedule } from '@/generated/prisma'
+import { IReportScheduleRepository } from '@domain/repositories/IReportScheduleRepository'
+import { ReportSchedule } from '@domain/entities/ReportSchedule'
 
 export class ReportScheduleMapper {
   static toDomain(prisma: PrismaReportSchedule): ReportSchedule {
@@ -13,11 +13,11 @@ export class ReportScheduleMapper {
       isActive: prisma.isActive,
       createdAt: prisma.createdAt,
       updatedAt: prisma.updatedAt,
-    });
+    })
   }
 
   static toCreateInput(domain: ReportSchedule) {
-    const json = domain; // Since domain doesn't have toJSON right now, we use getters
+    const json = domain // Since domain doesn't have toJSON right now, we use getters
     return {
       id: json.id,
       userId: json.userId,
@@ -27,7 +27,7 @@ export class ReportScheduleMapper {
       isActive: json.isActive,
       createdAt: json.createdAt,
       updatedAt: json.updatedAt,
-    };
+    }
   }
 }
 
@@ -37,16 +37,16 @@ export class PrismaReportScheduleRepository implements IReportScheduleRepository
   async findById(id: string): Promise<ReportSchedule | null> {
     const schedule = await this.prisma.reportSchedule.findUnique({
       where: { id },
-    });
-    return schedule ? ReportScheduleMapper.toDomain(schedule) : null;
+    })
+    return schedule ? ReportScheduleMapper.toDomain(schedule) : null
   }
 
   async findByUserId(userId: string): Promise<ReportSchedule[]> {
     const schedules = await this.prisma.reportSchedule.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
-    });
-    return schedules.map(ReportScheduleMapper.toDomain);
+    })
+    return schedules.map(ReportScheduleMapper.toDomain)
   }
 
   async findDue(beforeDate: Date): Promise<ReportSchedule[]> {
@@ -57,22 +57,22 @@ export class PrismaReportScheduleRepository implements IReportScheduleRepository
           lte: beforeDate,
         },
       },
-    });
-    return schedules.map(ReportScheduleMapper.toDomain);
+    })
+    return schedules.map(ReportScheduleMapper.toDomain)
   }
 
   async save(schedule: ReportSchedule): Promise<ReportSchedule> {
-    const data = ReportScheduleMapper.toCreateInput(schedule);
+    const data = ReportScheduleMapper.toCreateInput(schedule)
     const created = await this.prisma.reportSchedule.create({
       data: {
         ...data,
       },
-    });
-    return ReportScheduleMapper.toDomain(created);
+    })
+    return ReportScheduleMapper.toDomain(created)
   }
 
   async update(schedule: ReportSchedule): Promise<ReportSchedule> {
-    const data = ReportScheduleMapper.toCreateInput(schedule);
+    const data = ReportScheduleMapper.toCreateInput(schedule)
     const updated = await this.prisma.reportSchedule.update({
       where: { id: schedule.id },
       data: {
@@ -82,13 +82,13 @@ export class PrismaReportScheduleRepository implements IReportScheduleRepository
         isActive: data.isActive,
         updatedAt: new Date(),
       },
-    });
-    return ReportScheduleMapper.toDomain(updated);
+    })
+    return ReportScheduleMapper.toDomain(updated)
   }
 
   async delete(id: string): Promise<void> {
     await this.prisma.reportSchedule.delete({
       where: { id },
-    });
+    })
   }
 }

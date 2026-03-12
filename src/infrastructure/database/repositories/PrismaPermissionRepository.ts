@@ -5,7 +5,10 @@
  */
 
 import { PrismaClient } from '@/generated/prisma'
-import type { IPermissionRepository, TeamMemberRecord } from '@domain/repositories/IPermissionRepository'
+import type {
+  IPermissionRepository,
+  TeamMemberRecord,
+} from '@domain/repositories/IPermissionRepository'
 
 export class PrismaPermissionRepository implements IPermissionRepository {
   constructor(private readonly prisma: PrismaClient) {}

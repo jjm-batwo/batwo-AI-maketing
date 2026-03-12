@@ -66,7 +66,9 @@ export function StepCampaignType() {
                     : 'border-border hover:border-border'
                 )}
               >
-                <Icon className={cn('h-8 w-8', isSelected ? 'text-primary' : 'text-muted-foreground')} />
+                <Icon
+                  className={cn('h-8 w-8', isSelected ? 'text-primary' : 'text-muted-foreground')}
+                />
                 <span
                   className={cn('font-semibold', isSelected ? 'text-primary' : 'text-foreground')}
                 >
@@ -112,7 +114,9 @@ export function StepCampaignType() {
                     : 'border-border hover:border-border'
                 )}
               >
-                <Icon className={cn('h-6 w-6', isSelected ? 'text-primary' : 'text-muted-foreground')} />
+                <Icon
+                  className={cn('h-6 w-6', isSelected ? 'text-primary' : 'text-muted-foreground')}
+                />
                 <span
                   className={cn(
                     'text-sm font-medium',

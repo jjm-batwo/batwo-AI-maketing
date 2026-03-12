@@ -166,7 +166,11 @@ export class PrismaConversionEventRepository implements IConversionEventReposito
     return { sent, failed, expired }
   }
 
-  async countByEventName(pixelId: string, eventName: string, since: Date): Promise<{ count: number; value: number }> {
+  async countByEventName(
+    pixelId: string,
+    eventName: string,
+    since: Date
+  ): Promise<{ count: number; value: number }> {
     const result = await this.prisma.conversionEvent.aggregate({
       where: { pixelId, eventName, eventTime: { gte: since } },
       _count: true,

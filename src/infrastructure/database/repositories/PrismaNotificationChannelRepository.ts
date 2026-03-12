@@ -37,7 +37,7 @@ export class PrismaNotificationChannelRepository implements INotificationChannel
 
   async findByUserAndType(
     userId: string,
-    type: NotificationChannelType,
+    type: NotificationChannelType
   ): Promise<NotificationChannel | null> {
     const record = await this.prisma.notificationChannel.findUnique({
       where: { userId_type: { userId, type } },

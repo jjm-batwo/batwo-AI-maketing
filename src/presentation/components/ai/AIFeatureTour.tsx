@@ -173,9 +173,7 @@ export function AIFeatureTour({
                       {currentStep + 1} / {steps.length}
                     </span>
                   </div>
-                  <h3 className="text-base font-semibold text-foreground">
-                    {step.title}
-                  </h3>
+                  <h3 className="text-base font-semibold text-foreground">{step.title}</h3>
                 </div>
                 <button
                   type="button"
@@ -190,9 +188,7 @@ export function AIFeatureTour({
 
             {/* Content */}
             <div className="px-5 py-4">
-              <p className="text-sm text-foreground leading-relaxed">
-                {step.description}
-              </p>
+              <p className="text-sm text-foreground leading-relaxed">{step.description}</p>
             </div>
 
             {/* Footer */}

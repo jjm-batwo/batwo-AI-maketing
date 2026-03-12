@@ -61,5 +61,9 @@ export interface IConversionEventRepository {
    * @param eventName 이벤트 이름 (e.g., PageView, Purchase)
    * @param since 조회 시작 시간
    */
-  countByEventName(pixelId: string, eventName: string, since: Date): Promise<{ count: number; value: number }>
+  countByEventName(
+    pixelId: string,
+    eventName: string,
+    since: Date
+  ): Promise<{ count: number; value: number }>
 }

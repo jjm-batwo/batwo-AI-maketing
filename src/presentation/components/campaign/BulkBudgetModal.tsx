@@ -1,25 +1,25 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
+import { useState } from 'react'
 
 interface BulkBudgetModalProps {
-  onClose: () => void;
-  onConfirm: (mode: 'percentage' | 'absolute', value: number) => void;
+  onClose: () => void
+  onConfirm: (mode: 'percentage' | 'absolute', value: number) => void
 }
 
 export function BulkBudgetModal({ onClose, onConfirm }: BulkBudgetModalProps) {
-  const [mode, setMode] = useState<'percentage' | 'absolute'>('percentage');
-  const [value, setValue] = useState<number>(0);
+  const [mode, setMode] = useState<'percentage' | 'absolute'>('percentage')
+  const [value, setValue] = useState<number>(0)
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60]">
       <div className="bg-card border border-border rounded-xl p-6 w-96 max-w-full shadow-xl">
         <h2 className="text-xl font-semibold text-foreground mb-4">예산 일괄 변경</h2>
-        
+
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-foreground mb-1">변경 방식</label>
-            <select 
+            <select
               value={mode}
               onChange={(e) => setMode(e.target.value as 'percentage' | 'absolute')}
               className="w-full border border-input bg-background text-foreground rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-ring"
@@ -28,12 +28,12 @@ export function BulkBudgetModal({ onClose, onConfirm }: BulkBudgetModalProps) {
               <option value="absolute">고정 금액 (원)</option>
             </select>
           </div>
-          
+
           <div>
             <label className="block text-sm font-medium text-foreground mb-1">
               {mode === 'percentage' ? '비율 (%)' : '금액 (원)'}
             </label>
-            <input 
+            <input
               type="number"
               value={value}
               onChange={(e) => setValue(Number(e.target.value))}
@@ -49,13 +49,13 @@ export function BulkBudgetModal({ onClose, onConfirm }: BulkBudgetModalProps) {
         </div>
 
         <div className="flex justify-end gap-2 mt-6">
-          <button 
+          <button
             onClick={onClose}
             className="px-4 py-2 text-sm text-foreground border border-border rounded-lg hover:bg-muted transition-colors"
           >
             취소
           </button>
-          <button 
+          <button
             onClick={() => onConfirm(mode, value)}
             className="px-4 py-2 text-sm text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
           >
@@ -64,5 +64,5 @@ export function BulkBudgetModal({ onClose, onConfirm }: BulkBudgetModalProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }

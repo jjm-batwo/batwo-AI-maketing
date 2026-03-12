@@ -15,15 +15,15 @@
  * ```
  */
 export async function mapWithConcurrency<T, U>(
-    items: T[],
-    limit: number,
-    fn: (item: T) => Promise<U>
+  items: T[],
+  limit: number,
+  fn: (item: T) => Promise<U>
 ): Promise<U[]> {
-    const results: U[] = []
-    for (let i = 0; i < items.length; i += limit) {
-        const chunk = items.slice(i, i + limit)
-        const chunkResults = await Promise.all(chunk.map(fn))
-        results.push(...chunkResults)
-    }
-    return results
+  const results: U[] = []
+  for (let i = 0; i < items.length; i += limit) {
+    const chunk = items.slice(i, i + limit)
+    const chunkResults = await Promise.all(chunk.map(fn))
+    results.push(...chunkResults)
+  }
+  return results
 }

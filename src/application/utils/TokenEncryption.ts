@@ -23,8 +23,7 @@ function getEncryptionKey(): Buffer | null {
     // SEC-11: 프로덕션에서는 암호화 키 필수 (평문 저장 방지)
     if (process.env.NODE_ENV === 'production') {
       throw new Error(
-        'TOKEN_ENCRYPTION_KEY is required in production. ' +
-        'Generate with: openssl rand -hex 32'
+        'TOKEN_ENCRYPTION_KEY is required in production. ' + 'Generate with: openssl rand -hex 32'
       )
     }
     return null

@@ -4,15 +4,15 @@
  */
 
 export type WidgetType =
-  | 'kpi_card'        // 단일 KPI 메트릭
-  | 'kpi_chart'       // 시계열 차트
-  | 'funnel'          // 전환 퍼널
-  | 'benchmark'       // 벤치마크 카드
-  | 'ai_insights'     // AI 인사이트
-  | 'campaign_table'  // 캠페인 요약 테이블
-  | 'donut_chart'     // 상태 분포
-  | 'savings'         // 절감액
-  | 'anomaly_alert'   // 이상 탐지
+  | 'kpi_card' // 단일 KPI 메트릭
+  | 'kpi_chart' // 시계열 차트
+  | 'funnel' // 전환 퍼널
+  | 'benchmark' // 벤치마크 카드
+  | 'ai_insights' // AI 인사이트
+  | 'campaign_table' // 캠페인 요약 테이블
+  | 'donut_chart' // 상태 분포
+  | 'savings' // 절감액
+  | 'anomaly_alert' // 이상 탐지
 
 export const WIDGET_TYPE_LABELS: Record<WidgetType, string> = {
   kpi_card: 'KPI 카드',
@@ -39,18 +39,18 @@ export const ALL_WIDGET_TYPES: WidgetType[] = [
 ]
 
 export interface WidgetPosition {
-  x: number  // grid column (0-based)
-  y: number  // grid row (0-based)
-  w: number  // width in grid units (1-12)
-  h: number  // height in grid units
+  x: number // grid column (0-based)
+  y: number // grid row (0-based)
+  w: number // width in grid units (1-12)
+  h: number // height in grid units
 }
 
 export interface WidgetConfig {
-  metric?: string        // kpi_card: 'roas', 'ctr', etc.
-  period?: string        // '7d', '30d', '90d'
-  campaignId?: string    // 특정 캠페인 필터
-  chartType?: string     // 'line', 'area', 'bar'
-  title?: string         // 커스텀 타이틀
+  metric?: string // kpi_card: 'roas', 'ctr', etc.
+  period?: string // '7d', '30d', '90d'
+  campaignId?: string // 특정 캠페인 필터
+  chartType?: string // 'line', 'area', 'bar'
+  title?: string // 커스텀 타이틀
 }
 
 export interface DashboardWidget {

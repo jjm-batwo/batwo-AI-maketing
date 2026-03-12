@@ -1,4 +1,8 @@
-import type { INotificationSender, NotificationSendParams, NotificationSendResult } from '@application/ports/INotificationSender'
+import type {
+  INotificationSender,
+  NotificationSendParams,
+  NotificationSendResult,
+} from '@application/ports/INotificationSender'
 import type { KakaoConfig } from '@domain/entities/NotificationChannel'
 
 /**
@@ -32,18 +36,19 @@ export class KakaoNotificationSender implements INotificationSender {
           message: {
             to: config.phoneNumber,
             from: senderNumber,
-            kakaoOptions: pfId && templateId
-              ? {
-                  pfId,
-                  templateId,
-                  variables: {
-                    title: params.title,
-                    message: params.message,
-                    severity: params.severity,
-                    ...(params.actionUrl ? { actionUrl: params.actionUrl } : {}),
-                  },
-                }
-              : undefined,
+            kakaoOptions:
+              pfId && templateId
+                ? {
+                    pfId,
+                    templateId,
+                    variables: {
+                      title: params.title,
+                      message: params.message,
+                      severity: params.severity,
+                      ...(params.actionUrl ? { actionUrl: params.actionUrl } : {}),
+                    },
+                  }
+                : undefined,
             // 카카오 알림톡이 불가능한 경우 SMS 폴백
             text: `[바투] ${params.title}\n${params.message}${params.actionUrl ? `\n확인: ${params.actionUrl}` : ''}`,
           },

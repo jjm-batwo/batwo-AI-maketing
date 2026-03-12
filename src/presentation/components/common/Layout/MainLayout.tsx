@@ -29,12 +29,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       </a>
 
       {/* UX-08: Global aria-live region for status announcements */}
-      <div
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-        className="sr-only"
-      >
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {ariaLiveMessage}
       </div>
 
@@ -44,7 +39,9 @@ export function MainLayout({ children }: MainLayoutProps) {
       <MobileSidebar />
       <div className="flex flex-1 flex-col overflow-hidden relative z-10">
         <Header />
-        <main id="main-content" className="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">{children}</main>
+        <main id="main-content" className="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">
+          {children}
+        </main>
       </div>
 
       {/* Chat Panel - 우측 사이드바 */}
@@ -77,4 +74,3 @@ export function MainLayout({ children }: MainLayoutProps) {
     </div>
   )
 }
-

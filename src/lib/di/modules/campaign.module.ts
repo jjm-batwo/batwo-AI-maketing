@@ -161,7 +161,10 @@ export function registerCampaignModule(container: Container): void {
       )
   )
 
-  container.registerSingleton(DI_TOKENS.AnomalyRootCauseService, () => new AnomalyRootCauseService())
+  container.registerSingleton(
+    DI_TOKENS.AnomalyRootCauseService,
+    () => new AnomalyRootCauseService()
+  )
 
   container.registerSingleton(
     DI_TOKENS.AnomalySegmentAnalysisService,
@@ -170,20 +173,22 @@ export function registerCampaignModule(container: Container): void {
 
   container.registerSingleton(
     DI_TOKENS.PortfolioOptimizationService,
-    () => new PortfolioOptimizationService(
-      container.resolve(DI_TOKENS.CampaignRepository),
-      container.resolve(DI_TOKENS.KPIRepository)
-    )
+    () =>
+      new PortfolioOptimizationService(
+        container.resolve(DI_TOKENS.CampaignRepository),
+        container.resolve(DI_TOKENS.KPIRepository)
+      )
   )
 
   container.registerSingleton(
     DI_TOKENS.AdAccountAuditService,
-    () => new AdAccountAuditService(
-      container.resolve(DI_TOKENS.AnomalyDetectionService),
-      container.resolve(DI_TOKENS.PortfolioOptimizationService),
-      container.resolve(DI_TOKENS.KPIRepository),
-      container.resolve(DI_TOKENS.CampaignRepository)
-    )
+    () =>
+      new AdAccountAuditService(
+        container.resolve(DI_TOKENS.AnomalyDetectionService),
+        container.resolve(DI_TOKENS.PortfolioOptimizationService),
+        container.resolve(DI_TOKENS.KPIRepository),
+        container.resolve(DI_TOKENS.CampaignRepository)
+      )
   )
 
   container.registerSingleton(DI_TOKENS.CopyLearningService, () => new CopyLearningService())
@@ -358,7 +363,8 @@ export function registerCampaignModule(container: Container): void {
 
   container.register(
     DI_TOKENS.GetTrackedCompetitorsUseCase,
-    () => new GetTrackedCompetitorsUseCase(container.resolve(DI_TOKENS.CompetitorTrackingRepository))
+    () =>
+      new GetTrackedCompetitorsUseCase(container.resolve(DI_TOKENS.CompetitorTrackingRepository))
   )
 
   // --- Optimization Use Cases (Transient) ---

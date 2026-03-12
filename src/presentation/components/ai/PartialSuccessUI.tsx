@@ -138,7 +138,9 @@ export function PartialSuccessUI({
                       </span>
                     </div>
                     {result.value && (
-                      <p className="mt-1 text-sm text-muted-foreground break-words">{result.value}</p>
+                      <p className="mt-1 text-sm text-muted-foreground break-words">
+                        {result.value}
+                      </p>
                     )}
                     {result.error && <p className="mt-1 text-xs text-red-600">{result.error}</p>}
                   </div>

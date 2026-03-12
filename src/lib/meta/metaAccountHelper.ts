@@ -75,7 +75,10 @@ export async function getMetaAccountForUser(userId: string): Promise<MetaAccount
       businessName: account.businessName,
     }
   } catch (error) {
-    console.error(`[MetaAccount] Failed to fetch account for user ${userId.substring(0, 8)}...`, error)
+    console.error(
+      `[MetaAccount] Failed to fetch account for user ${userId.substring(0, 8)}...`,
+      error
+    )
     return null
   }
 }

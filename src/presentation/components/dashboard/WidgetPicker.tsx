@@ -103,9 +103,7 @@ export const WidgetPicker = memo(function WidgetPicker({
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">위젯 추가</DialogTitle>
-          <DialogDescription>
-            대시보드에 추가할 위젯을 선택하세요
-          </DialogDescription>
+          <DialogDescription>대시보드에 추가할 위젯을 선택하세요</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6 py-4">
@@ -119,12 +117,10 @@ export const WidgetPicker = memo(function WidgetPicker({
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {category.types.map(type => {
+                {category.types.map((type) => {
                   const Icon = WIDGET_ICONS[type]
                   const isSelected = selectedType === type
-                  const isExisting =
-                    existingWidgetTypes.includes(type) &&
-                    type !== 'kpi_card' // kpi_card는 여러 개 가능
+                  const isExisting = existingWidgetTypes.includes(type) && type !== 'kpi_card' // kpi_card는 여러 개 가능
 
                   return (
                     <button
@@ -134,12 +130,11 @@ export const WidgetPicker = memo(function WidgetPicker({
                       disabled={isExisting}
                       className={cn(
                         'flex items-start gap-3 rounded-xl border p-4 text-left transition-all',
-                        isSelected &&
-                          'border-primary bg-primary/5 ring-2 ring-primary/20',
-                        !isSelected && !isExisting &&
+                        isSelected && 'border-primary bg-primary/5 ring-2 ring-primary/20',
+                        !isSelected &&
+                          !isExisting &&
                           'border-border hover:border-primary/40 hover:bg-accent/50',
-                        isExisting &&
-                          'opacity-50 cursor-not-allowed border-border bg-muted/30',
+                        isExisting && 'opacity-50 cursor-not-allowed border-border bg-muted/30'
                       )}
                     >
                       <div
@@ -147,16 +142,14 @@ export const WidgetPicker = memo(function WidgetPicker({
                           'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg',
                           isSelected
                             ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted text-muted-foreground',
+                            : 'bg-muted text-muted-foreground'
                         )}
                       >
                         <Icon className="h-5 w-5" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm">
-                            {WIDGET_TYPE_LABELS[type]}
-                          </span>
+                          <span className="font-medium text-sm">{WIDGET_TYPE_LABELS[type]}</span>
                           {isExisting && (
                             <Badge variant="secondary" className="text-xs">
                               추가됨
@@ -182,11 +175,7 @@ export const WidgetPicker = memo(function WidgetPicker({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             취소
           </Button>
-          <Button
-            onClick={handleAdd}
-            disabled={!selectedType}
-            className="gap-2"
-          >
+          <Button onClick={handleAdd} disabled={!selectedType} className="gap-2">
             <Plus className="h-4 w-4" />
             추가
           </Button>

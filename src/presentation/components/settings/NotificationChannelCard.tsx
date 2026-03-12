@@ -18,7 +18,10 @@ interface ChannelData {
   isActive: boolean
 }
 
-const CHANNEL_INFO: Record<NotificationChannelType, { label: string; icon: string; description: string }> = {
+const CHANNEL_INFO: Record<
+  NotificationChannelType,
+  { label: string; icon: string; description: string }
+> = {
   SLACK: {
     label: 'Slack',
     icon: '💬',
@@ -74,7 +77,8 @@ export function NotificationChannelCard({
     setIsEditing(false)
   }
 
-  const inputClass = 'w-full rounded-lg border border-input bg-background text-foreground px-3 py-2 text-sm focus:border-ring focus:ring-1 focus:ring-ring focus:outline-none transition-colors'
+  const inputClass =
+    'w-full rounded-lg border border-input bg-background text-foreground px-3 py-2 text-sm focus:border-ring focus:ring-1 focus:ring-ring focus:outline-none transition-colors'
 
   return (
     <div className="rounded-xl border border-border bg-card p-6 shadow-sm transition hover:shadow-md">
@@ -131,9 +135,7 @@ export function NotificationChannelCard({
           )}
           {channelType === 'KAKAO' && (
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
-                전화번호
-              </label>
+              <label className="block text-sm font-medium text-foreground mb-1">전화번호</label>
               <input
                 type="tel"
                 value={phoneNumber}
@@ -145,9 +147,7 @@ export function NotificationChannelCard({
           )}
           {channelType === 'EMAIL' && (
             <div>
-              <label className="block text-sm font-medium text-foreground mb-1">
-                이메일 주소
-              </label>
+              <label className="block text-sm font-medium text-foreground mb-1">이메일 주소</label>
               <input
                 type="email"
                 value={email}
@@ -182,7 +182,10 @@ export function NotificationChannelCard({
               <span>Webhook: ...{channel.config.webhookUrl.slice(-12)}</span>
             )}
             {channelType === 'KAKAO' && channel?.config?.phoneNumber && (
-              <span>전화번호: {channel.config.phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-****-$3')}</span>
+              <span>
+                전화번호:{' '}
+                {channel.config.phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, '$1-****-$3')}
+              </span>
             )}
             {channelType === 'EMAIL' && channel?.config?.email && (
               <span>이메일: {channel.config.email}</span>

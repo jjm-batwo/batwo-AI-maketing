@@ -28,7 +28,9 @@ export const OptimizationConfirmDialog = memo(function OptimizationConfirmDialog
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>최적화 액션 적용</AlertDialogTitle>
-          <AlertDialogDescription>다음 변경사항이 실제 Meta 광고 관리자에 즉시 반영됩니다.</AlertDialogDescription>
+          <AlertDialogDescription>
+            다음 변경사항이 실제 Meta 광고 관리자에 즉시 반영됩니다.
+          </AlertDialogDescription>
         </AlertDialogHeader>
 
         <div className="py-4 space-y-4">
@@ -55,7 +57,10 @@ export const OptimizationConfirmDialog = memo(function OptimizationConfirmDialog
           {action.confidence < 0.7 && (
             <div className="flex items-start gap-2 text-warning p-3 bg-warning/10 rounded-md">
               <AlertTriangle className="w-5 h-5 shrink-0" />
-              <p className="text-sm">이 추천의 신뢰도가 다소 낮습니다 ({Math.round(action.confidence * 100)}%). 적용 전 관리자의 판단이 필요합니다.</p>
+              <p className="text-sm">
+                이 추천의 신뢰도가 다소 낮습니다 ({Math.round(action.confidence * 100)}%). 적용 전
+                관리자의 판단이 필요합니다.
+              </p>
             </div>
           )}
         </div>

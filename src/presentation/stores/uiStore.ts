@@ -66,14 +66,14 @@ interface UIState {
 
   // Campaign objective filter
   dashboardObjective:
-  | 'ALL'
-  | 'AWARENESS'
-  | 'TRAFFIC'
-  | 'ENGAGEMENT'
-  | 'LEADS'
-  | 'APP_PROMOTION'
-  | 'SALES'
-  | 'CONVERSIONS'
+    | 'ALL'
+    | 'AWARENESS'
+    | 'TRAFFIC'
+    | 'ENGAGEMENT'
+    | 'LEADS'
+    | 'APP_PROMOTION'
+    | 'SALES'
+    | 'CONVERSIONS'
   setDashboardObjective: (
     objective:
       | 'ALL'

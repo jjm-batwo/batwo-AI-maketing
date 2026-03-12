@@ -15,10 +15,12 @@ export async function GET(
     }
 
     const { actionId } = await params
-    
+
     // We register the Tracker Service in DI container in the next step
-    const trackerService = container.resolve<OptimizationTrackerService>(DI_TOKENS.OptimizationTrackerService)
-    
+    const trackerService = container.resolve<OptimizationTrackerService>(
+      DI_TOKENS.OptimizationTrackerService
+    )
+
     const result = await trackerService.getOptimizationResult(actionId)
 
     if (!result) {

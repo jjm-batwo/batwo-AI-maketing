@@ -39,7 +39,7 @@ export class PrismaNotificationPreferenceRepository implements INotificationPref
 
   async findByUserAndType(
     userId: string,
-    alertType: string,
+    alertType: string
   ): Promise<NotificationPreference | null> {
     const record = await this.prisma.notificationPreference.findUnique({
       where: { userId_alertType: { userId, alertType } },

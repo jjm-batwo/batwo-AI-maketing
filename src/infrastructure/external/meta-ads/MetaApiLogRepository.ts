@@ -27,7 +27,7 @@ export interface MetaApiStats {
 }
 
 export class MetaApiLogRepository {
-  constructor(private readonly prisma: PrismaClient) { }
+  constructor(private readonly prisma: PrismaClient) {}
 
   /**
    * API 호출 로그 기록

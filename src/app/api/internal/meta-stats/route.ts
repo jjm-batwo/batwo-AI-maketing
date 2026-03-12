@@ -75,12 +75,12 @@ export async function GET(request: NextRequest) {
       },
       today: todayStats
         ? {
-          calls: todayStats.calls,
-          errors: todayStats.errors,
-          errorRate: `${todayStats.errorRate.toFixed(2)}%`,
-          targetCalls: dailyTarget,
-          onTrack: todayStats.calls >= dailyTarget,
-        }
+            calls: todayStats.calls,
+            errors: todayStats.errors,
+            errorRate: `${todayStats.errorRate.toFixed(2)}%`,
+            targetCalls: dailyTarget,
+            onTrack: todayStats.calls >= dailyTarget,
+          }
         : null,
       callsByEndpoint: stats.callsByEndpoint,
       dailyBreakdown: stats.dailyBreakdown,
