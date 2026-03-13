@@ -1,11 +1,13 @@
 import { IMetaAdsService } from '@application/ports/IMetaAdsService'
 import { AuditScore, CampaignAuditData } from '@domain/value-objects/AuditScore'
 import { AuditRequestDTO, AuditReportDTO } from '@application/dto/audit/AuditDTO'
-import { batchSettled } from '@/lib/utils/batchSettled'
 
 /**
  * 광고 계정 무료 감사 유스케이스
  * Meta API에서 캠페인 데이터를 가져와 AuditScore로 평가 후 DTO로 반환한다.
+ *
+ * 최적화: 개별 getCampaignInsights × N회 → getAccountInsights(level='campaign') 1회
+ * API 호출: ~101회 → 2회 (98% 감소)
  */
 export class AuditAdAccountUseCase {
   constructor(private readonly metaAdsService: IMetaAdsService) {}
@@ -14,7 +16,7 @@ export class AuditAdAccountUseCase {
     // currency 기본값 설정
     const currency = dto.currency ?? 'KRW'
 
-    // 1. Meta API로 캠페인 목록 조회
+    // 1. Meta API로 캠페인 목록 조회 (1회)
     const { campaigns } = await this.metaAdsService.listCampaigns(
       dto.accessToken,
       dto.adAccountId,
@@ -25,21 +27,24 @@ export class AuditAdAccountUseCase {
       return this.emptyReport(currency)
     }
 
-    // 2. 각 캠페인의 인사이트(최근 30일) 병렬 배치 조회 (배치 크기 5)
-    const settledResults = await batchSettled(
-      campaigns,
-      (campaign) =>
-        this.metaAdsService.getCampaignInsights(dto.accessToken, campaign.id, 'last_30d'),
-      5
+    // 2. 계정 레벨 인사이트 벌크 조회 (1회 — 기존 N회 대체)
+    const campaignIds = campaigns.map((c) => c.id)
+    const insightsMap = await this.metaAdsService.getAccountInsights(
+      dto.accessToken,
+      dto.adAccountId,
+      {
+        level: 'campaign',
+        datePreset: 'last_30d',
+        campaignIds,
+      }
     )
 
-    // 3. fulfilled 결과만 CampaignAuditData로 변환 (rejected는 건너뜀)
+    // 3. ID 기반 매핑으로 CampaignAuditData 생성
     const campaignInsights: CampaignAuditData[] = []
-    for (let i = 0; i < settledResults.length; i++) {
-      const result = settledResults[i]
-      if (result.status === 'rejected') continue
-      const campaign = campaigns[i]
-      const insights = result.value
+    for (const campaign of campaigns) {
+      const insights = insightsMap.get(campaign.id)
+      if (!insights) continue // insights 없으면 건너뜀
+
       campaignInsights.push({
         campaignId: campaign.id,
         campaignName: campaign.name,

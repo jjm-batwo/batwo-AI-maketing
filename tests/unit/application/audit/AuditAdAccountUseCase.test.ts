@@ -1,6 +1,7 @@
 /**
  * AuditAdAccountUseCase 단위 테스트
  * TDD: RED → GREEN → REFACTOR
+ * 벌크 조회 최적화: getCampaignInsights × N → getAccountInsights(level='campaign') 1회
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { AuditAdAccountUseCase } from '@application/use-cases/audit/AuditAdAccountUseCase'
@@ -29,6 +30,10 @@ const makeMockMetaAdsService = (): IMetaAdsService => ({
   createAdCreative: vi.fn(),
   uploadImage: vi.fn(),
   uploadVideo: vi.fn(),
+  // Bulk methods
+  getAccountInsights: vi.fn(),
+  listAllAdSets: vi.fn(),
+  listAllAds: vi.fn(),
 })
 
 // 테스트 픽스처: 활성 캠페인 목록 항목
@@ -71,6 +76,15 @@ const makeUnprofitableInsights = (campaignId: string): MetaInsightsData => ({
   dateStop: '2026-01-30',
 })
 
+/** Map 생성 헬퍼 */
+function buildInsightsMap(entries: MetaInsightsData[]): Map<string, MetaInsightsData> {
+  const map = new Map<string, MetaInsightsData>()
+  for (const e of entries) {
+    map.set(e.campaignId, e)
+  }
+  return map
+}
+
 // currency 추가 (하위 호환: 선택적 필드)
 const TEST_DTO = {
   accessToken: 'test-access-token',
@@ -93,8 +107,8 @@ describe('AuditAdAccountUseCase', () => {
       campaigns,
       paging: { hasNext: false },
     } satisfies ListCampaignsResponse)
-    vi.mocked(mockMetaAdsService.getCampaignInsights).mockResolvedValue(
-      makeProfitableInsights('meta-campaign-1')
+    vi.mocked(mockMetaAdsService.getAccountInsights).mockResolvedValue(
+      buildInsightsMap([makeProfitableInsights('meta-campaign-1')])
     )
 
     const report = await useCase.execute(TEST_DTO)
@@ -132,32 +146,34 @@ describe('AuditAdAccountUseCase', () => {
       campaigns,
       paging: { hasNext: false },
     } satisfies ListCampaignsResponse)
-    vi.mocked(mockMetaAdsService.getCampaignInsights)
-      .mockResolvedValueOnce(makeUnprofitableInsights('meta-campaign-1')) // spend=100000
-      .mockResolvedValueOnce(makeUnprofitableInsights('meta-campaign-2')) // spend=100000
+    vi.mocked(mockMetaAdsService.getAccountInsights).mockResolvedValue(
+      buildInsightsMap([
+        makeUnprofitableInsights('meta-campaign-1'),
+        makeUnprofitableInsights('meta-campaign-2'),
+      ])
+    )
 
     const report = await useCase.execute(TEST_DTO)
 
     // 두 캠페인 모두 ROAS < 1.0: spend 합산 = 100000 + 100000 = 200,000
-    // estimatedWaste는 { amount, currency } 평면 객체로 직렬화됨
     expect(report.estimatedWaste.amount).toBe(200000)
     expect(report.estimatedImprovement.amount).toBeGreaterThanOrEqual(0)
   })
 
-  it('should_skip_campaign_when_insights_fetch_fails', async () => {
+  it('should_skip_campaign_when_insights_not_available', async () => {
     const campaigns = [
       makeActiveCampaignItem({ id: 'meta-campaign-1', name: '정상 캠페인' }),
-      makeActiveCampaignItem({ id: 'meta-campaign-2', name: '오류 캠페인' }),
+      makeActiveCampaignItem({ id: 'meta-campaign-2', name: '데이터 없는 캠페인' }),
     ]
     vi.mocked(mockMetaAdsService.listCampaigns).mockResolvedValue({
       campaigns,
       paging: { hasNext: false },
     } satisfies ListCampaignsResponse)
-    vi.mocked(mockMetaAdsService.getCampaignInsights)
-      .mockResolvedValueOnce(makeProfitableInsights('meta-campaign-1'))
-      .mockRejectedValueOnce(new Error('Meta API 오류'))
+    // meta-campaign-2는 insightsMap에 없음 → 건너뜀
+    vi.mocked(mockMetaAdsService.getAccountInsights).mockResolvedValue(
+      buildInsightsMap([makeProfitableInsights('meta-campaign-1')])
+    )
 
-    // 오류 발생해도 전체 실행이 실패하지 않아야 함
     const report = await useCase.execute(TEST_DTO)
 
     expect(report.totalCampaigns).toBe(2)
@@ -175,8 +191,12 @@ describe('AuditAdAccountUseCase', () => {
       campaigns,
       paging: { hasNext: false },
     } satisfies ListCampaignsResponse)
-    vi.mocked(mockMetaAdsService.getCampaignInsights).mockResolvedValue(
-      makeProfitableInsights('meta-campaign-1')
+    vi.mocked(mockMetaAdsService.getAccountInsights).mockResolvedValue(
+      buildInsightsMap([
+        makeProfitableInsights('meta-campaign-1'),
+        makeProfitableInsights('meta-campaign-2'),
+        makeProfitableInsights('meta-campaign-3'),
+      ])
     )
 
     const report = await useCase.execute(TEST_DTO)
@@ -191,8 +211,8 @@ describe('AuditAdAccountUseCase', () => {
       campaigns,
       paging: { hasNext: false },
     } satisfies ListCampaignsResponse)
-    vi.mocked(mockMetaAdsService.getCampaignInsights).mockResolvedValue(
-      makeProfitableInsights('meta-campaign-1')
+    vi.mocked(mockMetaAdsService.getAccountInsights).mockResolvedValue(
+      buildInsightsMap([makeProfitableInsights('meta-campaign-1')])
     )
 
     await useCase.execute(TEST_DTO)
@@ -204,7 +224,7 @@ describe('AuditAdAccountUseCase', () => {
     expect(mockMetaAdsService.createCampaign).not.toHaveBeenCalled()
   })
 
-  it('20개 캠페인 → getCampaignInsights가 배치로 호출된다', async () => {
+  it('20개 캠페인 → getAccountInsights가 1회만 호출된다', async () => {
     // 20개 캠페인 생성
     const campaigns = Array.from({ length: 20 }, (_, i) =>
       makeActiveCampaignItem({ id: `meta-campaign-${i + 1}`, name: `캠페인 ${i + 1}` })
@@ -213,17 +233,20 @@ describe('AuditAdAccountUseCase', () => {
       campaigns,
       paging: { hasNext: false },
     } satisfies ListCampaignsResponse)
-    // 모든 인사이트 성공
-    vi.mocked(mockMetaAdsService.getCampaignInsights).mockImplementation(
-      (_, campaignId) => Promise.resolve(makeProfitableInsights(campaignId))
+    // 모든 인사이트 벌크 반환
+    const allInsights = campaigns.map((c) => makeProfitableInsights(c.id))
+    vi.mocked(mockMetaAdsService.getAccountInsights).mockResolvedValue(
+      buildInsightsMap(allInsights)
     )
 
     const report = await useCase.execute(TEST_DTO)
 
     // 20개 캠페인 모두 처리됨
     expect(report.totalCampaigns).toBe(20)
-    // getCampaignInsights가 20번 호출됨
-    expect(mockMetaAdsService.getCampaignInsights).toHaveBeenCalledTimes(20)
+    // getAccountInsights가 1번만 호출됨 (기존 20번 → 1번)
+    expect(mockMetaAdsService.getAccountInsights).toHaveBeenCalledTimes(1)
+    // getCampaignInsights는 호출되지 않음
+    expect(mockMetaAdsService.getCampaignInsights).not.toHaveBeenCalled()
     expect(report.overall).toBeGreaterThanOrEqual(0)
   })
 
@@ -233,8 +256,8 @@ describe('AuditAdAccountUseCase', () => {
       campaigns,
       paging: { hasNext: false },
     } satisfies ListCampaignsResponse)
-    vi.mocked(mockMetaAdsService.getCampaignInsights).mockResolvedValue(
-      makeUnprofitableInsights('meta-campaign-1')
+    vi.mocked(mockMetaAdsService.getAccountInsights).mockResolvedValue(
+      buildInsightsMap([makeUnprofitableInsights('meta-campaign-1')])
     )
 
     const report = await useCase.execute({

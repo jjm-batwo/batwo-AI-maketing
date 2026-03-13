@@ -1495,4 +1495,241 @@ export class MetaAdsClient implements IMetaAdsService {
       }),
     }
   }
+
+  // ============================================================
+  // Account-Level Bulk Methods (N+1 → 1 최적화)
+  // ============================================================
+
+  /**
+   * 계정 레벨 인사이트 집계
+   * GET /act_{id}/insights?level={level}&date_preset={preset}
+   * 응답을 Map<entityId, MetaInsightsData>로 반환
+   */
+  async getAccountInsights(
+    accessToken: string,
+    adAccountId: string,
+    options: {
+      level: 'campaign' | 'adset' | 'ad'
+      datePreset: string
+      campaignIds?: string[]
+    }
+  ): Promise<Map<string, MetaInsightsData>> {
+    if (this.mockMode) {
+      console.log(`[MetaAdsClient:MOCK] getAccountInsights called (level=${options.level})`)
+      return new Map()
+    }
+
+    return withSpan(
+      'meta.getAccountInsights',
+      async () => {
+        const fields =
+          'campaign_id,adset_id,ad_id,impressions,reach,clicks,spend,actions,action_values,date_start,date_stop'
+
+        const params = new URLSearchParams({
+          fields,
+          level: options.level,
+          date_preset: options.datePreset,
+          limit: '500',
+        })
+
+        // campaignIds 필터링
+        if (options.campaignIds && options.campaignIds.length > 0) {
+          params.append(
+            'filtering',
+            JSON.stringify([
+              {
+                field: 'campaign.id',
+                operator: 'IN',
+                value: options.campaignIds,
+              },
+            ])
+          )
+        }
+
+        const response = await this.requestWithRetry<MetaApiInsightsResponse>(
+          accessToken,
+          `/${adAccountId}/insights?${params.toString()}`,
+          { method: 'GET' }
+        )
+
+        // level에 따라 적절한 ID 키로 Map 생성
+        const result = new Map<string, MetaInsightsData>()
+
+        if (!response.data || response.data.length === 0) {
+          return result
+        }
+
+        for (const item of response.data) {
+          // level에 따라 key ID 결정
+          let entityId: string
+          const itemAny = item as Record<string, unknown>
+          if (options.level === 'ad') {
+            entityId = (itemAny.ad_id as string) || item.campaign_id
+          } else if (options.level === 'adset') {
+            entityId = (itemAny.adset_id as string) || item.campaign_id
+          } else {
+            entityId = item.campaign_id
+          }
+
+          const conversions =
+            item.actions?.find((a) => a.action_type === 'purchase')?.value || '0'
+          const revenue =
+            item.action_values?.find((a) => a.action_type === 'purchase')?.value || '0'
+          const linkClicks =
+            item.actions?.find((a) => a.action_type === 'link_click')?.value || '0'
+
+          result.set(entityId, {
+            campaignId: item.campaign_id,
+            impressions: parseInt(item.impressions || '0', 10),
+            reach: parseInt(item.reach || '0', 10),
+            clicks: parseInt(item.clicks || '0', 10),
+            linkClicks: parseInt(linkClicks, 10),
+            spend: parseFloat(item.spend || '0'),
+            conversions: parseInt(conversions, 10),
+            revenue: parseFloat(revenue),
+            dateStart: item.date_start,
+            dateStop: item.date_stop,
+          })
+        }
+
+        return result
+      },
+      {
+        'meta.adAccountId': adAccountId,
+        'meta.level': options.level,
+        'meta.datePreset': options.datePreset,
+      }
+    )
+  }
+
+  /**
+   * 계정 레벨 전체 광고세트 조회
+   * GET /act_{id}/adsets?fields=...&filtering=[{campaign.id IN [...]}]
+   */
+  async listAllAdSets(
+    accessToken: string,
+    adAccountId: string,
+    options?: { campaignIds?: string[] }
+  ): Promise<MetaAdSetData[]> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] listAllAdSets called with mock mode')
+      return [
+        {
+          id: 'mock_adset_1',
+          name: 'Mock AdSet',
+          status: 'ACTIVE',
+          dailyBudget: 30000,
+          billingEvent: 'IMPRESSIONS',
+          optimizationGoal: 'CONVERSIONS',
+        },
+      ]
+    }
+
+    return withSpan(
+      'meta.listAllAdSets',
+      async () => {
+        const fields = 'id,name,status,daily_budget,lifetime_budget,billing_event,optimization_goal,campaign_id'
+
+        const params = new URLSearchParams({
+          fields,
+          limit: '500',
+        })
+
+        if (options?.campaignIds && options.campaignIds.length > 0) {
+          params.append(
+            'filtering',
+            JSON.stringify([
+              {
+                field: 'campaign.id',
+                operator: 'IN',
+                value: options.campaignIds,
+              },
+            ])
+          )
+        }
+
+        const response = await this.requestWithRetry<{
+          data: {
+            id: string
+            name: string
+            status: string
+            daily_budget?: string
+            lifetime_budget?: string
+            billing_event: string
+            optimization_goal: string
+            campaign_id?: string
+          }[]
+        }>(accessToken, `/${adAccountId}/adsets?${params.toString()}`, { method: 'GET' })
+
+        return response.data.map((item) => ({
+          id: item.id,
+          name: item.name,
+          status: item.status,
+          dailyBudget: item.daily_budget ? parseInt(item.daily_budget, 10) : undefined,
+          lifetimeBudget: item.lifetime_budget ? parseInt(item.lifetime_budget, 10) : undefined,
+          billingEvent: item.billing_event,
+          optimizationGoal: item.optimization_goal,
+        }))
+      },
+      { 'meta.adAccountId': adAccountId }
+    )
+  }
+
+  /**
+   * 계정 레벨 전체 광고 조회
+   * GET /act_{id}/ads?fields=...&filtering=[{adset.id IN [...]}]
+   */
+  async listAllAds(
+    accessToken: string,
+    adAccountId: string,
+    options?: { adSetIds?: string[] }
+  ): Promise<MetaAdData[]> {
+    if (this.mockMode) {
+      console.log('[MetaAdsClient:MOCK] listAllAds called with mock mode')
+      return [
+        { id: 'mock_ad_1', name: 'Mock Ad 1', status: 'ACTIVE' },
+        { id: 'mock_ad_2', name: 'Mock Ad 2', status: 'PAUSED' },
+      ]
+    }
+
+    return withSpan(
+      'meta.listAllAds',
+      async () => {
+        const fields = 'id,name,status'
+
+        const params = new URLSearchParams({
+          fields,
+          limit: '500',
+        })
+
+        if (options?.adSetIds && options.adSetIds.length > 0) {
+          params.append(
+            'filtering',
+            JSON.stringify([
+              {
+                field: 'adset.id',
+                operator: 'IN',
+                value: options.adSetIds,
+              },
+            ])
+          )
+        }
+
+        const response = await this.requestWithRetry<{
+          data: {
+            id: string
+            name: string
+            status: string
+          }[]
+        }>(accessToken, `/${adAccountId}/ads?${params.toString()}`, { method: 'GET' })
+
+        return response.data.map((item) => ({
+          id: item.id,
+          name: item.name,
+          status: item.status,
+        }))
+      },
+      { 'meta.adAccountId': adAccountId }
+    )
+  }
 }

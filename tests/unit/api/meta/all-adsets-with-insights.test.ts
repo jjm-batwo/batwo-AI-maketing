@@ -3,8 +3,8 @@ import { NextRequest } from 'next/server'
 
 // --- Mock instances that will be returned by new MetaAdsClient() ---
 const mockListCampaigns = vi.fn()
-const mockListAdSets = vi.fn()
-const mockGetAdSetInsights = vi.fn()
+const mockListAllAdSets = vi.fn()
+const mockGetAccountInsights = vi.fn()
 const mockGetMetaAccountForUser = vi.fn()
 
 // --- vi.mock declarations (hoisted) ---
@@ -21,8 +21,8 @@ vi.mock('@/infrastructure/external/meta-ads/MetaAdsClient', () => {
     return {
         MetaAdsClient: vi.fn().mockImplementation(function (this: any) {
             this.listCampaigns = mockListCampaigns
-            this.listAdSets = mockListAdSets
-            this.getAdSetInsights = mockGetAdSetInsights
+            this.listAllAdSets = mockListAllAdSets
+            this.getAccountInsights = mockGetAccountInsights
         }),
     }
 })
@@ -62,28 +62,42 @@ const mockAdSetsData = [
     { id: 'adset-1', name: 'AdSet 1', status: 'ACTIVE', dailyBudget: 30000 },
     { id: 'adset-2', name: 'AdSet 2', status: 'PAUSED', dailyBudget: 20000 },
 ]
-const mockInsightsData = {
-    campaignId: 'adset-1',
-    impressions: 5000,
-    clicks: 200,
-    spend: 50000,
-    conversions: 10,
-    revenue: 200000,
-    reach: 4000,
-    linkClicks: 180,
-    dateStart: '2026-01-01',
-    dateStop: '2026-01-07',
-}
+const mockInsightsMap = new Map([
+    ['adset-1', {
+        campaignId: 'camp-1',
+        impressions: 5000,
+        clicks: 200,
+        spend: 50000,
+        conversions: 10,
+        revenue: 200000,
+        reach: 4000,
+        linkClicks: 180,
+        dateStart: '2026-01-01',
+        dateStop: '2026-01-07',
+    }],
+    ['adset-2', {
+        campaignId: 'camp-1',
+        impressions: 3000,
+        clicks: 120,
+        spend: 30000,
+        conversions: 6,
+        revenue: 120000,
+        reach: 2500,
+        linkClicks: 100,
+        dateStart: '2026-01-01',
+        dateStop: '2026-01-07',
+    }],
+])
 
-describe('GET /api/meta/all-adsets-with-insights - Edge Cases', () => {
+describe('GET /api/meta/all-adsets-with-insights - Bulk Optimized', () => {
     beforeEach(() => {
         vi.clearAllMocks()
         // Default happy path setup
         mockGetAuthenticatedUser.mockResolvedValue(mockUser as any)
         mockGetMetaAccountForUser.mockResolvedValue(mockMetaAccountInfo)
         mockListCampaigns.mockResolvedValue({ campaigns: mockCampaigns })
-        mockListAdSets.mockResolvedValue(mockAdSetsData)
-        mockGetAdSetInsights.mockResolvedValue(mockInsightsData)
+        mockListAllAdSets.mockResolvedValue(mockAdSetsData)
+        mockGetAccountInsights.mockResolvedValue(mockInsightsMap)
     })
 
     // --- 인증 ---
@@ -182,40 +196,35 @@ describe('GET /api/meta/all-adsets-with-insights - Edge Cases', () => {
         expect(response.status).toBe(200)
         const body = await response.json()
         expect(body.adSets).toEqual([])
-        expect(mockListAdSets).not.toHaveBeenCalled()
+        expect(mockListAllAdSets).not.toHaveBeenCalled()
     })
 
     it('should return empty adSets when no adsets found across campaigns', async () => {
-        mockListAdSets.mockResolvedValue([])
+        mockListAllAdSets.mockResolvedValue([])
         const response = await GET(createRequest())
         expect(response.status).toBe(200)
         const body = await response.json()
         expect(body.adSets).toEqual([])
-        expect(mockGetAdSetInsights).not.toHaveBeenCalled()
+        expect(mockGetAccountInsights).not.toHaveBeenCalled()
     })
 
-    // --- Rate limit partial 결과 ---
+    // --- Rate limit at bulk level ---
 
-    it('should include _rateLimited flag when rate limit hits during adset fetch', async () => {
-        let callCount = 0
-        mockListAdSets.mockImplementation(async () => {
-            callCount++
-            if (callCount === 2) {
-                throw new MetaAdsApiError('User request limit reached', 17, undefined, 429)
-            }
-            return mockAdSetsData
-        })
+    it('should return _rateLimited flag when listAllAdSets hits rate limit', async () => {
+        mockListAllAdSets.mockRejectedValue(
+            new MetaAdsApiError('User request limit reached', 17, undefined, 429)
+        )
         const response = await GET(createRequest())
         const body = await response.json()
         expect(response.status).toBe(200)
         expect(body._rateLimited).toBe(true)
-        expect(body.adSets.length).toBeGreaterThan(0)
+        expect(body.adSets).toEqual([])
     })
 
     // --- Auth 에러 전파 ---
 
-    it('should propagate auth error from adset-level mapWithConcurrency', async () => {
-        mockListAdSets.mockRejectedValue(
+    it('should propagate auth error from listAllAdSets', async () => {
+        mockListAllAdSets.mockRejectedValue(
             new MetaAdsApiError('Invalid OAuth access token.', 190, undefined, 401)
         )
         const response = await GET(createRequest())
@@ -224,8 +233,8 @@ describe('GET /api/meta/all-adsets-with-insights - Edge Cases', () => {
         expect(body.error).toContain('expired or revoked')
     })
 
-    it('should propagate auth error from insights fetch', async () => {
-        mockGetAdSetInsights.mockRejectedValue(
+    it('should propagate auth error from getAccountInsights', async () => {
+        mockGetAccountInsights.mockRejectedValue(
             new MetaAdsApiError('Invalid OAuth access token.', 190, undefined, 401)
         )
         const response = await GET(createRequest())
@@ -234,21 +243,16 @@ describe('GET /api/meta/all-adsets-with-insights - Edge Cases', () => {
 
     // --- Insights fallback ---
 
-    it('should return zero insights for adsets that hit rate limit during insights fetch', async () => {
-        let insightCallCount = 0
-        mockGetAdSetInsights.mockImplementation(async () => {
-            insightCallCount++
-            if (insightCallCount === 2) {
-                throw new MetaAdsApiError('User request limit reached', 17, undefined, 429)
-            }
-            return mockInsightsData
-        })
+    it('should return zero insights for adsets when getAccountInsights hits rate limit', async () => {
+        mockGetAccountInsights.mockRejectedValue(
+            new MetaAdsApiError('User request limit reached', 17, undefined, 429)
+        )
         const response = await GET(createRequest())
         const body = await response.json()
         expect(response.status).toBe(200)
-        expect(body._rateLimited).toBe(true)
-        const adSetWithZeroInsights = body.adSets.find((as: any) => as.insights.impressions === 0)
-        expect(adSetWithZeroInsights).toBeDefined()
+        expect(body.adSets.length).toBe(2)
+        expect(body.adSets[0].insights.impressions).toBe(0)
+        expect(body.adSets[1].insights.impressions).toBe(0)
     })
 
     // --- Happy path ---
@@ -257,10 +261,9 @@ describe('GET /api/meta/all-adsets-with-insights - Edge Cases', () => {
         const response = await GET(createRequest())
         expect(response.status).toBe(200)
         const body = await response.json()
-        // 2 campaigns × 2 adsets each = 4 adsets
-        expect(body.adSets).toHaveLength(4)
+        expect(body.adSets).toHaveLength(2)
         expect(body.adSets[0].insights.impressions).toBe(5000)
-        expect(body._rateLimited).toBeUndefined()
+        expect(body.adSets[1].insights.impressions).toBe(3000)
     })
 
     // --- Unknown error → 500 ---
