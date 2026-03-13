@@ -3,7 +3,6 @@ import { getAuthenticatedUser } from '@/lib/auth'
 import { MetaAdsClient } from '@/infrastructure/external/meta-ads/MetaAdsClient'
 import { MetaAdsApiError } from '@/infrastructure/external/errors'
 import type { MetaCampaignListItem } from '@application/ports/IMetaAdsService'
-import { mapWithConcurrency } from '@/lib/utils/mapWithConcurrency'
 import { getMetaAccountForUser } from '@/lib/meta/metaAccountHelper'
 
 const LOG_PREFIX = '[AllAds API]'
@@ -36,7 +35,7 @@ export async function GET(request: NextRequest) {
 
     const metaAdsClient = new MetaAdsClient()
 
-    // 2. Get campaigns (권한 박탈/토큰 만료 감지)
+    // 1. Get campaigns (권한 박탈/토큰 만료 감지)
     let campaigns: MetaCampaignListItem[]
     try {
       const result = await metaAdsClient.listCampaigns(decryptedToken, metaAccount.metaAccountId, {
@@ -73,101 +72,103 @@ export async function GET(request: NextRequest) {
       throw error
     }
 
-    // 3. 빈 캠페인 → 빈 광고
+    // 2. 빈 캠페인 → 빈 광고
     if (campaigns.length === 0) {
       return NextResponse.json({ ads: [] })
     }
 
-    // 4. Get adsets (conc 2) - rate limit 발생 시 partial 결과 반환
-    let rateLimitHit = false
-    const allAdSetsNested = await mapWithConcurrency(campaigns, 2, async (campaign) => {
-      try {
-        const adSets = await metaAdsClient.listAdSets(decryptedToken, campaign.id)
-        return adSets
-      } catch (error) {
-        if (error instanceof MetaAdsApiError) {
-          if (MetaAdsApiError.isAuthError(error)) {
-            throw error // 인증 에러는 즉시 전파
-          }
-          if (MetaAdsApiError.isRateLimitError(error)) {
-            rateLimitHit = true
-            console.warn(`${LOG_PREFIX} Rate limit fetching adsets for campaign ${campaign.id}`)
-          }
-        }
-        return []
-      }
-    })
-    const flattenedAdSets = allAdSetsNested.flat()
+    const campaignIds = campaigns.map((c) => c.id)
 
-    // 5. Get ads (conc 2)
-    const allAdsNested = await mapWithConcurrency(flattenedAdSets, 2, async (adSet) => {
-      try {
-        const ads = await metaAdsClient.listAds(decryptedToken, adSet.id)
-        return ads
-      } catch (error) {
-        if (error instanceof MetaAdsApiError) {
-          if (MetaAdsApiError.isAuthError(error)) {
-            throw error
-          }
-          if (MetaAdsApiError.isRateLimitError(error)) {
-            rateLimitHit = true
-            console.warn(`${LOG_PREFIX} Rate limit fetching ads for adset ${adSet.id}`)
-          }
+    // 3. 벌크 조회: 계정 레벨 광고세트 (N회 → 1회)
+    let allAdSets
+    try {
+      allAdSets = await metaAdsClient.listAllAdSets(decryptedToken, metaAccount.metaAccountId, {
+        campaignIds,
+      })
+    } catch (error) {
+      if (error instanceof MetaAdsApiError) {
+        if (MetaAdsApiError.isAuthError(error)) {
+          throw error
         }
-        return []
+        if (MetaAdsApiError.isRateLimitError(error)) {
+          return NextResponse.json({ ads: [], _rateLimited: true })
+        }
       }
-    })
-    const flattenedAds = allAdsNested.flat()
-
-    // 6. 빈 광고 → early return
-    if (flattenedAds.length === 0) {
-      return NextResponse.json({ ads: [], ...(rateLimitHit ? { _rateLimited: true } : {}) })
+      throw error
     }
 
-    // 7. Get insights (conc 2)
-    const adsWithInsights = await mapWithConcurrency(flattenedAds, 2, async (ad) => {
-      try {
-        const insights = await metaAdsClient.getAdInsights(
-          decryptedToken,
-          ad.id,
-          datePreset as 'today' | 'yesterday' | 'last_3d' | 'last_7d' | 'last_30d' | 'last_90d'
-        )
+    if (allAdSets.length === 0) {
+      return NextResponse.json({ ads: [] })
+    }
 
-        return {
-          id: ad.id,
-          name: ad.name,
-          status: ad.status,
-          insights: {
-            impressions: insights.impressions,
-            clicks: insights.clicks,
-            spend: insights.spend,
-            conversions: insights.conversions,
-            revenue: insights.revenue,
-          },
+    const adSetIds = allAdSets.map((as) => as.id)
+
+    // 4. 벌크 조회: 계정 레벨 광고 (N회 → 1회)
+    let allAds
+    try {
+      allAds = await metaAdsClient.listAllAds(decryptedToken, metaAccount.metaAccountId, {
+        adSetIds,
+      })
+    } catch (error) {
+      if (error instanceof MetaAdsApiError) {
+        if (MetaAdsApiError.isAuthError(error)) {
+          throw error
         }
-      } catch (error) {
-        if (error instanceof MetaAdsApiError) {
-          if (MetaAdsApiError.isAuthError(error)) {
-            throw error
-          }
-          if (MetaAdsApiError.isRateLimitError(error)) {
-            rateLimitHit = true
-            console.warn(`${LOG_PREFIX} Rate limit fetching insights for ad ${ad.id}`)
-          }
+        if (MetaAdsApiError.isRateLimitError(error)) {
+          return NextResponse.json({ ads: [], _rateLimited: true })
         }
-        return {
-          id: ad.id,
-          name: ad.name,
-          status: ad.status,
-          insights: { ...EMPTY_INSIGHTS },
+      }
+      throw error
+    }
+
+    if (allAds.length === 0) {
+      return NextResponse.json({ ads: [] })
+    }
+
+    // 5. 벌크 조회: 계정 레벨 인사이트 (N회 → 1회)
+    let insightsMap: Map<string, { impressions: number; clicks: number; spend: number; conversions: number; revenue: number }>
+    try {
+      insightsMap = await metaAdsClient.getAccountInsights(decryptedToken, metaAccount.metaAccountId, {
+        level: 'ad',
+        datePreset,
+        campaignIds,
+      })
+    } catch (error) {
+      if (error instanceof MetaAdsApiError) {
+        if (MetaAdsApiError.isAuthError(error)) {
+          throw error
         }
+        if (MetaAdsApiError.isRateLimitError(error)) {
+          // insights 실패해도 광고 목록은 반환 (insights만 비어있음)
+          insightsMap = new Map()
+        } else {
+          throw error
+        }
+      } else {
+        throw error
+      }
+    }
+
+    // 6. ID 기반 매핑으로 조합
+    const adsWithInsights = allAds.map((ad) => {
+      const insights = insightsMap.get(ad.id)
+      return {
+        id: ad.id,
+        name: ad.name,
+        status: ad.status,
+        insights: insights
+          ? {
+              impressions: insights.impressions,
+              clicks: insights.clicks,
+              spend: insights.spend,
+              conversions: insights.conversions,
+              revenue: insights.revenue,
+            }
+          : { ...EMPTY_INSIGHTS },
       }
     })
 
-    return NextResponse.json({
-      ads: adsWithInsights,
-      ...(rateLimitHit ? { _rateLimited: true } : {}),
-    })
+    return NextResponse.json({ ads: adsWithInsights })
   } catch (error: unknown) {
     // Auth 에러가 최외부까지 전파된 경우
     if (error instanceof MetaAdsApiError && MetaAdsApiError.isAuthError(error)) {

@@ -3,9 +3,9 @@ import { NextRequest } from 'next/server'
 
 // --- Mock instances that will be returned by new MetaAdsClient() ---
 const mockListCampaigns = vi.fn()
-const mockListAdSets = vi.fn()
-const mockListAds = vi.fn()
-const mockGetAdInsights = vi.fn()
+const mockListAllAdSets = vi.fn()
+const mockListAllAds = vi.fn()
+const mockGetAccountInsights = vi.fn()
 const mockGetMetaAccountForUser = vi.fn()
 
 // --- vi.mock declarations (hoisted) ---
@@ -22,9 +22,9 @@ vi.mock('@/infrastructure/external/meta-ads/MetaAdsClient', () => {
     return {
         MetaAdsClient: vi.fn().mockImplementation(function (this: any) {
             this.listCampaigns = mockListCampaigns
-            this.listAdSets = mockListAdSets
-            this.listAds = mockListAds
-            this.getAdInsights = mockGetAdInsights
+            this.listAllAdSets = mockListAllAdSets
+            this.listAllAds = mockListAllAds
+            this.getAccountInsights = mockGetAccountInsights
         }),
     }
 })
@@ -67,29 +67,43 @@ const mockAdsData = [
     { id: 'ad-1', name: 'Ad 1', status: 'ACTIVE' },
     { id: 'ad-2', name: 'Ad 2', status: 'PAUSED' },
 ]
-const mockInsightsData = {
-    campaignId: 'ad-1',
-    impressions: 1000,
-    clicks: 50,
-    spend: 10000,
-    conversions: 5,
-    revenue: 50000,
-    reach: 800,
-    linkClicks: 40,
-    dateStart: '2026-01-01',
-    dateStop: '2026-01-07',
-}
+const mockInsightsMap = new Map([
+    ['ad-1', {
+        campaignId: 'camp-1',
+        impressions: 1000,
+        clicks: 50,
+        spend: 10000,
+        conversions: 5,
+        revenue: 50000,
+        reach: 800,
+        linkClicks: 40,
+        dateStart: '2026-01-01',
+        dateStop: '2026-01-07',
+    }],
+    ['ad-2', {
+        campaignId: 'camp-1',
+        impressions: 500,
+        clicks: 20,
+        spend: 5000,
+        conversions: 2,
+        revenue: 20000,
+        reach: 400,
+        linkClicks: 15,
+        dateStart: '2026-01-01',
+        dateStop: '2026-01-07',
+    }],
+])
 
-describe('GET /api/meta/all-ads-with-insights - Edge Cases', () => {
+describe('GET /api/meta/all-ads-with-insights - Bulk Optimized', () => {
     beforeEach(() => {
         vi.clearAllMocks()
         // Default happy path setup
         mockGetAuthenticatedUser.mockResolvedValue(mockUser as any)
         mockGetMetaAccountForUser.mockResolvedValue(mockMetaAccountInfo)
         mockListCampaigns.mockResolvedValue({ campaigns: mockCampaigns })
-        mockListAdSets.mockResolvedValue(mockAdSetsData)
-        mockListAds.mockResolvedValue(mockAdsData)
-        mockGetAdInsights.mockResolvedValue(mockInsightsData)
+        mockListAllAdSets.mockResolvedValue(mockAdSetsData)
+        mockListAllAds.mockResolvedValue(mockAdsData)
+        mockGetAccountInsights.mockResolvedValue(mockInsightsMap)
     })
 
     // --- 인증 ---
@@ -188,47 +202,44 @@ describe('GET /api/meta/all-ads-with-insights - Edge Cases', () => {
         expect(response.status).toBe(200)
         const body = await response.json()
         expect(body.ads).toEqual([])
-        expect(mockListAdSets).not.toHaveBeenCalled()
+        expect(mockListAllAdSets).not.toHaveBeenCalled()
     })
 
     it('should return empty ads when no adsets found', async () => {
-        mockListAdSets.mockResolvedValue([])
-        const response = await GET(createRequest())
-        expect(response.status).toBe(200)
-        expect(mockListAds).not.toHaveBeenCalled()
-    })
-
-    it('should return empty ads when no ads found', async () => {
-        mockListAds.mockResolvedValue([])
+        mockListAllAdSets.mockResolvedValue([])
         const response = await GET(createRequest())
         expect(response.status).toBe(200)
         const body = await response.json()
         expect(body.ads).toEqual([])
-        expect(mockGetAdInsights).not.toHaveBeenCalled()
+        expect(mockListAllAds).not.toHaveBeenCalled()
     })
 
-    // --- Rate limit partial 결과 ---
+    it('should return empty ads when no ads found', async () => {
+        mockListAllAds.mockResolvedValue([])
+        const response = await GET(createRequest())
+        expect(response.status).toBe(200)
+        const body = await response.json()
+        expect(body.ads).toEqual([])
+        expect(mockGetAccountInsights).not.toHaveBeenCalled()
+    })
 
-    it('should include _rateLimited flag when rate limit hits during adset fetch', async () => {
-        let callCount = 0
-        mockListAdSets.mockImplementation(async () => {
-            callCount++
-            if (callCount === 2) {
-                throw new MetaAdsApiError('User request limit reached', 17, undefined, 429)
-            }
-            return mockAdSetsData
-        })
+    // --- Rate limit at bulk level ---
+
+    it('should return _rateLimited flag when listAllAdSets hits rate limit', async () => {
+        mockListAllAdSets.mockRejectedValue(
+            new MetaAdsApiError('User request limit reached', 17, undefined, 429)
+        )
         const response = await GET(createRequest())
         const body = await response.json()
         expect(response.status).toBe(200)
         expect(body._rateLimited).toBe(true)
-        expect(body.ads.length).toBeGreaterThan(0)
+        expect(body.ads).toEqual([])
     })
 
     // --- Auth 에러 전파 ---
 
-    it('should propagate auth error from adset-level mapWithConcurrency', async () => {
-        mockListAdSets.mockRejectedValue(
+    it('should propagate auth error from listAllAdSets', async () => {
+        mockListAllAdSets.mockRejectedValue(
             new MetaAdsApiError('Invalid OAuth access token.', 190, undefined, 401)
         )
         const response = await GET(createRequest())
@@ -237,16 +248,16 @@ describe('GET /api/meta/all-ads-with-insights - Edge Cases', () => {
         expect(body.error).toContain('expired or revoked')
     })
 
-    it('should propagate auth error from ad-level mapWithConcurrency', async () => {
-        mockListAds.mockRejectedValue(
+    it('should propagate auth error from listAllAds', async () => {
+        mockListAllAds.mockRejectedValue(
             new MetaAdsApiError('Invalid OAuth access token.', 190, undefined, 401)
         )
         const response = await GET(createRequest())
         expect(response.status).toBe(401)
     })
 
-    it('should propagate auth error from insights fetch', async () => {
-        mockGetAdInsights.mockRejectedValue(
+    it('should propagate auth error from getAccountInsights', async () => {
+        mockGetAccountInsights.mockRejectedValue(
             new MetaAdsApiError('Invalid OAuth access token.', 190, undefined, 401)
         )
         const response = await GET(createRequest())
@@ -255,21 +266,17 @@ describe('GET /api/meta/all-ads-with-insights - Edge Cases', () => {
 
     // --- Insights fallback ---
 
-    it('should return zero insights for ads that hit rate limit during insights fetch', async () => {
-        let insightCallCount = 0
-        mockGetAdInsights.mockImplementation(async () => {
-            insightCallCount++
-            if (insightCallCount === 2) {
-                throw new MetaAdsApiError('User request limit reached', 17, undefined, 429)
-            }
-            return mockInsightsData
-        })
+    it('should return zero insights for ads when getAccountInsights hits rate limit', async () => {
+        mockGetAccountInsights.mockRejectedValue(
+            new MetaAdsApiError('User request limit reached', 17, undefined, 429)
+        )
         const response = await GET(createRequest())
         const body = await response.json()
         expect(response.status).toBe(200)
-        expect(body._rateLimited).toBe(true)
-        const adWithZeroInsights = body.ads.find((ad: any) => ad.insights.impressions === 0)
-        expect(adWithZeroInsights).toBeDefined()
+        // 광고 목록은 반환, insights만 비어있음
+        expect(body.ads.length).toBe(2)
+        expect(body.ads[0].insights.impressions).toBe(0)
+        expect(body.ads[1].insights.impressions).toBe(0)
     })
 
     // --- Happy path ---
@@ -278,11 +285,11 @@ describe('GET /api/meta/all-ads-with-insights - Edge Cases', () => {
         const response = await GET(createRequest())
         expect(response.status).toBe(200)
         const body = await response.json()
-        // 2 campaigns × 1 adset × 2 ads = 4 total
-        expect(body.ads).toHaveLength(4)
+        expect(body.ads).toHaveLength(2)
         expect(body.ads[0].id).toBe('ad-1')
         expect(body.ads[0].insights.impressions).toBe(1000)
-        expect(body._rateLimited).toBeUndefined()
+        expect(body.ads[1].id).toBe('ad-2')
+        expect(body.ads[1].insights.impressions).toBe(500)
     })
 
     // --- Unknown error → 500 ---
