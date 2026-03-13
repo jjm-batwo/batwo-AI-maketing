@@ -4,11 +4,11 @@ import createNextIntlPlugin from 'next-intl/plugin'
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
-// Bundle Analyzer 설정 (환경 변수로 활성화)
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-})
+// Bundle Analyzer 설정 (ANALYZE=true 일 때만 로드)
+const withBundleAnalyzer = process.env.ANALYZE === 'true'
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  ? require('@next/bundle-analyzer')({ enabled: true })
+  : (config: NextConfig) => config
 
 /**
  * 보안 헤더 설정
