@@ -5,8 +5,11 @@
 // - DATABASE_URL: Connection Pooler (PgBouncer) - 일반 쿼리용
 // - DIRECT_URL: Direct Connection - 마이그레이션용
 // =============================================================================
+// NOTE: dotenv/config는 사용하지 않습니다.
+// - Vercel: 환경변수가 대시보드에서 자동 주입
+// - 로컬: Prisma CLI가 .env 파일을 자체적으로 로드
+// =============================================================================
 
-import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
 // 환경별 데이터베이스 URL 결정
