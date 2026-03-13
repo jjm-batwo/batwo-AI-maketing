@@ -58,6 +58,7 @@ jobs:
 
       - name: Run all checks
         run: |
+          npm run check:prod-deps
           npm run lint
           npm run type-check
           npm run test:unit -- --reporter=verbose

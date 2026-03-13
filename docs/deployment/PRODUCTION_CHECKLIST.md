@@ -2,6 +2,9 @@
 
 바투 AI 마케팅 솔루션의 프로덕션 배포 전 필수 확인 사항입니다.
 
+Preview/production build failures on Vercel should be checked first with
+[VERCEL_DEPLOYMENT_CHECKLIST.md](./VERCEL_DEPLOYMENT_CHECKLIST.md).
+
 ---
 
 ## 배포 전 체크리스트
@@ -12,6 +15,7 @@
 - [ ] **CI 파이프라인 통과**: `ci.yml` 워크플로우 성공
   ```bash
   # 로컬 확인
+  npm run check:prod-deps
   npm run lint
   npm run type-check
   npm run test:unit

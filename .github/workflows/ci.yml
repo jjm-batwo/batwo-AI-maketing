@@ -147,6 +147,34 @@ jobs:
         run: npm run type-check
 
   # =============================================================================
+  # Deployment Readiness
+  # =============================================================================
+  deployment-readiness:
+    name: Deployment Readiness
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: lint
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Setup npm
+        run: npm install -g npm@${{ env.NPM_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify production dependency boundaries
+        run: npm run check:prod-deps
+
+  # =============================================================================
   # Unit Tests
   # =============================================================================
   unit-tests:
@@ -244,7 +272,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [lint, unit-tests, integration-tests]
+    needs: [lint, deployment-readiness, unit-tests, integration-tests]
 
     steps:
       - name: Checkout
@@ -289,6 +317,7 @@ jobs:
       - codeql-analysis
       - secrets-scan
       - lint
+      - deployment-readiness
       - unit-tests
       - integration-tests
       - build
@@ -301,6 +330,7 @@ jobs:
              [[ "${{ needs.codeql-analysis.result }}" != "success" ]] || \
              [[ "${{ needs.secrets-scan.result }}" != "success" ]] || \
              [[ "${{ needs.lint.result }}" != "success" ]] || \
+             [[ "${{ needs.deployment-readiness.result }}" != "success" ]] || \
              [[ "${{ needs.unit-tests.result }}" != "success" ]] || \
              [[ "${{ needs.integration-tests.result }}" != "success" ]] || \
              [[ "${{ needs.build.result }}" != "success" ]]; then

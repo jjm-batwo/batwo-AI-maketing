@@ -4,13 +4,14 @@
 
 ## 문서 목록
 
-| 문서 | 설명 |
-|------|------|
-| [BRANCH_STRATEGY.md](./BRANCH_STRATEGY.md) | 브랜치 전략 및 배포 플로우 |
-| [VERCEL_ENV_SETUP.md](./VERCEL_ENV_SETUP.md) | Vercel 환경변수 설정 가이드 |
-| [DATABASE_MIGRATION.md](./DATABASE_MIGRATION.md) | 데이터베이스 마이그레이션 가이드 |
-| [PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md) | 프로덕션 배포 체크리스트 |
-| [ROLLBACK_STRATEGY.md](./ROLLBACK_STRATEGY.md) | 롤백 전략 가이드 |
+| 문서                                                               | 설명                                       |
+| ------------------------------------------------------------------ | ------------------------------------------ |
+| [VERCEL_DEPLOYMENT_CHECKLIST.md](./VERCEL_DEPLOYMENT_CHECKLIST.md) | Preview/Production 배포 전 빠른 체크리스트 |
+| [BRANCH_STRATEGY.md](./BRANCH_STRATEGY.md)                         | 브랜치 전략 및 배포 플로우                 |
+| [VERCEL_ENV_SETUP.md](./VERCEL_ENV_SETUP.md)                       | Vercel 환경변수 설정 가이드                |
+| [DATABASE_MIGRATION.md](./DATABASE_MIGRATION.md)                   | 데이터베이스 마이그레이션 가이드           |
+| [PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md)               | 프로덕션 배포 체크리스트                   |
+| [ROLLBACK_STRATEGY.md](./ROLLBACK_STRATEGY.md)                     | 롤백 전략 가이드                           |
 
 ---
 
@@ -51,12 +52,12 @@ vercel --prod
 
 ### GitHub Actions 워크플로우
 
-| 워크플로우 | 트리거 | 설명 |
-|-----------|--------|------|
-| `ci.yml` | push, PR | Lint, 타입체크, 테스트, 빌드 |
-| `e2e-staging.yml` | deployment_status | Staging 배포 후 E2E 테스트 |
-| `migrate.yml` | workflow_dispatch, workflow_run | 데이터베이스 마이그레이션 |
-| `deploy-production.yml` | workflow_dispatch | 수동 프로덕션 배포 |
+| 워크플로우              | 트리거                          | 설명                         |
+| ----------------------- | ------------------------------- | ---------------------------- |
+| `ci.yml`                | push, PR                        | Lint, 타입체크, 테스트, 빌드 |
+| `e2e-staging.yml`       | deployment_status               | Staging 배포 후 E2E 테스트   |
+| `migrate.yml`           | workflow_dispatch, workflow_run | 데이터베이스 마이그레이션    |
+| `deploy-production.yml` | workflow_dispatch               | 수동 프로덕션 배포           |
 
 ### CI 파이프라인 흐름
 
@@ -80,11 +81,11 @@ Push/PR
 
 ### 환경 목록
 
-| 환경 | URL | 브랜치 | 데이터베이스 |
-|------|-----|--------|-------------|
-| Development | localhost:3000 | feature/* | Local/Docker |
-| Staging | staging.batwo.ai | develop | Supabase Staging |
-| Production | batwo.ai | main | Supabase Production |
+| 환경        | URL              | 브랜치     | 데이터베이스        |
+| ----------- | ---------------- | ---------- | ------------------- |
+| Development | localhost:3000   | feature/\* | Local/Docker        |
+| Staging     | staging.batwo.ai | develop    | Supabase Staging    |
+| Production  | batwo.ai         | main       | Supabase Production |
 
 ### 필수 환경변수
 
@@ -113,15 +114,17 @@ SENTRY_DSN=
 
 ### 빌드 실패 시
 
-1. 로컬에서 빌드 테스트: `npm run build`
-2. 환경변수 확인: `.env.example` 참조
-3. 타입 에러 확인: `npm run type-check`
+1. 런타임 코드가 `devDependencies`를 참조하지 않는지 확인: `npm run check:prod-deps`
+2. 로컬에서 빌드 테스트: `npm run build`
+3. 환경변수 확인: `.env.example` 참조
+4. 타입 에러 확인: `npm run type-check`
 
 ### 배포 실패 시
 
-1. Vercel Dashboard에서 빌드 로그 확인
-2. GitHub Actions 로그 확인
-3. 롤백 고려: Vercel Instant Rollback
+1. 로컬에서 빌드 테스트: `npm run build`
+2. Vercel Dashboard에서 빌드 로그 확인
+3. GitHub Actions `Deployment Readiness`와 `Build` 로그 확인
+4. 롤백 고려: Vercel Instant Rollback
 
 ### 데이터베이스 연결 실패 시
 

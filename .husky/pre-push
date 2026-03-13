@@ -17,7 +17,7 @@ echo "${CYAN}━━━━━━━━━━━━━━━━━━━━━━�
 
 # ── Phase 0: 환경 검증 ──
 echo ""
-echo "${CYAN}[0/4] 환경 검증${RESET}"
+echo "${CYAN}[0/5] 환경 검증${RESET}"
 
 # Node.js 버전 확인
 NODE_MAJOR=$(node -v | sed 's/v\([0-9]*\).*/\1/')
@@ -37,25 +37,30 @@ fi
 
 # ── Phase 1: Lint ──
 echo ""
-echo "${CYAN}[1/4] ESLint${RESET}"
+echo "${CYAN}[1/5] ESLint${RESET}"
 npm run lint --silent
 
 # ── Phase 2: Type Check ──
 echo ""
-echo "${CYAN}[2/4] Type Check${RESET}"
+echo "${CYAN}[2/5] Type Check${RESET}"
 npm run type-check --silent
 
-# ── Phase 3: Format Check ──
+# ── Phase 3: Deploy Guard ──
 echo ""
-echo "${CYAN}[3/4] Format Check${RESET}"
+echo "${CYAN}[3/5] Deploy Guard${RESET}"
+npm run check:prod-deps --silent
+
+# ── Phase 4: Format Check ──
+echo ""
+echo "${CYAN}[4/5] Format Check${RESET}"
 npm run format:check --silent 2>/dev/null || {
   echo "${YELLOW}  ⚠ 포맷 불일치 — npm run format 으로 수정 가능${RESET}"
   # format은 warning만, 블로킹하지 않음
 }
 
-# ── Phase 4: Unit Tests ──
+# ── Phase 5: Unit Tests ──
 echo ""
-echo "${CYAN}[4/4] Unit Tests${RESET}"
+echo "${CYAN}[5/5] Unit Tests${RESET}"
 npm run test:unit -- --pool forks --reporter=dot
 
 # ── Full 모드 (선택) ──
