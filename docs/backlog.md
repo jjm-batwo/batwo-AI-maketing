@@ -12,6 +12,7 @@
 | 1 | PPR(Partial Prerendering) 활성화 검토 | Turbopack + PPR 안정화 필요 | Next.js 릴리즈 노트에서 PPR stable 확인 | 2026-02-12 |
 | 2 | `unstable_cache` → `'use cache'` 전환 | dynamicIO 활성화 필요 | Next.js에서 dynamicIO stable 확인 | 2026-02-12 |
 | 3 | Playwright MCP 스크린샷 타임아웃 근본 해결 | MCP 타임아웃 설정 미지원 | Playwright MCP에 타임아웃 옵션 추가 시 | 2026-02-12 |
+| 4 | M-6 토스페이먼츠 SDK: `NEXT_PUBLIC_TOSS_CLIENT_KEY` 환경변수 설정 | 토스페이먼츠 심사 진행 중, 클라이언트 키 미발급 | 토스페이먼츠 심사 완료 후 키 발급 시 | 2026-03-13 |
 
 ## 백로그 (P2b) — 기능 동작에 문제없는 개선사항
 
