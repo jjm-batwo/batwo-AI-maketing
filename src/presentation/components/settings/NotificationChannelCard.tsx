@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import type { NotificationChannelType } from '@domain/entities/NotificationChannel'
-import type { MinSeverity } from '@domain/value-objects/NotificationPreference'
 
 interface ChannelConfig {
   webhookUrl?: string

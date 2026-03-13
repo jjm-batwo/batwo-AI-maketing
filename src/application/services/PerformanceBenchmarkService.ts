@@ -26,7 +26,7 @@ export class PerformanceBenchmarkService {
     const metrics: MetricBenchmark[] = Object.entries(userMetrics)
       .map(([metric, value]) => {
         const p = percentiles[metric as BenchmarkMetric]
-        if (!p) return null
+        if (!p || typeof p === 'number') return null
 
         const isInverse = this.INVERSE_METRICS.includes(metric as BenchmarkMetric)
         const percentile = this.interpolatePercentile(value, p, isInverse)
@@ -98,8 +98,8 @@ export class PerformanceBenchmarkService {
   }
 
   private async getUserAverageMetrics(
-    userId: string,
-    periodDays: number
+    _userId: string,
+    _periodDays: number
   ): Promise<Record<string, number>> {
     // 실제 구현은 kpiRepository 등을 통해 가져오도록 합니다.
     return {

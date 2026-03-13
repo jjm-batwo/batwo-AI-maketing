@@ -1,5 +1,5 @@
 import { PrismaClient } from '@/generated/prisma'
-import { IKPIRepository, KPIFilters, DailyKPIAggregate } from '@domain/repositories/IKPIRepository'
+import { IKPIRepository, KPIFilters, DailyKPIAggregate, IndustryPercentiles } from '@domain/repositories/IKPIRepository'
 import { KPI } from '@domain/entities/KPI'
 import { KPIMapper } from '../mappers/KPIMapper'
 
@@ -327,11 +327,11 @@ export class PrismaKPIRepository implements IKPIRepository {
     return Number(result._sum.spend ?? 0)
   }
 
-  async getIndustryPercentiles(industry: string, periodDays: number): Promise<any> {
+  async getIndustryPercentiles(industry: string, periodDays: number): Promise<IndustryPercentiles> {
     const since = new Date()
     since.setDate(since.getDate() - periodDays)
 
-    const result = await this.prisma.$queryRaw<any[]>`
+    const result = await this.prisma.$queryRaw<Record<string, unknown>[]>`
       SELECT
         PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY spend) as roas_p25,
         PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY spend) as roas_p50,

@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -64,14 +64,17 @@ export function AdDetailPanel({ adId, open, onOpenChange }: AdDetailPanelProps) 
     [adDetail]
   )
 
+  // Track adDetail identity to reset form when it changes
+  const adDetailId = adDetail?.id ?? null
+  const [trackedId, setTrackedId] = useState(adDetailId)
+
   // Local form state
   const [formData, setFormData] = useState(initialFormData)
   const [isDirty, setIsDirty] = useState(false)
-  const prevAdDetailRef = useRef(adDetail)
 
-  // Sync form data when adDetail reference changes
-  if (adDetail !== prevAdDetailRef.current) {
-    prevAdDetailRef.current = adDetail
+  // Reset form when adDetail identity changes (synchronous during render, no cascading)
+  if (adDetailId !== trackedId) {
+    setTrackedId(adDetailId)
     setFormData(initialFormData)
     setIsDirty(false)
   }

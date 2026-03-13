@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ConversionFunnelService } from '@/application/services/ConversionFunnelService';
-import type { IConversionEventRepository } from '@domain/repositories/IConversionEventRepository';
 
 describe('ConversionFunnelService', () => {
   let mockRepository: any;

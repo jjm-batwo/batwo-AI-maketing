@@ -144,11 +144,7 @@ function formatValue(value: number | undefined, metric?: string): string {
   return value.toLocaleString()
 }
 
-function formatChangePercent(change: number | undefined): string {
-  if (change === undefined) return ''
-  const sign = change >= 0 ? '+' : ''
-  return `${sign}${change.toFixed(1)}%`
-}
+// formatChangePercent is handled by MetricChange component
 
 // ============================================================================
 // Component
@@ -328,7 +324,7 @@ export const AIInsights = memo(function AIInsights({
             const Icon = config.icon
             const priority = insight.priority ? priorityConfig[insight.priority] : null
             const hasChange = insight.changePercent !== undefined
-            const isPositiveChange = (insight.changePercent ?? 0) >= 0
+            const _isPositiveChange = (insight.changePercent ?? 0) >= 0
 
             return (
               <div

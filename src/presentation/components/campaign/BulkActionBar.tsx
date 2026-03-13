@@ -3,6 +3,7 @@
 import { memo, useState } from 'react'
 import { useCampaignStore } from '@/presentation/stores'
 import { BulkAction } from '@/application/use-cases/campaign/BulkUpdateCampaignsUseCase'
+import { CampaignStatus } from '@/domain/value-objects/CampaignStatus'
 import { BulkBudgetModal } from './BulkBudgetModal'
 
 export const BulkActionBar = memo(function BulkActionBar() {
@@ -40,14 +41,14 @@ export const BulkActionBar = memo(function BulkActionBar() {
         </span>
         <div className="h-6 w-px bg-border" />
         <button
-          onClick={() => executeBulkAction({ type: 'status_change', status: 'PAUSED' as any })}
+          onClick={() => executeBulkAction({ type: 'status_change', status: 'PAUSED' as CampaignStatus })}
           disabled={loading}
           className="px-3 py-1.5 text-sm bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:hover:bg-yellow-900/50 transition-colors"
         >
           일시정지
         </button>
         <button
-          onClick={() => executeBulkAction({ type: 'status_change', status: 'ACTIVE' as any })}
+          onClick={() => executeBulkAction({ type: 'status_change', status: 'ACTIVE' as CampaignStatus })}
           disabled={loading}
           className="px-3 py-1.5 text-sm bg-green-100 text-green-800 rounded-lg hover:bg-green-200 dark:bg-green-900/30 dark:text-green-300 dark:hover:bg-green-900/50 transition-colors"
         >

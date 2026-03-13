@@ -3,7 +3,6 @@ import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
 import type { IAlertRepository } from '@domain/repositories/IAlertRepository'
 import type { NotificationDispatcherService } from './NotificationDispatcherService'
 import { Alert } from '@domain/entities/Alert'
-import type { AlertSeverity, AlertType } from '@domain/entities/Alert'
 import { CampaignStatus } from '@domain/value-objects/CampaignStatus'
 
 interface AlertCheckResult {

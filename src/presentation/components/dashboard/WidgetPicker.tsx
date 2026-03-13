@@ -12,7 +12,6 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
 import {
-  ALL_WIDGET_TYPES,
   WIDGET_TYPE_LABELS,
   WIDGET_DEFAULT_SIZES,
   type WidgetType,

@@ -47,7 +47,7 @@ function formatValue(value: number, format: KPIFormat, unit?: string): string {
   }
 }
 
-function formatChange(change: number): string {
+function _formatChange(change: number): string {
   if (change === 0) return '0%'
   const sign = change > 0 ? '+' : ''
   return `${sign}${change.toFixed(2)}%`

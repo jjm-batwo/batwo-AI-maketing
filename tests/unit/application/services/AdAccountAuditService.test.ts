@@ -1,7 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { AdAccountAuditService } from '@/application/services/AdAccountAuditService'
-import { AnomalyDetectionService } from '@/application/services/AnomalyDetectionService'
-import { PortfolioOptimizationService } from '@/application/services/PortfolioOptimizationService'
+// AnomalyDetectionService and PortfolioOptimizationService types are mocked locally
 import { ICampaignRepository } from '@/domain/repositories/ICampaignRepository'
 import { IKPIRepository } from '@/domain/repositories/IKPIRepository'
 import { Campaign } from '@/domain/entities/Campaign'
@@ -32,7 +31,7 @@ class MockCampaignRepository implements Partial<ICampaignRepository> {
   setMockCampaigns(campaigns: any[]) {
     this.campaigns = campaigns as any
   }
-  async findByUserId(userId: string): Promise<any> {
+  async findByUserId(_userId: string): Promise<Campaign[]> {
     return this.campaigns
   }
 }

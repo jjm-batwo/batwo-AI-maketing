@@ -725,7 +725,7 @@ export const CampaignTable = memo(function CampaignTable({
               const status = statusConfig[campaign.status]
               const isSelected = selectedCampaignIds.has(campaign.id)
               // UX-06: Get icon component for status
-              const StatusIcon = statusIconMap[campaign.status]
+              const _StatusIcon = statusIconMap[campaign.status]
 
               return (
                 <TableRow

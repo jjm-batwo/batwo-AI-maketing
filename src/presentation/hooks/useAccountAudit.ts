@@ -11,7 +11,7 @@ export function useAccountAudit() {
         try {
           const errData = await res.json()
           errorMsg = errData.error || errorMsg
-        } catch (e) {}
+        } catch (_e) {}
         throw new Error(errorMsg)
       }
       const json = await res.json()

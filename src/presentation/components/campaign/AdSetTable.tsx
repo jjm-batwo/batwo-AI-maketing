@@ -206,7 +206,7 @@ export const AdSetTable = memo(function AdSetTable({
               const roas = insights.spend > 0 ? insights.revenue / insights.spend : 0
               const config = getStatusConfig(adSet.status, statusConfig)
               // UX-06: Get icon component
-              const StatusIcon = statusIconMap[adSet.status as AdSetStatus] ?? Play
+              const _StatusIcon = statusIconMap[adSet.status as AdSetStatus] ?? Play
 
               return (
                 <TableRow

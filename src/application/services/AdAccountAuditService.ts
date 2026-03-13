@@ -1,6 +1,7 @@
 import { AnomalyDetectionService } from './AnomalyDetectionService'
 import { PortfolioOptimizationService } from './PortfolioOptimizationService'
-import { IKPIRepository, KPIFilters } from '@/domain/repositories/IKPIRepository'
+import type { PortfolioAnalysis } from './PortfolioOptimizationService'
+import { IKPIRepository } from '@/domain/repositories/IKPIRepository'
 import { ICampaignRepository } from '@/domain/repositories/ICampaignRepository'
 import { Campaign } from '@/domain/entities/Campaign'
 import { KPI } from '@/domain/entities/KPI'
@@ -86,12 +87,12 @@ export class AdAccountAuditService {
   }
 
   private analyzeInefficientCampaigns(
-    campaigns: Campaign[],
-    kpiData: KPI[],
-    anomalies: any[]
+    _campaigns: Campaign[],
+    _kpiData: KPI[],
+    anomalies: { metric?: string; severity?: string; type?: string }[]
   ): AuditCategoryResult {
     let wasteEstimate = 0
-    let findings: string[] = []
+    const findings: string[] = []
 
     // 단순한 휴리스틱: 전환율(CVR)이 매우 낮거나 CPA가 높은 캠페인을 찾는다.
     const inefficientAnomalies = anomalies.filter(
@@ -122,9 +123,9 @@ export class AdAccountAuditService {
     }
   }
 
-  private analyzeTargetOverlap(campaigns: Campaign[]): AuditCategoryResult {
+  private analyzeTargetOverlap(_campaigns: Campaign[]): AuditCategoryResult {
     // 실제로는 타겟팅 파라미터를 비교해야 하지만, 현재 예시 처리
-    let findings = [
+    const findings = [
       '타겟팅 중복이 의심되는 캠페인은 적으나, 동일 관심사를 타겟하는 캠페인이 2개 존재합니다.',
     ]
     const score = 80
@@ -141,10 +142,10 @@ export class AdAccountAuditService {
     }
   }
 
-  private analyzeCreativeFatigue(kpiData: KPI[], anomalies: any[]): AuditCategoryResult {
+  private analyzeCreativeFatigue(_kpiData: KPI[], anomalies: { metric?: string; severity?: string; type?: string }[]): AuditCategoryResult {
     const fatigueAnomalies = anomalies.filter((a) => a.type === 'metric_drop' && a.metric === 'ctr')
     let wasteEstimate = 0
-    let findings: string[] = []
+    const findings: string[] = []
 
     if (fatigueAnomalies.length > 0) {
       wasteEstimate = 30000 * fatigueAnomalies.length
@@ -170,7 +171,7 @@ export class AdAccountAuditService {
     }
   }
 
-  private analyzeBidStrategy(campaigns: Campaign[], kpiData: KPI[]): AuditCategoryResult {
+  private analyzeBidStrategy(_campaigns: Campaign[], _kpiData: KPI[]): AuditCategoryResult {
     // 단순 모의 로직 (현재 입찰 전략 기반 최적화 권장)
     const score = 85
     return {
@@ -185,13 +186,13 @@ export class AdAccountAuditService {
     }
   }
 
-  private analyzeBudgetAllocation(portfolio: any, campaigns: Campaign[]): AuditCategoryResult {
+  private analyzeBudgetAllocation(portfolio: PortfolioAnalysis | null, _campaigns: Campaign[]): AuditCategoryResult {
     let wasteEstimate = 0
-    let findings: string[] = []
+    const findings: string[] = []
     let score = 90
 
-    if (portfolio?.optimizationRecommendations?.length > 0) {
-      wasteEstimate = portfolio.optimizationRecommendations.length * 20000
+    if ((portfolio?.recommendations?.length ?? 0) > 0) {
+      wasteEstimate = (portfolio?.recommendations?.length ?? 0) * 20000
       findings.push('포트폴리오 예산 배분 최적화(CBO)를 통해 효율 개선 여지가 있습니다.')
       score = 75
     } else {

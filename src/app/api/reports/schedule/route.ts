@@ -4,7 +4,7 @@ import { container, DI_TOKENS } from '@/lib/di'
 import { IReportScheduleRepository } from '@domain/repositories/IReportScheduleRepository'
 import { ReportSchedule } from '@domain/entities/ReportSchedule'
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   const user = await getAuthenticatedUser()
 
   if (!user?.id) {

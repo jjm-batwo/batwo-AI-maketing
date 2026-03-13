@@ -16,6 +16,18 @@ export interface DailyKPIAggregate {
   totalRevenue: number
 }
 
+export interface PercentileBand {
+  p25: number
+  p50: number
+  p75: number
+  p90: number
+}
+
+export interface IndustryPercentiles {
+  [metric: string]: PercentileBand | number | undefined
+  _sampleSize?: number
+}
+
 export interface IKPIRepository {
   save(kpi: KPI): Promise<KPI>
   saveMany(kpis: KPI[]): Promise<KPI[]>
@@ -64,5 +76,5 @@ export interface IKPIRepository {
   getCumulativeSpend(campaignId: string, date: Date): Promise<number>
   delete(id: string): Promise<void>
   deleteByCampaignId(campaignId: string): Promise<void>
-  getIndustryPercentiles(industry: string, periodDays: number): Promise<any>
+  getIndustryPercentiles(industry: string, periodDays: number): Promise<IndustryPercentiles>
 }
