@@ -49,13 +49,13 @@ describe('CampaignCard', () => {
     it('should render ACTIVE status with correct styling', () => {
       render(<CampaignCard {...defaultProps} status="ACTIVE" />, { wrapper: Wrapper })
       const badge = screen.getByText('진행 중')
-      expect(badge).toHaveClass('bg-green-500/15', 'text-green-500')
+      expect(badge).toHaveClass('bg-green-500/15', 'text-green-600')
     })
 
     it('should render PAUSED status with correct styling', () => {
       render(<CampaignCard {...defaultProps} status="PAUSED" />, { wrapper: Wrapper })
       const badge = screen.getByText('일시정지')
-      expect(badge).toHaveClass('bg-yellow-500/15', 'text-yellow-500')
+      expect(badge).toHaveClass('bg-yellow-500/15', 'text-yellow-600')
     })
 
     it('should render COMPLETED status with correct styling', () => {

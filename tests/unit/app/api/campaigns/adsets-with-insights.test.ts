@@ -15,19 +15,17 @@ vi.mock('@/lib/di/container', () => ({
   },
 }))
 
+const mockGetMetaAccountForUser = vi.fn()
+vi.mock('@/lib/meta/metaAccountHelper', () => ({
+  getMetaAccountForUser: (...args: unknown[]) => mockGetMetaAccountForUser(...args),
+}))
+
 vi.mock('@/lib/prisma', () => ({
   prisma: {
-    metaAdAccount: {
-      findFirst: vi.fn(),
-    },
     campaign: {
       findFirst: vi.fn(),
     },
   },
-}))
-
-vi.mock('@application/utils/TokenEncryption', () => ({
-  safeDecryptToken: vi.fn((value: string) => value),
 }))
 
 import { getAuthenticatedUser } from '@/lib/auth'
@@ -37,7 +35,6 @@ import { GET } from '@/app/api/campaigns/[id]/adsets-with-insights/route'
 
 const mockGetAuthenticatedUser = vi.mocked(getAuthenticatedUser)
 const mockResolve = vi.mocked(container.resolve)
-const mockFindMetaAccount = vi.mocked(prisma.metaAdAccount.findFirst)
 const mockFindCampaign = vi.mocked(prisma.campaign.findFirst)
 
 function createRequest() {
@@ -56,7 +53,13 @@ describe('GET /api/campaigns/[id]/adsets-with-insights', () => {
     vi.clearAllMocks()
     mockGetAuthenticatedUser.mockResolvedValue({ id: 'user-1' } as never)
     mockResolve.mockReturnValue(mockMetaAdsService as never)
-    mockFindMetaAccount.mockResolvedValue({ accessToken: 'encrypted-token' } as never)
+    mockGetMetaAccountForUser.mockResolvedValue({
+      id: 'account-1',
+      metaAccountId: 'act_123',
+      accessToken: 'encrypted-token',
+      tokenExpiry: null,
+      businessName: null,
+    })
   })
 
   it('should_use_meta_campaign_id_instead_of_internal_campaign_id', async () => {

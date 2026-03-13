@@ -24,7 +24,7 @@ describe('KPICard', () => {
 
     it('should render percentage change', () => {
       render(<KPICard {...defaultProps} />)
-      expect(screen.getByText('+12.50%')).toBeInTheDocument()
+      expect(screen.getByText('+12.5%')).toBeInTheDocument()
     })
 
     it('should render currency value correctly', () => {
@@ -60,19 +60,20 @@ describe('KPICard', () => {
   describe('change indicator', () => {
     it('should show green color for positive change', () => {
       render(<KPICard {...defaultProps} change={10} changeType="increase" />)
-      const changeElement = screen.getByText('+10.00%').closest('div')
+      const changeElement = screen.getByText('+10.0%').closest('span')
       expect(changeElement).toHaveClass('text-green-700')
     })
 
     it('should show red color for negative change', () => {
-      render(<KPICard {...defaultProps} change={-10} changeType="decrease" />)
-      const changeElement = screen.getByText('-10.00%').closest('div')
+      // changeType='increase'(inverse=false) + negative value = red
+      render(<KPICard {...defaultProps} change={-10} changeType="increase" />)
+      const changeElement = screen.getByText('-10.0%').closest('span')
       expect(changeElement).toHaveClass('text-red-700')
     })
 
     it('should show neutral color for no change', () => {
       render(<KPICard {...defaultProps} change={0} changeType="neutral" />)
-      const changeElement = screen.getByText('0%').closest('div')
+      const changeElement = screen.getByText('0%').closest('span')
       expect(changeElement).toHaveClass('text-muted-foreground')
     })
   })

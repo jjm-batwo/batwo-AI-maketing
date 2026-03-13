@@ -17,6 +17,7 @@ const mockMessages = {
       ctr: 'CTR',
       conversions: '전환',
       roas: 'ROAS',
+      activation: '활성화',
     },
     status: {
       active: '진행 중',
@@ -75,13 +76,39 @@ vi.mock('@/lib/utils/format', () => ({
   formatMultiplier: (n: number) => `${n.toFixed(2)}x`,
 }))
 
-// Mock lucide-react icons
-vi.mock('lucide-react', () => ({
-  Play: ({ className }: { className?: string }) => <span data-testid="icon-play" className={className} />,
-  Pause: ({ className }: { className?: string }) => <span data-testid="icon-pause" className={className} />,
-  Trash2: ({ className }: { className?: string }) => <span data-testid="icon-trash" className={className} />,
-  Archive: ({ className }: { className?: string }) => <span data-testid="icon-archive" className={className} />,
-}))
+// Mock lucide-react icons using importOriginal to inherit all exports
+vi.mock('lucide-react', async (importOriginal) => {
+  const actual = await importOriginal<Record<string, unknown>>()
+  const createIcon = (name: string) => {
+    const Icon = ({ className, ...props }: { className?: string; [key: string]: unknown }) => (
+      <span data-testid={`icon-${name.toLowerCase()}`} className={className} {...props} />
+    )
+    Icon.displayName = name
+    return Icon
+  }
+
+  return {
+    ...actual,
+    Play: createIcon('Play'),
+    Pause: createIcon('Pause'),
+    Trash2: createIcon('Trash2'),
+    Archive: createIcon('Archive'),
+    CheckIcon: createIcon('CheckIcon'),
+    XIcon: createIcon('XIcon'),
+    ChevronDownIcon: createIcon('ChevronDownIcon'),
+    ChevronUpIcon: createIcon('ChevronUpIcon'),
+    ChevronRightIcon: createIcon('ChevronRightIcon'),
+    CircleIcon: createIcon('CircleIcon'),
+    ArrowUpRight: createIcon('ArrowUpRight'),
+    ArrowDownRight: createIcon('ArrowDownRight'),
+    Minus: createIcon('Minus'),
+    LoaderCircle: createIcon('LoaderCircle'),
+    TriangleAlert: createIcon('TriangleAlert'),
+    CircleCheck: createIcon('CircleCheck'),
+    Info: createIcon('Info'),
+    X: createIcon('X'),
+  }
+})
 
 function renderWithIntl(ui: React.ReactElement) {
   return render(

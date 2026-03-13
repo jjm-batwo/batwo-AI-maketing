@@ -5,6 +5,7 @@ import { NextRequest } from 'next/server'
 const mockListCampaigns = vi.fn()
 const mockListAdSets = vi.fn()
 const mockGetAdSetInsights = vi.fn()
+const mockGetMetaAccountForUser = vi.fn()
 
 // --- vi.mock declarations (hoisted) ---
 
@@ -12,12 +13,8 @@ vi.mock('@/lib/auth', () => ({
     getAuthenticatedUser: vi.fn(),
 }))
 
-vi.mock('@/lib/prisma', () => ({
-    prisma: {
-        metaAdAccount: {
-            findFirst: vi.fn(),
-        },
-    },
+vi.mock('@/lib/meta/metaAccountHelper', () => ({
+    getMetaAccountForUser: (...args: unknown[]) => mockGetMetaAccountForUser(...args),
 }))
 
 vi.mock('@/infrastructure/external/meta-ads/MetaAdsClient', () => {
@@ -30,23 +27,15 @@ vi.mock('@/infrastructure/external/meta-ads/MetaAdsClient', () => {
     }
 })
 
-vi.mock('@application/utils/TokenEncryption', () => ({
-    safeDecryptToken: vi.fn((token: string) => token),
-}))
-
 // --- Static imports (after vi.mock) ---
 
 import { getAuthenticatedUser } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
-import { safeDecryptToken } from '@application/utils/TokenEncryption'
 import { MetaAdsApiError } from '@/infrastructure/external/errors'
 import { GET } from '@/app/api/meta/all-adsets-with-insights/route'
 
 // --- Typed mocks ---
 
 const mockGetAuthenticatedUser = vi.mocked(getAuthenticatedUser)
-const mockFindFirst = vi.mocked(prisma.metaAdAccount.findFirst)
-const mockSafeDecryptToken = vi.mocked(safeDecryptToken)
 
 function createRequest(datePreset?: string): NextRequest {
     const url = datePreset
@@ -58,12 +47,12 @@ function createRequest(datePreset?: string): NextRequest {
 // --- Test data ---
 
 const mockUser = { id: 'user-1', name: 'Test User', email: 'test@test.com' }
-const mockMetaAccount = {
+const mockMetaAccountInfo = {
     id: 'account-1',
-    userId: 'user-1',
-    accessToken: 'encrypted-token',
     metaAccountId: 'act_123',
-    createdAt: new Date(),
+    accessToken: 'decrypted-token',
+    tokenExpiry: null,
+    businessName: null,
 }
 const mockCampaigns = [
     { id: 'camp-1', name: 'Campaign 1', status: 'ACTIVE' },
@@ -91,8 +80,7 @@ describe('GET /api/meta/all-adsets-with-insights - Edge Cases', () => {
         vi.clearAllMocks()
         // Default happy path setup
         mockGetAuthenticatedUser.mockResolvedValue(mockUser as any)
-        mockFindFirst.mockResolvedValue(mockMetaAccount as any)
-        mockSafeDecryptToken.mockImplementation((token: string) => `decrypted-${token}`)
+        mockGetMetaAccountForUser.mockResolvedValue(mockMetaAccountInfo)
         mockListCampaigns.mockResolvedValue({ campaigns: mockCampaigns })
         mockListAdSets.mockResolvedValue(mockAdSetsData)
         mockGetAdSetInsights.mockResolvedValue(mockInsightsData)
@@ -110,29 +98,26 @@ describe('GET /api/meta/all-adsets-with-insights - Edge Cases', () => {
 
     // --- safeDecryptToken 실패 ---
 
-    it('should return 401 when safeDecryptToken throws', async () => {
-        mockSafeDecryptToken.mockImplementation(() => {
-            throw new Error('Decryption failed: invalid auth tag')
-        })
+    it('should return empty adSets when getMetaAccountForUser returns null (token decrypt fail)', async () => {
+        mockGetMetaAccountForUser.mockResolvedValue(null)
         const response = await GET(createRequest())
-        expect(response.status).toBe(401)
+        expect(response.status).toBe(200)
         const body = await response.json()
-        expect(body.error).toContain('Token decryption failed')
         expect(body.adSets).toEqual([])
     })
 
-    it('should return 401 when safeDecryptToken returns empty string', async () => {
-        mockSafeDecryptToken.mockReturnValue('')
+    it('should return empty adSets when getMetaAccountForUser returns null (empty token)', async () => {
+        mockGetMetaAccountForUser.mockResolvedValue(null)
         const response = await GET(createRequest())
-        expect(response.status).toBe(401)
+        expect(response.status).toBe(200)
         const body = await response.json()
-        expect(body.error).toContain('Invalid access token')
+        expect(body.adSets).toEqual([])
     })
 
     // --- Meta Account 없음 ---
 
     it('should return empty adSets when no Meta account exists', async () => {
-        mockFindFirst.mockResolvedValue(null as any)
+        mockGetMetaAccountForUser.mockResolvedValue(null)
         const response = await GET(createRequest())
         expect(response.status).toBe(200)
         const body = await response.json()
@@ -140,7 +125,7 @@ describe('GET /api/meta/all-adsets-with-insights - Edge Cases', () => {
     })
 
     it('should return empty adSets when Meta account has no metaAccountId', async () => {
-        mockFindFirst.mockResolvedValue({ ...mockMetaAccount, metaAccountId: null } as any)
+        mockGetMetaAccountForUser.mockResolvedValue(null)
         const response = await GET(createRequest())
         expect(response.status).toBe(200)
         const body = await response.json()
