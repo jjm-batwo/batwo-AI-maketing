@@ -47,7 +47,7 @@
     },
     {
       "path": "/api/cron/sync",
-      "schedule": "0 */6 * * *"
+      "schedule": "0 6 * * *"
     },
     {
       "path": "/api/cron/refresh-tokens",
@@ -55,11 +55,11 @@
     },
     {
       "path": "/api/cron/capi-batch",
-      "schedule": "*/5 * * * *"
+      "schedule": "0 3 * * *"
     },
     {
       "path": "/api/cron/evaluate-rules",
-      "schedule": "*/15 * * * *"
+      "schedule": "0 4 * * *"
     },
     {
       "path": "/api/cron/send-scheduled-reports",

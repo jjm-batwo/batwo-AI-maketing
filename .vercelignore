@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# Test files
+tests/
+coverage/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+vitest.config*.ts
+playwright.config.ts
+
+# Dev tools
+.worktrees/
+.agent/
+.gemini/
+.opencode/
+.git/
+.husky/
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Build artifacts
+.next/
+.turbo/
+
+# IDE
+.vscode/
+.idea/
+
+# Scripts
+scripts/
+
+# Temporary
+tmp/
+*.log
