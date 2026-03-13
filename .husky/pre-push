@@ -2,23 +2,81 @@
 
 set -e
 
-echo "[pre-push] Running lint"
-npm run lint
+# ── 색상 ──
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+CYAN='\033[0;36m'
+RESET='\033[0m'
 
-echo "[pre-push] Running type-check"
-npm run type-check
+START_TIME=$(date +%s)
 
-echo "[pre-push] Running unit tests"
-npm run test:unit -- --reporter=dot
+echo "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+echo "${CYAN}  Pre-Push CI Check${RESET}"
+echo "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
 
-if [ "$PREPUSH_FULL" = "1" ]; then
-  echo "[pre-push] Running integration tests"
-  npm run test:integration -- --reporter=verbose
+# ── Phase 0: 환경 검증 ──
+echo ""
+echo "${CYAN}[0/4] 환경 검증${RESET}"
 
-  echo "[pre-push] Running production build"
-  SKIP_ENV_VALIDATION=true npm run build
-else
-  echo "[pre-push] ℹ️  Set PREPUSH_FULL=1 to also run integration tests + build before push"
+# Node.js 버전 확인
+NODE_MAJOR=$(node -v | sed 's/v\([0-9]*\).*/\1/')
+if [ "$NODE_MAJOR" -lt 20 ]; then
+  echo "${RED}✗ Node.js v${NODE_MAJOR} — v20+ 필요${RESET}"
+  exit 1
+fi
+echo "${GREEN}  ✓ Node.js $(node -v)${RESET}"
+
+# npm 버전 확인 (ci.yml의 NPM_VERSION과 동기화)
+REQUIRED_NPM="11.9.0"
+CURRENT_NPM=$(npm -v)
+if [ "$CURRENT_NPM" != "$REQUIRED_NPM" ]; then
+  echo "${YELLOW}  ⚠ npm ${CURRENT_NPM} — CI는 ${REQUIRED_NPM}${RESET}"
+  echo "${YELLOW}    → npm install -g npm@${REQUIRED_NPM}${RESET}"
 fi
 
-echo "[pre-push] ✅ All checks passed!"
+# ── Phase 1: Lint ──
+echo ""
+echo "${CYAN}[1/4] ESLint${RESET}"
+npm run lint --silent
+
+# ── Phase 2: Type Check ──
+echo ""
+echo "${CYAN}[2/4] Type Check${RESET}"
+npm run type-check --silent
+
+# ── Phase 3: Format Check ──
+echo ""
+echo "${CYAN}[3/4] Format Check${RESET}"
+npm run format:check --silent 2>/dev/null || {
+  echo "${YELLOW}  ⚠ 포맷 불일치 — npm run format 으로 수정 가능${RESET}"
+  # format은 warning만, 블로킹하지 않음
+}
+
+# ── Phase 4: Unit Tests ──
+echo ""
+echo "${CYAN}[4/4] Unit Tests${RESET}"
+npm run test:unit -- --pool forks --reporter=dot
+
+# ── Full 모드 (선택) ──
+if [ "$PREPUSH_FULL" = "1" ]; then
+  echo ""
+  echo "${CYAN}[FULL] Integration Tests${RESET}"
+  npm run test:integration -- --reporter=verbose
+
+  echo ""
+  echo "${CYAN}[FULL] Production Build${RESET}"
+  SKIP_ENV_VALIDATION=true npm run build
+else
+  echo ""
+  echo "${YELLOW}ℹ️  PREPUSH_FULL=1 로 integration test + build도 실행 가능${RESET}"
+fi
+
+# ── 결과 ──
+END_TIME=$(date +%s)
+ELAPSED=$((END_TIME - START_TIME))
+
+echo ""
+echo "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+echo "${GREEN}  ✅ All checks passed! (${ELAPSED}초)${RESET}"
+echo "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"

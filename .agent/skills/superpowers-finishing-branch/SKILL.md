@@ -15,11 +15,17 @@ Guide completion of development work by presenting clear options and handling ch
 
 ### Step 1: Verify Tests
 
-**Before presenting options, verify tests pass:**
+**Before presenting options, run pre-push CI check:**
 
 ```bash
-# Run project's test suite
-npx tsc --noEmit && npx vitest run
+# Run pre-push-ci-check (equivalent to make check-quick)
+make check-quick
+```
+
+If `make` is unavailable, fall back to individual commands:
+
+```bash
+npm run lint && npm run type-check && npx vitest run --pool forks
 ```
 
 **If tests fail:**

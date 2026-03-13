@@ -40,6 +40,7 @@
 | UI/UX 작업, 디자인 변경 | `ui-ux-pro-max` | **항상** |
 | 구현 완료 후 브랜치 정리 | `superpowers-finishing-branch` | **항상** |
 | 코드 리뷰, PR 전 검증 | `verify-implementation` | **항상** |
+| 커밋/푸시, push 전 검증 | `pre-push-ci-check` | **항상** |
 
 ### 스킬 호출 순서
 
