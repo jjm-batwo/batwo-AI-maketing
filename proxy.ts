@@ -1,17 +1,23 @@
+import NextAuth from 'next-auth'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { authConfig } from '@/infrastructure/auth/auth.config'
 
 /**
- * CSP(Content Security Policy) nonce 기반 미들웨어
+ * Next.js 16 Proxy (기존 middleware.ts → proxy.ts 마이그레이션)
  *
- * 매 요청마다 고유한 nonce를 생성하여 CSP 헤더에 적용합니다.
- * 이를 통해 'unsafe-inline'을 제거하고, nonce + strict-dynamic으로
- * XSS 공격 표면을 최소화합니다.
+ * 1. CSP(Content Security Policy) nonce 기반 보안 헤더 생성
+ * 2. NextAuth v5 `authorized` 콜백을 통한 인증 기반 라우트 보호
  *
- * Auth redirects는 기존대로 page/layout 레벨에서 처리:
- * - src/app/page.tsx (logged-in users: / → /campaigns)
- * - src/app/(auth)/layout.tsx (logged-in users: /login, /register → /campaigns)
+ * NextAuth의 `authorized` 콜백(auth.config.ts)이 자동으로 실행되어
+ * - 대시보드: 로그인 필수
+ * - 관리자: ADMIN/SUPER_ADMIN
+ * - 퍼블릭: 누구나 접근 가능
+ * - 랜딩: 로그인 사용자 → /campaigns 리다이렉트
  */
+
+// NextAuth auth 함수 (authConfig의 authorized 콜백 실행)
+const { auth } = NextAuth(authConfig)
 
 /**
  * CSP directive 목록 생성
@@ -127,31 +133,47 @@ function generateCSPDirectives(nonce: string): string {
     .join('; ')
 }
 
-export function middleware(request: NextRequest) {
-  // 매 요청마다 고유한 nonce 생성 (base64 인코딩)
+/**
+ * CSP 헤더를 요청/응답에 적용하는 헬퍼
+ */
+function applyCSPHeaders(request: NextRequest, response: NextResponse): NextResponse {
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
-
   const cspHeaderValue = generateCSPDirectives(nonce)
 
-  // 요청 헤더에 nonce 전달 (Server Component에서 headers()로 읽을 수 있음)
-  const requestHeaders = new Headers(request.headers)
-  requestHeaders.set('x-nonce', nonce)
-  requestHeaders.set('Content-Security-Policy', cspHeaderValue)
+  // 요청 헤더에 nonce + CSP 전달 (Server Component에서 headers()로 읽기 가능)
+  request.headers.set('x-nonce', nonce)
+  request.headers.set('Content-Security-Policy', cspHeaderValue)
   // Server Component에서 현재 요청 경로를 읽을 수 있도록 헤더에 추가
-  requestHeaders.set('x-pathname', request.nextUrl.pathname)
-  requestHeaders.set('x-search', request.nextUrl.search)
-
-  const response = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  })
+  request.headers.set('x-pathname', request.nextUrl.pathname)
+  request.headers.set('x-search', request.nextUrl.search)
 
   // 응답 헤더에 CSP 설정
   response.headers.set('Content-Security-Policy', cspHeaderValue)
+  response.headers.set('x-nonce', nonce)
 
   return response
 }
+
+/**
+ * Next.js 16 Proxy 함수
+ *
+ * NextAuth auth()가 authorized 콜백을 실행한 후,
+ * 그 응답에 CSP 헤더를 추가합니다.
+ */
+export const proxy = auth((request) => {
+  // auth()가 authorized 콜백을 실행하여:
+  // - 인증 필요 페이지 → 리다이렉트 (auth.config.ts에서 처리)
+  // - 허용된 페이지 → 계속 진행
+  // 여기 도달하면 authorized 콜백이 true를 반환한 경우
+
+  const response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  })
+
+  return applyCSPHeaders(request, response)
+})
 
 export const config = {
   matcher: [
