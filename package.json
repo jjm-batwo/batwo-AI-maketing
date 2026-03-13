@@ -28,7 +28,7 @@
     "test:perf": "k6 run tests/performance/run-all.js",
     "test:contract": "vitest run tests/contract",
     "test:mutation": "npx stryker run",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.21",
