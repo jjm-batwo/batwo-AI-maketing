@@ -304,4 +304,40 @@ export interface IMetaAdsService {
     videoData: Buffer,
     name: string
   ): Promise<{ videoId: string }>
+
+  // --- Account-Level Bulk Methods ---
+
+  /**
+   * 계정 레벨 인사이트 집계 (level별로 campaign/adset/ad 인사이트를 한 번에 조회)
+   * GET /act_{id}/insights?level={level}&date_preset={preset}
+   */
+  getAccountInsights(
+    accessToken: string,
+    adAccountId: string,
+    options: {
+      level: 'campaign' | 'adset' | 'ad'
+      datePreset: string
+      campaignIds?: string[]
+    }
+  ): Promise<Map<string, MetaInsightsData>>
+
+  /**
+   * 계정 레벨 전체 광고세트 조회 (campaignIds 필터링 가능)
+   * GET /act_{id}/adsets?fields=...&filtering=[{campaign.id IN [...]}]
+   */
+  listAllAdSets(
+    accessToken: string,
+    adAccountId: string,
+    options?: { campaignIds?: string[] }
+  ): Promise<MetaAdSetData[]>
+
+  /**
+   * 계정 레벨 전체 광고 조회 (adSetIds 필터링 가능)
+   * GET /act_{id}/ads?fields=...&filtering=[{adset.id IN [...]}]
+   */
+  listAllAds(
+    accessToken: string,
+    adAccountId: string,
+    options?: { adSetIds?: string[] }
+  ): Promise<MetaAdData[]>
 }
