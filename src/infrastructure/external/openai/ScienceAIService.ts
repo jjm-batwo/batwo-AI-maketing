@@ -17,6 +17,8 @@ import {
   MarketingIntelligenceService,
   ScienceBackedResult,
 } from '@application/services/MarketingIntelligenceService'
+import { PromptLabCache } from '@infrastructure/prompt-lab/PromptLabCache'
+import type { Industry } from '@domain/value-objects/Industry'
 
 /**
  * ScienceAIService - Decorator Pattern
@@ -48,6 +50,19 @@ export class ScienceAIService implements IAIService {
   }
 
   async generateAdCopy(input: GenerateAdCopyInput): Promise<AdCopyVariant[]> {
+    // PromptLab 최적화 결과가 캐시에 있으면 scienceContext에 힌트 추가
+    const industry = (input as { industry?: Industry }).industry
+    if (industry) {
+      const cachedVariant = PromptLabCache.get(industry)
+      if (cachedVariant && !input.scienceContext) {
+        const domains = cachedVariant.scienceDomains.join(', ')
+        input = {
+          ...input,
+          scienceContext: `[PromptLab 최적화 적용] 활성 도메인: ${domains}, 스타일: ${cachedVariant.instructionStyle}`,
+        }
+      }
+    }
+
     const enriched = this.intelligence.enrichAdCopyInput(input)
     return this.inner.generateAdCopy(enriched)
   }
