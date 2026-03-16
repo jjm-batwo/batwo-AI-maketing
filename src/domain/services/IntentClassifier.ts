@@ -46,12 +46,12 @@ export class IntentClassifier {
 
     const normalized = message.toLowerCase().trim()
 
-    // Check for negation — if the message negates an action keyword,
-    // skip keyword classification for that intent
-    const hasNegation = this.config.negationPatterns.some((pattern) => normalized.includes(pattern))
+    // Check for action negation — "만들지 마", "하지 마" 같은 행동 부정만 필터.
+    // "안 돼", "안 나와", "안 잡혀" 같은 문제 호소는 부정이 아님.
+    const hasActionNegation = this.isActionNegation(normalized)
 
     // Stage 1: Keyword-based classification
-    if (!hasNegation) {
+    if (!hasActionNegation) {
       const keywordResult = this.classifyByKeyword(normalized, message)
       if (keywordResult) {
         return keywordResult
@@ -60,6 +60,21 @@ export class IntentClassifier {
 
     // Stage 2: LLM fallback (stubbed with contextual pattern matching)
     return this.classifyByLLM(normalized, message)
+  }
+
+  /**
+   * Detect action negation (행동 부정) vs problem complaint (문제 호소).
+   *
+   * Action negation: "캠페인을 만들지 마세요", "하지 마" → skip keyword matching
+   * Problem complaint: "전환이 안 나와요", "노출이 안 돼" → NOT negation, proceed normally
+   *
+   * Heuristic: "지 마", "지마", "하지 마" = action negation (verb + 지 마)
+   * "안 " / "못 " alone = usually problem complaint in marketing context
+   */
+  private isActionNegation(normalized: string): boolean {
+    // Strong action negation patterns — these clearly negate an action
+    const actionNegationPatterns = ['지 마', '지마', '하지 마', '하지마']
+    return actionNegationPatterns.some((pattern) => normalized.includes(pattern))
   }
 
   /**
