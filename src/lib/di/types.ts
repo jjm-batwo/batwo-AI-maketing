@@ -60,6 +60,11 @@ export const DI_TOKENS = {
   ReportPDFGenerator: Symbol.for('ReportPDFGenerator'),
   EmailService: Symbol.for('EmailService'),
 
+  // RAG / Knowledge Base
+  EmbeddingService: Symbol.for('EmbeddingService'),
+  KnowledgeBaseRepository: Symbol.for('KnowledgeBaseRepository'),
+  KnowledgeIngestionService: Symbol.for('KnowledgeIngestionService'),
+
   // Marketing Intelligence
   KnowledgeBaseService: Symbol.for('KnowledgeBaseService'),
   MarketingIntelligenceService: Symbol.for('MarketingIntelligenceService'),

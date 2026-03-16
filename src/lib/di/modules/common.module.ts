@@ -21,6 +21,8 @@ import type { IReportPDFGenerator } from '@infrastructure/pdf/ReportPDFGenerator
 import type { IBlobStorageService } from '@infrastructure/storage/BlobStorageService'
 import type { IKnowledgeBaseService } from '@application/ports/IKnowledgeBaseService'
 import type { IResearchService } from '@application/ports/IResearchService'
+import type { IEmbeddingService } from '@application/ports/IEmbeddingService'
+import type { IKnowledgeBaseRepository } from '@application/ports/IKnowledgeBaseRepository'
 
 // Infrastructure implementations
 import { AIService } from '@infrastructure/external/openai/AIService'
@@ -36,6 +38,9 @@ import { EmailService } from '@infrastructure/email/EmailService'
 import { BlobStorageService } from '@infrastructure/storage/BlobStorageService'
 import { KnowledgeBaseService } from '@infrastructure/knowledge'
 import { PerplexityResearchService } from '@infrastructure/external/research'
+import { OpenAIEmbeddingService } from '@infrastructure/external/openai/OpenAIEmbeddingService'
+import { PrismaKnowledgeBaseRepository } from '@infrastructure/database/repositories/PrismaKnowledgeBaseRepository'
+import { KnowledgeIngestionService } from '@application/services/KnowledgeIngestionService'
 import { ScienceAIService } from '@infrastructure/external/openai/ScienceAIService'
 import { MarketingIntelligenceService } from '@application/services/MarketingIntelligenceService'
 
@@ -151,6 +156,42 @@ export function registerCommonModule(container: Container): void {
         container.resolve(DI_TOKENS.AIService),
         container.resolve(DI_TOKENS.MarketingIntelligenceService)
       )
+  )
+
+  // --- RAG / Knowledge Base Vector Search ---
+  container.registerSingleton<IEmbeddingService>(
+    DI_TOKENS.EmbeddingService,
+    () => {
+      // OpenAI SDK 호환 클라이언트 생성
+      const apiKey = process.env.OPENAI_API_KEY || ''
+      const openaiClient = {
+        embeddings: {
+          async create(params: { model: string; input: string | string[] }) {
+            const response = await fetch('https://api.openai.com/v1/embeddings', {
+              method: 'POST',
+              headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ model: params.model, input: params.input }),
+            })
+            if (!response.ok) throw new Error(`OpenAI Embedding API error: ${response.status}`)
+            return response.json()
+          },
+        },
+      }
+      return new OpenAIEmbeddingService(openaiClient)
+    }
+  )
+
+  container.registerSingleton<IKnowledgeBaseRepository>(
+    DI_TOKENS.KnowledgeBaseRepository,
+    () => new PrismaKnowledgeBaseRepository(prisma)
+  )
+
+  container.registerSingleton(
+    DI_TOKENS.KnowledgeIngestionService,
+    () => new KnowledgeIngestionService(
+      container.resolve<IEmbeddingService>(DI_TOKENS.EmbeddingService),
+      container.resolve<IKnowledgeBaseRepository>(DI_TOKENS.KnowledgeBaseRepository)
+    )
   )
 
   // --- Application Services ---

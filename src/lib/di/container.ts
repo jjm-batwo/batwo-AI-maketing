@@ -44,6 +44,9 @@ import type { ICompetitorTrackingRepository } from '@domain/repositories/ICompet
 import type { IOptimizationRuleRepository } from '@domain/repositories/IOptimizationRuleRepository'
 import type { IPaymentGateway } from '@application/ports/IPaymentGateway'
 import type { IAIService } from '@application/ports/IAIService'
+import type { IEmbeddingService } from '@application/ports/IEmbeddingService'
+import type { IKnowledgeBaseRepository } from '@application/ports/IKnowledgeBaseRepository'
+import type { KnowledgeIngestionService } from '@application/services/KnowledgeIngestionService'
 import type { IStreamingAIService } from '@application/ports/IStreamingAIService'
 import type { ICacheService } from '@application/ports/ICacheService'
 import type { IKnowledgeBaseService } from '@application/ports/IKnowledgeBaseService'
@@ -236,6 +239,18 @@ export function getAIService(): IAIService {
 
 export function getStreamingAIService(): IStreamingAIService {
   return container.resolve(DI_TOKENS.StreamingAIService)
+}
+
+export function getEmbeddingService(): IEmbeddingService {
+  return container.resolve(DI_TOKENS.EmbeddingService)
+}
+
+export function getKnowledgeBaseRepository(): IKnowledgeBaseRepository {
+  return container.resolve(DI_TOKENS.KnowledgeBaseRepository)
+}
+
+export function getKnowledgeIngestionService(): KnowledgeIngestionService {
+  return container.resolve(DI_TOKENS.KnowledgeIngestionService)
 }
 
 export function getAnomalyDetectionService(): AnomalyDetectionService {
