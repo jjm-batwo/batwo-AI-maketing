@@ -2,7 +2,6 @@
 import { describe, it, expect } from 'vitest'
 import {
   DEFAULT_INTENT_CLASSIFIER_CONFIG,
-  type IntentClassifierConfig,
 } from '@domain/services/IntentClassifierConfig'
 import { ChatIntent } from '@domain/value-objects/ChatIntent'
 

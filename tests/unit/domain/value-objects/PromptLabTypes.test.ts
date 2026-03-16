@@ -3,10 +3,6 @@ import { describe, it, expect } from 'vitest'
 import {
   createDefaultVariant,
   createPromptLabConfig,
-  type PromptVariant,
-  type PromptLabConfig,
-  type PromptLabResult,
-  type PromptLabReport,
 } from '@domain/value-objects/PromptLabTypes'
 import type { Industry } from '@domain/value-objects/Industry'
 

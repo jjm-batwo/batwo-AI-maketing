@@ -1,11 +1,11 @@
 // tests/unit/application/services/PromptLabService.test.ts
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { PromptLabService } from '@application/services/PromptLabService'
 import type { PromptLabEvaluator, EvaluationResult } from '@infrastructure/prompt-lab/PromptLabEvaluator'
 import type { PromptLabMutator } from '@infrastructure/prompt-lab/PromptLabMutator'
 import type { PromptLabAIAdapter, GenerateWithVariantResult } from '@infrastructure/prompt-lab/PromptLabAIAdapter'
 import type { AdCopyVariant } from '@application/ports/IAIService'
-import { createPromptLabConfig, createDefaultVariant } from '@domain/value-objects/PromptLabTypes'
+import { createPromptLabConfig } from '@domain/value-objects/PromptLabTypes'
 import type { Industry } from '@domain/value-objects/Industry'
 
 function makeVariant(): AdCopyVariant {
