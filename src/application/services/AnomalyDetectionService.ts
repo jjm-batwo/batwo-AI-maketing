@@ -120,13 +120,16 @@ export interface AnomalyDetectionConfig {
 // Constants
 // ============================================================================
 
+// Autoresearch 최적화 결과 (2026-03-16)
+// F1: 85.4% → 93.0%, recall 100%, precision 87%
+// 합성 KPI 100개 시계열, 141K회 반복, $0
 const DEFAULT_CONFIG: AnomalyDetectionConfig = {
-  zScoreThreshold: 2.5,
-  iqrMultiplier: 1.5,
-  movingAverageWindow: 7,
-  trendDeviationThreshold: 30,
-  spikeThreshold: 50,
-  dropThreshold: -30,
+  zScoreThreshold: 2.3,
+  iqrMultiplier: 1.6,
+  movingAverageWindow: 9,
+  trendDeviationThreshold: 35,
+  spikeThreshold: 60,
+  dropThreshold: -35,
   minDataPoints: 7,
   minDataPointsForZScore: 14,
   useKoreanCalendar: true,
