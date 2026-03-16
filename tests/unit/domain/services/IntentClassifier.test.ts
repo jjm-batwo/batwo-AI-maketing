@@ -17,6 +17,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { IntentClassifier } from '@domain/services/IntentClassifier'
 import { ChatIntent } from '@domain/value-objects/ChatIntent'
 import { IntentClassificationResult } from '@domain/value-objects/IntentClassificationResult'
+import { DEFAULT_INTENT_CLASSIFIER_CONFIG } from '@domain/services/IntentClassifierConfig'
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -423,6 +424,35 @@ describe('IntentClassifier', () => {
 
       // Negation — should NOT classify as CAMPAIGN_CREATION
       expect(result.intent).not.toBe(ChatIntent.CAMPAIGN_CREATION)
+    })
+  })
+
+  // =========================================================================
+  // 9. Config injection
+  // =========================================================================
+  describe('config injection', () => {
+    it('should use default config when none provided', () => {
+      const classifier = IntentClassifier.create()
+      const result = classifier.classify('캠페인 만들어줘')
+      expect(result.intent).toBe(ChatIntent.CAMPAIGN_CREATION)
+    })
+
+    it('should use custom config when provided', () => {
+      const customConfig = {
+        ...DEFAULT_INTENT_CLASSIFIER_CONFIG,
+        keywordMap: {
+          ...DEFAULT_INTENT_CLASSIFIER_CONFIG.keywordMap,
+          [ChatIntent.CAMPAIGN_CREATION]: ['테스트키워드'],
+        },
+      }
+      const classifier = IntentClassifier.create(customConfig)
+      const result = classifier.classify('테스트키워드로 해줘')
+      expect(result.intent).toBe(ChatIntent.CAMPAIGN_CREATION)
+    })
+
+    it('should expose config via getConfig()', () => {
+      const classifier = IntentClassifier.create()
+      expect(classifier.getConfig().ambiguityThreshold).toBe(2.0)
     })
   })
 })

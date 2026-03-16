@@ -1,68 +1,9 @@
 import { ChatIntent } from '../value-objects/ChatIntent'
 import { IntentClassificationResult } from '../value-objects/IntentClassificationResult'
-
-/**
- * Keyword map: intent → array of keywords (lowercase).
- * Korean and English keywords for each intent category.
- */
-const KEYWORD_MAP: Record<Exclude<ChatIntent, ChatIntent.GENERAL>, string[]> = {
-  [ChatIntent.CAMPAIGN_CREATION]: ['캠페인', 'campaign', 'create', '만들', '생성', '시작'],
-  [ChatIntent.REPORT_QUERY]: ['리포트', 'report', '보고서', '보여줘', '보기', '조회'],
-  [ChatIntent.KPI_ANALYSIS]: [
-    'roas',
-    'cpc',
-    '성과',
-    '분석',
-    'performance',
-    'analyze',
-    '전환율',
-    '하락',
-    '급증',
-    '급감',
-    '이상',
-    '감지',
-    'ctr',
-  ],
-  [ChatIntent.PIXEL_SETUP]: ['픽셀', 'pixel', '설치', 'install'],
-  [ChatIntent.BUDGET_OPTIMIZATION]: ['예산', 'budget', '최적화', 'optimize'],
-  // 2026 Meta Trinity 기반 신규 인텐트
-  [ChatIntent.CREATIVE_FATIGUE]: ['피로도', '피로', '반복', '빈도', 'fatigue', '노출 빈도'],
-  [ChatIntent.LEARNING_PHASE]: [
-    '학습',
-    '학습단계',
-    '소진',
-    '예산이 안',
-    '노출이 안',
-    'learning phase',
-  ],
-  [ChatIntent.STRUCTURE_OPTIMIZATION]: ['구조', '통합', '파편', '세트 개수', '캠페인 수', '단순화'],
-  [ChatIntent.LEAD_QUALITY]: ['리드', '허수', '품질', '연락', '부재', 'lead quality'],
-  [ChatIntent.TRACKING_HEALTH]: ['capi', 'emq', '추적', '전환 추적', '이벤트', '트래킹'],
-}
-
-/**
- * Korean negation patterns that negate the preceding verb/action.
- */
-const NEGATION_PATTERNS = ['지 마', '지마', '하지', '안 ', '못 ', '없']
-
-/**
- * LLM context keyword map for fallback classification.
- * These are broader semantic patterns that indicate intent
- * when direct keywords are not matched.
- */
-const LLM_CONTEXT_MAP: Record<Exclude<ChatIntent, ChatIntent.GENERAL>, string[]> = {
-  [ChatIntent.CAMPAIGN_CREATION]: ['매출', '전략', '광고를 시작', '새로'],
-  [ChatIntent.REPORT_QUERY]: ['데이터', '살펴', '확인', '실적'],
-  [ChatIntent.KPI_ANALYSIS]: ['효율', '대비', '어떤가', '올리', '지표', '광고 효율'],
-  [ChatIntent.PIXEL_SETUP]: ['추적', '트래킹'],
-  [ChatIntent.BUDGET_OPTIMIZATION]: ['비용', '절감', '조정'],
-  // 2026 Meta Trinity 기반 신규 인텐트
-  [ChatIntent.CREATIVE_FATIGUE]: ['cpm 급등', '소재 교체', '같은 광고', '지겨'],
-  [ChatIntent.LEARNING_PHASE]: ['배달이 안', '돈이 안 써', '학습 중', '초기화'],
-  [ChatIntent.STRUCTURE_OPTIMIZATION]: ['너무 많', '합치', '정리', '분산'],
-  [ChatIntent.LEAD_QUALITY]: ['허수 고객', '가짜', '전화 안', '양질'],
-  [ChatIntent.TRACKING_HEALTH]: ['전환이 안 잡', '매칭', '이벤트 누락', '서버 이벤트'],
-}
+import {
+  IntentClassifierConfig,
+  DEFAULT_INTENT_CLASSIFIER_CONFIG,
+} from './IntentClassifierConfig'
 
 /**
  * IntentClassifier - Domain service for two-stage intent classification.
@@ -76,10 +17,14 @@ export class IntentClassifier {
   static readonly CONFIDENCE_MEDIUM = 0.5
   static readonly CONFIDENCE_LOW = 0.3
 
-  private constructor() {}
+  private constructor(private readonly config: IntentClassifierConfig) {}
 
-  static create(): IntentClassifier {
-    return new IntentClassifier()
+  static create(config?: IntentClassifierConfig): IntentClassifier {
+    return new IntentClassifier(config ?? DEFAULT_INTENT_CLASSIFIER_CONFIG)
+  }
+
+  getConfig(): IntentClassifierConfig {
+    return this.config
   }
 
   /**
@@ -103,7 +48,7 @@ export class IntentClassifier {
 
     // Check for negation — if the message negates an action keyword,
     // skip keyword classification for that intent
-    const hasNegation = NEGATION_PATTERNS.some((pattern) => normalized.includes(pattern))
+    const hasNegation = this.config.negationPatterns.some((pattern) => normalized.includes(pattern))
 
     // Stage 1: Keyword-based classification
     if (!hasNegation) {
@@ -128,7 +73,7 @@ export class IntentClassifier {
   ): IntentClassificationResult | null {
     const intentScores: Array<{ intent: ChatIntent; score: number; matches: number }> = []
 
-    for (const [intentStr, keywords] of Object.entries(KEYWORD_MAP)) {
+    for (const [intentStr, keywords] of Object.entries(this.config.keywordMap)) {
       const intent = intentStr as ChatIntent
       let intentScore = 0
       let intentMatches = 0
@@ -156,7 +101,7 @@ export class IntentClassifier {
     if (intentScores.length >= 2) {
       const topScore = intentScores[0].score
       const secondScore = intentScores[1].score
-      if (secondScore > 0 && topScore / secondScore < 2.0) {
+      if (secondScore > 0 && topScore / secondScore < this.config.ambiguityThreshold) {
         // Ambiguous - let LLM handle it
         return null
       }
@@ -172,7 +117,7 @@ export class IntentClassifier {
       confidence = 0.95
     } else {
       // Single keyword hit - use medium confidence
-      confidence = IntentClassifier.CONFIDENCE_MEDIUM + 0.1 // 0.6
+      confidence = this.config.singleMatchConfidence // 0.6
     }
 
     return IntentClassificationResult.create(bestIntent, confidence, 'KEYWORD', originalInput)
@@ -186,7 +131,7 @@ export class IntentClassifier {
     let bestIntent: ChatIntent | null = null
     let bestScore = 0
 
-    for (const [intentStr, contextKeywords] of Object.entries(LLM_CONTEXT_MAP)) {
+    for (const [intentStr, contextKeywords] of Object.entries(this.config.contextMap)) {
       const intent = intentStr as ChatIntent
       let score = 0
 
@@ -204,7 +149,7 @@ export class IntentClassifier {
 
     if (bestIntent !== null && bestScore > 0) {
       // LLM result — lower confidence than keyword matches
-      const confidence = Math.min(0.75, 0.4 + bestScore * 0.05)
+      const confidence = Math.min(0.75, 0.4 + bestScore * this.config.llmConfidenceCoeff)
       return IntentClassificationResult.create(bestIntent, confidence, 'LLM', originalInput)
     }
 
