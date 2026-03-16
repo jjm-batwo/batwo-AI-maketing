@@ -130,7 +130,7 @@ interface PromptVariant {
 ```
 입력: PromptLabConfig {
   industry: Industry
-  maxDurationMs: number        // 기본 3_600_000 (1시간), autoresearch의 TIME_BUDGET에 해당
+  maxDurationMs: number        // 사용자가 직접 지정 (제한 없음), autoresearch의 TIME_BUDGET에 해당
   maxTokenBudget: number       // 기본 500_000 (1시간 기준 ~600회 × ~800토큰)
   maxConsecutiveCrashes: number // 기본 3
   sampleInput: GenerateAdCopyInput & { industry: Industry }
@@ -237,8 +237,8 @@ interface PromptLabResult {
 
 | 장치 | 기본값 | 동작 |
 |------|--------|------|
-| 시간 상한 | 3,600,000ms (1시간) | 시간 소진 시 즉시 중단, 현재 best 반환 |
-| 토큰 상한 | 500,000 | 초과 시 즉시 중단, 현재 best 반환 |
+| 시간 상한 | 사용자 지정 (제한 없음) | 시간 소진 시 즉시 중단, 현재 best 반환 |
+| 토큰 상한 | 없음 (시간 기반 제어) | 시간만으로 제어 |
 | 연속 실패 제한 | 3 | 3연속 crash → 루프 중단 |
 
 ### 7.2 품질 안전장치
@@ -272,12 +272,12 @@ interface PromptLabResult {
 
 ## 9. 비용 예측
 
-| 항목 | 산업당 1시간 실험 |
+| 항목 | 산업당 1시간 기준 |
 |------|------------------|
-| 예상 반복 | ~600회 (6초/회 기준) |
+| 예상 반복 | ~100회 (36초/회, 의도적 간격) |
 | 반복당 토큰 | ~800 (생성 ~500 + 평가 ~300) |
-| 3회 중앙값 추가 (keep 시) | ~600 × 추정 keep 비율 20% × 추가 2회 × 300 = ~72K |
-| **합계** | **~550K 토큰** |
-| **비용 (gpt-4o-mini 기준)** | **~$1.20** |
+| 3회 중앙값 추가 (keep 시) | ~100 × 추정 keep 비율 20% × 추가 2회 × 300 = ~12K |
+| **합계** | **~92K 토큰** |
+| **비용 (gpt-4o-mini 기준)** | **~$0.20/시간** |
 
-7개 산업 전부 1시간씩 돌리면 약 **$8.40 (~11,000원)**.
+8시간 수면 중 돌리면: ~800회, ~$1.60 (~2,100원).

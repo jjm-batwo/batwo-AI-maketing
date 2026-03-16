@@ -86,15 +86,15 @@ describe('PromptLabTypes', () => {
         },
       })
       expect(config.maxDurationMs).toBe(3_600_000)
-      expect(config.maxTokenBudget).toBe(500_000)
       expect(config.maxConsecutiveCrashes).toBe(3)
+      expect(config.iterationDelayMs).toBe(36_000)
     })
 
     it('should allow overriding defaults', () => {
       const config = createPromptLabConfig({
         industry: 'beauty' as Industry,
         maxDurationMs: 1_800_000, // 30분
-        maxTokenBudget: 200_000,
+        iterationDelayMs: 18_000, // 18초 간격
         sampleInput: {
           productName: '뷰티 상품',
           productDescription: '뷰티 설명',
@@ -143,9 +143,9 @@ export type PromptLabSampleInput = GenerateAdCopyInput & { industry: Industry }
 
 export interface PromptLabConfig {
   industry: Industry
-  maxDurationMs: number        // 기본 3_600_000 (1시간)
-  maxTokenBudget: number       // 기본 500_000
+  maxDurationMs: number        // 사용자 지정 (제한 없음), 필수값
   maxConsecutiveCrashes: number
+  iterationDelayMs: number     // 반복 간 대기 (기본 36_000 → 시간당 ~100회)
   sampleInput: PromptLabSampleInput
 }
 
@@ -197,9 +197,9 @@ export function createPromptLabConfig(
     Partial<Omit<PromptLabConfig, 'industry' | 'sampleInput'>>,
 ): PromptLabConfig {
   return {
-    maxDurationMs: 3_600_000,   // 1시간
-    maxTokenBudget: 500_000,
+    maxDurationMs: 3_600_000,      // 기본 1시간 (사용자가 자유롭게 변경)
     maxConsecutiveCrashes: 3,
+    iterationDelayMs: 36_000,      // 36초 간격 → 시간당 ~100회
     ...partial,
   }
 }
@@ -1346,14 +1346,16 @@ describe('PromptLabService', () => {
     expect(report.improvementFromBaseline).toBeGreaterThanOrEqual(0)
   })
 
-  it('should stop when token budget exceeded', async () => {
-    const evaluator = makeMockEvaluator([50, 60, 70, 80])
+  it('should stop when time runs out', async () => {
+    const evaluator = makeMockEvaluator([50, 60, 70, 80, 75, 85])
     service = new PromptLabService(makeMockAdapter(), evaluator, makeMockMutator())
 
-    const limitedConfig = { ...config, maxDurationMs: 60_000, maxTokenBudget: 10_000 }
-    const report = await service.run(limitedConfig)
+    // 50ms 제한, delay 0 → 빠르게 여러 번 돌고 시간 초과로 종료
+    const shortConfig = { ...config, maxDurationMs: 50, iterationDelayMs: 0 }
+    const report = await service.run(shortConfig)
 
-    expect(report.totalTokensUsed).toBeLessThanOrEqual(15_000)
+    expect(report.totalDurationMs).toBeLessThan(200) // 약간의 오버헤드 허용
+    expect(report.results.length).toBeGreaterThanOrEqual(2) // baseline + 1 이상
   })
 
   it('should stop on 3 consecutive crashes', async () => {
@@ -1420,7 +1422,7 @@ export class PromptLabService {
 
   async run(config: PromptLabConfig): Promise<PromptLabReport> {
     const results: PromptLabResult[] = []
-    let totalTokensUsed = 0
+    let totalTokensUsed = 0 // 추적만 하고 제한은 안 함
     let consecutiveCrashes = 0
 
     // 1. Baseline (= autoresearch 첫 실행)
@@ -1436,10 +1438,11 @@ export class PromptLabService {
 
     // 2. LOOP (= autoresearch LOOP FOREVER, 시간 소진까지)
     const startTime = Date.now()
+    const delay = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
     while (true) {
       const elapsed = Date.now() - startTime
       if (elapsed >= config.maxDurationMs) break
-      if (totalTokensUsed >= config.maxTokenBudget) break
       if (consecutiveCrashes >= config.maxConsecutiveCrashes) break
 
       const mutated = this.mutator.mutate(bestVariant)
@@ -1487,6 +1490,11 @@ export class PromptLabService {
       }
 
       results.push(result)
+
+      // 시간당 ~100회 페이스 유지 (API rate limit 보호 + 비용 제어)
+      if (config.iterationDelayMs > 0) {
+        await delay(config.iterationDelayMs)
+      }
     }
 
     return {
@@ -1683,8 +1691,8 @@ const RequestSchema = z.object({
     keywords: z.array(z.string()).optional(),
     industry: z.string(),
   }),
-  maxDurationMs: z.number().min(60_000).max(14_400_000).optional(), // 1분~4시간
-  maxTokenBudget: z.number().min(5_000).max(2_000_000).optional(),
+  maxDurationMs: z.number().min(60_000), // 최소 1분, 상한 없음 (필수값)
+  iterationDelayMs: z.number().min(0).optional(), // 기본 36초
   applyBest: z.boolean().optional(),
 })
 
@@ -1697,6 +1705,7 @@ async function handler(request: Request) {
       industry: parsed.industry,
       sampleInput: { ...parsed.sampleInput, industry: parsed.industry },
       maxDurationMs: parsed.maxDurationMs,
+      iterationDelayMs: parsed.iterationDelayMs,
       maxTokenBudget: parsed.maxTokenBudget,
     })
 
