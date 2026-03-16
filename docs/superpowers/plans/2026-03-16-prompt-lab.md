@@ -85,16 +85,16 @@ describe('PromptLabTypes', () => {
           industry: 'ecommerce' as Industry,
         },
       })
-      expect(config.maxIterations).toBe(10)
-      expect(config.maxTokenBudget).toBe(50_000)
+      expect(config.maxDurationMs).toBe(3_600_000)
+      expect(config.maxTokenBudget).toBe(500_000)
       expect(config.maxConsecutiveCrashes).toBe(3)
     })
 
     it('should allow overriding defaults', () => {
       const config = createPromptLabConfig({
         industry: 'beauty' as Industry,
-        maxIterations: 5,
-        maxTokenBudget: 20_000,
+        maxDurationMs: 1_800_000, // 30분
+        maxTokenBudget: 200_000,
         sampleInput: {
           productName: '뷰티 상품',
           productDescription: '뷰티 설명',
@@ -104,8 +104,8 @@ describe('PromptLabTypes', () => {
           industry: 'beauty' as Industry,
         },
       })
-      expect(config.maxIterations).toBe(5)
-      expect(config.maxTokenBudget).toBe(20_000)
+      expect(config.maxDurationMs).toBe(1_800_000)
+      expect(config.maxTokenBudget).toBe(200_000)
     })
   })
 })
@@ -143,8 +143,8 @@ export type PromptLabSampleInput = GenerateAdCopyInput & { industry: Industry }
 
 export interface PromptLabConfig {
   industry: Industry
-  maxIterations: number
-  maxTokenBudget: number
+  maxDurationMs: number        // 기본 3_600_000 (1시간)
+  maxTokenBudget: number       // 기본 500_000
   maxConsecutiveCrashes: number
   sampleInput: PromptLabSampleInput
 }
@@ -173,6 +173,8 @@ export interface PromptLabReport {
   baselineScore: number
   results: PromptLabResult[]
   totalTokensUsed: number
+  totalDurationMs: number
+  totalIterations: number
   improvementFromBaseline: number
 }
 
@@ -195,8 +197,8 @@ export function createPromptLabConfig(
     Partial<Omit<PromptLabConfig, 'industry' | 'sampleInput'>>,
 ): PromptLabConfig {
   return {
-    maxIterations: 10,
-    maxTokenBudget: 50_000,
+    maxDurationMs: 3_600_000,   // 1시간
+    maxTokenBudget: 500_000,
     maxConsecutiveCrashes: 3,
     ...partial,
   }
@@ -1323,7 +1325,7 @@ describe('PromptLabService', () => {
 
   const config = createPromptLabConfig({
     industry: 'ecommerce' as Industry,
-    maxIterations: 3,
+    maxDurationMs: 100, // 100ms — 테스트용 짧은 시간
     sampleInput: {
       productName: '테스트', productDescription: '설명',
       targetAudience: '20대', tone: 'casual' as const,
@@ -1331,30 +1333,27 @@ describe('PromptLabService', () => {
     },
   })
 
-  it('should run baseline first then iterate', async () => {
-    // baseline=50, then 60(keep), 55(discard), 70(keep)
-    const evaluator = makeMockEvaluator([50, 60, 55, 70])
+  it('should run baseline first then iterate until time runs out', async () => {
+    // baseline=50, then improving scores
+    const evaluator = makeMockEvaluator([50, 60, 55, 70, 65, 72])
     service = new PromptLabService(makeMockAdapter(), evaluator, makeMockMutator())
 
     const report = await service.run(config)
 
     expect(report.baselineScore).toBe(50)
-    expect(report.bestScore).toBe(70)
-    expect(report.results).toHaveLength(4) // baseline + 3 iterations
-    expect(report.results.filter((r) => r.status === 'keep')).toHaveLength(3) // baseline + 2 improvements
-    expect(report.results.filter((r) => r.status === 'discard')).toHaveLength(1)
-    expect(report.improvementFromBaseline).toBeCloseTo(40) // (70-50)/50 * 100
+    expect(report.bestScore).toBeGreaterThanOrEqual(50)
+    expect(report.results.length).toBeGreaterThanOrEqual(2) // baseline + at least 1
+    expect(report.improvementFromBaseline).toBeGreaterThanOrEqual(0)
   })
 
   it('should stop when token budget exceeded', async () => {
     const evaluator = makeMockEvaluator([50, 60, 70, 80])
     service = new PromptLabService(makeMockAdapter(), evaluator, makeMockMutator())
 
-    const limitedConfig = { ...config, maxIterations: 100, maxTokenBudget: 10_000 }
+    const limitedConfig = { ...config, maxDurationMs: 60_000, maxTokenBudget: 10_000 }
     const report = await service.run(limitedConfig)
 
-    expect(report.totalTokensUsed).toBeLessThanOrEqual(15_000) // slight overshoot OK
-    expect(report.results.length).toBeLessThan(100)
+    expect(report.totalTokensUsed).toBeLessThanOrEqual(15_000)
   })
 
   it('should stop on 3 consecutive crashes', async () => {
@@ -1369,7 +1368,7 @@ describe('PromptLabService', () => {
     })
 
     service = new PromptLabService(adapter, evaluator, makeMockMutator())
-    const report = await service.run({ ...config, maxIterations: 10 })
+    const report = await service.run({ ...config, maxDurationMs: 60_000 })
 
     // Should stop after 3 consecutive crashes
     const crashes = report.results.filter((r) => r.status === 'crash')
@@ -1381,7 +1380,7 @@ describe('PromptLabService', () => {
     const evaluator = makeMockEvaluator([50, 35, 60])
     service = new PromptLabService(makeMockAdapter(), evaluator, makeMockMutator())
 
-    const report = await service.run({ ...config, maxIterations: 2 })
+    const report = await service.run({ ...config, maxDurationMs: 60_000 })
 
     const discarded = report.results.find((r) => r.score === 35)
     expect(discarded?.status).toBe('discard')
@@ -1435,8 +1434,11 @@ export class PromptLabService {
     let bestCopy = baselineResult.generatedCopy
     const baselineScore = baselineResult.score
 
-    // 2. LOOP (= autoresearch LOOP FOREVER)
-    for (let i = 0; i < config.maxIterations; i++) {
+    // 2. LOOP (= autoresearch LOOP FOREVER, 시간 소진까지)
+    const startTime = Date.now()
+    while (true) {
+      const elapsed = Date.now() - startTime
+      if (elapsed >= config.maxDurationMs) break
       if (totalTokensUsed >= config.maxTokenBudget) break
       if (consecutiveCrashes >= config.maxConsecutiveCrashes) break
 
@@ -1493,6 +1495,8 @@ export class PromptLabService {
       baselineScore,
       results,
       totalTokensUsed,
+      totalDurationMs: Date.now() - startTime,
+      totalIterations: results.length - 1, // baseline 제외
       improvementFromBaseline:
         baselineScore > 0
           ? ((bestScore - baselineScore) / baselineScore) * 100
@@ -1679,8 +1683,8 @@ const RequestSchema = z.object({
     keywords: z.array(z.string()).optional(),
     industry: z.string(),
   }),
-  maxIterations: z.number().min(1).max(50).optional(),
-  maxTokenBudget: z.number().min(5000).max(200000).optional(),
+  maxDurationMs: z.number().min(60_000).max(14_400_000).optional(), // 1분~4시간
+  maxTokenBudget: z.number().min(5_000).max(2_000_000).optional(),
   applyBest: z.boolean().optional(),
 })
 
@@ -1692,7 +1696,7 @@ async function handler(request: Request) {
     const config = createPromptLabConfig({
       industry: parsed.industry,
       sampleInput: { ...parsed.sampleInput, industry: parsed.industry },
-      maxIterations: parsed.maxIterations,
+      maxDurationMs: parsed.maxDurationMs,
       maxTokenBudget: parsed.maxTokenBudget,
     })
 

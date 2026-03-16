@@ -130,15 +130,16 @@ interface PromptVariant {
 ```
 입력: PromptLabConfig {
   industry: Industry
-  maxIterations: number        // 기본 10
-  maxTokenBudget: number       // 기본 50,000
+  maxDurationMs: number        // 기본 3_600_000 (1시간), autoresearch의 TIME_BUDGET에 해당
+  maxTokenBudget: number       // 기본 500_000 (1시간 기준 ~600회 × ~800토큰)
+  maxConsecutiveCrashes: number // 기본 3
   sampleInput: GenerateAdCopyInput & { industry: Industry }
   // NOTE: 기존 EnhancedAdCopyInput(adCopyGeneration.ts)에 industry 필드 있음.
   // PromptLabConfig.industry와 sampleInput.industry는 동일해야 함.
 }
 
 1. baseline 실행 (현재 기본 프롬프트 그대로)
-2. LOOP (maxIterations번):
+2. LOOP (시간이 남는 동안 계속, autoresearch의 LOOP FOREVER와 동일):
    a. 현재 bestVariant 확인
    b. PromptLabMutator가 1개 축 변형 → 새 PromptVariant
    c. 변형된 프롬프트로 AIService.generateAdCopy() 실행
@@ -161,6 +162,8 @@ interface PromptVariant {
 
 | autoresearch | PromptLabService |
 |---|---|
+| `TIME_BUDGET = 300` (5분) | `maxDurationMs = 3_600_000` (1시간) |
+| `LOOP FOREVER` (시간 소진까지) | `while (elapsed < maxDurationMs)` |
 | `git commit` | `PromptVariant` 객체 생성 |
 | `uv run train.py > run.log` | `AIService.generateAdCopy(variant)` |
 | `grep "^val_bpb:" run.log` | `PromptLabEvaluator.evaluate(result)` |
@@ -234,8 +237,8 @@ interface PromptLabResult {
 
 | 장치 | 기본값 | 동작 |
 |------|--------|------|
-| 토큰 상한 | 50,000 | 초과 시 즉시 중단, 현재 best 반환 |
-| 반복 상한 | 10 | 무한 루프 방지 |
+| 시간 상한 | 3,600,000ms (1시간) | 시간 소진 시 즉시 중단, 현재 best 반환 |
+| 토큰 상한 | 500,000 | 초과 시 즉시 중단, 현재 best 반환 |
 | 연속 실패 제한 | 3 | 3연속 crash → 루프 중단 |
 
 ### 7.2 품질 안전장치
@@ -269,12 +272,12 @@ interface PromptLabResult {
 
 ## 9. 비용 예측
 
-| 항목 | 산업당 1회 실험 |
-|------|----------------|
-| baseline 1회 (생성 + 평가) | ~3K 토큰 |
-| 변형 10회 × (생성 ~2K + 평가 1회 ~1K) | ~30K 토큰 |
-| 3회 중앙값 추가 호출 (score > best인 경우만, 추정 3~5회 × 추가 2K) | ~6-10K 토큰 |
-| **합계** | **~39-43K 토큰** |
-| **비용 (gpt-4o-mini 기준)** | **~$0.02** |
+| 항목 | 산업당 1시간 실험 |
+|------|------------------|
+| 예상 반복 | ~600회 (6초/회 기준) |
+| 반복당 토큰 | ~800 (생성 ~500 + 평가 ~300) |
+| 3회 중앙값 추가 (keep 시) | ~600 × 추정 keep 비율 20% × 추가 2회 × 300 = ~72K |
+| **합계** | **~550K 토큰** |
+| **비용 (gpt-4o-mini 기준)** | **~$1.20** |
 
-7개 산업 전부 돌려도 약 **$0.14**.
+7개 산업 전부 1시간씩 돌리면 약 **$8.40 (~11,000원)**.
