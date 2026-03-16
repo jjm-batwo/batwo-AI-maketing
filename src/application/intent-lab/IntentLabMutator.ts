@@ -1,6 +1,8 @@
 // src/application/intent-lab/IntentLabMutator.ts
 import type { IntentClassifierConfig } from '@domain/services/IntentClassifierConfig'
 import { ChatIntent } from '@domain/value-objects/ChatIntent'
+import { IntentClassifier } from '@domain/services/IntentClassifier'
+import { TRAIN_EVAL_SET, evaluate } from './IntentLabEvalSet'
 
 type NonGeneralIntent = Exclude<ChatIntent, ChatIntent.GENERAL>
 
@@ -31,11 +33,20 @@ const CANDIDATE_CONTEXT_PATTERNS: Record<NonGeneralIntent, string[]> = {
   [ChatIntent.TRACKING_HEALTH]: ['어트리뷰션', '쿠키', '전환값'],
 }
 
+// Stop words to exclude when extracting keywords from failures
+const STOP_WORDS = new Set([
+  '이', '그', '저', '것', '수', '등', '좀', '더', '도', '를', '을', '에', '의', '가', '와', '과',
+  '는', '은', '에서', '으로', '로', '하고', '하면', '해야', '해줘', '해봐', '인데', '인가',
+  '너무', '많이', '아직', '안', '못', '왜', '어떻게', '뭐', '뭔가', '좋', '싶', '같',
+])
+
 type MutationAxis =
   | 'addKeyword'
   | 'removeKeyword'
   | 'addContext'
   | 'removeContext'
+  | 'addKeywordFromFailures'
+  | 'addContextFromFailures'
   | 'ambiguityThreshold'
   | 'singleMatchConfidence'
   | 'llmConfidenceCoeff'
@@ -60,6 +71,9 @@ export class IntentLabMutator {
     'removeKeyword',
     'addContext',
     'removeContext',
+    'addKeywordFromFailures',
+    'addKeywordFromFailures',  // 2x weight — 실패 기반이 더 유용
+    'addContextFromFailures',
     'ambiguityThreshold',
     'singleMatchConfidence',
     'llmConfidenceCoeff',
@@ -107,6 +121,40 @@ export class IntentLabMutator {
         return { config, description: `removeContext ${intent} -= "${removed}"` }
       }
 
+      case 'addKeywordFromFailures': {
+        const failures = this.getFailures(config)
+        if (failures.length === 0) return this.mutate(base)
+        const failure = pickRandom(failures)
+        const words = this.extractWords(failure.input)
+        const existing = config.keywordMap[failure.expected as NonGeneralIntent] ?? []
+        const candidates = words.filter((w) => !existing.includes(w) && w.length >= 2)
+        if (candidates.length === 0) return this.mutate(base)
+        const word = pickRandom(candidates)
+        config.keywordMap[failure.expected as NonGeneralIntent] = [...existing, word]
+        return { config, description: `addKeywordFromFailure ${failure.expected} += "${word}" (from: "${failure.input.slice(0, 20)}")` }
+      }
+
+      case 'addContextFromFailures': {
+        const failures = this.getFailures(config)
+        if (failures.length === 0) return this.mutate(base)
+        const failure = pickRandom(failures)
+        // 입력 문장에서 2~4글자 서브스트링 추출
+        const input = failure.input.toLowerCase()
+        const substrings: string[] = []
+        for (let len = 2; len <= Math.min(4, input.length); len++) {
+          for (let i = 0; i <= input.length - len; i++) {
+            const sub = input.slice(i, i + len).trim()
+            if (sub.length >= 2 && !STOP_WORDS.has(sub)) substrings.push(sub)
+          }
+        }
+        const existing = config.contextMap[failure.expected as NonGeneralIntent] ?? []
+        const candidates = substrings.filter((s) => !existing.includes(s))
+        if (candidates.length === 0) return this.mutate(base)
+        const pattern = pickRandom(candidates)
+        config.contextMap[failure.expected as NonGeneralIntent] = [...existing, pattern]
+        return { config, description: `addContextFromFailure ${failure.expected} += "${pattern}" (from: "${failure.input.slice(0, 20)}")` }
+      }
+
       case 'ambiguityThreshold': {
         const delta = pickRandom([-0.3, -0.2, -0.1, 0.1, 0.2, 0.3])
         config.ambiguityThreshold = Math.max(
@@ -140,5 +188,18 @@ export class IntentLabMutator {
         return { config, description: `llmConfidenceCoeff ${base.llmConfidenceCoeff} → ${config.llmConfidenceCoeff}` }
       }
     }
+  }
+
+  private getFailures(config: IntentClassifierConfig): { input: string; expected: ChatIntent }[] {
+    const classifier = IntentClassifier.create(config)
+    const result = evaluate(classifier, TRAIN_EVAL_SET)
+    return result.failures
+  }
+
+  private extractWords(input: string): string[] {
+    return input
+      .toLowerCase()
+      .split(/[\s,!?.]+/)
+      .filter((w) => w.length >= 2 && !STOP_WORDS.has(w))
   }
 }
