@@ -14,6 +14,8 @@ import { createPauseCampaignTool } from './mutations/pauseCampaign.tool'
 import { createResumeCampaignTool } from './mutations/resumeCampaign.tool'
 import { createDeleteCampaignTool } from './mutations/deleteCampaign.tool'
 import { createGenerateAdCopyTool } from './mutations/generateAdCopy.tool'
+// Knowledge base tools
+import { createSearchKnowledgeBaseTool } from './queries/searchKnowledgeBase.tool'
 // Meta tools
 import { createAskClarificationTool } from './meta/askClarification.tool'
 import { createFreeformResponseTool } from './meta/freeformResponse.tool'
@@ -32,6 +34,8 @@ import type { UpdateCampaignUseCase } from '@application/use-cases/campaign/Upda
 import type { PauseCampaignUseCase } from '@application/use-cases/campaign/PauseCampaignUseCase'
 import type { ResumeCampaignUseCase } from '@application/use-cases/campaign/ResumeCampaignUseCase'
 import type { DeleteCampaignUseCase } from '@application/use-cases/campaign/DeleteCampaignUseCase'
+import type { IEmbeddingService } from '@application/ports/IEmbeddingService'
+import type { IKnowledgeBaseRepository } from '@application/ports/IKnowledgeBaseRepository'
 
 export interface RegisterAllToolsDeps {
   // Repositories
@@ -47,6 +51,9 @@ export interface RegisterAllToolsDeps {
   pauseCampaignUseCase: PauseCampaignUseCase
   resumeCampaignUseCase: ResumeCampaignUseCase
   deleteCampaignUseCase: DeleteCampaignUseCase
+  // RAG (optional — graceful degradation if not provided)
+  embeddingService?: IEmbeddingService
+  knowledgeBaseRepository?: IKnowledgeBaseRepository
 }
 
 export function registerAllTools(deps: RegisterAllToolsDeps): IToolRegistry {
@@ -72,6 +79,11 @@ export function registerAllTools(deps: RegisterAllToolsDeps): IToolRegistry {
   registry.register(createResumeCampaignTool(deps.resumeCampaignUseCase, deps.campaignRepository))
   registry.register(createDeleteCampaignTool(deps.deleteCampaignUseCase, deps.campaignRepository))
   registry.register(createGenerateAdCopyTool())
+
+  // Knowledge base tools (conditional)
+  if (deps.embeddingService && deps.knowledgeBaseRepository) {
+    registry.register(createSearchKnowledgeBaseTool(deps.embeddingService, deps.knowledgeBaseRepository))
+  }
 
   // Meta tools (4)
   registry.register(createAskClarificationTool())

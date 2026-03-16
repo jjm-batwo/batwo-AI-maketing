@@ -90,6 +90,9 @@ export function registerAuthModule(container: Container): void {
       pauseCampaignUseCase: container.resolve(DI_TOKENS.PauseCampaignUseCase),
       resumeCampaignUseCase: container.resolve(DI_TOKENS.ResumeCampaignUseCase),
       deleteCampaignUseCase: container.resolve(DI_TOKENS.DeleteCampaignUseCase),
+      // RAG
+      embeddingService: container.resolve(DI_TOKENS.EmbeddingService),
+      knowledgeBaseRepository: container.resolve(DI_TOKENS.KnowledgeBaseRepository),
     })
   )
 
