@@ -78,7 +78,8 @@ portfolio-page.png
 # agent internal state (workflows/skills는 IDE가 스캔해야 하므로 제외하지 않음)
 # .agent/ 전체 대신 하위만 선택적 무시
 .sisyphus/
-.claude/
+.claude/*
+!.claude/agents/
 .openchrome/
 docs/meta-app-review/recordings/
 
