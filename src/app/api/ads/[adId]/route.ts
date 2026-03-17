@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { container, DI_TOKENS } from '@/lib/di/container'
 import type { IMetaAdsService } from '@application/ports/IMetaAdsService'
+import type { UpdateAdUseCase } from '@application/use-cases/ad/UpdateAdUseCase'
 import { getMetaAccountForUser } from '@/lib/meta/metaAccountHelper'
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ adId: string }> }) {
@@ -50,6 +51,17 @@ export async function PATCH(
     await metaAdsService.updateAd(decryptedToken, adId, {
       name: body.name,
       status: body.status,
+    })
+
+    // 로컬 DB도 동기화 (dual-write)
+    const updateAdUseCase = container.resolve<UpdateAdUseCase>(DI_TOKENS.UpdateAdUseCase)
+    await updateAdUseCase.execute({
+      id: adId,
+      name: body.name,
+      status: body.status,
+    }).catch((err) => {
+      // 로컬 DB 업데이트 실패는 Meta API 성공을 롤백하지 않음
+      console.warn('Local DB ad update failed (non-blocking):', err)
     })
 
     return NextResponse.json({ success: true })
