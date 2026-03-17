@@ -1,0 +1,1 @@
+T10-3: AdSet insights N+1 제거 — Promise.allSettled 팬아웃을 벌크 메서드로 전환. 파일: src/app/api/campaigns/[id]/adsets-with-insights/route.ts

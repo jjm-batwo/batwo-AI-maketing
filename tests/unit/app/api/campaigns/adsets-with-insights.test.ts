@@ -46,7 +46,7 @@ function createRequest() {
 describe('GET /api/campaigns/[id]/adsets-with-insights', () => {
   const mockMetaAdsService = {
     listAdSets: vi.fn(),
-    getAdSetInsights: vi.fn(),
+    getAccountInsights: vi.fn(),
   }
 
   beforeEach(() => {
@@ -65,6 +65,7 @@ describe('GET /api/campaigns/[id]/adsets-with-insights', () => {
   it('should_use_meta_campaign_id_instead_of_internal_campaign_id', async () => {
     mockFindCampaign.mockResolvedValue({ metaCampaignId: '120000000000001' } as never)
     mockMetaAdsService.listAdSets.mockResolvedValue([])
+    mockMetaAdsService.getAccountInsights.mockResolvedValue(new Map())
 
     await GET(createRequest(), { params: Promise.resolve({ id: 'cmp_db_1' }) })
 
@@ -80,5 +81,53 @@ describe('GET /api/campaigns/[id]/adsets-with-insights', () => {
     expect(response.status).toBe(200)
     expect(body).toEqual({ adSets: [] })
     expect(mockMetaAdsService.listAdSets).not.toHaveBeenCalled()
+  })
+
+  it('should_use_bulk_getAccountInsights_with_adset_level', async () => {
+    mockFindCampaign.mockResolvedValue({ metaCampaignId: '120000000000001' } as never)
+    mockMetaAdsService.listAdSets.mockResolvedValue([
+      { id: 'adset_1', name: 'AdSet 1', status: 'ACTIVE', billingEvent: 'IMPRESSIONS', optimizationGoal: 'REACH' },
+      { id: 'adset_2', name: 'AdSet 2', status: 'PAUSED', billingEvent: 'IMPRESSIONS', optimizationGoal: 'REACH' },
+    ])
+    mockMetaAdsService.getAccountInsights.mockResolvedValue(new Map([
+      ['adset_1', {
+        campaignId: '120000000000001',
+        impressions: 1000,
+        reach: 800,
+        clicks: 50,
+        linkClicks: 30,
+        spend: 25,
+        conversions: 5,
+        revenue: 100,
+        dateStart: '2026-03-10',
+        dateStop: '2026-03-17',
+      }],
+    ]))
+
+    const response = await GET(createRequest(), { params: Promise.resolve({ id: 'cmp_db_1' }) })
+    const body = await response.json()
+
+    expect(mockMetaAdsService.getAccountInsights).toHaveBeenCalledWith(
+      'encrypted-token',
+      'act_123',
+      { level: 'adset', datePreset: 'last_7d', campaignIds: ['120000000000001'] }
+    )
+
+    // adset_1 has insights from bulk response
+    expect(body.adSets[0].insights.impressions).toBe(1000)
+
+    // adset_2 falls back to empty insights
+    expect(body.adSets[1].insights).toEqual({
+      campaignId: '120000000000001',
+      impressions: 0,
+      reach: 0,
+      clicks: 0,
+      linkClicks: 0,
+      spend: 0,
+      conversions: 0,
+      revenue: 0,
+      dateStart: '',
+      dateStop: '',
+    })
   })
 })
