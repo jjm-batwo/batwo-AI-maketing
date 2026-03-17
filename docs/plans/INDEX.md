@@ -9,6 +9,7 @@
 
 | 계획 | 생성일 | 요약 | 규모 |
 |------|--------|------|------|
+| [intent-classifier-llm-fallback](PLAN_intent-classifier-llm-fallback.md) | 2026-03-17 | IntentClassifier LLM fallback (86.7%→95%+) | 소형 |
 | [meta-batch-api](PLAN_meta-batch-api.md) | 2026-03-13 | Meta API N+1 최적화 (71회→4회) | 중형 |
 | [rag-2026-algorithm-alignment](PLAN_rag-2026-algorithm-alignment.md) | 2026-03-09 | Meta Trinity 기반 RAG 정렬 | 대형 |
 | [conversational-ai-pivot](PLAN_conversational-ai-pivot.md) | 2026-02-06 | 대화형 AI 에이전트 전환 | 대형 |

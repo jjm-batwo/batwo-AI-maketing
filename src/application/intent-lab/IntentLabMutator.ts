@@ -2,7 +2,7 @@
 import type { IntentClassifierConfig } from '@domain/services/IntentClassifierConfig'
 import { ChatIntent } from '@domain/value-objects/ChatIntent'
 import { IntentClassifier } from '@domain/services/IntentClassifier'
-import { TRAIN_EVAL_SET, evaluate } from './IntentLabEvalSet'
+import { TRAIN_EVAL_SET, evaluate, type EvalCase } from './IntentLabEvalSet'
 
 type NonGeneralIntent = Exclude<ChatIntent, ChatIntent.GENERAL>
 
@@ -66,6 +66,12 @@ export interface MutationResult {
 }
 
 export class IntentLabMutator {
+  private trainSet: readonly EvalCase[] = TRAIN_EVAL_SET
+
+  setTrainSet(trainSet: readonly EvalCase[]): void {
+    this.trainSet = trainSet
+  }
+
   private axes: MutationAxis[] = [
     'addKeyword',
     'removeKeyword',
@@ -192,7 +198,7 @@ export class IntentLabMutator {
 
   private getFailures(config: IntentClassifierConfig): { input: string; expected: ChatIntent }[] {
     const classifier = IntentClassifier.create(config)
-    const result = evaluate(classifier, TRAIN_EVAL_SET)
+    const result = evaluate(classifier, this.trainSet)
     return result.failures
   }
 

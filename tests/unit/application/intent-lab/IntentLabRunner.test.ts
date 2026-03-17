@@ -51,4 +51,24 @@ describe('IntentLabRunner', () => {
     // Should run many iterations in 1 second (no API calls)
     expect(report.totalIterations).toBeGreaterThan(10)
   })
+
+  it('should include gap report with synthetic vs real accuracy', async () => {
+    const runner = new IntentLabRunner()
+    const report = await runner.run({ maxDurationMs: 100, iterationDelayMs: 0 })
+
+    expect(report.gapReport).toBeDefined()
+    expect(report.gapReport.syntheticAccuracy).toBeGreaterThanOrEqual(0)
+    expect(report.gapReport.realAccuracy).toBeGreaterThanOrEqual(0)
+    expect(report.gapReport.combinedAccuracy).toBeGreaterThanOrEqual(0)
+    expect(typeof report.gapReport.gap).toBe('number')
+    expect(report.gapReport.realByDifficulty).toBeDefined()
+  })
+
+  it('should accept combined train set mode', async () => {
+    const runner = new IntentLabRunner()
+    const report = await runner.run({ maxDurationMs: 100, iterationDelayMs: 0, trainSetMode: 'combined' })
+
+    expect(report.baselineAccuracy).toBeGreaterThan(0)
+    expect(report.gapReport).toBeDefined()
+  })
 })

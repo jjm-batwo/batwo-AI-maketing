@@ -4,6 +4,8 @@ import {
   TRAIN_EVAL_SET,
   VALIDATION_EVAL_SET,
   FULL_EVAL_SET,
+  REAL_EVAL_SET,
+  COMBINED_EVAL_SET,
   evaluate,
 } from '@application/intent-lab/IntentLabEvalSet'
 import { IntentClassifier } from '@domain/services/IntentClassifier'
@@ -35,6 +37,49 @@ describe('IntentLabEvalSet', () => {
     expect(difficulties).toContain('hard')
   })
 
+  describe('REAL_EVAL_SET', () => {
+    it('should have 60 real-pattern cases', () => {
+      expect(REAL_EVAL_SET.length).toBe(60)
+    })
+
+    it('should all have source=real', () => {
+      for (const c of REAL_EVAL_SET) {
+        expect(c.source).toBe('real')
+      }
+    })
+
+    it('should cover all 11 intents', () => {
+      const intents = new Set(REAL_EVAL_SET.map((c) => c.expected))
+      expect(intents.size).toBe(11)
+    })
+
+    it('should have 3 difficulty levels', () => {
+      const difficulties = new Set(REAL_EVAL_SET.map((c) => c.difficulty))
+      expect(difficulties).toContain('easy')
+      expect(difficulties).toContain('medium')
+      expect(difficulties).toContain('hard')
+    })
+  })
+
+  describe('COMBINED_EVAL_SET', () => {
+    it('should have 160 combined cases', () => {
+      expect(COMBINED_EVAL_SET.length).toBe(160)
+    })
+
+    it('should contain both synthetic and real sources', () => {
+      const sources = new Set(COMBINED_EVAL_SET.map((c) => c.source))
+      expect(sources).toContain('synthetic')
+      expect(sources).toContain('real')
+    })
+
+    it('should have 100 synthetic + 60 real', () => {
+      const synthetic = COMBINED_EVAL_SET.filter((c) => c.source === 'synthetic')
+      const real = COMBINED_EVAL_SET.filter((c) => c.source === 'real')
+      expect(synthetic.length).toBe(100)
+      expect(real.length).toBe(60)
+    })
+  })
+
   describe('evaluate()', () => {
     it('should return accuracy between 0 and 1', () => {
       const classifier = IntentClassifier.create()
@@ -55,6 +100,13 @@ describe('IntentLabEvalSet', () => {
       expect(result.byDifficulty.easy).toBeDefined()
       expect(result.byDifficulty.medium).toBeDefined()
       expect(result.byDifficulty.hard).toBeDefined()
+    })
+
+    it('should work with REAL_EVAL_SET', () => {
+      const classifier = IntentClassifier.create()
+      const result = evaluate(classifier, REAL_EVAL_SET)
+      expect(result.total).toBe(60)
+      expect(result.correct + result.failures.length).toBe(result.total)
     })
 
     it('should return failures with details', () => {

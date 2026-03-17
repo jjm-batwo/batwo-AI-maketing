@@ -1,5 +1,6 @@
 import { ChatIntent } from '../value-objects/ChatIntent'
 import { IntentClassificationResult } from '../value-objects/IntentClassificationResult'
+import type { IIntentLLMPort } from '../ports/IIntentLLMPort'
 import {
   IntentClassifierConfig,
   DEFAULT_INTENT_CLASSIFIER_CONFIG,
@@ -17,10 +18,13 @@ export class IntentClassifier {
   static readonly CONFIDENCE_MEDIUM = 0.5
   static readonly CONFIDENCE_LOW = 0.3
 
-  private constructor(private readonly config: IntentClassifierConfig) {}
+  private constructor(
+    private readonly config: IntentClassifierConfig,
+    private readonly llmPort?: IIntentLLMPort,
+  ) {}
 
-  static create(config?: IntentClassifierConfig): IntentClassifier {
-    return new IntentClassifier(config ?? DEFAULT_INTENT_CLASSIFIER_CONFIG)
+  static create(config?: IntentClassifierConfig, llmPort?: IIntentLLMPort): IntentClassifier {
+    return new IntentClassifier(config ?? DEFAULT_INTENT_CLASSIFIER_CONFIG, llmPort)
   }
 
   getConfig(): IntentClassifierConfig {
@@ -60,6 +64,30 @@ export class IntentClassifier {
 
     // Stage 2: LLM fallback (stubbed with contextual pattern matching)
     return this.classifyByLLM(normalized, message)
+  }
+
+  /**
+   * Async classify with LLM fallback.
+   * Calls sync classify() first. If confidence < threshold and llmPort exists,
+   * delegates to LLM. On LLM error, falls back to sync result.
+   */
+  async classifyAsync(message: string): Promise<IntentClassificationResult> {
+    const syncResult = this.classify(message)
+
+    // High confidence or no LLM port → return sync result
+    if (syncResult.confidence > this.config.llmFallbackThreshold || !this.llmPort) {
+      return syncResult
+    }
+
+    // Low confidence → try LLM
+    try {
+      const allIntents = Object.values(ChatIntent)
+      const llmIntent = await this.llmPort.classifyIntent(message, allIntents)
+      return IntentClassificationResult.create(llmIntent, 0.85, 'LLM', message)
+    } catch {
+      // LLM failed → graceful fallback to sync result
+      return syncResult
+    }
   }
 
   /**
