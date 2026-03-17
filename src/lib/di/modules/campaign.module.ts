@@ -60,6 +60,9 @@ import { ListAdSetsUseCase } from '@application/use-cases/adset/ListAdSetsUseCas
 
 // Ad Use Cases
 import { CreateAdUseCase } from '@application/use-cases/ad/CreateAdUseCase'
+import { UpdateAdUseCase } from '@application/use-cases/ad/UpdateAdUseCase'
+import { DeleteAdUseCase } from '@application/use-cases/ad/DeleteAdUseCase'
+import { ListAdsUseCase } from '@application/use-cases/ad/ListAdsUseCase'
 
 // Creative Use Cases
 import { CreateCreativeUseCase } from '@application/use-cases/creative/CreateCreativeUseCase'
@@ -327,6 +330,21 @@ export function registerCampaignModule(container: Container): void {
         container.resolve(DI_TOKENS.AdSetRepository),
         container.resolve(DI_TOKENS.CreativeRepository)
       )
+  )
+
+  container.register(
+    DI_TOKENS.UpdateAdUseCase,
+    () => new UpdateAdUseCase(container.resolve(DI_TOKENS.AdRepository))
+  )
+
+  container.register(
+    DI_TOKENS.DeleteAdUseCase,
+    () => new DeleteAdUseCase(container.resolve(DI_TOKENS.AdRepository))
+  )
+
+  container.register(
+    DI_TOKENS.ListAdsUseCase,
+    () => new ListAdsUseCase(container.resolve(DI_TOKENS.AdRepository))
   )
 
   // --- Creative Use Cases (Transient) ---

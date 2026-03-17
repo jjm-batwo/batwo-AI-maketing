@@ -118,6 +118,9 @@ export const DI_TOKENS = {
   // Ad
   AdRepository: Symbol.for('AdRepository'),
   CreateAdUseCase: Symbol.for('CreateAdUseCase'),
+  UpdateAdUseCase: Symbol.for('UpdateAdUseCase'),
+  DeleteAdUseCase: Symbol.for('DeleteAdUseCase'),
+  ListAdsUseCase: Symbol.for('ListAdsUseCase'),
 
   // Creative
   CreativeRepository: Symbol.for('CreativeRepository'),
