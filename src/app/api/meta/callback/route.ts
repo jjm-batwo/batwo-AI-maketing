@@ -3,8 +3,7 @@ import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { oauthCache } from '@/lib/cache/oauthCache'
 import { encryptToken } from '@application/utils/TokenEncryption'
-
-const META_API_URL = 'https://graph.facebook.com/v25.0'
+import { META_GRAPH_BASE as META_API_URL } from '@infrastructure/external/meta-constants'
 
 interface MetaTokenResponse {
   access_token: string

@@ -7,9 +7,7 @@
 
 import { MetaAdsApiError } from '../errors'
 import { fetchWithTimeout } from '@lib/utils/timeout'
-
-const META_API_VERSION = 'v25.0'
-const META_API_BASE = `https://graph.facebook.com/${META_API_VERSION}`
+import { META_GRAPH_BASE as META_API_BASE } from '../meta-constants'
 const META_API_TIMEOUT_MS = 30000 // 30 seconds for Meta API calls
 
 // 날짜 프리셋 목록 (7개)

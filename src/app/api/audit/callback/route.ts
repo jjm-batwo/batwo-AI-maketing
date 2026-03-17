@@ -14,8 +14,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auditTokenCache } from '@/lib/cache/auditTokenCache'
 import { auditStateCache } from '@/lib/cache/auditStateCache'
-
-const META_API_URL = 'https://graph.facebook.com/v25.0'
+import { META_GRAPH_BASE as META_API_URL } from '@infrastructure/external/meta-constants'
 
 interface MetaTokenResponse {
   access_token?: string

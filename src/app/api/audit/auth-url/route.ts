@@ -10,6 +10,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { checkRateLimit, getClientIp, rateLimitExceededResponse } from '@/lib/middleware/rateLimit'
 import { auditStateCache } from '@/lib/cache/auditStateCache'
+import { META_OAUTH_BASE } from '@infrastructure/external/meta-constants'
 
 export async function GET(request: NextRequest) {
   // IP 기반 Rate Limit 체크
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
 
   // ads_read 스코프만 요청 (수정 권한 없음) + CSRF state 포함
   const authUrl =
-    `https://www.facebook.com/v25.0/dialog/oauth` +
+    `${META_OAUTH_BASE}/dialog/oauth` +
     `?client_id=${META_APP_ID}` +
     `&redirect_uri=${encodeURIComponent(redirectUri)}` +
     `&scope=ads_read` +

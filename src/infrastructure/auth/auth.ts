@@ -4,6 +4,7 @@ import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
 import Google from 'next-auth/providers/google'
 import { prisma } from '@/lib/prisma'
 import { authConfig } from './auth.config'
+import { META_GRAPH_BASE, META_OAUTH_BASE } from '@infrastructure/external/meta-constants'
 
 // Meta 로그인용 기본 권한 (앱 검수 불필요)
 // 고급 권한(ads_management 등)은 /settings/meta-connect에서 별도 OAuth로 요청
@@ -43,20 +44,20 @@ function FacebookLoginForBusiness<P extends FacebookBusinessProfile>(
     type: 'oauth',
     checks: ['state'], // Only use state, no PKCE
     authorization: {
-      url: 'https://www.facebook.com/v25.0/dialog/oauth',
+      url: `${META_OAUTH_BASE}/dialog/oauth`,
       params: {
         scope: options.authorization?.params?.scope || 'public_profile',
         config_id: options.configId,
       },
     },
     token: {
-      url: 'https://graph.facebook.com/v25.0/oauth/access_token',
+      url: `${META_GRAPH_BASE}/oauth/access_token`,
       params: {
         config_id: options.configId,
       },
     },
     userinfo: {
-      url: 'https://graph.facebook.com/v25.0/me',
+      url: `${META_GRAPH_BASE}/me`,
       params: {
         fields: 'id,name,email,picture',
       },

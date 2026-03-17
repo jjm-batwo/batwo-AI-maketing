@@ -5,9 +5,7 @@ import type {
 } from '@application/ports/IMetaPixelService'
 import { MetaAdsApiError } from '../errors/ExternalServiceError'
 import { fetchWithTimeout } from '@lib/utils/timeout'
-
-const META_API_VERSION = 'v25.0'
-const META_API_BASE = `https://graph.facebook.com/${META_API_VERSION}`
+import { META_GRAPH_BASE as META_API_BASE } from '../meta-constants'
 const META_API_TIMEOUT_MS = 30000 // 30 seconds for Meta API calls
 
 interface MetaApiError {

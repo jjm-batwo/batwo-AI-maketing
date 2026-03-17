@@ -1,6 +1,7 @@
 'use client'
 
 import Script from 'next/script'
+import { META_API_VERSION } from '@infrastructure/external/meta-constants'
 
 export function FacebookSDK() {
   const appId = process.env.NEXT_PUBLIC_META_APP_ID
@@ -24,7 +25,7 @@ export function FacebookSDK() {
               appId: appId,
               cookie: true,
               xfbml: true,
-              version: 'v25.0',
+              version: META_API_VERSION,
             })
             window.FB.AppEvents.logPageView()
           }

@@ -17,6 +17,7 @@ import {
   Building2,
   Users,
 } from 'lucide-react'
+import { META_OAUTH_BASE } from '@infrastructure/external/meta-constants'
 
 interface MetaAdAccount {
   id: string
@@ -120,7 +121,7 @@ function MetaConnectContent() {
       'ads_management,ads_read,business_management,pages_show_list,pages_read_engagement'
     )
 
-    window.location.href = `https://www.facebook.com/v25.0/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code`
+    window.location.href = `${META_OAUTH_BASE}/dialog/oauth?client_id=${appId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code`
   }
 
   const handleDisconnect = async () => {

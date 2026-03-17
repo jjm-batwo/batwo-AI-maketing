@@ -10,9 +10,7 @@
 import { IMetaAdAccountRepository } from '@application/ports/IMetaAdAccountRepository'
 import { safeDecryptToken, encryptToken } from '@application/utils/TokenEncryption'
 import type { IAppConfig } from '@application/ports/IAppConfig'
-
-const META_API_VERSION = 'v25.0'
-const META_GRAPH_URL = `https://graph.facebook.com/${META_API_VERSION}`
+import { META_GRAPH_BASE as META_GRAPH_URL } from '@lib/constants/meta-api'
 
 /** 갱신 대상 기준: 만료까지 남은 일수 */
 const REFRESH_THRESHOLD_DAYS = 7
