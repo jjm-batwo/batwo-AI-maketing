@@ -109,6 +109,10 @@ function resolveCategory(filename: string): string {
         '08-': 'ad-policy',
         '09-': 'attribution',
         '10-': 'pixel-tracking',
+        '11-': 'industry-benchmark',
+        '12-': 'faq',
+        '13-': 'ab-testing',
+        '14-': 'retargeting',
     }
 
     for (const [prefix, category] of Object.entries(categoryMap)) {

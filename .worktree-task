@@ -1,0 +1,1 @@
+RAG 문서 추가 인제스트 — 현재 14개 마케팅 지식 문서에 산업별 벤치마크, FAQ 등 추가. 파일: scripts/ingest-knowledge.ts, data/

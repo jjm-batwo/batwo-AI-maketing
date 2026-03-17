@@ -2,7 +2,7 @@
  * 마케팅 도메인 지식 인제스트 스크립트
  * Usage: npx tsx scripts/ingest-knowledge.ts
  *
- * 9개 도메인 분석기의 지식 + Meta 2026 가이드라인을 벡터 DB에 저장
+ * 13개 도메인 분석기의 지식 + Meta 2026 가이드라인 + 산업별 벤치마크 + FAQ를 벡터 DB에 저장
  */
 import 'dotenv/config'
 
@@ -100,6 +100,66 @@ const KNOWLEDGE_DOCUMENTS: KnowledgeDocument[] = [
     source: 'copywriting_psychology',
     title: '광고 카피 작성 원칙 — 사람들이 클릭하게 만드는 법, 카피에 숫자를 넣으면 효과적인가',
     content: 'SUCCESs 프레임워크: Simple(단순), Unexpected(의외), Concrete(구체적), Credible(신뢰), Emotional(감성), Story(스토리). 사람들이 왜 클릭하지 않을까? 헤드라인이 모호하거나 혜택이 불분명할 때 클릭률이 낮아집니다. 카피에 숫자를 넣으면 효과적입니다 — "50% 할인"이 "큰 할인"보다 CTR이 36% 높습니다. Hook 유형별 효과: 혜택(benefit) - 가장 범용적, 긴급성(urgency) - 전환율 높음, 사회적 증거(social proof) - 신규 브랜드에 효과적, 호기심(curiosity) - 클릭률 높음. 파워 워드: "무료", "즉시", "한정", "검증된", "비밀", "새로운". CTA는 행동+혜택 조합이 효과적: "지금 구매하고 50% 할인받기".',
+  },
+  // 산업별 벤치마크 — 이커머스 (출처: WordStream 2025, Triple Whale 2025)
+  {
+    source: 'industry_benchmark',
+    title: '이커머스 광고 벤치마크 — 쇼핑몰 ROAS 몇 배가 좋은 건가, 온라인 쇼핑몰 광고 성과 기준',
+    content: '이커머스 Meta 광고 벤치마크: WordStream 2025 기준 트래픽 캠페인 CTR 4.13%, CPC $0.34. Triple Whale 2025(35,000개 브랜드) 기준 의류 ROAS 2.18, 뷰티 ROAS 1.57, 플랫폼 전체 평균 ROAS 1.86, 평균 CVR 1.6%. Baymard Institute 메타분석(50개 연구)에 따르면 평균 장바구니 이탈률 70.22%로 리타겟팅이 필수입니다. 이탈 1위 원인은 예상치 못한 추가 비용(배송비, 세금)으로 48%가 이를 지목했습니다(Baymard 2024). 출처: WordStream Facebook Ads Benchmarks 2025; Triple Whale Facebook Ad Benchmarks 2025; Baymard Institute Cart Abandonment Rate Statistics.',
+  },
+  // 산업별 벤치마크 — 뷰티 (출처: WordStream 2025, Triple Whale 2025, Varos 2024)
+  {
+    source: 'industry_benchmark',
+    title: '뷰티/화장품 광고 벤치마크 — 뷰티 브랜드 광고 성과 기준, 화장품 광고 효율',
+    content: '뷰티 Meta 광고 벤치마크: WordStream 2025 기준 트래픽 CTR 1.81%, CPC $0.74, 리드 CVR 5.29%, CPL $51.42. Triple Whale 2025 기준 뷰티 CPA $37.92, CVR 1.94%, CTR 2.27%, ROAS 1.57. Varos 2024년 7월 기준 화장품 CVR 3.9%, ROAS 1.72. PowerReviews 연구(1,200+ 이커머스 사이트, 150만 페이지)에 따르면 UGC와 상호작용하는 방문자의 전환율이 사이트 평균 대비 102.4% 높음. 출처: WordStream 2025; Triple Whale 2025; Varos Paid Media Benchmarks Cosmetics July 2024; PowerReviews UGC Conversion 2023.',
+  },
+  // 산업별 벤치마크 — SaaS/B2B (출처: WordStream 2025)
+  {
+    source: 'industry_benchmark',
+    title: 'SaaS/B2B 광고 벤치마크 — B2B 리드 단가, SaaS 고객 획득 비용',
+    content: 'B2B/비즈니스 서비스 Meta 광고 벤치마크: WordStream 2025 기준 트래픽 CTR 1.36%, CPC $0.86, 리드 CVR 9.34%, CPL $37.34. SaaS를 별도로 분류한 대규모 1차 연구는 공개되지 않았으며, WordStream의 "비즈니스 서비스" 카테고리가 가장 가까운 프록시입니다. B2B는 즉시 전환보다 리드 nurturing이 핵심입니다. Meta 15건 A/B 테스트에서 Advantage+ 쇼핑 캠페인이 기존 대비 구매당 비용 12% 낮았습니다(Meta Newsroom 2022.08). 출처: WordStream Facebook Ads Benchmarks 2025; Meta Newsroom 2022.',
+  },
+  // 산업별 벤치마크 — F&B (출처: WordStream 2025, Triple Whale 2025)
+  {
+    source: 'industry_benchmark',
+    title: '식음료(F&B) 광고 벤치마크 — 배달/음식점 광고 성과, 식품 브랜드 온라인 마케팅',
+    content: 'F&B Meta 광고 벤치마크: WordStream 2025 기준 트래픽 CTR 1.67%, CPC $0.72, 리드 CVR 18.25%(전 산업 최고), CPL $3.16(전 산업 최저). Triple Whale 2025 기준 식음료 CPA $38.15, CVR 2.02%, CTR 1.85%, ROAS 1.56. F&B는 리드 전환율이 타 산업 대비 월등히 높고 리드 단가가 매우 낮은 것이 특징입니다. 첫 주문 CPA보다 LTV(고객 생애 가치)와 재주문율이 수익성을 결정합니다. 출처: WordStream Facebook Ads Benchmarks 2025; Triple Whale Facebook Ad Benchmarks 2025.',
+  },
+  // FAQ — 예산/설정 (출처: Meta Business Help Center, Meta Newsroom)
+  {
+    source: 'faq',
+    title: 'FAQ: 광고 예산 설정 — 하루에 얼마가 적당한가, 광고비 최소 금액, 처음 시작 예산',
+    content: 'Meta는 특정 금액을 명시하지 않습니다. 핵심 기준은 7일 내 50회 최적화 이벤트 수집입니다. 필요한 최소 주간 예산 = 타겟 CPA × 50. CPA가 ₩10,000이면 주간 예산 ₩500,000(일일 약 ₩71,000) 필요. 2024년 11월 업데이트로 구매/앱 설치 캠페인은 50회에서 10회로 하향 조정되었습니다(Madgicx 보도). 광고 세트는 목표당 1-3개가 최적. Advantage+ 쇼핑 캠페인은 15건 A/B 테스트에서 기존 대비 구매당 비용 12% 낮았습니다. 출처: Meta Business Help Center Learning Phase; Madgicx 2024.11; Meta Newsroom 2022.08.',
+  },
+  // FAQ — 성과 분석 (출처: Google, WordStream, Meta)
+  {
+    source: 'faq',
+    title: 'FAQ: 클릭은 많은데 구매가 없을 때, CTR이 높으면 좋은 건가, CPM이 갑자기 올랐을 때',
+    content: '클릭은 많은데 구매가 없는 것은 광고 문제가 아니라 전환 퍼널 문제입니다. Google 연구(11M 모바일 페이지, 213개국)에 따르면 로딩 1초→3초 시 이탈 확률 32% 증가, 1초→5초 시 90% 증가, 1초→10초 시 123% 증가합니다. 확인 순서: 1) 랜딩페이지 로딩 속도(3초 이내), 2) 광고-랜딩페이지 메시지 일치, 3) 결제 프로세스, 4) 가격 경쟁력. CTR 높고 CVR 낮으면 소재와 랜딩페이지 불일치입니다. WordStream 2025 기준 전체 산업 평균 트래픽 CTR은 약 1.57%. CPM 급등 시 Meta의 Creative Fatigue Recommendations 기능을 확인하세요. 출처: Google "The Need for Mobile Speed"; WordStream 2025; Meta Business Help Center.',
+  },
+  // FAQ — 소재/타겟팅 (출처: Databox, Meta, PowerReviews)
+  {
+    source: 'faq',
+    title: 'FAQ: 이미지 vs 영상 효과, 소재 교체 주기, 타겟을 좁게 vs 넓게, 룩어라이크 효과',
+    content: 'Databox 전문가 설문 결과 영상이 정적 이미지 대비 약 30% 더 많은 클릭을 유도합니다. 단, 영상은 이미지보다 CPM이 높을 수 있습니다(Confect.io: 약 17% 높은 CPM). Meta 공식 가이드는 작은/특정 오디언스의 경우 7-10일마다 소재 새로고침 권장. 타겟팅은 Advantage+ Audience가 대부분의 경우 효과적 — Meta 15건 A/B 테스트에서 12% 낮은 구매당 비용 달성. 룩어라이크는 여전히 유효하며 소스 오디언스는 구매자 기반 권장. 출처: Databox "Videos vs Images in Facebook Ads"; Confect.io; Meta Business Help Center; Meta Newsroom 2022.08.',
+  },
+  // A/B 테스트 (출처: Meta, Databox, PowerReviews, Google)
+  {
+    source: 'ab_testing',
+    title: 'A/B 테스트 최적화 — 광고 테스트 방법, 소재 테스트 우선순위, 통계적 유의성',
+    content: 'A/B 테스트 핵심 원칙: 한 번에 하나만 바꾸세요. Meta의 A/B 테스트 도구는 95% 신뢰 수준을 기본 임계값으로 사용합니다. Advantage+ Creative Standard Enhancements는 평균 4% 낮은 결과당 비용을 달성(Meta Developer Blog 2023.04). Databox 설문에서 영상이 이미지 대비 약 30% 더 많은 클릭을 유도. PowerReviews(1,200+ 사이트, 150만 페이지)에 따르면 UGC 상호작용 시 전환율 102.4% 상승, Q&A 상호작용 시 177.2% 상승. 랜딩페이지 속도: Google 연구에서 로딩 1초→3초 시 이탈 32% 증가. 출처: Meta Developer Blog; Databox; PowerReviews 2023; Google "The Need for Mobile Speed".',
+  },
+  // 리타겟팅 (출처: Baymard Institute, Meta, Lebesgue)
+  {
+    source: 'retargeting',
+    title: '리타겟팅 전략 — 장바구니 이탈 고객, 이탈 고객 재방문, 리타겟팅 퍼널',
+    content: 'Baymard Institute 메타분석(50개 연구)에 따르면 평균 장바구니 이탈률 70.22%입니다. 이탈 1위 원인: 예상치 못한 추가 비용 48%(Baymard 2024). 리타겟팅 3단계 퍼널: TOFU(영상 시청자, 60-180일) → MOFU(제품 페이지 조회자, 14-30일) → BOFU(장바구니 이탈, 1-7일). 이탈 시점별 전략: 0-1시간 단순 리마인더, 1-24시간 제품 혜택+리뷰, 1-3일 할인 코드, 3-7일 대안 제품. Lebesgue 2024 데이터: 리타겟팅 클릭률 2.86%, CVR 4.30%, CPM $7.59. Meta의 Creative Fatigue Recommendations 기능으로 소재 피로도를 모니터링하세요. 출처: Baymard Institute(50개 연구 메타분석); Lebesgue 2024; Meta Business Help Center.',
+  },
+  // 오디언스 세그멘테이션 (출처: Meta Business Help Center)
+  {
+    source: 'audience_segmentation',
+    title: '오디언스 세그멘테이션 전략 — 고객 분류, 타겟 그룹 나누기, 맞춤 타겟',
+    content: 'Meta 커스텀 오디언스 유형별 활용: 웹사이트 전체 방문자(180일, 브랜드 리마인드), 제품 페이지 조회자(30일, 제품 관심자), 장바구니 추가자(14일, 이탈 회수), 결제 시작자(7일, 최우선 타겟), 기구매자(365일, 크로스셀/업셀), 영상 75% 시청자(60일, 높은 관심도). 제외 전략: 구매 완료자는 7-14일간 해당 제품 광고 제외, Prospecting에서 기구매자 제외. 크로스셀 타이밍: 구매 후 7일 사용 팁+리뷰 요청, 14-30일 보완 제품, 60-90일 재구매 리마인더, 180일 신제품 소개. 출처: Meta Business Help Center — Custom Audiences.',
   },
 ]
 
