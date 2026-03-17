@@ -36,44 +36,32 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ adSets: [] })
     }
 
-    const adSets = await metaAdsService.listAdSets(metaAccount.accessToken, campaign.metaCampaignId)
+    const [adSets, insightsMap] = await Promise.all([
+      metaAdsService.listAdSets(metaAccount.accessToken, campaign.metaCampaignId),
+      metaAdsService.getAccountInsights(metaAccount.accessToken, metaAccount.metaAccountId, {
+        level: 'adset',
+        datePreset,
+        campaignIds: [campaign.metaCampaignId],
+      }),
+    ])
 
-    const settledInsights = await Promise.allSettled(
-      adSets.map((adSet) =>
-        metaAdsService.getAdSetInsights(metaAccount.accessToken, adSet.id, datePreset)
-      )
-    )
+    const emptyInsights = {
+      campaignId: campaign.metaCampaignId,
+      impressions: 0,
+      reach: 0,
+      clicks: 0,
+      linkClicks: 0,
+      spend: 0,
+      conversions: 0,
+      revenue: 0,
+      dateStart: '',
+      dateStop: '',
+    }
 
-    const adSetsWithInsights = adSets.map((adSet, index) => {
-      const settled = settledInsights[index]
-      if (settled.status === 'fulfilled') {
-        return {
-          ...adSet,
-          insights: settled.value,
-        }
-      }
-
-      console.error('Failed to fetch ad set insights:', {
-        adSetId: adSet.id,
-        error: settled.reason,
-      })
-
-      return {
-        ...adSet,
-        insights: {
-          campaignId: campaign.metaCampaignId,
-          impressions: 0,
-          reach: 0,
-          clicks: 0,
-          linkClicks: 0,
-          spend: 0,
-          conversions: 0,
-          revenue: 0,
-          dateStart: '',
-          dateStop: '',
-        },
-      }
-    })
+    const adSetsWithInsights = adSets.map((adSet) => ({
+      ...adSet,
+      insights: insightsMap.get(adSet.id) ?? emptyInsights,
+    }))
 
     return NextResponse.json({ adSets: adSetsWithInsights })
   } catch (error) {
