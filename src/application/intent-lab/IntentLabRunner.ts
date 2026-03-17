@@ -1,12 +1,15 @@
 // src/application/intent-lab/IntentLabRunner.ts
 import { IntentClassifier } from '@domain/services/IntentClassifier'
 import { DEFAULT_INTENT_CLASSIFIER_CONFIG, type IntentClassifierConfig } from '@domain/services/IntentClassifierConfig'
-import { TRAIN_EVAL_SET, VALIDATION_EVAL_SET, FULL_EVAL_SET, evaluate, type EvalResult } from './IntentLabEvalSet'
+import { TRAIN_EVAL_SET, VALIDATION_EVAL_SET, FULL_EVAL_SET, REAL_EVAL_SET, COMBINED_EVAL_SET, evaluate, type EvalResult, type EvalCase } from './IntentLabEvalSet'
 import { IntentLabMutator } from './IntentLabMutator'
+
+export type TrainSetMode = 'synthetic' | 'combined'
 
 export interface IntentLabConfig {
   maxDurationMs: number
   iterationDelayMs: number
+  trainSetMode?: TrainSetMode
 }
 
 export interface IntentLabResult {
@@ -15,11 +18,21 @@ export interface IntentLabResult {
   status: 'keep' | 'discard'
 }
 
+export interface GapReport {
+  syntheticAccuracy: number
+  realAccuracy: number
+  combinedAccuracy: number
+  gap: number // synthetic - real
+  realByDifficulty: EvalResult['byDifficulty']
+  realFailures: EvalResult['failures']
+}
+
 export interface IntentLabReport {
   bestConfig: IntentClassifierConfig
   bestAccuracy: number
   baselineAccuracy: number
   validationAccuracy: number
+  gapReport: GapReport
   results: IntentLabResult[]
   totalDurationMs: number
   totalIterations: number
@@ -35,15 +48,17 @@ export class IntentLabRunner {
 
   async run(config: IntentLabConfig): Promise<IntentLabReport> {
     const results: IntentLabResult[] = []
+    const trainSet = this.resolveTrainSet(config.trainSetMode ?? 'synthetic')
+    this.mutator.setTrainSet(trainSet)
 
     // 1. Baseline
     const baselineClassifier = IntentClassifier.create()
-    const baselineEval = evaluate(baselineClassifier, TRAIN_EVAL_SET)
+    const baselineEval = evaluate(baselineClassifier, trainSet)
     let bestConfig = DEFAULT_INTENT_CLASSIFIER_CONFIG
     let bestAccuracy = baselineEval.accuracy
     const baselineAccuracy = baselineEval.accuracy
 
-    console.log(`[IntentLab] baseline: ${(baselineAccuracy * 100).toFixed(1)}%`)
+    console.log(`[IntentLab] baseline: ${(baselineAccuracy * 100).toFixed(1)}% (trainSet: ${config.trainSetMode ?? 'synthetic'}, ${trainSet.length} cases)`)
 
     // 2. LOOP (time-based, like autoresearch's LOOP FOREVER)
     const startTime = Date.now()
@@ -54,7 +69,7 @@ export class IntentLabRunner {
 
       const mutation = this.mutator.mutate(bestConfig)
       const classifier = IntentClassifier.create(mutation.config)
-      const evalResult = evaluate(classifier, TRAIN_EVAL_SET)
+      const evalResult = evaluate(classifier, trainSet)
 
       // Floor check
       if (evalResult.accuracy < baselineAccuracy * BASELINE_FLOOR_RATIO) {
@@ -88,17 +103,37 @@ export class IntentLabRunner {
     const validationEval = evaluate(finalClassifier, VALIDATION_EVAL_SET)
     const fullEval = evaluate(finalClassifier, FULL_EVAL_SET)
 
+    // 4. Gap report: synthetic vs real vs combined
+    const realEval = evaluate(finalClassifier, REAL_EVAL_SET)
+    const combinedEval = evaluate(finalClassifier, COMBINED_EVAL_SET)
+    const gapReport: GapReport = {
+      syntheticAccuracy: fullEval.accuracy,
+      realAccuracy: realEval.accuracy,
+      combinedAccuracy: combinedEval.accuracy,
+      gap: fullEval.accuracy - realEval.accuracy,
+      realByDifficulty: realEval.byDifficulty,
+      realFailures: realEval.failures,
+    }
+
     return {
       bestConfig,
       bestAccuracy,
       baselineAccuracy,
       validationAccuracy: validationEval.accuracy,
+      gapReport,
       results,
       totalDurationMs: Date.now() - startTime,
       totalIterations: results.length,
       improvementFromBaseline: baselineAccuracy > 0 ? ((bestAccuracy - baselineAccuracy) / baselineAccuracy) * 100 : 0,
       byDifficulty: fullEval.byDifficulty,
       failures: fullEval.failures,
+    }
+  }
+
+  private resolveTrainSet(mode: TrainSetMode): readonly EvalCase[] {
+    switch (mode) {
+      case 'combined': return COMBINED_EVAL_SET
+      case 'synthetic': return TRAIN_EVAL_SET
     }
   }
 
