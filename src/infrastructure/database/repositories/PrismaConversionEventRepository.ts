@@ -63,22 +63,25 @@ export class PrismaConversionEventRepository implements IConversionEventReposito
   }
 
   async incrementRetryBatch(ids: string[]): Promise<void> {
-    // 현재 metaResponseId 값을 읽어 재시도 횟수를 계산
-    // RETRY_N 패턴 유지: null → RETRY_1 → RETRY_2 → RETRY_3
-    const records = await this.prisma.conversionEvent.findMany({
-      where: { id: { in: ids } },
-      select: { id: true, metaResponseId: true },
-    })
+    if (ids.length === 0) return
 
-    // 각 이벤트별로 다음 재시도 값 계산 후 업데이트
-    await Promise.all(
-      records.map((r) => {
-        const nextRetryId = this.nextRetryId(r.metaResponseId)
-        return this.prisma.conversionEvent.update({
-          where: { id: r.id },
-          data: { metaResponseId: nextRetryId },
-        })
-      })
+    // Supabase Best Practice: N+1 제거 → 단일 SQL (data-n-plus-one)
+    // N개 SELECT + N개 UPDATE → 단일 UPDATE with CASE 표현식
+    // RETRY_N 패턴 유지: null → RETRY_1 → RETRY_2 → RETRY_3
+    await this.prisma.$executeRawUnsafe(
+      `UPDATE "ConversionEvent"
+       SET "metaResponseId" = CASE
+         WHEN "metaResponseId" IS NULL OR "metaResponseId" NOT LIKE 'RETRY_%'
+           THEN 'RETRY_1'
+         ELSE 'RETRY_' || (
+           COALESCE(
+             NULLIF(regexp_replace("metaResponseId", '^RETRY_', ''), '')::int,
+             0
+           ) + 1
+         )::text
+       END
+       WHERE id = ANY($1)`,
+      ids
     )
   }
 

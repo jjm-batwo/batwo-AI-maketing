@@ -78,6 +78,7 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId]) // FK index: CASCADE 삭제 + JOIN 최적화
 }
 
 model Session {
@@ -86,6 +87,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId]) // FK index: CASCADE 삭제 + User JOIN 최적화
 }
 
 model VerificationToken {
@@ -112,6 +115,8 @@ model MetaAdAccount {
   timezone      String    @default("Asia/Seoul")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  @@index([tokenExpiry]) // findExpiringBefore 크론 쿼리 최적화
 }
 
 // ========================================
@@ -499,6 +504,7 @@ model ConversionEvent {
   @@unique([pixelId, eventId])
   @@index([pixelId, sentToMeta])
   @@index([eventTime])
+  @@index([sentToMeta, createdAt]) // Partial index 효과: CAPI 배치 크론의 findUnsentEvents 최적화
 }
 
 // ========================================
@@ -875,6 +881,7 @@ model Ad {
 
   @@index([adSetId])
   @@index([creativeId])
+  @@index([metaAdId]) // FK index: findByMetaAdId 쿼리 최적화
 }
 
 // ========================================

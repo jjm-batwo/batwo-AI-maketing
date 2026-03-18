@@ -71,22 +71,28 @@ export class PrismaConversationRepository implements IConversationRepository {
     conversationId: string,
     message: Omit<ConversationMessageData, 'id' | 'conversationId' | 'createdAt'>
   ): Promise<ConversationMessageData> {
-    const saved = await this.prisma.conversationMessage.create({
-      data: {
-        conversationId,
-        role: message.role,
-        content: message.content,
-        toolCalls: message.toolCalls as unknown as undefined,
-        toolName: message.toolName,
-        toolResult: message.toolResult as unknown as undefined,
-        metadata: message.metadata as unknown as undefined,
-      },
-    })
+    // Supabase Best Practice: Short transactions (lock-short-transactions)
+    // message 생성 + conversation updatedAt 갱신을 원자적 트랜잭션으로 묶어
+    // 데이터 일관성 보장 + 라운드트립 절감
+    const saved = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.conversationMessage.create({
+        data: {
+          conversationId,
+          role: message.role,
+          content: message.content,
+          toolCalls: message.toolCalls as unknown as undefined,
+          toolName: message.toolName,
+          toolResult: message.toolResult as unknown as undefined,
+          metadata: message.metadata as unknown as undefined,
+        },
+      })
 
-    // Update conversation updatedAt
-    await this.prisma.conversation.update({
-      where: { id: conversationId },
-      data: { updatedAt: new Date() },
+      await tx.conversation.update({
+        where: { id: conversationId },
+        data: { updatedAt: new Date() },
+      })
+
+      return created
     })
 
     return {

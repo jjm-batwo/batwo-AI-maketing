@@ -68,25 +68,28 @@ export class PrismaABTestRepository implements IABTestRepository {
   async update(abTest: ABTest): Promise<ABTest> {
     const data = ABTestMapper.toUpdateInput(abTest)
 
-    // Update main record
-    await this.prisma.aBTest.update({
-      where: { id: abTest.id },
-      data,
-    })
-
-    // Update variants
-    for (const variant of abTest.variants) {
-      const variantData = ABTestMapper.toVariantUpdateInput(variant)
-      await this.prisma.aBTestVariant.update({
-        where: { id: variant.id },
-        data: variantData,
+    // Supabase Best Practice: Batch N+1 → $transaction (data-n-plus-one)
+    // main + N variants + fetch = N+2 쿼리 → $transaction으로 원자적 배치 실행
+    const updated = await this.prisma.$transaction(async (tx) => {
+      await tx.aBTest.update({
+        where: { id: abTest.id },
+        data,
       })
-    }
 
-    // Fetch and return updated
-    const updated = await this.prisma.aBTest.findUnique({
-      where: { id: abTest.id },
-      include: { variants: true },
+      await Promise.all(
+        abTest.variants.map((variant) => {
+          const variantData = ABTestMapper.toVariantUpdateInput(variant)
+          return tx.aBTestVariant.update({
+            where: { id: variant.id },
+            data: variantData,
+          })
+        })
+      )
+
+      return tx.aBTest.findUnique({
+        where: { id: abTest.id },
+        include: { variants: true },
+      })
     })
 
     if (!updated) {

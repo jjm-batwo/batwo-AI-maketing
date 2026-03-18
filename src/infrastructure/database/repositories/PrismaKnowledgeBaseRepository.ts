@@ -57,8 +57,37 @@ export class PrismaKnowledgeBaseRepository implements IKnowledgeBaseRepository {
   }
 
   async bulkInsert(documents: KnowledgeDocumentDTO[]): Promise<void> {
-    for (const doc of documents) {
-      await this.insert(doc)
+    if (documents.length === 0) return
+
+    // Supabase Best Practice: Batch INSERT (data-batch-inserts)
+    // 개별 INSERT 루프 대신 단일 SQL로 N개 행을 한 번에 삽입
+    const BATCH_SIZE = 500
+    for (let i = 0; i < documents.length; i += BATCH_SIZE) {
+      const batch = documents.slice(i, i + BATCH_SIZE)
+      const values: string[] = []
+      const params: unknown[] = []
+      let paramIdx = 1
+
+      for (const doc of batch) {
+        const vectorString = `[${doc.embedding.join(',')}]`
+        values.push(
+          `(gen_random_uuid(), $${paramIdx}, $${paramIdx + 1}, $${paramIdx + 2}, $${paramIdx + 3}::vector, $${paramIdx + 4}::jsonb, NOW(), NOW())`
+        )
+        params.push(
+          doc.source,
+          doc.title,
+          doc.content,
+          vectorString,
+          doc.metadata ? JSON.stringify(doc.metadata) : null
+        )
+        paramIdx += 5
+      }
+
+      await this.prisma.$executeRawUnsafe(
+        `INSERT INTO knowledge_documents (id, source, title, content, embedding, metadata, "createdAt", "updatedAt")
+         VALUES ${values.join(', ')}`,
+        ...params
+      )
     }
   }
 
