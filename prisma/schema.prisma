@@ -868,11 +868,54 @@ model Ad {
   creativeId String
   creative   Creative @relation(fields: [creativeId], references: [id])
   metaAdId   String?
+  kpiSnapshots AdKPISnapshot[]
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   @@index([adSetId])
   @@index([creativeId])
+}
+
+// ========================================
+// Ad-Level KPI Tracking
+// ========================================
+
+model AdKPISnapshot {
+  id          String   @id @default(cuid())
+  adId        String
+  ad          Ad       @relation(fields: [adId], references: [id], onDelete: Cascade)
+  adSetId     String
+  campaignId  String
+  creativeId  String
+
+  // 기본 메트릭 (KPISnapshot과 동일)
+  impressions Int      @default(0)
+  clicks      Int      @default(0)
+  linkClicks  Int      @default(0)
+  conversions Int      @default(0)
+  spend       Decimal  @db.Decimal(15, 2)
+  currency    String   @default("KRW")
+  revenue     Decimal  @db.Decimal(15, 2)
+
+  // 추가 메트릭 (소재 피로도 / 포맷 분석용)
+  reach       Int      @default(0)
+  frequency   Decimal  @default(0) @db.Decimal(8, 4)
+  cpm         Decimal  @default(0) @db.Decimal(15, 4)
+  cpc         Decimal  @default(0) @db.Decimal(15, 4)
+  videoViews  Int      @default(0)
+  thruPlays   Int      @default(0)
+
+  date        DateTime @db.Date
+  createdAt   DateTime @default(now())
+
+  @@unique([adId, date])
+  @@index([adId])
+  @@index([adSetId])
+  @@index([campaignId])
+  @@index([creativeId])
+  @@index([date])
+  @@index([campaignId, date])
+  @@index([creativeId, date])
 }
 
 model Creative {

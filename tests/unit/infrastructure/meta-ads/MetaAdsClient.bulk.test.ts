@@ -20,6 +20,9 @@ const mockAccountInsightsResponse = {
       reach: '8000',
       clicks: '500',
       spend: '150.00',
+      frequency: '1.25',
+      cpm: '15.00',
+      cpc: '0.30',
       actions: [
         { action_type: 'purchase', value: '25' },
         { action_type: 'link_click', value: '400' },
@@ -36,6 +39,9 @@ const mockAccountInsightsResponse = {
       reach: '4000',
       clicks: '200',
       spend: '80.00',
+      frequency: '1.10',
+      cpm: '16.00',
+      cpc: '0.40',
       actions: [
         { action_type: 'purchase', value: '10' },
         { action_type: 'link_click', value: '180' },
@@ -250,6 +256,278 @@ describe('MetaAdsClient — Bulk Account-Level Methods', () => {
 
       expect(capturedUrl).toContain('filtering')
       expect(capturedUrl).toContain('campaign_1')
+    })
+  })
+
+  // ========== getAccountInsights - extended fields (Task 5) ==========
+
+  describe('getAccountInsights - extended fields', () => {
+    it('should include frequency/cpm/cpc in response', async () => {
+      const result = await client.getAccountInsights(ACCESS_TOKEN, AD_ACCOUNT_ID, {
+        level: 'ad',
+        datePreset: 'last_7d',
+      })
+
+      const ad1 = result.get('ad_1')
+      expect(ad1).toBeDefined()
+      expect(ad1!.frequency).toBe(1.25)
+      expect(ad1!.cpm).toBe(15)
+      expect(ad1!.cpc).toBe(0.3)
+      expect(ad1!.adSetId).toBe('adset_1')
+      expect(ad1!.adId).toBe('ad_1')
+    })
+
+    it('should extract videoViews from video_3s_views field first (A1)', async () => {
+      server.use(
+        http.get(`${META_API_BASE}/${AD_ACCOUNT_ID}/insights`, () => {
+          return HttpResponse.json({
+            data: [
+              {
+                campaign_id: 'campaign_1',
+                adset_id: 'adset_1',
+                ad_id: 'ad_1',
+                impressions: '10000',
+                reach: '8000',
+                clicks: '500',
+                spend: '150.00',
+                video_3s_views: '3000',
+                actions: [
+                  { action_type: 'video_view', value: '5000' },
+                  { action_type: 'link_click', value: '400' },
+                ],
+                date_start: '2025-01-01',
+                date_stop: '2025-01-07',
+              },
+            ],
+          })
+        })
+      )
+
+      const result = await client.getAccountInsights(ACCESS_TOKEN, AD_ACCOUNT_ID, {
+        level: 'ad',
+        datePreset: 'last_7d',
+      })
+
+      const ad1 = result.get('ad_1')
+      expect(ad1).toBeDefined()
+      // video_3s_views (3000) takes priority over actions video_view (5000)
+      expect(ad1!.videoViews).toBe(3000)
+    })
+
+    it('should fallback to actions video_view when video_3s_views is absent (A1)', async () => {
+      server.use(
+        http.get(`${META_API_BASE}/${AD_ACCOUNT_ID}/insights`, () => {
+          return HttpResponse.json({
+            data: [
+              {
+                campaign_id: 'campaign_1',
+                adset_id: 'adset_1',
+                ad_id: 'ad_1',
+                impressions: '10000',
+                reach: '8000',
+                clicks: '500',
+                spend: '150.00',
+                actions: [
+                  { action_type: 'video_view', value: '5000' },
+                  { action_type: 'link_click', value: '400' },
+                ],
+                date_start: '2025-01-01',
+                date_stop: '2025-01-07',
+              },
+            ],
+          })
+        })
+      )
+
+      const result = await client.getAccountInsights(ACCESS_TOKEN, AD_ACCOUNT_ID, {
+        level: 'ad',
+        datePreset: 'last_7d',
+      })
+
+      const ad1 = result.get('ad_1')
+      expect(ad1).toBeDefined()
+      expect(ad1!.videoViews).toBe(5000)
+    })
+
+    it('should extract thruPlays from actions array', async () => {
+      server.use(
+        http.get(`${META_API_BASE}/${AD_ACCOUNT_ID}/insights`, () => {
+          return HttpResponse.json({
+            data: [
+              {
+                campaign_id: 'campaign_1',
+                adset_id: 'adset_1',
+                ad_id: 'ad_1',
+                impressions: '10000',
+                reach: '8000',
+                clicks: '500',
+                spend: '150.00',
+                actions: [
+                  { action_type: 'video_thru_play', value: '1200' },
+                  { action_type: 'link_click', value: '400' },
+                ],
+                date_start: '2025-01-01',
+                date_stop: '2025-01-07',
+              },
+            ],
+          })
+        })
+      )
+
+      const result = await client.getAccountInsights(ACCESS_TOKEN, AD_ACCOUNT_ID, {
+        level: 'ad',
+        datePreset: 'last_7d',
+      })
+
+      const ad1 = result.get('ad_1')
+      expect(ad1).toBeDefined()
+      expect(ad1!.thruPlays).toBe(1200)
+    })
+
+    it('should use entityId_date as map key when timeIncrement is set (A2)', async () => {
+      server.use(
+        http.get(`${META_API_BASE}/${AD_ACCOUNT_ID}/insights`, () => {
+          return HttpResponse.json({
+            data: [
+              {
+                campaign_id: 'campaign_1',
+                adset_id: 'adset_1',
+                ad_id: 'ad_1',
+                impressions: '5000',
+                reach: '4000',
+                clicks: '200',
+                spend: '75.00',
+                actions: [],
+                date_start: '2026-03-15',
+                date_stop: '2026-03-15',
+              },
+              {
+                campaign_id: 'campaign_1',
+                adset_id: 'adset_1',
+                ad_id: 'ad_1',
+                impressions: '6000',
+                reach: '5000',
+                clicks: '300',
+                spend: '90.00',
+                actions: [],
+                date_start: '2026-03-16',
+                date_stop: '2026-03-16',
+              },
+            ],
+          })
+        })
+      )
+
+      const result = await client.getAccountInsights(ACCESS_TOKEN, AD_ACCOUNT_ID, {
+        level: 'ad',
+        datePreset: 'last_7d',
+        timeIncrement: '1',
+      })
+
+      expect(result.size).toBe(2)
+      expect(result.has('ad_1_2026-03-15')).toBe(true)
+      expect(result.has('ad_1_2026-03-16')).toBe(true)
+      expect(result.get('ad_1_2026-03-15')!.impressions).toBe(5000)
+      expect(result.get('ad_1_2026-03-16')!.impressions).toBe(6000)
+    })
+
+    it('should handle pagination for 500+ ads (A3)', async () => {
+      let callCount = 0
+      server.use(
+        http.get(`${META_API_BASE}/${AD_ACCOUNT_ID}/insights`, () => {
+          callCount++
+          if (callCount === 1) {
+            return HttpResponse.json({
+              data: [
+                {
+                  campaign_id: 'campaign_1',
+                  ad_id: 'ad_page1',
+                  impressions: '1000',
+                  reach: '800',
+                  clicks: '50',
+                  spend: '10.00',
+                  actions: [],
+                  date_start: '2025-01-01',
+                  date_stop: '2025-01-07',
+                },
+              ],
+              paging: {
+                next: `${META_API_BASE}/${AD_ACCOUNT_ID}/insights?cursor=abc123`,
+              },
+            })
+          }
+          // Second page - no more pages
+          return HttpResponse.json({
+            data: [
+              {
+                campaign_id: 'campaign_1',
+                ad_id: 'ad_page2',
+                impressions: '2000',
+                reach: '1600',
+                clicks: '100',
+                spend: '20.00',
+                actions: [],
+                date_start: '2025-01-01',
+                date_stop: '2025-01-07',
+              },
+            ],
+          })
+        })
+      )
+
+      const result = await client.getAccountInsights(ACCESS_TOKEN, AD_ACCOUNT_ID, {
+        level: 'ad',
+        datePreset: 'last_7d',
+      })
+
+      expect(callCount).toBe(2)
+      expect(result.size).toBe(2)
+      expect(result.has('ad_page1')).toBe(true)
+      expect(result.has('ad_page2')).toBe(true)
+      expect(result.get('ad_page1')!.impressions).toBe(1000)
+      expect(result.get('ad_page2')!.impressions).toBe(2000)
+    })
+
+    it('should support timeRange parameter', async () => {
+      let capturedUrl = ''
+      server.use(
+        http.get(`${META_API_BASE}/${AD_ACCOUNT_ID}/insights`, ({ request }) => {
+          capturedUrl = request.url
+          return HttpResponse.json(mockAccountInsightsResponse)
+        })
+      )
+
+      await client.getAccountInsights(ACCESS_TOKEN, AD_ACCOUNT_ID, {
+        level: 'ad',
+        timeRange: { since: '2026-03-01', until: '2026-03-15' },
+      })
+
+      expect(capturedUrl).toContain('time_range')
+      expect(capturedUrl).toContain('2026-03-01')
+      expect(capturedUrl).toContain('2026-03-15')
+      // Should NOT have date_preset when timeRange is used
+      expect(capturedUrl).not.toContain('date_preset')
+    })
+
+    it('should throw when neither datePreset nor timeRange is provided', async () => {
+      await expect(
+        client.getAccountInsights(ACCESS_TOKEN, AD_ACCOUNT_ID, {
+          level: 'ad',
+        })
+      ).rejects.toThrow('Either datePreset or timeRange must be provided')
+    })
+
+    it('should return videoViews=0 and thruPlays=0 when no video data', async () => {
+      const result = await client.getAccountInsights(ACCESS_TOKEN, AD_ACCOUNT_ID, {
+        level: 'ad',
+        datePreset: 'last_7d',
+      })
+
+      const ad1 = result.get('ad_1')
+      expect(ad1).toBeDefined()
+      // mock data has no video_3s_views and no video_view action
+      expect(ad1!.videoViews).toBe(0)
+      expect(ad1!.thruPlays).toBe(0)
     })
   })
 

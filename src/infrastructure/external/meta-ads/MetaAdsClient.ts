@@ -59,6 +59,10 @@ interface MetaApiInsightsResponse {
     reach?: string
     clicks?: string
     spend?: string
+    frequency?: string
+    cpm?: string
+    cpc?: string
+    video_3s_views?: string
     actions?: { action_type: string; value: string }[]
     action_values?: { action_type: string; value: string }[]
     date_start: string
@@ -1508,10 +1512,17 @@ export class MetaAdsClient implements IMetaAdsService {
     adAccountId: string,
     options: {
       level: 'campaign' | 'adset' | 'ad'
-      datePreset: string
+      datePreset?: string
+      timeRange?: { since: string; until: string }
+      timeIncrement?: '1'
       campaignIds?: string[]
     }
   ): Promise<Map<string, MetaInsightsData>> {
+    // datePreset 또는 timeRange 중 최소 하나 필수
+    if (!options.datePreset && !options.timeRange) {
+      throw new Error('Either datePreset or timeRange must be provided')
+    }
+
     if (this.mockMode) {
       console.log(`[MetaAdsClient:MOCK] getAccountInsights called (level=${options.level})`)
       return new Map()
@@ -1521,14 +1532,31 @@ export class MetaAdsClient implements IMetaAdsService {
       'meta.getAccountInsights',
       async () => {
         const fields =
-          'campaign_id,adset_id,ad_id,impressions,reach,clicks,spend,actions,action_values,date_start,date_stop'
+          'campaign_id,adset_id,ad_id,impressions,reach,clicks,spend,' +
+          'actions,action_values,frequency,cpm,cpc,' +
+          'video_3s_views,' +
+          'date_start,date_stop'
 
         const params = new URLSearchParams({
           fields,
           level: options.level,
-          date_preset: options.datePreset,
           limit: '500',
         })
+
+        // timeRange 또는 datePreset 설정
+        if (options.timeRange) {
+          params.append('time_range', JSON.stringify({
+            since: options.timeRange.since,
+            until: options.timeRange.until,
+          }))
+        } else if (options.datePreset) {
+          params.append('date_preset', options.datePreset)
+        }
+
+        // timeIncrement 옵션 처리 (A2)
+        if (options.timeIncrement) {
+          params.append('time_increment', options.timeIncrement)
+        }
 
         // campaignIds 필터링
         if (options.campaignIds && options.campaignIds.length > 0) {
@@ -1544,20 +1572,39 @@ export class MetaAdsClient implements IMetaAdsService {
           )
         }
 
-        const response = await this.requestWithRetry<MetaApiInsightsResponse>(
+        // 첫 페이지 호출
+        let response = await this.requestWithRetry<MetaApiInsightsResponse>(
           accessToken,
           `/${adAccountId}/insights?${params.toString()}`,
           { method: 'GET' }
         )
 
+        const allData = [...(response.data || [])]
+
+        // 페이지네이션: paging.next가 있으면 계속 가져옴 (A3)
+        while (response.paging?.next) {
+          const nextUrl = new URL(response.paging.next)
+          const nextPath = nextUrl.pathname + nextUrl.search
+          // META_API_BASE prefix 제거하여 requestWithRetry에 전달
+          const basePath = nextPath.replace(/^\/v[\d.]+/, '')
+          response = await this.requestWithRetry<MetaApiInsightsResponse>(
+            accessToken,
+            basePath,
+            { method: 'GET' }
+          )
+          if (response.data) {
+            allData.push(...response.data)
+          }
+        }
+
         // level에 따라 적절한 ID 키로 Map 생성
         const result = new Map<string, MetaInsightsData>()
 
-        if (!response.data || response.data.length === 0) {
+        if (allData.length === 0) {
           return result
         }
 
-        for (const item of response.data) {
+        for (const item of allData) {
           // level에 따라 key ID 결정
           let entityId: string
           const itemAny = item as Record<string, unknown>
@@ -1576,7 +1623,25 @@ export class MetaAdsClient implements IMetaAdsService {
           const linkClicks =
             item.actions?.find((a) => a.action_type === 'link_click')?.value || '0'
 
-          result.set(entityId, {
+          // video_views 추출 (A1 전략: 직접 필드 우선 -> actions 배열 fallback)
+          const videoViewsDirect = item.video_3s_views || '0'
+          const videoViewsFallback = item.actions?.find(
+            (a: { action_type: string; value: string }) => a.action_type === 'video_view'
+          )?.value || '0'
+          const videoViews = parseInt(videoViewsDirect, 10) > 0
+            ? videoViewsDirect
+            : videoViewsFallback
+
+          const thruPlays = item.actions?.find(
+            (a: { action_type: string; value: string }) => a.action_type === 'video_thru_play'
+          )?.value || '0'
+
+          // Map 키 결정 (A2): timeIncrement 사용 시 ${entityId}_${dateStart}
+          const mapKey = options.timeIncrement
+            ? `${entityId}_${item.date_start}`
+            : entityId
+
+          result.set(mapKey, {
             campaignId: item.campaign_id,
             impressions: parseInt(item.impressions || '0', 10),
             reach: parseInt(item.reach || '0', 10),
@@ -1587,6 +1652,14 @@ export class MetaAdsClient implements IMetaAdsService {
             revenue: parseFloat(revenue),
             dateStart: item.date_start,
             dateStop: item.date_stop,
+            // Phase 1 확장 필드
+            frequency: parseFloat(item.frequency || '0'),
+            cpm: parseFloat(item.cpm || '0'),
+            cpc: parseFloat(item.cpc || '0'),
+            videoViews: parseInt(videoViews, 10),
+            thruPlays: parseInt(thruPlays, 10),
+            adSetId: itemAny.adset_id as string | undefined,
+            adId: itemAny.ad_id as string | undefined,
           })
         }
 
@@ -1595,7 +1668,7 @@ export class MetaAdsClient implements IMetaAdsService {
       {
         'meta.adAccountId': adAccountId,
         'meta.level': options.level,
-        'meta.datePreset': options.datePreset,
+        'meta.datePreset': options.datePreset || '',
       }
     )
   }

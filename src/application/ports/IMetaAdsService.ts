@@ -20,6 +20,14 @@ export interface MetaInsightsData {
   revenue: number
   dateStart: string
   dateStop: string
+  // Phase 1: Ad-level 확장 필드
+  frequency?: number
+  cpm?: number
+  cpc?: number
+  videoViews?: number
+  thruPlays?: number
+  adSetId?: string
+  adId?: string
 }
 
 export interface MetaDailyInsightsData {
@@ -316,7 +324,9 @@ export interface IMetaAdsService {
     adAccountId: string,
     options: {
       level: 'campaign' | 'adset' | 'ad'
-      datePreset: string
+      datePreset?: string
+      timeRange?: { since: string; until: string }
+      timeIncrement?: '1'          // 일별 분할 (A2)
       campaignIds?: string[]
     }
   ): Promise<Map<string, MetaInsightsData>>
