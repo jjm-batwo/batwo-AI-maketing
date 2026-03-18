@@ -35,11 +35,11 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
     backgroundColor: '#ffffff',
-    padding: 40,
+    padding: 24,
     fontFamily: PDF_FONT_FAMILY,
   },
   header: {
-    marginBottom: 30,
+    marginBottom: 16,
     borderBottomWidth: 2,
     borderBottomColor: '#2563eb',
     paddingBottom: 20,
@@ -60,9 +60,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   summarySection: {
-    marginBottom: 30,
+    marginBottom: 16,
     backgroundColor: '#f8fafc',
-    padding: 20,
+    padding: 12,
     borderRadius: 8,
   },
   sectionTitle: {
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     color: '#1e293b',
   },
   campaignSection: {
-    marginBottom: 24,
+    marginBottom: 12,
   },
   campaignCard: {
     backgroundColor: '#ffffff',
@@ -129,10 +129,10 @@ const styles = StyleSheet.create({
     color: '#334155',
   },
   insightsSection: {
-    marginBottom: 24,
+    marginBottom: 12,
     backgroundColor: '#eff6ff',
-    padding: 20,
-    borderRadius: 8,
+    padding: 12,
+    borderRadius: 6,
   },
   insightCard: {
     marginBottom: 12,
@@ -160,12 +160,12 @@ const styles = StyleSheet.create({
   },
   footer: {
     position: 'absolute',
-    bottom: 30,
-    left: 40,
-    right: 40,
+    bottom: 16,
+    left: 24,
+    right: 24,
     borderTopWidth: 1,
     borderTopColor: '#e2e8f0',
-    paddingTop: 12,
+    paddingTop: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -174,9 +174,9 @@ const styles = StyleSheet.create({
     color: '#94a3b8',
   },
   executiveSummary: {
-    marginBottom: 30,
+    marginBottom: 16,
     backgroundColor: '#f8fafc',
-    padding: 20,
+    padding: 12,
     borderRadius: 8,
     borderLeftWidth: 4,
     borderLeftColor: '#2563eb',
@@ -223,13 +223,13 @@ const styles = StyleSheet.create({
     color: '#dc2626',
   },
   extendedSection: {
-    marginBottom: 24,
+    marginBottom: 12,
   },
   benchmarkSection: {
-    marginBottom: 24,
+    marginBottom: 12,
     backgroundColor: '#f0f9ff',
-    padding: 20,
-    borderRadius: 8,
+    padding: 12,
+    borderRadius: 6,
   },
   scoreDisplay: {
     fontSize: 32,
