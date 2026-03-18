@@ -231,10 +231,10 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
 
       {/* ===== Page 3: 캠페인별 성과 + 소재별 성과 ===== */}
       {(campaignPerformance?.campaigns.length || creativePerformance?.creatives.length) && (
-        <Page size="A4" style={styles.page}>
+        <Page size="A4" style={styles.page} wrap>
           {/* 캠페인별 성과 */}
           {campaignPerformance && campaignPerformance.campaigns.length > 0 && (
-            <View style={styles.section}>
+            <View style={styles.section} wrap={false}>
               <Text style={styles.sectionTitle}>캠페인별 성과</Text>
               <View style={styles.tableHeader}>
                 <Text style={[styles.tableCellHeader, { width: '25%' }]}>캠페인</Text>
@@ -268,7 +268,7 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
 
           {/* 소재별 성과 */}
           {creativePerformance && creativePerformance.creatives.length > 0 && (
-            <View style={styles.section}>
+            <View style={styles.section} wrap={false}>
               <Text style={styles.sectionTitle}>소재별 성과 TOP {creativePerformance.topN}</Text>
               <View style={styles.tableHeader}>
                 <Text style={[styles.tableCellHeader, { width: '22%' }]}>소재</Text>
@@ -300,10 +300,10 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
 
       {/* ===== Page 4: 소재 분석 (피로도 + 포맷 + 퍼널) ===== */}
       {(creativeFatigue?.creatives.length || formatComparison?.formats.length || funnelPerformance?.stages.length) && (
-        <Page size="A4" style={styles.page}>
+        <Page size="A4" style={styles.page} wrap>
           {/* 소재 피로도 */}
           {creativeFatigue && creativeFatigue.creatives.length > 0 && (
-            <View style={styles.section}>
+            <View style={styles.section} wrap={false}>
               <Text style={styles.sectionTitle}>소재 피로도 지수</Text>
               <FatigueMatrix creatives={creativeFatigue.creatives} />
             </View>
@@ -316,7 +316,7 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
 
           {/* 포맷별 성과 */}
           {formatComparison && formatComparison.formats.length > 0 && (
-            <View style={styles.section}>
+            <View style={styles.section} wrap={false}>
               <Text style={styles.sectionTitle}>소재 포맷별 성과</Text>
               <FormatComparisonChart formats={formatComparison.formats} />
             </View>
@@ -329,7 +329,7 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
 
           {/* 퍼널 단계별 */}
           {funnelPerformance && funnelPerformance.stages.length > 0 && (
-            <View style={styles.section}>
+            <View style={styles.section} wrap={false}>
               <Text style={styles.sectionTitle}>퍼널 단계별 성과</Text>
               <FunnelChart stages={funnelPerformance.stages} totalBudget={funnelPerformance.totalBudget} />
             </View>
@@ -340,10 +340,10 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
 
       {/* ===== Page 5: 성과 분석 + 추천 액션 ===== */}
       {(performanceAnalysis || recommendations?.actions.length) && (
-        <Page size="A4" style={styles.page}>
+        <Page size="A4" style={styles.page} wrap>
           {/* 성과 분석 */}
           {performanceAnalysis && (
-            <View style={styles.section}>
+            <View style={styles.section} wrap={false}>
               <Text style={styles.sectionTitle}>성과 분석</Text>
               <Text style={styles.summaryText}>{performanceAnalysis.summary}</Text>
 
@@ -382,7 +382,7 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
 
           {/* 추천 액션 */}
           {recommendations && recommendations.actions.length > 0 && (
-            <View style={styles.section}>
+            <View style={styles.section} wrap={false}>
               <Text style={styles.sectionTitle}>추천 액션</Text>
               {recommendations.actions.map((action, i) => (
                 <PriorityActionCard key={i} action={action} />
