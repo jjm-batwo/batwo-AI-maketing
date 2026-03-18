@@ -33,7 +33,7 @@
 
 ### Steps
 
-- [ ] **1.1** `prisma/schema.prisma`에 AdKPISnapshot 모델 추가 (Ad 모델 뒤에 배치)
+- [x]**1.1** `prisma/schema.prisma`에 AdKPISnapshot 모델 추가 (Ad 모델 뒤에 배치)
 
 ```prisma
 // ========================================
@@ -79,7 +79,7 @@ model AdKPISnapshot {
 }
 ```
 
-- [ ] **1.2** `Ad` 모델에 역관계 추가
+- [x]**1.2** `Ad` 모델에 역관계 추가
 
 기존 Ad 모델을 찾아서 `kpiSnapshots AdKPISnapshot[]` 필드를 추가한다:
 
@@ -93,13 +93,13 @@ model Ad {
 }
 ```
 
-- [ ] **1.3** Prisma 마이그레이션 생성
+- [x]**1.3** Prisma 마이그레이션 생성
 
 ```bash
 npx prisma migrate dev --name add_ad_kpi_snapshot
 ```
 
-- [ ] **1.4** Prisma Client 재생성 확인
+- [x]**1.4** Prisma Client 재생성 확인
 
 ```bash
 npx prisma generate
@@ -126,7 +126,7 @@ npx tsc --noEmit
 
 ### Steps
 
-- [ ] **2.1** 실패 테스트 작성: `tests/unit/domain/entities/AdKPI.test.ts`
+- [x]**2.1** 실패 테스트 작성: `tests/unit/domain/entities/AdKPI.test.ts`
 
 ```typescript
 import { describe, it, expect } from 'vitest'
@@ -271,7 +271,7 @@ describe('AdKPI', () => {
 })
 ```
 
-- [ ] **2.2** 실패 확인
+- [x]**2.2** 실패 확인
 
 ```bash
 npx vitest run tests/unit/domain/entities/AdKPI.test.ts --pool forks
@@ -279,7 +279,7 @@ npx vitest run tests/unit/domain/entities/AdKPI.test.ts --pool forks
 
 예상: 모든 테스트 FAIL (모듈 없음)
 
-- [ ] **2.3** 최소 구현: `src/domain/entities/AdKPI.ts`
+- [x]**2.3** 최소 구현: `src/domain/entities/AdKPI.ts`
 
 ```typescript
 import { Money } from '../value-objects/Money'
@@ -456,7 +456,7 @@ export class AdKPI {
 }
 ```
 
-- [ ] **2.4** 통과 확인
+- [x]**2.4** 통과 확인
 
 ```bash
 npx vitest run tests/unit/domain/entities/AdKPI.test.ts --pool forks
@@ -464,7 +464,7 @@ npx vitest run tests/unit/domain/entities/AdKPI.test.ts --pool forks
 
 예상: 모든 테스트 PASS
 
-- [ ] **2.5** 타입 체크
+- [x]**2.5** 타입 체크
 
 ```bash
 npx tsc --noEmit
@@ -482,7 +482,7 @@ npx tsc --noEmit
 
 ### Steps
 
-- [ ] **3.1** Repository 인터페이스 생성: `src/domain/repositories/IAdKPIRepository.ts`
+- [x]**3.1** Repository 인터페이스 생성: `src/domain/repositories/IAdKPIRepository.ts`
 
 ```typescript
 import { AdKPI } from '../entities/AdKPI'
@@ -575,7 +575,7 @@ export interface IAdKPIRepository {
 }
 ```
 
-- [ ] **3.2** 타입 체크
+- [x]**3.2** 타입 체크
 
 ```bash
 npx tsc --noEmit
@@ -596,7 +596,7 @@ npx tsc --noEmit
 
 ### Steps
 
-- [ ] **4.1** AdKPIMapper 생성: `src/infrastructure/database/mappers/AdKPIMapper.ts`
+- [x]**4.1** AdKPIMapper 생성: `src/infrastructure/database/mappers/AdKPIMapper.ts`
 
 ```typescript
 import { AdKPISnapshot as PrismaAdKPI, Prisma } from '@/generated/prisma'
@@ -658,7 +658,7 @@ export class AdKPIMapper {
 }
 ```
 
-- [ ] **4.2** PrismaAdKPIRepository 생성: `src/infrastructure/database/repositories/PrismaAdKPIRepository.ts`
+- [x]**4.2** PrismaAdKPIRepository 생성: `src/infrastructure/database/repositories/PrismaAdKPIRepository.ts`
 
 ```typescript
 import { PrismaClient } from '@/generated/prisma'
@@ -776,7 +776,7 @@ export class PrismaAdKPIRepository implements IAdKPIRepository {
 
 > 전체 메서드 구현은 `PrismaKPIRepository`의 `findByCampaignIdAndDateRange`, `aggregateByCampaignId`, `getDailyAggregates` 패턴을 동일하게 따른다. `findBy*`는 `findMany` + `where` + `orderBy`, `aggregate*`는 `aggregate` + `_sum`/_avg`, `getTopCreatives`는 `groupBy` + raw SQL로 ROAS 정렬.
 
-- [ ] **4.3** 타입 체크
+- [x]**4.3** 타입 체크
 
 ```bash
 npx tsc --noEmit
@@ -796,7 +796,7 @@ npx tsc --noEmit
 
 ### Steps
 
-- [ ] **5.1** `MetaInsightsData` 인터페이스 확장: `src/application/ports/IMetaAdsService.ts`
+- [x]**5.1** `MetaInsightsData` 인터페이스 확장: `src/application/ports/IMetaAdsService.ts`
 
 기존 `MetaInsightsData`에 optional 필드 추가:
 
@@ -823,7 +823,7 @@ export interface MetaInsightsData {
 }
 ```
 
-- [ ] **5.2** `getAccountInsights` options에 `timeIncrement` + `timeRange` 추가: `src/application/ports/IMetaAdsService.ts`
+- [x]**5.2** `getAccountInsights` options에 `timeIncrement` + `timeRange` 추가: `src/application/ports/IMetaAdsService.ts`
 
 `IMetaAdsService.getAccountInsights` 시그니처 변경:
 
@@ -851,7 +851,7 @@ if (!options.datePreset && !options.timeRange) {
 }
 ```
 
-- [ ] **5.2a** 기존 `getAccountInsights` 호출자 감사(audit) 및 업데이트
+- [x]**5.2a** 기존 `getAccountInsights` 호출자 감사(audit) 및 업데이트
 
 기존 호출자가 `datePreset`을 required로 전달하고 있으므로 시그니처 변경 후에도 컴파일이 유지되는지 확인한다:
 
@@ -866,7 +866,7 @@ grep -rn "getAccountInsights" src/ --include="*.ts"
 
 **검증:** `npx tsc --noEmit` 으로 모든 호출자가 컴파일되는지 확인 (Task 5.6에서 수행).
 
-- [ ] **5.3** `MetaAdsClient.getAccountInsights` 구현 수정: `src/infrastructure/external/meta-ads/MetaAdsClient.ts`
+- [x]**5.3** `MetaAdsClient.getAccountInsights` 구현 수정: `src/infrastructure/external/meta-ads/MetaAdsClient.ts`
 
 변경점:
 1. `fields` 문자열에 `frequency,cpm,cpc` 추가
@@ -975,7 +975,7 @@ while (response.paging?.next) {
 }
 ```
 
-- [ ] **5.4** 기존 테스트 업데이트 + 새 테스트 추가
+- [x]**5.4** 기존 테스트 업데이트 + 새 테스트 추가
 
 `tests/unit/infrastructure/meta-ads/MetaAdsClient.test.ts` 또는 `MetaAdsClient.bulk.test.ts`에 추가:
 
@@ -1004,13 +1004,13 @@ describe('getAccountInsights - extended fields', () => {
 })
 ```
 
-- [ ] **5.5** 테스트 실행
+- [x]**5.5** 테스트 실행
 
 ```bash
 npx vitest run tests/unit/infrastructure/meta-ads/ --pool forks
 ```
 
-- [ ] **5.6** 타입 체크
+- [x]**5.6** 타입 체크
 
 ```bash
 npx tsc --noEmit
@@ -1029,7 +1029,7 @@ npx tsc --noEmit
 
 ### Steps
 
-- [ ] **6.1** 실패 테스트 작성: `tests/unit/application/kpi/SyncAdInsightsUseCase.test.ts`
+- [x]**6.1** 실패 테스트 작성: `tests/unit/application/kpi/SyncAdInsightsUseCase.test.ts`
 
 ```typescript
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -1160,13 +1160,13 @@ describe('SyncAdInsightsUseCase', () => {
 })
 ```
 
-- [ ] **6.2** 실패 확인
+- [x]**6.2** 실패 확인
 
 ```bash
 npx vitest run tests/unit/application/kpi/SyncAdInsightsUseCase.test.ts --pool forks
 ```
 
-- [ ] **6.3** 최소 구현: `src/application/use-cases/kpi/SyncAdInsightsUseCase.ts`
+- [x]**6.3** 최소 구현: `src/application/use-cases/kpi/SyncAdInsightsUseCase.ts`
 
 ```typescript
 import { AdKPI } from '@domain/entities/AdKPI'
@@ -1298,7 +1298,7 @@ export class SyncAdInsightsUseCase {
 
 **참고:** `IAdRepository`에 `findByMetaAdId(metaAdId: string)` 메서드가 없을 수 있음. 기존 `IAdRepository` 인터페이스를 확인하여 해당 메서드가 없으면 추가해야 한다. 대안으로 `prisma.ad.findFirst({ where: { metaAdId } })`를 직접 사용하는 것은 Clean Architecture 위반이므로, Repository 인터페이스에 메서드를 추가하는 것이 올바르다.
 
-- [ ] **6.4** IAdRepository에 `findByMetaAdId` 메서드 추가 (필수 -- 현재 존재하지 않음)
+- [x]**6.4** IAdRepository에 `findByMetaAdId` 메서드 추가 (필수 -- 현재 존재하지 않음)
 
 **현황:** `IAdRepository.ts`에는 `save`, `findById`, `findByAdSetId`, `update`, `delete`만 존재. `findByMetaAdId`는 없음.
 **참고:** Prisma Ad 모델의 `metaAdId`는 `String?` (nullable). 따라서 반환 타입은 `Ad | null`.
@@ -1340,13 +1340,13 @@ async findByMetaAdId(metaAdId: string): Promise<Ad | null> {
 
 `npx tsc --noEmit`으로 확인 (Task 6.6에서 수행).
 
-- [ ] **6.5** 테스트 통과 확인
+- [x]**6.5** 테스트 통과 확인
 
 ```bash
 npx vitest run tests/unit/application/kpi/SyncAdInsightsUseCase.test.ts --pool forks
 ```
 
-- [ ] **6.6** 타입 체크
+- [x]**6.6** 타입 체크
 
 ```bash
 npx tsc --noEmit
@@ -1364,7 +1364,7 @@ npx tsc --noEmit
 
 ### Steps
 
-- [ ] **7.1** 라우트 생성: `src/app/api/cron/sync-ad-insights/route.ts`
+- [x]**7.1** 라우트 생성: `src/app/api/cron/sync-ad-insights/route.ts`
 
 ```typescript
 import { NextRequest, NextResponse } from 'next/server'
@@ -1469,7 +1469,7 @@ export const dynamic = 'force-dynamic'
 export const maxDuration = 300
 ```
 
-- [ ] **7.2** `vercel.json`에 cron 스케줄 엔트리 추가
+- [x]**7.2** `vercel.json`에 cron 스케줄 엔트리 추가
 
 기존 `vercel.json`의 `crons` 배열에 동일한 형식으로 추가한다. 기존 `/api/cron/sync`(06:00) 이후 30분 간격으로 설정하여 Rate Limit 충돌을 방지한다:
 
@@ -1490,7 +1490,7 @@ export const maxDuration = 300
 
 위 엔트리 바로 뒤에 추가하여 관련 cron job이 인접하게 배치되도록 한다.
 
-- [ ] **7.3** 타입 체크
+- [x]**7.3** 타입 체크
 
 ```bash
 npx tsc --noEmit
@@ -1511,7 +1511,7 @@ npx tsc --noEmit
 
 ### Steps
 
-- [ ] **8.1** DI 토큰 추가: `src/lib/di/types.ts`
+- [x]**8.1** DI 토큰 추가: `src/lib/di/types.ts`
 
 기존 `DI_TOKENS` 객체 내 적절한 위치에 추가:
 
@@ -1523,7 +1523,7 @@ SyncAdInsightsUseCase: Symbol.for('SyncAdInsightsUseCase'),
 
 위치: `// Ad` 섹션 (line ~118) 근처, 또는 `KPIRepository` 토큰 근처.
 
-- [ ] **8.2** KPI 모듈에 등록 추가: `src/lib/di/modules/kpi.module.ts`
+- [x]**8.2** KPI 모듈에 등록 추가: `src/lib/di/modules/kpi.module.ts`
 
 기존 `registerKPIModule` 함수에 추가:
 
@@ -1551,7 +1551,7 @@ container.register(
 )
 ```
 
-- [ ] **8.3** 타입 체크
+- [x]**8.3** 타입 체크
 
 ```bash
 npx tsc --noEmit
@@ -1567,7 +1567,7 @@ npx tsc --noEmit
 
 ### Steps
 
-- [ ] **9.1** Repository 단위 테스트 (Prisma mock 사용)
+- [x]**9.1** Repository 단위 테스트 (Prisma mock 사용)
 
 ```typescript
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -1681,7 +1681,7 @@ describe('PrismaAdKPIRepository', () => {
 })
 ```
 
-- [ ] **9.2** 테스트 실행
+- [x]**9.2** 테스트 실행
 
 ```bash
 npx vitest run tests/unit/infrastructure/database/PrismaAdKPIRepository.test.ts --pool forks
@@ -1695,7 +1695,7 @@ npx vitest run tests/unit/infrastructure/database/PrismaAdKPIRepository.test.ts 
 
 ### Steps
 
-- [ ] **10.1** 타입 체크
+- [x]**10.1** 타입 체크
 
 ```bash
 npx tsc --noEmit
@@ -1703,7 +1703,7 @@ npx tsc --noEmit
 
 예상: 0 errors
 
-- [ ] **10.2** 전체 단위 테스트
+- [x]**10.2** 전체 단위 테스트
 
 ```bash
 npx vitest run --pool forks
@@ -1711,13 +1711,13 @@ npx vitest run --pool forks
 
 예상: 기존 테스트 + 신규 테스트 모두 PASS
 
-- [ ] **10.3** 린트
+- [x]**10.3** 린트
 
 ```bash
 npm run lint
 ```
 
-- [ ] **10.4** 디버그 코드 확인
+- [x]**10.4** 디버그 코드 확인
 
 ```bash
 grep -rn "console\.log\|debugger\|TODO\|HACK" \
@@ -1730,7 +1730,7 @@ grep -rn "console\.log\|debugger\|TODO\|HACK" \
 
 예상: 일치 없음 (cron route의 console.log는 기존 패턴이므로 허용)
 
-- [ ] **10.5** 커밋
+- [x]**10.5** 커밋
 
 ```bash
 git add -A
