@@ -95,6 +95,16 @@ Verifies React component implementation consistency and quality:
 | `src/presentation/utils/accountStatus.ts` | Account status utility — audit account status determination helper |
 | `src/app/audit/callback/page.tsx` | Audit callback page (core audit UI) |
 | `src/components/ui/` | shadcn/ui base components |
+| `src/presentation/components/report/ReportDetail.tsx` | Report detail view — 9 enhanced sections with backward compat |
+| `src/presentation/components/report/sections/OverallSummarySection.tsx` | KPI summary cards with change indicators |
+| `src/presentation/components/report/sections/DailyTrendSection.tsx` | Daily metrics trend table |
+| `src/presentation/components/report/sections/CampaignPerformanceSection.tsx` | Campaign metrics table |
+| `src/presentation/components/report/sections/CreativePerformanceSection.tsx` | Top N creative ranking table |
+| `src/presentation/components/report/sections/CreativeFatigueSection.tsx` | Fatigue score badges with recommendations |
+| `src/presentation/components/report/sections/FormatComparisonSection.tsx` | Format comparison grid |
+| `src/presentation/components/report/sections/FunnelPerformanceSection.tsx` | Funnel stage progress bars |
+| `src/presentation/components/report/sections/PerformanceAnalysisSection.tsx` | AI analysis positive/negative factors |
+| `src/presentation/components/report/sections/RecommendationsSection.tsx` | Action cards with priority badges |
 
 ## Workflow
 

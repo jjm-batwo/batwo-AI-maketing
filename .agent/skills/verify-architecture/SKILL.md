@@ -64,6 +64,10 @@ Verifies that Clean Architecture dependency rules (domain <- application <- infr
 | `src/domain/repositories/IPermissionRepository.ts` | Permission repository port interface (domain layer) |
 | `src/infrastructure/database/repositories/PrismaPermissionRepository.ts` | Permission repository Prisma implementation (infrastructure layer) |
 | `src/application/ports/IAppConfig.ts` | App config port interface (application layer) |
+| `src/application/services/ReportNotificationService.ts` | Report notification service (Email + Slack) |
+| `src/application/services/EnhancedReportDataBuilder.ts` | Enhanced report data builder with AI integration |
+| `src/application/ports/IReportPDFGenerator.ts` | PDF generator port interface |
+| `src/infrastructure/pdf/ReportPDFGenerator.ts` | PDF generator infrastructure impl |
 
 ## Workflow
 

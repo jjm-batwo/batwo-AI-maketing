@@ -50,6 +50,12 @@ Verifies DI (Dependency Injection) container consistency:
 | `src/application/ports/IKnowledgeBaseRepository.ts` | Vector search repository port — RAG system, DI registration target |
 | `src/application/services/KnowledgeIngestionService.ts` | Knowledge ingestion service — RAG system, DI registration target |
 | `src/infrastructure/database/repositories/PrismaPermissionRepository.ts` | Permission repository Prisma implementation (Phase 3 addition) |
+| `src/application/services/ReportNotificationService.ts` | Report notification service (Email + Slack) — Phase 5 DI target |
+| `src/application/services/EnhancedReportDataBuilder.ts` | Enhanced report data builder — Phase 2 DI target |
+| `src/application/services/CreativeFatigueService.ts` | Creative fatigue scoring service — Phase 2 DI target |
+| `src/application/services/FunnelClassificationService.ts` | Funnel classification service — Phase 2 DI target |
+| `src/application/use-cases/report/GenerateMonthlyReportUseCase.ts` | Monthly report generation UC — Phase 6 DI target |
+| `src/application/use-cases/report/GenerateDailyReportUseCase.ts` | Daily report generation UC — Phase 6 DI target |
 
 ## Workflow
 
