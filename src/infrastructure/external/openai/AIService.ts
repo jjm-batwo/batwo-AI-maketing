@@ -105,6 +105,15 @@ export class AIService implements IAIService {
     const finalMaxTokens = config?.maxTokens ?? 2000
     const finalTopP = config?.topP ?? 1
 
+    // gpt-5/o 계열: max_completion_tokens 사용, temperature/top_p 미지원
+    const isNewModel = finalModel.startsWith('gpt-5') || finalModel.startsWith('o')
+    const tokenParam = isNewModel
+      ? { max_completion_tokens: finalMaxTokens }
+      : { max_tokens: finalMaxTokens }
+    const samplingParams = isNewModel
+      ? {}
+      : { temperature: finalTemperature, top_p: finalTopP }
+
     const response = await this.requestWithRetry<ChatCompletionResponse>('/chat/completions', {
       method: 'POST',
       body: JSON.stringify({
@@ -113,9 +122,8 @@ export class AIService implements IAIService {
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
         ],
-        temperature: finalTemperature,
-        max_tokens: finalMaxTokens,
-        top_p: finalTopP,
+        ...samplingParams,
+        ...tokenParam,
       }),
     })
 
