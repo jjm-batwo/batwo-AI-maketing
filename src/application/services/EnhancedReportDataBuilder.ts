@@ -315,16 +315,37 @@ export class EnhancedReportDataBuilder {
   }
 
   private async buildAISections(
-    _overallSummary: OverallSummarySection,
-    _campaignPerformance: CampaignPerformanceSection
+    overallSummary: OverallSummarySection,
+    campaignPerformance: CampaignPerformanceSection
   ): Promise<[PerformanceAnalysisSection, RecommendationsSection]> {
     try {
+      const campaignSummaries = campaignPerformance.campaigns.map(c => ({
+        name: c.name,
+        objective: c.objective ?? 'CONVERSIONS',
+        metrics: {
+          impressions: c.impressions ?? 0,
+          clicks: c.clicks ?? 0,
+          conversions: c.conversions ?? 0,
+          spend: c.spend ?? 0,
+          revenue: c.revenue ?? 0,
+        },
+      }))
+
       const result = await this.aiService.generateReportInsights({
         reportType: 'weekly',
-        campaignSummaries: [],
+        campaignSummaries,
         includeExtendedInsights: true,
         includeForecast: false,
         includeBenchmark: false,
+        comparisonPeriod: overallSummary.changes ? {
+          previousMetrics: {
+            impressions: 0,
+            clicks: 0,
+            conversions: 0,
+            spend: overallSummary.totalSpend / (1 + (overallSummary.changes.spend.value / 100)),
+            revenue: overallSummary.totalRevenue / (1 + (overallSummary.changes.revenue.value / 100)),
+          },
+        } : undefined,
       })
 
       return [
