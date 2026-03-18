@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   recommendation: {
     fontSize: 9,
     color: '#475569',
-    fontStyle: 'italic',
+    color: '#64748b',
   },
 })
 
