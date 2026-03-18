@@ -6,6 +6,9 @@ export interface PDFGeneratorResult {
   contentType: string
 }
 
+export type PDFReportType = 'DAILY' | 'WEEKLY' | 'MONTHLY'
+
 export interface IReportPDFGenerator {
   generateWeeklyReport(report: ReportDTO): Promise<PDFGeneratorResult>
+  generateReport(type: PDFReportType, report: ReportDTO): Promise<PDFGeneratorResult>
 }

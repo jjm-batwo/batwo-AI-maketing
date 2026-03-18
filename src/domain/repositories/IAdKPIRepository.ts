@@ -31,6 +31,8 @@ export interface FormatAggregate {
   totalConversions: number
   totalSpend: number
   totalRevenue: number
+  avgFrequency: number
+  adCount: number
 }
 
 export interface CreativeAggregate {

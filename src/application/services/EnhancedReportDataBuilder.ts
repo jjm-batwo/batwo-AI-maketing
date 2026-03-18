@@ -85,7 +85,7 @@ export class EnhancedReportDataBuilder {
     const dailyTrend = this.buildDailyTrend(dailyAggregates)
     const campaignPerformance = this.buildCampaignPerformance(campaigns, campaignAggregates)
     const creativePerformance = this.buildCreativePerformance(topCreatives)
-    const creativeFatigue = this.buildCreativeFatigue(topCreatives)
+    const creativeFatigue = this.buildCreativeFatigue(topCreatives, startDate, endDate)
     const formatComparison = this.buildFormatComparison(formatAggregates)
     const funnelPerformance = this.buildFunnelPerformance(campaigns, campaignAggregates)
 
@@ -236,7 +236,15 @@ export class EnhancedReportDataBuilder {
     }
   }
 
-  private buildCreativeFatigue(topCreatives: CreativeAggregate[]): CreativeFatigueSection {
+  private buildCreativeFatigue(
+    topCreatives: CreativeAggregate[],
+    startDate: Date,
+    endDate: Date
+  ): CreativeFatigueSection {
+    const activeDays = Math.max(1, Math.ceil(
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+    ))
+
     return {
       creatives: topCreatives
         .filter(c => c.avgFrequency > 0)
@@ -247,7 +255,7 @@ export class EnhancedReportDataBuilder {
             frequency: c.avgFrequency,
             currentCtr,
             initialCtr,
-            activeDays: 7,
+            activeDays,
           })
           const level = this.fatigueService.getFatigueLevel(score)
 
@@ -260,7 +268,7 @@ export class EnhancedReportDataBuilder {
             ctrTrend: [],
             fatigueScore: score,
             fatigueLevel: level,
-            activeDays: 7,
+            activeDays,
             recommendation: level === 'critical'
               ? '즉시 소재 교체 권장'
               : level === 'warning'
@@ -276,7 +284,7 @@ export class EnhancedReportDataBuilder {
       formats: formatAggregates.map(f => ({
         format: f.format,
         formatLabel: FORMAT_LABELS[f.format] ?? f.format,
-        adCount: 0,
+        adCount: f.adCount,
         impressions: f.totalImpressions,
         clicks: f.totalClicks,
         conversions: f.totalConversions,
@@ -284,7 +292,7 @@ export class EnhancedReportDataBuilder {
         revenue: f.totalRevenue,
         roas: f.totalSpend > 0 ? f.totalRevenue / f.totalSpend : 0,
         ctr: f.totalImpressions > 0 ? (f.totalClicks / f.totalImpressions) * 100 : 0,
-        avgFrequency: 0,
+        avgFrequency: f.avgFrequency,
       })),
     }
   }

@@ -309,6 +309,8 @@ export class PrismaAdKPIRepository implements IAdKPIRepository {
         totalconversions: bigint
         totalspend: number
         totalrevenue: number
+        avgfrequency: number
+        adcount: bigint
       }>
     >`
       SELECT
@@ -317,7 +319,9 @@ export class PrismaAdKPIRepository implements IAdKPIRepository {
         SUM(k.clicks)::bigint as totalclicks,
         SUM(k.conversions)::bigint as totalconversions,
         SUM(k.spend)::numeric as totalspend,
-        SUM(k.revenue)::numeric as totalrevenue
+        SUM(k.revenue)::numeric as totalrevenue,
+        AVG(k.frequency)::numeric as avgfrequency,
+        COUNT(DISTINCT k."adId")::bigint as adcount
       FROM "AdKPISnapshot" k
       JOIN "Creative" c ON k."creativeId" = c.id
       WHERE k."campaignId" = ANY(${campaignIds})
@@ -333,6 +337,8 @@ export class PrismaAdKPIRepository implements IAdKPIRepository {
       totalConversions: Number(r.totalconversions),
       totalSpend: Number(r.totalspend),
       totalRevenue: Number(r.totalrevenue),
+      avgFrequency: Number(r.avgfrequency ?? 0),
+      adCount: Number(r.adcount),
     }))
   }
 

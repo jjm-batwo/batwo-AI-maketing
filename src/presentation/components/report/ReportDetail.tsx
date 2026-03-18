@@ -7,6 +7,18 @@ import { KPICard } from '../dashboard/KPICard'
 import DOMPurify from 'dompurify'
 import { ShareReportButton } from './ShareReportButton'
 import { ReportScheduleForm } from './ReportScheduleForm'
+import {
+  OverallSummarySection,
+  DailyTrendSection,
+  CampaignPerformanceSection,
+  CreativePerformanceSection,
+  CreativeFatigueSection,
+  FormatComparisonSection,
+  FunnelPerformanceSection,
+  PerformanceAnalysisSection,
+  RecommendationsSection,
+} from './sections'
+import type { EnhancedReportSections } from '@application/dto/report/EnhancedReportSections'
 
 interface ReportDetailProps {
   report: {
@@ -34,6 +46,16 @@ interface ReportDetailProps {
       title: string
       content: string
     }>
+    // Enhanced sections (Phase 2) — optional for backward compatibility
+    overallSummary?: EnhancedReportSections['overallSummary']
+    dailyTrend?: EnhancedReportSections['dailyTrend']
+    campaignPerformance?: EnhancedReportSections['campaignPerformance']
+    creativePerformance?: EnhancedReportSections['creativePerformance']
+    creativeFatigue?: EnhancedReportSections['creativeFatigue']
+    formatComparison?: EnhancedReportSections['formatComparison']
+    funnelPerformance?: EnhancedReportSections['funnelPerformance']
+    performanceAnalysis?: EnhancedReportSections['performanceAnalysis']
+    recommendations?: EnhancedReportSections['recommendations']
   }
   isLoading?: boolean
   onDownload?: () => void
@@ -63,7 +85,7 @@ export function ReportDetail({
     )
   }
 
-  const { summaryMetrics, aiInsights } = report
+  const hasEnhancedData = !!report.overallSummary
 
   // Determine an existing share URL if a token exists and is valid
   const existingShareUrl =
@@ -71,14 +93,14 @@ export function ReportDetail({
       ? `${process.env.NEXT_PUBLIC_APP_URL || ''}/reports/share/${report.shareToken}`
       : undefined
 
+  const typeLabel = report.type === 'DAILY' ? '일간' : report.type === 'WEEKLY' ? '주간' : '월간'
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">
-            {report.type === 'WEEKLY' ? '주간' : '월간'} 성과 보고서
-          </h1>
+          <h1 className="text-2xl font-bold">{typeLabel} 성과 보고서</h1>
           <p className="text-muted-foreground">
             {report.dateRange.startDate} ~ {report.dateRange.endDate}
           </p>
@@ -103,82 +125,123 @@ export function ReportDetail({
         </div>
       </div>
 
-      {/* KPI Summary */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <KPICard
-          title="ROAS"
-          value={summaryMetrics.averageRoas}
-          unit="x"
-          format="multiplier"
-          icon="chart"
-        />
-        <KPICard
-          title="총 지출"
-          value={summaryMetrics.totalSpend}
-          unit="원"
-          format="currency"
-          icon="dollar"
-        />
-        <KPICard
-          title="전환수"
-          value={summaryMetrics.totalConversions}
-          format="number"
-          icon="target"
-        />
-        <KPICard
-          title="CTR"
-          value={summaryMetrics.averageCtr}
-          unit="%"
-          format="percentage"
-          icon="click"
-        />
-      </div>
+      {hasEnhancedData ? (
+        <>
+          {/* Enhanced 9-Section View */}
+          {report.overallSummary && (
+            <OverallSummarySection data={report.overallSummary} />
+          )}
 
-      {/* AI Insights */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
-            AI 인사이트
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {aiInsights.map((insight, index) => (
-              <div
-                key={index}
-                className={`rounded-lg p-4 ${
-                  insight.type === 'POSITIVE'
-                    ? 'bg-green-50 text-green-800'
-                    : insight.type === 'NEGATIVE'
-                      ? 'bg-red-50 text-red-800'
-                      : 'bg-blue-50 text-blue-800'
-                }`}
-              >
-                <p className="text-sm">{insight.message}</p>
-                <p className="mt-1 text-xs opacity-70">
-                  신뢰도: {Math.round(insight.confidence * 100)}%
-                </p>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+          {report.dailyTrend && (
+            <DailyTrendSection data={report.dailyTrend} />
+          )}
 
-      {/* Sections */}
-      {report.sections.map((section, index) => (
-        <Card key={index}>
-          <CardHeader>
-            <CardTitle>{section.title}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div
-              className="prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(section.content) }}
+          {report.campaignPerformance && (
+            <CampaignPerformanceSection data={report.campaignPerformance} />
+          )}
+
+          {report.creativePerformance && (
+            <CreativePerformanceSection data={report.creativePerformance} />
+          )}
+
+          {report.creativeFatigue && (
+            <CreativeFatigueSection data={report.creativeFatigue} />
+          )}
+
+          {report.formatComparison && (
+            <FormatComparisonSection data={report.formatComparison} />
+          )}
+
+          {report.funnelPerformance && (
+            <FunnelPerformanceSection data={report.funnelPerformance} />
+          )}
+
+          {report.performanceAnalysis && (
+            <PerformanceAnalysisSection data={report.performanceAnalysis} />
+          )}
+
+          {report.recommendations && (
+            <RecommendationsSection data={report.recommendations} />
+          )}
+        </>
+      ) : (
+        <>
+          {/* Basic View (backward compatibility) */}
+          <div className="grid gap-4 md:grid-cols-4">
+            <KPICard
+              title="ROAS"
+              value={report.summaryMetrics.averageRoas}
+              unit="x"
+              format="multiplier"
+              icon="chart"
             />
-          </CardContent>
-        </Card>
-      ))}
+            <KPICard
+              title="총 지출"
+              value={report.summaryMetrics.totalSpend}
+              unit="원"
+              format="currency"
+              icon="dollar"
+            />
+            <KPICard
+              title="전환수"
+              value={report.summaryMetrics.totalConversions}
+              format="number"
+              icon="target"
+            />
+            <KPICard
+              title="CTR"
+              value={report.summaryMetrics.averageCtr}
+              unit="%"
+              format="percentage"
+              icon="click"
+            />
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-primary" />
+                AI 인사이트
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {report.aiInsights.map((insight, index) => (
+                  <div
+                    key={index}
+                    className={`rounded-lg p-4 ${
+                      insight.type === 'POSITIVE'
+                        ? 'bg-green-50 text-green-800'
+                        : insight.type === 'NEGATIVE'
+                          ? 'bg-red-50 text-red-800'
+                          : 'bg-blue-50 text-blue-800'
+                    }`}
+                  >
+                    <p className="text-sm">{insight.message}</p>
+                    <p className="mt-1 text-xs opacity-70">
+                      신뢰도: {Math.round(insight.confidence * 100)}%
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {report.sections.map((section, index) => (
+            <Card key={index}>
+              <CardHeader>
+                <CardTitle>{section.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div
+                  className="prose prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(section.content) }}
+                />
+              </CardContent>
+            </Card>
+          ))}
+        </>
+      )}
     </div>
   )
 }

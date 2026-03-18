@@ -1,0 +1,10 @@
+// src/presentation/components/report/sections/index.ts
+export { OverallSummarySection } from './OverallSummarySection'
+export { DailyTrendSection } from './DailyTrendSection'
+export { CampaignPerformanceSection } from './CampaignPerformanceSection'
+export { CreativePerformanceSection } from './CreativePerformanceSection'
+export { CreativeFatigueSection } from './CreativeFatigueSection'
+export { FormatComparisonSection } from './FormatComparisonSection'
+export { FunnelPerformanceSection } from './FunnelPerformanceSection'
+export { PerformanceAnalysisSection } from './PerformanceAnalysisSection'
+export { RecommendationsSection } from './RecommendationsSection'

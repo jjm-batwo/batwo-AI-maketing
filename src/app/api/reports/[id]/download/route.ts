@@ -35,7 +35,13 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     // Generate PDF
     const pdfGenerator = getReportPDFGenerator()
     const reportDTO = toReportDTO(report)
-    const { buffer, filename, contentType } = await pdfGenerator.generateWeeklyReport(reportDTO)
+    const typeMap: Record<string, 'DAILY' | 'WEEKLY' | 'MONTHLY'> = {
+      DAILY: 'DAILY',
+      WEEKLY: 'WEEKLY',
+      MONTHLY: 'MONTHLY',
+    }
+    const templateType = typeMap[report.type] ?? 'WEEKLY'
+    const { buffer, filename, contentType } = await pdfGenerator.generateReport(templateType, reportDTO)
 
     // Return PDF (convert Buffer to Uint8Array for NextResponse)
     return new NextResponse(new Uint8Array(buffer), {

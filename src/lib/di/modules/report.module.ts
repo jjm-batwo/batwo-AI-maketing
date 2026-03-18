@@ -17,6 +17,8 @@ import { PrismaReportScheduleRepository } from '@infrastructure/database/reposit
 
 // Use Cases
 import { GenerateWeeklyReportUseCase } from '@application/use-cases/report/GenerateWeeklyReportUseCase'
+import { GenerateMonthlyReportUseCase } from '@application/use-cases/report/GenerateMonthlyReportUseCase'
+import { GenerateDailyReportUseCase } from '@application/use-cases/report/GenerateDailyReportUseCase'
 import { SendScheduledReportsUseCase } from '@application/use-cases/report/SendScheduledReportsUseCase'
 
 // Phase 2: Enhanced Report Services
@@ -77,6 +79,32 @@ export function registerReportModule(container: Container): void {
     DI_TOKENS.GenerateWeeklyReportUseCase,
     () =>
       new GenerateWeeklyReportUseCase(
+        container.resolve(DI_TOKENS.ReportRepository),
+        container.resolve(DI_TOKENS.CampaignRepository),
+        container.resolve(DI_TOKENS.KPIRepository),
+        container.resolve(DI_TOKENS.AIService),
+        container.resolve(DI_TOKENS.UsageLogRepository),
+        container.resolve(DI_TOKENS.EnhancedReportDataBuilder)
+      )
+  )
+
+  container.register(
+    DI_TOKENS.GenerateMonthlyReportUseCase,
+    () =>
+      new GenerateMonthlyReportUseCase(
+        container.resolve(DI_TOKENS.ReportRepository),
+        container.resolve(DI_TOKENS.CampaignRepository),
+        container.resolve(DI_TOKENS.KPIRepository),
+        container.resolve(DI_TOKENS.AIService),
+        container.resolve(DI_TOKENS.UsageLogRepository),
+        container.resolve(DI_TOKENS.EnhancedReportDataBuilder)
+      )
+  )
+
+  container.register(
+    DI_TOKENS.GenerateDailyReportUseCase,
+    () =>
+      new GenerateDailyReportUseCase(
         container.resolve(DI_TOKENS.ReportRepository),
         container.resolve(DI_TOKENS.CampaignRepository),
         container.resolve(DI_TOKENS.KPIRepository),
