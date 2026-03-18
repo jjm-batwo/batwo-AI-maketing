@@ -6,13 +6,19 @@ import type {
   PDFGeneratorResult,
 } from '@application/ports/IReportPDFGenerator'
 import { WeeklyReportTemplate } from './templates/WeeklyReportTemplate'
+import { EnhancedWeeklyReportTemplate } from './templates/EnhancedWeeklyReportTemplate'
 
 export type { PDFGeneratorResult, IReportPDFGenerator }
 
 export class ReportPDFGenerator implements IReportPDFGenerator {
   async generateWeeklyReport(report: ReportDTO): Promise<PDFGeneratorResult> {
+    // B1: enrichedData(overallSummary) 유무로 템플릿 분기
+    const Template = report.overallSummary
+      ? EnhancedWeeklyReportTemplate
+      : WeeklyReportTemplate
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const document = React.createElement(WeeklyReportTemplate, { report }) as any
+    const document = React.createElement(Template, { report }) as any
     const buffer = await renderToBuffer(document)
 
     const startDate = new Date(report.dateRange.startDate)

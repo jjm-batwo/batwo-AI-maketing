@@ -111,12 +111,8 @@ export function formatNumber(num: number): string {
   return new Intl.NumberFormat('ko-KR').format(Math.round(num))
 }
 
-export function formatCurrency(num: number, currency = 'KRW'): string {
-  return new Intl.NumberFormat('ko-KR', {
-    style: 'currency',
-    currency,
-    maximumFractionDigits: 0,
-  }).format(num)
+export function formatCurrency(num: number): string {
+  return new Intl.NumberFormat('ko-KR').format(Math.round(num)) + '원'
 }
 
 export function formatPercent(num: number, decimals = 2): string {

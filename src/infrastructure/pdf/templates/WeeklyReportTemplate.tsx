@@ -313,11 +313,7 @@ function formatNumber(num: number): string {
 }
 
 function formatCurrency(num: number): string {
-  return new Intl.NumberFormat('ko-KR', {
-    style: 'currency',
-    currency: 'KRW',
-    maximumFractionDigits: 0,
-  }).format(num)
+  return new Intl.NumberFormat('ko-KR').format(Math.round(num)) + '원'
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

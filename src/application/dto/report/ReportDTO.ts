@@ -6,6 +6,7 @@ import {
   AIInsight,
   ReportSummaryMetrics,
 } from '@domain/entities/Report'
+import type { EnhancedReportSections } from './EnhancedReportSections'
 
 export interface GenerateReportDTO {
   userId: string
@@ -35,12 +36,23 @@ export interface ReportDTO {
   sentAt?: string
   createdAt: string
   updatedAt: string
+
+  // 9개 섹션 (Phase 2) -- enrichedData가 있을 때만 채워짐
+  overallSummary?: EnhancedReportSections['overallSummary']
+  dailyTrend?: EnhancedReportSections['dailyTrend']
+  campaignPerformance?: EnhancedReportSections['campaignPerformance']
+  creativePerformance?: EnhancedReportSections['creativePerformance']
+  creativeFatigue?: EnhancedReportSections['creativeFatigue']
+  formatComparison?: EnhancedReportSections['formatComparison']
+  funnelPerformance?: EnhancedReportSections['funnelPerformance']
+  performanceAnalysis?: EnhancedReportSections['performanceAnalysis']
+  recommendations?: EnhancedReportSections['recommendations']
 }
 
 export function toReportDTO(report: Report): ReportDTO {
   const metrics = report.calculateSummaryMetrics()
 
-  return {
+  const base: ReportDTO = {
     id: report.id,
     type: report.type,
     userId: report.userId,
@@ -58,4 +70,23 @@ export function toReportDTO(report: Report): ReportDTO {
     createdAt: report.createdAt.toISOString(),
     updatedAt: report.updatedAt.toISOString(),
   }
+
+  // enrichedData가 있으면 9개 섹션 매핑
+  if (report.enrichedData) {
+    const enriched = report.enrichedData as unknown as EnhancedReportSections
+    return {
+      ...base,
+      overallSummary: enriched.overallSummary,
+      dailyTrend: enriched.dailyTrend,
+      campaignPerformance: enriched.campaignPerformance,
+      creativePerformance: enriched.creativePerformance,
+      creativeFatigue: enriched.creativeFatigue,
+      formatComparison: enriched.formatComparison,
+      funnelPerformance: enriched.funnelPerformance,
+      performanceAnalysis: enriched.performanceAnalysis,
+      recommendations: enriched.recommendations,
+    }
+  }
+
+  return base
 }

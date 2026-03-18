@@ -101,6 +101,7 @@ export interface ReportProps extends CreateReportProps {
   shareExpiresAt?: Date | null
   createdAt: Date
   updatedAt: Date
+  enrichedData?: Record<string, unknown> | null
 }
 
 export class Report extends AggregateRoot {
@@ -118,7 +119,8 @@ export class Report extends AggregateRoot {
     private readonly _generatedAt: Date | undefined,
     private readonly _sentAt: Date | undefined,
     private readonly _createdAt: Date,
-    private readonly _updatedAt: Date
+    private readonly _updatedAt: Date,
+    private readonly _enrichedData: Record<string, unknown> | null | undefined
   ) {
     super()
   }
@@ -143,7 +145,8 @@ export class Report extends AggregateRoot {
       undefined,
       undefined,
       now,
-      now
+      now,
+      undefined
     )
   }
 
@@ -166,7 +169,8 @@ export class Report extends AggregateRoot {
       undefined,
       undefined,
       now,
-      now
+      now,
+      undefined
     )
   }
 
@@ -190,7 +194,8 @@ export class Report extends AggregateRoot {
       undefined,
       undefined,
       now,
-      now
+      now,
+      undefined
     )
   }
 
@@ -209,7 +214,8 @@ export class Report extends AggregateRoot {
       props.generatedAt,
       props.sentAt,
       props.createdAt,
-      props.updatedAt
+      props.updatedAt,
+      props.enrichedData ?? null
     )
   }
 
@@ -298,6 +304,9 @@ export class Report extends AggregateRoot {
   get sentAt(): Date | undefined {
     return this._sentAt ? new Date(this._sentAt) : undefined
   }
+  get enrichedData(): Record<string, unknown> | null {
+    return this._enrichedData ?? null
+  }
   get createdAt(): Date {
     return new Date(this._createdAt)
   }
@@ -321,7 +330,8 @@ export class Report extends AggregateRoot {
       this._generatedAt,
       this._sentAt,
       this._createdAt,
-      new Date()
+      new Date(),
+      this._enrichedData
     )
   }
 
@@ -344,7 +354,8 @@ export class Report extends AggregateRoot {
       this._generatedAt,
       this._sentAt,
       this._createdAt,
-      new Date()
+      new Date(),
+      this._enrichedData
     )
   }
 
@@ -363,7 +374,8 @@ export class Report extends AggregateRoot {
       new Date(),
       this._sentAt,
       this._createdAt,
-      new Date()
+      new Date(),
+      this._enrichedData
     )
 
     // Raise domain event
@@ -401,7 +413,8 @@ export class Report extends AggregateRoot {
       this._generatedAt,
       new Date(),
       this._createdAt,
-      new Date()
+      new Date(),
+      this._enrichedData
     )
 
     // Raise domain event
@@ -410,6 +423,18 @@ export class Report extends AggregateRoot {
     )
 
     return report
+  }
+
+  setEnrichedData(data: Record<string, unknown>): Report {
+    return new Report(
+      this._id, this._type, this._userId, this._campaignIds,
+      this._dateRange, this._sections, this._aiInsights,
+      this._status,
+      this._shareToken, this._shareExpiresAt,
+      this._generatedAt, this._sentAt,
+      this._createdAt, new Date(),
+      data
+    )
   }
 
   calculateSummaryMetrics(): ReportSummaryMetrics {
@@ -461,6 +486,7 @@ export class Report extends AggregateRoot {
       sentAt: this._sentAt,
       createdAt: this._createdAt,
       updatedAt: this._updatedAt,
+      enrichedData: this._enrichedData ?? null,
     }
   }
 }

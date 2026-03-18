@@ -23,3 +23,26 @@ export interface FunnelData {
   overallConversionRate: number // PageView → Purchase
   totalValue: number
 }
+
+// --- Campaign Objective-based Funnel Stage (ToFu/MoFu/BoFu) ---
+
+import { CampaignObjective } from './CampaignObjective'
+
+export type FunnelStage = 'tofu' | 'mofu' | 'bofu'
+
+export const FUNNEL_STAGE_LABELS: Record<FunnelStage | 'auto', string> = {
+  tofu: '인지 (ToFu)',
+  mofu: '고려 (MoFu)',
+  bofu: '전환 (BoFu)',
+  auto: '자동 배치 (Advantage+)',
+}
+
+export const OBJECTIVE_TO_FUNNEL: Record<CampaignObjective, FunnelStage> = {
+  [CampaignObjective.AWARENESS]:     'tofu',
+  [CampaignObjective.TRAFFIC]:       'mofu',
+  [CampaignObjective.ENGAGEMENT]:    'mofu',
+  [CampaignObjective.LEADS]:         'mofu',
+  [CampaignObjective.APP_PROMOTION]: 'mofu',
+  [CampaignObjective.SALES]:         'bofu',
+  [CampaignObjective.CONVERSIONS]:   'bofu',
+}

@@ -7,10 +7,16 @@
 import { NextResponse } from 'next/server'
 import { ReportPDFGenerator } from '@/infrastructure/pdf/ReportPDFGenerator'
 import { getSampleReportDTO } from '@/lib/sample-report-data'
+import { getSampleEnhancedReportDTO } from '@/lib/sample-enhanced-report-data'
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const sampleReport = getSampleReportDTO()
+    const { searchParams } = new URL(request.url)
+    const enhanced = searchParams.get('enhanced') === 'true'
+
+    const sampleReport = enhanced
+      ? getSampleEnhancedReportDTO()
+      : getSampleReportDTO()
 
     // PDF 생성
     const generator = new ReportPDFGenerator()
@@ -19,8 +25,7 @@ export async function GET() {
     // Buffer를 Uint8Array로 변환하여 NextResponse에 전달
     const uint8Array = new Uint8Array(result.buffer)
 
-    // PDF 응답 생성
-    const response = new NextResponse(uint8Array, {
+    return new NextResponse(uint8Array, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
@@ -28,8 +33,6 @@ export async function GET() {
         'Content-Length': result.buffer.length.toString(),
       },
     })
-
-    return response
   } catch (error) {
     console.error('Sample PDF generation error:', error)
     return NextResponse.json(

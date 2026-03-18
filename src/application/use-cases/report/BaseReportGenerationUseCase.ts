@@ -12,6 +12,7 @@ import {
   ForbiddenError,
   ExternalServiceError,
 } from '@application/errors'
+import { EnhancedReportDataBuilder } from '@application/services/EnhancedReportDataBuilder'
 
 /**
  * Base class for report generation use cases.
@@ -23,7 +24,8 @@ export abstract class BaseReportGenerationUseCase {
     protected readonly campaignRepository: ICampaignRepository,
     protected readonly kpiRepository: IKPIRepository,
     protected readonly aiService: IAIService,
-    protected readonly usageLogRepository: IUsageLogRepository
+    protected readonly usageLogRepository: IUsageLogRepository,
+    protected readonly enhancedReportDataBuilder?: EnhancedReportDataBuilder
   ) {}
 
   /**
@@ -52,6 +54,29 @@ export abstract class BaseReportGenerationUseCase {
       report
     )
     report = campaignSummaries.report
+
+    // Step 3.5: Enhanced Report Data (enrichedData) 빌드
+    if (this.enhancedReportDataBuilder) {
+      try {
+        const previousDateRange = this.calculatePreviousDateRange(startDate, endDate)
+        const enrichedData = await this.enhancedReportDataBuilder.build({
+          campaignIds: dto.campaignIds,
+          campaigns: campaigns.filter(Boolean).map(c => ({
+            id: c!.id,
+            name: c!.name,
+            objective: c!.objective,
+            status: c!.status,
+          })),
+          startDate,
+          endDate,
+          previousStartDate: previousDateRange.start,
+          previousEndDate: previousDateRange.end,
+        })
+        report = report.setEnrichedData(enrichedData as unknown as Record<string, unknown>)
+      } catch (error) {
+        console.warn('Enhanced report data build failed, falling back to basic report:', error)
+      }
+    }
 
     // Step 4: Generate AI insights
     report = await this.generateAIInsights(report, campaignSummaries.summaries, dto.userId)
@@ -267,6 +292,14 @@ export abstract class BaseReportGenerationUseCase {
       console.warn('AI service error (continuing without insights):', serviceError.toLogFormat())
 
       return report
+    }
+  }
+
+  private calculatePreviousDateRange(startDate: Date, endDate: Date): { start: Date; end: Date } {
+    const durationMs = endDate.getTime() - startDate.getTime()
+    return {
+      start: new Date(startDate.getTime() - durationMs),
+      end: new Date(startDate.getTime() - 1),
     }
   }
 

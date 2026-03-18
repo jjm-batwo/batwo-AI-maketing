@@ -119,6 +119,11 @@ export const DI_TOKENS = {
   AdKPIRepository: Symbol.for('AdKPIRepository'),
   SyncAdInsightsUseCase: Symbol.for('SyncAdInsightsUseCase'),
 
+  // Enhanced Report (Phase 2)
+  EnhancedReportDataBuilder: Symbol.for('EnhancedReportDataBuilder'),
+  CreativeFatigueService: Symbol.for('CreativeFatigueService'),
+  FunnelClassificationService: Symbol.for('FunnelClassificationService'),
+
   // Ad
   AdRepository: Symbol.for('AdRepository'),
   CreateAdUseCase: Symbol.for('CreateAdUseCase'),

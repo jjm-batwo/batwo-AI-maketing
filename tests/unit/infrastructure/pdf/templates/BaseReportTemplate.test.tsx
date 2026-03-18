@@ -22,17 +22,13 @@ describe('BaseReportTemplate - Utility Functions', () => {
   })
 
   describe('formatCurrency', () => {
-    it('should format currency with KRW default', () => {
-      expect(formatCurrency(10000)).toBe('₩10,000')
-      expect(formatCurrency(1234567)).toBe('₩1,234,567')
+    it('should format currency with 원 suffix (B2)', () => {
+      expect(formatCurrency(10000)).toBe('10,000원')
+      expect(formatCurrency(1234567)).toBe('1,234,567원')
     })
 
-    it('should format currency with custom currency', () => {
-      expect(formatCurrency(10000, 'USD')).toContain('10,000')
-    })
-
-    it('should not show decimals for KRW', () => {
-      expect(formatCurrency(10000.99)).toBe('₩10,001')
+    it('should round and not show decimals', () => {
+      expect(formatCurrency(10000.99)).toBe('10,001원')
     })
   })
 

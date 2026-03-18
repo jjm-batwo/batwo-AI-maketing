@@ -19,6 +19,11 @@ import { PrismaReportScheduleRepository } from '@infrastructure/database/reposit
 import { GenerateWeeklyReportUseCase } from '@application/use-cases/report/GenerateWeeklyReportUseCase'
 import { SendScheduledReportsUseCase } from '@application/use-cases/report/SendScheduledReportsUseCase'
 
+// Phase 2: Enhanced Report Services
+import { EnhancedReportDataBuilder } from '@application/services/EnhancedReportDataBuilder'
+import { CreativeFatigueService } from '@application/services/CreativeFatigueService'
+import { FunnelClassificationService } from '@application/services/FunnelClassificationService'
+
 import { prisma } from '@/lib/prisma'
 
 export function registerReportModule(container: Container): void {
@@ -33,6 +38,29 @@ export function registerReportModule(container: Container): void {
     () => new PrismaReportScheduleRepository(prisma)
   )
 
+  // --- Phase 2: Enhanced Report ---
+  container.registerSingleton(
+    DI_TOKENS.CreativeFatigueService,
+    () => new CreativeFatigueService()
+  )
+
+  container.registerSingleton(
+    DI_TOKENS.FunnelClassificationService,
+    () => new FunnelClassificationService()
+  )
+
+  container.register(
+    DI_TOKENS.EnhancedReportDataBuilder,
+    () => new EnhancedReportDataBuilder(
+      container.resolve(DI_TOKENS.KPIRepository),
+      container.resolve(DI_TOKENS.AdKPIRepository),
+      container.resolve(DI_TOKENS.CampaignRepository),
+      container.resolve(DI_TOKENS.CreativeFatigueService),
+      container.resolve(DI_TOKENS.FunnelClassificationService),
+      container.resolve(DI_TOKENS.AIService)
+    )
+  )
+
   // --- Use Cases (Transient) ---
   container.register(
     DI_TOKENS.GenerateWeeklyReportUseCase,
@@ -42,7 +70,8 @@ export function registerReportModule(container: Container): void {
         container.resolve(DI_TOKENS.CampaignRepository),
         container.resolve(DI_TOKENS.KPIRepository),
         container.resolve(DI_TOKENS.AIService),
-        container.resolve(DI_TOKENS.UsageLogRepository)
+        container.resolve(DI_TOKENS.UsageLogRepository),
+        container.resolve(DI_TOKENS.EnhancedReportDataBuilder)
       )
   )
 

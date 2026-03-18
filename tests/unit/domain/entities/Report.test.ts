@@ -338,4 +338,48 @@ describe('Report', () => {
       expect(report.sentAt).toBeUndefined()
     })
   })
+
+  describe('Report enrichedData', () => {
+    it('should create report with null enrichedData by default', () => {
+      const report = Report.createWeekly({
+        userId: 'user-1',
+        campaignIds: ['c-1'],
+        dateRange: DateRange.create(new Date('2025-01-13'), new Date('2025-01-19')),
+      })
+      expect(report.enrichedData).toBeNull()
+    })
+
+    it('should set enrichedData and return new report', () => {
+      const report = Report.createWeekly({
+        userId: 'user-1',
+        campaignIds: ['c-1'],
+        dateRange: DateRange.create(new Date('2025-01-13'), new Date('2025-01-19')),
+      })
+      const enriched = report.setEnrichedData({ overallSummary: { totalSpend: 100 } })
+      expect(enriched.enrichedData).toEqual({ overallSummary: { totalSpend: 100 } })
+      expect(report.enrichedData).toBeNull()
+    })
+
+    it('should preserve enrichedData through restore', () => {
+      const report = Report.createWeekly({
+        userId: 'user-1',
+        campaignIds: ['c-1'],
+        dateRange: DateRange.create(new Date('2025-01-13'), new Date('2025-01-19')),
+      })
+      const enriched = report.setEnrichedData({ test: 'data' })
+      const restored = Report.restore(enriched.toJSON())
+      expect(restored.enrichedData).toEqual({ test: 'data' })
+    })
+
+    it('should include enrichedData in toJSON', () => {
+      const report = Report.createWeekly({
+        userId: 'user-1',
+        campaignIds: ['c-1'],
+        dateRange: DateRange.create(new Date('2025-01-13'), new Date('2025-01-19')),
+      })
+      const enriched = report.setEnrichedData({ foo: 'bar' })
+      const json = enriched.toJSON()
+      expect(json.enrichedData).toEqual({ foo: 'bar' })
+    })
+  })
 })

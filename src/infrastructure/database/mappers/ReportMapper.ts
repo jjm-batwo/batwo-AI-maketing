@@ -28,6 +28,7 @@ export class ReportMapper {
       sentAt: prisma.sentAt ?? undefined,
       createdAt: prisma.createdAt,
       updatedAt: prisma.updatedAt,
+      enrichedData: prisma.enrichedData as Record<string, unknown> | null ?? null,
     })
   }
 
@@ -47,6 +48,7 @@ export class ReportMapper {
       shareExpiresAt: json.shareExpiresAt ?? null,
       generatedAt: json.generatedAt ?? null,
       sentAt: json.sentAt ?? null,
+      enrichedData: json.enrichedData as unknown as PrismaReport['enrichedData'] ?? null,
       createdAt: json.createdAt,
       updatedAt: json.updatedAt,
     }
@@ -68,6 +70,7 @@ export class ReportMapper {
       shareExpiresAt: json.shareExpiresAt ?? null,
       generatedAt: json.generatedAt ?? null,
       sentAt: json.sentAt ?? null,
+      enrichedData: json.enrichedData as unknown as InputJsonValue ?? null,
       createdAt: json.createdAt,
       updatedAt: json.updatedAt,
     }
@@ -83,6 +86,7 @@ export class ReportMapper {
       shareExpiresAt: json.shareExpiresAt ?? null,
       generatedAt: json.generatedAt ?? null,
       sentAt: json.sentAt ?? null,
+      enrichedData: json.enrichedData as unknown as InputJsonValue ?? null,
       updatedAt: new Date(),
     }
   }
