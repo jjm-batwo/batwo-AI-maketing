@@ -45,6 +45,15 @@ export interface CreativeAggregate {
   avgFrequency: number
 }
 
+export interface CampaignAggregate {
+  campaignId: string
+  totalImpressions: number
+  totalClicks: number
+  totalConversions: number
+  totalSpend: number
+  totalRevenue: number
+}
+
 export interface IAdKPIRepository {
   save(kpi: AdKPI): Promise<AdKPI>
   saveMany(kpis: AdKPI[]): Promise<AdKPI[]>
@@ -85,4 +94,10 @@ export interface IAdKPIRepository {
     limit: number,
     sortBy: 'roas' | 'conversions' | 'spend'
   ): Promise<CreativeAggregate[]>
+
+  aggregateByCampaignIds(
+    campaignIds: string[],
+    startDate: Date,
+    endDate: Date
+  ): Promise<CampaignAggregate[]>
 }

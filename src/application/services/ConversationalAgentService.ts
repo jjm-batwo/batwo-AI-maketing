@@ -150,7 +150,7 @@ export class ConversationalAgentService {
 
       try {
         const streamResult = streamText({
-          model: openai('gpt-4o-mini'),
+          model: openai('gpt-5-mini'),
           system: setupData.systemPrompt,
           messages: setupData.messages,
           tools: this.toolRegistry.toVercelAITools() as Parameters<typeof streamText>[0]['tools'],

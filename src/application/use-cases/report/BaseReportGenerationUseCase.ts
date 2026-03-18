@@ -39,6 +39,9 @@ export abstract class BaseReportGenerationUseCase {
     const startDate = new Date(dto.startDate)
     const endDate = new Date(dto.endDate)
 
+    // Date range validation
+    this.validateDateRange(startDate, endDate)
+
     // Step 1: Validate campaign ownership
     const campaigns = await this.validateCampaignOwnership(dto)
 
@@ -71,6 +74,7 @@ export abstract class BaseReportGenerationUseCase {
           endDate,
           previousStartDate: previousDateRange.start,
           previousEndDate: previousDateRange.end,
+          reportType: this.getReportTypeName(),
         })
         report = report.setEnrichedData(enrichedData as unknown as Record<string, unknown>)
       } catch (error) {
@@ -292,6 +296,28 @@ export abstract class BaseReportGenerationUseCase {
       console.warn('AI service error (continuing without insights):', serviceError.toLogFormat())
 
       return report
+    }
+  }
+
+  protected validateDateRange(startDate: Date, endDate: Date): void {
+    const diffMs = endDate.getTime() - startDate.getTime()
+    const diffDays = diffMs / (1000 * 60 * 60 * 24)
+
+    const maxDays = this.getMaxDateRangeDays()
+    if (diffDays > maxDays) {
+      throw ValidationError.businessRule(
+        '날짜 범위 검증',
+        `날짜 범위가 최대 ${maxDays}일을 초과합니다 (${Math.round(diffDays)}일)`
+      )
+    }
+  }
+
+  protected getMaxDateRangeDays(): number {
+    switch (this.getReportTypeName()) {
+      case 'daily': return 2
+      case 'weekly': return 8
+      case 'monthly': return 35
+      default: return 35
     }
   }
 

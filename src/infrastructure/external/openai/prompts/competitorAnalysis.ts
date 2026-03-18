@@ -30,7 +30,7 @@ export const COMPETITOR_ANALYSIS_SYSTEM_PROMPT = `당신은 한국 커머스 시
 **언어**: 한국어`
 
 export const COMPETITOR_TRENDS_AI_CONFIG: AIConfig = {
-  model: 'gpt-4o-mini',
+  model: 'gpt-5-mini',
   temperature: 0.3,
   maxTokens: 2000,
 }
@@ -100,7 +100,7 @@ ${JSON.stringify(adSamples, null, 2)}
 }
 
 export const COMPETITOR_INSIGHTS_AI_CONFIG: AIConfig = {
-  model: 'gpt-4o-mini',
+  model: 'gpt-5-mini',
   temperature: 0.5,
   maxTokens: 1500,
 }

@@ -114,7 +114,7 @@ JSON 배열 형식으로만 응답하세요.`.trim()
  * 크리에이티브 테스트 설계 AI 설정
  */
 export const CREATIVE_TEST_DESIGN_AI_CONFIG: AIConfig = {
-  model: 'gpt-4o', // 크리에이티브 생성은 고품질 모델 사용
+  model: 'gpt-5-mini', // 크리에이티브 생성은 고품질 모델 사용
   temperature: 0.7, // 창의성과 일관성의 균형
   maxTokens: 1500,
   topP: 0.9,

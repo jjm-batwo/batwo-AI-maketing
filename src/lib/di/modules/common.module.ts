@@ -66,12 +66,12 @@ export function registerCommonModule(container: Container): void {
   // --- AI Services ---
   container.registerSingleton<IAIService>(
     DI_TOKENS.AIService,
-    () => new AIService(process.env.OPENAI_API_KEY || '', process.env.OPENAI_MODEL || 'gpt-4o-mini')
+    () => new AIService(process.env.OPENAI_API_KEY || '', process.env.OPENAI_MODEL || 'gpt-5-mini')
   )
 
   container.registerSingleton<IStreamingAIService>(
     DI_TOKENS.StreamingAIService,
-    () => new StreamingAIService(process.env.OPENAI_MODEL || 'gpt-4o-mini')
+    () => new StreamingAIService(process.env.OPENAI_MODEL || 'gpt-5-mini')
   )
 
   // --- Resilience ---

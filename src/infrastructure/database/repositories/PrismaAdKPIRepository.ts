@@ -5,6 +5,7 @@ import {
   DailyAdKPIAggregate,
   FormatAggregate,
   CreativeAggregate,
+  CampaignAggregate,
 } from '@domain/repositories/IAdKPIRepository'
 import { AdKPI } from '@domain/entities/AdKPI'
 import { AdKPIMapper } from '../mappers/AdKPIMapper'
@@ -259,6 +260,38 @@ export class PrismaAdKPIRepository implements IAdKPIRepository {
       totalVideoViews: result._sum.videoViews ?? 0,
       totalThruPlays: result._sum.thruPlays ?? 0,
     }
+  }
+
+  async aggregateByCampaignIds(
+    campaignIds: string[],
+    startDate: Date,
+    endDate: Date
+  ): Promise<CampaignAggregate[]> {
+    if (campaignIds.length === 0) return []
+
+    const results = await this.prisma.adKPISnapshot.groupBy({
+      by: ['campaignId'],
+      where: {
+        campaignId: { in: campaignIds },
+        date: { gte: startDate, lte: endDate },
+      },
+      _sum: {
+        impressions: true,
+        clicks: true,
+        conversions: true,
+        spend: true,
+        revenue: true,
+      },
+    })
+
+    return results.map((r) => ({
+      campaignId: r.campaignId,
+      totalImpressions: r._sum.impressions ?? 0,
+      totalClicks: r._sum.clicks ?? 0,
+      totalConversions: r._sum.conversions ?? 0,
+      totalSpend: Number(r._sum.spend ?? 0),
+      totalRevenue: Number(r._sum.revenue ?? 0),
+    }))
   }
 
   async aggregateByFormat(

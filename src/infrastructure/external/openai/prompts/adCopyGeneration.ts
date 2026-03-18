@@ -446,10 +446,10 @@ JSON 외 다른 텍스트나 설명을 포함하지 마세요.`
 /**
  * 광고 카피 생성 AI 설정
  * - 높은 temperature: 창의적이고 다양한 카피 생성
- * - gpt-4o: 카피 품질을 위해 더 강력한 모델 사용
+ * - gpt-5-mini: 카피 품질을 위해 더 강력한 모델 사용
  */
 export const AD_COPY_AI_CONFIG: AIConfig = {
-  model: 'gpt-4o',
+  model: 'gpt-5-mini',
   temperature: 0.8,
   maxTokens: 2500,
   topP: 0.95,

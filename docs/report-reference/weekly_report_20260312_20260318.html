@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>주간 마케팅 리포트 - 바투 AI 마케팅 솔루션</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ===== CSS VARIABLES ===== */
+:root {
+  --bg-primary: #0A0A0F;
+  --bg-secondary: #12121A;
+  --bg-card: #1A1A26;
+  --bg-card-hover: #22223A;
+  --border: #2A2A3E;
+  --border-active: #4A4A6E;
+  --text-primary: #F0F0F5;
+  --text-secondary: #9898B0;
+  --text-muted: #6A6A82;
+  --accent-blue: #4E8CFF;
+  --accent-blue-dim: rgba(78,140,255,0.15);
+  --accent-green: #34D399;
+  --accent-green-dim: rgba(52,211,153,0.12);
+  --accent-red: #F87171;
+  --accent-red-dim: rgba(248,113,113,0.12);
+  --accent-yellow: #FBBF24;
+  --accent-yellow-dim: rgba(251,191,36,0.12);
+  --accent-purple: #A78BFA;
+  --accent-purple-dim: rgba(167,139,250,0.12);
+  --gradient-brand: linear-gradient(135deg, #4E8CFF 0%, #A78BFA 100%);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.report-container { max-width: 1200px; margin: 0 auto; padding: 40px 24px 80px; }
+
+/* ===== HEADER ===== */
+.report-header { text-align: center; padding: 60px 0 48px; position: relative; }
+.report-header::before {
+  content: ''; position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(78,140,255,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.brand-badge {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px;
+  background: var(--accent-blue-dim); border: 1px solid rgba(78,140,255,0.25);
+  border-radius: 100px; font-size: 12px; font-weight: 600; color: var(--accent-blue);
+  letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 20px;
+}
+.brand-badge .dot { width: 6px; height: 6px; background: var(--accent-blue); border-radius: 50%; }
+.report-title {
+  font-size: 42px; font-weight: 900; letter-spacing: -1px;
+  background: var(--gradient-brand); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 12px;
+}
+.report-period { font-size: 16px; color: var(--text-secondary); }
+.report-period span { color: var(--text-primary); font-weight: 600; }
+
+/* ===== SECTION ===== */
+.section { margin-top: 48px; }
+.section-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px;
+}
+.section-label::before { content: ''; width: 16px; height: 2px; background: var(--gradient-brand); border-radius: 2px; }
+.section-title { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+
+/* ===== KPI CARDS ===== */
+.kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.kpi-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 24px; overflow: hidden;
+}
+.kpi-card.highlight {
+  border-color: rgba(78,140,255,0.3);
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(78,140,255,0.05) 100%);
+}
+.kpi-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
+.kpi-value { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700; margin-bottom: 8px; line-height: 1.1; }
+.kpi-change { font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; }
+.kpi-change.up { color: var(--accent-green); background: var(--accent-green-dim); }
+.kpi-change.down { color: var(--accent-red); background: var(--accent-red-dim); }
+
+/* ===== CHART ===== */
+.chart-container { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; margin-bottom: 24px; }
+.chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.chart-title { font-size: 16px; font-weight: 600; }
+.chart-legend { display: flex; gap: 16px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+canvas#dailyChart { width: 100% !important; height: 280px !important; }
+
+/* ===== TABLE ===== */
+.data-table-wrapper { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table thead th {
+  padding: 14px 16px; text-align: left; font-weight: 600; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted);
+  background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border);
+}
+.data-table thead th:not(:first-child) { text-align: right; }
+.data-table tbody td {
+  padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.03);
+  color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; font-size: 12px;
+}
+.data-table tbody td:not(:first-child) { text-align: right; }
+.data-table tbody td:first-child { color: var(--text-primary); font-family: 'Noto Sans KR', sans-serif; font-weight: 500; }
+.data-table tbody tr:last-child td { border-bottom: none; }
+
+/* ===== CAMPAIGN ===== */
+.campaign-grid { display: grid; gap: 16px; }
+.campaign-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; }
+.campaign-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.campaign-objective { font-size: 12px; color: var(--text-muted); }
+.campaign-metrics { display: flex; gap: 24px; align-items: center; }
+.campaign-metric { text-align: right; }
+.campaign-metric-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); margin-bottom: 2px; }
+.campaign-metric-value { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; }
+.status-badge {
+  display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px;
+  border-radius: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+}
+.status-badge.active { background: var(--accent-green-dim); color: var(--accent-green); }
+.status-badge.active::before { content: ''; width: 5px; height: 5px; background: var(--accent-green); border-radius: 50%; }
+.status-badge.paused { background: var(--accent-yellow-dim); color: var(--accent-yellow); }
+
+/* ===== FATIGUE ===== */
+.fatigue-grid { display: grid; gap: 16px; }
+.fatigue-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; display: flex; gap: 20px; align-items: flex-start; }
+.fatigue-indicator { width: 4px; border-radius: 4px; align-self: stretch; flex-shrink: 0; }
+.fatigue-indicator.critical { background: var(--accent-red); }
+.fatigue-indicator.warning { background: var(--accent-yellow); }
+.fatigue-indicator.healthy { background: var(--accent-green); }
+.fatigue-level { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 3px 10px; border-radius: 6px; display: inline-block; margin-bottom: 8px; }
+.fatigue-level.critical { background: var(--accent-red-dim); color: var(--accent-red); }
+.fatigue-level.warning { background: var(--accent-yellow-dim); color: var(--accent-yellow); }
+.fatigue-level.healthy { background: var(--accent-green-dim); color: var(--accent-green); }
+.fatigue-name { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+.fatigue-stats { display: flex; gap: 20px; margin-bottom: 8px; }
+.fatigue-stat { font-size: 12px; color: var(--text-muted); }
+.fatigue-stat strong { color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
+.fatigue-note { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+.fatigue-bar-bg { width: 120px; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+.fatigue-bar-fill { height: 100%; border-radius: 3px; }
+
+/* ===== FORMAT ===== */
+.format-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+.format-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; text-align: center; }
+.format-icon { font-size: 28px; margin-bottom: 12px; }
+.format-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.format-roas { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--accent-blue); margin-bottom: 12px; }
+.format-details { display: flex; justify-content: center; gap: 16px; font-size: 12px; color: var(--text-muted); }
+
+/* ===== FUNNEL ===== */
+.funnel-wrapper { display: flex; flex-direction: column; }
+.funnel-stage { background: var(--bg-card); border: 1px solid var(--border); padding: 28px 32px; display: grid; grid-template-columns: 200px 1fr; gap: 32px; align-items: center; }
+.funnel-stage:first-child { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+.funnel-stage:last-child { border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+.funnel-stage:not(:last-child) { border-bottom: none; }
+.funnel-stage-name { font-size: 16px; font-weight: 700; }
+.funnel-stage-sub { font-size: 12px; color: var(--text-muted); }
+.funnel-pct { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; }
+.funnel-right { display: flex; gap: 32px; }
+.funnel-metric-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); }
+.funnel-metric-value { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 600; }
+.funnel-bar { grid-column: 1 / -1; height: 4px; background: rgba(255,255,255,0.04); border-radius: 2px; overflow: hidden; margin-top: 8px; }
+.funnel-bar-fill { height: 100%; border-radius: 2px; }
+
+/* ===== ANALYSIS ===== */
+.analysis-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; margin-bottom: 24px; font-size: 15px; line-height: 1.8; color: var(--text-secondary); }
+.insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.insight-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; position: relative; }
+.insight-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+.insight-card.positive::before { background: var(--accent-green); }
+.insight-card.negative::before { background: var(--accent-red); }
+.insight-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 6px; }
+.insight-tag.positive { color: var(--accent-green); background: var(--accent-green-dim); }
+.insight-tag.negative { color: var(--accent-red); background: var(--accent-red-dim); }
+.insight-title { font-size: 15px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary); }
+.insight-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.impact-badge { margin-top: 12px; display: inline-flex; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); padding: 3px 8px; background: rgba(255,255,255,0.04); border-radius: 4px; }
+
+/* ===== ACTIONS ===== */
+.action-grid { display: grid; gap: 16px; }
+.action-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; display: grid; grid-template-columns: auto 1fr auto; gap: 20px; align-items: flex-start; }
+.action-priority { writing-mode: vertical-lr; text-orientation: mixed; font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 4px; border-radius: 4px; text-align: center; }
+.action-priority.high { color: var(--accent-red); background: var(--accent-red-dim); }
+.action-priority.medium { color: var(--accent-yellow); background: var(--accent-yellow-dim); }
+.action-priority.low { color: var(--accent-blue); background: var(--accent-blue-dim); }
+.action-category { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 6px; }
+.action-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--text-primary); }
+.action-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+.action-expected { background: rgba(255,255,255,0.03); border-radius: var(--radius-sm); padding: 14px 18px; min-width: 200px; }
+.action-expected-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); margin-bottom: 4px; }
+.action-expected-value { font-size: 13px; color: var(--accent-green); font-weight: 500; line-height: 1.5; }
+
+/* ===== FOOTER & DIVIDER ===== */
+.page-divider { height: 1px; background: linear-gradient(90deg, transparent 0%, var(--border) 50%, transparent 100%); margin: 48px 0 0; }
+.report-footer { margin-top: 64px; text-align: center; padding: 32px 0; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 12px; }
+.footer-brand { font-weight: 700; background: var(--gradient-brand); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+/* ===== PRINT / PDF ===== */
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page-divider { page-break-after: always; height: 0; margin: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="report-container">
+
+  <!-- ===== HEADER ===== -->
+  <header class="report-header">
+    <div class="brand-badge"><span class="dot"></span>바투 AI 마케팅 솔루션</div>
+    <h1 class="report-title">주간 마케팅 리포트</h1>
+    <p class="report-period">리포트 기간 <span>2026-03-12 ~ 2026-03-18</span></p>
+  </header>
+
+  <!-- ===== PAGE 1: KPI ===== -->
+  <section class="section">
+    <div class="section-label">Overview</div>
+    <h2 class="section-title">전체 성과 요약</h2>
+    <div class="kpi-grid">
+      
+      
+      <div class="kpi-card">
+        <div class="kpi-label">총 지출</div>
+        <div class="kpi-value">2,450,000원</div>
+        <span class="kpi-change up">
+          ↑ +5.2%
+        </span>
+      </div>
+      
+      <div class="kpi-card highlight">
+        <div class="kpi-label">총 매출</div>
+        <div class="kpi-value">9,310,000원</div>
+        <span class="kpi-change up">
+          ↑ +12.8%
+        </span>
+      </div>
+      
+      <div class="kpi-card">
+        <div class="kpi-label">ROAS</div>
+        <div class="kpi-value">3.80x</div>
+        <span class="kpi-change up">
+          ↑ +7.2%
+        </span>
+      </div>
+      
+      <div class="kpi-card">
+        <div class="kpi-label">CTR</div>
+        <div class="kpi-value">2.56%</div>
+        <span class="kpi-change down">
+          ↓ -1.3%
+        </span>
+      </div>
+      
+      <div class="kpi-card">
+        <div class="kpi-label">전환</div>
+        <div class="kpi-value">186</div>
+        <span class="kpi-change up">
+          ↑ +15.4%
+        </span>
+      </div>
+      
+    </div>
+  </section>
+
+  <div class="page-divider"></div>
+
+  <!-- ===== PAGE 2: DAILY ===== -->
+  <section class="section">
+    <div class="section-label">Daily Trend</div>
+    <h2 class="section-title">성과 추이 (일별)</h2>
+
+    <div class="chart-container">
+      <div class="chart-header">
+        <div class="chart-title">지출 vs 매출</div>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--accent-blue)"></div>지출</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--accent-purple)"></div>매출</div>
+        </div>
+      </div>
+      <canvas id="dailyChart"></canvas>
+    </div>
+
+    <div class="data-table-wrapper">
+      <table class="data-table">
+        <thead><tr><th>날짜</th><th>지출</th><th>매출</th><th>ROAS</th><th>노출</th><th>클릭</th><th>전환</th></tr></thead>
+        <tbody>
+          
+          <tr>
+            <td>03-10</td>
+            <td>340,000원</td>
+            <td>1,280,000원</td>
+            <td>3.76x</td>
+            <td>120,000</td>
+            <td>3,100</td>
+            <td>24</td>
+          </tr>
+          
+          <tr>
+            <td>03-11</td>
+            <td>355,000원</td>
+            <td>1,350,000원</td>
+            <td>3.80x</td>
+            <td>125,000</td>
+            <td>3,200</td>
+            <td>26</td>
+          </tr>
+          
+          <tr>
+            <td>03-12</td>
+            <td>360,000원</td>
+            <td>1,420,000원</td>
+            <td>3.94x</td>
+            <td>128,000</td>
+            <td>3,350</td>
+            <td>28</td>
+          </tr>
+          
+          <tr>
+            <td>03-13</td>
+            <td>345,000원</td>
+            <td>1,310,000원</td>
+            <td>3.80x</td>
+            <td>122,000</td>
+            <td>3,100</td>
+            <td>25</td>
+          </tr>
+          
+          <tr>
+            <td>03-14</td>
+            <td>350,000원</td>
+            <td>1,350,000원</td>
+            <td>3.86x</td>
+            <td>124,000</td>
+            <td>3,180</td>
+            <td>27</td>
+          </tr>
+          
+          <tr>
+            <td>03-15</td>
+            <td>360,000원</td>
+            <td>1,400,000원</td>
+            <td>3.89x</td>
+            <td>130,000</td>
+            <td>3,400</td>
+            <td>29</td>
+          </tr>
+          
+          <tr>
+            <td>03-16</td>
+            <td>340,000원</td>
+            <td>1,200,000원</td>
+            <td>3.53x</td>
+            <td>118,000</td>
+            <td>2,950</td>
+            <td>27</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="page-divider"></div>
+
+  <!-- ===== PAGE 3: CAMPAIGNS ===== -->
+  <section class="section">
+    <div class="section-label">Campaigns</div>
+    <h2 class="section-title">캠페인별 성과</h2>
+
+    <div class="campaign-grid">
+      
+      <div class="campaign-card">
+        <div>
+          <div class="campaign-name">프리미엄 스킨케어 세트 - 전환</div>
+          <div class="campaign-objective">목표: 전환</div>
+        </div>
+        <div class="campaign-metrics">
+          <div class="campaign-metric"><div class="campaign-metric-label">지출</div><div class="campaign-metric-value">1,250,000원</div></div>
+          <div class="campaign-metric"><div class="campaign-metric-label">매출</div><div class="campaign-metric-value">6,400,000원</div></div>
+          <div class="campaign-metric"><div class="campaign-metric-label">ROAS</div><div class="campaign-metric-value" style="color:var(--accent-green)">5.12x</div></div>
+          <div class="campaign-metric"><div class="campaign-metric-label">CTR</div><div class="campaign-metric-value">3.0%</div></div>
+          <div class="campaign-metric"><div class="campaign-metric-label">전환</div><div class="campaign-metric-value">128</div></div>
+          <span class="status-badge active">ACTIVE</span>
+        </div>
+      </div>
+      
+      <div class="campaign-card">
+        <div>
+          <div class="campaign-name">신규 고객 유치 - 브랜드 인지도</div>
+          <div class="campaign-objective">목표: 인지도</div>
+        </div>
+        <div class="campaign-metrics">
+          <div class="campaign-metric"><div class="campaign-metric-label">지출</div><div class="campaign-metric-value">750,000원</div></div>
+          <div class="campaign-metric"><div class="campaign-metric-label">매출</div><div class="campaign-metric-value">1,710,000원</div></div>
+          <div class="campaign-metric"><div class="campaign-metric-label">ROAS</div><div class="campaign-metric-value" >2.28x</div></div>
+          <div class="campaign-metric"><div class="campaign-metric-label">CTR</div><div class="campaign-metric-value">2.0%</div></div>
+          <div class="campaign-metric"><div class="campaign-metric-label">전환</div><div class="campaign-metric-value">38</div></div>
+          <span class="status-badge active">ACTIVE</span>
+        </div>
+      </div>
+      
+      <div class="campaign-card">
+        <div>
+          <div class="campaign-name">리타겟팅 - 장바구니 이탈</div>
+          <div class="campaign-objective">목표: 전환</div>
+        </div>
+        <div class="campaign-metrics">
+          <div class="campaign-metric"><div class="campaign-metric-label">지출</div><div class="campaign-metric-value">450,000원</div></div>
+          <div class="campaign-metric"><div class="campaign-metric-label">매출</div><div class="campaign-metric-value">1,200,000원</div></div>
+          <div class="campaign-metric"><div class="campaign-metric-label">ROAS</div><div class="campaign-metric-value" >2.67x</div></div>
+          <div class="campaign-metric"><div class="campaign-metric-label">CTR</div><div class="campaign-metric-value">2.5%</div></div>
+          <div class="campaign-metric"><div class="campaign-metric-label">전환</div><div class="campaign-metric-value">20</div></div>
+          <span class="status-badge active">ACTIVE</span>
+        </div>
+      </div>
+      
+    </div>
+
+    <h3 class="section-title" style="margin-top:32px;font-size:18px;">소재별 성과 TOP 5</h3>
+    <div class="data-table-wrapper">
+      <table class="data-table">
+        <thead><tr><th>소재</th><th>포맷</th><th>지출</th><th>매출</th><th>ROAS</th><th>CTR</th><th>클릭</th><th>전환</th></tr></thead>
+        <tbody>
+          
+          <tr>
+            <td>봄 신상 세트 A</td>
+            <td style="text-align:right">이미지</td>
+            <td>520,000원</td>
+            <td>3,100,000원</td>
+            <td style="color:var(--accent-green)">5.96x</td>
+            <td>3.0%</td>
+            <td>5,400</td>
+            <td>62</td>
+          </tr>
+          
+          <tr>
+            <td>모델 착용 영상 B</td>
+            <td style="text-align:right">동영상</td>
+            <td>420,000원</td>
+            <td>2,250,000원</td>
+            <td style="color:var(--accent-green)">5.36x</td>
+            <td>3.0%</td>
+            <td>4,500</td>
+            <td>45</td>
+          </tr>
+          
+          <tr>
+            <td>베스트셀러 카루셀</td>
+            <td style="text-align:right">카루셀</td>
+            <td>310,000원</td>
+            <td>1,050,000원</td>
+            <td >3.39x</td>
+            <td>3.0%</td>
+            <td>2,850</td>
+            <td>21</td>
+          </tr>
+          
+          <tr>
+            <td>리뷰 영상 C</td>
+            <td style="text-align:right">동영상</td>
+            <td>250,000원</td>
+            <td>900,000원</td>
+            <td >3.60x</td>
+            <td>2.0%</td>
+            <td>2,000</td>
+            <td>18</td>
+          </tr>
+          
+          <tr>
+            <td>할인 배너 D</td>
+            <td style="text-align:right">이미지</td>
+            <td>300,000원</td>
+            <td>750,000원</td>
+            <td style="color:var(--accent-red)">2.50x</td>
+            <td>2.0%</td>
+            <td>2,400</td>
+            <td>15</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="page-divider"></div>
+
+  <!-- ===== PAGE 4: FATIGUE ===== -->
+  <section class="section">
+    <div class="section-label">Creative Fatigue</div>
+    <h2 class="section-title">소재 피로도 지수</h2>
+
+    <div class="fatigue-grid">
+      
+      <div class="fatigue-card">
+        <div class="fatigue-indicator critical"></div>
+        <div style="flex:1">
+          <span class="fatigue-level critical">CRITICAL</span>
+          <div class="fatigue-name">할인 배너 D <span style="color:var(--text-muted);font-size:12px;font-weight:400">(SINGLE_IMAGE)</span></div>
+          <div class="fatigue-stats">
+            <span class="fatigue-stat">피로도: <strong>78/100</strong></span>
+            <span class="fatigue-stat">Frequency: <strong>4.2</strong></span>
+            <span class="fatigue-stat">CTR: <strong>1.8%</strong></span>
+            <span class="fatigue-stat">활성일: <strong>21일</strong></span>
+          </div>
+          
+          <div class="fatigue-bar-bg"><div class="fatigue-bar-fill" style="width:78%;background:var(--accent-red)"></div></div>
+          <p class="fatigue-note" style="margin-top:10px">CTR이 7일간 36% 하락. 즉시 소재 교체 권장.</p>
+        </div>
+      </div>
+      
+      <div class="fatigue-card">
+        <div class="fatigue-indicator warning"></div>
+        <div style="flex:1">
+          <span class="fatigue-level warning">WARNING</span>
+          <div class="fatigue-name">리뷰 영상 C <span style="color:var(--text-muted);font-size:12px;font-weight:400">(SINGLE_VIDEO)</span></div>
+          <div class="fatigue-stats">
+            <span class="fatigue-stat">피로도: <strong>52/100</strong></span>
+            <span class="fatigue-stat">Frequency: <strong>3.1</strong></span>
+            <span class="fatigue-stat">CTR: <strong>2.0%</strong></span>
+            <span class="fatigue-stat">활성일: <strong>14일</strong></span>
+          </div>
+          
+          <div class="fatigue-bar-bg"><div class="fatigue-bar-fill" style="width:52%;background:var(--accent-yellow)"></div></div>
+          <p class="fatigue-note" style="margin-top:10px">Frequency 3.1 도달. 1주 내 교체 검토 필요.</p>
+        </div>
+      </div>
+      
+      <div class="fatigue-card">
+        <div class="fatigue-indicator healthy"></div>
+        <div style="flex:1">
+          <span class="fatigue-level healthy">HEALTHY</span>
+          <div class="fatigue-name">봄 신상 세트 A <span style="color:var(--text-muted);font-size:12px;font-weight:400">(SINGLE_IMAGE)</span></div>
+          <div class="fatigue-stats">
+            <span class="fatigue-stat">피로도: <strong>15/100</strong></span>
+            <span class="fatigue-stat">Frequency: <strong>1.8</strong></span>
+            <span class="fatigue-stat">CTR: <strong>3.0%</strong></span>
+            <span class="fatigue-stat">활성일: <strong>7일</strong></span>
+          </div>
+          
+          <div class="fatigue-bar-bg"><div class="fatigue-bar-fill" style="width:15%;background:var(--accent-green)"></div></div>
+          <p class="fatigue-note" style="margin-top:10px">양호. 현재 소재 유지.</p>
+        </div>
+      </div>
+      
+    </div>
+
+    <h3 class="section-title" style="margin-top:40px;font-size:18px;">소재 포맷별 성과</h3>
+    <div class="format-grid">
+      
+      
+      <div class="format-card">
+        <div class="format-icon">🖼</div>
+        <div class="format-name">이미지</div>
+        <div class="format-roas">4.70x</div>
+        <div class="format-details">
+          <span>소재 5개</span>
+          <span>CTR 2.6%</span>
+          <span>Freq 2.5</span>
+        </div>
+        
+      </div>
+      
+      <div class="format-card">
+        <div class="format-icon">🎬</div>
+        <div class="format-name">동영상</div>
+        <div class="format-roas">4.70x</div>
+        <div class="format-details">
+          <span>소재 3개</span>
+          <span>CTR 2.6%</span>
+          <span>Freq 2.2</span>
+        </div>
+        
+        <div style="margin-top:8px;font-size:11px;color:var(--accent-purple)">완전재생 28.5%</div>
+        
+      </div>
+      
+      <div class="format-card">
+        <div class="format-icon">🎠</div>
+        <div class="format-name">카루셀</div>
+        <div class="format-roas">3.39x</div>
+        <div class="format-details">
+          <span>소재 2개</span>
+          <span>CTR 3.0%</span>
+          <span>Freq 1.9</span>
+        </div>
+        
+      </div>
+      
+    </div>
+  </section>
+
+  <div class="page-divider"></div>
+
+  <!-- ===== PAGE 5: FUNNEL ===== -->
+  <section class="section">
+    <div class="section-label">Funnel</div>
+    <h2 class="section-title">퍼널 단계별 성과</h2>
+
+    <div class="funnel-wrapper">
+      
+      
+      <div class="funnel-stage">
+        <div>
+          <div class="funnel-stage-name" style="color:var(--accent-blue)">인지 (ToFu)</div>
+          <div class="funnel-stage-sub">1개 캠페인</div>
+          <div class="funnel-pct" style="color:var(--accent-blue)">30.6%</div>
+        </div>
+        <div class="funnel-right">
+          <div class="funnel-metric"><div class="funnel-metric-label">지출</div><div class="funnel-metric-value" >750,000원</div></div>
+          <div class="funnel-metric"><div class="funnel-metric-label">전환</div><div class="funnel-metric-value" >38건</div></div>
+          <div class="funnel-metric"><div class="funnel-metric-label">ROAS</div><div class="funnel-metric-value" >2.28x</div></div>
+          <div class="funnel-metric"><div class="funnel-metric-label">CTR</div><div class="funnel-metric-value" >2.0%</div></div>
+        </div>
+        <div class="funnel-bar"><div class="funnel-bar-fill" style="width:30.6%;background:var(--accent-blue)"></div></div>
+      </div>
+      
+      <div class="funnel-stage">
+        <div>
+          <div class="funnel-stage-name" style="color:var(--text-muted)">고려 (MoFu)</div>
+          <div class="funnel-stage-sub">0개 캠페인</div>
+          <div class="funnel-pct" style="color:var(--text-muted)">0.0%</div>
+        </div>
+        <div class="funnel-right">
+          <div class="funnel-metric"><div class="funnel-metric-label">지출</div><div class="funnel-metric-value" style="color:var(--text-muted)">0원</div></div>
+          <div class="funnel-metric"><div class="funnel-metric-label">전환</div><div class="funnel-metric-value" style="color:var(--text-muted)">0건</div></div>
+          <div class="funnel-metric"><div class="funnel-metric-label">ROAS</div><div class="funnel-metric-value" style="color:var(--text-muted)">0.00x</div></div>
+          <div class="funnel-metric"><div class="funnel-metric-label">CTR</div><div class="funnel-metric-value" style="color:var(--text-muted)">0.0%</div></div>
+        </div>
+        <div class="funnel-bar"><div class="funnel-bar-fill" style="width:0.0%;background:var(--text-muted)"></div></div>
+      </div>
+      
+      <div class="funnel-stage">
+        <div>
+          <div class="funnel-stage-name" style="color:var(--accent-green)">전환 (BoFu)</div>
+          <div class="funnel-stage-sub">2개 캠페인</div>
+          <div class="funnel-pct" style="color:var(--accent-green)">69.4%</div>
+        </div>
+        <div class="funnel-right">
+          <div class="funnel-metric"><div class="funnel-metric-label">지출</div><div class="funnel-metric-value" >1,700,000원</div></div>
+          <div class="funnel-metric"><div class="funnel-metric-label">전환</div><div class="funnel-metric-value" >148건</div></div>
+          <div class="funnel-metric"><div class="funnel-metric-label">ROAS</div><div class="funnel-metric-value" >4.47x</div></div>
+          <div class="funnel-metric"><div class="funnel-metric-label">CTR</div><div class="funnel-metric-value" >2.9%</div></div>
+        </div>
+        <div class="funnel-bar"><div class="funnel-bar-fill" style="width:69.4%;background:var(--accent-green)"></div></div>
+      </div>
+      
+    </div>
+  </section>
+
+  <div class="page-divider"></div>
+
+  <!-- ===== PAGE 6: ANALYSIS ===== -->
+  <section class="section">
+    <div class="section-label">Analysis</div>
+    <h2 class="section-title">성과 분석</h2>
+
+    <div class="analysis-box">이번 주 전체 ROAS 3.80x로 전주(3.55x) 대비 7.2% 상승했습니다. 프리미엄 스킨케어 세트 캠페인이 5.12x ROAS로 전체 수익의 68.7%를 견인했으며, 봄 시즌 수요 증가와 25-34세 여성 타겟의 높은 전환율이 주요 성공 요인입니다.</div>
+
+    <div class="insight-grid">
+      
+      <div class="insight-card positive">
+        <div class="insight-tag positive">✓ 잘된 점</div>
+        <div class="insight-title">시즌 수요 증가</div>
+        <div class="insight-desc">봄 시즌 진입으로 스킨케어 카테고리 검색량 22% 증가. 적시에 프로모션을 배치한 것이 효과적이었습니다.</div>
+        <div class="impact-badge">영향도: HIGH</div>
+      </div>
+      
+      <div class="insight-card positive">
+        <div class="insight-tag positive">✓ 잘된 점</div>
+        <div class="insight-title">소재 최적화 효과</div>
+        <div class="insight-desc">"봄 신상 세트 A" 소재가 CTR 3.0%로 계정 평균 대비 17% 높은 성과를 기록했습니다.</div>
+        <div class="impact-badge">영향도: MEDIUM</div>
+      </div>
+      
+      
+      <div class="insight-card negative">
+        <div class="insight-tag negative">✕ 개선 필요</div>
+        <div class="insight-title">리타겟팅 효율 저하</div>
+        <div class="insight-desc">CPC가 전주 대비 15% 상승하여 리타겟팅 캠페인의 ROAS가 2.67x로 목표(3.0x) 미달.</div>
+        <div class="impact-badge">영향도: HIGH</div>
+      </div>
+      
+      <div class="insight-card negative">
+        <div class="insight-tag negative">✕ 개선 필요</div>
+        <div class="insight-title">소재 피로도 증가</div>
+        <div class="insight-desc">"할인 배너 D" 소재의 CTR이 7일간 36% 하락. Frequency 4.2로 소재 수명 초과.</div>
+        <div class="impact-badge">영향도: MEDIUM</div>
+      </div>
+      
+    </div>
+  </section>
+
+  <div class="page-divider"></div>
+
+  <!-- ===== PAGE 7: ACTIONS ===== -->
+  <section class="section">
+    <div class="section-label">Next Steps</div>
+    <h2 class="section-title">추천 액션</h2>
+
+    <div class="action-grid">
+      
+      <div class="action-card">
+        <div class="action-priority high">HIGH</div>
+        <div>
+          <div class="action-category">소재</div>
+          <div class="action-title">할인 배너 D 소재 교체</div>
+          <div class="action-desc">Frequency 4.2, CTR 36% 하락. 새로운 프로모션 소재로 즉시 교체하세요.</div>
+        </div>
+        <div class="action-expected">
+          <div class="action-expected-label">예상 효과</div>
+          <div class="action-expected-value">CTR 1.5~2.0% 회복, 전환 10~15건/주 증가 예상</div>
+        </div>
+      </div>
+      
+      <div class="action-card">
+        <div class="action-priority high">HIGH</div>
+        <div>
+          <div class="action-category">예산</div>
+          <div class="action-title">프리미엄 스킨케어 캠페인 예산 증액</div>
+          <div class="action-desc">ROAS 5.12x로 우수한 성과. 일 예산 20% 증액 권장.</div>
+        </div>
+        <div class="action-expected">
+          <div class="action-expected-label">예상 효과</div>
+          <div class="action-expected-value">주당 매출 약 1,280,000원 추가 예상</div>
+        </div>
+      </div>
+      
+      <div class="action-card">
+        <div class="action-priority medium">MED</div>
+        <div>
+          <div class="action-category">퍼널</div>
+          <div class="action-title">MoFu 캠페인 신설</div>
+          <div class="action-desc">현재 MoFu 단계 캠페인 부재. 인지 → 전환 사이 고려 단계 캠페인으로 전환율 개선 가능.</div>
+        </div>
+        <div class="action-expected">
+          <div class="action-expected-label">예상 효과</div>
+          <div class="action-expected-value">전체 퍼널 전환율 15~20% 개선 예상</div>
+        </div>
+      </div>
+      
+      <div class="action-card">
+        <div class="action-priority medium">MED</div>
+        <div>
+          <div class="action-category">타겟팅</div>
+          <div class="action-title">리타겟팅 타겟 세분화</div>
+          <div class="action-desc">장바구니 이탈 고객 중 최근 7일 이탈자와 30일 이탈자를 분리하여 메시지 차별화.</div>
+        </div>
+        <div class="action-expected">
+          <div class="action-expected-label">예상 효과</div>
+          <div class="action-expected-value">CPC 10~15% 절감, 전환율 0.3%p 개선 예상</div>
+        </div>
+      </div>
+      
+      <div class="action-card">
+        <div class="action-priority low">LOW</div>
+        <div>
+          <div class="action-category">소재</div>
+          <div class="action-title">동영상 소재 비중 확대</div>
+          <div class="action-desc">동영상 포맷이 이미지 대비 동일 ROAS이나, 완전 재생율(thruPlayRate) 28.5%로 브랜드 인지 효과 우수.</div>
+        </div>
+        <div class="action-expected">
+          <div class="action-expected-label">예상 효과</div>
+          <div class="action-expected-value">장기적 브랜드 인지도 향상, 리타겟팅 풀 확대</div>
+        </div>
+      </div>
+      
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="report-footer">
+    <p>생성일: 2026-03-18</p>
+    <p class="footer-brand" style="margin-top:4px">바투 AI 마케팅</p>
+  </footer>
+
+</div>
+
+<script>
+const ctx = document.getElementById('dailyChart').getContext('2d');
+const g1 = ctx.createLinearGradient(0,0,0,280);
+g1.addColorStop(0,'rgba(78,140,255,0.3)'); g1.addColorStop(1,'rgba(78,140,255,0)');
+const g2 = ctx.createLinearGradient(0,0,0,280);
+g2.addColorStop(0,'rgba(167,139,250,0.3)'); g2.addColorStop(1,'rgba(167,139,250,0)');
+
+const dailyData = [{"date": "03-10", "spend": 340000, "revenue": 1280000, "roas": 3.76, "impressions": 120000, "clicks": 3100, "conversions": 24}, {"date": "03-11", "spend": 355000, "revenue": 1350000, "roas": 3.8, "impressions": 125000, "clicks": 3200, "conversions": 26}, {"date": "03-12", "spend": 360000, "revenue": 1420000, "roas": 3.94, "impressions": 128000, "clicks": 3350, "conversions": 28}, {"date": "03-13", "spend": 345000, "revenue": 1310000, "roas": 3.8, "impressions": 122000, "clicks": 3100, "conversions": 25}, {"date": "03-14", "spend": 350000, "revenue": 1350000, "roas": 3.86, "impressions": 124000, "clicks": 3180, "conversions": 27}, {"date": "03-15", "spend": 360000, "revenue": 1400000, "roas": 3.89, "impressions": 130000, "clicks": 3400, "conversions": 29}, {"date": "03-16", "spend": 340000, "revenue": 1200000, "roas": 3.53, "impressions": 118000, "clicks": 2950, "conversions": 27}];
+
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: dailyData.map(d => d.date),
+    datasets: [
+      {
+        label: '지출', data: dailyData.map(d => d.spend),
+        borderColor: '#4E8CFF', backgroundColor: g1, borderWidth: 2.5,
+        fill: true, tension: 0.4, pointRadius: 4,
+        pointBackgroundColor: '#4E8CFF', pointBorderColor: '#0A0A0F', pointBorderWidth: 2,
+      },
+      {
+        label: '매출', data: dailyData.map(d => d.revenue),
+        borderColor: '#A78BFA', backgroundColor: g2, borderWidth: 2.5,
+        fill: true, tension: 0.4, pointRadius: 4,
+        pointBackgroundColor: '#A78BFA', pointBorderColor: '#0A0A0F', pointBorderWidth: 2,
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    interaction: { intersect: false, mode: 'index' },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: '#1A1A26', borderColor: '#2A2A3E', borderWidth: 1,
+        titleColor: '#F0F0F5', bodyColor: '#9898B0', padding: 12, cornerRadius: 8,
+        callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toLocaleString() + '원' }
+      }
+    },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false }, ticks: { color: '#6A6A82', font: { family: 'JetBrains Mono', size: 11 } } },
+      y: { grid: { color: 'rgba(255,255,255,0.04)', drawBorder: false }, ticks: { color: '#6A6A82', font: { family: 'JetBrains Mono', size: 11 }, callback: v => (v/10000).toFixed(0)+'만' } }
+    }
+  }
+});
+</script>
+</body>
+</html>

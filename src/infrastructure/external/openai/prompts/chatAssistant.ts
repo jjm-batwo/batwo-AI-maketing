@@ -470,7 +470,7 @@ export const TRACKING_HEALTH_TEMPLATE: ChatResponseTemplate = {
 // ============================================================================
 
 export const CHAT_ASSISTANT_AI_CONFIG: AIConfig = {
-  model: 'gpt-4o-mini',
+  model: 'gpt-5-mini',
   temperature: 0.6, // 창의성과 일관성의 균형
   maxTokens: 2000,
   topP: 0.9,
@@ -480,7 +480,7 @@ export const CHAT_ASSISTANT_AI_CONFIG: AIConfig = {
  * 빠른 응답용 설정 (간단한 질문)
  */
 export const CHAT_QUICK_RESPONSE_AI_CONFIG: AIConfig = {
-  model: 'gpt-4o-mini',
+  model: 'gpt-5-mini',
   temperature: 0.3,
   maxTokens: 500,
   topP: 0.8,

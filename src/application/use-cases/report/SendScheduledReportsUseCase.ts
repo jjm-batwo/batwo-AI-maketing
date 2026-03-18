@@ -1,13 +1,13 @@
 import { IReportScheduleRepository } from '@domain/repositories/IReportScheduleRepository'
 import { IReportRepository } from '@domain/repositories/IReportRepository'
-import { IEmailService } from '@application/ports/IEmailService'
+import { ReportNotificationService } from '@application/services/ReportNotificationService'
 import { ReportType } from '@domain/entities/Report'
 
 export class SendScheduledReportsUseCase {
   constructor(
     private readonly scheduleRepository: IReportScheduleRepository,
     private readonly reportRepository: IReportRepository,
-    private readonly emailService: IEmailService
+    private readonly notificationService: ReportNotificationService
   ) {}
 
   async execute(): Promise<{ sentCount: number; failedCount: number }> {
@@ -35,16 +35,17 @@ export class SendScheduledReportsUseCase {
 
         const shareUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reports/share/${sharedReport.shareToken}`
 
-        // 이메일 발송
-        const result = await this.emailService.sendReportEmail({
-          to: schedule.recipients,
+        // 이메일 + Slack 발송
+        const result = await this.notificationService.sendReport({
+          userId: schedule.userId,
+          recipients: schedule.recipients,
           subject: `[바투 AI] ${this.getSubjectByFrequency(schedule.frequency)} 광고 성과 보고서`,
           reportId: latestReport.id,
           reportSummary: latestReport.calculateSummaryMetrics(),
           shareUrl,
         })
 
-        if (result.success) {
+        if (result.emailSent || result.slackSent) {
           sentCount++
           const advanced = schedule.advanceSchedule()
           await this.scheduleRepository.update(advanced)

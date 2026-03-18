@@ -1,0 +1,314 @@
+{
+  "report_meta": {
+    "brand_name": "바투 AI 마케팅 솔루션",
+    "report_type": "monthly",
+    "period_start": "2026-02-18",
+    "period_end": "2026-03-18",
+    "generated_at": "2026-03-18"
+  },
+  "kpi_summary": {
+    "total_spend": {
+      "value": 9800000,
+      "change_pct": 8.5
+    },
+    "total_revenue": {
+      "value": 38200000,
+      "change_pct": 15.2
+    },
+    "roas": {
+      "value": 3.9,
+      "change_pct": 6.1
+    },
+    "ctr": {
+      "value": 2.72,
+      "change_pct": 3.8
+    },
+    "conversions": {
+      "value": 742,
+      "change_pct": 12.3
+    }
+  },
+  "daily_data": [
+    {
+      "date": "W1",
+      "spend": 2300000,
+      "revenue": 8500000,
+      "roas": 3.7,
+      "impressions": 485000,
+      "clicks": 12800,
+      "conversions": 168
+    },
+    {
+      "date": "W2",
+      "spend": 2450000,
+      "revenue": 9800000,
+      "roas": 4.0,
+      "impressions": 520000,
+      "clicks": 14200,
+      "conversions": 195
+    },
+    {
+      "date": "W3",
+      "spend": 2600000,
+      "revenue": 10500000,
+      "roas": 4.04,
+      "impressions": 548000,
+      "clicks": 15100,
+      "conversions": 203
+    },
+    {
+      "date": "W4",
+      "spend": 2450000,
+      "revenue": 9400000,
+      "roas": 3.84,
+      "impressions": 510000,
+      "clicks": 13500,
+      "conversions": 176
+    }
+  ],
+  "campaigns": [
+    {
+      "name": "프리미엄 스킨케어 세트 - 전환",
+      "objective": "전환",
+      "spend": 5200000,
+      "revenue": 26800000,
+      "roas": 5.15,
+      "ctr": 3.1,
+      "conversions": 520,
+      "status": "ACTIVE"
+    },
+    {
+      "name": "신규 고객 유치 - 브랜드 인지도",
+      "objective": "인지도",
+      "spend": 2800000,
+      "revenue": 6200000,
+      "roas": 2.21,
+      "ctr": 2.1,
+      "conversions": 132,
+      "status": "ACTIVE"
+    },
+    {
+      "name": "리타겟팅 - 장바구니 이탈",
+      "objective": "전환",
+      "spend": 1800000,
+      "revenue": 5200000,
+      "roas": 2.89,
+      "ctr": 2.6,
+      "conversions": 90,
+      "status": "ACTIVE"
+    }
+  ],
+  "creatives_top5": [
+    {
+      "name": "봄 신상 세트 A",
+      "format": "이미지",
+      "spend": 2100000,
+      "revenue": 12800000,
+      "roas": 6.1,
+      "ctr": 3.2,
+      "clicks": 21600,
+      "conversions": 248
+    },
+    {
+      "name": "모델 착용 영상 B",
+      "format": "동영상",
+      "spend": 1680000,
+      "revenue": 9200000,
+      "roas": 5.48,
+      "ctr": 3.1,
+      "clicks": 18000,
+      "conversions": 182
+    },
+    {
+      "name": "베스트셀러 카루셀",
+      "format": "카루셀",
+      "spend": 1240000,
+      "revenue": 4300000,
+      "roas": 3.47,
+      "ctr": 2.9,
+      "clicks": 11400,
+      "conversions": 84
+    },
+    {
+      "name": "리뷰 영상 C",
+      "format": "동영상",
+      "spend": 1000000,
+      "revenue": 3600000,
+      "roas": 3.6,
+      "ctr": 2.2,
+      "clicks": 8000,
+      "conversions": 72
+    },
+    {
+      "name": "할인 배너 D",
+      "format": "이미지",
+      "spend": 1200000,
+      "revenue": 3100000,
+      "roas": 2.58,
+      "ctr": 1.9,
+      "clicks": 9600,
+      "conversions": 58
+    }
+  ],
+  "creative_fatigue": [
+    {
+      "name": "할인 배너 D",
+      "format_type": "SINGLE_IMAGE",
+      "level": "CRITICAL",
+      "fatigue_score": 85,
+      "frequency": 5.1,
+      "ctr": 1.5,
+      "active_days": 28,
+      "note": "CTR이 월초 대비 42% 하락.\n소재 수명 초과로 즉시 교체 필요."
+    },
+    {
+      "name": "리뷰 영상 C",
+      "format_type": "SINGLE_VIDEO",
+      "level": "WARNING",
+      "fatigue_score": 62,
+      "frequency": 3.8,
+      "ctr": 2.0,
+      "active_days": 21,
+      "note": "Frequency 3.8 도달.\n다음 주 내 교체 소재 준비 권장."
+    },
+    {
+      "name": "봄 신상 세트 A",
+      "format_type": "SINGLE_IMAGE",
+      "level": "HEALTHY",
+      "fatigue_score": 22,
+      "frequency": 2.1,
+      "ctr": 3.0,
+      "active_days": 14,
+      "note": "양호.\n현재 소재 유지하되 4주차부터 모니터링 강화."
+    }
+  ],
+  "format_performance": [
+    {
+      "format": "이미지",
+      "roas": 4.52,
+      "count": 8,
+      "ctr": 2.7,
+      "frequency": 2.8,
+      "thru_play_rate": null
+    },
+    {
+      "format": "동영상",
+      "roas": 4.68,
+      "count": 5,
+      "ctr": 2.7,
+      "frequency": 2.5,
+      "thru_play_rate": 31.2
+    },
+    {
+      "format": "카루셀",
+      "roas": 3.47,
+      "count": 3,
+      "ctr": 2.9,
+      "frequency": 2.2,
+      "thru_play_rate": null
+    }
+  ],
+  "funnel": [
+    {
+      "stage": "인지 (ToFu)",
+      "pct": 28.6,
+      "campaigns_count": 1,
+      "spend": 2800000,
+      "conversions": 132,
+      "roas": 2.21,
+      "ctr": 2.1
+    },
+    {
+      "stage": "고려 (MoFu)",
+      "pct": 0.0,
+      "campaigns_count": 0,
+      "spend": 0,
+      "conversions": 0,
+      "roas": 0.0,
+      "ctr": 0.0
+    },
+    {
+      "stage": "전환 (BoFu)",
+      "pct": 71.4,
+      "campaigns_count": 2,
+      "spend": 7000000,
+      "conversions": 610,
+      "roas": 4.57,
+      "ctr": 2.9
+    }
+  ],
+  "analysis": {
+    "summary": "기간 내 전체 지출은 9,800,000원으로 전월 대비 +8.5% 증가했습니다.\n총 매출은 38,200,000원으로 전월 대비 +15.2% 증가하여 ROAS는 3.90x로 전월 대비 +6.1% 향상되었습니다.\n전환은 742건으로 전월 대비 +12.3% 증가하여 전반적인 퍼포먼스가 개선되었습니다.\n",
+    "positives": [
+      {
+        "title": "프리미엄 스킨케어 세트 캠페인 성과 우수",
+        "desc": "지출 5,200,000원 대비 매출 26,800,000원으로 ROAS 5.15x를 기록하며 캠페인 수익성이 높습니다.\n전환 520건으로 전체 전환(742건)의 70% 이상을 차지하여 효율적인 예산 집행이 확인됩니다.\n",
+        "impact": "HIGH"
+      },
+      {
+        "title": "상위 소재(봄 신상 세트 A, 모델 착용 영상 B) 높은 효과",
+        "desc": "봄 신상 세트 A는 ROAS 6.10x·CTR 3.2%·전환 248건으로 가장 높은 효율을 보였습니다.\n모델 착용 영상 B도 ROAS 5.48x·CTR 3.1%·전환 182건으로 상위 퍼포머로 확인됩니다.\n",
+        "impact": "HIGH"
+      },
+      {
+        "title": "전체 지표 개선으로 캠페인 최적화 여지 확인",
+        "desc": "CTR 2.72% (+3.8%)와 전환 증가(+12.3%)가 동시에 발생하여 크리에이티브 및 타겟팅 개선이 실효를 냈습니다.\n상승 추세를 기반으로 고효율 채널·크리에이티브에 추가 투입 효과가 기대됩니다.\n",
+        "impact": "MEDIUM"
+      }
+    ],
+    "negatives": [
+      {
+        "title": "신규 고객 유치(브랜드 인지도) 캠페인 ROAS 저조",
+        "desc": "지출 2,800,000원 대비 매출 6,200,000원으로 ROAS 2.21x에 그치고 전환도 132건으로 상대적으로 낮습니다.\n주간 전환 산출(약 31.9건/주) 기준으로 머신러닝 안정(주 50건 이상)에 미달하여 자동화 최적화가 제한적입니다.\n",
+        "impact": "HIGH"
+      },
+      {
+        "title": "리타겟팅(장바구니 이탈) 캠페인 개선 여지",
+        "desc": "지출 1,800,000원에 매출 5,200,000원, ROAS 2.89x로 중간 수준입니다.\n전환 90건은 주간 환산 시 약 21.7건/주로 머신러닝 안정 구간에 미달하여 스케일링 시 예측 불확실성이 존재합니다.\n",
+        "impact": "MEDIUM"
+      },
+      {
+        "title": "할인 배너 D 소재 피로도 및 효율 저하",
+        "desc": "할인 배너 D가 피로도 85/100, Frequency 5.1로 CRITICAL 상태이며 CTR 1.5%(활성 CTR 1.9% 보고)로 반응이 낮습니다.\n높은 노출 대비 저조한 클릭·전환 성과로 즉각적인 교체 또는 노출 축소가 필요합니다.\n",
+        "impact": "HIGH"
+      }
+    ]
+  },
+  "actions": [
+    {
+      "priority": "HIGH",
+      "category": "예산",
+      "title": "프리미엄 스킨케어 세트 캠페인에 예산 +1,000,000원 배분(5,200,000원→6,200,000원).",
+      "desc": "신뢰성 있는 성과(ROAS 5.15x, 전환 520건)를 바탕으로 예산 1,000,000원을 프리미엄 캠페인으로 이동합니다.\n이동 출처는 신규 고객 유치에서 600,000원, 리타겟팅에서 400,000원을 감액하는 방식으로 총 지출은 9,800,000원을 유지합니다.\n",
+      "expected": "추가 예산 1,000,000원 적용 시 과거 효율(CPA 약 10,000원 기반)으로 약 +100건 전환을 기대합니다.\n매출은 보수적 추정으로 ROAS 5.15x 가정 시 약 +5,150,000원 증가가 예상됩니다.\n"
+    },
+    {
+      "priority": "HIGH",
+      "category": "소재",
+      "title": "할인 배너 D 즉시 일시중단 및 대체 크리에이티브 테스트(테스트 예산 300,000원).",
+      "desc": "피로도 85/100·Frequency 5.1로 CRITICAL 상태인 할인 배너 D를 즉시 일시중단합니다.\n중단 후 300,000원을 배정하여 A/B 테스트용 대체 이미지 2종 및 짧은 동영상 1종을 7일간 집행하고 CTR·전환 차이를 검증합니다.\n",
+      "expected": "7일 테스트 종료 시 CTR이 기존 1.5%→최소 2.3%로 +0.8pp 개선되면 ROAS가 평균 20% 이상 상승할 것으로 기대합니다.\n테스트 예산 300,000원 기준 잠재 매출 개선 효과는 약 +300,000원×1.2×현재 평균 ROAS 수준으로 산출됩니다.\n"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "타겟팅",
+      "title": "신규 고객 유치 캠페인 타겟 재정의 및 KPI 조정(예산 -400,000원).",
+      "desc": "브랜드 인지도 캠페인의 예산 400,000원을 삭감하고, 대신 룩어라이크·관심사 타겟의 상향 전환 목표(상위 퍼널→중상위 퍼널 전환 지향)로 캠페인 세그먼트를 분리합니다.\n동시에 동영상(모델 착용 B) 크리에이티브를 적용하여 인지도→실제 사이트 유입 전환 흐름을 개선합니다.\n",
+      "expected": "세그먼트 전환 최적화 후 8주 내 해당 예산의 ROAS를 현재 2.21x에서 약 +30%(약 2.9x)까지 개선하고 전환은 약 +20% 증가를 목표로 합니다.\n"
+    },
+    {
+      "priority": "MEDIUM",
+      "category": "퍼널",
+      "title": "리타겟팅 캠페인에 동적 카루셀 전환형 소재 집중(예산 +200,000원).",
+      "desc": "리타겟팅(장바구니 이탈)에 동적 카루셀(Bestseller 카루셀 포함)을 적용하고 하루 빈도 상한을 조절(Frequency cap 3~4)합니다.\n디폴트 쇼핑 카탈로그 연동과 함께 CTA 최적화를 진행하여 재방문 시 구매 유도율을 높입니다.\n",
+      "expected": "추가 예산 200,000원 투입 시 CPA가 약 15% 감소하고 전환은 약 25% 증가할 것으로 예상합니다.\n리타겟팅 ROAS는 2.89x에서 3.3x 수준으로 개선될 가능성이 있습니다.\n"
+    },
+    {
+      "priority": "LOW",
+      "category": "소재",
+      "title": "상위 크리에이티브(봄 신상 세트 A·모델 착용 영상 B) 예산 15% 스케일링(프리미엄 내 780,000원 배분).",
+      "desc": "프리미엄 캠페인 내 상위 퍼포머인 봄 신상 세트 A와 모델 착용 영상 B에 각각 예산을 15%씩 증액합니다.\n프리미엄 캠페인 예산 증가분(총 780,000원)은 상위 소재에 우선 배분하여 확장성을 검증합니다.\n",
+      "expected": "상위 소재 확장으로 CTR·전환 효율이 유지될 경우 전환은 최소 +15% 증가하고 ROAS는 기존 수준(봄 신상 A 기준 6.10x)을 유지하거나 소폭 하락으로 안정화될 것으로 예상합니다.\n"
+    }
+  ]
+}

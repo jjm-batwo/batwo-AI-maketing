@@ -7,7 +7,7 @@ const TRUNCATE_LENGTH = 500
 const INTENT_LLM_CONFIG: AIConfig = {
   temperature: 0,
   maxTokens: 20,
-  model: 'gpt-4o-mini',
+  model: 'gpt-5-mini',
 }
 
 const INTENT_DESCRIPTIONS: Record<ChatIntent, string> = {

@@ -1,5 +1,5 @@
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
-import type { IAdKPIRepository, DailyAdKPIAggregate, CreativeAggregate, FormatAggregate } from '@domain/repositories/IAdKPIRepository'
+import type { IAdKPIRepository, DailyAdKPIAggregate, CreativeAggregate, FormatAggregate, CampaignAggregate } from '@domain/repositories/IAdKPIRepository'
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
 import type { IAIService } from '@application/ports/IAIService'
 import { CreativeFatigueService } from './CreativeFatigueService'
@@ -33,6 +33,7 @@ interface BuildInput {
   endDate: Date
   previousStartDate: Date
   previousEndDate: Date
+  reportType?: 'daily' | 'weekly' | 'monthly'
 }
 
 const FORMAT_LABELS: Record<string, string> = {
@@ -70,25 +71,30 @@ export class EnhancedReportDataBuilder {
       previousDailyAggregates,
       topCreatives,
       formatAggregates,
+      campaignAggregates,
     ] = await Promise.all([
       this.adKPIRepository.getDailyAggregatesByCampaignIds(campaignIds, startDate, endDate),
       this.adKPIRepository.getDailyAggregatesByCampaignIds(campaignIds, previousStartDate, previousEndDate),
       this.adKPIRepository.getTopCreatives(campaignIds, startDate, endDate, 10, 'roas'),
       this.adKPIRepository.aggregateByFormat(campaignIds, startDate, endDate),
+      this.adKPIRepository.aggregateByCampaignIds(campaignIds, startDate, endDate),
     ])
 
     // 2. 각 섹션 빌드
     const overallSummary = this.buildOverallSummary(dailyAggregates, previousDailyAggregates)
     const dailyTrend = this.buildDailyTrend(dailyAggregates)
-    const campaignPerformance = this.buildCampaignPerformance(campaigns)
+    const campaignPerformance = this.buildCampaignPerformance(campaigns, campaignAggregates)
     const creativePerformance = this.buildCreativePerformance(topCreatives)
     const creativeFatigue = this.buildCreativeFatigue(topCreatives)
     const formatComparison = this.buildFormatComparison(formatAggregates)
-    const funnelPerformance = this.buildFunnelPerformance(campaigns)
+    const funnelPerformance = this.buildFunnelPerformance(campaigns, campaignAggregates)
 
-    // 3. AI 분석 (B6: 1회 호출로 통합)
+    // 2.5. 데이터 완전성 경고
+    this.warnIfEmptyData(campaignPerformance, dailyTrend)
+
+    // 3. AI 분석 (B6: 1회 호출로 통합, 최대 2회 재시도)
     const [performanceAnalysis, recommendations] = await this.buildAISections(
-      overallSummary, campaignPerformance
+      overallSummary, campaignPerformance, input.reportType ?? 'weekly'
     )
 
     return {
@@ -181,22 +187,34 @@ export class EnhancedReportDataBuilder {
   }
 
   private buildCampaignPerformance(
-    campaigns: BuildInput['campaigns']
+    campaigns: BuildInput['campaigns'],
+    aggregates: CampaignAggregate[]
   ): CampaignPerformanceSection {
+    const aggregateMap = new Map(aggregates.map(a => [a.campaignId, a]))
+
     return {
-      campaigns: campaigns.map(c => ({
-        campaignId: c.id,
-        name: c.name,
-        objective: c.objective,
-        status: c.status,
-        impressions: 0,
-        clicks: 0,
-        conversions: 0,
-        spend: 0,
-        revenue: 0,
-        roas: 0,
-        ctr: 0,
-      })),
+      campaigns: campaigns.map(c => {
+        const agg = aggregateMap.get(c.id)
+        const impressions = agg?.totalImpressions ?? 0
+        const clicks = agg?.totalClicks ?? 0
+        const conversions = agg?.totalConversions ?? 0
+        const spend = agg?.totalSpend ?? 0
+        const revenue = agg?.totalRevenue ?? 0
+
+        return {
+          campaignId: c.id,
+          name: c.name,
+          objective: c.objective,
+          status: c.status,
+          impressions,
+          clicks,
+          conversions,
+          spend,
+          revenue,
+          roas: spend > 0 ? revenue / spend : 0,
+          ctr: impressions > 0 ? (clicks / impressions) * 100 : 0,
+        }
+      }),
     }
   }
 
@@ -271,7 +289,12 @@ export class EnhancedReportDataBuilder {
     }
   }
 
-  private buildFunnelPerformance(campaigns: BuildInput['campaigns']): FunnelPerformanceSection {
+  private buildFunnelPerformance(
+    campaigns: BuildInput['campaigns'],
+    aggregates: CampaignAggregate[]
+  ): FunnelPerformanceSection {
+    const aggregateMap = new Map(aggregates.map(a => [a.campaignId, a]))
+
     const stageMap = new Map<string, {
       campaignCount: number
       spend: number
@@ -287,10 +310,16 @@ export class EnhancedReportDataBuilder {
         objective,
         !!c.advantageConfig
       )
+      const agg = aggregateMap.get(c.id)
       const existing = stageMap.get(stage) ?? {
         campaignCount: 0, spend: 0, impressions: 0, clicks: 0, conversions: 0, revenue: 0,
       }
       existing.campaignCount += 1
+      existing.spend += agg?.totalSpend ?? 0
+      existing.impressions += agg?.totalImpressions ?? 0
+      existing.clicks += agg?.totalClicks ?? 0
+      existing.conversions += agg?.totalConversions ?? 0
+      existing.revenue += agg?.totalRevenue ?? 0
       stageMap.set(stage, existing)
     }
 
@@ -316,67 +345,99 @@ export class EnhancedReportDataBuilder {
 
   private async buildAISections(
     overallSummary: OverallSummarySection,
-    campaignPerformance: CampaignPerformanceSection
+    campaignPerformance: CampaignPerformanceSection,
+    reportType: 'daily' | 'weekly' | 'monthly' = 'weekly'
   ): Promise<[PerformanceAnalysisSection, RecommendationsSection]> {
-    try {
-      const campaignSummaries = campaignPerformance.campaigns.map(c => ({
-        name: c.name,
-        objective: c.objective ?? 'CONVERSIONS',
-        metrics: {
-          impressions: c.impressions ?? 0,
-          clicks: c.clicks ?? 0,
-          conversions: c.conversions ?? 0,
-          spend: c.spend ?? 0,
-          revenue: c.revenue ?? 0,
-        },
-      }))
+    const maxRetries = 2
+    let lastError: unknown
 
-      const result = await this.aiService.generateReportInsights({
-        reportType: 'weekly',
-        campaignSummaries,
-        includeExtendedInsights: true,
-        includeForecast: false,
-        includeBenchmark: false,
-        comparisonPeriod: overallSummary.changes ? {
-          previousMetrics: {
-            impressions: 0,
-            clicks: 0,
-            conversions: 0,
-            spend: overallSummary.totalSpend / (1 + (overallSummary.changes.spend.value / 100)),
-            revenue: overallSummary.totalRevenue / (1 + (overallSummary.changes.revenue.value / 100)),
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const campaignSummaries = campaignPerformance.campaigns.map(c => ({
+          name: c.name,
+          objective: c.objective ?? 'CONVERSIONS',
+          metrics: {
+            impressions: c.impressions ?? 0,
+            clicks: c.clicks ?? 0,
+            conversions: c.conversions ?? 0,
+            spend: c.spend ?? 0,
+            revenue: c.revenue ?? 0,
           },
-        } : undefined,
-      })
+        }))
 
-      const insights = result.insights ?? []
-      const mapImpact = (importance: string): 'high' | 'medium' | 'low' =>
-        importance === 'critical' ? 'high' : (importance as 'high' | 'medium' | 'low')
-      return [
-        {
-          summary: result.summary,
-          positiveFactors: insights
-            .filter(i => i.type === 'performance' || i.type === 'trend' || i.type === 'comparison')
-            .map(i => ({ title: i.title, description: i.description, impact: mapImpact(i.importance) })),
-          negativeFactors: insights
-            .filter(i => i.type === 'anomaly' || i.type === 'recommendation')
-            .map(i => ({ title: i.title, description: i.description, impact: mapImpact(i.importance) })),
-        },
-        {
-          actions: (result.actionItems ?? []).map(item => ({
-            priority: item.priority,
-            category: ACTION_CATEGORY_MAP[item.category] ?? 'general',
-            title: item.action,
-            description: item.action,
-            expectedImpact: item.expectedImpact,
-            deadline: item.deadline,
-          })),
-        },
-      ]
-    } catch {
-      return [
-        { summary: 'AI 분석을 사용할 수 없습니다.', positiveFactors: [], negativeFactors: [] },
-        { actions: [] },
-      ]
+        const result = await this.aiService.generateReportInsights({
+          reportType,
+          campaignSummaries,
+          includeExtendedInsights: true,
+          includeForecast: false,
+          includeBenchmark: false,
+          comparisonPeriod: overallSummary.changes ? {
+            previousMetrics: {
+              impressions: 0,
+              clicks: 0,
+              conversions: 0,
+              spend: overallSummary.totalSpend / (1 + (overallSummary.changes.spend.value / 100)),
+              revenue: overallSummary.totalRevenue / (1 + (overallSummary.changes.revenue.value / 100)),
+            },
+          } : undefined,
+        })
+
+        const insights = result.insights ?? []
+        const mapImpact = (importance: string): 'high' | 'medium' | 'low' =>
+          importance === 'critical' ? 'high' : (importance as 'high' | 'medium' | 'low')
+
+        return [
+          {
+            summary: result.summary,
+            positiveFactors: insights
+              .filter(i => i.type === 'performance' || i.type === 'trend' || i.type === 'comparison')
+              .map(i => ({ title: i.title, description: i.description, impact: mapImpact(i.importance) })),
+            negativeFactors: insights
+              .filter(i => i.type === 'anomaly' || i.type === 'recommendation')
+              .map(i => ({ title: i.title, description: i.description, impact: mapImpact(i.importance) })),
+          },
+          {
+            actions: (result.actionItems ?? []).map(item => ({
+              priority: item.priority,
+              category: ACTION_CATEGORY_MAP[item.category] ?? 'general',
+              title: item.action,
+              description: item.action,
+              expectedImpact: item.expectedImpact,
+              deadline: item.deadline,
+            })),
+          },
+        ]
+      } catch (error) {
+        lastError = error
+        if (attempt < maxRetries) {
+          console.warn(`[EnhancedReportDataBuilder] AI attempt ${attempt} failed, retrying...`)
+        }
+      }
+    }
+
+    console.error('[EnhancedReportDataBuilder] AI analysis failed after retries:', lastError)
+    return [
+      { summary: 'AI 분석을 사용할 수 없습니다. 잠시 후 다시 시도해주세요.', positiveFactors: [], negativeFactors: [] },
+      { actions: [] },
+    ]
+  }
+
+  private warnIfEmptyData(
+    campaignPerformance: CampaignPerformanceSection,
+    dailyTrend: DailyTrendSection
+  ): void {
+    const allZeroMetrics = campaignPerformance.campaigns.every(
+      c => c.impressions === 0 && c.spend === 0
+    )
+    if (allZeroMetrics && campaignPerformance.campaigns.length > 0) {
+      console.warn(
+        '[EnhancedReportDataBuilder] 모든 캠페인 지표가 0입니다. AdKPISnapshot 동기화 상태를 확인하세요.',
+        { campaignIds: campaignPerformance.campaigns.map(c => c.campaignId) }
+      )
+    }
+
+    if (dailyTrend.days.length === 0) {
+      console.warn('[EnhancedReportDataBuilder] 일별 데이터가 없습니다.')
     }
   }
 }

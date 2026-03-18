@@ -1,0 +1,118 @@
+{
+  "report_meta": {
+    "brand_name": "바투 AI 마케팅 솔루션",
+    "report_type": "monthly",
+    "period_start": "2026-02-18",
+    "period_end": "2026-03-18",
+    "generated_at": "2026-03-18"
+  },
+
+  "kpi_summary": {
+    "total_spend": { "value": 9800000, "change_pct": 8.5 },
+    "total_revenue": { "value": 38200000, "change_pct": 15.2 },
+    "roas": { "value": 3.90, "change_pct": 6.1 },
+    "ctr": { "value": 2.72, "change_pct": 3.8 },
+    "conversions": { "value": 742, "change_pct": 12.3 }
+  },
+
+  "daily_data": [
+    { "date": "W1", "spend": 2300000, "revenue": 8500000, "roas": 3.70, "impressions": 485000, "clicks": 12800, "conversions": 168 },
+    { "date": "W2", "spend": 2450000, "revenue": 9800000, "roas": 4.00, "impressions": 520000, "clicks": 14200, "conversions": 195 },
+    { "date": "W3", "spend": 2600000, "revenue": 10500000, "roas": 4.04, "impressions": 548000, "clicks": 15100, "conversions": 203 },
+    { "date": "W4", "spend": 2450000, "revenue": 9400000, "roas": 3.84, "impressions": 510000, "clicks": 13500, "conversions": 176 }
+  ],
+
+  "campaigns": [
+    {
+      "name": "프리미엄 스킨케어 세트 - 전환",
+      "objective": "전환",
+      "spend": 5200000,
+      "revenue": 26800000,
+      "roas": 5.15,
+      "ctr": 3.1,
+      "conversions": 520,
+      "status": "ACTIVE"
+    },
+    {
+      "name": "신규 고객 유치 - 브랜드 인지도",
+      "objective": "인지도",
+      "spend": 2800000,
+      "revenue": 6200000,
+      "roas": 2.21,
+      "ctr": 2.1,
+      "conversions": 132,
+      "status": "ACTIVE"
+    },
+    {
+      "name": "리타겟팅 - 장바구니 이탈",
+      "objective": "전환",
+      "spend": 1800000,
+      "revenue": 5200000,
+      "roas": 2.89,
+      "ctr": 2.6,
+      "conversions": 90,
+      "status": "ACTIVE"
+    }
+  ],
+
+  "creatives_top5": [
+    { "name": "봄 신상 세트 A", "format": "이미지", "spend": 2100000, "revenue": 12800000, "roas": 6.10, "ctr": 3.2, "clicks": 21600, "conversions": 248 },
+    { "name": "모델 착용 영상 B", "format": "동영상", "spend": 1680000, "revenue": 9200000, "roas": 5.48, "ctr": 3.1, "clicks": 18000, "conversions": 182 },
+    { "name": "베스트셀러 카루셀", "format": "카루셀", "spend": 1240000, "revenue": 4300000, "roas": 3.47, "ctr": 2.9, "clicks": 11400, "conversions": 84 },
+    { "name": "리뷰 영상 C", "format": "동영상", "spend": 1000000, "revenue": 3600000, "roas": 3.60, "ctr": 2.2, "clicks": 8000, "conversions": 72 },
+    { "name": "할인 배너 D", "format": "이미지", "spend": 1200000, "revenue": 3100000, "roas": 2.58, "ctr": 1.9, "clicks": 9600, "conversions": 58 }
+  ],
+
+  "creative_fatigue": [
+    {
+      "name": "할인 배너 D",
+      "format_type": "SINGLE_IMAGE",
+      "level": "CRITICAL",
+      "fatigue_score": 85,
+      "frequency": 5.1,
+      "ctr": 1.5,
+      "active_days": 28,
+      "note": "CTR이 월초 대비 42% 하락.\n소재 수명 초과로 즉시 교체 필요."
+    },
+    {
+      "name": "리뷰 영상 C",
+      "format_type": "SINGLE_VIDEO",
+      "level": "WARNING",
+      "fatigue_score": 62,
+      "frequency": 3.8,
+      "ctr": 2.0,
+      "active_days": 21,
+      "note": "Frequency 3.8 도달.\n다음 주 내 교체 소재 준비 권장."
+    },
+    {
+      "name": "봄 신상 세트 A",
+      "format_type": "SINGLE_IMAGE",
+      "level": "HEALTHY",
+      "fatigue_score": 22,
+      "frequency": 2.1,
+      "ctr": 3.0,
+      "active_days": 14,
+      "note": "양호.\n현재 소재 유지하되 4주차부터 모니터링 강화."
+    }
+  ],
+
+  "format_performance": [
+    { "format": "이미지", "roas": 4.52, "count": 8, "ctr": 2.7, "frequency": 2.8, "thru_play_rate": null },
+    { "format": "동영상", "roas": 4.68, "count": 5, "ctr": 2.7, "frequency": 2.5, "thru_play_rate": 31.2 },
+    { "format": "카루셀", "roas": 3.47, "count": 3, "ctr": 2.9, "frequency": 2.2, "thru_play_rate": null }
+  ],
+
+  "funnel": [
+    { "stage": "인지 (ToFu)", "pct": 28.6, "campaigns_count": 1, "spend": 2800000, "conversions": 132, "roas": 2.21, "ctr": 2.1 },
+    { "stage": "고려 (MoFu)", "pct": 0.0, "campaigns_count": 0, "spend": 0, "conversions": 0, "roas": 0.00, "ctr": 0.0 },
+    { "stage": "전환 (BoFu)", "pct": 71.4, "campaigns_count": 2, "spend": 7000000, "conversions": 610, "roas": 4.57, "ctr": 2.9 }
+  ],
+
+  "analysis": {
+    "summary": "placeholder",
+    "positives": [],
+    "negatives": []
+  },
+
+  "actions": []
+}

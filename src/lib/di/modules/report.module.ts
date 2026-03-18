@@ -21,6 +21,7 @@ import { SendScheduledReportsUseCase } from '@application/use-cases/report/SendS
 
 // Phase 2: Enhanced Report Services
 import { EnhancedReportDataBuilder } from '@application/services/EnhancedReportDataBuilder'
+import { ReportNotificationService } from '@application/services/ReportNotificationService'
 import { CreativeFatigueService } from '@application/services/CreativeFatigueService'
 import { FunnelClassificationService } from '@application/services/FunnelClassificationService'
 
@@ -61,6 +62,16 @@ export function registerReportModule(container: Container): void {
     )
   )
 
+  // --- Report Notification (Phase 5: Email + Slack) ---
+  container.register(
+    DI_TOKENS.ReportNotificationService,
+    () => new ReportNotificationService(
+      container.resolve(DI_TOKENS.EmailService),
+      container.resolve(DI_TOKENS.SlackNotificationSender),
+      container.resolve(DI_TOKENS.NotificationChannelRepository)
+    )
+  )
+
   // --- Use Cases (Transient) ---
   container.register(
     DI_TOKENS.GenerateWeeklyReportUseCase,
@@ -81,7 +92,7 @@ export function registerReportModule(container: Container): void {
       new SendScheduledReportsUseCase(
         container.resolve(DI_TOKENS.ReportScheduleRepository),
         container.resolve(DI_TOKENS.ReportRepository),
-        container.resolve(DI_TOKENS.EmailService)
+        container.resolve(DI_TOKENS.ReportNotificationService)
       )
   )
 }

@@ -52,7 +52,7 @@ const OPENAI_API_BASE = 'https://api.openai.com/v1'
 const OPENAI_TIMEOUT_MS = 60000 // 60 seconds for LLM responses
 
 const BUDGET_RECOMMENDATION_AI_CONFIG: AIConfig = {
-  model: 'gpt-4o-mini',
+  model: 'gpt-5-mini',
   temperature: 0.5,
   maxTokens: 2000,
 }
@@ -89,7 +89,7 @@ export class AIService implements IAIService {
   private readonly apiKey: string
   private readonly model: string
 
-  constructor(apiKey: string, model: string = 'gpt-4o-mini') {
+  constructor(apiKey: string, model: string = 'gpt-5-mini') {
     this.apiKey = apiKey
     this.model = model
   }

@@ -3,7 +3,7 @@
  * 기능별로 최적화된 파라미터를 외부에서 관리
  */
 export interface AIConfig {
-  /** 사용할 모델 (예: 'gpt-4o', 'gpt-4o-mini') */
+  /** 사용할 모델 (예: 'gpt-5-mini', 'gpt-5-mini') */
   model?: string
   /** 응답의 창의성/일관성 조절 (0.0~2.0) */
   temperature: number

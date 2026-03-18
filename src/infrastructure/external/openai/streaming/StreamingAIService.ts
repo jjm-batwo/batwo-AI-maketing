@@ -20,7 +20,7 @@ import {
 export class StreamingAIService implements IStreamingAIService {
   private readonly model: string
 
-  constructor(model: string = 'gpt-4o-mini') {
+  constructor(model: string = 'gpt-5-mini') {
     this.model = model
   }
 

@@ -272,10 +272,10 @@ export const CAMPAIGN_OPTIMIZATION_SYSTEM_PROMPT = `당신은 Meta Ads 캠페인
 /**
  * 캠페인 최적화 AI 설정
  * - 중간 temperature: 분석적이면서도 일관된 제안
- * - gpt-4o-mini: 비용 효율적인 분석 모델
+ * - gpt-5-mini: 비용 효율적인 분석 모델
  */
 export const CAMPAIGN_OPTIMIZATION_AI_CONFIG: AIConfig = {
-  model: 'gpt-4o-mini',
+  model: 'gpt-5-mini',
   temperature: 0.5,
   maxTokens: 2000,
   topP: 0.9,

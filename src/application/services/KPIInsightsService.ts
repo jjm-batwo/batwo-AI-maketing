@@ -241,7 +241,7 @@ export class KPIInsightsService {
       const hasHighPriority = insights.some(
         (i) => i.priority === 'critical' || i.priority === 'high'
       )
-      const model = hasHighPriority ? 'gpt-4o' : 'gpt-4o-mini'
+      const model = hasHighPriority ? 'gpt-5-mini' : 'gpt-5-mini'
 
       const parseJsonResponse = (response: string): unknown => {
         const jsonStr = response

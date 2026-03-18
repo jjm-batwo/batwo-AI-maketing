@@ -121,6 +121,7 @@ export const DI_TOKENS = {
 
   // Enhanced Report (Phase 2)
   EnhancedReportDataBuilder: Symbol.for('EnhancedReportDataBuilder'),
+  ReportNotificationService: Symbol.for('ReportNotificationService'),
   CreativeFatigueService: Symbol.for('CreativeFatigueService'),
   FunnelClassificationService: Symbol.for('FunnelClassificationService'),
 

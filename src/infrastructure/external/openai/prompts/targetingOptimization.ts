@@ -168,10 +168,10 @@ ${autoRecommendations}
 /**
  * 타겟팅 최적화 AI 설정
  * - 중간 temperature: 균형 잡힌 전략 제안
- * - gpt-4o: 복잡한 타겟팅 전략 수립에 적합
+ * - gpt-5-mini: 복잡한 타겟팅 전략 수립에 적합
  */
 export const TARGETING_OPTIMIZATION_AI_CONFIG: AIConfig = {
-  model: 'gpt-4o',
+  model: 'gpt-5-mini',
   temperature: 0.6,
   maxTokens: 2500,
   topP: 0.9,

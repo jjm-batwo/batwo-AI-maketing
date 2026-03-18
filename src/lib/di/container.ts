@@ -454,7 +454,7 @@ export function getAIServiceForPlan(plan: SubscriptionPlan): IAIService {
 }
 
 /**
- * Get AIService configured for premium copy generation (gpt-4o)
+ * Get AIService configured for premium copy generation (gpt-5-mini)
  */
 export function getPremiumAIService(plan: SubscriptionPlan): IAIService | null {
   const modelConfig = getAIModelConfig(plan)

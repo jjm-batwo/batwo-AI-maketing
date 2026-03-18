@@ -11,7 +11,7 @@ export interface KPIInsightPromptInput {
     currentValue?: number
     changePercent?: number
   }>
-  model: 'gpt-4o' | 'gpt-4o-mini'
+  model: 'gpt-5-mini' | 'gpt-5-mini'
 }
 
 export function buildKPIInsightPrompt(input: KPIInsightPromptInput): {
