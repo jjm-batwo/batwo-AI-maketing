@@ -38,3 +38,4 @@
 | 18 | IDE TSConfig 경로 alias 미인식 건 일괄 처리 | `tsconfig.json` | 개발 편의성 | 2026-03-12 |
 | 19 | RAG 도메인 분석기 DI 자동 등록 구조 개편 | `src/infrastructure/knowledge/analyzers/`, `src/lib/di/` | 분석기 추가 시 수동 등록 제거 | 2026-03-12 |
 | 20 | SEC-09: Credentials Provider 비밀번호 해시 검증 | `src/infrastructure/auth/auth.ts` | 의도적 보류 (소셜 로그인 우선) | 2026-03-12 |
+| 21 | Python Jinja2 보고서 디자인을 React-PDF 템플릿에 반영 | `docs/report-reference/batwo-report/templates/report.html.j2` → `src/infrastructure/pdf/templates/` | 레퍼런스 디자인 SaaS 통합 | 2026-03-18 |
