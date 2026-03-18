@@ -9,7 +9,7 @@ import { safeDecryptToken } from '@application/utils/TokenEncryption'
 export interface SyncAllInsightsInput {
   userId: string
   datePreset?: 'today' | 'yesterday' | 'last_7d' | 'last_30d' | 'last_90d'
-  includeTodayData?: boolean // Also fetch today's data separately (Meta's last_Xd excludes today)
+  includeTodayData?: boolean
 }
 
 export interface SyncAllInsightsResult {
@@ -28,23 +28,14 @@ export class SyncAllInsightsUseCase {
   ) {}
 
   async execute(input: SyncAllInsightsInput): Promise<SyncAllInsightsResult> {
-    // Get user's Meta access token
     const metaAccount = await this.metaAdAccountRepository.findByUserId(input.userId)
 
-    console.log('[SyncInsights] Starting sync for user:', input.userId)
-    console.log('[SyncInsights] Meta account found:', !!metaAccount?.accessToken)
-
     if (!metaAccount?.accessToken) {
-      console.log('[SyncInsights] No access token, returning empty result')
       return { synced: 0, failed: 0, total: 0, errors: [] }
     }
 
-    // Get all campaigns with metaCampaignId
     const campaigns = await this.campaignRepository.findByUserId(input.userId)
     const metaCampaigns = campaigns.filter((c) => c.metaCampaignId)
-
-    console.log('[SyncInsights] Total campaigns:', campaigns.length)
-    console.log('[SyncInsights] Campaigns with Meta ID:', metaCampaigns.length)
 
     const result: SyncAllInsightsResult = {
       synced: 0,
@@ -53,76 +44,79 @@ export class SyncAllInsightsUseCase {
       errors: [],
     }
 
-    // Sync daily insights for each campaign (for chart data)
-    for (const campaign of metaCampaigns) {
-      try {
-        console.log(
-          `[SyncInsights] Fetching insights for campaign: ${campaign.name} (${campaign.metaCampaignId})`
-        )
+    if (metaCampaigns.length === 0) return result
 
-        // date_preset 대신 명시적 since/until 사용 (Meta의 date_preset은 최근 데이터 누락 가능)
-        const until = new Date().toISOString().split('T')[0] // 오늘
-        const presetDays: Record<string, number> = {
-          today: 0,
-          yesterday: 1,
-          last_7d: 7,
-          last_30d: 30,
-          last_90d: 90,
+    // Build metaCampaignId → localCampaignId map
+    const metaToLocalMap = new Map<string, string>()
+    for (const c of metaCampaigns) {
+      metaToLocalMap.set(c.metaCampaignId!, c.id)
+    }
+
+    // Date range
+    const until = new Date().toISOString().split('T')[0]
+    const presetDays: Record<string, number> = {
+      today: 0, yesterday: 1, last_7d: 7, last_30d: 30, last_90d: 90,
+    }
+    const days = presetDays[input.datePreset || 'last_7d'] ?? 7
+    const sinceDate = new Date()
+    sinceDate.setDate(sinceDate.getDate() - days)
+    const since = sinceDate.toISOString().split('T')[0]
+
+    try {
+      // PERF-01: Single bulk API call instead of N per-campaign calls
+      const insightsMap = await this.metaAdsService.getAccountInsights(
+        safeDecryptToken(metaAccount.accessToken),
+        metaAccount.metaAccountId,
+        {
+          level: 'campaign',
+          timeRange: { since, until },
+          timeIncrement: '1',
+          campaignIds: metaCampaigns.map(c => c.metaCampaignId!),
         }
-        const days = presetDays[input.datePreset || 'last_7d'] ?? 7
-        const sinceDate = new Date()
-        sinceDate.setDate(sinceDate.getDate() - days)
-        const since = sinceDate.toISOString().split('T')[0]
+      )
 
-        console.log(`[SyncInsights] Fetching with date range: ${since} ~ ${until}`)
+      // Build KPI records and batch save
+      const kpisToSave: KPI[] = []
+      for (const [, insight] of insightsMap) {
+        const localCampaignId = metaToLocalMap.get(insight.campaignId)
+        if (!localCampaignId) continue
 
-        const dailyInsights = await this.metaAdsService.getCampaignDailyInsights(
-          safeDecryptToken(metaAccount.accessToken),
-          campaign.metaCampaignId!,
-          input.datePreset || 'last_7d',
-          { since, until }
-        )
-
-        console.log(`[SyncInsights] Received ${dailyInsights.length} daily insights`)
-        if (dailyInsights.length > 0) {
-          console.log('[SyncInsights] Sample data:', JSON.stringify(dailyInsights[0]))
-          console.log(
-            '[SyncInsights] Last data:',
-            JSON.stringify(dailyInsights[dailyInsights.length - 1])
-          )
-        }
-
-        // Save each daily KPI record
-        for (const daily of dailyInsights) {
-          const kpi = KPI.create({
-            campaignId: campaign.id,
-            impressions: daily.impressions,
-            clicks: daily.clicks,
-            conversions: daily.conversions,
-            linkClicks: daily.linkClicks || 0,
-            spend: Money.create(Math.round(daily.spend), 'KRW'),
-            revenue: Money.create(Math.round(daily.revenue), 'KRW'),
-            date: new Date(daily.date + 'T00:00:00.000Z'),
+        try {
+          kpisToSave.push(KPI.create({
+            campaignId: localCampaignId,
+            impressions: insight.impressions,
+            clicks: insight.clicks,
+            conversions: insight.conversions,
+            linkClicks: insight.linkClicks || 0,
+            spend: Money.create(Math.round(insight.spend), 'KRW'),
+            revenue: Money.create(Math.round(insight.revenue), 'KRW'),
+            date: new Date(insight.dateStart + 'T00:00:00.000Z'),
+          }))
+        } catch (error) {
+          result.failed++
+          result.errors.push({
+            campaignId: localCampaignId,
+            error: error instanceof Error ? error.message : 'Unknown error',
           })
-
-          await this.kpiRepository.save(kpi)
         }
+      }
 
-        console.log(
-          `[SyncInsights] Saved ${dailyInsights.length} KPI records for campaign ${campaign.name}`
-        )
-        result.synced += dailyInsights.length
-      } catch (error) {
-        console.error(`[SyncInsights] Error syncing campaign ${campaign.id}:`, error)
+      if (kpisToSave.length > 0) {
+        await this.kpiRepository.saveMany(kpisToSave)
+        result.synced = kpisToSave.length
+      }
+    } catch (error) {
+      console.error('[SyncInsights] Bulk sync failed:', error)
+      // Mark all campaigns as failed
+      for (const c of metaCampaigns) {
         result.failed++
         result.errors.push({
-          campaignId: campaign.id,
-          error: error instanceof Error ? error.message : 'Unknown error',
+          campaignId: c.id,
+          error: error instanceof Error ? error.message : 'Bulk sync failed',
         })
       }
     }
 
-    console.log('[SyncInsights] Sync complete:', result)
     return result
   }
 }
