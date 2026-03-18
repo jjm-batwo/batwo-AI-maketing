@@ -1,0 +1,3109 @@
+{
+  "bestVariant": {
+    "id": "variant-a7faa2f0",
+    "scienceDomains": [
+      "neuromarketing",
+      "marketing_psychology",
+      "crowd_psychology",
+      "meta_best_practices",
+      "color_psychology",
+      "copywriting_psychology",
+      "creative_diversity",
+      "campaign_structure",
+      "tracking_health"
+    ],
+    "temperature": 0.8,
+    "fewShotStrategy": "industry",
+    "systemRole": "expert_marketer",
+    "instructionStyle": "strict",
+    "description": "instruction style → strict"
+  },
+  "bestScore": 83,
+  "baselineScore": 80,
+  "results": [
+    {
+      "id": "result-1773656538465-7brp",
+      "variantId": "variant-b843ae13",
+      "industry": "ecommerce",
+      "score": 80,
+      "ruleScore": 38,
+      "llmScore": 42,
+      "status": "keep",
+      "description": "baseline",
+      "generatedCopy": [
+        {
+          "headline": "신학기 피부 리셋! 할인 중 🌸",
+          "primaryText": "올봄, 피부과 전문 스킨케어로 새출발하세요! 민감피부도 걱정 없이 사용 가능. 한정 할인 기회!",
+          "description": "봄맞이 특별 세일",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "봄맞이 새출발을 준비하는 25-45세 여성"
+        },
+        {
+          "headline": "피부과 스킨케어, 오늘만 특가!",
+          "primaryText": "피부 고민 이제 그만! 세럼, 크림, 토너 3종 세트로 완벽 케어. 오늘만 특가로 만나보세요!",
+          "description": "민감피부도 안전",
+          "callToAction": "바로 구매",
+          "targetAudience": "피부 케어에 관심 있는 직장인 여성"
+        },
+        {
+          "headline": "피부과 개발! 품절 전 마지막 기회",
+          "primaryText": "피부과 전문의가 추천하는 저자극 스킨케어 세트, 재입고 미정! 지금 아니면 놓치기 쉬워요.",
+          "description": "마지막 할인 기회",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "스킨케어 품질에 민감한 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1526,
+      "createdAt": "2026-03-16T10:22:18.465Z"
+    },
+    {
+      "id": "result-1773656543320-qc3b",
+      "variantId": "variant-ec3f7d86",
+      "industry": "ecommerce",
+      "score": 77,
+      "ruleScore": 36,
+      "llmScore": 41,
+      "status": "discard",
+      "description": "temperature → 0.9",
+      "generatedCopy": [
+        {
+          "headline": "🌸봄맞이 스킨케어 세일!🌸",
+          "primaryText": "민감 피부도 안심! 피부과 전문 스킨케어 3종 세트 지금 할인 중. 새 출발을 위한 완벽한 선택!",
+          "description": "지금 구매하고 할인 혜택!",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "피부 고민 있는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "마지막 100세트, 놓치지 마세요!",
+          "primaryText": "신학기 맞이 특별 할인! 피부과 공동개발 저자극 스킨케어. 세럼, 크림, 토너로 피부 고민 해결!",
+          "description": "한정 수량, 서둘러 구매하세요!",
+          "callToAction": "지금 쇼핑하기",
+          "targetAudience": "민감 피부로 고민인 25-45세 여성"
+        },
+        {
+          "headline": "피부과 스킨케어, 지금 할인 중!",
+          "primaryText": "새학기 피부 자신감 UP! 피부과 전문 저자극 포뮬러로 민감 피부까지 케어. 빠른 할인 구매 기회!",
+          "description": "올인원 스킨케어 세트 할인!",
+          "callToAction": "할인 혜택 받기",
+          "targetAudience": "새 학기를 준비하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1527,
+      "createdAt": "2026-03-16T10:22:23.320Z"
+    },
+    {
+      "id": "result-1773656583897-p78t",
+      "variantId": "variant-cf1b8cfa",
+      "industry": "ecommerce",
+      "score": 77,
+      "ruleScore": 38,
+      "llmScore": 39,
+      "status": "discard",
+      "description": "few-shot strategy → topPerformer",
+      "generatedCopy": [
+        {
+          "headline": "신학기 특가 스킨케어 세트 할인!",
+          "primaryText": "지금, 피부과 전문 세트로 새출발하세요! 민감피부도 안심, 오늘만 20% 할인.",
+          "description": "신학기 할인 이벤트",
+          "callToAction": "지금 확인",
+          "targetAudience": "새학기 준비하는 25-35세 여성 직장인"
+        },
+        {
+          "headline": "민감피부도 안심! 저자극 스킨케어",
+          "primaryText": "피부과 전문 개발, 봄철 피부 고민 해결! 재고 한정, 오늘 구매 시 추가 혜택.",
+          "description": "한정 수량 특가",
+          "callToAction": "서둘러 구매",
+          "targetAudience": "민감 피부 고민 있는 30-45세 여성"
+        },
+        {
+          "headline": "올인원 스킨케어, 품절임박!",
+          "primaryText": "피부 고민 끝! 세럼, 크림, 토너 3종 세트. 지금 바로 시작하세요, 마지막 기회!",
+          "description": "마지막 100개 남음",
+          "callToAction": "지금 구매",
+          "targetAudience": "피부 관리에 관심 많은 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1524,
+      "createdAt": "2026-03-16T10:23:03.897Z"
+    },
+    {
+      "id": "result-1773656624609-8hn6",
+      "variantId": "variant-8c0ba14d",
+      "industry": "ecommerce",
+      "score": 79,
+      "ruleScore": 36,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "temperature → 0.6",
+      "generatedCopy": [
+        {
+          "headline": "신학기 맞이, 스킨케어 할인!",
+          "primaryText": "피부과 전문의 개발, 민감 피부도 안심! 지금 구매 시 할인 혜택까지.",
+          "description": "지금 구매하면 할인!",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "피부 고민 있는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "피부과 세럼 특가! 품절 임박",
+          "primaryText": "올인원 세트로 간편한 피부 관리. 할인 혜택은 오늘만, 지금 구매하세요!",
+          "description": "올인원 세트 한정 특가",
+          "callToAction": "구매하기",
+          "targetAudience": "간편한 스킨케어를 원하는 25-45세 여성"
+        },
+        {
+          "headline": "민감 피부, 봄맞이 새출발 세트",
+          "primaryText": "저자극 포뮬러로 안전한 스킨케어. 오늘만 무료배송 혜택!",
+          "description": "봄맞이 새출발!",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "민감 피부로 고민하는 여성"
+        }
+      ],
+      "tokenUsage": 1522,
+      "createdAt": "2026-03-16T10:23:44.609Z"
+    },
+    {
+      "id": "result-1773656665441-2v19",
+      "variantId": "variant-90530ea3",
+      "industry": "ecommerce",
+      "score": 77,
+      "ruleScore": 36,
+      "llmScore": 41,
+      "status": "discard",
+      "description": "science context → 9개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "오늘만 특가! 스킨케어 세트 할인",
+          "primaryText": "민감 피부도 걱정 없는 저자극 포뮬러. 피부과 전문의와 함께 만든 안전한 선택!",
+          "description": "피부과 전문 세트",
+          "callToAction": "지금 할인 받기",
+          "targetAudience": "피부 고민 있는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "새출발 기회! 스킨케어 20% 할인",
+          "primaryText": "프리미엄 스킨케어 세트로 피부 자신감 업! 새학기 시작과 함께 피부도 새롭게 변신하세요.",
+          "description": "민감피부도 안전",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기 맞이하는 25-45세 여성"
+        },
+        {
+          "headline": "세럼 품절임박! 마지막 기회🔥",
+          "primaryText": "피부과 전문 개발 세럼 포함 3종 세트. 재입고 미정, 지금 놓치면 후회할지도 몰라요!",
+          "description": "저자극 세럼 포함",
+          "callToAction": "바로 구매",
+          "targetAudience": "품질 중시하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1524,
+      "createdAt": "2026-03-16T10:24:25.441Z"
+    },
+    {
+      "id": "result-1773656707424-s5jo",
+      "variantId": "variant-c0024cbe",
+      "industry": "ecommerce",
+      "score": 73,
+      "ruleScore": 38,
+      "llmScore": 35,
+      "status": "discard",
+      "description": "system role → consumer_psychologist",
+      "generatedCopy": [
+        {
+          "headline": "민감피부도 OK! 세럼 할인 중",
+          "primaryText": "피부과 전문 올인원 케어. 지금 할인 혜택 놓치지 마세요!",
+          "description": "피부과 전문 세럼 세트",
+          "callToAction": "지금 확인",
+          "targetAudience": "민감 피부 고민 직장인 여성"
+        },
+        {
+          "headline": "새출발엔 프리미엄 스킨케어",
+          "primaryText": "민감 피부를 위한 저자극 케어. 새학기 맞이 할인 중!",
+          "description": "새학기 할인",
+          "callToAction": "세트 구매하기",
+          "targetAudience": "새학기 준비하는 25-45세 여성"
+        },
+        {
+          "headline": "마지막 기회! 품절 임박 세트",
+          "primaryText": "피부과 공동 개발로 안심, 인기 세럼 세트 곧 품절 예정!",
+          "description": "마감 임박!",
+          "callToAction": "지금 구매",
+          "targetAudience": "피부 관리에 관심 있는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1519,
+      "createdAt": "2026-03-16T10:25:07.424Z"
+    },
+    {
+      "id": "result-1773656748060-bwyl",
+      "variantId": "variant-1d919ec4",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "few-shot strategy → topPerformer",
+      "generatedCopy": [
+        {
+          "headline": "봄맞이 피부과 세트 할인!",
+          "primaryText": "피부과 전문의가 추천하는 스킨케어 세트로 새학기 새출발! 지금 구매 시 특별 할인가 적용 중!",
+          "description": "민감피부도 안심",
+          "callToAction": "지금 바로 구매",
+          "targetAudience": "새학기를 준비하는 25-35세 여성"
+        },
+        {
+          "headline": "신학기 특가! 피부과 세럼 세트",
+          "primaryText": "민감 피부도 걱정 없이 사용할 수 있는 세럼, 크림, 토너 3종! 한정 할인, 지금 확인하세요!",
+          "description": "한정 수량 할인",
+          "callToAction": "할인 확인하기",
+          "targetAudience": "피부 고민 있는 30-45세 여성"
+        },
+        {
+          "headline": "피부과 올인원 세트, 마지막 기회!",
+          "primaryText": "재고 소진 임박! 피부과 전문의와 공동 개발한 저자극 스킨케어로 새출발하세요. 서두르세요!",
+          "description": "지금이 기회!",
+          "callToAction": "마지막 기회",
+          "targetAudience": "민감 피부 고민이 있는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1525,
+      "createdAt": "2026-03-16T10:25:48.060Z"
+    },
+    {
+      "id": "result-1773656789447-mrrz",
+      "variantId": "variant-986ae424",
+      "industry": "ecommerce",
+      "score": 78,
+      "ruleScore": 36,
+      "llmScore": 42,
+      "status": "discard",
+      "description": "temperature → 0.9",
+      "generatedCopy": [
+        {
+          "headline": "신학기 특가! 피부과 개발 세트",
+          "primaryText": "민감 피부도 안심! 피부과 전문 세럼 포함. 오늘만 한정 할인!",
+          "description": "새학기 시작, 피부도 새롭게",
+          "callToAction": "지금 할인 구매",
+          "targetAudience": "피부 고민 있는 25-35세 여성 직장인"
+        },
+        {
+          "headline": "민감피부 안심! 세트 할인 중",
+          "primaryText": "저자극 포뮬러로 안심하세요. 세럼, 크림, 토너 3종 세트 특별 할인!",
+          "description": "피부과 전문 개발",
+          "callToAction": "할인 구매하기",
+          "targetAudience": "피부에 민감한 30-45세 여성 직장인"
+        },
+        {
+          "headline": "봄맞이 스킨케어 세트 특가!",
+          "primaryText": "새출발 준비! 프리미엄 세럼 세트로 피부 고민 해결. 오늘만 특가!",
+          "description": "한정 수량, 놓치지 마세요",
+          "callToAction": "지금 바로 구매",
+          "targetAudience": "새학기 새출발 준비하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1523,
+      "createdAt": "2026-03-16T10:26:29.447Z"
+    },
+    {
+      "id": "result-1773656829957-li5l",
+      "variantId": "variant-a4c16647",
+      "industry": "ecommerce",
+      "score": 75,
+      "ruleScore": 38,
+      "llmScore": 37,
+      "status": "discard",
+      "description": "instruction style → loose",
+      "generatedCopy": [
+        {
+          "headline": "새출발, 민감피부 위한 스킨케어",
+          "primaryText": "민감피부에도 안전한 피부과 개발 세트. 지금 구매 시 한정 할인 혜택!",
+          "description": "피부과 개발 스킨케어",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "새학기 맞아 새출발을 원하는 25-45세 여성"
+        },
+        {
+          "headline": "봄 맞이 할인, 품절주의!",
+          "primaryText": "피부과 전문가가 만든 올인원 세트, 민감피부도 OK! 할인 놓치지 마세요.",
+          "description": "한정 수량 할인",
+          "callToAction": "지금 바로 구매",
+          "targetAudience": "봄 시즌에 새 스킨케어를 찾는 직장인 여성"
+        },
+        {
+          "headline": "오늘만! 피부과 스킨케어 특가",
+          "primaryText": "피부 고민 해결, 피부과 개발 저자극 세트로! 오늘만 특별 할인가 제공.",
+          "description": "오늘만 특가",
+          "callToAction": "할인 구매하기",
+          "targetAudience": "민감한 피부로 고민 중인 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1525,
+      "createdAt": "2026-03-16T10:27:09.957Z"
+    },
+    {
+      "id": "result-1773656870754-69nz",
+      "variantId": "variant-6528b5c9",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "few-shot strategy → hook",
+      "generatedCopy": [
+        {
+          "headline": "한정 특가, 스킨케어 세트 할인!",
+          "primaryText": "새학기 맞이 20% 할인! 민감 피부에도 안전한 세럼, 크림, 토너 3종 세트로 피부 걱정 끝.",
+          "description": "새출발, 피부과 추천",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "새학기 새출발을 준비하는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "피부과 공동 개발 세트 20% 할인",
+          "primaryText": "새학기 시작, 민감 피부에 딱 맞는 저자극 스킨케어 세트로 자신감을!",
+          "description": "민감피부도 안전하게",
+          "callToAction": "할인 받기",
+          "targetAudience": "민감 피부로 고민하는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "당신의 피부를 위한 프리미엄 케어",
+          "primaryText": "피부과 전문의와 함께한 저자극 포뮬러! 지금 구매하면 20% 할인 혜택!",
+          "description": "한정 수량, 서두르세요",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "프리미엄 스킨케어를 찾는 25-45세 여성 직장인"
+        }
+      ],
+      "tokenUsage": 1526,
+      "createdAt": "2026-03-16T10:27:50.754Z"
+    },
+    {
+      "id": "result-1773656912562-ka9z",
+      "variantId": "variant-bd12febf",
+      "industry": "ecommerce",
+      "score": 78,
+      "ruleScore": 36,
+      "llmScore": 42,
+      "status": "discard",
+      "description": "system role → data_analyst",
+      "generatedCopy": [
+        {
+          "headline": "🌸새학기 필수템! 민감 피부도 OK",
+          "primaryText": "피부과 전문의와 공동 개발한 저자극 스킨케어 세트, 할인 중! 새출발을 위한 완벽한 선택.",
+          "description": "올인원 스킨케어 세트",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기 준비하는 25-35세 여성"
+        },
+        {
+          "headline": "📉오늘만 할인! 놓치지 마세요",
+          "primaryText": "민감 피부에도 안전한 저자극 포뮬러. 피부 고민 해결, 오늘만 특가 혜택으로 경험해보세요.",
+          "description": "피부 고민 해결 세트",
+          "callToAction": "할인받기",
+          "targetAudience": "피부 고민 있는 30-45세 여성 직장인"
+        },
+        {
+          "headline": "품절 주의! 한정 수량 특가",
+          "primaryText": "올해 가장 주목받는 스킨케어 세트, 마지막 기회! 피부과 전문의 개발로 안심 사용 가능.",
+          "description": "세럼, 크림, 토너 세트",
+          "callToAction": "바로 구매",
+          "targetAudience": "신상에 민감한 25-40세 여성"
+        }
+      ],
+      "tokenUsage": 1522,
+      "createdAt": "2026-03-16T10:28:32.562Z"
+    },
+    {
+      "id": "result-1773656954617-fpxs",
+      "variantId": "variant-0057c6ce",
+      "industry": "ecommerce",
+      "score": 77,
+      "ruleScore": 38,
+      "llmScore": 39,
+      "status": "discard",
+      "description": "instruction style → strict",
+      "generatedCopy": [
+        {
+          "headline": "🌸 봄맞이 스킨케어 할인, 놓치지 마세요!",
+          "primaryText": "민감 피부도 OK! 피부과 전문 개발 세럼 세트, 지금 할인 중. 새학기 맞이 피부 리셋 기회!",
+          "description": "지금 할인 중!",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "봄 시즌, 피부 개선을 원하는 직장인 여성"
+        },
+        {
+          "headline": "한정수량! 프리미엄 세럼 세트",
+          "primaryText": "피부과 전문 개발로 민감 피부도 걱정 NO! 새출발 기념 특별 할인, 오늘만 적용됩니다.",
+          "description": "오늘만 할인!",
+          "callToAction": "할인 받기",
+          "targetAudience": "할인과 빠른 구매를 원하는 30대 여성"
+        },
+        {
+          "headline": "피부과 전문 세럼 세트, 품절 임박",
+          "primaryText": "올인원 스킨케어로 새출발! 피부 고민 해결, 이 기회 놓치면 안 돼요. 마지막 재고!",
+          "description": "마지막 재고!",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "피부 고민 해결을 원하는 40대 여성"
+        }
+      ],
+      "tokenUsage": 1531,
+      "createdAt": "2026-03-16T10:29:14.617Z"
+    },
+    {
+      "id": "result-1773656996874-79wc",
+      "variantId": "variant-d52274e0",
+      "industry": "ecommerce",
+      "score": 76,
+      "ruleScore": 38,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "instruction style → loose",
+      "generatedCopy": [
+        {
+          "headline": "신학기 스킨케어 특가 🔥",
+          "primaryText": "민감피부도 안심, 피부과 전문 세트. 새출발에 필요한 스킨케어, 지금 할인 중!",
+          "description": "피부과 개발, 저자극 포뮬러",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "민감 피부를 가진 직장 여성"
+        },
+        {
+          "headline": "오늘만! 프리미엄 세럼 할인",
+          "primaryText": "피부 고민 해결! 피부과 공동 개발 세트로 촉촉한 새학기 맞이하세요. 수량 한정!",
+          "description": "올인원 스킨케어, 지금 구매",
+          "callToAction": "할인 구매하기",
+          "targetAudience": "새학기 준비 중인 25-35세 여성"
+        },
+        {
+          "headline": "품절임박! 민감 피부 안전케어",
+          "primaryText": "피부과 전문의 개발, 저자극 세트. 새출발엔 민감한 피부에 맞는 케어 필수!",
+          "description": "안전한 스킨케어, 놓치지 마세요",
+          "callToAction": "지금 구매",
+          "targetAudience": "피부 안전을 중요시하는 30대 여성"
+        }
+      ],
+      "tokenUsage": 1524,
+      "createdAt": "2026-03-16T10:29:56.874Z"
+    },
+    {
+      "id": "result-1773657039129-bx6f",
+      "variantId": "variant-5fe37a23",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "keep",
+      "description": "instruction style → loose",
+      "generatedCopy": [
+        {
+          "headline": "새학기 특별 할인! 스킨케어 세트",
+          "primaryText": "피부과 전문의와 개발한 민감피부용 올인원 세트, 오늘만 특별가로 만나세요!",
+          "description": "피부 고민 해결, 지금 바로",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "새학기 준비 중인 25-35세 여성"
+        },
+        {
+          "headline": "민감피부 위한 전문 스킨케어",
+          "primaryText": "저자극 포뮬러로 안전하게, 세럼/크림/토너 세트로 피부 고민 완벽 해결!",
+          "description": "지금 특별 할인 중",
+          "callToAction": "할인 확인하기",
+          "targetAudience": "피부 고민이 있는 30-45세 직장 여성"
+        },
+        {
+          "headline": "스킨케어 세트, 마지막 기회!",
+          "primaryText": "품절임박! 봄맞이 특별가로 민감피부 안전한 스킨케어 세트 지금 구매하세요!",
+          "description": "마지막 할인, 서두르세요",
+          "callToAction": "바로 구매하기",
+          "targetAudience": "스킨케어 제품에 관심 있는 25-40세 여성"
+        }
+      ],
+      "tokenUsage": 1525,
+      "createdAt": "2026-03-16T10:30:39.129Z"
+    },
+    {
+      "id": "result-1773657082072-odcm",
+      "variantId": "variant-e434a880",
+      "industry": "ecommerce",
+      "score": 78,
+      "ruleScore": 38,
+      "llmScore": 40,
+      "status": "discard",
+      "description": "instruction style → strict",
+      "generatedCopy": [
+        {
+          "headline": "피부과 추천 세트, 30% 할인",
+          "primaryText": "민감피부도 안심! 피부과 전문의 개발 스킨케어 3종. 신학기 맞이 특별 할인 중, 서두르세요!",
+          "description": "지금 구매하세요",
+          "callToAction": "할인 구매하기",
+          "targetAudience": "피부 고민 있는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "세럼, 크림, 토너 올인원!",
+          "primaryText": "새출발엔 피부 케어부터! 민감피부도 안심인 저자극 포뮬러. 수량 한정, 놓치지 마세요!",
+          "description": "올인원 스킨케어",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "피부 케어에 관심 있는 25-45세 여성"
+        },
+        {
+          "headline": "한정 특가, 오늘만 25% 할인!",
+          "primaryText": "봄맞이 피부 리셋! 3종 스킨케어 세트로 간편하게. 피부과 전문 개발로 믿을 수 있어요.",
+          "description": "오늘만 특가",
+          "callToAction": "특가 구매하기",
+          "targetAudience": "피부 리셋을 원하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1529,
+      "createdAt": "2026-03-16T10:31:22.072Z"
+    },
+    {
+      "id": "result-1773657124708-hixz",
+      "variantId": "variant-f9b914c5",
+      "industry": "ecommerce",
+      "score": 79,
+      "ruleScore": 36,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "few-shot strategy → topPerformer",
+      "generatedCopy": [
+        {
+          "headline": "지금 구매 시 20% 할인! 🎁",
+          "primaryText": "피부과 공동개발! 민감피부도 걱정 없는 프리미엄 세트. 새출발엔 맑은 피부로!",
+          "description": "오늘만 특가!",
+          "callToAction": "지금 바로 구매",
+          "targetAudience": "새학기에 피부 고민 해결을 원하는 여성"
+        },
+        {
+          "headline": "품절임박! 마지막 할인 기회 🔥",
+          "primaryText": "민감피부에 안전한 저자극 포뮬러. 봄맞이 한정 할인, 놓치지 마세요!",
+          "description": "신속 구매 필수!",
+          "callToAction": "세트 구매하기",
+          "targetAudience": "한정 할인에 관심 있는 직장 여성"
+        },
+        {
+          "headline": "피부과 전문 스킨케어, 이사 기념 특가",
+          "primaryText": "새출발엔 새 피부로! 세럼, 크림, 토너 세트로 완벽 케어. 서두르세요!",
+          "description": "이사 시즌 특가",
+          "callToAction": "할인 혜택 받기",
+          "targetAudience": "이사 시즌에 새롭게 시작하고 싶은 직장인"
+        }
+      ],
+      "tokenUsage": 1526,
+      "createdAt": "2026-03-16T10:32:04.708Z"
+    },
+    {
+      "id": "result-1773657167249-2xhn",
+      "variantId": "variant-65f7763f",
+      "industry": "ecommerce",
+      "score": 77,
+      "ruleScore": 34,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "few-shot strategy → hook",
+      "generatedCopy": [
+        {
+          "headline": "새학기 맞이 스킨케어 할인!",
+          "primaryText": "민감 피부에도 안심! 올인원 스킨케어 세트로 새출발 준비하세요. 오늘 주문 시 특별 할인 적용!",
+          "description": "봄 맞이 피부 관리",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "피부 고민 있는 25-35세 여성 직장인"
+        },
+        {
+          "headline": "피부과 개발 세럼 3종 세트",
+          "primaryText": "저자극 포뮬러로 민감 피부도 OK! 피부과 전문의와 만든 세럼, 크림, 토너로 피부 고민 해결하세요.",
+          "description": "안전한 피부 솔루션",
+          "callToAction": "자세히 보기",
+          "targetAudience": "민감 피부에 고민인 30-45세 여성"
+        },
+        {
+          "headline": "품절 주의! 마지막 기회!",
+          "primaryText": "한정 수량! 피부과 전문 세트로 봄맞이 피부 관리 시작하세요. 곧 품절될 수 있으니 서두르세요!",
+          "description": "마지막 기회 놓치지 마세요",
+          "callToAction": "지금 주문",
+          "targetAudience": "긴급성을 느끼는 25-45세 여성 소비자"
+        }
+      ],
+      "tokenUsage": 1526,
+      "createdAt": "2026-03-16T10:32:47.249Z"
+    },
+    {
+      "id": "result-1773657208267-k2s1",
+      "variantId": "variant-10ea4091",
+      "industry": "ecommerce",
+      "score": 76,
+      "ruleScore": 38,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "instruction style → moderate",
+      "generatedCopy": [
+        {
+          "headline": "지금만! 스킨케어 세트 특별 할인",
+          "primaryText": "민감 피부에도 안전한 피부과 세럼, 크림, 토너. 봄맞이 할인 중!",
+          "description": "특별 할인, 놓치지 마세요",
+          "callToAction": "지금 구매",
+          "targetAudience": "25-45세 여성, 피부 고민 있는 직장인"
+        },
+        {
+          "headline": "신학기 시작, 피부도 새롭게!",
+          "primaryText": "피부과 전문의 개발, 저자극 세럼 세트로 피부 고민 해결. 한정 수량!",
+          "description": "피부 고민 해결의 시작",
+          "callToAction": "지금 확인",
+          "targetAudience": "25-45세 여성, 봄철 피부 고민 해결 희망자"
+        },
+        {
+          "headline": "마지막 기회! 한정판 스킨케어 세트",
+          "primaryText": "민감 피부를 위한 올인원. 품절 임박! 지금 주문하세요.",
+          "description": "마지막 기회, 놓치지 마세요",
+          "callToAction": "바로 구매",
+          "targetAudience": "25-45세 여성, 즉각적인 피부 개선 필요자"
+        }
+      ],
+      "tokenUsage": 1523,
+      "createdAt": "2026-03-16T10:33:28.267Z"
+    },
+    {
+      "id": "result-1773657249022-cu86",
+      "variantId": "variant-a7faa2f0",
+      "industry": "ecommerce",
+      "score": 83,
+      "ruleScore": 40,
+      "llmScore": 43,
+      "status": "keep",
+      "description": "instruction style → strict",
+      "generatedCopy": [
+        {
+          "headline": "지금만, 20% 할인 스킨케어 세트",
+          "primaryText": "민감피부 안심! 피부과 전문 개발 세럼 포함 3종 세트. 새 출발을 위한 특별 할인, 놓치지 마세요.",
+          "description": "지금 바로 피부 변화 시작!",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "새학기 새출발을 원하는 25-45세 여성"
+        },
+        {
+          "headline": "첫인상부터 반짝, 프리미엄 케어",
+          "primaryText": "피부과 전문의가 만든 올인원 세트로 피부 고민 끝! 민감피부도 OK. 무료배송, 지금이 기회!",
+          "description": "첫 인상부터 빛나는 피부",
+          "callToAction": "할인 구매하기",
+          "targetAudience": "피부 고민이 있는 25-45세 직장인 여성"
+        },
+        {
+          "headline": "신학기 스페셜! 스킨케어 세트",
+          "primaryText": "민감피부 맞춤 저자극 포뮬러. 이번 기회에 스킨케어 루틴 완성하세요! 한정 수량, 서두르세요.",
+          "description": "한정 수량, 구매 서두르세요",
+          "callToAction": "세트 구매하기",
+          "targetAudience": "신학기 시작을 준비하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1532,
+      "createdAt": "2026-03-16T10:34:09.022Z"
+    },
+    {
+      "id": "result-1773657291519-68ht",
+      "variantId": "variant-8914d08e",
+      "industry": "ecommerce",
+      "score": 79,
+      "ruleScore": 36,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "instruction style → moderate",
+      "generatedCopy": [
+        {
+          "headline": "지금, 민감피부에도 안심 세트!",
+          "primaryText": "피부과 개발, 민감피부도 걱정 끝! 프리미엄 3종 세트, 오늘만 할인 중. 놓치면 후회!",
+          "description": "피부과 개발, 할인 중!",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "민감 피부가 고민인 25-45세 여성"
+        },
+        {
+          "headline": "새출발, 피부도 새롭게 🌼",
+          "primaryText": "피부과 전문가와 공동 개발한 세럼, 크림, 토너로 새학기 피부 컨디션을 최상으로!",
+          "description": "새출발, 피부도 새롭게",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "새학기를 준비하는 25-45세 여성"
+        },
+        {
+          "headline": "올인원 스킨케어, 품절 전 GET!",
+          "primaryText": "민감피부에도 안전한 저자극 포뮬러, 지금 마지막 할인 기회! 서두르세요.",
+          "description": "올인원 스킨케어",
+          "callToAction": "더 알아보기",
+          "targetAudience": "피부 고민 있는 직장인 여성"
+        }
+      ],
+      "tokenUsage": 1525,
+      "createdAt": "2026-03-16T10:34:51.519Z"
+    },
+    {
+      "id": "result-1773657332438-h34g",
+      "variantId": "variant-4ef0cc2c",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "instruction style → moderate",
+      "generatedCopy": [
+        {
+          "headline": "민감 피부 위한 프리미엄 세럼 할인!",
+          "primaryText": "피부과 전문의와 개발한 저자극 스킨케어 세트, 신학기 맞이 특별가로 만나보세요!",
+          "description": "지금 구매 시 할인 혜택",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "신학기를 맞아 새출발을 준비하는 25-45세 여성"
+        },
+        {
+          "headline": "세럼·크림·토너 올인원 패키지!",
+          "primaryText": "민감 피부도 안심! 피부과 전문의와 함께한 프리미엄 스킨케어, 한정 수량 특가로 만나보세요.",
+          "description": "민감 피부에 최적화",
+          "callToAction": "혜택 받기",
+          "targetAudience": "피부 고민이 많은 직장 여성"
+        },
+        {
+          "headline": "지금 아니면 놓친다! 스킨케어 특가",
+          "primaryText": "민감 피부 전용 저자극 스킨케어, 봄맞이 할인 기회! 놓치면 후회할 인기템",
+          "description": "봄맞이 특가 기회",
+          "callToAction": "바로 구매하기",
+          "targetAudience": "봄철 피부 관리에 관심 있는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1526,
+      "createdAt": "2026-03-16T10:35:32.438Z"
+    },
+    {
+      "id": "result-1773657374158-9fw1",
+      "variantId": "variant-58f04bcd",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "temperature → 0.9",
+      "generatedCopy": [
+        {
+          "headline": "신학기 특가! 스킨케어 세트 할인",
+          "primaryText": "새출발, 건강한 피부로! 프리미엄 세럼 포함 세트, 지금 할인 중! 민감피부도 안심.",
+          "description": "오늘만 특별 할인",
+          "callToAction": "지금 쇼핑하기",
+          "targetAudience": "새학기 준비 중인 25-45세 여성"
+        },
+        {
+          "headline": "피부과 개발 스킨케어, 남다른 경험",
+          "primaryText": "전문가와 함께 만든 저자극 스킨케어. 민감피부도 OK! 구매 시 깜짝 할인 혜택.",
+          "description": "피부 고민 해결의 시작",
+          "callToAction": "할인 받기",
+          "targetAudience": "피부 고민 많은 직장 여성"
+        },
+        {
+          "headline": "민감피부 맞춤 스킨케어, 품절임박!",
+          "primaryText": "한정 수량! 피부과 전문의 공동 개발 세럼, 크림, 토너 세트. 지금이 기회!",
+          "description": "지금 구매, 피부 변화",
+          "callToAction": "바로 구매",
+          "targetAudience": "스킨케어 관심 많은 30대 여성"
+        }
+      ],
+      "tokenUsage": 1527,
+      "createdAt": "2026-03-16T10:36:14.158Z"
+    },
+    {
+      "id": "result-1773657414502-c07o",
+      "variantId": "variant-54dc3e57",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "science context → 8개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "🌸새출발, 민감피부도 OK!",
+          "primaryText": "피부과 공동 개발! 저자극 올인원 스킨케어 세트. 지금 특별 할인 중!",
+          "description": "프리미엄 스킨케어 세트",
+          "callToAction": "할인 구매하기",
+          "targetAudience": "피부 고민 있는 25-35세 여성"
+        },
+        {
+          "headline": "📈스킨케어 특가! 품절 임박",
+          "primaryText": "민감 피부도 걱정 없는 세럼, 크림, 토너 세트. 오늘만 추가 할인!",
+          "description": "피부과 전문의 추천",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "피부 트러블 있는 30-40세 여성"
+        },
+        {
+          "headline": "⏳마감 임박! 피부 변화 시작",
+          "primaryText": "올 봄, 민감 피부를 위한 저자극 케어. 한정 수량으로 빠르게 만나보세요.",
+          "description": "프리미엄 세트 할인",
+          "callToAction": "바로 구매",
+          "targetAudience": "새학기 준비하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1521,
+      "createdAt": "2026-03-16T10:36:54.502Z"
+    },
+    {
+      "id": "result-1773657456587-ppqj",
+      "variantId": "variant-acb60f5c",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "few-shot strategy → hook",
+      "generatedCopy": [
+        {
+          "headline": "지금 구매 시 20% 할인! 🎁",
+          "primaryText": "피부과 전문 스킨케어 세트, 민감피부도 걱정 없어요. 새출발을 맑고 투명하게!",
+          "description": "한정 수량 할인 중",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "새출발을 준비하는 직장 여성"
+        },
+        {
+          "headline": "올인원 스킨케어, 오늘만 특가!",
+          "primaryText": "피부 고민 끝! 세럼, 크림, 토너로 탄력 UP. 민감피부에도 안전한 저자극 포뮬러.",
+          "description": "피부과 공동 개발",
+          "callToAction": "특가 구매하기",
+          "targetAudience": "피부 고민 많은 직장인 여성"
+        },
+        {
+          "headline": "신학기 맞이 특별할인! 🌸",
+          "primaryText": "새출발엔 맑은 피부로! 피부과 공동 개발 세트로 자신감 상승. 민감피부에도 OK!",
+          "description": "한정 할인 중",
+          "callToAction": "자세히 보기",
+          "targetAudience": "새학기 준비 중인 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1525,
+      "createdAt": "2026-03-16T10:37:36.587Z"
+    },
+    {
+      "id": "result-1773657499188-90lc",
+      "variantId": "variant-31c2e66d",
+      "industry": "ecommerce",
+      "score": 76,
+      "ruleScore": 38,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "system role → consumer_psychologist",
+      "generatedCopy": [
+        {
+          "headline": "🌸 봄맞이 스킨케어 세일 20%",
+          "primaryText": "민감피부도 걱정 없는 피부과 전문 스킨케어! 새출발의 기회, 한정 할인. 지금 바로 확인하세요!",
+          "description": "민감피부 안전, 20% 할인",
+          "callToAction": "지금 쇼핑하기",
+          "targetAudience": "피부가 민감한 직장 여성"
+        },
+        {
+          "headline": "올인원 세트로 피부 고민 해결!",
+          "primaryText": "세럼, 크림, 토너 3종으로 간편하게! 지금 구매 시 무료배송 혜택까지. 시작하세요, 새로운 피부!",
+          "description": "피부과와 공동 개발",
+          "callToAction": "세트 구매하기",
+          "targetAudience": "시간이 부족한 바쁜 직장인 여성"
+        },
+        {
+          "headline": "품절 전, 마지막 기회! 🔥",
+          "primaryText": "재입고 미정! 피부과 전문의가 추천하는 저자극 포뮬러. 놓치면 후회할 이 기회, 서둘러 만나보세요!",
+          "description": "지금 아니면 품절!",
+          "callToAction": "구매 서두르기",
+          "targetAudience": "새학기 준비 중인 20-30대 여성"
+        }
+      ],
+      "tokenUsage": 1529,
+      "createdAt": "2026-03-16T10:38:19.188Z"
+    },
+    {
+      "id": "result-1773657539842-2lg6",
+      "variantId": "variant-b8335fc1",
+      "industry": "ecommerce",
+      "score": 79,
+      "ruleScore": 36,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "science context → 9개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "피부과 개발 스킨케어 세트 할인",
+          "primaryText": "신학기 맞이 특별 할인! 민감 피부에도 OK. 단, 오늘만! 잊지 마세요.",
+          "description": "지금 주문하세요",
+          "callToAction": "지금 구매",
+          "targetAudience": "새 학기를 맞아 새출발을 준비하는 25-45세 여성"
+        },
+        {
+          "headline": "봄맞이 스킨케어 세트 특가!",
+          "primaryText": "피부과 전문의와 공동 개발한 저자극 세럼 포함! 한정 수량 서둘러 구매하세요.",
+          "description": "한정 수량, 서두르세요",
+          "callToAction": "구매하기",
+          "targetAudience": "봄철 피부 관리를 고민하는 직장인 여성"
+        },
+        {
+          "headline": "올인원 스킨케어로 새출발!",
+          "primaryText": "세럼, 크림, 토너의 완벽 조합. 민감피부도 걱정 없는 저자극 포뮬러. 지금 할인 중!",
+          "description": "피부 고민 해결",
+          "callToAction": "자세히 보기",
+          "targetAudience": "피부 고민 해결을 원하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1527,
+      "createdAt": "2026-03-16T10:38:59.842Z"
+    },
+    {
+      "id": "result-1773657580802-7e00",
+      "variantId": "variant-e7c69b91",
+      "industry": "ecommerce",
+      "score": 76,
+      "ruleScore": 38,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "instruction style → loose",
+      "generatedCopy": [
+        {
+          "headline": "신학기 맞이 스킨케어 할인!",
+          "primaryText": "피부과 전문 개발 올인원 세트, 민감피부에 딱! 지금 특별 할인 중!",
+          "description": "지금 바로 확인하세요",
+          "callToAction": "할인 구매",
+          "targetAudience": "신학기 새출발을 준비하는 25-35세 여성"
+        },
+        {
+          "headline": "피부과 개발 세트, 품절임박!",
+          "primaryText": "민감피부도 안전한 세럼, 크림, 토너 3종. 한정 수량 할인 중!",
+          "description": "놓치지 마세요!",
+          "callToAction": "지금 구매",
+          "targetAudience": "피부 고민이 많은 30-45세 직장인 여성"
+        },
+        {
+          "headline": "봄철 피부 고민 해결, 특가!",
+          "primaryText": "새출발엔 피부부터! 저자극 스킨케어로 봄철 피부를 지켜보세요.",
+          "description": "피부과 전문 개발",
+          "callToAction": "지금 확인",
+          "targetAudience": "새로운 시작을 준비하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1523,
+      "createdAt": "2026-03-16T10:39:40.802Z"
+    },
+    {
+      "id": "result-1773657621967-baza",
+      "variantId": "variant-ca9f02c6",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "science context → 8개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "신학기 맞이 특별 할인! 🌸",
+          "primaryText": "민감피부 OK! 올인원 스킨케어 세트, 봄 시즌 한정 15% 할인 중! 지금 바로 확인하세요.",
+          "description": "피부과 전문 개발",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "신학기에 맞춰 새출발을 준비하는 25-35세 여성"
+        },
+        {
+          "headline": "민감피부도 안심! 🌼 한정 특가",
+          "primaryText": "피부과 전문 개발 저자극 스킨케어 세트. 세럼+크림+토너 지금 20% 할인! 놓치지 마세요.",
+          "description": "오늘만 특가!",
+          "callToAction": "할인 구매",
+          "targetAudience": "피부 고민 많은 30-45세 직장인 여성"
+        },
+        {
+          "headline": "마지막 기회! 품절 임박 🚨",
+          "primaryText": "올인원 스킨케어 세트, 재입고 미정! 민감 피부에 안전한 저자극 포뮬러를 지금 만나보세요.",
+          "description": "지금 아니면 놓쳐요",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "제품 소진에 민감한 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1525,
+      "createdAt": "2026-03-16T10:40:21.967Z"
+    },
+    {
+      "id": "result-1773657662961-3soa",
+      "variantId": "variant-df6f5b97",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "science context → 9개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "🕒 오늘만! 스킨케어 20% 할인",
+          "primaryText": "민감피부도 안심! 피부과 전문 스킨케어 세트, 오늘 단 하루 특가로 만나보세요.",
+          "description": "한정 할인, 서두르세요!",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "할인을 중요시하는 25-45세 여성"
+        },
+        {
+          "headline": "봄맞이 새출발, 피부부터 시작!",
+          "primaryText": "피부과 전문 개발! 세럼, 크림, 토너로 완성하는 올인원 스킨케어. 민감피부도 문제없어요!",
+          "description": "새학기, 피부도 새롭게!",
+          "callToAction": "세트 구매하기",
+          "targetAudience": "새출발을 준비하는 직장인 여성"
+        },
+        {
+          "headline": "남은 수량 단 50개! 품절 임박",
+          "primaryText": "민감피부도 사용하는 저자극 포뮬러, 프리미엄 세트 지금 구매하세요. 재입고 미정!",
+          "description": "마지막 기회, 놓치지 마세요",
+          "callToAction": "빠르게 주문하기",
+          "targetAudience": "희소성을 중시하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1528,
+      "createdAt": "2026-03-16T10:41:02.961Z"
+    },
+    {
+      "id": "result-1773657704399-twe9",
+      "variantId": "variant-a0c77174",
+      "industry": "ecommerce",
+      "score": 82,
+      "ruleScore": 40,
+      "llmScore": 42,
+      "status": "discard",
+      "description": "instruction style → moderate",
+      "generatedCopy": [
+        {
+          "headline": "이사철 특별할인! 🌸 민감피부 OK",
+          "primaryText": "피부과 전문 세럼, 크림, 토너 3종 세트로 피부 고민 해결! 지금 구매 시 추가 할인 혜택!",
+          "description": "올인원 스킨케어 세트",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "이사철 새로운 시작을 계획하는 25-35세 여성"
+        },
+        {
+          "headline": "신학기 새출발, 피부관리도 새롭게!",
+          "primaryText": "민감피부에도 안심! 올인원 스킨케어 세트로 당당한 첫걸음. 지금 구매하면 특별 할인!",
+          "description": "피부과 공동 개발",
+          "callToAction": "지금 확인",
+          "targetAudience": "새 학기 준비로 바쁜 25-45세 여성 직장인"
+        },
+        {
+          "headline": "품절 임박! 🌟 세럼+크림+토너 세트",
+          "primaryText": "저자극 포뮬러로 민감피부에도 안심! 올인원 스킨케어로 피부 고민 끝. 오늘만 할인!",
+          "description": "피부 고민 끝!",
+          "callToAction": "할인 받기",
+          "targetAudience": "피부 고민이 있는 35-45세 여성"
+        }
+      ],
+      "tokenUsage": 1527,
+      "createdAt": "2026-03-16T10:41:44.399Z"
+    },
+    {
+      "id": "result-1773657745669-umx8",
+      "variantId": "variant-0c60846c",
+      "industry": "ecommerce",
+      "score": 78,
+      "ruleScore": 36,
+      "llmScore": 42,
+      "status": "discard",
+      "description": "few-shot strategy → topPerformer",
+      "generatedCopy": [
+        {
+          "headline": "피부과 공동 개발, 세트 할인!",
+          "primaryText": "민감한 피부도 걱정 없이! 올인원 스킨케어로 새출발하세요. 지금 구매 시 특별 할인 혜택!",
+          "description": "민감 피부도 안심!",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "피부 고민 있는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "민감피부용 올인원 스킨케어 세트",
+          "primaryText": "피부과 전문의가 추천하는 저자극 포뮬러! 세럼, 크림, 토너까지 모두 포함된 세트, 할인 중입니다.",
+          "description": "저자극 포뮬러로 안심",
+          "callToAction": "할인 구매하기",
+          "targetAudience": "민감 피부로 고민 중인 직장 여성"
+        },
+        {
+          "headline": "새학기 준비! 스킨케어 세트 할인",
+          "primaryText": "피부과 전문의와 개발한 세럼, 크림, 토너로 민감한 피부도 새롭게 시작하세요. 지금 할인 중!",
+          "description": "새출발을 위한 스킨케어",
+          "callToAction": "세트 구매하기",
+          "targetAudience": "새학기 맞아 새출발을 원하는 여성"
+        }
+      ],
+      "tokenUsage": 1530,
+      "createdAt": "2026-03-16T10:42:25.669Z"
+    },
+    {
+      "id": "result-1773657786510-b9ld",
+      "variantId": "variant-8f138d2d",
+      "industry": "ecommerce",
+      "score": 73,
+      "ruleScore": 34,
+      "llmScore": 39,
+      "status": "discard",
+      "description": "instruction style → loose",
+      "generatedCopy": [
+        {
+          "headline": "💡 새 학기, 새 피부! 할인 진행 중",
+          "primaryText": "민감 피부도 걱정 없는 저자극 스킨케어 세트. 25% 할인 혜택을 지금 바로 확인하세요!",
+          "description": "25% 할인, 지금 시작하세요",
+          "callToAction": "혜택 받기",
+          "targetAudience": "새 학기를 맞아 변화를 원하는 직장인 여성"
+        },
+        {
+          "headline": "오늘만 스킨케어 세트 특가!",
+          "primaryText": "피부과 전문의가 추천하는 세럼, 크림, 토너 3종. 피부 고민 해결의 시작, 오늘만 특가!",
+          "description": "지금 구매하세요",
+          "callToAction": "지금 구매",
+          "targetAudience": "즉각적 구매 결정을 원하는 25-45세 여성"
+        },
+        {
+          "headline": "민감 피부도 안심! 🌸 봄맞이 세트",
+          "primaryText": "올 봄, 피부 걱정 끝! 저자극 포뮬러로 민감 피부도 안전하게 관리하세요. 한정 수량 할인 중!",
+          "description": "봄맞이 한정 수량",
+          "callToAction": "자세히 보기",
+          "targetAudience": "민감성 피부로 고민하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1529,
+      "createdAt": "2026-03-16T10:43:06.510Z"
+    },
+    {
+      "id": "result-1773657827691-r1ec",
+      "variantId": "variant-b8aa3fad",
+      "industry": "ecommerce",
+      "score": 77,
+      "ruleScore": 34,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "few-shot strategy → topPerformer",
+      "generatedCopy": [
+        {
+          "headline": "신학기 맞이, 프리미엄 스킨케어 할인!",
+          "primaryText": "새출발 시즌, 민감 피부에도 안전한 저자극 스킨케어 세트로 시작하세요. 오늘만 특별 할인!",
+          "description": "오늘만, 특별가 혜택",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "새학기 새출발을 준비하는 25-45세 여성"
+        },
+        {
+          "headline": "민감피부 안심! 올인원 세트 특가",
+          "primaryText": "피부과 전문의 공동 개발. 민감피부도 안심할 수 있는 올인원 스킨케어 세트, 한정 수량 할인 중!",
+          "description": "피부과 신뢰 스킨케어",
+          "callToAction": "세트 구매하기",
+          "targetAudience": "피부 고민 있는 직장 여성"
+        },
+        {
+          "headline": "품절 임박! 마지막 기회",
+          "primaryText": "피부과 전문의와 개발한 세럼, 크림, 토너 세트, 신학기 시즌 특가! 지금 놓치면 후회합니다.",
+          "description": "마지막 기회, 품절 임박",
+          "callToAction": "지금 바로",
+          "targetAudience": "스킨케어에 관심 있는 모든 여성"
+        }
+      ],
+      "tokenUsage": 1531,
+      "createdAt": "2026-03-16T10:43:47.691Z"
+    },
+    {
+      "id": "result-1773657870598-fwwo",
+      "variantId": "variant-d02784e1",
+      "industry": "ecommerce",
+      "score": 77,
+      "ruleScore": 38,
+      "llmScore": 39,
+      "status": "discard",
+      "description": "few-shot strategy → hook",
+      "generatedCopy": [
+        {
+          "headline": "새 피부 시작! 프리미엄 세트 할인",
+          "primaryText": "민감피부에도 안심! 피부과 전문 세럼, 크림, 토너 3종 세트 지금 할인중. 새학기엔 새 피부로!",
+          "description": "지금 바로 만나보세요",
+          "callToAction": "지금 구매",
+          "targetAudience": "피부 고민 있는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "한정 수량! 피부과 공동개발 세트",
+          "primaryText": "저자극 포뮬러로 민감피부도 OK! 3종 스킨케어 세트, 신학기 특가로 만나보세요.",
+          "description": "한정 수량, 서두르세요",
+          "callToAction": "특가 구매",
+          "targetAudience": "민감 피부 관리 필요한 25-45세 여성"
+        },
+        {
+          "headline": "피부에 선물하는 봄날, 스킨케어 세트",
+          "primaryText": "피부과 전문의가 추천하는 올인원 솔루션. 세럼, 크림, 토너까지 완벽한 봄 맞이 케어!",
+          "description": "봄에 어울리는 피부로",
+          "callToAction": "지금 확인",
+          "targetAudience": "새출발 원하는 25-45세 여성 직장인"
+        }
+      ],
+      "tokenUsage": 1529,
+      "createdAt": "2026-03-16T10:44:30.598Z"
+    },
+    {
+      "id": "result-1773657911793-v00i",
+      "variantId": "variant-8587a88d",
+      "industry": "ecommerce",
+      "score": 76,
+      "ruleScore": 36,
+      "llmScore": 40,
+      "status": "discard",
+      "description": "instruction style → loose",
+      "generatedCopy": [
+        {
+          "headline": "민감 피부 맞춤, 특별 할인!",
+          "primaryText": "피부과 전문의와 개발한 안전한 스킨케어 세트, 지금 새학기 특별 할인가로 만나요!",
+          "description": "올인원 스킨케어 세트",
+          "callToAction": "지금 구매",
+          "targetAudience": "민감 피부로 고민하는 25-45세 여성"
+        },
+        {
+          "headline": "🚨 오늘만 특가! 품절 임박",
+          "primaryText": "민감한 피부에도 안심! 모든 피부 타입을 위한 완벽한 스킨케어 세트, 오늘만 특가 제공!",
+          "description": "스킨케어 세럼 크림 토너",
+          "callToAction": "지금 바로",
+          "targetAudience": "피부 고민 해결을 원하는 직장인 여성"
+        },
+        {
+          "headline": "새출발엔 완벽 스킨케어",
+          "primaryText": "새학기, 새피부! 전문의 개발 저자극 세럼, 크림, 토너 세트로 피부 자신감 업그레이드!",
+          "description": "민감 피부도 OK",
+          "callToAction": "할인 구매",
+          "targetAudience": "새출발을 준비 중인 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1525,
+      "createdAt": "2026-03-16T10:45:11.793Z"
+    },
+    {
+      "id": "result-1773657952583-74tw",
+      "variantId": "variant-93c3d762",
+      "industry": "ecommerce",
+      "score": 74,
+      "ruleScore": 36,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "instruction style → loose",
+      "generatedCopy": [
+        {
+          "headline": "피부과 개발 스킨케어, 30% 할인",
+          "primaryText": "민감 피부에도 안전한 저자극 포뮬러! 지금 신학기 특가로 만나보세요. 서두르세요!",
+          "description": "신학기 맞이 할인",
+          "callToAction": "할인 받기",
+          "targetAudience": "피부 고민 많은 25-45세 여성 직장인"
+        },
+        {
+          "headline": "새출발! 피부과 세럼 세트",
+          "primaryText": "올봄, 피부부터 새롭게 시작하세요. 피부과 전문의와 개발한 세럼 세트로 민감 피부에도 안전!",
+          "description": "봄맞이 새출발 이벤트",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기, 새출발을 준비하는 여성"
+        },
+        {
+          "headline": "품절 전에! 인기 스킨케어 세트",
+          "primaryText": "신학기 필수템, 세럼 3종 세트! 민감 피부에도 걱정 없는 저자극 포뮬러. 재고 소진 임박!",
+          "description": "빠른 구매 추천",
+          "callToAction": "재고 확인",
+          "targetAudience": "스킨케어에 관심 많은 직장인 여성"
+        }
+      ],
+      "tokenUsage": 1525,
+      "createdAt": "2026-03-16T10:45:52.583Z"
+    },
+    {
+      "id": "result-1773657994813-b2xv",
+      "variantId": "variant-14f8084f",
+      "industry": "ecommerce",
+      "score": 80,
+      "ruleScore": 40,
+      "llmScore": 40,
+      "status": "discard",
+      "description": "instruction style → moderate",
+      "generatedCopy": [
+        {
+          "headline": "신학기 스킨케어 세트 특가!",
+          "primaryText": "올 봄, 민감피부 안심 세럼. 피부과 전문의 개발. 할인은 지금 뿐!",
+          "description": "지금 바로 확인하세요",
+          "callToAction": "할인 구매",
+          "targetAudience": "피부 고민 있는 25-35세 여성 직장인"
+        },
+        {
+          "headline": "신상 스킨케어, 무료배송 이벤트",
+          "primaryText": "민감피부도 OK! 피부과 공동개발 세트. 신학기 새출발, 특별 할인 중!",
+          "description": "지금이 기회!",
+          "callToAction": "지금 구매",
+          "targetAudience": "피부 고민 해결을 원하는 30-40대 여성"
+        },
+        {
+          "headline": "마지막 기회! 스킨케어 할인",
+          "primaryText": "올인원 세럼, 크림, 토너 세트. 품절 전 마지막 할인! 민감피부도 안전해요.",
+          "description": "서두르세요!",
+          "callToAction": "지금 주문",
+          "targetAudience": "마감 임박 혜택을 찾는 35-45세 여성"
+        }
+      ],
+      "tokenUsage": 1521,
+      "createdAt": "2026-03-16T10:46:34.813Z"
+    },
+    {
+      "id": "result-1773658035909-hkik",
+      "variantId": "variant-8a1021ae",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "few-shot strategy → hook",
+      "generatedCopy": [
+        {
+          "headline": "새출발을 위한 스킨케어 세트 할인!",
+          "primaryText": "피부과 전문의와 개발한 저자극 스킨케어 세트로 민감피부에도 안심! 지금 할인 혜택 놓치지 마세요.",
+          "description": "한정 수량, 서둘러요!",
+          "callToAction": "지금 구매",
+          "targetAudience": "피부 고민 있는 직장 여성"
+        },
+        {
+          "headline": "민감피부 안심, 프리미엄 세트 특가!",
+          "primaryText": "세럼, 크림, 토너를 한 번에! 저자극 포뮬러로 민감피부에도 안전합니다. 오늘 특가로 만나보세요.",
+          "description": "무료배송, 오늘만!",
+          "callToAction": "할인 구매",
+          "targetAudience": "민감피부 걱정 많은 여성"
+        },
+        {
+          "headline": "스킨케어 세트, 마지막 할인 찬스!",
+          "primaryText": "피부과 전문의와 공동 개발한 세트로 새학기, 새로운 피부를 시작하세요. 재고 한정, 지금 구매하세요!",
+          "description": "품절임박, 서두르세요!",
+          "callToAction": "지금 쇼핑",
+          "targetAudience": "새학기를 준비하는 여성"
+        }
+      ],
+      "tokenUsage": 1527,
+      "createdAt": "2026-03-16T10:47:15.909Z"
+    },
+    {
+      "id": "result-1773658077121-vwic",
+      "variantId": "variant-efce1cb2",
+      "industry": "ecommerce",
+      "score": 76,
+      "ruleScore": 38,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "science context → 9개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "새학기 맞이 15% 할인!",
+          "primaryText": "민감피부에 딱! 피부과 전문 개발 스킨케어. 새출발의 기회, 지금 할인 중!",
+          "description": "지금 피부과 세트 구매하세요",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기를 준비하는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "한정 수량! 품절임박 🔥",
+          "primaryText": "민감피부도 안심, 피부과 올인원 세트. 지금 아니면 놓쳐요! 한정 수량 빠르게 소진 중!",
+          "description": "피부 고민 해결, 지금이 기회",
+          "callToAction": "빠른 구매",
+          "targetAudience": "피부 고민 있는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "피부과 개발 세럼 세트 특가!",
+          "primaryText": "올인원 스킨케어, 민감피부에도 안전! 새출발의 기회, 할인 혜택 받으세요!",
+          "description": "특가로 피부 고민 해결하세요",
+          "callToAction": "지금 확인",
+          "targetAudience": "프로페셔널한 이미지 추구하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1527,
+      "createdAt": "2026-03-16T10:47:57.121Z"
+    },
+    {
+      "id": "result-1773658118063-tqxm",
+      "variantId": "variant-5f2b682a",
+      "industry": "ecommerce",
+      "score": 79,
+      "ruleScore": 36,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "science context → 8개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "🔔 신학기 특가 세일! 20% 할인",
+          "primaryText": "민감 피부에도 안전한 피부과 개발 스킨케어. 새출발 응원! 한정 수량, 놓치지 마세요!",
+          "description": "올인원 스킨케어 세트",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "새학기 준비 중인 25-35세 여성"
+        },
+        {
+          "headline": "오늘만! 50개 한정 할인 🎉",
+          "primaryText": "피부 고민 타파! 저자극 포뮬러 세럼+크림+토너 세트. 품절 전 서두르세요!",
+          "description": "피부과 전문 개발",
+          "callToAction": "즉시 구매",
+          "targetAudience": "피부 고민 해결 원하는 30-45세 여성"
+        },
+        {
+          "headline": "민감 피부? 걱정 끝! 🌿",
+          "primaryText": "전문가와 함께한 저자극 스킨케어 세트로 봄맞이 피부 개선. 할인 기회, 지금 잡으세요!",
+          "description": "새 출발을 위한 스킨케어",
+          "callToAction": "세트 구매하기",
+          "targetAudience": "피부에 민감한 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1525,
+      "createdAt": "2026-03-16T10:48:38.063Z"
+    },
+    {
+      "id": "result-1773658158907-e2p7",
+      "variantId": "variant-f82d098b",
+      "industry": "ecommerce",
+      "score": 76,
+      "ruleScore": 38,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "instruction style → moderate",
+      "generatedCopy": [
+        {
+          "headline": "봄맞이 스킨케어 할인 20%",
+          "primaryText": "민감피부도 안심! 피부과 전문 스킨케어 세트로 새출발하세요. 한정수량 할인 중입니다.",
+          "description": "지금 바로 할인받기",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기 준비하는 직장인 여성"
+        },
+        {
+          "headline": "신학기 선물로 딱! 스킨케어",
+          "primaryText": "올인원 세럼, 크림, 토너로 간편하게! 피부과 협력 저자극 포뮬러로 민감피부도 안심.",
+          "description": "한정수량, 서두르세요!",
+          "callToAction": "바로 구매",
+          "targetAudience": "새학기 기념 선물 찾는 여성"
+        },
+        {
+          "headline": "민감피부 필수템, 마지막 기회!",
+          "primaryText": "피부과 전문의와 개발한 세럼, 크림, 토너 세트. 재고 소진 임박, 지금 바로 만나보세요!",
+          "description": "지금 아니면 놓쳐요",
+          "callToAction": "지금 구매",
+          "targetAudience": "피부 고민 많은 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1521,
+      "createdAt": "2026-03-16T10:49:18.907Z"
+    },
+    {
+      "id": "result-1773658201148-u05v",
+      "variantId": "variant-a6153ce1",
+      "industry": "ecommerce",
+      "score": 72,
+      "ruleScore": 34,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "instruction style → loose",
+      "generatedCopy": [
+        {
+          "headline": "오늘만! 신학기 특별 할인 🌸",
+          "primaryText": "피부과 전문의 개발, 민감 피부도 안심! 지금 구매하면 신학기 특별 할인까지.",
+          "description": "신학기 할인, 품절 전 구매하세요",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기 준비하는 25-35세 여성 직장인"
+        },
+        {
+          "headline": "피부과 인증 올인원 세트, 재고 한정",
+          "primaryText": "민감피부 전용 저자극 포뮬러. 피부과 전문의와 공동 개발한 스킨케어를 지금 만나보세요.",
+          "description": "지금 구매로 피부 고민 끝",
+          "callToAction": "할인 구매하기",
+          "targetAudience": "피부 고민 많은 35-45세 여성 직장인"
+        },
+        {
+          "headline": "신학기, 피부 새출발! 첫 100명 할인",
+          "primaryText": "세럼, 크림, 토너로 완벽한 올인원 케어. 민감 피부도 걱정 없이! 첫 100명에게 특별 할인 제공.",
+          "description": "첫 100명, 특별 할인 기회",
+          "callToAction": "지금 쇼핑하기",
+          "targetAudience": "새출발을 준비하는 25-45세 여성 직장인"
+        }
+      ],
+      "tokenUsage": 1527,
+      "createdAt": "2026-03-16T10:50:01.148Z"
+    },
+    {
+      "id": "result-1773658242269-uz3d",
+      "variantId": "variant-24ecad0e",
+      "industry": "ecommerce",
+      "score": 77,
+      "ruleScore": 36,
+      "llmScore": 41,
+      "status": "discard",
+      "description": "instruction style → moderate",
+      "generatedCopy": [
+        {
+          "headline": "새출발의 첫걸음, 스킨케어 할인!",
+          "primaryText": "피부과 전문 개발 저자극 세트! 새 학기 맞이 할인은 지금뿐. 민감 피부도 환영합니다!",
+          "description": "지금 시작하세요",
+          "callToAction": "지금 구매",
+          "targetAudience": "새 학기 맞이 새출발을 준비하는 25-45세 여성"
+        },
+        {
+          "headline": "민감 피부 전용, 특별 할인 세일!",
+          "primaryText": "피부과 인증 세럼 3종 세트로 피부 고민 해결! 지금 구매하면 추가 할인 혜택!",
+          "description": "특별한 기회",
+          "callToAction": "할인 확인",
+          "targetAudience": "민감 피부로 고민 중인 25-45세 여성 직장인"
+        },
+        {
+          "headline": "피부과 인증 스킨케어 세트, 품절 임박!",
+          "primaryText": "올인원 세트 한정 수량 할인 중! 피부과와 공동 개발한 저자극 포뮬러를 만나보세요.",
+          "description": "지금이 기회!",
+          "callToAction": "바로 구매",
+          "targetAudience": "피부 트러블로 고민하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1525,
+      "createdAt": "2026-03-16T10:50:42.269Z"
+    },
+    {
+      "id": "result-1773658282708-9y42",
+      "variantId": "variant-becbbb0f",
+      "industry": "ecommerce",
+      "score": 76,
+      "ruleScore": 38,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "temperature → 0.7",
+      "generatedCopy": [
+        {
+          "headline": "신학기 특가! 세럼 포함 세트 할인",
+          "primaryText": "피부과 개발 저자극 포뮬러, 민감피부도 안심! 봄맞이 할인으로 지금 구매하세요.",
+          "description": "신학기, 새출발 준비!",
+          "callToAction": "지금 구매",
+          "targetAudience": "피부 고민 있는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "마지막 기회! 🌸 봄맞이 세트 할인",
+          "primaryText": "올인원 스킨케어, 세럼부터 크림까지 완벽 케어! 한정 수량, 지금 바로 확인하세요.",
+          "description": "마감 임박 할인!",
+          "callToAction": "할인 확인",
+          "targetAudience": "피부 고민 있는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "피부과 전문 세럼! 지금만 할인",
+          "primaryText": "민감피부도 OK! 저자극 포뮬러로 안심, 신학기 준비는 피부부터! 지금 구매하세요.",
+          "description": "지금이 기회!",
+          "callToAction": "세부 정보 보기",
+          "targetAudience": "피부 고민 있는 25-45세 여성 직장인"
+        }
+      ],
+      "tokenUsage": 1528,
+      "createdAt": "2026-03-16T10:51:22.708Z"
+    },
+    {
+      "id": "result-1773658324625-pf78",
+      "variantId": "variant-6d4d7273",
+      "industry": "ecommerce",
+      "score": 77,
+      "ruleScore": 36,
+      "llmScore": 41,
+      "status": "discard",
+      "description": "instruction style → loose",
+      "generatedCopy": [
+        {
+          "headline": "첫인상 업그레이드! 지금 할인 중",
+          "primaryText": "새학기, 새로운 피부! 민감피부도 OK, 세럼부터 토너까지 올인원 케어. 한정 할인!",
+          "description": "지금 바로 변신하세요",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기에 새 출발을 꿈꾸는 25-35세 여성 직장인"
+        },
+        {
+          "headline": "내 피부를 위한 신학기 필수템",
+          "primaryText": "전문가가 만든 저자극 스킨케어 세트! 민감피부도 걱정 없이. 오늘 구매하면 특가 혜택!",
+          "description": "피부과 전문 개발",
+          "callToAction": "할인 구매하기",
+          "targetAudience": "피부 고민 해결을 원하는 30-45세 여성 직장인"
+        },
+        {
+          "headline": "마감 임박! 피부과 추천 세트",
+          "primaryText": "피부과 전문의와 공동 개발한 스킨케어, 민감피부 안심 사용. 품절 전에 놓치지 마세요!",
+          "description": "마지막 구매 기회",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "피부 관리에 관심 많은 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1528,
+      "createdAt": "2026-03-16T10:52:04.625Z"
+    },
+    {
+      "id": "result-1773658366556-rarg",
+      "variantId": "variant-1f659a6d",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "temperature → 0.6",
+      "generatedCopy": [
+        {
+          "headline": "지금, 첫 구매 20% 할인",
+          "primaryText": "피부과 전문의 개발 스킨케어 세트! 민감피부에도 안심 사용. 첫 구매 혜택 놓치지 마세요!",
+          "description": "한정 수량, 서두르세요",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기, 피부 관리 시작하는 직장 여성"
+        },
+        {
+          "headline": "민감피부 맞춤 스킨케어",
+          "primaryText": "세럼, 크림, 토너로 완성되는 올인원! 피부과가 함께 만든 안전한 저자극 포뮬러. 신학기 출발 준비 완료!",
+          "description": "지금 시작하세요",
+          "callToAction": "자세히 보기",
+          "targetAudience": "민감피부로 고민하는 25-35세 여성"
+        },
+        {
+          "headline": "한정 특가! 놓치지 마세요",
+          "primaryText": "신학기엔 새 피부로! 프리미엄 스킨케어 세트, 한정 할인 중. 지금 아니면 기회는 없습니다!",
+          "description": "오늘만 특가!",
+          "callToAction": "할인 받기",
+          "targetAudience": "할인 기회를 찾는 30-45세 여성 직장인"
+        }
+      ],
+      "tokenUsage": 1528,
+      "createdAt": "2026-03-16T10:52:46.556Z"
+    },
+    {
+      "id": "result-1773658406992-vf0j",
+      "variantId": "variant-1b08c4f7",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "science context → 8개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "민감피부에도 안전한 스킨케어",
+          "primaryText": "올인원 스킨케어 세트로 새출발! 피부과 전문의 공동 개발, 할인 중! 지금 구매하세요.",
+          "description": "피부과 전문 개발 세트",
+          "callToAction": "할인 구매하기",
+          "targetAudience": "피부 고민 있는 25-45세 여성"
+        },
+        {
+          "headline": "신학기 할인, 세트 특가!",
+          "primaryText": "세럼, 크림, 토너 세트! 민감피부에도 저자극. 신학기 맞이 특별 할인 중!",
+          "description": "신학기 특가 할인",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "새학기 준비 중인 여성 직장인"
+        },
+        {
+          "headline": "피부과 스킨케어, 품절임박!",
+          "primaryText": "피부과 전문의가 추천하는 저자극 세럼 세트! 한정 수량, 지금 구매하세요!",
+          "description": "품절 임박, 서두르세요",
+          "callToAction": "바로 구매",
+          "targetAudience": "피부 민감한 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1521,
+      "createdAt": "2026-03-16T10:53:26.992Z"
+    },
+    {
+      "id": "result-1773658447889-5h2a",
+      "variantId": "variant-016d2057",
+      "industry": "ecommerce",
+      "score": 73,
+      "ruleScore": 38,
+      "llmScore": 35,
+      "status": "discard",
+      "description": "instruction style → loose",
+      "generatedCopy": [
+        {
+          "headline": "피부과 스킨케어 할인 중!",
+          "primaryText": "피부과 전문의가 개발한 저자극 세럼. 민감 피부도 안심하고 사용하세요! 새학기 맞이 특별 할인 적용 중.",
+          "description": "지금 특별 할인!",
+          "callToAction": "지금 쇼핑하기",
+          "targetAudience": "피부 고민 있는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "새출발에 필요한 스킨케어 세트",
+          "primaryText": "봄 시즌, 피부도 새롭게! 세럼, 크림, 토너로 완성하는 올인원 스킨케어. 신학기 특별가로 만나보세요.",
+          "description": "한정 수량!",
+          "callToAction": "지금 구매",
+          "targetAudience": "봄 시즌 새출발을 원하는 25-45세 여성"
+        },
+        {
+          "headline": "민감피부 안전한 선택!",
+          "primaryText": "피부과 공동 개발 저자극 포뮬러. 세럼 3종으로 완벽한 스킨케어 루틴 완성. 할인 기회 놓치지 마세요.",
+          "description": "지금 확인하세요",
+          "callToAction": "더 알아보기",
+          "targetAudience": "민감 피부로 고민하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1528,
+      "createdAt": "2026-03-16T10:54:07.889Z"
+    },
+    {
+      "id": "result-1773658488690-z5wc",
+      "variantId": "variant-58398146",
+      "industry": "ecommerce",
+      "score": 76,
+      "ruleScore": 38,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "science context → 9개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "스킨케어 세트 30% 할인!",
+          "primaryText": "피부과 전문가가 개발한 저자극 세럼과 크림. 봄맞이 할인, 민감 피부에도 안전해요.",
+          "description": "새학기 프로모션",
+          "callToAction": "지금 구매",
+          "targetAudience": "25-35세 여성, 신학기 준비 중"
+        },
+        {
+          "headline": "민감 피부, 걱정 끝!",
+          "primaryText": "민감 피부를 위한 저자극 스킨케어 세트. 품절 전 마지막 기회! 놓치지 마세요.",
+          "description": "한정 수량",
+          "callToAction": "바로 구매",
+          "targetAudience": "35-45세 여성, 피부 트러블 걱정 있는 직장인"
+        },
+        {
+          "headline": "올인원 스킨케어 세트 특가!",
+          "primaryText": "세럼, 크림, 토너까지 한 번에! 피부과와 공동 개발, 신학기 새출발에 딱 맞는 선택.",
+          "description": "무료배송 혜택",
+          "callToAction": "세트 구매하기",
+          "targetAudience": "25-45세 여성, 새 출발 계획 중인 소비자"
+        }
+      ],
+      "tokenUsage": 1526,
+      "createdAt": "2026-03-16T10:54:48.690Z"
+    },
+    {
+      "id": "result-1773658529240-bcxs",
+      "variantId": "variant-561a38aa",
+      "industry": "ecommerce",
+      "score": 74,
+      "ruleScore": 36,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "few-shot strategy → hook",
+      "generatedCopy": [
+        {
+          "headline": "신학기 맞이 🌸 할인 혜택",
+          "primaryText": "피부과와 함께한 안전한 스킨케어 세트. 민감 피부도 안심! 지금 특별 할인가로 만나보세요.",
+          "description": "오늘만 특가!",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기를 준비하는 25-35세 여성 직장인"
+        },
+        {
+          "headline": "봄맞이 스킨케어 세일 🍀",
+          "primaryText": "저자극으로 민감 피부도 OK! 세럼, 크림, 토너 3종 세트, 지금 바로 할인된 가격에 경험하세요.",
+          "description": "무료배송 제공",
+          "callToAction": "바로 쇼핑",
+          "targetAudience": "피부 고민 많은 35-45세 여성"
+        },
+        {
+          "headline": "품절 주의! 한정 수량 🔥",
+          "primaryText": "피부과 전문 개발, 민감 피부에 완벽한 스킨케어 세트. 이번 기회를 놓치지 마세요.",
+          "description": "마지막 기회!",
+          "callToAction": "지금 확인",
+          "targetAudience": "빠른 결정을 원하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1526,
+      "createdAt": "2026-03-16T10:55:29.240Z"
+    },
+    {
+      "id": "result-1773658570214-z2el",
+      "variantId": "variant-340c6e43",
+      "industry": "ecommerce",
+      "score": 74,
+      "ruleScore": 36,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "instruction style → moderate",
+      "generatedCopy": [
+        {
+          "headline": "새학기 스킨케어, 첫 인상 UP!",
+          "primaryText": "민감피부도 걱정 없는 저자극 스킨케어 세트. 지금 구매 시 할인 혜택! 봄 피부 준비 완료하세요.",
+          "description": "지금 구매하면 할인!",
+          "callToAction": "할인 구매",
+          "targetAudience": "새학기를 준비하는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "봄맞이 스킨케어 세트 할인!",
+          "primaryText": "피부과 전문 개발, 저자극 스킨케어 세트. 민감피부도 걱정 없이 지금 시작하세요! 한정 수량 특가!",
+          "description": "한정 수량, 서두르세요",
+          "callToAction": "지금 확인",
+          "targetAudience": "피부 고민 있는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "피부과 공동 개발 스킨케어",
+          "primaryText": "세럼, 크림, 토너 3종 세트로 올인원 스킨케어! 지금 할인 중, 민감피부에도 안전한 선택!",
+          "description": "올인원 스킨케어 할인",
+          "callToAction": "지금 구매",
+          "targetAudience": "고품질 스킨케어를 찾는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1526,
+      "createdAt": "2026-03-16T10:56:10.214Z"
+    },
+    {
+      "id": "result-1773658610851-yzy6",
+      "variantId": "variant-4d65b455",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "instruction style → loose",
+      "generatedCopy": [
+        {
+          "headline": "신학기 할인! 피부과 스킨케어 세트",
+          "primaryText": "직장 여성 필수템! 피부 고민, 이제는 그만. 민감피부도 안심하세요. 오늘만 특가!",
+          "description": "피부과 전문 개발",
+          "callToAction": "지금 구매",
+          "targetAudience": "피부 고민 많은 25-35세 여성 직장인"
+        },
+        {
+          "headline": "봄맞이 세트 할인! 품절임박",
+          "primaryText": "프리미엄 세럼+크림+토너 세트! 저자극으로 민감 피부에 완벽한 선택. 서두르세요!",
+          "description": "올인원 스킨케어",
+          "callToAction": "빠르게 주문",
+          "targetAudience": "민감 피부에 고민 많은 30-45세 여성"
+        },
+        {
+          "headline": "피부과 공동개발, 신상 스킨케어",
+          "primaryText": "새출발의 계절, 피부도 새롭게! 민감피부 전용 저자극 포뮬러. 할인 기회 놓치지 마세요!",
+          "description": "신학기 시즌 특가",
+          "callToAction": "할인 받기",
+          "targetAudience": "새출발을 원하는 25-40세 여성"
+        }
+      ],
+      "tokenUsage": 1526,
+      "createdAt": "2026-03-16T10:56:50.851Z"
+    },
+    {
+      "id": "result-1773658652325-rq93",
+      "variantId": "variant-e8d70509",
+      "industry": "ecommerce",
+      "score": 76,
+      "ruleScore": 38,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "temperature → 0.6",
+      "generatedCopy": [
+        {
+          "headline": "신학기 특별할인 🌸 지금 시작하세요!",
+          "primaryText": "피부과와 개발한 프리미엄 스킨케어, 민감피부에도 안전! 지금 할인 중, 놓치지 마세요.",
+          "description": "피부과 추천 저자극 스킨케어",
+          "callToAction": "지금 구매",
+          "targetAudience": "민감 피부로 고생하는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "피부과 전문 세트, 한정할인!",
+          "primaryText": "올인원 스킨케어로 새출발! 세럼, 크림, 토너가 하나로. 오늘만 특별 할인 중!",
+          "description": "한정 수량! 서두르세요",
+          "callToAction": "할인 구매하기",
+          "targetAudience": "봄철 피부 고민 중인 25-45세 여성"
+        },
+        {
+          "headline": "품절 전 마지막 기회! 🕒",
+          "primaryText": "피부과 전문의가 만든 저자극 스킨케어 세트, 민감피부에 딱! 지금 바로 특가로 만나보세요.",
+          "description": "민감피부 스킨케어 특가",
+          "callToAction": "바로 주문",
+          "targetAudience": "피부 고민 해결을 원하는 25-45세 여성 직장인"
+        }
+      ],
+      "tokenUsage": 1531,
+      "createdAt": "2026-03-16T10:57:32.325Z"
+    },
+    {
+      "id": "result-1773658693663-lvfv",
+      "variantId": "variant-75e24210",
+      "industry": "ecommerce",
+      "score": 79,
+      "ruleScore": 36,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "science context → 8개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "신학기 특별 할인, 지금 시작!",
+          "primaryText": "피부과 전문의와 만든 민감 피부용 세럼 세트. 피부 고민 해결, 지금만 20% 할인!",
+          "description": "세트 할인 놓치지 마세요",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "스킨케어 관심 많은 25-45세 여성"
+        },
+        {
+          "headline": "민감피부 필수템, 품절임박!",
+          "primaryText": "저자극 스킨케어 세트로 새 출발. 세럼, 크림, 토너 3종! 무료 배송, 수량 한정.",
+          "description": "지금 바로 확인하세요",
+          "callToAction": "한정 수량 구매",
+          "targetAudience": "직장 여성, 스킨케어 고민 많은 고객"
+        },
+        {
+          "headline": "세럼 세트 첫 구매 15% 할인!",
+          "primaryText": "피부과 전문 개발, 민감 피부도 OK! 신학기 새출발에 딱 맞는 스킨케어, 특가로 만나보세요.",
+          "description": "첫 구매 특가 기회",
+          "callToAction": "할인 받기",
+          "targetAudience": "스킨케어에 민감한 25-35세 여성"
+        }
+      ],
+      "tokenUsage": 1524,
+      "createdAt": "2026-03-16T10:58:13.663Z"
+    },
+    {
+      "id": "result-1773658734983-g71l",
+      "variantId": "variant-442ee3c5",
+      "industry": "ecommerce",
+      "score": 77,
+      "ruleScore": 36,
+      "llmScore": 41,
+      "status": "discard",
+      "description": "temperature → 0.9",
+      "generatedCopy": [
+        {
+          "headline": "🌸새출발 피부 케어, 할인 혜택!",
+          "primaryText": "민감피부에도 안전한 스킨케어 세트! 새학기 맞이 특별할인, 지금 시작하세요!",
+          "description": "신학기 특가, 놓치지 마세요!",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기 새출발을 준비하는 25-35세 여성"
+        },
+        {
+          "headline": "오늘만! 스킨케어 세트 특가🔥",
+          "primaryText": "피부과 전문 세럼, 크림, 토너 3종. 민감피부도 OK! 한정 수량, 서둘러 구매하세요!",
+          "description": "오늘만 할인, 놓치지 마세요",
+          "callToAction": "할인 구매하기",
+          "targetAudience": "즉시 혜택을 찾는 30-40세 여성"
+        },
+        {
+          "headline": "피부과 협업 스킨케어, 마지막 찬스!",
+          "primaryText": "재입고 미정! 피부 고민 해결, 민감피부도 안심. 지금 구매하면 할인 혜택까지!",
+          "description": "마지막 기회, 놓치지 마세요",
+          "callToAction": "할인 가격 보기",
+          "targetAudience": "피부 고민 있는 35-45세 여성 직장인"
+        }
+      ],
+      "tokenUsage": 1529,
+      "createdAt": "2026-03-16T10:58:54.983Z"
+    },
+    {
+      "id": "result-1773658775660-vxwi",
+      "variantId": "variant-accb89fd",
+      "industry": "ecommerce",
+      "score": 76,
+      "ruleScore": 38,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "science context → 9개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "지금만! 스킨케어 세트 20% 할인",
+          "primaryText": "민감피부에도 안전한 피부과 공동 개발 세트. 신학기 새출발, 아름다움을 선사하세요.",
+          "description": "오늘만 특가!",
+          "callToAction": "지금 구매",
+          "targetAudience": "피부 고민 있는 25-45세 여성"
+        },
+        {
+          "headline": "한정수량🔥프리미엄 세럼 포함!",
+          "primaryText": "민감한 피부를 위한 저자극 스킨케어 세트. 신학기, 새로운 당신을 위해 준비하세요.",
+          "description": "재고 소진 임박!",
+          "callToAction": "구매하기",
+          "targetAudience": "민감한 피부의 직장인 여성"
+        },
+        {
+          "headline": "피부과 협력, 안전한 스킨케어",
+          "primaryText": "세럼, 크림, 토너 3종 세트로 피부 고민 해결. 봄맞이 특별 할인 중, 놓치지 마세요!",
+          "description": "무료배송 혜택",
+          "callToAction": "바로 구매",
+          "targetAudience": "새학기 맞이 피부 개선 원하는 여성"
+        }
+      ],
+      "tokenUsage": 1526,
+      "createdAt": "2026-03-16T10:59:35.660Z"
+    },
+    {
+      "id": "result-1773658816466-unys",
+      "variantId": "variant-f18b3973",
+      "industry": "ecommerce",
+      "score": 72,
+      "ruleScore": 34,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "temperature → 0.6",
+      "generatedCopy": [
+        {
+          "headline": "🌸 새학기 피부 고민 해결, 할인 중!",
+          "primaryText": "피부과 전문 세트로 새출발! 지금 구매 시 할인 혜택, 민감 피부에도 완벽해요.",
+          "description": "지금 바로 할인 받기",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기 피부 개선 원하는 직장 여성"
+        },
+        {
+          "headline": "민감 피부 완벽 케어, 한정 할인!",
+          "primaryText": "저자극 스킨케어 세트로 민감 피부도 안심. 세럼, 크림, 토너까지 모두 포함!",
+          "description": "피부과 전문 세트",
+          "callToAction": "할인 구매",
+          "targetAudience": "민감 피부로 고민하는 여성"
+        },
+        {
+          "headline": "봄맞이 피부 케어, 품절 임박!",
+          "primaryText": "올인원 스킨케어 세트, 지금이 기회! 한정 수량, 빠른 주문 필수!",
+          "description": "새출발, 새 피부",
+          "callToAction": "빠르게 주문",
+          "targetAudience": "봄철 피부 관리 필요한 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1528,
+      "createdAt": "2026-03-16T11:00:16.466Z"
+    },
+    {
+      "id": "result-1773658858358-73js",
+      "variantId": "variant-d8828fbd",
+      "industry": "ecommerce",
+      "score": 76,
+      "ruleScore": 38,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "science context → 9개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "신학기 특가! 세럼 포함 3종 세트",
+          "primaryText": "민감 피부도 걱정 없는 올인원 스킨케어, 지금 할인 중! 새출발에 맞춰 피부 고민 해결하세요.",
+          "description": "안전한 피부과 포뮬러",
+          "callToAction": "지금 구매",
+          "targetAudience": "신학기 준비하는 25-35세 여성"
+        },
+        {
+          "headline": "한정 세일! 스킨케어 3종 세트",
+          "primaryText": "피부과 전문의 개발, 민감 피부에도 안전한 세럼, 크림, 토너 세트. 할인 혜택은 지금뿐!",
+          "description": "저자극 포뮬러",
+          "callToAction": "할인 구매",
+          "targetAudience": "피부 고민 많은 30-45세 직장인 여성"
+        },
+        {
+          "headline": "민감피부도 OK! 오늘만 할인",
+          "primaryText": "올인원 스킨케어로 새출발하세요. 피부과 공동 개발, 안전한 포뮬러. 지금 구매 시 특별 할인!",
+          "description": "피부과 공동 개발",
+          "callToAction": "지금 확인",
+          "targetAudience": "민감피부 고민 있는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1529,
+      "createdAt": "2026-03-16T11:00:58.358Z"
+    },
+    {
+      "id": "result-1773658901368-blwl",
+      "variantId": "variant-bc0be62b",
+      "industry": "ecommerce",
+      "score": 76,
+      "ruleScore": 38,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "temperature → 0.6",
+      "generatedCopy": [
+        {
+          "headline": "신학기 스킨케어 할인!🌿",
+          "primaryText": "피부과 개발 저자극 세트로 새출발! 지금 구매 시 할인 혜택!",
+          "description": "민감피부도 안심!",
+          "callToAction": "할인 받기",
+          "targetAudience": "피부 고민 있는 25-35세 직장인 여성"
+        },
+        {
+          "headline": "한정 수량!🌸프리미엄 세럼",
+          "primaryText": "민감한 봄 피부, 이제 걱정 NO! 신속 구매로 피부과 세럼 할인받으세요.",
+          "description": "지금이 기회!",
+          "callToAction": "지금 구매",
+          "targetAudience": "새출발을 준비하는 30-45세 여성"
+        },
+        {
+          "headline": "오늘만! 피부과 스킨케어 특가",
+          "primaryText": "3종 세트로 피부 자신감 UP! 민감피부 OK, 지금 바로 할인 혜택 누리세요.",
+          "description": "품절 전 구매하세요!",
+          "callToAction": "바로 구매",
+          "targetAudience": "피부 관리에 관심 있는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1523,
+      "createdAt": "2026-03-16T11:01:41.368Z"
+    },
+    {
+      "id": "result-1773658942773-2nst",
+      "variantId": "variant-32ba7f09",
+      "industry": "ecommerce",
+      "score": 74,
+      "ruleScore": 36,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "science context → 8개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "🎉 신학기 할인! 스킨케어 세트 특가",
+          "primaryText": "민감 피부도 OK! 피부과 전문 개발 세트. 봄맞이 할인, 지금 바로 시작하세요!",
+          "description": "지금 바로 할인 받기",
+          "callToAction": "쇼핑하기",
+          "targetAudience": "새학기 준비하는 25-35세 직장 여성"
+        },
+        {
+          "headline": "피부과가 추천하는 저자극 세럼",
+          "primaryText": "올 봄, 민감 피부에 필요한 스킨케어! 품절되기 전에 할인가로 만나보세요!",
+          "description": "피부 고민 해결 기회",
+          "callToAction": "지금 구매",
+          "targetAudience": "피부 고민 많은 35-45세 직장 여성"
+        },
+        {
+          "headline": "마지막 기회! 스킨케어 세트 20% 할인",
+          "primaryText": "오직 오늘만! 피부과와 개발한 세트로 피부 고민 끝내세요. 품절 주의!",
+          "description": "할인 중, 서두르세요!",
+          "callToAction": "즉시 구매",
+          "targetAudience": "할인을 놓치기 싫은 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1524,
+      "createdAt": "2026-03-16T11:02:22.773Z"
+    },
+    {
+      "id": "result-1773658984460-csek",
+      "variantId": "variant-792cb788",
+      "industry": "ecommerce",
+      "score": 74,
+      "ruleScore": 36,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "temperature → 0.9",
+      "generatedCopy": [
+        {
+          "headline": "신학기 피부 고민 해결! 🎁",
+          "primaryText": "민감피부에 딱 맞는 저자극 포뮬러! 첫 구매 15% 할인, 지금 시작하세요.",
+          "description": "피부과 전문 개발",
+          "callToAction": "지금 쇼핑",
+          "targetAudience": "새출발 준비 중인 25-35세 여성"
+        },
+        {
+          "headline": "특가 세일! 품절 전 구매하세요",
+          "primaryText": "올 봄, 피부과 전문 개발 스킨케어로 새로운 시작. 민감 피부에도 안전한 세럼, 토너, 크림 세트!",
+          "description": "한정 수량, 서두르세요",
+          "callToAction": "할인 받기",
+          "targetAudience": "직장인 여성, 피부 고민 해결자"
+        },
+        {
+          "headline": "오늘만 할인! 새로운 피부를 만나다",
+          "primaryText": "피부과 전문 개발 세럼, 크림, 토너 3종 세트! 민감피부에도 안전한 선택, 지금 경험하세요.",
+          "description": "올인원 스킨케어 세트",
+          "callToAction": "바로 구매",
+          "targetAudience": "25-45세 여성, 스킨케어 관심자"
+        }
+      ],
+      "tokenUsage": 1525,
+      "createdAt": "2026-03-16T11:03:04.460Z"
+    },
+    {
+      "id": "result-1773659025525-3ecm",
+      "variantId": "variant-d5e73f2e",
+      "industry": "ecommerce",
+      "score": 76,
+      "ruleScore": 36,
+      "llmScore": 40,
+      "status": "discard",
+      "description": "instruction style → loose",
+      "generatedCopy": [
+        {
+          "headline": "봄맞이 스킨케어 특가 세일",
+          "primaryText": "민감피부 OK! 올인원 스킨케어로 새출발. 지금 구매 시 한정 할인!",
+          "description": "지금 바로 확인하세요",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "피부 고민 있는 25-45세 여성"
+        },
+        {
+          "headline": "피부과 개발 스킨케어 세트",
+          "primaryText": "전문가가 추천하는 저자극 세럼, 크림, 토너. 민감피부에도 안전한 선택!",
+          "description": "한정 수량 제공",
+          "callToAction": "할인 정보 확인",
+          "targetAudience": "직장인 여성, 피부 걱정 많은 분"
+        },
+        {
+          "headline": "세럼, 크림, 토너 한 세트로!",
+          "primaryText": "신학기 준비! 저자극 스킨케어로 맑은 피부 시작. 지금 특가로 만나요!",
+          "description": "무료배송 기회",
+          "callToAction": "지금 쇼핑하기",
+          "targetAudience": "새출발을 준비하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1522,
+      "createdAt": "2026-03-16T11:03:45.525Z"
+    },
+    {
+      "id": "result-1773659067986-fotu",
+      "variantId": "variant-1503fa3e",
+      "industry": "ecommerce",
+      "score": 79,
+      "ruleScore": 36,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "science context → 8개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "새출발, 프리미엄 스킨케어 20% 할인",
+          "primaryText": "피부과 전문의와 함께한 저자극 스킨케어. 신학기 맞이 특별 할인, 민감 피부도 안심!",
+          "description": "오늘만 한정 특가",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "새학기를 준비하는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "신학기 필수템! 올인원 스킨케어",
+          "primaryText": "세럼, 크림, 토너 하나로 해결! 민감 피부에도 안전한 저자극 포뮬러. 지금 할인 중!",
+          "description": "피부과 추천 세트",
+          "callToAction": "할인 받기",
+          "targetAudience": "피부 고민 있는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "품절 임박! 프리미엄 스킨케어 세트",
+          "primaryText": "올해 가장 많이 팔린 인기템. 민감 피부도 안심! 놓치면 후회할 이번 기회, 지금 확인하세요.",
+          "description": "마지막 할인 찬스",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "새출발을 준비하는 25-45세 여성 직장인"
+        }
+      ],
+      "tokenUsage": 1524,
+      "createdAt": "2026-03-16T11:04:27.986Z"
+    },
+    {
+      "id": "result-1773659110061-zg57",
+      "variantId": "variant-98966470",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "science context → 8개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "지금 시작! 새학기 맞춤 스킨케어",
+          "primaryText": "피부과 전문 세럼, 크림, 토너 세트로 새출발! 민감 피부에도 걱정 없이, 할인 혜택까지.",
+          "description": "새학기 특별 할인",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "25-35세 여성, 새학기 준비 중"
+        },
+        {
+          "headline": "특가! 민감 피부를 위한 스킨케어",
+          "primaryText": "피부과와 공동 개발한 저자극 포뮬러. 지금 구매하면 할인 혜택! 봄 피부 고민 해결하세요.",
+          "description": "봄맞이 특별가",
+          "callToAction": "할인 구매",
+          "targetAudience": "35-45세 여성, 민감 피부 고민"
+        },
+        {
+          "headline": "품절임박! 프리미엄 스킨케어 세트",
+          "primaryText": "올해 가장 주목받는 스킨케어 세트, 민감 피부도 안심. 지금 놓치면 구하기 어려워요!",
+          "description": "마지막 기회!",
+          "callToAction": "바로 구매",
+          "targetAudience": "25-45세 여성, 스킨케어 트렌드 선도자"
+        }
+      ],
+      "tokenUsage": 1523,
+      "createdAt": "2026-03-16T11:05:10.061Z"
+    },
+    {
+      "id": "result-1773659151945-6g05",
+      "variantId": "variant-33b75f6f",
+      "industry": "ecommerce",
+      "score": 72,
+      "ruleScore": 36,
+      "llmScore": 36,
+      "status": "discard",
+      "description": "few-shot strategy → hook",
+      "generatedCopy": [
+        {
+          "headline": "지금 바로! 스킨케어 세트 할인",
+          "primaryText": "민감 피부도 OK! 올인원 스킨케어 세트, 신학기 맞이 특별 할인. 피부과 전문의와 함께 만든 안전한 선택.",
+          "description": "지금만 할인 기회",
+          "callToAction": "할인 구매하기",
+          "targetAudience": "피부 고민이 있는 25-45세 직장 여성"
+        },
+        {
+          "headline": "피부과 협업 스킨케어 세트",
+          "primaryText": "민감한 피부도 안심! 세럼, 크림, 토너 3종 한 세트로 봄을 준비하세요. 재고 한정, 서두르세요!",
+          "description": "한정 수량 남음",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "민감성 피부를 가진 25-45세 여성"
+        },
+        {
+          "headline": "신학기 피부 새출발, 특가",
+          "primaryText": "올해는 깨끗한 피부로 시작하세요. 피부과 전문 포뮬러 적용! 지금 특가로 만나보세요. 서둘러 구매하세요!",
+          "description": "새출발, 새피부",
+          "callToAction": "특가 구매하기",
+          "targetAudience": "신학기를 준비하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1530,
+      "createdAt": "2026-03-16T11:05:51.945Z"
+    },
+    {
+      "id": "result-1773659195155-nang",
+      "variantId": "variant-a13e1f57",
+      "industry": "ecommerce",
+      "score": 78,
+      "ruleScore": 40,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "science context → 8개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "🌸 새출발 스킨케어 할인",
+          "primaryText": "민감피부 OK! 피부과 공동 개발 프리미엄 세럼 세트. 오늘만 20% 할인!",
+          "description": "지금 바로 구매하세요!",
+          "callToAction": "할인 구매하기",
+          "targetAudience": "민감 피부 고민 직장 여성"
+        },
+        {
+          "headline": "🎁 봄맞이 스킨케어 특가!",
+          "primaryText": "피부과 전문의와 함께한 저자극 포뮬러! 새학기 맞이 3종 세트 할인 중!",
+          "description": "봄맞이 피부 리프레시",
+          "callToAction": "특가 구매하기",
+          "targetAudience": "새학기 새출발을 준비하는 여성"
+        },
+        {
+          "headline": "품절임박! 마지막 100세트",
+          "primaryText": "올인원 스킨케어, 민감피부도 안심. 할인 기회 놓치지 마세요! 한정 수량!",
+          "description": "지금 마지막 기회!",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "피부 케어에 민감한 직장인 여성"
+        }
+      ],
+      "tokenUsage": 1521,
+      "createdAt": "2026-03-16T11:06:35.155Z"
+    },
+    {
+      "id": "result-1773659236365-aa4e",
+      "variantId": "variant-1c5ba0d6",
+      "industry": "ecommerce",
+      "score": 79,
+      "ruleScore": 36,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "science context → 8개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "새학기, 새로운 피부를 위한 스킨케어",
+          "primaryText": "민감 피부도 걱정 끝! 피부과 전문 세트로 새출발하세요. 지금 20% 할인 중! 놓치지 마세요.",
+          "description": "오늘만 할인 혜택!",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기 새출발을 준비하는 여성"
+        },
+        {
+          "headline": "세럼, 크림, 토너 한 세트로 끝!",
+          "primaryText": "저자극 포뮬러로 민감 피부도 안심! 한정 수량, 지금 바로 확인하세요.",
+          "description": "한정 세트 특가",
+          "callToAction": "바로 확인",
+          "targetAudience": "피부 고민이 있는 직장인 여성"
+        },
+        {
+          "headline": "피부과 전문 세트, 품절임박!",
+          "primaryText": "올인원 스킨케어 세트, 새학기 시작 전에 준비하세요! 마지막 50개 남았습니다.",
+          "description": "마지막 기회!",
+          "callToAction": "지금 구매",
+          "targetAudience": "품절 걱정하는 구매자"
+        }
+      ],
+      "tokenUsage": 1524,
+      "createdAt": "2026-03-16T11:07:16.365Z"
+    },
+    {
+      "id": "result-1773659278509-vcg0",
+      "variantId": "variant-c42429c4",
+      "industry": "ecommerce",
+      "score": 77,
+      "ruleScore": 38,
+      "llmScore": 39,
+      "status": "discard",
+      "description": "instruction style → loose",
+      "generatedCopy": [
+        {
+          "headline": "🌸새학기 맞이 스킨케어 특가",
+          "primaryText": "민감 피부도 OK! 피부과 전문 세럼과 크림. 새출발 기회, 오늘 할인 혜택 놓치지 마세요!",
+          "description": "지금 바로 할인 받기",
+          "callToAction": "자세히 보기",
+          "targetAudience": "피부 고민 있는 25-35세 여성"
+        },
+        {
+          "headline": "첫 구매 20% 할인! 스킨케어 세트",
+          "primaryText": "민감 피부도 안심! 피부과 전문 스킨케어 세트로 촉촉한 봄을 맞이하세요. 수량 한정!",
+          "description": "특가로 만나요",
+          "callToAction": "구매하기",
+          "targetAudience": "직장 여성 30-45세"
+        },
+        {
+          "headline": "품절 임박! 피부과 세럼 세트",
+          "primaryText": "저자극 포뮬러로 민감 피부까지 커버! 신학기 시작 전, 피부 자신감 찾기! 서두르세요.",
+          "description": "지금 바로 구매",
+          "callToAction": "빠르게 확인하기",
+          "targetAudience": "25-45세, 직장인 여성"
+        }
+      ],
+      "tokenUsage": 1526,
+      "createdAt": "2026-03-16T11:07:58.510Z"
+    },
+    {
+      "id": "result-1773659321107-df08",
+      "variantId": "variant-aea02207",
+      "industry": "ecommerce",
+      "score": 76,
+      "ruleScore": 38,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "science context → 9개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "민감피부를 위한 신학기 할인!",
+          "primaryText": "피부과 전문 포뮬러로 매일 새 피부처럼! 민감피부에도 안전한 세럼, 크림, 토너 세트. 할인 기회 놓치지 마세요!",
+          "description": "지금 할인받고 시작하세요",
+          "callToAction": "지금 쇼핑하기",
+          "targetAudience": "새학기 시작을 준비하는 25-45세 직장 여성"
+        },
+        {
+          "headline": "피부 전문가가 선택한 스킨케어 세트",
+          "primaryText": "직장인 피부 고민 해결! 저자극 포뮬러로 민감피부에도 안심. 세럼, 크림, 토너 포함. 한정 할인 중!",
+          "description": "지금이 구매 적기!",
+          "callToAction": "할인 구매하기",
+          "targetAudience": "피부 트러블 걱정 많은 25-45세 여성"
+        },
+        {
+          "headline": "오늘만 할인! 프리미엄 스킨케어",
+          "primaryText": "올인원 스킨케어로 간편하게, 효과는 확실하게! 피부과 전문 세트로 새 출발하세요. 오늘만 특가!",
+          "description": "품절 전 서두르세요",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "할인 혜택에 민감한 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1533,
+      "createdAt": "2026-03-16T11:08:41.107Z"
+    },
+    {
+      "id": "result-1773659362786-p1gm",
+      "variantId": "variant-6ae7f488",
+      "industry": "ecommerce",
+      "score": 76,
+      "ruleScore": 38,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "system role → data_analyst",
+      "generatedCopy": [
+        {
+          "headline": "신학기 특가, 스킨케어 세트 할인!",
+          "primaryText": "새출발 시즌, 피부과 공동 개발 세럼, 크림, 토너 3종 세트를 특별가로 만나보세요!",
+          "description": "오늘만 할인!",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기를 맞이하는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "민감 피부도 OK! 저자극 스킨케어",
+          "primaryText": "피부 고민 해결! 피부과 전문의와 개발한 세럼, 크림, 토너로 맑고 건강한 피부를 시작하세요.",
+          "description": "피부과 전문 세트",
+          "callToAction": "지금 확인",
+          "targetAudience": "민감 피부로 고민하는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "품절주의! 프리미엄 스킨케어 세트",
+          "primaryText": "마감 임박! 신학기 맞이 특별 할인. 민감 피부에도 안전한 저자극 포뮬러를 지금 바로 경험하세요.",
+          "description": "한정 수량 남음",
+          "callToAction": "빠르게 구매",
+          "targetAudience": "품절을 우려하는 25-45세 여성 직장인"
+        }
+      ],
+      "tokenUsage": 1527,
+      "createdAt": "2026-03-16T11:09:22.786Z"
+    },
+    {
+      "id": "result-1773659405077-mat0",
+      "variantId": "variant-2d1f628c",
+      "industry": "ecommerce",
+      "score": 79,
+      "ruleScore": 38,
+      "llmScore": 41,
+      "status": "discard",
+      "description": "system role → creative_director",
+      "generatedCopy": [
+        {
+          "headline": "봄맞이 스킨케어 특가, 지금 바로!",
+          "primaryText": "프리미엄 세럼, 크림, 토너로 민감피부까지 케어. 새출발에 필요한 완벽한 선택, 신학기 할인 혜택!",
+          "description": "최대 20% 할인!",
+          "callToAction": "할인 구매하기",
+          "targetAudience": "봄맞이 피부 관리 필요한 직장 여성"
+        },
+        {
+          "headline": "피부과 전문 세럼 세트, 한정 할인!",
+          "primaryText": "피부 고민 끝! 안전한 저자극 포뮬러로 건강한 피부로 변신. 지금 구매하면 추가 할인!",
+          "description": "지금 바로 클릭!",
+          "callToAction": "즉시 구매",
+          "targetAudience": "민감피부로 고민하는 25-45세 여성"
+        },
+        {
+          "headline": "오늘만! 프리미엄 세트 특가",
+          "primaryText": "품절임박! 올인원 스킨케어 세트로 봄철 피부 완벽 케어. 늦기 전에 잡으세요!",
+          "description": "무료배송 혜택!",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "신학기 준비 중인 여성 직장인"
+        }
+      ],
+      "tokenUsage": 1531,
+      "createdAt": "2026-03-16T11:10:05.077Z"
+    },
+    {
+      "id": "result-1773659446526-yrra",
+      "variantId": "variant-5ee09ec7",
+      "industry": "ecommerce",
+      "score": 77,
+      "ruleScore": 36,
+      "llmScore": 41,
+      "status": "discard",
+      "description": "instruction style → loose",
+      "generatedCopy": [
+        {
+          "headline": "🌸새출발의 피부 비결, 여기있어요!",
+          "primaryText": "올 봄, 피부과 전문 올인원 세트로 민감피부를 촉촉하게! 지금 할인 중이에요.",
+          "description": "새학기 맞이 할인",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기 새출발을 준비하는 25-35세 여성"
+        },
+        {
+          "headline": "민감피부도 안심! 한정 할인 중",
+          "primaryText": "피부과 전문의와 개발한 저자극 세트, 잔여 수량 제한. 지금 바로 확인하세요.",
+          "description": "민감피부 안심 케어",
+          "callToAction": "더 알아보기",
+          "targetAudience": "피부 고민 많은 35-45세 여성 직장인"
+        },
+        {
+          "headline": "마지막 기회! 스킨케어 세트 특가",
+          "primaryText": "저자극 세럼, 크림, 토너로 완벽 케어. 오늘만 할인, 놓치지 마세요.",
+          "description": "오늘만 할인",
+          "callToAction": "지금 구매",
+          "targetAudience": "할인에 민감한 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1525,
+      "createdAt": "2026-03-16T11:10:46.526Z"
+    },
+    {
+      "id": "result-1773659488431-ryev",
+      "variantId": "variant-eb12578d",
+      "industry": "ecommerce",
+      "score": 74,
+      "ruleScore": 36,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "science context → 9개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "🌸봄맞이 할인! 프리미엄 스킨케어",
+          "primaryText": "신학기 맞이 특별 할인! 피부과 전문 개발 저자극 스킨케어 세트로 새출발 준비하세요.",
+          "description": "봄맞이 할인 중!",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기 준비하는 25-45세 여성"
+        },
+        {
+          "headline": "한정 수량! 인기 스킨케어 세트",
+          "primaryText": "민감 피부도 안심! 세럼, 크림, 토너까지 올인원 세트. 재고 소진 전 지금 구매하세요.",
+          "description": "한정 수량 판매 중",
+          "callToAction": "즉시 구매",
+          "targetAudience": "피부 고민 많은 직장 여성"
+        },
+        {
+          "headline": "피부과 개발 스킨케어 🔥특가 세일",
+          "primaryText": "민감 피부에도 안전한 저자극 스킨케어. 이번 기회 놓치지 마세요!",
+          "description": "피부과 전문 개발",
+          "callToAction": "할인 구매",
+          "targetAudience": "25-45세 민감 피부 여성"
+        }
+      ],
+      "tokenUsage": 1527,
+      "createdAt": "2026-03-16T11:11:28.431Z"
+    },
+    {
+      "id": "result-1773659530520-swmv",
+      "variantId": "variant-28720d1f",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "system role → consumer_psychologist",
+      "generatedCopy": [
+        {
+          "headline": "신학기 특가! 스킨케어 30% 할인",
+          "primaryText": "피부과 전문 스킨케어 세트, 민감피부도 안심! 봄맞이 한정 할인, 지금 바로 확인하세요!",
+          "description": "한정 특가, 지금 구매하세요!",
+          "callToAction": "지금 구매",
+          "targetAudience": "피부 고민 있는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "민감피부 필수템, 품절임박!",
+          "primaryText": "피부과 전문의와 공동 개발! 저자극 스킨케어로 새로운 시작을 준비하세요. 마지막 기회!",
+          "description": "마지막 재고 확인!",
+          "callToAction": "바로 구매",
+          "targetAudience": "피부가 민감한 25-45세 여성 직장인"
+        },
+        {
+          "headline": "봄맞이 피부과 스킨케어 세트!",
+          "primaryText": "세럼, 크림, 토너가 모두 하나에! 민감한 피부에도 안전하게. 지금만 할인 중!",
+          "description": "모두를 위한 피부케어",
+          "callToAction": "할인 구매",
+          "targetAudience": "새로운 스킨케어 찾는 25-45세 여성 직장인"
+        }
+      ],
+      "tokenUsage": 1530,
+      "createdAt": "2026-03-16T11:12:10.520Z"
+    },
+    {
+      "id": "result-1773659573219-6ef1",
+      "variantId": "variant-8f359b51",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "science context → 9개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "신학기 할인! 민감피부 스킨케어",
+          "primaryText": "새출발 맞이 20% 할인! 피부과 전문 세트로 건강한 피부 시작하세요. 지금 바로 구매.",
+          "description": "올인원 스킨케어 특가",
+          "callToAction": "지금 구매",
+          "targetAudience": "신학기 새출발을 준비하는 25-45세 여성"
+        },
+        {
+          "headline": "품절 전, 민감피부 맞춤 세럼!",
+          "primaryText": "피부과 전문의와 개발한 저자극 세럼 세트! 지금 구매하면 무료배송 혜택까지.",
+          "description": "한정 수량, 서두르세요",
+          "callToAction": "무료배송 받기",
+          "targetAudience": "피부 고민이 있는 직장인 여성"
+        },
+        {
+          "headline": "오늘만! 프리미엄 스킨케어 특가",
+          "primaryText": "세럼, 크림, 토너 3종 세트로 피부 고민 해결! 신학기 맞이 단 하루 특가, 놓치지 마세요.",
+          "description": "올인원 스킨케어 세트",
+          "callToAction": "특가 구매",
+          "targetAudience": "빠른 구매 결정을 원하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1529,
+      "createdAt": "2026-03-16T11:12:53.219Z"
+    },
+    {
+      "id": "result-1773659614385-crgf",
+      "variantId": "variant-4442210e",
+      "industry": "ecommerce",
+      "score": 78,
+      "ruleScore": 36,
+      "llmScore": 42,
+      "status": "discard",
+      "description": "system role → consumer_psychologist",
+      "generatedCopy": [
+        {
+          "headline": "민감피부를 위한 프리미엄 세트",
+          "primaryText": "피부과 전문의와 공동 개발, 민감피부 안전! 새출발 기념 한정 할인, 지금 구매하세요!",
+          "description": "피부과 전문 세트 할인",
+          "callToAction": "지금 구매",
+          "targetAudience": "피부에 민감한 25-45세 여성"
+        },
+        {
+          "headline": "🌸새학기, 피부도 새롭게!🌸",
+          "primaryText": "저자극 포뮬러, 세럼-크림-토너 3종! 새출발 할인 30%, 오늘만!",
+          "description": "새학기 특별 할인",
+          "callToAction": "할인 받기",
+          "targetAudience": "새학기를 맞이하는 25-45세 여성"
+        },
+        {
+          "headline": "품절주의! 마지막 100세트",
+          "primaryText": "피부과 개발 스킨케어, 민감피부도 OK! 지금 구매하지 않으면 놓칠지도!",
+          "description": "마지막 기회, 서두르세요",
+          "callToAction": "지금 확인",
+          "targetAudience": "스킨케어 제품에 관심 있는 직장인 여성"
+        }
+      ],
+      "tokenUsage": 1527,
+      "createdAt": "2026-03-16T11:13:34.385Z"
+    },
+    {
+      "id": "result-1773659655244-msyi",
+      "variantId": "variant-a987ae34",
+      "industry": "ecommerce",
+      "score": 79,
+      "ruleScore": 38,
+      "llmScore": 41,
+      "status": "discard",
+      "description": "few-shot strategy → hook",
+      "generatedCopy": [
+        {
+          "headline": "오늘만! 스킨케어 세트 특가",
+          "primaryText": "신학기, 새출발! 프리미엄 스킨케어로 피부를 새롭게. 민감피부도 안심! 지금 할인 중.",
+          "description": "세럼, 크림, 토너 세트",
+          "callToAction": "지금 구매",
+          "targetAudience": "새출발 준비하는 25-45세 여성"
+        },
+        {
+          "headline": "피부과 공동개발, 믿을 수 있는 세트",
+          "primaryText": "민감피부도 사용할 수 있는 저자극 스킨케어 세트! 피부 고민, 세럼과 크림으로 해결하세요. 한정 할인!",
+          "description": "피부 고민 해결, 할인 진행중",
+          "callToAction": "할인 받기",
+          "targetAudience": "피부 고민 많은 직장인 여성"
+        },
+        {
+          "headline": "스킨케어, 품절임박! 마지막 할인 기회",
+          "primaryText": "피부과 전문의가 추천하는 올인원 세트! 재고 한정, 할인 기회를 놓치지 마세요. 민감피부도 안전하게!",
+          "description": "마지막 세트 할인!",
+          "callToAction": "바로 구매",
+          "targetAudience": "신학기 피부 관리 원하는 여성"
+        }
+      ],
+      "tokenUsage": 1526,
+      "createdAt": "2026-03-16T11:14:15.244Z"
+    },
+    {
+      "id": "result-1773659696569-ts5o",
+      "variantId": "variant-a0ecad05",
+      "industry": "ecommerce",
+      "score": 81,
+      "ruleScore": 38,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "instruction style → moderate",
+      "generatedCopy": [
+        {
+          "headline": "새출발, 프리미엄 스킨케어 세트 할인!",
+          "primaryText": "피부과 전문의 개발 저자극 세럼 세트로 올봄 새로운 피부로! 지금 구매 시 특별 할인 혜택까지.",
+          "description": "민감 피부에 딱 맞는 선택",
+          "callToAction": "지금 구매",
+          "targetAudience": "피부 고민 있는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "마지막 기회! 프리미엄 스킨케어 20% 할인",
+          "primaryText": "봄맞이 피부 리셋! 민감 피부도 안심할 저자극 포뮬러. 한정 수량, 놓치지 마세요!",
+          "description": "지금 바로 경험해보세요",
+          "callToAction": "바로 구매",
+          "targetAudience": "피부 관리에 관심 많은 직장 여성"
+        },
+        {
+          "headline": "봄맞이 스킨케어 세트, 품절임박!",
+          "primaryText": "피부과 전문의와 공동 개발한 세럼, 크림, 토너로 간편하게 피부 케어. 지금 15% 할인 중!",
+          "description": "한정 수량, 서두르세요",
+          "callToAction": "지금 쇼핑",
+          "targetAudience": "새학기 맞이 피부 고민 해결 원하는 여성"
+        }
+      ],
+      "tokenUsage": 1527,
+      "createdAt": "2026-03-16T11:14:56.569Z"
+    },
+    {
+      "id": "result-1773659737881-1q09",
+      "variantId": "variant-dfbafd66",
+      "industry": "ecommerce",
+      "score": 75,
+      "ruleScore": 38,
+      "llmScore": 37,
+      "status": "discard",
+      "description": "temperature → 0.7",
+      "generatedCopy": [
+        {
+          "headline": "민감피부에도 안전한 스킨케어",
+          "primaryText": "피부과 전문 개발 올인원 세트! 새학기 준비, 지금 할인 중. 피부 고민 이제 끝!",
+          "description": "지금 구매하세요!",
+          "callToAction": "할인 구매",
+          "targetAudience": "25-45세 여성, 민감피부 고민 직장인"
+        },
+        {
+          "headline": "특가 할인! 피부과 추천 세럼 세트",
+          "primaryText": "새학기 대비, 민감피부도 안심! 한정 수량 할인 중. 품절되기 전에 잡아보세요.",
+          "description": "지금이 기회!",
+          "callToAction": "지금 확인",
+          "targetAudience": "25-45세 여성, 직장인, 할인 관심 고객"
+        },
+        {
+          "headline": "올인원 스킨케어 세트, 품절 임박!",
+          "primaryText": "피부과 전문의와 공동 개발! 민감피부에도 적합. 새출발 응원 할인, 서두르세요!",
+          "description": "마감 임박!",
+          "callToAction": "바로 구매",
+          "targetAudience": "25-45세 여성, 새출발 준비 중인 직장인"
+        }
+      ],
+      "tokenUsage": 1527,
+      "createdAt": "2026-03-16T11:15:37.881Z"
+    },
+    {
+      "id": "result-1773659779422-0g6h",
+      "variantId": "variant-ef8b5483",
+      "industry": "ecommerce",
+      "score": 74,
+      "ruleScore": 36,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "instruction style → moderate",
+      "generatedCopy": [
+        {
+          "headline": "신학기 특가! 스킨케어 할인 중",
+          "primaryText": "프리미엄 세트로 새출발 준비! 민감피부도 걱정 NO, 오늘만 할인 중!",
+          "description": "올인원 피부 케어",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기 맞이 피부 관리가 필요한 여성"
+        },
+        {
+          "headline": "피부과 공동개발 스킨케어 세트",
+          "primaryText": "전문가 추천 세럼, 크림, 토너 3종! 민감 피부에도 안전한 포뮬러, 한정 특가!",
+          "description": "안전한 저자극 케어",
+          "callToAction": "세트 구매하기",
+          "targetAudience": "피부 고민이 많은 직장인 여성"
+        },
+        {
+          "headline": "마지막 할인! 프리미엄 세트",
+          "primaryText": "민감 피부도 걱정 없이 사용! 피부과 전문의 공동 개발, 봄맞이 특가로 지금 바로!",
+          "description": "한정 수량 세일",
+          "callToAction": "할인 구매",
+          "targetAudience": "봄철 피부 관리에 신경 쓰는 여성"
+        }
+      ],
+      "tokenUsage": 1521,
+      "createdAt": "2026-03-16T11:16:19.422Z"
+    },
+    {
+      "id": "result-1773659821886-bdet",
+      "variantId": "variant-89edeb91",
+      "industry": "ecommerce",
+      "score": 79,
+      "ruleScore": 36,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "instruction style → moderate",
+      "generatedCopy": [
+        {
+          "headline": "새학기 맞이 스킨케어 30% 할인!",
+          "primaryText": "피부과 전문의와 개발한 저자극 세트로 새출발! 민감 피부도 OK, 지금 할인 중입니다.",
+          "description": "새학기, 새 피부 시작",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "새학기 새출발을 준비하는 직장인 여성"
+        },
+        {
+          "headline": "민감 피부의 구원, 세럼 세트",
+          "primaryText": "직장인 필수템! 피부과 개발로 안전한 3종 세트. 품절 전 지금 바로 확인하세요.",
+          "description": "안전한 피부 케어",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "민감 피부로 고민하는 25-45세 여성"
+        },
+        {
+          "headline": "오늘만! 프리미엄 세트 특가",
+          "primaryText": "피부 고민 해결! 저자극 3종 세트로 봄철 피부 케어를 완성하세요. 수량 제한!",
+          "description": "봄철 피부 케어 시작",
+          "callToAction": "특가 구매하기",
+          "targetAudience": "즉시 구매 욕구가 있는 직장인 여성"
+        }
+      ],
+      "tokenUsage": 1525,
+      "createdAt": "2026-03-16T11:17:01.886Z"
+    },
+    {
+      "id": "result-1773659862449-3av1",
+      "variantId": "variant-4dc19188",
+      "industry": "ecommerce",
+      "score": 74,
+      "ruleScore": 36,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "temperature → 0.7",
+      "generatedCopy": [
+        {
+          "headline": "올인원 스킨케어 세트 할인 중!",
+          "primaryText": "신학기 준비는 피부부터! 민감 피부도 안심, 피부과 전문 세트. 지금 할인 혜택 놓치지 마세요.",
+          "description": "피부 고민, 이제 끝!",
+          "callToAction": "지금 구매",
+          "targetAudience": "25-35세 직장인 여성"
+        },
+        {
+          "headline": "세럼 포함, 마감 임박! 🔥",
+          "primaryText": "민감 피부도 OK! 피부과 전문의가 만든 3종 세트. 지금 구매하면 특별 할인 적용!",
+          "description": "오늘만 할인!",
+          "callToAction": "세트 구매",
+          "targetAudience": "35-45세 여성, 피부 고민"
+        },
+        {
+          "headline": "피부과 전문 스킨케어, 신상 도착!",
+          "primaryText": "새출발을 위한 피부 솔루션! 세럼, 크림, 토너로 완벽 케어. 민감 피부도 안전한 포뮬러.",
+          "description": "지금 바로 체험!",
+          "callToAction": "할인 구매",
+          "targetAudience": "25-45세 여성, 민감 피부"
+        }
+      ],
+      "tokenUsage": 1527,
+      "createdAt": "2026-03-16T11:17:42.449Z"
+    },
+    {
+      "id": "result-1773659904486-2yaw",
+      "variantId": "variant-7c03ecbe",
+      "industry": "ecommerce",
+      "score": 83,
+      "ruleScore": 40,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "few-shot strategy → hook",
+      "generatedCopy": [
+        {
+          "headline": "민감피부를 위한 스킨케어 특가!",
+          "primaryText": "피부과 전문 세럼 & 크림 세트 할인! 지금 구매 시 봄 피부 고민 해결하세요.",
+          "description": "오늘만 특가!",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "25-45세 민감피부 직장 여성"
+        },
+        {
+          "headline": "피부과 세럼 세트 20% 할인",
+          "primaryText": "올 봄, 새롭게 출발하세요. 민감피부 안전한 저자극 포뮬러로 피부 고민 해결!",
+          "description": "재고 한정 세일",
+          "callToAction": "할인 받기",
+          "targetAudience": "피부 고민 있는 30대 여성"
+        },
+        {
+          "headline": "품절임박! 마지막 기회 세트",
+          "primaryText": "피부과와 공동 개발한 스킨케어 세트, 신학기 맞이 특별가로 만나보세요!",
+          "description": "지금 아니면 놓쳐요!",
+          "callToAction": "빠르게 구매하기",
+          "targetAudience": "새학기 준비하는 20대 여성"
+        }
+      ],
+      "tokenUsage": 1524,
+      "createdAt": "2026-03-16T11:18:24.486Z"
+    },
+    {
+      "id": "result-1773659945344-7h5w",
+      "variantId": "variant-191d3eb2",
+      "industry": "ecommerce",
+      "score": 78,
+      "ruleScore": 36,
+      "llmScore": 42,
+      "status": "discard",
+      "description": "science context → 9개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "세럼+크림+토너, 오늘만 20% 할인!",
+          "primaryText": "민감 피부도 OK! 피부과 전문의와 공동 개발. 새학기 새 피부로 시작하세요. 한정 할인 중!",
+          "description": "피부과 개발, 한정 할인",
+          "callToAction": "지금 구매하기",
+          "targetAudience": "피부 고민 있는 25-45세 여성 직장인"
+        },
+        {
+          "headline": "프리미엄 스킨케어, 품절 임박!",
+          "primaryText": "올인원 스킨케어 세트로 봄맞이 피부 케어! 수량 한정, 놓치면 아쉬워요.",
+          "description": "수량 한정, 지금 구매",
+          "callToAction": "바로 주문하기",
+          "targetAudience": "봄 시즌에 피부 관리를 시작하는 여성"
+        },
+        {
+          "headline": "신학기, 새출발! 특별 할인",
+          "primaryText": "민감 피부에도 안전한 세럼, 크림, 토너 세트. 지금 구매하면 특별 할인 혜택까지!",
+          "description": "신학기 특별 할인",
+          "callToAction": "지금 확인하기",
+          "targetAudience": "새학기, 새출발 준비하는 여성 직장인"
+        }
+      ],
+      "tokenUsage": 1531,
+      "createdAt": "2026-03-16T11:19:05.344Z"
+    },
+    {
+      "id": "result-1773659986407-sw50",
+      "variantId": "variant-fcc058ac",
+      "industry": "ecommerce",
+      "score": 78,
+      "ruleScore": 40,
+      "llmScore": 38,
+      "status": "discard",
+      "description": "science context → 9개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "신학기 할인! 스킨케어 세트 🌸",
+          "primaryText": "민감피부에 안전한 저자극 세럼 포함. 지금 구매 시 특별 할인 혜택! 피부과 전문이 추천합니다.",
+          "description": "새 출발, 건강한 피부로",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기를 준비하는 직장인 여성"
+        },
+        {
+          "headline": "한정 수량, 올인원 스킨케어 특가",
+          "primaryText": "피부과와 공동 개발한 세트, 마지막 기회! 민감피부도 안심. 품절 전 서두르세요!",
+          "description": "피부 고민, 해결하세요",
+          "callToAction": "바로 확인",
+          "targetAudience": "피부 고민 해결을 원하는 25-45세 여성"
+        },
+        {
+          "headline": "봄맞이 스킨케어 세트 할인!",
+          "primaryText": "저자극 포뮬러로 민감피부에도 안전한 세럼, 크림, 토너! 지금 구매하면 특별 할인 적용.",
+          "description": "피부과 전문이 추천",
+          "callToAction": "세트 구매",
+          "targetAudience": "피부 관리에 관심 있는 30대 여성"
+        }
+      ],
+      "tokenUsage": 1529,
+      "createdAt": "2026-03-16T11:19:46.407Z"
+    },
+    {
+      "id": "result-1773660027579-o5bz",
+      "variantId": "variant-0193a30a",
+      "industry": "ecommerce",
+      "score": 78,
+      "ruleScore": 36,
+      "llmScore": 42,
+      "status": "discard",
+      "description": "science context → 9개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "새학기, 피부 변화를 시작하세요!",
+          "primaryText": "피부과 전문의와 개발한 세트로 새출발. 오늘 구매 시 추가 할인!",
+          "description": "올인원 스킨케어 할인",
+          "callToAction": "지금 할인 받기",
+          "targetAudience": "새학기 새출발을 준비하는 여성 직장인"
+        },
+        {
+          "headline": "민감피부 맞춤! 세럼 3종 세트 할인",
+          "primaryText": "저자극 포뮬러로 피부 고민 해결! 지금 구매 시 한정 특가 혜택.",
+          "description": "피부과 개발, 민감피부 안심",
+          "callToAction": "바로 구매하기",
+          "targetAudience": "민감피부로 고민하는 25-45세 여성"
+        },
+        {
+          "headline": "한정 세일 🔥 지금이 기회!",
+          "primaryText": "3종 세트로 피부 문제 해결! 품절되기 전 서두르세요.",
+          "description": "피부과 공동 개발 세트",
+          "callToAction": "서둘러 구매",
+          "targetAudience": "피부 고민 있는 직장 여성"
+        }
+      ],
+      "tokenUsage": 1526,
+      "createdAt": "2026-03-16T11:20:27.579Z"
+    },
+    {
+      "id": "result-1773660068123-2owo",
+      "variantId": "variant-f4f23413",
+      "industry": "ecommerce",
+      "score": 79,
+      "ruleScore": 38,
+      "llmScore": 41,
+      "status": "discard",
+      "description": "temperature → 1",
+      "generatedCopy": [
+        {
+          "headline": "🌸신학기, 피부 리셋하자!",
+          "primaryText": "민감피부도 OK! 피부과 개발 올인원 세트로 새출발. 오늘 구매 시 15% 할인!",
+          "description": "피부과 개발 스킨케어",
+          "callToAction": "지금 쇼핑",
+          "targetAudience": "신학기 새출발을 준비하는 직장인 여성"
+        },
+        {
+          "headline": "마지막 100세트! 품절임박",
+          "primaryText": "피부과 공동개발 스킨케어 세트, 민감피부도 안전! 지금 바로 20% 할인 혜택을 누리세요.",
+          "description": "할인 종료 임박!",
+          "callToAction": "할인 받기",
+          "targetAudience": "피부 고민이 있는 25-45세 여성"
+        },
+        {
+          "headline": "피부 고민, 지금 해결하세요!",
+          "primaryText": "세럼부터 크림까지, 올인원 스킨케어로 간편 관리. 봄맞이 특별 할인 중!",
+          "description": "봄맞이 특별 할인",
+          "callToAction": "구매하기",
+          "targetAudience": "간편한 피부 관리를 원하는 여성 직장인"
+        }
+      ],
+      "tokenUsage": 1526,
+      "createdAt": "2026-03-16T11:21:08.123Z"
+    },
+    {
+      "id": "result-1773660109513-ty1q",
+      "variantId": "variant-99a3cafe",
+      "industry": "ecommerce",
+      "score": 79,
+      "ruleScore": 36,
+      "llmScore": 43,
+      "status": "discard",
+      "description": "science context → 9개 도메인",
+      "generatedCopy": [
+        {
+          "headline": "오늘만! 스킨케어 3종 세트 할인",
+          "primaryText": "새 출발의 계절, 피부도 새롭게! 민감피부도 안심할 수 있는 올인원 스킨케어 세트, 오늘만 특가로 만나보세요!",
+          "description": "올인원 스킨케어 할인",
+          "callToAction": "지금 구매",
+          "targetAudience": "새학기 준비 중인 25-45세 여성 직장인"
+        },
+        {
+          "headline": "🔔피부과 개발, 품절임박 스킨케어",
+          "primaryText": "피부 고민 끝! 피부과 전문의와 개발한 세럼, 크림, 토너 3종. 민감피부에 최적화된 포뮬러로 안전하게 관리하세요.",
+          "description": "마지막 기회",
+          "callToAction": "바로 확인",
+          "targetAudience": "민감피부 고민 많은 직장 여성"
+        },
+        {
+          "headline": "프리미엄 스킨케어 세트 특가!",
+          "primaryText": "올 봄, 피부도 새출발! 민감피부에도 안전한 세럼, 크림, 토너 3종 세트, 지금 특별 할인 중입니다.",
+          "description": "지금이 기회!",
+          "callToAction": "할인 구매",
+          "targetAudience": "새로운 시작을 준비하는 25-45세 여성"
+        }
+      ],
+      "tokenUsage": 1532,
+      "createdAt": "2026-03-16T11:21:49.513Z"
+    }
+  ],
+  "totalTokensUsed": 137104,
+  "totalDurationMs": 3607051,
+  "totalIterations": 87,
+  "improvementFromBaseline": 3.75
+}

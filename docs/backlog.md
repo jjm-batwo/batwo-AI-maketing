@@ -10,7 +10,7 @@
 | # | 항목 | 블로킹 조건 | 승격 기준 | 등록일 |
 |---|------|-----------|----------|--------|
 | 1 | PPR(Partial Prerendering) 활성화 검토 | Turbopack + PPR 안정화 필요 | Next.js 릴리즈 노트에서 PPR stable 확인 | 2026-02-12 |
-| 2 | `unstable_cache` → `'use cache'` 전환 | dynamicIO 활성화 필요 | Next.js에서 dynamicIO stable 확인 | 2026-02-12 |
+| ~~2~~ | ~~`unstable_cache` → `'use cache'` 전환~~ | ✅ 완료 — 사용처 0건, 전환 불필요 | - | 2026-02-12 |
 | 3 | Playwright MCP 스크린샷 타임아웃 근본 해결 | MCP 타임아웃 설정 미지원 | Playwright MCP에 타임아웃 옵션 추가 시 | 2026-02-12 |
 | 4 | M-6 토스페이먼츠 SDK: `NEXT_PUBLIC_TOSS_CLIENT_KEY` 환경변수 설정 | 토스페이먼츠 심사 진행 중, 클라이언트 키 미발급 | 토스페이먼츠 심사 완료 후 키 발급 시 | 2026-03-13 |
 
@@ -33,3 +33,8 @@
 | 13 | SSE eventsource-parser 도입 | `src/presentation/hooks/useAgentChat.ts` | TCP 패킷 분할 시 JSON 파싱 실패 방지 | 2026-02-25 |
 | 14 | `meta-warmup/route.ts:176` accessToken 변수명 명확화 | `src/app/api/meta/meta-warmup/route.ts` | verify-token-encryption WARN | 2026-02-27 |
 | 15 | `INTEGRATION_EXAMPLE.tsx` 'use client' 지시어 추가 | `src/presentation/components/INTEGRATION_EXAMPLE.tsx` | verify-ui-components WARN | 2026-02-27 |
+| 16 | Phase 3 - Feature 10: AI 크리에이티브 생성 | `src/application/use-cases/creative/` | 작업 범위 대형, 우선순위 보류 | 2026-03-12 |
+| 17 | 대규모 광고주 계정 연동 시 가상화(Virtualization) 로직 추가 | `src/presentation/components/campaign/` | 대량 데이터 렌더링 성능 | 2026-03-12 |
+| 18 | IDE TSConfig 경로 alias 미인식 건 일괄 처리 | `tsconfig.json` | 개발 편의성 | 2026-03-12 |
+| 19 | RAG 도메인 분석기 DI 자동 등록 구조 개편 | `src/infrastructure/knowledge/analyzers/`, `src/lib/di/` | 분석기 추가 시 수동 등록 제거 | 2026-03-12 |
+| 20 | SEC-09: Credentials Provider 비밀번호 해시 검증 | `src/infrastructure/auth/auth.ts` | 의도적 보류 (소셜 로그인 우선) | 2026-03-12 |

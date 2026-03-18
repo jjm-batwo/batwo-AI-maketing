@@ -27,6 +27,12 @@ export class PrismaAdRepository implements IAdRepository {
     return ads.map(AdMapper.toDomain)
   }
 
+  async findByMetaAdId(metaAdId: string): Promise<Ad | null> {
+    const ad = await this.prisma.ad.findFirst({ where: { metaAdId } })
+    if (!ad) return null
+    return AdMapper.toDomain(ad)
+  }
+
   async update(ad: Ad): Promise<Ad> {
     const data = AdMapper.toUpdateInput(ad)
     const updated = await this.prisma.ad.update({

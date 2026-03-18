@@ -4,6 +4,7 @@ export interface IAdRepository {
   save(ad: Ad): Promise<Ad>
   findById(id: string): Promise<Ad | null>
   findByAdSetId(adSetId: string): Promise<Ad[]>
+  findByMetaAdId(metaAdId: string): Promise<Ad | null>
   update(ad: Ad): Promise<Ad>
   delete(id: string): Promise<void>
 }

@@ -115,6 +115,10 @@ export const DI_TOKENS = {
   DeleteAdSetUseCase: Symbol.for('DeleteAdSetUseCase'),
   ListAdSetsUseCase: Symbol.for('ListAdSetsUseCase'),
 
+  // Ad KPI (Phase 1: Report Enhancement)
+  AdKPIRepository: Symbol.for('AdKPIRepository'),
+  SyncAdInsightsUseCase: Symbol.for('SyncAdInsightsUseCase'),
+
   // Ad
   AdRepository: Symbol.for('AdRepository'),
   CreateAdUseCase: Symbol.for('CreateAdUseCase'),

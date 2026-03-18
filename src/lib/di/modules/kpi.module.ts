@@ -9,12 +9,14 @@ import { DI_TOKENS } from '../types'
 
 // Repository interfaces
 import type { IKPIRepository } from '@domain/repositories/IKPIRepository'
+import type { IAdKPIRepository } from '@domain/repositories/IAdKPIRepository'
 import type { IInsightHistoryRepository } from '@domain/repositories/IInsightHistoryRepository'
 import type { IAIService } from '@application/ports/IAIService'
 import type { ICacheService } from '@application/ports/ICacheService'
 
 // Infrastructure implementations
 import { PrismaKPIRepository } from '@infrastructure/database/repositories/PrismaKPIRepository'
+import { PrismaAdKPIRepository } from '@infrastructure/database/repositories/PrismaAdKPIRepository'
 import { PrismaInsightHistoryRepository } from '@infrastructure/database/repositories/PrismaInsightHistoryRepository'
 
 // Application services
@@ -26,6 +28,7 @@ import { GetDashboardKPIUseCase } from '@application/use-cases/kpi/GetDashboardK
 import { GetLiveDashboardKPIUseCase } from '@application/use-cases/kpi/GetLiveDashboardKPIUseCase'
 import { SyncMetaInsightsUseCase } from '@application/use-cases/kpi/SyncMetaInsightsUseCase'
 import { SyncAllInsightsUseCase } from '@application/use-cases/kpi/SyncAllInsightsUseCase'
+import { SyncAdInsightsUseCase } from '@application/use-cases/kpi/SyncAdInsightsUseCase'
 
 import { prisma } from '@/lib/prisma'
 
@@ -95,6 +98,23 @@ export function registerKPIModule(container: Container): void {
       new SyncAllInsightsUseCase(
         container.resolve(DI_TOKENS.CampaignRepository),
         container.resolve(DI_TOKENS.KPIRepository),
+        container.resolve(DI_TOKENS.MetaAdsService),
+        container.resolve(DI_TOKENS.MetaAdAccountRepository)
+      )
+  )
+
+  // --- Ad KPI (Phase 1: Report Enhancement) ---
+  container.registerSingleton<IAdKPIRepository>(
+    DI_TOKENS.AdKPIRepository,
+    () => new PrismaAdKPIRepository(prisma)
+  )
+
+  container.register(
+    DI_TOKENS.SyncAdInsightsUseCase,
+    () =>
+      new SyncAdInsightsUseCase(
+        container.resolve(DI_TOKENS.AdKPIRepository),
+        container.resolve(DI_TOKENS.AdRepository),
         container.resolve(DI_TOKENS.MetaAdsService),
         container.resolve(DI_TOKENS.MetaAdAccountRepository)
       )
