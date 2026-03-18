@@ -153,6 +153,40 @@ function formatCurrency(num: number): string {
   return new Intl.NumberFormat('ko-KR').format(Math.round(num)) + '원'
 }
 
+const OBJECTIVE_LABELS: Record<string, string> = {
+  CONVERSIONS: '전환',
+  AWARENESS: '인지도',
+  BRAND_AWARENESS: '브랜드 인지도',
+  REACH: '도달',
+  TRAFFIC: '트래픽',
+  ENGAGEMENT: '참여',
+  LEAD_GENERATION: '잠재고객',
+  APP_PROMOTION: '앱 프로모션',
+  SALES: '판매',
+  OUTCOME_SALES: '판매',
+  OUTCOME_LEADS: '잠재고객',
+  OUTCOME_AWARENESS: '인지도',
+  OUTCOME_TRAFFIC: '트래픽',
+  OUTCOME_ENGAGEMENT: '참여',
+}
+
+const FORMAT_LABELS: Record<string, string> = {
+  SINGLE_IMAGE: '이미지',
+  SINGLE_VIDEO: '동영상',
+  CAROUSEL: '카루셀',
+  REELS: '릴스',
+  COLLECTION: '컬렉션',
+  DYNAMIC: '다이나믹',
+}
+
+function objectiveLabel(objective: string): string {
+  return OBJECTIVE_LABELS[objective] ?? objective
+}
+
+function formatLabel(format: string): string {
+  return FORMAT_LABELS[format] ?? format
+}
+
 interface EnhancedWeeklyReportTemplateProps {
   report: ReportDTO
 }
@@ -256,7 +290,7 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
               {campaignPerformance.campaigns.map((c, idx) => (
                 <View key={c.campaignId} style={[styles.tableRow, idx % 2 === 1 && styles.tableRowAlt]}>
                   <Text style={[styles.tableCell, { width: '25%' }]}>{c.name}</Text>
-                  <Text style={[styles.tableCell, { width: '12%' }]}>{c.objective}</Text>
+                  <Text style={[styles.tableCell, { width: '12%' }]}>{objectiveLabel(c.objective)}</Text>
                   <Text style={[styles.tableCell, { width: '13%' }]}>{formatCurrency(c.spend)}</Text>
                   <Text style={[styles.tableCell, { width: '13%' }]}>{formatCurrency(c.revenue)}</Text>
                   <Text style={[styles.tableCell, { width: '10%' }]}>{c.roas.toFixed(2)}x</Text>
@@ -290,7 +324,7 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
               {creativePerformance.creatives.map((c, idx) => (
                 <View key={c.creativeId} style={[styles.tableRow, idx % 2 === 1 && styles.tableRowAlt]}>
                   <Text style={[styles.tableCell, { width: '22%' }]}>{c.name}</Text>
-                  <Text style={[styles.tableCell, { width: '12%' }]}>{c.format}</Text>
+                  <Text style={[styles.tableCell, { width: '12%' }]}>{formatLabel(c.format)}</Text>
                   <Text style={[styles.tableCell, { width: '13%' }]}>{formatCurrency(c.spend)}</Text>
                   <Text style={[styles.tableCell, { width: '13%' }]}>{formatCurrency(c.revenue)}</Text>
                   <Text style={[styles.tableCell, { width: '10%' }]}>{c.roas.toFixed(2)}x</Text>

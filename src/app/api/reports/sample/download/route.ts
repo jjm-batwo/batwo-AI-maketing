@@ -76,9 +76,13 @@ export async function GET(request: Request) {
       }
     }
 
+    // ₩ 기호를 "원"으로 치환 (PDF 폰트에서 깨짐 방지)
+    const sanitized = JSON.parse(JSON.stringify(sampleReport).replace(/₩/g, ''))
+    // 금액 뒤에 "원" 붙이기 보정: AI 응답에서 "₩1,250,000" → "1,250,000" 된 것 확인
+
     // PDF 생성
     const generator = new ReportPDFGenerator()
-    const result = await generator.generateWeeklyReport(sampleReport)
+    const result = await generator.generateWeeklyReport(sanitized)
 
     // Buffer를 Uint8Array로 변환하여 NextResponse에 전달
     const uint8Array = new Uint8Array(result.buffer)
