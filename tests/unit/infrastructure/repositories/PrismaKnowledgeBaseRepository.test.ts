@@ -81,7 +81,11 @@ describe('PrismaKnowledgeBaseRepository', () => {
 
             await repo.bulkInsert(docs)
 
-            expect(mockPrisma.$executeRawUnsafe).toHaveBeenCalledTimes(2)
+            // 배치 INSERT: 2개 문서를 단일 SQL로 삽입 (N+1 제거)
+            expect(mockPrisma.$executeRawUnsafe).toHaveBeenCalledTimes(1)
+            const callArgs = (mockPrisma.$executeRawUnsafe as ReturnType<typeof vi.fn>).mock.calls[0]
+            expect(callArgs[0]).toContain('INSERT INTO')
+            expect(callArgs[0]).toContain('knowledge_documents')
         })
 
         it('should_handle_empty_array', async () => {
