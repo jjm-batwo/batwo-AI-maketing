@@ -257,7 +257,7 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
               <Text style={[styles.tableCellHeader, { width: '12%' }]}>전환</Text>
             </View>
             {dailyTrend.days.map((d, idx) => (
-              <View key={d.date} style={[styles.tableRow, idx % 2 === 1 && styles.tableRowAlt]}>
+              <View key={d.date} style={[styles.tableRow, ...(idx % 2 === 1 ? [styles.tableRowAlt] : [])]}>
                 <Text style={[styles.tableCell, { width: '15%' }]}>{d.date.slice(5)}</Text>
                 <Text style={[styles.tableCell, { width: '17%' }]}>{formatCurrency(d.spend)}</Text>
                 <Text style={[styles.tableCell, { width: '17%' }]}>{formatCurrency(d.revenue)}</Text>
@@ -290,7 +290,7 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
                 <Text style={[styles.tableCellHeader, { width: '9%' }]}>상태</Text>
               </View>
               {campaignPerformance.campaigns.map((c, idx) => (
-                <View key={c.campaignId} style={[styles.tableRow, idx % 2 === 1 && styles.tableRowAlt]}>
+                <View key={c.campaignId} style={[styles.tableRow, ...(idx % 2 === 1 ? [styles.tableRowAlt] : [])]}>
                   <Text style={[styles.tableCell, { width: '25%' }]}>{c.name}</Text>
                   <Text style={[styles.tableCell, { width: '12%' }]}>{objectiveLabel(c.objective)}</Text>
                   <Text style={[styles.tableCell, { width: '13%' }]}>{formatCurrency(c.spend)}</Text>
@@ -324,7 +324,7 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
                 <Text style={[styles.tableCellHeader, { width: '10%' }]}>전환</Text>
               </View>
               {creativePerformance.creatives.map((c, idx) => (
-                <View key={c.creativeId} style={[styles.tableRow, idx % 2 === 1 && styles.tableRowAlt]}>
+                <View key={c.creativeId} style={[styles.tableRow, ...(idx % 2 === 1 ? [styles.tableRowAlt] : [])]}>
                   <Text style={[styles.tableCell, { width: '22%' }]}>{c.name}</Text>
                   <Text style={[styles.tableCell, { width: '12%' }]}>{formatLabel(c.format)}</Text>
                   <Text style={[styles.tableCell, { width: '13%' }]}>{formatCurrency(c.spend)}</Text>

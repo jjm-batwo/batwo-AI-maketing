@@ -51,7 +51,6 @@ const styles = StyleSheet.create({
   },
   recommendation: {
     fontSize: 9,
-    color: '#475569',
     color: '#64748b',
   },
 })

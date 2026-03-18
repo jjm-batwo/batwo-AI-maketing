@@ -55,10 +55,10 @@ export async function GET(request: Request) {
             summary: result.summary,
             positiveFactors: (result.insights ?? [])
               .filter(i => i.type === 'performance' || i.type === 'trend')
-              .map(i => ({ title: i.title, description: i.description, impact: i.importance ?? 'medium' })),
+              .map(i => ({ title: i.title, description: i.description, impact: (i.importance === 'critical' ? 'high' : i.importance ?? 'medium') as 'high' | 'medium' | 'low' })),
             negativeFactors: (result.insights ?? [])
               .filter(i => i.type === 'anomaly' || i.type === 'recommendation')
-              .map(i => ({ title: i.title, description: i.description, impact: i.importance ?? 'medium' })),
+              .map(i => ({ title: i.title, description: i.description, impact: (i.importance === 'critical' ? 'high' : i.importance ?? 'medium') as 'high' | 'medium' | 'low' })),
           },
           recommendations: {
             actions: (result.actionItems ?? []).map(item => ({
