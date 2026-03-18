@@ -51,13 +51,15 @@ describe('AnomalyDetectionService — Statistical Utilities', () => {
   describe('calculateStdDev', () => {
     it('should calculate standard deviation', () => {
       const values = [10, 12, 23, 23, 16, 23, 21, 16]
-      const stdDev = calculateStdDev(values)
+      const mean = calculateMean(values)
+      const stdDev = calculateStdDev(values, mean)
       expect(stdDev).toBeGreaterThan(0)
       expect(stdDev).toBeLessThan(10)
     })
 
     it('should return 0 for identical values', () => {
-      expect(calculateStdDev([5, 5, 5, 5])).toBe(0)
+      const mean = calculateMean([5, 5, 5, 5])
+      expect(calculateStdDev([5, 5, 5, 5], mean)).toBe(0)
     })
   })
 
@@ -105,17 +107,17 @@ describe('AnomalyDetectionService — Statistical Utilities', () => {
   describe('detectTrend', () => {
     it('should detect upward trend', () => {
       const trend = detectTrend([10, 20, 30, 40, 50, 60, 70])
-      expect(trend.direction).toBe('up')
+      expect(trend).toBe('increasing')
     })
 
     it('should detect downward trend', () => {
       const trend = detectTrend([70, 60, 50, 40, 30, 20, 10])
-      expect(trend.direction).toBe('down')
+      expect(trend).toBe('decreasing')
     })
 
-    it('should detect flat trend', () => {
+    it('should detect stable trend', () => {
       const trend = detectTrend([50, 51, 49, 50, 51, 49, 50])
-      expect(trend.direction).toBe('flat')
+      expect(trend).toBe('stable')
     })
   })
 })
@@ -256,8 +258,7 @@ describe('AnomalyDetectionService — Threshold Validation', () => {
                        2.5, 2.4, 2.3, 2.1, 2.0, 1.9, 1.8]
       const trend = detectTrend(ctrData)
 
-      expect(trend.direction).toBe('down')
-      expect(Math.abs(trend.slope)).toBeGreaterThan(0)
+      expect(trend).toBe('decreasing')
     })
 
     it('ROAS dip during Korean holiday should be within adjusted threshold', () => {

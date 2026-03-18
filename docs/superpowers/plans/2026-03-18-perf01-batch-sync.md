@@ -42,6 +42,7 @@ const mockCampaignRepo = {
 
 const mockKPIRepo = {
   save: vi.fn(),
+  saveMany: vi.fn(),
 } as unknown as IKPIRepository
 
 const mockMetaAds = {
@@ -112,7 +113,7 @@ describe('SyncAllInsightsUseCase', () => {
       }],
     ])
     vi.mocked(mockMetaAds.getAccountInsights).mockResolvedValue(insightsMap)
-    vi.mocked(mockKPIRepo.save).mockResolvedValue({} as any)
+    vi.mocked(mockKPIRepo.saveMany).mockResolvedValue([] as any)
 
     const result = await useCase.execute({ userId: 'user-1', datePreset: 'last_7d' })
 
@@ -131,7 +132,10 @@ describe('SyncAllInsightsUseCase', () => {
     // 3 daily records saved (2 for c1, 1 for c2)
     expect(result.synced).toBe(3)
     expect(result.total).toBe(2) // 2 meta campaigns
-    expect(mockKPIRepo.save).toHaveBeenCalledTimes(3)
+    expect(mockKPIRepo.saveMany).toHaveBeenCalledTimes(1)
+    expect(mockKPIRepo.saveMany).toHaveBeenCalledWith(expect.arrayContaining([
+      expect.objectContaining({ campaignId: 'local-c1' }),
+    ]))
   })
 
   it('should skip campaigns without metaCampaignId', async () => {
@@ -241,13 +245,14 @@ export class SyncAllInsightsUseCase {
         }
       )
 
-      // Save each daily KPI record
+      // Build KPI records and batch save
+      const kpisToSave: import('@domain/entities/KPI').KPI[] = []
       for (const [, insight] of insightsMap) {
         const localCampaignId = metaToLocalMap.get(insight.campaignId)
         if (!localCampaignId) continue
 
         try {
-          const kpi = KPI.create({
+          kpisToSave.push(KPI.create({
             campaignId: localCampaignId,
             impressions: insight.impressions,
             clicks: insight.clicks,
@@ -256,10 +261,7 @@ export class SyncAllInsightsUseCase {
             spend: Money.create(Math.round(insight.spend), 'KRW'),
             revenue: Money.create(Math.round(insight.revenue), 'KRW'),
             date: new Date(insight.dateStart + 'T00:00:00.000Z'),
-          })
-
-          await this.kpiRepository.save(kpi)
-          result.synced++
+          }))
         } catch (error) {
           result.failed++
           result.errors.push({
@@ -267,6 +269,11 @@ export class SyncAllInsightsUseCase {
             error: error instanceof Error ? error.message : 'Unknown error',
           })
         }
+      }
+
+      if (kpisToSave.length > 0) {
+        await this.kpiRepository.saveMany(kpisToSave)
+        result.synced = kpisToSave.length
       }
     } catch (error) {
       console.error('[SyncInsights] Bulk sync failed:', error)
