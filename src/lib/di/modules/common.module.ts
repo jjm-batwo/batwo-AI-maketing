@@ -17,7 +17,7 @@ import type { IPromptTemplateService } from '@application/ports/IPromptTemplateS
 import type { IFallbackResponseService } from '@application/ports/IFallbackResponseService'
 import type { IFewShotExampleRegistry } from '@application/ports/IFewShotExampleRegistry'
 import type { IEmailService } from '@application/ports/IEmailService'
-import type { IReportPDFGenerator } from '@infrastructure/pdf/ReportPDFGenerator'
+import type { IReportPDFGenerator } from '@application/ports/IReportPDFGenerator'
 import type { IBlobStorageService } from '@infrastructure/storage/BlobStorageService'
 import type { IKnowledgeBaseService } from '@application/ports/IKnowledgeBaseService'
 import type { IResearchService } from '@application/ports/IResearchService'

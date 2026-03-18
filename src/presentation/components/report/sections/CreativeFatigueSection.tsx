@@ -9,7 +9,11 @@ const LEVEL_STYLES: Record<FatigueLevel, { bg: string; text: string; label: stri
   critical: { bg: 'bg-red-100', text: 'text-red-800', label: '위험' },
 }
 
-export function CreativeFatigueSection({ data }: { data: FatigueData }) {
+interface CreativeFatigueSectionProps {
+  data: FatigueData
+}
+
+export function CreativeFatigueSection({ data }: CreativeFatigueSectionProps) {
   if (data.creatives.length === 0) return null
 
   return (

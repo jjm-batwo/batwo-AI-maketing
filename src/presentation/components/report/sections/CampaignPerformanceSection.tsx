@@ -3,7 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { CampaignPerformanceSection as CampaignData } from '@application/dto/report/EnhancedReportSections'
 
-export function CampaignPerformanceSection({ data }: { data: CampaignData }) {
+interface CampaignPerformanceSectionProps {
+  data: CampaignData
+}
+
+export function CampaignPerformanceSection({ data }: CampaignPerformanceSectionProps) {
   if (data.campaigns.length === 0) return null
 
   return (

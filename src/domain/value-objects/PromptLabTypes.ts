@@ -2,6 +2,7 @@
 import type { KnowledgeDomain } from '@domain/value-objects/MarketingScience'
 import { ALL_KNOWLEDGE_DOMAINS } from '@domain/value-objects/MarketingScience'
 import type { Industry } from '@domain/value-objects/Industry'
+// TODO: extract to domain layer — GenerateAdCopyInput and AdCopyVariant should live in domain, not application/ports
 import type { GenerateAdCopyInput, AdCopyVariant } from '@application/ports/IAIService'
 
 export interface PromptVariant {

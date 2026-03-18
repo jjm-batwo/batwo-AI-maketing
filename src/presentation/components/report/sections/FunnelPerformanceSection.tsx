@@ -3,7 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { FunnelPerformanceSection as FunnelData } from '@application/dto/report/EnhancedReportSections'
 
-export function FunnelPerformanceSection({ data }: { data: FunnelData }) {
+interface FunnelPerformanceSectionProps {
+  data: FunnelData
+}
+
+export function FunnelPerformanceSection({ data }: FunnelPerformanceSectionProps) {
   if (data.stages.length === 0) return null
 
   return (

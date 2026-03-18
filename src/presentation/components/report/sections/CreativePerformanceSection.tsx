@@ -3,7 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { CreativePerformanceSection as CreativeData } from '@application/dto/report/EnhancedReportSections'
 
-export function CreativePerformanceSection({ data }: { data: CreativeData }) {
+interface CreativePerformanceSectionProps {
+  data: CreativeData
+}
+
+export function CreativePerformanceSection({ data }: CreativePerformanceSectionProps) {
   if (data.creatives.length === 0) return null
 
   return (

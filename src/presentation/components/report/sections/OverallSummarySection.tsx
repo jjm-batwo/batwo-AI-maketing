@@ -23,7 +23,11 @@ function formatWon(value: number): string {
   return value.toLocaleString('ko-KR')
 }
 
-export function OverallSummarySection({ data }: { data: OverallSummaryData }) {
+interface OverallSummarySectionProps {
+  data: OverallSummaryData
+}
+
+export function OverallSummarySection({ data }: OverallSummarySectionProps) {
   const metrics = [
     { label: '총 지출', value: `${formatWon(data.totalSpend)}원`, change: data.changes.spend },
     { label: '총 매출', value: `${formatWon(data.totalRevenue)}원`, change: data.changes.revenue },

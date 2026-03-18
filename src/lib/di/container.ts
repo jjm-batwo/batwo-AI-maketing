@@ -52,7 +52,7 @@ import type { ICacheService } from '@application/ports/ICacheService'
 import type { IKnowledgeBaseService } from '@application/ports/IKnowledgeBaseService'
 import type { IResearchService } from '@application/ports/IResearchService'
 import type { IEmailService } from '@application/ports/IEmailService'
-import type { IReportPDFGenerator } from '@infrastructure/pdf/ReportPDFGenerator'
+import type { IReportPDFGenerator } from '@application/ports/IReportPDFGenerator'
 import type { IToolRegistry } from '@application/ports/IConversationalAgent'
 import type { IGuideQuestionService } from '@application/ports/IGuideQuestionService'
 

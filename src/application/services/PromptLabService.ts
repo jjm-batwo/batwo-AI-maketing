@@ -1,5 +1,6 @@
 // src/application/services/PromptLabService.ts
 import type { AdCopyVariant } from '@application/ports/IAIService'
+// TODO: create port interfaces in @application/ports/ for PromptLabEvaluator, PromptLabMutator, PromptLabAIAdapter
 import type { PromptLabEvaluator } from '@infrastructure/prompt-lab/PromptLabEvaluator'
 import type { PromptLabMutator } from '@infrastructure/prompt-lab/PromptLabMutator'
 import type { PromptLabAIAdapter } from '@infrastructure/prompt-lab/PromptLabAIAdapter'

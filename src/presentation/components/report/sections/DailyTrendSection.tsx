@@ -3,7 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { DailyTrendSection as TrendData } from '@application/dto/report/EnhancedReportSections'
 
-export function DailyTrendSection({ data }: { data: TrendData }) {
+interface DailyTrendSectionProps {
+  data: TrendData
+}
+
+export function DailyTrendSection({ data }: DailyTrendSectionProps) {
   if (data.days.length === 0) return null
 
   return (

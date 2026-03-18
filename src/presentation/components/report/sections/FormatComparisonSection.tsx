@@ -3,7 +3,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import type { FormatComparisonSection as FormatData } from '@application/dto/report/EnhancedReportSections'
 
-export function FormatComparisonSection({ data }: { data: FormatData }) {
+interface FormatComparisonSectionProps {
+  data: FormatData
+}
+
+export function FormatComparisonSection({ data }: FormatComparisonSectionProps) {
   if (data.formats.length === 0) return null
 
   return (

@@ -13,7 +13,11 @@ const CATEGORY_LABELS: Record<string, string> = {
   budget: '예산', creative: '소재', targeting: '타겟팅', funnel: '퍼널', general: '일반',
 }
 
-export function RecommendationsSection({ data }: { data: RecsData }) {
+interface RecommendationsSectionProps {
+  data: RecsData
+}
+
+export function RecommendationsSection({ data }: RecommendationsSectionProps) {
   if (data.actions.length === 0) return null
 
   return (

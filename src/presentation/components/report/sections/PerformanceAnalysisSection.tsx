@@ -10,7 +10,11 @@ const IMPACT_STYLES = {
   low: 'border-l-4 border-l-blue-500',
 }
 
-export function PerformanceAnalysisSection({ data }: { data: AnalysisData }) {
+interface PerformanceAnalysisSectionProps {
+  data: AnalysisData
+}
+
+export function PerformanceAnalysisSection({ data }: PerformanceAnalysisSectionProps) {
   return (
     <Card>
       <CardHeader>
