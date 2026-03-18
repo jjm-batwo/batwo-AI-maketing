@@ -485,121 +485,102 @@ export function WeeklyReportTemplate({ report }: WeeklyReportTemplateProps) {
           ))}
         </View>
 
-        {/* Footer */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
-          <Text style={styles.footerText}>바투 AI 마케팅</Text>
-        </View>
-      </Page>
-
-      {/* Page 2: Extended Insights */}
-      {(allInsights.length > 0 || allActionItems.length > 0 || allForecasts.length > 0) && (
-        <Page size="A4" style={styles.page}>
-          {/* Extended Insights Section */}
-          {allInsights.length > 0 && (
-            <View style={styles.extendedSection}>
-              <Text style={styles.sectionTitle}>상세 인사이트</Text>
-              {allInsights.map((insight, index) => (
-                <InsightCard key={index} insight={insight} />
-              ))}
-            </View>
-          )}
-
-          {/* Action Items Section */}
-          {allActionItems.length > 0 && (
-            <View style={styles.extendedSection}>
-              <Text style={styles.sectionTitle}>실행 과제</Text>
-              {allActionItems.map((item, index) => (
-                <ActionItemCard key={index} item={item} />
-              ))}
-            </View>
-          )}
-
-          {/* Forecast Section */}
-          {allForecasts.length > 0 && (
-            <View style={styles.extendedSection}>
-              <Text style={styles.sectionTitle}>성과 예측</Text>
-              <View style={styles.forecastTable}>
-                <View style={[styles.tableRow, styles.tableHeader]}>
-                  <Text style={[styles.tableCell, styles.tableCellBold, { width: '25%' }]}>
-                    지표
-                  </Text>
-                  <Text style={[styles.tableCell, styles.tableCellBold, { width: '20%' }]}>
-                    현재
-                  </Text>
-                  <Text style={[styles.tableCell, styles.tableCellBold, { width: '20%' }]}>
-                    7일 예측
-                  </Text>
-                  <Text style={[styles.tableCell, styles.tableCellBold, { width: '20%' }]}>
-                    30일 예측
-                  </Text>
-                  <Text style={[styles.tableCell, styles.tableCellBold, { width: '15%' }]}>
-                    신뢰도
-                  </Text>
-                </View>
-                {allForecasts.map((forecast, index) => {
-                  const confidenceStyle =
-                    forecast.confidence === 'high'
-                      ? styles.highConfidence
-                      : forecast.confidence === 'medium'
-                        ? styles.mediumConfidence
-                        : styles.lowConfidence
-
-                  return (
-                    <View key={index} style={styles.tableRow}>
-                      <Text style={[styles.tableCell, { width: '25%' }]}>{forecast.metric}</Text>
-                      <Text style={[styles.tableCell, { width: '20%' }]}>
-                        {formatNumber(forecast.current)}
-                      </Text>
-                      <Text style={[styles.tableCell, { width: '20%' }]}>
-                        {formatNumber(forecast.predicted7d)}
-                      </Text>
-                      <Text style={[styles.tableCell, { width: '20%' }]}>
-                        {formatNumber(forecast.predicted30d)}
-                      </Text>
-                      <Text
-                        style={[
-                          styles.tableCell,
-                          styles.confidenceBadge,
-                          confidenceStyle,
-                          { width: '15%' },
-                        ]}
-                      >
-                        {forecast.confidence}
-                      </Text>
-                    </View>
-                  )
-                })}
-              </View>
-            </View>
-          )}
-
-          {/* Benchmark Gaps */}
-          {benchmark && benchmark.gaps.length > 0 && (
-            <View style={styles.benchmarkSection}>
-              <Text style={styles.sectionTitle}>업계 대비 개선점</Text>
-              {benchmark.gaps.map((gap, index) => (
-                <View key={index} style={styles.gapItem}>
-                  <Text style={styles.gapMetric}>{gap.metric}</Text>
-                  <Text style={styles.gapText}>차이: {gap.gap}</Text>
-                  <Text style={styles.gapSuggestion}>제안: {gap.suggestion}</Text>
-                </View>
-              ))}
-            </View>
-          )}
-
-          {/* Footer */}
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
-            <Text style={styles.footerText}>바투 AI 마케팅</Text>
+        {/* Extended Insights Section */}
+        {allInsights.length > 0 && (
+          <View style={styles.extendedSection} wrap={false}>
+            <Text style={styles.sectionTitle}>상세 인사이트</Text>
+            {allInsights.map((insight, index) => (
+              <InsightCard key={index} insight={insight} />
+            ))}
           </View>
-        </Page>
-      )}
+        )}
 
-      {/* Page 3: AI Insights (Legacy) */}
-      {aiInsights.length > 0 && (
-        <Page size="A4" style={styles.page}>
-          <View style={styles.insightsSection}>
+        {/* Action Items Section */}
+        {allActionItems.length > 0 && (
+          <View style={styles.extendedSection} wrap={false}>
+            <Text style={styles.sectionTitle}>실행 과제</Text>
+            {allActionItems.map((item, index) => (
+              <ActionItemCard key={index} item={item} />
+            ))}
+          </View>
+        )}
+
+        {/* Forecast Section */}
+        {allForecasts.length > 0 && (
+          <View style={styles.extendedSection} wrap={false}>
+            <Text style={styles.sectionTitle}>성과 예측</Text>
+            <View style={styles.forecastTable}>
+              <View style={[styles.tableRow, styles.tableHeader]}>
+                <Text style={[styles.tableCell, styles.tableCellBold, { width: '25%' }]}>
+                  지표
+                </Text>
+                <Text style={[styles.tableCell, styles.tableCellBold, { width: '20%' }]}>
+                  현재
+                </Text>
+                <Text style={[styles.tableCell, styles.tableCellBold, { width: '20%' }]}>
+                  7일 예측
+                </Text>
+                <Text style={[styles.tableCell, styles.tableCellBold, { width: '20%' }]}>
+                  30일 예측
+                </Text>
+                <Text style={[styles.tableCell, styles.tableCellBold, { width: '15%' }]}>
+                  신뢰도
+                </Text>
+              </View>
+              {allForecasts.map((forecast, index) => {
+                const confidenceStyle =
+                  forecast.confidence === 'high'
+                    ? styles.highConfidence
+                    : forecast.confidence === 'medium'
+                      ? styles.mediumConfidence
+                      : styles.lowConfidence
+
+                return (
+                  <View key={index} style={styles.tableRow}>
+                    <Text style={[styles.tableCell, { width: '25%' }]}>{forecast.metric}</Text>
+                    <Text style={[styles.tableCell, { width: '20%' }]}>
+                      {formatNumber(forecast.current)}
+                    </Text>
+                    <Text style={[styles.tableCell, { width: '20%' }]}>
+                      {formatNumber(forecast.predicted7d)}
+                    </Text>
+                    <Text style={[styles.tableCell, { width: '20%' }]}>
+                      {formatNumber(forecast.predicted30d)}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.tableCell,
+                        styles.confidenceBadge,
+                        confidenceStyle,
+                        { width: '15%' },
+                      ]}
+                    >
+                      {forecast.confidence}
+                    </Text>
+                  </View>
+                )
+              })}
+            </View>
+          </View>
+        )}
+
+        {/* Benchmark Gaps */}
+        {benchmark && benchmark.gaps.length > 0 && (
+          <View style={styles.benchmarkSection} wrap={false}>
+            <Text style={styles.sectionTitle}>업계 대비 개선점</Text>
+            {benchmark.gaps.map((gap, index) => (
+              <View key={index} style={styles.gapItem}>
+                <Text style={styles.gapMetric}>{gap.metric}</Text>
+                <Text style={styles.gapText}>차이: {gap.gap}</Text>
+                <Text style={styles.gapSuggestion}>제안: {gap.suggestion}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* AI Insights */}
+        {aiInsights.length > 0 && (
+          <View style={styles.insightsSection} wrap={false}>
             <Text style={styles.sectionTitle}>AI 인사이트</Text>
             {aiInsights.map((insight, index) => (
               <View key={index} style={styles.insightCard}>
@@ -617,14 +598,14 @@ export function WeeklyReportTemplate({ report }: WeeklyReportTemplateProps) {
               </View>
             ))}
           </View>
+        )}
 
-          {/* Footer */}
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
-            <Text style={styles.footerText}>바투 AI 마케팅</Text>
-          </View>
-        </Page>
-      )}
+        {/* Footer */}
+        <View style={styles.footer} fixed>
+          <Text style={styles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
+          <Text style={styles.footerText}>바투 AI 마케팅</Text>
+        </View>
+      </Page>
     </Document>
   )
 }
