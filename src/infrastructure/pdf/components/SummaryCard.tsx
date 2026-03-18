@@ -4,31 +4,36 @@ import type { ChangeRate } from '@application/dto/report/EnhancedReportSections'
 
 const styles = StyleSheet.create({
   card: {
-    width: '30%',
-    backgroundColor: '#ffffff',
-    padding: 12,
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
+    width: '18%',
+    backgroundColor: '#f8fafc',
+    padding: 10,
+    borderRadius: 4,
+    borderLeftWidth: 3,
+    borderLeftColor: '#2563eb',
   },
   label: {
-    fontSize: 10,
+    fontSize: 8,
     color: '#64748b',
-    marginBottom: 4,
+    marginBottom: 2,
+    textTransform: 'uppercase',
   },
   value: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 'bold',
-    color: '#1e293b',
-    marginBottom: 4,
+    color: '#0f172a',
+    marginBottom: 3,
   },
   changeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 2,
+  },
+  arrow: {
+    fontSize: 10,
+    fontWeight: 'bold',
   },
   changeText: {
-    fontSize: 10,
+    fontSize: 8,
     fontWeight: 'bold',
   },
 })
@@ -41,9 +46,15 @@ function getChangeColor(change: ChangeRate): string {
   return change.isPositive ? '#dc2626' : '#16a34a'
 }
 
+function getArrow(change: ChangeRate): string {
+  if (change.direction === 'up') return '▲'
+  if (change.direction === 'down') return '▼'
+  return '—'
+}
+
 function formatChange(change: ChangeRate): string {
-  const arrow = change.direction === 'up' ? '+' : change.direction === 'down' ? '' : ''
-  return `${arrow}${change.value.toFixed(1)}%`
+  const sign = change.direction === 'up' ? '+' : change.direction === 'down' ? '' : ''
+  return `${sign}${change.value.toFixed(1)}%`
 }
 
 interface SummaryCardProps {
@@ -53,14 +64,14 @@ interface SummaryCardProps {
 }
 
 export function SummaryCard({ label, value, change }: SummaryCardProps) {
+  const color = getChangeColor(change)
   return (
     <View style={styles.card}>
       <Text style={styles.label}>{label}</Text>
       <Text style={styles.value}>{value}</Text>
       <View style={styles.changeRow}>
-        <Text style={[styles.changeText, { color: getChangeColor(change) }]}>
-          {formatChange(change)}
-        </Text>
+        <Text style={[styles.arrow, { color }]}>{getArrow(change)}</Text>
+        <Text style={[styles.changeText, { color }]}>{formatChange(change)}</Text>
       </View>
     </View>
   )

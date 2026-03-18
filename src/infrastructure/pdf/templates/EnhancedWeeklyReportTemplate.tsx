@@ -18,30 +18,35 @@ const styles = StyleSheet.create({
     fontFamily: PDF_FONT_FAMILY,
   },
   header: {
-    marginBottom: 12,
-    borderBottomWidth: 2,
-    borderBottomColor: '#2563eb',
-    paddingBottom: 10,
+    marginBottom: 16,
+    backgroundColor: '#0f172a',
+    padding: 16,
+    borderRadius: 4,
   },
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: '#ffffff',
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 10,
-    color: '#64748b',
+    color: '#94a3b8',
   },
   dateRange: {
     fontSize: 11,
-    color: '#475569',
-    marginTop: 4,
+    color: '#60a5fa',
+    marginTop: 6,
+    fontWeight: 'bold',
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: '#ffffff',
+    backgroundColor: '#1e293b',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 3,
     marginBottom: 8,
     marginTop: 4,
   },
@@ -56,31 +61,32 @@ const styles = StyleSheet.create({
   },
   divider: {
     borderBottomWidth: 1,
-    borderBottomColor: '#e2e8f0',
-    marginVertical: 10,
+    borderBottomColor: '#cbd5e1',
+    marginVertical: 8,
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#f1f5f9',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e2e8f0',
-    paddingVertical: 4,
+    backgroundColor: '#2563eb',
+    paddingVertical: 5,
   },
   tableRow: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBottomColor: '#e2e8f0',
+    borderBottomColor: '#f1f5f9',
     paddingVertical: 4,
+  },
+  tableRowAlt: {
+    backgroundColor: '#f8fafc',
   },
   tableCell: {
     fontSize: 8,
-    color: '#475569',
+    color: '#334155',
     padding: 3,
   },
   tableCellHeader: {
     fontSize: 8,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: '#ffffff',
     padding: 3,
   },
   analysisCard: {
@@ -130,15 +136,16 @@ const styles = StyleSheet.create({
     bottom: 12,
     left: 24,
     right: 24,
-    borderTopWidth: 1,
-    borderTopColor: '#e2e8f0',
-    paddingTop: 6,
+    backgroundColor: '#f8fafc',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 3,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   footerText: {
-    fontSize: 8,
-    color: '#94a3b8',
+    fontSize: 7,
+    color: '#64748b',
   },
 })
 
@@ -213,8 +220,8 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
               <Text style={[styles.tableCellHeader, { width: '12%' }]}>클릭</Text>
               <Text style={[styles.tableCellHeader, { width: '12%' }]}>전환</Text>
             </View>
-            {dailyTrend.days.map((d) => (
-              <View key={d.date} style={styles.tableRow}>
+            {dailyTrend.days.map((d, idx) => (
+              <View key={d.date} style={[styles.tableRow, idx % 2 === 1 && styles.tableRowAlt]}>
                 <Text style={[styles.tableCell, { width: '15%' }]}>{d.date.slice(5)}</Text>
                 <Text style={[styles.tableCell, { width: '17%' }]}>{formatCurrency(d.spend)}</Text>
                 <Text style={[styles.tableCell, { width: '17%' }]}>{formatCurrency(d.revenue)}</Text>
@@ -246,8 +253,8 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
                 <Text style={[styles.tableCellHeader, { width: '8%' }]}>전환</Text>
                 <Text style={[styles.tableCellHeader, { width: '9%' }]}>상태</Text>
               </View>
-              {campaignPerformance.campaigns.map((c) => (
-                <View key={c.campaignId} style={styles.tableRow}>
+              {campaignPerformance.campaigns.map((c, idx) => (
+                <View key={c.campaignId} style={[styles.tableRow, idx % 2 === 1 && styles.tableRowAlt]}>
                   <Text style={[styles.tableCell, { width: '25%' }]}>{c.name}</Text>
                   <Text style={[styles.tableCell, { width: '12%' }]}>{c.objective}</Text>
                   <Text style={[styles.tableCell, { width: '13%' }]}>{formatCurrency(c.spend)}</Text>
@@ -280,8 +287,8 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
                 <Text style={[styles.tableCellHeader, { width: '10%' }]}>클릭</Text>
                 <Text style={[styles.tableCellHeader, { width: '10%' }]}>전환</Text>
               </View>
-              {creativePerformance.creatives.map((c) => (
-                <View key={c.creativeId} style={styles.tableRow}>
+              {creativePerformance.creatives.map((c, idx) => (
+                <View key={c.creativeId} style={[styles.tableRow, idx % 2 === 1 && styles.tableRowAlt]}>
                   <Text style={[styles.tableCell, { width: '22%' }]}>{c.name}</Text>
                   <Text style={[styles.tableCell, { width: '12%' }]}>{c.format}</Text>
                   <Text style={[styles.tableCell, { width: '13%' }]}>{formatCurrency(c.spend)}</Text>

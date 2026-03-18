@@ -4,8 +4,8 @@ import type { RecommendedAction } from '@application/dto/report/EnhancedReportSe
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: 10,
-    padding: 10,
+    marginBottom: 6,
+    padding: 8,
     backgroundColor: '#ffffff',
     borderRadius: 6,
     borderLeftWidth: 3,
