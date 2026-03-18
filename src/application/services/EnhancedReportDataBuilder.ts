@@ -348,11 +348,18 @@ export class EnhancedReportDataBuilder {
         } : undefined,
       })
 
+      const insights = result.insights ?? []
+      const mapImpact = (importance: string): 'high' | 'medium' | 'low' =>
+        importance === 'critical' ? 'high' : (importance as 'high' | 'medium' | 'low')
       return [
         {
           summary: result.summary,
-          positiveFactors: [],
-          negativeFactors: [],
+          positiveFactors: insights
+            .filter(i => i.type === 'performance' || i.type === 'trend' || i.type === 'comparison')
+            .map(i => ({ title: i.title, description: i.description, impact: mapImpact(i.importance) })),
+          negativeFactors: insights
+            .filter(i => i.type === 'anomaly' || i.type === 'recommendation')
+            .map(i => ({ title: i.title, description: i.description, impact: mapImpact(i.importance) })),
         },
         {
           actions: (result.actionItems ?? []).map(item => ({
