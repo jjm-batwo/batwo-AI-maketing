@@ -126,7 +126,7 @@ const handlers = [
     // Match based on system prompt content
     if (systemMessage.includes('campaign optimization') || systemMessage.includes('Meta Ads campaign optimization') || systemMessage.includes('Meta Ads 캠페인 최적화') || systemMessage.includes('최적화 전문가')) {
       return HttpResponse.json(mockOptimizationResponse)
-    } else if (systemMessage.includes('report analyst') || systemMessage.includes('marketing report') || systemMessage.includes('마케팅 리포트') || systemMessage.includes('리포트 전문 분석가')) {
+    } else if (systemMessage.includes('report analyst') || systemMessage.includes('marketing report') || systemMessage.includes('마케팅 리포트') || systemMessage.includes('리포트 전문 분석가') || systemMessage.includes('시니어 AE') || systemMessage.includes('보고서')) {
       return HttpResponse.json(mockReportInsightResponse)
     } else if (systemMessage.includes('copywriter') || systemMessage.includes('digital advertising') || systemMessage.includes('카피라이터') || systemMessage.includes('디지털 광고')) {
       return HttpResponse.json(mockAdCopyResponse)
@@ -409,7 +409,7 @@ describe('AIService', () => {
       expect(AD_COPY_AI_CONFIG).toBeDefined()
       expect(AD_COPY_AI_CONFIG.temperature).toBe(0.8)
       expect(AD_COPY_AI_CONFIG.maxTokens).toBe(2500)
-      expect(AD_COPY_AI_CONFIG.model).toBe('gpt-4o')
+      expect(AD_COPY_AI_CONFIG.model).toBe('gpt-5-mini')
       expect(AD_COPY_AI_CONFIG.topP).toBe(0.95)
     })
 
@@ -417,16 +417,16 @@ describe('AIService', () => {
       expect(CAMPAIGN_OPTIMIZATION_AI_CONFIG).toBeDefined()
       expect(CAMPAIGN_OPTIMIZATION_AI_CONFIG.temperature).toBe(0.5)
       expect(CAMPAIGN_OPTIMIZATION_AI_CONFIG.maxTokens).toBe(2000)
-      expect(CAMPAIGN_OPTIMIZATION_AI_CONFIG.model).toBe('gpt-4o-mini')
+      expect(CAMPAIGN_OPTIMIZATION_AI_CONFIG.model).toBe('gpt-5-mini')
       expect(CAMPAIGN_OPTIMIZATION_AI_CONFIG.topP).toBe(0.9)
     })
 
     it('should have valid REPORT_INSIGHT_AI_CONFIG', () => {
       expect(REPORT_INSIGHT_AI_CONFIG).toBeDefined()
-      expect(REPORT_INSIGHT_AI_CONFIG.temperature).toBe(0.4)
-      expect(REPORT_INSIGHT_AI_CONFIG.maxTokens).toBe(3000)
-      expect(REPORT_INSIGHT_AI_CONFIG.model).toBe('gpt-4o-mini')
-      expect(REPORT_INSIGHT_AI_CONFIG.topP).toBe(0.85)
+      expect(REPORT_INSIGHT_AI_CONFIG.temperature).toBe(0.5)
+      expect(REPORT_INSIGHT_AI_CONFIG.maxTokens).toBe(4000)
+      expect(REPORT_INSIGHT_AI_CONFIG.model).toBe('gpt-5-mini')
+      expect(REPORT_INSIGHT_AI_CONFIG.topP).toBe(0.9)
     })
 
     it('should apply correct config for generateAdCopy', async () => {
@@ -448,10 +448,11 @@ describe('AIService', () => {
       })
 
       expect(capturedBody).toBeDefined()
-      expect(capturedBody!.temperature).toBe(AD_COPY_AI_CONFIG.temperature)
-      expect(capturedBody!.max_tokens).toBe(AD_COPY_AI_CONFIG.maxTokens)
+      expect(capturedBody!.temperature).toBeUndefined()
+      expect(capturedBody!.max_tokens).toBeUndefined()
+      expect(capturedBody!.max_completion_tokens).toBe(AD_COPY_AI_CONFIG.maxTokens)
       expect(capturedBody!.model).toBe(AD_COPY_AI_CONFIG.model)
-      expect(capturedBody!.top_p).toBe(AD_COPY_AI_CONFIG.topP)
+      expect(capturedBody!.top_p).toBeUndefined()
     })
 
     it('should apply correct config for generateCampaignOptimization', async () => {
@@ -479,10 +480,11 @@ describe('AIService', () => {
       })
 
       expect(capturedBody).toBeDefined()
-      expect(capturedBody!.temperature).toBe(CAMPAIGN_OPTIMIZATION_AI_CONFIG.temperature)
-      expect(capturedBody!.max_tokens).toBe(CAMPAIGN_OPTIMIZATION_AI_CONFIG.maxTokens)
+      expect(capturedBody!.temperature).toBeUndefined()
+      expect(capturedBody!.max_tokens).toBeUndefined()
+      expect(capturedBody!.max_completion_tokens).toBe(CAMPAIGN_OPTIMIZATION_AI_CONFIG.maxTokens)
       expect(capturedBody!.model).toBe(CAMPAIGN_OPTIMIZATION_AI_CONFIG.model)
-      expect(capturedBody!.top_p).toBe(CAMPAIGN_OPTIMIZATION_AI_CONFIG.topP)
+      expect(capturedBody!.top_p).toBeUndefined()
     })
 
     it('should apply correct config for generateReportInsights', async () => {
@@ -513,10 +515,11 @@ describe('AIService', () => {
       })
 
       expect(capturedBody).toBeDefined()
-      expect(capturedBody!.temperature).toBe(REPORT_INSIGHT_AI_CONFIG.temperature)
-      expect(capturedBody!.max_tokens).toBe(REPORT_INSIGHT_AI_CONFIG.maxTokens)
+      expect(capturedBody!.temperature).toBeUndefined()
+      expect(capturedBody!.max_tokens).toBeUndefined()
+      expect(capturedBody!.max_completion_tokens).toBe(REPORT_INSIGHT_AI_CONFIG.maxTokens)
       expect(capturedBody!.model).toBe(REPORT_INSIGHT_AI_CONFIG.model)
-      expect(capturedBody!.top_p).toBe(REPORT_INSIGHT_AI_CONFIG.topP)
+      expect(capturedBody!.top_p).toBeUndefined()
     })
   })
 })

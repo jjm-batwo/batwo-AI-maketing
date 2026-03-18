@@ -636,7 +636,7 @@ describe('KPIInsightsService', () => {
         expect.any(String),
         expect.any(String),
         expect.objectContaining({
-          model: 'gpt-4o',
+          model: 'gpt-5-mini',
           maxTokens: 3000,
         })
       )
@@ -760,13 +760,13 @@ describe('KPIInsightsService', () => {
         1,
         expect.any(String),
         expect.any(String),
-        expect.objectContaining({ model: 'gpt-4o' })
+        expect.objectContaining({ model: 'gpt-5-mini' })
       )
       expect(mockAiService.chatCompletion).toHaveBeenNthCalledWith(
         2,
         expect.any(String),
         expect.any(String),
-        expect.objectContaining({ model: 'gpt-4o-mini' })
+        expect.objectContaining({ model: 'gpt-5-mini' })
       )
     })
 
