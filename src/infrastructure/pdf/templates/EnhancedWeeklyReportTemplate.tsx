@@ -191,6 +191,15 @@ interface EnhancedWeeklyReportTemplateProps {
   report: ReportDTO
 }
 
+function Footer() {
+  return (
+    <View style={styles.footer} fixed>
+      <Text style={styles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
+      <Text style={styles.footerText}>바투 AI 마케팅</Text>
+    </View>
+  )
+}
+
 export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTemplateProps) {
   const {
     overallSummary,
@@ -204,13 +213,6 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
     recommendations,
     dateRange,
   } = report
-
-  const Footer = () => (
-    <View style={styles.footer} fixed>
-      <Text style={styles.footerText}>생성일: {new Date().toLocaleDateString('ko-KR')}</Text>
-      <Text style={styles.footerText}>바투 AI 마케팅</Text>
-    </View>
-  )
 
   return (
     <Document>

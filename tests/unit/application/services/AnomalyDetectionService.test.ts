@@ -236,11 +236,9 @@ describe('AnomalyDetectionService — Threshold Validation', () => {
                         3.0, 2.9, 3.1, 3.0, 2.9, 3.0, 2.0] // holiday dip
       const baseline = calculateBaseline(roasData.slice(0, -1))
       const z = calculateZScore(roasData[13], baseline.mean, baseline.stdDev)
-      const adjustedThreshold = 2.3 * 1.2 // Korean holiday adjustment
-
-      // The z-score should be between normal and adjusted threshold
-      // showing that without adjustment it triggers, but with adjustment it might not
-      expect(Math.abs(z)).toBeGreaterThan(2.0) // still detectable
+      // Korean holiday: adjusted threshold = 2.3 * 1.2 = 2.76
+      // The z-score should be detectable even with adjustment
+      expect(Math.abs(z)).toBeGreaterThan(2.0)
     })
   })
 })
