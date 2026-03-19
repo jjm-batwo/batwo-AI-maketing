@@ -479,23 +479,36 @@ _last_split_pane_id() {
   tmux list-panes -t "$win_id" -F '#{pane_index}' | tail -1
 }
 
-# Build the main-vertical layout: left 40% main, right 60% stacked worktrees
+# Build layout: left 40% main, right 60% worktrees
+# For 4+ worktrees, uses tiled layout on right side for 2-column grid
 _apply_layout() {
   local win_id="$1"
   local main_pane_id="$2"
+  local pane_count=$(tmux list-panes -t "$win_id" -F '#{pane_index}' | wc -l | tr -d ' ')
 
-  tmux select-layout -t "$win_id" main-vertical 2>/dev/null || true
-  local total_cols=$(tmux display-message -t "$win_id" -p '#{window_width}' 2>/dev/null || echo 200)
-  local main_width=$((total_cols * 40 / 100))
-  tmux resize-pane -t "$main_pane_id" -x "$main_width" 2>/dev/null || true
+  if [[ $pane_count -ge 5 ]]; then
+    # 4+ worktrees + main = 5+ panes: use tiled for even grid
+    tmux select-layout -t "$win_id" tiled 2>/dev/null || true
+    # Then resize main pane to 40% width
+    local total_cols=$(tmux display-message -t "$win_id" -p '#{window_width}' 2>/dev/null || echo 200)
+    local main_width=$((total_cols * 40 / 100))
+    tmux resize-pane -t "$main_pane_id" -x "$main_width" 2>/dev/null || true
+  else
+    # 1-3 worktrees: standard main-vertical
+    tmux select-layout -t "$win_id" main-vertical 2>/dev/null || true
+    local total_cols=$(tmux display-message -t "$win_id" -p '#{window_width}' 2>/dev/null || echo 200)
+    local main_width=$((total_cols * 40 / 100))
+    tmux resize-pane -t "$main_pane_id" -x "$main_width" 2>/dev/null || true
+  fi
   tmux select-pane -t "$main_pane_id"
 }
 
 # Start interactive Claude session in a worktree pane
+# Uses --dangerously-skip-permissions so worktree agents can work autonomously
 _start_claude_session() {
   local pane_target="$1"
   local wt_name="$2"
-  tmux send-keys -t "$pane_target" "claude" Enter
+  tmux send-keys -t "$pane_target" "claude --dangerously-skip-permissions" Enter
 }
 
 # Split panes for worktrees from a given main pane
@@ -614,23 +627,62 @@ tmux_live() {
   _set_pane_title "$first_pane_id" "wt:${first_wt}"
   _start_claude_session "$first_pane_id" "$first_wt"
 
-  # Split for remaining worktrees (vertical stack)
-  local remaining=("${WORKTREE_NAMES[@]:1}")
-  for wt_name in "${remaining[@]}"; do
-    local wt_path="$WORKTREE_DIR/$wt_name"
-    local wt_branch=$(git -C "$wt_path" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown")
+  local wt_count=${#WORKTREE_NAMES[@]}
 
-    local last_pane=$(_last_split_pane_id "$win_id")
-    tmux split-window -v -t "${win_id}.${last_pane}" -c "$wt_path"
+  if [[ $wt_count -ge 4 ]]; then
+    # 4+ worktrees: 2-column grid layout for readability
+    # Split first pane horizontally to create right column
+    local second_wt="${WORKTREE_NAMES[1]}"
+    local second_wt_path="$WORKTREE_DIR/$second_wt"
+    tmux split-window -h -t "$first_pane_id" -c "$second_wt_path"
+    local right_pane=$(_last_split_pane_id "$win_id")
+    _set_pane_title "${win_id}.${right_pane}" "wt:${second_wt}"
+    _start_claude_session "${win_id}.${right_pane}" "$second_wt"
 
-    local new_pane=$(_last_split_pane_id "$win_id")
-    _set_pane_title "${win_id}.${new_pane}" "wt:${wt_name}"
-    _start_claude_session "${win_id}.${new_pane}" "$wt_name"
-  done
+    # Remaining worktrees: alternate between left column (vertical) and right column (vertical)
+    local left_col_last="$first_pane_id"
+    local right_col_last="${win_id}.${right_pane}"
+    local col="left"  # next split goes to left column
 
-  # Balance panes evenly (no main-vertical needed, just even-vertical)
-  if [[ ${#WORKTREE_NAMES[@]} -gt 1 ]]; then
-    tmux select-layout -t "$win_id" even-vertical 2>/dev/null || true
+    for ((i=2; i<wt_count; i++)); do
+      local wt_name="${WORKTREE_NAMES[$i]}"
+      local wt_path="$WORKTREE_DIR/$wt_name"
+
+      if [[ "$col" == "left" ]]; then
+        tmux split-window -v -t "$left_col_last" -c "$wt_path"
+        local new_pane=$(_last_split_pane_id "$win_id")
+        left_col_last="${win_id}.${new_pane}"
+        col="right"
+      else
+        tmux split-window -v -t "$right_col_last" -c "$wt_path"
+        local new_pane=$(_last_split_pane_id "$win_id")
+        right_col_last="${win_id}.${new_pane}"
+        col="left"
+      fi
+
+      _set_pane_title "${win_id}.${new_pane}" "wt:${wt_name}"
+      _start_claude_session "${win_id}.${new_pane}" "$wt_name"
+    done
+
+    # Balance within each column using tiled layout
+    tmux select-layout -t "$win_id" tiled 2>/dev/null || true
+  else
+    # 1-3 worktrees: simple vertical stack
+    local remaining=("${WORKTREE_NAMES[@]:1}")
+    for wt_name in "${remaining[@]}"; do
+      local wt_path="$WORKTREE_DIR/$wt_name"
+
+      local last_pane=$(_last_split_pane_id "$win_id")
+      tmux split-window -v -t "${win_id}.${last_pane}" -c "$wt_path"
+
+      local new_pane=$(_last_split_pane_id "$win_id")
+      _set_pane_title "${win_id}.${new_pane}" "wt:${wt_name}"
+      _start_claude_session "${win_id}.${new_pane}" "$wt_name"
+    done
+
+    if [[ $wt_count -gt 1 ]]; then
+      tmux select-layout -t "$win_id" even-vertical 2>/dev/null || true
+    fi
   fi
 
   tmux select-pane -t "$first_pane_id"

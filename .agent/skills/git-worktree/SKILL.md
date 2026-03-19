@@ -78,11 +78,17 @@ bash .agent/skills/git-worktree/scripts/worktree-manager.sh tmux-live
 
 `tmux-live`는 macOS 터미널 앱을 자동 감지(Ghostty, iTerm2, Terminal.app, Warp)하여 **새 탭/창에 tmux 세션을 자동으로 attach**합니다. 현재 Claude Code 세션은 중단되지 않습니다.
 
+각 워크트리 패널에는 `claude --dangerously-skip-permissions` 모드로 대화형 세션이 자동 시작됩니다 — 워크트리 에이전트가 권한 프롬프트 없이 자율적으로 작업합니다.
+
+**레이아웃 자동 분기**:
+- **1~3개 워크트리**: 세로 스택 (위→아래)
+- **4개 이상**: 2열 그리드 (좌우 분할 + 세로 스택) — 가독성 향상
+
 > 대화 세션과 분리해서 백그라운드로만 생성하려면 `tmux` 명령 사용
 
 ### Phase 3: 각 워크트리에 태스크 전송
 
-`tmux-live`가 각 워크트리 패널에 대화형 Claude 세션을 자동으로 시작합니다. `tmux-exec`로 **태스크 설명만** 보내면 사용자가 직접 타이핑한 것처럼 동작합니다.
+`tmux-live`가 각 워크트리 패널에 `--dangerously-skip-permissions` 모드의 대화형 Claude 세션을 자동으로 시작합니다. `tmux-exec`로 **태스크 설명만** 보내면 사용자가 직접 타이핑한 것처럼 동작합니다.
 
 ```bash
 # 이미 실행 중인 Claude 세션에 태스크 텍스트 전송
