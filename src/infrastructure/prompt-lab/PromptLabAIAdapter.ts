@@ -1,4 +1,9 @@
-import type { IAIService, GenerateAdCopyInput, AdCopyVariant } from '@application/ports/IAIService'
+import type {
+  IPromptLabAIAdapter,
+  GenerateWithVariantResult,
+} from '@application/ports/IPromptLabAIAdapter'
+import type { IAIService } from '@application/ports/IAIService'
+import type { GenerateAdCopyInput } from '@domain/value-objects/AdCopyTypes'
 import type { PromptVariant, PromptLabSampleInput } from '@domain/value-objects/PromptLabTypes'
 
 const SYSTEM_ROLE_LABELS: Record<string, string> = {
@@ -14,12 +19,10 @@ const INSTRUCTION_HINTS: Record<string, string> = {
   loose: '자유롭고 창의적으로 작성하라. 형식에 구애받지 말고 가장 매력적인 카피를 만들어라.',
 }
 
-export interface GenerateWithVariantResult {
-  variants: AdCopyVariant[]
-  estimatedTokenUsage: number
-}
+// Re-export for backward compatibility
+export type { GenerateWithVariantResult } from '@application/ports/IPromptLabAIAdapter'
 
-export class PromptLabAIAdapter {
+export class PromptLabAIAdapter implements IPromptLabAIAdapter {
   constructor(private readonly ai: IAIService) {}
 
   async generateWithVariant(

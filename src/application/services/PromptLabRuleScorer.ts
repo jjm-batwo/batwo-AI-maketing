@@ -1,5 +1,6 @@
 // src/application/services/PromptLabRuleScorer.ts
-import type { AdCopyVariant } from '@application/ports/IAIService'
+import type { IPromptLabRuleScorer, RuleScorerInput } from '@application/ports/IPromptLabRuleScorer'
+import type { AdCopyVariant } from '@domain/value-objects/AdCopyTypes'
 
 const HOOK_PATTERNS: Record<string, RegExp> = {
   urgency: /오늘만|한정|마감|지금|즉시|남은|시간|급히|서두|놓치/,
@@ -11,13 +12,10 @@ const HOOK_PATTERNS: Record<string, RegExp> = {
   emotional: /행복|사랑|감동|꿈|희망|자신감|변화|새로운/,
 }
 
-export interface RuleScorerInput {
-  variants: AdCopyVariant[]
-  keywords: string[]
-  bestVariantCopy: AdCopyVariant[] | null
-}
+// Re-export for backward compatibility
+export type { RuleScorerInput } from '@application/ports/IPromptLabRuleScorer'
 
-export class PromptLabRuleScorer {
+export class PromptLabRuleScorer implements IPromptLabRuleScorer {
   score(input: RuleScorerInput): number {
     const first = input.variants[0]
     if (!first) return 0

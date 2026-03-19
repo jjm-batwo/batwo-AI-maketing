@@ -210,6 +210,15 @@ export const DI_TOKENS = {
   NotificationDispatcherService: Symbol.for('NotificationDispatcherService'),
   SlackNotificationSender: Symbol.for('SlackNotificationSender'),
   KakaoNotificationSender: Symbol.for('KakaoNotificationSender'),
+
+  // PromptLab
+  PromptLabService: Symbol.for('PromptLabService'),
+  PromptLabEvaluator: Symbol.for('PromptLabEvaluator'),
+  PromptLabMutator: Symbol.for('PromptLabMutator'),
+  PromptLabAIAdapter: Symbol.for('PromptLabAIAdapter'),
+  PromptLabRuleScorer: Symbol.for('PromptLabRuleScorer'),
+  PromptLabLLMJudge: Symbol.for('PromptLabLLMJudge'),
+  PromptLabCache: Symbol.for('PromptLabCache'),
 } as const
 
 export type DIToken = (typeof DI_TOKENS)[keyof typeof DI_TOKENS]

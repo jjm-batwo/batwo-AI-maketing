@@ -1,9 +1,8 @@
 // src/application/services/PromptLabService.ts
-import type { AdCopyVariant } from '@application/ports/IAIService'
-// TODO: create port interfaces in @application/ports/ for PromptLabEvaluator, PromptLabMutator, PromptLabAIAdapter
-import type { PromptLabEvaluator } from '@infrastructure/prompt-lab/PromptLabEvaluator'
-import type { PromptLabMutator } from '@infrastructure/prompt-lab/PromptLabMutator'
-import type { PromptLabAIAdapter } from '@infrastructure/prompt-lab/PromptLabAIAdapter'
+import type { AdCopyVariant } from '@domain/value-objects/AdCopyTypes'
+import type { IPromptLabEvaluator } from '@application/ports/IPromptLabEvaluator'
+import type { IPromptLabMutator } from '@application/ports/IPromptLabMutator'
+import type { IPromptLabAIAdapter } from '@application/ports/IPromptLabAIAdapter'
 import {
   createDefaultVariant,
   type PromptLabConfig,
@@ -16,9 +15,9 @@ const BASELINE_FLOOR_RATIO = 0.8
 
 export class PromptLabService {
   constructor(
-    private readonly aiAdapter: PromptLabAIAdapter,
-    private readonly evaluator: PromptLabEvaluator,
-    private readonly mutator: PromptLabMutator,
+    private readonly aiAdapter: IPromptLabAIAdapter,
+    private readonly evaluator: IPromptLabEvaluator,
+    private readonly mutator: IPromptLabMutator,
   ) {}
 
   async run(config: PromptLabConfig): Promise<PromptLabReport> {

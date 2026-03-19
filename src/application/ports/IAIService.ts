@@ -1,3 +1,6 @@
+import type { AdCopyVariant } from '@domain/value-objects/AdCopyTypes'
+import type { GenerateAdCopyInput } from '@domain/value-objects/AdCopyTypes'
+
 /**
  * AI 서비스 설정 인터페이스
  * 기능별로 최적화된 파라미터를 외부에서 관리
@@ -99,13 +102,8 @@ export interface ReportInsight {
   }
 }
 
-export interface AdCopyVariant {
-  headline: string
-  primaryText: string
-  description: string
-  callToAction: string
-  targetAudience: string
-}
+// Re-export from domain for backward compatibility
+export type { AdCopyVariant } from '@domain/value-objects/AdCopyTypes'
 
 export interface GenerateOptimizationInput {
   campaignName: string
@@ -180,17 +178,8 @@ export interface GenerateReportInsightInput {
   includeBenchmark?: boolean
 }
 
-export interface GenerateAdCopyInput {
-  productName: string
-  productDescription: string
-  targetAudience: string
-  tone: 'professional' | 'casual' | 'playful' | 'urgent'
-  objective: 'awareness' | 'consideration' | 'conversion'
-  keywords?: string[]
-  variantCount?: number
-  /** 과학 기반 마케팅 지식 컨텍스트 (자동 주입) */
-  scienceContext?: string
-}
+// Re-export from domain for backward compatibility
+export type { GenerateAdCopyInput } from '@domain/value-objects/AdCopyTypes'
 
 export interface GenerateBudgetRecommendationInput {
   industry:

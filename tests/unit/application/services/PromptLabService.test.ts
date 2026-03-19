@@ -1,10 +1,10 @@
 // tests/unit/application/services/PromptLabService.test.ts
 import { describe, it, expect, vi } from 'vitest'
 import { PromptLabService } from '@application/services/PromptLabService'
-import type { PromptLabEvaluator, EvaluationResult } from '@infrastructure/prompt-lab/PromptLabEvaluator'
-import type { PromptLabMutator } from '@infrastructure/prompt-lab/PromptLabMutator'
-import type { PromptLabAIAdapter, GenerateWithVariantResult } from '@infrastructure/prompt-lab/PromptLabAIAdapter'
-import type { AdCopyVariant } from '@application/ports/IAIService'
+import type { IPromptLabEvaluator, EvaluationResult } from '@application/ports/IPromptLabEvaluator'
+import type { IPromptLabMutator } from '@application/ports/IPromptLabMutator'
+import type { IPromptLabAIAdapter, GenerateWithVariantResult } from '@application/ports/IPromptLabAIAdapter'
+import type { AdCopyVariant } from '@domain/value-objects/AdCopyTypes'
 import { createPromptLabConfig } from '@domain/value-objects/PromptLabTypes'
 import type { Industry } from '@domain/value-objects/Industry'
 
@@ -18,7 +18,7 @@ function makeVariant(): AdCopyVariant {
   }
 }
 
-function makeMockEvaluator(scores: number[]): PromptLabEvaluator {
+function makeMockEvaluator(scores: number[]): IPromptLabEvaluator {
   let callIdx = 0
   return {
     evaluate: vi.fn().mockImplementation(async () => {
@@ -39,19 +39,19 @@ function makeMockEvaluator(scores: number[]): PromptLabEvaluator {
         tokenUsage: 5000,
       } satisfies EvaluationResult
     }),
-  } as unknown as PromptLabEvaluator
+  } as unknown as IPromptLabEvaluator
 }
 
-function makeMockAdapter(): PromptLabAIAdapter {
+function makeMockAdapter(): IPromptLabAIAdapter {
   return {
     generateWithVariant: vi.fn().mockResolvedValue({
       variants: [makeVariant()],
       estimatedTokenUsage: 1100,
     } satisfies GenerateWithVariantResult),
-  } as unknown as PromptLabAIAdapter
+  } as unknown as IPromptLabAIAdapter
 }
 
-function makeMockMutator(): PromptLabMutator {
+function makeMockMutator(): IPromptLabMutator {
   let counter = 0
   return {
     mutate: vi.fn().mockImplementation((base) => ({
@@ -60,7 +60,7 @@ function makeMockMutator(): PromptLabMutator {
       temperature: 0.6,
       description: `mutation ${counter}`,
     })),
-  } as unknown as PromptLabMutator
+  } as unknown as IPromptLabMutator
 }
 
 describe('PromptLabService', () => {

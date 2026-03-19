@@ -1,27 +1,21 @@
 // src/infrastructure/prompt-lab/PromptLabEvaluator.ts
-import type { AdCopyVariant } from '@application/ports/IAIService'
-import type { PromptLabRuleScorer, RuleScorerInput } from '@application/services/PromptLabRuleScorer'
-import type { PromptLabLLMJudge } from '@infrastructure/prompt-lab/PromptLabLLMJudge'
+import type {
+  IPromptLabEvaluator,
+  EvaluationInput,
+  EvaluationResult,
+} from '@application/ports/IPromptLabEvaluator'
+import type { IPromptLabRuleScorer, RuleScorerInput } from '@application/ports/IPromptLabRuleScorer'
+import type { IPromptLabLLMJudge } from '@application/ports/IPromptLabLLMJudge'
 
-export interface EvaluationInput {
-  variants: AdCopyVariant[]
-  keywords: string[]
-  bestVariantCopy: AdCopyVariant[] | null
-}
-
-export interface EvaluationResult {
-  ruleScore: number
-  llmScore: number
-  totalScore: number
-  tokenUsage: number
-}
+// Re-export for backward compatibility
+export type { EvaluationInput, EvaluationResult } from '@application/ports/IPromptLabEvaluator'
 
 const RULE_SCORE_THRESHOLD = 20
 
-export class PromptLabEvaluator {
+export class PromptLabEvaluator implements IPromptLabEvaluator {
   constructor(
-    private readonly ruleScorer: PromptLabRuleScorer,
-    private readonly llmJudge: PromptLabLLMJudge,
+    private readonly ruleScorer: IPromptLabRuleScorer,
+    private readonly llmJudge: IPromptLabLLMJudge,
   ) {}
 
   async evaluate(input: EvaluationInput): Promise<EvaluationResult> {

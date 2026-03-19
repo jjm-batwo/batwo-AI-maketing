@@ -1,13 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getAuthenticatedUser, unauthorizedResponse } from '@/lib/auth'
-import { getAIService } from '@/lib/di/container'
-import { PromptLabService } from '@application/services/PromptLabService'
-import { PromptLabEvaluator } from '@infrastructure/prompt-lab/PromptLabEvaluator'
-import { PromptLabRuleScorer } from '@application/services/PromptLabRuleScorer'
-import { PromptLabLLMJudge } from '@infrastructure/prompt-lab/PromptLabLLMJudge'
-import { PromptLabMutator } from '@infrastructure/prompt-lab/PromptLabMutator'
-import { PromptLabAIAdapter } from '@infrastructure/prompt-lab/PromptLabAIAdapter'
-import { PromptLabCache } from '@infrastructure/prompt-lab/PromptLabCache'
+import { getPromptLabService, getPromptLabCache } from '@/lib/di/container'
 import { createPromptLabConfig } from '@domain/value-objects/PromptLabTypes'
 import type { Industry } from '@domain/value-objects/Industry'
 
@@ -55,19 +48,13 @@ export async function POST(request: Request) {
       },
     })
 
-    const ai = getAIService()
-    const ruleScorer = new PromptLabRuleScorer()
-    const llmJudge = new PromptLabLLMJudge(ai)
-    const evaluator = new PromptLabEvaluator(ruleScorer, llmJudge)
-    const mutator = new PromptLabMutator()
-    const adapter = new PromptLabAIAdapter(ai)
-
-    const service = new PromptLabService(adapter, evaluator, mutator)
+    const service = getPromptLabService()
     const report = await service.run(config)
 
     // Apply if requested
     if (body.applyBest) {
-      PromptLabCache.set(config.industry, report.bestVariant)
+      const cache = getPromptLabCache()
+      cache.set(config.industry, report.bestVariant)
     }
 
     return NextResponse.json(report)

@@ -1,4 +1,5 @@
 // src/infrastructure/prompt-lab/PromptLabMutator.ts
+import type { IPromptLabMutator } from '@application/ports/IPromptLabMutator'
 import type { PromptVariant } from '@domain/value-objects/PromptLabTypes'
 import { ALL_KNOWLEDGE_DOMAINS, MIN_REQUIRED_DOMAINS } from '@domain/value-objects/MarketingScience'
 import type { KnowledgeDomain } from '@domain/value-objects/MarketingScience'
@@ -13,7 +14,7 @@ function pickRandom<T>(arr: readonly T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
 }
 
-export class PromptLabMutator {
+export class PromptLabMutator implements IPromptLabMutator {
   private axes: MutationAxis[] = [
     'scienceDomains', 'temperature', 'fewShotStrategy', 'systemRole', 'instructionStyle',
   ]

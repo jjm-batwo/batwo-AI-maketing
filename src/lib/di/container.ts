@@ -20,6 +20,7 @@ import { registerPaymentModule } from './modules/payment.module'
 import { registerMetaModule } from './modules/meta.module'
 import { registerAuthModule } from './modules/auth.module'
 import { registerNotificationModule } from './modules/notification.module'
+import { registerPromptLabModule } from './modules/promptlab.module'
 
 // Type-only imports for convenience function signatures
 import type { ICampaignRepository } from '@domain/repositories/ICampaignRepository'
@@ -77,6 +78,10 @@ import type { ConversionFunnelService } from '@application/services/ConversionFu
 import type { NotificationDispatcherService } from '@application/services/NotificationDispatcherService'
 import type { INotificationChannelRepository } from '@domain/repositories/INotificationChannelRepository'
 import type { INotificationPreferenceRepository } from '@domain/repositories/INotificationPreferenceRepository'
+
+// PromptLab
+import type { PromptLabService } from '@application/services/PromptLabService'
+import type { IPromptLabCache } from '@application/ports/IPromptLabCache'
 
 import type { CreateCampaignUseCase } from '@application/use-cases/campaign/CreateCampaignUseCase'
 import type { UpdateCampaignUseCase } from '@application/use-cases/campaign/UpdateCampaignUseCase'
@@ -169,7 +174,9 @@ registerCommonModule(container)
 registerReportModule(container)
 // 7. Notification (Slack/Kakao – ProactiveAlertService에서 의존)
 registerNotificationModule(container)
-// 8. Auth (ToolRegistry, ConversationalAgent – 모든 Use Case 의존)
+// 8. PromptLab (AIService 의존 – Common 이후 등록)
+registerPromptLabModule(container)
+// 9. Auth (ToolRegistry, ConversationalAgent – 모든 Use Case 의존)
 registerAuthModule(container)
 
 export { container, DI_TOKENS }
@@ -551,4 +558,12 @@ export function getNotificationChannelRepository(): INotificationChannelReposito
 
 export function getNotificationPreferenceRepository(): INotificationPreferenceRepository {
   return container.resolve(DI_TOKENS.NotificationPreferenceRepository)
+}
+
+export function getPromptLabService(): PromptLabService {
+  return container.resolve(DI_TOKENS.PromptLabService)
+}
+
+export function getPromptLabCache(): IPromptLabCache {
+  return container.resolve(DI_TOKENS.PromptLabCache)
 }

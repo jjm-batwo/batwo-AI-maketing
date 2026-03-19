@@ -1,17 +1,10 @@
 // src/infrastructure/prompt-lab/PromptLabLLMJudge.ts
-import type { IAIService, AdCopyVariant } from '@application/ports/IAIService'
+import type { IAIService } from '@application/ports/IAIService'
+import type { IPromptLabLLMJudge, LLMJudgeResult } from '@application/ports/IPromptLabLLMJudge'
+import type { AdCopyVariant } from '@domain/value-objects/AdCopyTypes'
 
-export interface LLMJudgeResult {
-  score: number
-  dimensions: {
-    attention: number
-    action: number
-    relevance: number
-    emotion: number
-    clarity: number
-  }
-  tokenUsage: number
-}
+// Re-export for backward compatibility
+export type { LLMJudgeResult } from '@application/ports/IPromptLabLLMJudge'
 
 const JUDGE_SYSTEM_PROMPT = `당신은 Facebook/Instagram 광고 카피 품질 평가 전문가입니다.
 주어진 광고 카피를 5개 차원으로 채점합니다. 각 차원은 1-12점입니다.
@@ -37,7 +30,7 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value))
 }
 
-export class PromptLabLLMJudge {
+export class PromptLabLLMJudge implements IPromptLabLLMJudge {
   constructor(private readonly ai: IAIService) {}
 
   async evaluate(variant: AdCopyVariant): Promise<LLMJudgeResult> {
