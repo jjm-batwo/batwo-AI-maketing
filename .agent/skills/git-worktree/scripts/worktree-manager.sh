@@ -413,24 +413,24 @@ cleanup_worktrees() {
 
   local count=0
   for worktree_path in "$WORKTREE_DIR"/*/; do
-    if [[ -d "$worktree_path" && -e "$worktree_path/.git" ]]; then
-      local name=$(basename "$worktree_path")
-      local branch_name="${BRANCH_PREFIX}/${name}"
+    [[ -d "$worktree_path" ]] || continue
+    local name=$(basename "$worktree_path")
+    local branch_name="${BRANCH_PREFIX}/${name}"
 
-      # Remove symlink
+    if [[ -e "$worktree_path/.git" ]]; then
+      # Active worktree
       rm -f "$worktree_path/node_modules" 2>/dev/null || true
-
-      # Remove worktree
       git worktree remove --force "$worktree_path" 2>/dev/null || {
         rm -rf "$worktree_path"
       }
-
-      # Delete branch
-      git branch -D "$branch_name" 2>/dev/null || true
-
-      echo -e "  ${GREEN}✓ Removed: $name${NC}"
-      count=$((count + 1))
+    else
+      # Stale directory
+      rm -rf "$worktree_path"
     fi
+
+    git branch -D "$branch_name" 2>/dev/null || true
+    echo -e "  ${GREEN}✓ Removed: $name${NC}"
+    count=$((count + 1))
   done
 
   git worktree prune 2>/dev/null || true
@@ -463,13 +463,14 @@ _set_pane_title() {
 _find_pane_by_title() {
   local win_id="$1"
   local title="$2"
-  tmux list-panes -t "$win_id" -F '#{pane_index}:#{pane_title}' 2>/dev/null | \
-    while IFS=: read -r idx ptitle; do
-      if [[ "$ptitle" == "$title" ]]; then
-        echo "$idx"
-        return 0
-      fi
-    done
+  local pane_list
+  pane_list=$(tmux list-panes -t "$win_id" -F '#{pane_index}:#{pane_title}' 2>/dev/null) || return 1
+  while IFS=: read -r idx ptitle; do
+    if [[ "$ptitle" == "$title" ]]; then
+      echo "$idx"
+      return 0
+    fi
+  done <<< "$pane_list"
 }
 
 # Get the actual pane ID after a split (tmux may not assign sequential indexes)
@@ -754,7 +755,9 @@ tmux_exec() {
     exit 1
   fi
 
-  tmux send-keys -t "${win_id}.${target_pane}" "$cmd" Enter
+  # Use -l (literal) to avoid interpreting special chars in the task text
+  tmux send-keys -t "${win_id}.${target_pane}" -l "$cmd"
+  tmux send-keys -t "${win_id}.${target_pane}" Enter
   echo -e "${GREEN}Sent to $task_slug (pane $target_pane): $cmd${NC}"
 }
 
@@ -880,8 +883,8 @@ Examples:
   worktree-manager.sh tmux         # create in background
   tmux attach -t worktrees         # attach manually
 
-  # Send claude command to a worktree pane
-  worktree-manager.sh tmux-exec auth-refactor "claude -p 'implement auth'"
+  # Send task to a worktree's Claude session
+  worktree-manager.sh tmux-exec auth-refactor "auth 리팩토링 진행해줘"
 
   # Add a new worktree pane to running session
   worktree-manager.sh create pixel-fix

@@ -9,17 +9,27 @@ description: 독립적인 작업 2개 이상을 동시에 진행할 때 Git Work
 
 독립적인 작업 여러 개를 동시에 진행할 때, 각 작업을 git worktree로 격리하고 tmux 분할 화면에서 모든 작업 진행 상황을 한눈에 모니터링할 수 있게 합니다.
 
+**tmux 안에서 실행 시** (현재 윈도우 분할):
 ```
 ┌──────────────────┬──────────────────┐
 │                  │  워크트리 A       │
-│                  │  (Claude Code)   │
-│    MAIN          ├──────────────────┤
-│    SESSION       │  워크트리 B       │
-│    (Claude Code) │  (Claude Code)   │
-│                  ├──────────────────┤
-│                  │  워크트리 C       │
+│    MAIN          │  (Claude Code)   │
+│    SESSION       ├──────────────────┤
+│    (Claude Code) │  워크트리 B       │
 │                  │  (Claude Code)   │
 └──────────────────┴──────────────────┘
+```
+
+**일반 터미널에서 실행 시** (새 탭에 워크트리만):
+```
+현재 탭              새 탭 (자동 열림)
+┌──────────────┐    ┌──────────────┐
+│              │    │  워크트리 A   │
+│  MAIN        │    │  (Claude)    │
+│  SESSION     │    ├──────────────┤
+│  (Claude)    │    │  워크트리 B   │
+│              │    │  (Claude)    │
+└──────────────┘    └──────────────┘
 ```
 
 ## 언제 트리거되는가
@@ -201,10 +211,15 @@ bash .agent/skills/git-worktree/scripts/worktree-manager.sh tmux-kill
 └── step-4/                          # 독립 워크트리 3
 
 tmux session "worktrees"
-├── pane 0 [main]: main repo (좌측 40%)
-├── pane 1 [wt:step-2]: .worktrees/step-2/ (우측)
-├── pane 2 [wt:step-3]: .worktrees/step-3/ (우측)
-└── pane 3 [wt:step-4]: .worktrees/step-4/ (우측)
+  tmux 안에서:
+  ├── pane 0 [main]: main repo (좌측 40%)
+  ├── pane 1 [wt:step-2]: .worktrees/step-2/ (우측)
+  └── pane 2 [wt:step-3]: .worktrees/step-3/ (우측)
+
+  일반 터미널에서 (새 탭):
+  ├── pane 0 [wt:step-2]: .worktrees/step-2/ (상단)
+  ├── pane 1 [wt:step-3]: .worktrees/step-3/ (중단)
+  └── pane 2 [wt:step-4]: .worktrees/step-4/ (하단)
 ```
 
 각 패널에는 `wt:<slug>` 타이틀이 설정되어, 사용자가 `cd`로 경로를 변경해도 `tmux-exec`가 올바른 패널을 찾습니다.
