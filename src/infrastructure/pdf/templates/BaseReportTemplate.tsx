@@ -1,35 +1,12 @@
 import React from 'react'
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
 import type { ReportDTO } from '@application/dto/report/ReportDTO'
 import type { ReportSection } from '@domain/entities/Report'
 import type { ChartData, TableData, PDFGenerationOptions } from '../types'
+import { PDF_FONT_FAMILY, PDF_MONO_FONT_FAMILY, colors, spacing, radius, fontSize, letterSpacing } from '../design-tokens'
 
-// ========================================
-// Font Registration
-// ========================================
-
-const shouldUseRemotePdfFont =
-  process.env.NODE_ENV !== 'test' && process.env.DISABLE_REMOTE_PDF_FONT !== 'true'
-
-export const PDF_FONT_FAMILY = shouldUseRemotePdfFont ? 'NotoSansKR' : 'Helvetica'
-
-if (shouldUseRemotePdfFont) {
-  Font.register({
-    family: 'NotoSansKR',
-    fonts: [
-      {
-        src: 'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-400-normal.ttf',
-        fontWeight: 'normal',
-      },
-      {
-        src: 'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-700-normal.ttf',
-        fontWeight: 'bold',
-      },
-    ],
-  })
-
-  Font.registerHyphenationCallback((word) => [word])
-}
+// Re-export for backward compatibility
+export { PDF_FONT_FAMILY } from '../design-tokens'
 
 // ========================================
 // Base Styles
@@ -38,68 +15,70 @@ if (shouldUseRemotePdfFont) {
 export const baseStyles = StyleSheet.create({
   page: {
     flexDirection: 'column',
-    backgroundColor: '#ffffff',
-    padding: 40,
+    backgroundColor: colors.bgCard,
+    padding: spacing.xxl,
     fontFamily: PDF_FONT_FAMILY,
   },
   header: {
     marginBottom: 30,
     borderBottomWidth: 2,
-    borderBottomColor: '#2563eb',
+    borderBottomColor: colors.blue,
     paddingBottom: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: fontSize['7xl'],
     fontWeight: 'bold',
-    color: '#1e293b',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    marginBottom: spacing.sm,
   },
   subtitle: {
-    fontSize: 12,
-    color: '#64748b',
+    fontSize: fontSize.lg,
+    color: colors.textSecondary,
   },
   dateRange: {
-    fontSize: 14,
-    color: '#475569',
-    marginTop: 8,
+    fontSize: fontSize['2xl'],
+    color: colors.textSecondary,
+    marginTop: spacing.sm,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: fontSize['4xl'],
     fontWeight: 'bold',
-    color: '#1e293b',
-    marginBottom: 16,
+    color: colors.textPrimary,
+    marginBottom: spacing.lg,
   },
   footer: {
     position: 'absolute',
     bottom: 30,
-    left: 40,
-    right: 40,
+    left: spacing.xxl,
+    right: spacing.xxl,
     borderTopWidth: 1,
-    borderTopColor: '#e2e8f0',
-    paddingTop: 12,
+    borderTopColor: colors.border,
+    paddingTop: spacing.md,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   footerText: {
-    fontSize: 9,
-    color: '#94a3b8',
+    fontSize: fontSize.sm,
+    color: colors.textMuted,
   },
   metricCard: {
-    backgroundColor: '#ffffff',
-    padding: 12,
-    borderRadius: 6,
+    backgroundColor: colors.bgCard,
+    padding: spacing.md,
+    borderRadius: radius.md,
     borderWidth: 1,
-    borderColor: '#e2e8f0',
+    borderColor: colors.border,
   },
   metricLabel: {
-    fontSize: 10,
-    color: '#64748b',
-    marginBottom: 4,
+    fontSize: fontSize.base,
+    color: colors.textSecondary,
+    marginBottom: spacing.xs,
   },
   metricValue: {
-    fontSize: 16,
+    fontSize: fontSize['3xl'],
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
+    fontFamily: PDF_MONO_FONT_FAMILY,
+    letterSpacing: letterSpacing.wide,
   },
 })
 
@@ -185,20 +164,20 @@ export abstract class BaseReportTemplate {
     const maxValue = Math.max(...chartData.map((d) => d.value))
 
     return (
-      <View style={{ marginVertical: 12 }}>
+      <View style={{ marginVertical: spacing.md }}>
         {chartData.map((data, index) => (
-          <View key={index} style={{ marginBottom: 8 }}>
-            <Text style={{ fontSize: 10, color: '#64748b', marginBottom: 4 }}>{data.label}</Text>
+          <View key={index} style={{ marginBottom: spacing.sm }}>
+            <Text style={{ fontSize: fontSize.base, color: colors.textSecondary, marginBottom: spacing.xs }}>{data.label}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <View
                 style={{
                   width: `${(data.value / maxValue) * 100}%`,
                   height: 20,
-                  backgroundColor: data.color || '#3b82f6',
-                  borderRadius: 4,
+                  backgroundColor: data.color || colors.blue,
+                  borderRadius: radius.sm,
                 }}
               />
-              <Text style={{ fontSize: 10, marginLeft: 8, color: '#1e293b' }}>
+              <Text style={{ fontSize: fontSize.base, marginLeft: spacing.sm, color: colors.textPrimary }}>
                 {formatNumber(data.value)}
               </Text>
             </View>
@@ -212,14 +191,14 @@ export abstract class BaseReportTemplate {
     const columnWidth = `${100 / tableData.headers.length}%`
 
     return (
-      <View style={{ marginVertical: 12 }}>
+      <View style={{ marginVertical: spacing.md }}>
         {/* Header */}
         <View
           style={{
             flexDirection: 'row',
-            backgroundColor: '#f1f5f9',
+            backgroundColor: colors.slate100,
             borderBottomWidth: 1,
-            borderBottomColor: '#e2e8f0',
+            borderBottomColor: colors.border,
             paddingVertical: 6,
           }}
         >
@@ -228,10 +207,10 @@ export abstract class BaseReportTemplate {
               key={index}
               style={{
                 width: columnWidth,
-                fontSize: 9,
+                fontSize: fontSize.sm,
                 fontWeight: 'bold',
-                color: '#1e293b',
-                padding: 4,
+                color: colors.textPrimary,
+                padding: spacing.xs,
               }}
             >
               {header}
@@ -246,7 +225,7 @@ export abstract class BaseReportTemplate {
             style={{
               flexDirection: 'row',
               borderBottomWidth: 1,
-              borderBottomColor: '#e2e8f0',
+              borderBottomColor: colors.border,
               paddingVertical: 6,
             }}
           >
@@ -255,9 +234,9 @@ export abstract class BaseReportTemplate {
                 key={colIndex}
                 style={{
                   width: columnWidth,
-                  fontSize: 9,
-                  color: '#475569',
-                  padding: 4,
+                  fontSize: fontSize.sm,
+                  color: colors.textSecondary,
+                  padding: spacing.xs,
                 }}
               >
                 {row[header]}

@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text, StyleSheet } from '@react-pdf/renderer'
 import type { FunnelStageItem } from '@application/dto/report/EnhancedReportSections'
+import { colors, funnelColors, PDF_MONO_FONT_FAMILY, letterSpacing } from '../design-tokens'
 
 const styles = StyleSheet.create({
   container: {
@@ -20,12 +21,12 @@ const styles = StyleSheet.create({
   stageLabel: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
   },
   budgetRatio: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#475569',
+    color: colors.textSecondary,
   },
   metricsRow: {
     flexDirection: 'row',
@@ -33,20 +34,15 @@ const styles = StyleSheet.create({
   },
   metric: {
     fontSize: 9,
-    color: '#475569',
+    color: colors.textSecondary,
   },
   metricValue: {
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
+    fontFamily: PDF_MONO_FONT_FAMILY,
+    letterSpacing: letterSpacing.wide,
   },
 })
-
-const STAGE_COLORS: Record<string, string> = {
-  tofu: '#dbeafe',
-  mofu: '#fef3c7',
-  bofu: '#dcfce7',
-  auto: '#f3e8ff',
-}
 
 function formatCurrency(num: number): string {
   return new Intl.NumberFormat('ko-KR').format(Math.round(num)) + '원'
@@ -63,7 +59,7 @@ export function FunnelChart({ stages }: FunnelChartProps) {
   return (
     <View style={styles.container}>
       {stages.map((s) => (
-        <View key={s.stage} style={[styles.stage, { backgroundColor: STAGE_COLORS[s.stage] ?? '#f1f5f9' }]}>
+        <View key={s.stage} style={[styles.stage, { backgroundColor: funnelColors[s.stage] ?? colors.slate100 }]}>
           <View style={styles.stageHeader}>
             <Text style={styles.stageLabel}>{s.stageLabel}</Text>
             <Text style={styles.budgetRatio}>

@@ -8,6 +8,7 @@ import {
   formatDate,
   formatPercent,
 } from './BaseReportTemplate'
+import { colors, PDF_MONO_FONT_FAMILY, letterSpacing } from '../design-tokens'
 import { MetricCard } from '../components/MetricCard'
 import { BarChart } from '../components/BarChart'
 
@@ -19,7 +20,7 @@ const styles = StyleSheet.create({
   ...baseStyles,
   summarySection: {
     marginBottom: 20,
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.slate50,
     padding: 20,
     borderRadius: 8,
   },
@@ -30,16 +31,16 @@ const styles = StyleSheet.create({
   },
   comparisonSection: {
     marginBottom: 20,
-    backgroundColor: '#fef3c7',
+    backgroundColor: colors.warningSectionBg,
     padding: 16,
     borderRadius: 8,
     borderLeftWidth: 4,
-    borderLeftColor: '#f59e0b',
+    borderLeftColor: colors.yellow,
   },
   comparisonTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#92400e',
+    color: colors.warningSectionTitle,
     marginBottom: 12,
   },
   comparisonRow: {
@@ -49,28 +50,30 @@ const styles = StyleSheet.create({
   },
   comparisonLabel: {
     fontSize: 10,
-    color: '#78350f',
+    color: colors.warningSectionText,
   },
   comparisonValue: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#92400e',
+    color: colors.warningSectionTitle,
+    fontFamily: PDF_MONO_FONT_FAMILY,
+    letterSpacing: letterSpacing.wide,
   },
   increaseText: {
-    color: '#16a34a',
+    color: colors.positive,
   },
   decreaseText: {
-    color: '#dc2626',
+    color: colors.negative,
   },
   highlightBox: {
-    backgroundColor: '#dbeafe',
+    backgroundColor: colors.highlightBg,
     padding: 12,
     borderRadius: 6,
     marginBottom: 16,
   },
   highlightText: {
     fontSize: 11,
-    color: '#1e40af',
+    color: colors.infoSectionText,
     lineHeight: 1.6,
   },
 })
@@ -219,7 +222,7 @@ export function DailyReportTemplate({ report }: DailyReportTemplateProps) {
                 .map((s) => ({
                   label: s.title.substring(0, 20),
                   value: s.metrics?.conversions || 0,
-                  color: '#3b82f6',
+                  color: colors.blue,
                 }))}
               formatValue={(v) => formatNumber(v)}
             />

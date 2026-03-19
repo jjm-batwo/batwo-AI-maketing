@@ -1,18 +1,19 @@
 import React from 'react'
 import { View, Text, StyleSheet } from '@react-pdf/renderer'
+import { colors, PDF_MONO_FONT_FAMILY, letterSpacing } from '../design-tokens'
 
 const styles = StyleSheet.create({
   card: {
     width: '30%',
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.bgCard,
     padding: 12,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#e2e8f0',
+    borderColor: colors.border,
   },
   label: {
     fontSize: 10,
-    color: '#64748b',
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   valueRow: {
@@ -23,7 +24,9 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
+    fontFamily: PDF_MONO_FONT_FAMILY,
+    letterSpacing: letterSpacing.wide,
   },
   changeContainer: {
     flexDirection: 'row',
@@ -36,13 +39,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   positive: {
-    color: '#10b981',
+    color: colors.positive,
   },
   negative: {
-    color: '#ef4444',
+    color: colors.negative,
   },
   neutral: {
-    color: '#64748b',
+    color: colors.textSecondary,
   },
   trend: {
     fontSize: 10,

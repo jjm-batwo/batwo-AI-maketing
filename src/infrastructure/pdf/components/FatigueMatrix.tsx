@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text, StyleSheet, Svg, Rect } from '@react-pdf/renderer'
 import type { CreativeFatigueItem } from '@application/dto/report/EnhancedReportSections'
+import { colors, fatigueColors, PDF_MONO_FONT_FAMILY, letterSpacing } from '../design-tokens'
 
 const styles = StyleSheet.create({
   container: {
@@ -9,13 +10,13 @@ const styles = StyleSheet.create({
   item: {
     marginBottom: 10,
     padding: 10,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.bgCard,
     borderRadius: 6,
     borderLeftWidth: 3,
   },
-  healthy: { borderLeftColor: '#16a34a' },
-  warning: { borderLeftColor: '#ca8a04' },
-  critical: { borderLeftColor: '#dc2626' },
+  healthy: { borderLeftColor: fatigueColors.healthy.border },
+  warning: { borderLeftColor: fatigueColors.warning.border },
+  critical: { borderLeftColor: fatigueColors.critical.border },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -25,7 +26,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
   },
   badge: {
     paddingHorizontal: 6,
@@ -44,22 +45,18 @@ const styles = StyleSheet.create({
   },
   metricText: {
     fontSize: 9,
-    color: '#64748b',
+    color: colors.textSecondary,
+    fontFamily: PDF_MONO_FONT_FAMILY,
+    letterSpacing: letterSpacing.wide,
   },
   barContainer: {
     marginBottom: 4,
   },
   recommendation: {
     fontSize: 9,
-    color: '#64748b',
+    color: colors.textSecondary,
   },
 })
-
-const LEVEL_COLORS = {
-  healthy: { bg: '#f0fdf4', text: '#16a34a', bar: '#16a34a' },
-  warning: { bg: '#fefce8', text: '#ca8a04', bar: '#ca8a04' },
-  critical: { bg: '#fef2f2', text: '#dc2626', bar: '#dc2626' },
-}
 
 interface FatigueMatrixProps {
   creatives: CreativeFatigueItem[]
@@ -71,13 +68,13 @@ export function FatigueMatrix({ creatives }: FatigueMatrixProps) {
   return (
     <View style={styles.container}>
       {creatives.map((c) => {
-        const colors = LEVEL_COLORS[c.fatigueLevel]
+        const levelColors = fatigueColors[c.fatigueLevel]
         return (
           <View key={c.creativeId} style={[styles.item, styles[c.fatigueLevel]]}>
             <View style={styles.header}>
               <Text style={styles.name}>{c.name} ({c.format})</Text>
-              <View style={[styles.badge, { backgroundColor: colors.bg }]}>
-                <Text style={[styles.badgeText, { color: colors.text }]}>{c.fatigueLevel}</Text>
+              <View style={[styles.badge, { backgroundColor: levelColors.bg }]}>
+                <Text style={[styles.badgeText, { color: levelColors.text }]}>{c.fatigueLevel}</Text>
               </View>
             </View>
             <View style={styles.metricsRow}>
@@ -88,8 +85,8 @@ export function FatigueMatrix({ creatives }: FatigueMatrixProps) {
             </View>
             <View style={styles.barContainer}>
               <Svg width={200} height={8}>
-                <Rect x={0} y={0} width={200} height={8} rx={4} fill="#e2e8f0" />
-                <Rect x={0} y={0} width={c.fatigueScore * 2} height={8} rx={4} fill={colors.bar} />
+                <Rect x={0} y={0} width={200} height={8} rx={4} fill={colors.border} />
+                <Rect x={0} y={0} width={c.fatigueScore * 2} height={8} rx={4} fill={levelColors.bar} />
               </Svg>
             </View>
             <Text style={styles.recommendation}>{c.recommendation}</Text>

@@ -1,27 +1,30 @@
 import React from 'react'
 import { View, Text, StyleSheet } from '@react-pdf/renderer'
 import type { ChangeRate } from '@application/dto/report/EnhancedReportSections'
+import { colors, PDF_MONO_FONT_FAMILY, letterSpacing } from '../design-tokens'
 
 const styles = StyleSheet.create({
   card: {
     width: '18%',
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.slate50,
     padding: 10,
     borderRadius: 4,
     borderLeftWidth: 3,
-    borderLeftColor: '#2563eb',
+    borderLeftColor: colors.blue,
   },
   label: {
     fontSize: 8,
-    color: '#64748b',
+    color: colors.textSecondary,
     marginBottom: 2,
     textTransform: 'uppercase',
   },
   value: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#0f172a',
+    color: colors.textPrimary,
     marginBottom: 3,
+    fontFamily: PDF_MONO_FONT_FAMILY,
+    letterSpacing: letterSpacing.wide,
   },
   changeRow: {
     flexDirection: 'row',
@@ -39,11 +42,11 @@ const styles = StyleSheet.create({
 })
 
 function getChangeColor(change: ChangeRate): string {
-  if (change.direction === 'flat') return '#64748b'
+  if (change.direction === 'flat') return colors.textSecondary
   if (change.direction === 'up') {
-    return change.isPositive ? '#16a34a' : '#dc2626'
+    return change.isPositive ? colors.positive : colors.negative
   }
-  return change.isPositive ? '#dc2626' : '#16a34a'
+  return change.isPositive ? colors.negative : colors.positive
 }
 
 function getArrow(change: ChangeRate): string {

@@ -8,6 +8,7 @@ import {
   formatDate,
   formatPercent,
 } from './BaseReportTemplate'
+import { colors, PDF_MONO_FONT_FAMILY, letterSpacing } from '../design-tokens'
 
 // ========================================
 // Executive Report Specific Styles
@@ -22,19 +23,19 @@ const styles = StyleSheet.create({
   companyLogo: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2563eb',
+    color: colors.blue,
     marginBottom: 40,
   },
   executiveTitle: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
     marginBottom: 12,
     textAlign: 'center',
   },
   executiveSubtitle: {
     fontSize: 14,
-    color: '#64748b',
+    color: colors.textSecondary,
     marginBottom: 40,
     textAlign: 'center',
   },
@@ -46,35 +47,37 @@ const styles = StyleSheet.create({
   },
   kpiCard: {
     width: '45%',
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.slate50,
     padding: 20,
     borderRadius: 8,
     borderLeftWidth: 4,
-    borderLeftColor: '#2563eb',
+    borderLeftColor: colors.blue,
   },
   kpiLabel: {
     fontSize: 12,
-    color: '#64748b',
+    color: colors.textSecondary,
     marginBottom: 8,
   },
   kpiValue: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
     marginBottom: 4,
+    fontFamily: PDF_MONO_FONT_FAMILY,
+    letterSpacing: letterSpacing.wide,
   },
   kpiChange: {
     fontSize: 11,
     marginTop: 4,
   },
   kpiIncrease: {
-    color: '#16a34a',
+    color: colors.positive,
   },
   kpiDecrease: {
-    color: '#dc2626',
+    color: colors.negative,
   },
   summaryBox: {
-    backgroundColor: '#eff6ff',
+    backgroundColor: colors.infoSectionBg,
     padding: 24,
     borderRadius: 8,
     marginBottom: 30,
@@ -82,18 +85,18 @@ const styles = StyleSheet.create({
   summaryTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#1e40af',
+    color: colors.infoSectionText,
     marginBottom: 12,
   },
   summaryText: {
     fontSize: 12,
-    color: '#1e40af',
+    color: colors.infoSectionText,
     lineHeight: 1.8,
   },
   highlightNumber: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#2563eb',
+    color: colors.blue,
   },
   keyInsights: {
     marginBottom: 30,
@@ -107,14 +110,14 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#3b82f6',
+    backgroundColor: colors.blue,
     marginRight: 10,
     marginTop: 6,
   },
   insightText: {
     flex: 1,
     fontSize: 11,
-    color: '#334155',
+    color: colors.slate700,
     lineHeight: 1.6,
   },
   bottomSignature: {
@@ -123,12 +126,12 @@ const styles = StyleSheet.create({
     left: 50,
     right: 50,
     borderTopWidth: 1,
-    borderTopColor: '#e2e8f0',
+    borderTopColor: colors.border,
     paddingTop: 20,
   },
   signatureText: {
     fontSize: 10,
-    color: '#64748b',
+    color: colors.textSecondary,
     textAlign: 'right',
   },
 })

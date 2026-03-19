@@ -2,6 +2,25 @@
 // PDF Infrastructure Exports
 // ========================================
 
+// Design tokens (single source of truth for PDF styling)
+export {
+  colors,
+  priorityColors,
+  fatigueColors,
+  importanceColors,
+  analysisColors,
+  funnelColors,
+  formatColors,
+  gradeColors,
+  confidenceColors,
+  spacing,
+  radius,
+  fontSize,
+  letterSpacing,
+  PDF_FONT_FAMILY,
+  PDF_MONO_FONT_FAMILY,
+} from './design-tokens'
+
 // Legacy exports (backward compatibility)
 export {
   ReportPDFGenerator,

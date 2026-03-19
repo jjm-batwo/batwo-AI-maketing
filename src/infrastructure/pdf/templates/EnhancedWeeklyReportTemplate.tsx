@@ -2,6 +2,7 @@ import React from 'react'
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
 import type { ReportDTO } from '@application/dto/report/ReportDTO'
 import { formatDate, formatNumber, PDF_FONT_FAMILY } from './BaseReportTemplate'
+import { colors, analysisColors } from '../design-tokens'
 import { SummaryCard } from '../components/SummaryCard'
 import { LineChart } from '../components/LineChart'
 import { FatigueMatrix } from '../components/FatigueMatrix'
@@ -12,38 +13,38 @@ import { PriorityActionCard } from '../components/PriorityActionCard'
 const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.bgCard,
     padding: 24,
     paddingBottom: 40,
     fontFamily: PDF_FONT_FAMILY,
   },
   header: {
     marginBottom: 16,
-    backgroundColor: '#0f172a',
+    backgroundColor: colors.headerBg,
     padding: 16,
     borderRadius: 4,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: colors.headerText,
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 10,
-    color: '#94a3b8',
+    color: colors.textMuted,
   },
   dateRange: {
     fontSize: 11,
-    color: '#60a5fa',
+    color: colors.headerAccent,
     marginTop: 6,
     fontWeight: 'bold',
   },
   sectionTitle: {
     fontSize: 13,
     fontWeight: 'bold',
-    color: '#ffffff',
-    backgroundColor: '#1e293b',
+    color: colors.white,
+    backgroundColor: colors.slate800,
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 3,
@@ -61,32 +62,32 @@ const styles = StyleSheet.create({
   },
   divider: {
     borderBottomWidth: 1,
-    borderBottomColor: '#cbd5e1',
+    borderBottomColor: colors.slate300,
     marginVertical: 8,
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#2563eb',
+    backgroundColor: colors.tableHeaderBg,
     paddingVertical: 5,
   },
   tableRow: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBottomColor: '#f1f5f9',
+    borderBottomColor: colors.tableBorder,
     paddingVertical: 4,
   },
   tableRowAlt: {
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.tableRowAlt,
   },
   tableCell: {
     fontSize: 8,
-    color: '#334155',
+    color: colors.slate700,
     padding: 3,
   },
   tableCellHeader: {
     fontSize: 8,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: colors.white,
     padding: 3,
   },
   analysisCard: {
@@ -96,22 +97,22 @@ const styles = StyleSheet.create({
     borderLeftWidth: 3,
   },
   positiveCard: {
-    backgroundColor: '#f0fdf4',
-    borderLeftColor: '#16a34a',
+    backgroundColor: analysisColors.positive.bg,
+    borderLeftColor: analysisColors.positive.border,
   },
   negativeCard: {
-    backgroundColor: '#fef2f2',
-    borderLeftColor: '#dc2626',
+    backgroundColor: analysisColors.negative.bg,
+    borderLeftColor: analysisColors.negative.border,
   },
   factorTitle: {
     fontSize: 9,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
     marginBottom: 2,
   },
   factorDescription: {
     fontSize: 8,
-    color: '#475569',
+    color: colors.textSecondary,
   },
   impactBadge: {
     fontSize: 7,
@@ -120,14 +121,14 @@ const styles = StyleSheet.create({
   },
   summaryText: {
     fontSize: 9,
-    color: '#475569',
+    color: colors.textSecondary,
     lineHeight: 1.5,
     marginBottom: 8,
   },
   subsectionTitle: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
     marginBottom: 6,
     marginTop: 8,
   },
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
     bottom: 12,
     left: 24,
     right: 24,
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.slate50,
     paddingVertical: 6,
     paddingHorizontal: 10,
     borderRadius: 3,
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     fontSize: 7,
-    color: '#64748b',
+    color: colors.textSecondary,
   },
 })
 
@@ -397,7 +398,7 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
                     <View key={i} style={[styles.analysisCard, styles.positiveCard]}>
                       <Text style={styles.factorTitle}>{f.title}</Text>
                       <Text style={styles.factorDescription}>{f.description}</Text>
-                      <Text style={[styles.impactBadge, { color: '#16a34a' }]}>영향도: {f.impact}</Text>
+                      <Text style={[styles.impactBadge, { color: analysisColors.positive.text }]}>영향도: {f.impact}</Text>
                     </View>
                   ))}
                 </View>
@@ -410,7 +411,7 @@ export function EnhancedWeeklyReportTemplate({ report }: EnhancedWeeklyReportTem
                     <View key={i} style={[styles.analysisCard, styles.negativeCard]}>
                       <Text style={styles.factorTitle}>{f.title}</Text>
                       <Text style={styles.factorDescription}>{f.description}</Text>
-                      <Text style={[styles.impactBadge, { color: '#dc2626' }]}>영향도: {f.impact}</Text>
+                      <Text style={[styles.impactBadge, { color: analysisColors.negative.text }]}>영향도: {f.impact}</Text>
                     </View>
                   ))}
                 </View>

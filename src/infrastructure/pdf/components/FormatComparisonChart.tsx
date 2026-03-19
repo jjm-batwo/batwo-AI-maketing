@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text, StyleSheet, Svg, Rect } from '@react-pdf/renderer'
 import type { FormatPerformanceItem } from '@application/dto/report/EnhancedReportSections'
+import { colors, formatColors, PDF_MONO_FONT_FAMILY, letterSpacing } from '../design-tokens'
 
 const styles = StyleSheet.create({
   container: {
@@ -16,16 +17,18 @@ const styles = StyleSheet.create({
     width: 60,
     fontSize: 9,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
   },
   barArea: {
     flex: 1,
   },
   valueText: {
     fontSize: 9,
-    color: '#475569',
+    color: colors.textSecondary,
     width: 50,
     textAlign: 'right',
+    fontFamily: PDF_MONO_FONT_FAMILY,
+    letterSpacing: letterSpacing.wide,
   },
   details: {
     flexDirection: 'row',
@@ -35,16 +38,9 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 8,
-    color: '#64748b',
+    color: colors.textSecondary,
   },
 })
-
-const FORMAT_COLORS: Record<string, string> = {
-  SINGLE_IMAGE: '#3b82f6',
-  SINGLE_VIDEO: '#8b5cf6',
-  CAROUSEL: '#f59e0b',
-  REELS: '#ec4899',
-}
 
 interface FormatComparisonChartProps {
   formats: FormatPerformanceItem[]
@@ -59,14 +55,14 @@ export function FormatComparisonChart({ formats }: FormatComparisonChartProps) {
     <View style={styles.container}>
       {formats.map((f) => {
         const barWidth = (f.roas / maxRoas) * 300
-        const color = FORMAT_COLORS[f.format] ?? '#64748b'
+        const color = formatColors[f.format] ?? colors.textSecondary
         return (
           <View key={f.format}>
             <View style={styles.row}>
               <Text style={styles.label}>{f.formatLabel}</Text>
               <View style={styles.barArea}>
                 <Svg width={310} height={16}>
-                  <Rect x={0} y={0} width={310} height={16} rx={4} fill="#f1f5f9" />
+                  <Rect x={0} y={0} width={310} height={16} rx={4} fill={colors.slate100} />
                   <Rect x={0} y={0} width={Math.max(barWidth, 2)} height={16} rx={4} fill={color} />
                 </Svg>
               </View>

@@ -1,74 +1,51 @@
 import React from 'react'
-import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
 import type { ReportDTO } from '@application/dto/report/ReportDTO'
 import { BarChart } from '../components/BarChart'
 import { MetricCard } from '../components/MetricCard'
 import { InsightCard } from '../components/InsightCard'
 import { ActionItemCard } from '../components/ActionItemCard'
-import { PDF_FONT_FAMILY } from './BaseReportTemplate'
-
-const shouldUseRemotePdfFont =
-  process.env.NODE_ENV !== 'test' && process.env.DISABLE_REMOTE_PDF_FONT !== 'true'
-
-if (shouldUseRemotePdfFont) {
-  // Noto Sans KR 폰트 등록 (한글 지원)
-  Font.register({
-    family: 'NotoSansKR',
-    fonts: [
-      {
-        src: 'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-400-normal.ttf',
-        fontWeight: 'normal',
-      },
-      {
-        src: 'https://cdn.jsdelivr.net/fontsource/fonts/noto-sans-kr@latest/korean-700-normal.ttf',
-        fontWeight: 'bold',
-      },
-    ],
-  })
-
-  // Hyphenation callback 비활성화 (한글 줄바꿈 개선)
-  Font.registerHyphenationCallback((word) => [word])
-}
+import { PDF_FONT_FAMILY, PDF_MONO_FONT_FAMILY, colors, gradeColors, confidenceColors, letterSpacing } from '../design-tokens'
 
 // Define styles
 const styles = StyleSheet.create({
   page: {
     flexDirection: 'column',
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.bgCard,
     padding: 24,
     fontFamily: PDF_FONT_FAMILY,
   },
   header: {
     marginBottom: 16,
     borderBottomWidth: 2,
-    borderBottomColor: '#2563eb',
+    borderBottomColor: colors.blue,
     paddingBottom: 20,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 12,
-    color: '#64748b',
+    color: colors.textSecondary,
   },
   dateRange: {
     fontSize: 14,
-    color: '#475569',
+    color: colors.textSecondary,
     marginTop: 8,
   },
   summarySection: {
     marginBottom: 16,
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.slate50,
     padding: 12,
     borderRadius: 8,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
     marginBottom: 16,
   },
   metricsGrid: {
@@ -78,37 +55,39 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     width: '30%',
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.bgCard,
     padding: 12,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: '#e2e8f0',
+    borderColor: colors.border,
   },
   metricLabel: {
     fontSize: 10,
-    color: '#64748b',
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   metricValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
+    fontFamily: PDF_MONO_FONT_FAMILY,
+    letterSpacing: letterSpacing.wide,
   },
   campaignSection: {
     marginBottom: 12,
   },
   campaignCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.bgCard,
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#e2e8f0',
+    borderColor: colors.border,
     marginBottom: 12,
   },
   campaignTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   campaignMetrics: {
@@ -121,16 +100,18 @@ const styles = StyleSheet.create({
   },
   campaignMetricLabel: {
     fontSize: 9,
-    color: '#64748b',
+    color: colors.textSecondary,
   },
   campaignMetricValue: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#334155',
+    color: colors.slate700,
+    fontFamily: PDF_MONO_FONT_FAMILY,
+    letterSpacing: letterSpacing.wide,
   },
   insightsSection: {
     marginBottom: 12,
-    backgroundColor: '#eff6ff',
+    backgroundColor: colors.infoSectionBg,
     padding: 12,
     borderRadius: 6,
   },
@@ -138,23 +119,23 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#bfdbfe',
+    borderBottomColor: colors.infoSectionBorder,
   },
   insightText: {
     fontSize: 11,
-    color: '#1e40af',
+    color: colors.infoSectionText,
     marginBottom: 8,
     lineHeight: 1.5,
   },
   recommendationTitle: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#1e40af',
+    color: colors.infoSectionText,
     marginBottom: 6,
   },
   recommendationItem: {
     fontSize: 10,
-    color: '#3b82f6',
+    color: colors.blue,
     marginBottom: 4,
     paddingLeft: 12,
   },
@@ -164,22 +145,22 @@ const styles = StyleSheet.create({
     left: 24,
     right: 24,
     borderTopWidth: 1,
-    borderTopColor: '#e2e8f0',
+    borderTopColor: colors.border,
     paddingTop: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   footerText: {
     fontSize: 9,
-    color: '#94a3b8',
+    color: colors.textMuted,
   },
   executiveSummary: {
     marginBottom: 16,
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.slate50,
     padding: 12,
     borderRadius: 8,
     borderLeftWidth: 4,
-    borderLeftColor: '#2563eb',
+    borderLeftColor: colors.blue,
   },
   gradeBadge: {
     paddingHorizontal: 12,
@@ -189,77 +170,79 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   gradeExcellent: {
-    backgroundColor: '#dcfce7',
+    backgroundColor: gradeColors.excellent.bg,
   },
   gradeGood: {
-    backgroundColor: '#dbeafe',
+    backgroundColor: gradeColors.good.bg,
   },
   gradeAverage: {
-    backgroundColor: '#fef3c7',
+    backgroundColor: gradeColors.average.bg,
   },
   gradeBelowAverage: {
-    backgroundColor: '#fed7aa',
+    backgroundColor: gradeColors.below_average.bg,
   },
   gradePoor: {
-    backgroundColor: '#fee2e2',
+    backgroundColor: gradeColors.poor.bg,
   },
   gradeText: {
     fontSize: 14,
     fontWeight: 'bold',
   },
   gradeTextExcellent: {
-    color: '#16a34a',
+    color: gradeColors.excellent.text,
   },
   gradeTextGood: {
-    color: '#2563eb',
+    color: gradeColors.good.text,
   },
   gradeTextAverage: {
-    color: '#ca8a04',
+    color: gradeColors.average.text,
   },
   gradeTextBelowAverage: {
-    color: '#ea580c',
+    color: gradeColors.below_average.text,
   },
   gradeTextPoor: {
-    color: '#dc2626',
+    color: gradeColors.poor.text,
   },
   extendedSection: {
     marginBottom: 12,
   },
   benchmarkSection: {
     marginBottom: 12,
-    backgroundColor: '#f0f9ff',
+    backgroundColor: colors.skyBg,
     padding: 12,
     borderRadius: 6,
   },
   scoreDisplay: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#2563eb',
+    color: colors.blue,
     textAlign: 'center',
     marginVertical: 12,
+    fontFamily: PDF_MONO_FONT_FAMILY,
+    letterSpacing: letterSpacing.wide,
   },
   gapItem: {
     marginBottom: 10,
     padding: 10,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.bgCard,
     borderRadius: 6,
     borderLeftWidth: 3,
-    borderLeftColor: '#f59e0b',
+    borderLeftColor: colors.yellow,
   },
   gapMetric: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   gapText: {
     fontSize: 9,
-    color: '#64748b',
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   gapSuggestion: {
     fontSize: 9,
-    color: '#3b82f6',
+    color: colors.blue,
   },
   forecastTable: {
     marginTop: 12,
@@ -267,21 +250,21 @@ const styles = StyleSheet.create({
   tableRow: {
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderBottomColor: '#e2e8f0',
+    borderBottomColor: colors.border,
     paddingVertical: 6,
   },
   tableHeader: {
-    backgroundColor: '#f1f5f9',
+    backgroundColor: colors.slate100,
     fontWeight: 'bold',
   },
   tableCell: {
     fontSize: 9,
-    color: '#475569',
+    color: colors.textSecondary,
     padding: 4,
   },
   tableCellBold: {
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
   },
   confidenceBadge: {
     fontSize: 8,
@@ -290,16 +273,16 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   highConfidence: {
-    backgroundColor: '#dcfce7',
-    color: '#16a34a',
+    backgroundColor: confidenceColors.high.bg,
+    color: confidenceColors.high.text,
   },
   mediumConfidence: {
-    backgroundColor: '#fef3c7',
-    color: '#ca8a04',
+    backgroundColor: confidenceColors.medium.bg,
+    color: confidenceColors.medium.text,
   },
   lowConfidence: {
-    backgroundColor: '#fee2e2',
-    color: '#dc2626',
+    backgroundColor: confidenceColors.low.bg,
+    color: confidenceColors.low.text,
   },
 })
 
@@ -433,7 +416,7 @@ export function WeeklyReportTemplate({ report }: WeeklyReportTemplateProps) {
                 .map((s) => ({
                   label: s.title.substring(0, 15),
                   value: s.metrics!.spend! > 0 ? s.metrics!.revenue! / s.metrics!.spend! : 0,
-                  color: '#3b82f6',
+                  color: colors.blue,
                 }))
                 .slice(0, 5)}
               formatValue={(v) => `${v.toFixed(2)}x`}

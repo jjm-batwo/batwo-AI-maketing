@@ -1,13 +1,14 @@
 import React from 'react'
 import { View, Text, StyleSheet } from '@react-pdf/renderer'
 import type { InsightItem } from '@domain/entities/Report'
+import { colors, importanceColors } from '../design-tokens'
 
 const styles = StyleSheet.create({
   card: {
     marginBottom: 12,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#e2e8f0',
+    borderBottomColor: colors.border,
   },
   header: {
     flexDirection: 'row',
@@ -18,7 +19,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
     flex: 1,
   },
   badge: {
@@ -32,31 +33,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textTransform: 'uppercase',
   },
-  critical: {
-    backgroundColor: '#fef2f2',
-    color: '#dc2626',
-  },
-  high: {
-    backgroundColor: '#fff7ed',
-    color: '#ea580c',
-  },
-  medium: {
-    backgroundColor: '#fefce8',
-    color: '#ca8a04',
-  },
-  low: {
-    backgroundColor: '#f0f9ff',
-    color: '#0284c7',
-  },
   description: {
     fontSize: 10,
-    color: '#475569',
+    color: colors.textSecondary,
     lineHeight: 1.5,
     marginBottom: 6,
   },
   typeLabel: {
     fontSize: 8,
-    color: '#94a3b8',
+    color: colors.textMuted,
     textTransform: 'uppercase',
   },
 })
@@ -66,34 +51,15 @@ interface InsightCardProps {
 }
 
 export function InsightCard({ insight }: InsightCardProps) {
+  const importanceKey = insight.importance as keyof typeof importanceColors
+  const badgeColors = importanceColors[importanceKey] ?? importanceColors.medium
+
   const getBadgeStyles = () => {
-    switch (insight.importance) {
-      case 'critical':
-        return [styles.badge, styles.critical]
-      case 'high':
-        return [styles.badge, styles.high]
-      case 'medium':
-        return [styles.badge, styles.medium]
-      case 'low':
-        return [styles.badge, styles.low]
-      default:
-        return [styles.badge, styles.medium]
-    }
+    return [styles.badge, { backgroundColor: badgeColors.bg }]
   }
 
   const getBadgeTextStyles = () => {
-    switch (insight.importance) {
-      case 'critical':
-        return [styles.badgeText, styles.critical]
-      case 'high':
-        return [styles.badgeText, styles.high]
-      case 'medium':
-        return [styles.badgeText, styles.medium]
-      case 'low':
-        return [styles.badgeText, styles.low]
-      default:
-        return [styles.badgeText, styles.medium]
-    }
+    return [styles.badgeText, { color: badgeColors.text }]
   }
 
   return (

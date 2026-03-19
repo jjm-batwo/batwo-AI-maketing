@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, Text, Svg, Rect, StyleSheet } from '@react-pdf/renderer'
+import { colors, PDF_MONO_FONT_FAMILY, letterSpacing } from '../design-tokens'
 
 const styles = StyleSheet.create({
   container: {
@@ -8,7 +9,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   chartArea: {
@@ -23,12 +24,12 @@ const styles = StyleSheet.create({
   label: {
     width: '25%',
     fontSize: 9,
-    color: '#475569',
+    color: colors.textSecondary,
   },
   barContainer: {
     flex: 1,
     height: 20,
-    backgroundColor: '#f1f5f9',
+    backgroundColor: colors.slate100,
     borderRadius: 4,
     position: 'relative',
   },
@@ -37,7 +38,9 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     fontSize: 9,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
+    fontFamily: PDF_MONO_FONT_FAMILY,
+    letterSpacing: letterSpacing.wide,
   },
 })
 
@@ -63,7 +66,7 @@ export function BarChart({ title, data, formatValue, maxValue }: BarChartProps) 
       <View style={styles.chartArea}>
         {data.map((item, index) => {
           const percentage = (item.value / max) * 100
-          const color = item.color || '#3b82f6'
+          const color = item.color || colors.blue
 
           return (
             <View key={index} style={styles.barRow}>

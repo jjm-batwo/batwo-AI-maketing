@@ -1,18 +1,19 @@
 import React from 'react'
 import { View, Text, StyleSheet } from '@react-pdf/renderer'
 import type { RecommendedAction } from '@application/dto/report/EnhancedReportSections'
+import { colors, priorityColors } from '../design-tokens'
 
 const styles = StyleSheet.create({
   card: {
     marginBottom: 6,
     padding: 8,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.bgCard,
     borderRadius: 6,
     borderLeftWidth: 3,
   },
-  highPriority: { borderLeftColor: '#dc2626', backgroundColor: '#fef2f2' },
-  mediumPriority: { borderLeftColor: '#ca8a04', backgroundColor: '#fffbeb' },
-  lowPriority: { borderLeftColor: '#3b82f6', backgroundColor: '#eff6ff' },
+  highPriority: { borderLeftColor: priorityColors.high.border, backgroundColor: priorityColors.high.bg },
+  mediumPriority: { borderLeftColor: priorityColors.medium.border, backgroundColor: priorityColors.medium.bg },
+  lowPriority: { borderLeftColor: priorityColors.low.border, backgroundColor: priorityColors.low.bg },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -29,33 +30,33 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textTransform: 'uppercase',
   },
-  highText: { color: '#dc2626' },
-  mediumText: { color: '#ca8a04' },
-  lowText: { color: '#3b82f6' },
+  highText: { color: priorityColors.high.text },
+  mediumText: { color: priorityColors.medium.text },
+  lowText: { color: priorityColors.low.text },
   categoryBadge: {
     paddingHorizontal: 6,
     paddingVertical: 2,
-    backgroundColor: '#f1f5f9',
+    backgroundColor: colors.slate100,
     borderRadius: 3,
   },
   categoryText: {
     fontSize: 8,
-    color: '#475569',
+    color: colors.textSecondary,
   },
   title: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   description: {
     fontSize: 9,
-    color: '#475569',
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   impact: {
     fontSize: 9,
-    color: '#3b82f6',
+    color: colors.blue,
   },
 })
 

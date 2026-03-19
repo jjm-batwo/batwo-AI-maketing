@@ -8,6 +8,7 @@ import {
   formatDate,
   formatPercent,
 } from './BaseReportTemplate'
+import { colors, PDF_MONO_FONT_FAMILY, letterSpacing } from '../design-tokens'
 import { MetricCard } from '../components/MetricCard'
 import { BarChart } from '../components/BarChart'
 import { InsightCard } from '../components/InsightCard'
@@ -20,19 +21,19 @@ const styles = StyleSheet.create({
   ...baseStyles,
   executiveSummary: {
     marginBottom: 24,
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.slate50,
     padding: 20,
     borderRadius: 8,
     borderLeftWidth: 4,
-    borderLeftColor: '#2563eb',
+    borderLeftColor: colors.blue,
   },
   summarySection: {
     marginBottom: 24,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.bgCard,
     padding: 20,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#e2e8f0',
+    borderColor: colors.border,
   },
   metricsGrid: {
     flexDirection: 'row',
@@ -41,14 +42,14 @@ const styles = StyleSheet.create({
   },
   goalSection: {
     marginBottom: 24,
-    backgroundColor: '#fef3c7',
+    backgroundColor: colors.warningSectionBg,
     padding: 16,
     borderRadius: 8,
   },
   goalTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#92400e',
+    color: colors.warningSectionTitle,
     marginBottom: 12,
   },
   goalRow: {
@@ -58,26 +59,26 @@ const styles = StyleSheet.create({
   },
   goalLabel: {
     fontSize: 10,
-    color: '#78350f',
+    color: colors.warningSectionText,
     width: '40%',
   },
   goalBar: {
     flex: 1,
     height: 16,
-    backgroundColor: '#fed7aa',
+    backgroundColor: colors.goalBarBg,
     borderRadius: 4,
     marginRight: 8,
     position: 'relative',
   },
   goalProgress: {
     height: 16,
-    backgroundColor: '#f59e0b',
+    backgroundColor: colors.goalBarFill,
     borderRadius: 4,
   },
   goalValue: {
     fontSize: 9,
     fontWeight: 'bold',
-    color: '#92400e',
+    color: colors.warningSectionTitle,
     width: '15%',
     textAlign: 'right',
   },
@@ -88,17 +89,17 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   weekCard: {
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.slate50,
     padding: 12,
     borderRadius: 6,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#e2e8f0',
+    borderColor: colors.border,
   },
   weekTitle: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   weekMetrics: {
@@ -111,12 +112,14 @@ const styles = StyleSheet.create({
   },
   weekMetricLabel: {
     fontSize: 8,
-    color: '#64748b',
+    color: colors.textSecondary,
   },
   weekMetricValue: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#334155',
+    color: colors.slate700,
+    fontFamily: PDF_MONO_FONT_FAMILY,
+    letterSpacing: letterSpacing.wide,
   },
 })
 
@@ -171,13 +174,13 @@ export function MonthlyReportTemplate({ report }: MonthlyReportTemplateProps) {
         {/* Executive Summary */}
         <View style={styles.executiveSummary}>
           <Text style={styles.sectionTitle}>경영진 요약</Text>
-          <Text style={{ fontSize: 11, color: '#475569', lineHeight: 1.6, marginBottom: 12 }}>
+          <Text style={{ fontSize: 11, color: colors.textSecondary, lineHeight: 1.6, marginBottom: 12 }}>
             {new Date(dateRange.startDate).toLocaleDateString('ko-KR', { month: 'long' })} 한 달간
             총 {formatCurrency(summaryMetrics.totalRevenue)}의 매출을 달성했으며, ROAS{' '}
             {summaryMetrics.overallROAS.toFixed(2)}x로 목표 대비{' '}
             {goalAchievement.roas > 100 ? '초과' : '미달'} 달성했습니다.
           </Text>
-          <Text style={{ fontSize: 10, color: '#64748b', lineHeight: 1.5 }}>
+          <Text style={{ fontSize: 10, color: colors.textSecondary, lineHeight: 1.5 }}>
             • 총 전환: {formatNumber(summaryMetrics.totalConversions)}건 (목표 대비{' '}
             {formatPercent(goalAchievement.conversions - 100, 1)}){'\n'}• 총 지출:{' '}
             {formatCurrency(summaryMetrics.totalSpend)} (예산 대비{' '}
@@ -262,7 +265,7 @@ export function MonthlyReportTemplate({ report }: MonthlyReportTemplateProps) {
               .map((s) => ({
                 label: s.title.substring(0, 15),
                 value: s.metrics?.revenue || 0,
-                color: '#3b82f6',
+                color: colors.blue,
               }))}
             formatValue={(v) => formatCurrency(v)}
           />

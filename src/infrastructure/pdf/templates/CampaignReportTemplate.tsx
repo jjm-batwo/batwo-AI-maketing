@@ -8,6 +8,7 @@ import {
   formatDate,
   formatPercent,
 } from './BaseReportTemplate'
+import { colors } from '../design-tokens'
 import { MetricCard } from '../components/MetricCard'
 import { BarChart } from '../components/BarChart'
 
@@ -19,21 +20,21 @@ const styles = StyleSheet.create({
   ...baseStyles,
   campaignHeader: {
     marginBottom: 20,
-    backgroundColor: '#eff6ff',
+    backgroundColor: colors.infoSectionBg,
     padding: 16,
     borderRadius: 8,
     borderLeftWidth: 4,
-    borderLeftColor: '#3b82f6',
+    borderLeftColor: colors.blue,
   },
   campaignName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#1e40af',
+    color: colors.infoSectionText,
     marginBottom: 4,
   },
   campaignStatus: {
     fontSize: 11,
-    color: '#60a5fa',
+    color: colors.headerAccent,
   },
   metricsGrid: {
     flexDirection: 'row',
@@ -48,12 +49,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   dayCard: {
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.slate50,
     padding: 10,
     borderRadius: 6,
     marginBottom: 6,
     borderWidth: 1,
-    borderColor: '#e2e8f0',
+    borderColor: colors.border,
   },
   dayHeader: {
     flexDirection: 'row',
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
   dayDate: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
   },
   dayMetrics: {
     flexDirection: 'row',
@@ -74,15 +75,15 @@ const styles = StyleSheet.create({
   },
   dayMetricLabel: {
     fontSize: 8,
-    color: '#64748b',
+    color: colors.textSecondary,
   },
   dayMetricValue: {
     fontSize: 9,
     fontWeight: 'bold',
-    color: '#334155',
+    color: colors.slate700,
   },
   optimizationSection: {
-    backgroundColor: '#fef3c7',
+    backgroundColor: colors.warningSectionBg,
     padding: 16,
     borderRadius: 8,
     marginBottom: 20,
@@ -90,30 +91,30 @@ const styles = StyleSheet.create({
   optimizationTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#92400e',
+    color: colors.warningSectionTitle,
     marginBottom: 10,
   },
   optimizationItem: {
     fontSize: 10,
-    color: '#78350f',
+    color: colors.warningSectionText,
     marginBottom: 6,
     paddingLeft: 10,
   },
   targetingSection: {
     marginBottom: 20,
-    backgroundColor: '#f0f9ff',
+    backgroundColor: colors.skyBg,
     padding: 16,
     borderRadius: 8,
   },
   targetingTitle: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#0c4a6e',
+    color: colors.skyTitle,
     marginBottom: 8,
   },
   targetingDetail: {
     fontSize: 9,
-    color: '#075985',
+    color: colors.skyText,
     marginBottom: 4,
   },
 })
@@ -207,7 +208,7 @@ export function CampaignReportTemplate({ report }: CampaignReportTemplateProps) 
             data={dailyMetrics.map((day, i) => ({
               label: `Day ${i + 1}`,
               value: day.conversions,
-              color: '#3b82f6',
+              color: colors.blue,
             }))}
             formatValue={(v) => formatNumber(v)}
           />

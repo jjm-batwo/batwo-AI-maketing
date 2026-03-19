@@ -1,26 +1,27 @@
 import React from 'react'
 import { View, Text, StyleSheet } from '@react-pdf/renderer'
 import type { ActionItem } from '@domain/entities/Report'
+import { colors, priorityColors } from '../design-tokens'
 
 const styles = StyleSheet.create({
   card: {
     marginBottom: 10,
     padding: 10,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.bgCard,
     borderRadius: 6,
     borderLeftWidth: 3,
   },
   highPriority: {
-    borderLeftColor: '#dc2626',
-    backgroundColor: '#fef2f2',
+    borderLeftColor: priorityColors.high.border,
+    backgroundColor: priorityColors.high.bg,
   },
   mediumPriority: {
-    borderLeftColor: '#f59e0b',
-    backgroundColor: '#fffbeb',
+    borderLeftColor: priorityColors.medium.border,
+    backgroundColor: priorityColors.medium.bg,
   },
   lowPriority: {
-    borderLeftColor: '#3b82f6',
-    backgroundColor: '#eff6ff',
+    borderLeftColor: priorityColors.low.border,
+    backgroundColor: priorityColors.low.bg,
   },
   header: {
     flexDirection: 'row',
@@ -39,39 +40,39 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   highText: {
-    color: '#dc2626',
+    color: priorityColors.high.text,
   },
   mediumText: {
-    color: '#f59e0b',
+    color: priorityColors.medium.text,
   },
   lowText: {
-    color: '#3b82f6',
+    color: priorityColors.low.text,
   },
   categoryBadge: {
     paddingHorizontal: 6,
     paddingVertical: 2,
-    backgroundColor: '#f1f5f9',
+    backgroundColor: colors.slate100,
     borderRadius: 3,
   },
   categoryText: {
     fontSize: 8,
-    color: '#475569',
+    color: colors.textSecondary,
     textTransform: 'uppercase',
   },
   action: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: '#1e293b',
+    color: colors.textPrimary,
     marginBottom: 4,
   },
   impact: {
     fontSize: 9,
-    color: '#64748b',
+    color: colors.textSecondary,
     marginBottom: 4,
   },
   deadline: {
     fontSize: 8,
-    color: '#94a3b8',
+    color: colors.textMuted,
   },
 })
 

@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text, StyleSheet, Svg, Line, Circle } from '@react-pdf/renderer'
 import type { DailyDataPoint } from '@application/dto/report/EnhancedReportSections'
+import { colors } from '../design-tokens'
 
 const styles = StyleSheet.create({
   container: {
@@ -19,7 +20,7 @@ const styles = StyleSheet.create({
   },
   legendText: {
     fontSize: 8,
-    color: '#64748b',
+    color: colors.textSecondary,
   },
   xAxis: {
     flexDirection: 'row',
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
   },
   xLabel: {
     fontSize: 7,
-    color: '#94a3b8',
+    color: colors.textMuted,
   },
 })
 
@@ -39,9 +40,9 @@ interface LineChartProps {
 }
 
 const COLORS = {
-  spend: '#ef4444',
-  revenue: '#22c55e',
-  roas: '#3b82f6',
+  spend: colors.spend,
+  revenue: colors.revenue,
+  roas: colors.blue,
 }
 
 export function LineChart({ data, width = 460, height = 150 }: LineChartProps) {
