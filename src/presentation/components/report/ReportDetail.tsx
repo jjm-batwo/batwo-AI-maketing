@@ -96,9 +96,9 @@ export function ReportDetail({
   const typeLabel = report.type === 'DAILY' ? '일간' : report.type === 'WEEKLY' ? '주간' : '월간'
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-testid="report-detail">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between" data-testid="report-detail-header">
         <div>
           <h1 className="text-2xl font-bold">{typeLabel} 성과 보고서</h1>
           <p className="text-muted-foreground">
@@ -117,7 +117,7 @@ export function ReportDetail({
           />
 
           {onDownload && (
-            <Button onClick={onDownload}>
+            <Button onClick={onDownload} data-testid="report-download-btn">
               <Download className="mr-1 h-4 w-4" />
               다운로드
             </Button>
@@ -126,44 +126,44 @@ export function ReportDetail({
       </div>
 
       {hasEnhancedData ? (
-        <>
+        <div data-testid="report-enhanced-sections">
           {/* Enhanced 9-Section View */}
           {report.overallSummary && (
-            <OverallSummarySection data={report.overallSummary} />
+            <div data-testid="section-overall-summary"><OverallSummarySection data={report.overallSummary} /></div>
           )}
 
           {report.dailyTrend && (
-            <DailyTrendSection data={report.dailyTrend} />
+            <div data-testid="section-daily-trend"><DailyTrendSection data={report.dailyTrend} /></div>
           )}
 
           {report.campaignPerformance && (
-            <CampaignPerformanceSection data={report.campaignPerformance} />
+            <div data-testid="section-campaign-performance"><CampaignPerformanceSection data={report.campaignPerformance} /></div>
           )}
 
           {report.creativePerformance && (
-            <CreativePerformanceSection data={report.creativePerformance} />
+            <div data-testid="section-creative-performance"><CreativePerformanceSection data={report.creativePerformance} /></div>
           )}
 
           {report.creativeFatigue && (
-            <CreativeFatigueSection data={report.creativeFatigue} />
+            <div data-testid="section-creative-fatigue"><CreativeFatigueSection data={report.creativeFatigue} /></div>
           )}
 
           {report.formatComparison && (
-            <FormatComparisonSection data={report.formatComparison} />
+            <div data-testid="section-format-comparison"><FormatComparisonSection data={report.formatComparison} /></div>
           )}
 
           {report.funnelPerformance && (
-            <FunnelPerformanceSection data={report.funnelPerformance} />
+            <div data-testid="section-funnel-performance"><FunnelPerformanceSection data={report.funnelPerformance} /></div>
           )}
 
           {report.performanceAnalysis && (
-            <PerformanceAnalysisSection data={report.performanceAnalysis} />
+            <div data-testid="section-performance-analysis"><PerformanceAnalysisSection data={report.performanceAnalysis} /></div>
           )}
 
           {report.recommendations && (
-            <RecommendationsSection data={report.recommendations} />
+            <div data-testid="section-recommendations"><RecommendationsSection data={report.recommendations} /></div>
           )}
-        </>
+        </div>
       ) : (
         <>
           {/* Basic View (backward compatibility) */}

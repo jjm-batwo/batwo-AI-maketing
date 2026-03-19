@@ -3,6 +3,7 @@
  */
 
 export * from './auth'
+export * from './report'
 export * from './viewport'
 
 // 헬퍼 클래스

@@ -43,11 +43,11 @@ export function SampleReportActions({ startDate, endDate }: SampleReportActionsP
 
   return (
     <div className="flex gap-2">
-      <Button variant="outline" onClick={handleShare}>
+      <Button variant="outline" onClick={handleShare} data-testid="sample-share-btn">
         <Share2 className="mr-1 h-4 w-4" />
         공유
       </Button>
-      <Button onClick={handleDownload} disabled={isDownloading}>
+      <Button onClick={handleDownload} disabled={isDownloading} data-testid="sample-download-btn">
         <Download className="mr-1 h-4 w-4" />
         {isDownloading ? 'PDF 생성 중...' : 'PDF 다운로드'}
       </Button>

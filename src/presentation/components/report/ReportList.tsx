@@ -46,7 +46,7 @@ export function ReportList({ reports, isLoading = false, onDownload }: ReportLis
 
   if (reports.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center">
+      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center" data-testid="report-empty-state">
         <FileText className="h-12 w-12 text-muted-foreground/50" />
         <h3 className="mt-4 text-lg font-semibold">아직 보고서가 없어요</h3>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -57,11 +57,11 @@ export function ReportList({ reports, isLoading = false, onDownload }: ReportLis
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="report-list">
       {reports.map((report) => {
         const status = statusConfig[report.status]
         return (
-          <Card key={report.id} className="transition-shadow hover:shadow-md">
+          <Card key={report.id} className="transition-shadow hover:shadow-md" data-testid={`report-item-${report.id}`}>
             <CardContent className="flex items-center justify-between p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-primary/10 p-3">
@@ -87,13 +87,13 @@ export function ReportList({ reports, isLoading = false, onDownload }: ReportLis
                   {status.label}
                 </span>
                 {report.status === 'GENERATED' && onDownload && (
-                  <Button variant="outline" size="sm" onClick={() => onDownload(report.id)}>
+                  <Button variant="outline" size="sm" onClick={() => onDownload(report.id)} data-testid={`report-download-${report.id}`}>
                     <Download className="mr-1 h-4 w-4" />
                     다운로드
                   </Button>
                 )}
                 <Button variant="ghost" size="icon" asChild>
-                  <Link href={`/reports/${report.id}`}>
+                  <Link href={`/reports/${report.id}`} data-testid={`report-detail-link-${report.id}`}>
                     <ChevronRight className="h-5 w-5" />
                   </Link>
                 </Button>

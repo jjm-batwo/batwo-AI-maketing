@@ -81,7 +81,7 @@ export function ShareReportButton({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" data-testid="share-report-btn">
           <Share2 className="mr-2 h-4 w-4" />
           공유
         </Button>
@@ -97,8 +97,8 @@ export function ShareReportButton({
           {existingShareUrl ? (
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
-                <Input id="link" defaultValue={existingShareUrl} readOnly className="w-full" />
-                <Button size="sm" className="px-3" onClick={handleCopy}>
+                <Input id="link" defaultValue={existingShareUrl} readOnly className="w-full" data-testid="share-url-input" />
+                <Button size="sm" className="px-3" onClick={handleCopy} data-testid="share-copy-btn">
                   {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </Button>
               </div>
@@ -110,13 +110,14 @@ export function ShareReportButton({
                 className="w-full"
                 onClick={handleRevokeLink}
                 disabled={isLoading}
+                data-testid="share-revoke-btn"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
                 링크 취소
               </Button>
             </div>
           ) : (
-            <Button onClick={handleGenerateLink} disabled={isLoading}>
+            <Button onClick={handleGenerateLink} disabled={isLoading} data-testid="share-generate-btn">
               <Link className="mr-2 h-4 w-4" />
               {isLoading ? '생성 중...' : '퍼블릭 공유 링크 생성'}
             </Button>
