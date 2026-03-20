@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test'
 import { DownloadHelper } from '../helpers/download.helper'
 
+// 샘플 보고서 페이지는 force-static — DB 시딩 불필요
+// 단, (dashboard) layout 인증이 필요하므로 beforeEach에서 mock-auth 호출
 test.describe('샘플 보고서 조회 + 다운로드', () => {
   test.beforeEach(async ({ page }) => {
-    // 샘플 보고서는 인증 없이도 접근 가능할 수 있지만, mock-auth 설정
     await page.goto('/api/test/mock-auth')
   })
 
@@ -11,10 +12,12 @@ test.describe('샘플 보고서 조회 + 다운로드', () => {
     await page.goto('/reports/sample')
 
     // 샘플 보고서 제목
-    await expect(page.getByRole('heading', { level: 1, name: /주간 성과 보고서/ })).toBeVisible({ timeout: 10000 })
+    await expect(
+      page.getByRole('heading', { level: 1, name: /주간 성과 보고서/ })
+    ).toBeVisible({ timeout: 10000 })
 
     // 예시 보고서 뱃지
-    await expect(page.getByText('예시 보고서')).toBeVisible()
+    await expect(page.getByText('예시 보고서', { exact: true }).first()).toBeVisible()
 
     // 예시 데이터 안내 텍스트
     await expect(page.getByText(/이 보고서는 예시 데이터로 생성되었습니다/)).toBeVisible()
@@ -23,10 +26,10 @@ test.describe('샘플 보고서 조회 + 다운로드', () => {
   test('KPI 카드가 표시된다', async ({ page }) => {
     await page.goto('/reports/sample')
 
-    await expect(page.getByText('ROAS')).toBeVisible({ timeout: 10000 })
-    await expect(page.getByText('총 지출')).toBeVisible()
-    await expect(page.getByText('전환수')).toBeVisible()
-    await expect(page.getByText('CTR')).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'ROAS' })).toBeVisible({ timeout: 10000 })
+    await expect(page.getByRole('heading', { name: '총 지출' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: '전환수' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'CTR' })).toBeVisible()
   })
 
   test('AI 인사이트 섹션이 표시된다', async ({ page }) => {
@@ -58,6 +61,7 @@ test.describe('샘플 보고서 조회 + 다운로드', () => {
   })
 
   test('PDF 다운로드 버튼이 동작한다', async ({ page }) => {
+    // 샘플 다운로드는 클라이언트 사이드 fetch → page.route()로 인터셉트
     const downloadHelper = new DownloadHelper(page)
     await downloadHelper.mockPdfDownload(
       '**/api/reports/sample/download*',
@@ -82,9 +86,9 @@ test.describe('샘플 보고서 조회 + 다운로드', () => {
     await page.goto('/reports/sample')
     await expect(page.getByTestId('sample-share-btn')).toBeVisible({ timeout: 10000 })
 
-    // alert 다이얼로그 캡처
+    // alert 다이얼로그 캡처 — waitForEvent 먼저 등록, click은 non-blocking으로 실행
     const dialogPromise = page.waitForEvent('dialog')
-    await page.getByTestId('sample-share-btn').click()
+    void page.getByTestId('sample-share-btn').click()
 
     const dialog = await dialogPromise
     expect(dialog.message()).toContain('예시 보고서는 공유할 수 없습니다')

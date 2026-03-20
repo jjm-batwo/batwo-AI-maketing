@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description: '바투 마케팅 보고서 샘플을 확인하세요',
 }
 
-export const dynamic = 'force-static'
+// Note: force-static은 dashboard layout의 동적 auth 체크와 충돌하므로 사용하지 않음
 
 export default function SampleReportPage() {
   const report = getSampleReportForWebViewer()

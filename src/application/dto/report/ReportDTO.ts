@@ -36,6 +36,8 @@ export interface ReportDTO {
   sentAt?: string
   createdAt: string
   updatedAt: string
+  shareToken?: string | null
+  shareExpiresAt?: string | null
 
   // 9개 섹션 (Phase 2) -- enrichedData가 있을 때만 채워짐
   overallSummary?: EnhancedReportSections['overallSummary']
@@ -69,6 +71,8 @@ export function toReportDTO(report: Report): ReportDTO {
     sentAt: report.sentAt?.toISOString(),
     createdAt: report.createdAt.toISOString(),
     updatedAt: report.updatedAt.toISOString(),
+    shareToken: report.shareToken,
+    shareExpiresAt: report.shareExpiresAt?.toISOString() ?? null,
   }
 
   // enrichedData가 있으면 9개 섹션 매핑

@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils'
 interface Report {
   id: string
   type: 'WEEKLY' | 'MONTHLY' | 'CUSTOM'
-  status: 'PENDING' | 'GENERATED' | 'SENT'
+  status: 'DRAFT' | 'PENDING' | 'GENERATED' | 'SENT'
   dateRange: { startDate: string; endDate: string }
   generatedAt?: string
   campaignCount: number
@@ -28,6 +28,7 @@ const typeLabels = {
 }
 
 const statusConfig = {
+  DRAFT: { label: '생성 중', className: 'bg-yellow-500/15 text-yellow-500' },
   PENDING: { label: '생성 중', className: 'bg-yellow-500/15 text-yellow-500' },
   GENERATED: { label: '생성 완료', className: 'bg-green-500/15 text-green-500' },
   SENT: { label: '발송됨', className: 'bg-blue-500/15 text-blue-500' },
@@ -46,7 +47,10 @@ export function ReportList({ reports, isLoading = false, onDownload }: ReportLis
 
   if (reports.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center" data-testid="report-empty-state">
+      <div
+        className="flex flex-col items-center justify-center rounded-lg border border-dashed p-12 text-center"
+        data-testid="report-empty-state"
+      >
         <FileText className="h-12 w-12 text-muted-foreground/50" />
         <h3 className="mt-4 text-lg font-semibold">아직 보고서가 없어요</h3>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -61,7 +65,11 @@ export function ReportList({ reports, isLoading = false, onDownload }: ReportLis
       {reports.map((report) => {
         const status = statusConfig[report.status]
         return (
-          <Card key={report.id} className="transition-shadow hover:shadow-md" data-testid={`report-item-${report.id}`}>
+          <Card
+            key={report.id}
+            className="transition-shadow hover:shadow-md"
+            data-testid={`report-item-${report.id}`}
+          >
             <CardContent className="flex items-center justify-between p-4">
               <div className="flex items-center gap-4">
                 <div className="rounded-lg bg-primary/10 p-3">
@@ -87,13 +95,22 @@ export function ReportList({ reports, isLoading = false, onDownload }: ReportLis
                   {status.label}
                 </span>
                 {report.status === 'GENERATED' && onDownload && (
-                  <Button variant="outline" size="sm" onClick={() => onDownload(report.id)} data-testid={`report-download-${report.id}`}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onDownload(report.id)}
+                    data-testid={`report-download-${report.id}`}
+                  >
                     <Download className="mr-1 h-4 w-4" />
                     다운로드
                   </Button>
                 )}
                 <Button variant="ghost" size="icon" asChild>
-                  <Link href={`/reports/${report.id}`} data-testid={`report-detail-link-${report.id}`}>
+                  <Link
+                    href={`/reports/${report.id}`}
+                    data-testid={`report-detail-link-${report.id}`}
+                    aria-label={`${typeLabels[report.type]} 상세 보기`}
+                  >
                     <ChevronRight className="h-5 w-5" />
                   </Link>
                 </Button>

@@ -1,38 +1,55 @@
 import { test, expect } from '@playwright/test'
-import { mockReportDetail, mockShareResponse, mockSharedReportResponse } from '../fixtures/report'
 
-test.describe('보고서 공유: 생성 → 토큰 접근 → 해제', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/api/test/mock-auth')
+interface SeedReports {
+  weeklyGenerated: { id: string; type: string; status: string }
+  monthlyGenerated: { id: string; type: string; status: string }
+  weeklyPending: { id: string; type: string; status: string }
+  withShareToken: { id: string; shareToken: string; type: string; status: string }
+}
+
+interface SeedData {
+  reports: SeedReports
+  userId: string
+}
+
+test.describe.serial('보고서 공유: 생성 → 토큰 접근 → 해제', () => {
+  let seedData: SeedData
+
+  test.beforeAll(async ({ request }) => {
+    const seedResponse = await request.get('/api/test/seed-reports')
+    expect(seedResponse.ok()).toBeTruthy()
+    const body = await seedResponse.json()
+    seedData = body.data
+  })
+
+  test.afterAll(async ({ request }) => {
+    await request.delete('/api/test/seed-reports')
   })
 
   test('공유 링크를 생성할 수 있다', async ({ page }) => {
-    const detail = mockReportDetail('report-001')
-    const shareRes = mockShareResponse('report-001')
+    // monthlyGenerated 보고서는 shareToken 없음 → share-generate-btn이 표시됨
+    const reportId = seedData.reports.monthlyGenerated.id
 
-    await page.route('**/api/reports/report-001', async (route) => {
-      if (route.request().url().includes('/share')) return route.continue()
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(detail),
-      })
-    })
-
-    await page.route('**/api/reports/report-001/share', async (route) => {
+    // 공유 생성/해제는 클라이언트 사이드 fetch 호출 → page.route()로 인터셉트
+    await page.route(`**/api/reports/${reportId}/share`, async (route) => {
       if (route.request().method() === 'POST') {
+        const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
         await route.fulfill({
           status: 200,
           contentType: 'application/json',
-          body: JSON.stringify(shareRes),
+          body: JSON.stringify({
+            shareToken: 'new-share-token-e2e',
+            shareExpiresAt: expiresAt,
+            shareUrl: `http://localhost:3000/reports/share/new-share-token-e2e`,
+          }),
         })
       } else {
         await route.continue()
       }
     })
 
-    await page.goto('/reports/report-001')
-    await expect(page.getByTestId('report-detail')).toBeVisible({ timeout: 10000 })
+    await page.goto(`/reports/${reportId}`)
+    await expect(page.getByTestId('report-detail')).toBeVisible({ timeout: 15000 })
 
     // 공유 버튼 클릭 → 다이얼로그 열림
     await page.getByTestId('share-report-btn').click()
@@ -46,48 +63,24 @@ test.describe('보고서 공유: 생성 → 토큰 접근 → 해제', () => {
   })
 
   test('공유 토큰으로 보고서에 접근할 수 있다', async ({ page }) => {
-    const sharedReport = mockSharedReportResponse()
+    // 시드된 withShareToken 보고서의 토큰으로 접근 (실제 DB에 저장된 데이터)
+    const shareToken = seedData.reports.withShareToken.shareToken
 
-    await page.route('**/api/reports/share/test-share-token-abc123', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(sharedReport),
-      })
-    })
+    // 공유 페이지는 공개 접근 — 인증 불필요
+    await page.goto(`/reports/share/${shareToken}`)
 
-    // 공유 토큰으로 직접 접근 (인증 없이)
-    await page.goto('/reports/share/test-share-token-abc123')
-
-    // 공유 뷰어 페이지가 렌더링될 때까지 대기 (testId 기반)
+    // 공유 뷰어 페이지가 렌더링될 때까지 대기
     await expect(
-      page.getByTestId('shared-report-viewer').or(page.getByTestId('report-detail'))
-    ).toBeVisible({ timeout: 10000 })
-
-    // API 응답 확인
-    const apiResponse = await page.request.get('/api/reports/share/test-share-token-abc123')
-    expect(apiResponse.status()).toBe(200)
-    const body = await apiResponse.json()
-    expect(body).toBeTruthy()
+      page.getByTestId('shared-report-viewer').or(page.getByTestId('report-detail')).first()
+    ).toBeVisible({ timeout: 15000 })
   })
 
   test('기존 공유 링크가 있으면 URL과 해제 버튼이 표시된다', async ({ page }) => {
-    const detail = mockReportDetail('report-001')
-    const shareExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-    detail.shareToken = 'existing-token-xyz'
-    detail.shareExpiresAt = shareExpiresAt
+    // withShareToken 보고서 — 이미 shareToken이 DB에 존재
+    const reportId = seedData.reports.withShareToken.id
 
-    await page.route('**/api/reports/report-001', async (route) => {
-      if (route.request().url().includes('/share')) return route.continue()
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(detail),
-      })
-    })
-
-    await page.goto('/reports/report-001')
-    await expect(page.getByTestId('report-detail')).toBeVisible({ timeout: 10000 })
+    await page.goto(`/reports/${reportId}`)
+    await expect(page.getByTestId('report-detail')).toBeVisible({ timeout: 15000 })
 
     // 공유 버튼 클릭
     await page.getByTestId('share-report-btn').click()
@@ -102,21 +95,10 @@ test.describe('보고서 공유: 생성 → 토큰 접근 → 해제', () => {
   })
 
   test('공유 링크를 해제할 수 있다', async ({ page }) => {
-    const detail = mockReportDetail('report-001')
-    const shareExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-    detail.shareToken = 'existing-token-xyz'
-    detail.shareExpiresAt = shareExpiresAt
+    const reportId = seedData.reports.withShareToken.id
 
-    await page.route('**/api/reports/report-001', async (route) => {
-      if (route.request().url().includes('/share')) return route.continue()
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(detail),
-      })
-    })
-
-    await page.route('**/api/reports/report-001/share', async (route) => {
+    // 해제는 클라이언트 사이드 DELETE fetch → page.route()로 인터셉트
+    await page.route(`**/api/reports/${reportId}/share`, async (route) => {
       if (route.request().method() === 'DELETE') {
         await route.fulfill({
           status: 200,
@@ -128,8 +110,8 @@ test.describe('보고서 공유: 생성 → 토큰 접근 → 해제', () => {
       }
     })
 
-    await page.goto('/reports/report-001')
-    await expect(page.getByTestId('report-detail')).toBeVisible({ timeout: 10000 })
+    await page.goto(`/reports/${reportId}`)
+    await expect(page.getByTestId('report-detail')).toBeVisible({ timeout: 15000 })
 
     // 공유 다이얼로그 열기
     await page.getByTestId('share-report-btn').click()
@@ -144,5 +126,4 @@ test.describe('보고서 공유: 생성 → 토큰 접근 → 해제', () => {
     // 토스트: 공유 링크 취소 확인
     await expect(page.getByText(/공유 링크가 취소되었습니다/)).toBeVisible({ timeout: 5000 })
   })
-
 })

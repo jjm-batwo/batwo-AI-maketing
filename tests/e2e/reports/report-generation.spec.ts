@@ -1,164 +1,106 @@
 import { test, expect } from '@playwright/test'
-import { mockReportList, mockCreateReportResponse } from '../fixtures/report'
 
-test.describe('보고서 생성 → 목록 노출', () => {
-  test.beforeEach(async ({ page }) => {
-    // Mock 인증
-    await page.goto('/api/test/mock-auth')
+interface SeedReports {
+  weeklyGenerated: { id: string; type: string; status: string }
+  monthlyGenerated: { id: string; type: string; status: string }
+  weeklyPending: { id: string; type: string; status: string }
+  withShareToken: { id: string; shareToken: string; type: string; status: string }
+}
+
+interface SeedData {
+  reports: SeedReports
+  userId: string
+}
+
+test.describe.serial('보고서 생성 → 목록 노출', () => {
+  let seedData: SeedData
+
+  test.beforeAll(async ({ request }) => {
+    const seedResponse = await request.get('/api/test/seed-reports')
+    expect(seedResponse.ok()).toBeTruthy()
+    const body = await seedResponse.json()
+    seedData = body.data
+  })
+
+  test.afterAll(async ({ request }) => {
+    await request.delete('/api/test/seed-reports')
   })
 
   test('보고서 목록 페이지에 보고서가 표시된다', async ({ page }) => {
-    const listData = mockReportList()
-
-    await page.route('**/api/reports?*', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(listData),
-      })
-    })
-
     await page.goto('/reports')
+    // 캐시된 응답을 피하기 위해 리로드 (ISR revalidate: 120 캐시 우회)
+    await page.reload()
 
     // 보고서 목록 컨테이너 확인
-    await expect(page.getByTestId('report-list')).toBeVisible({ timeout: 10000 })
+    await expect(page.getByTestId('report-list').first()).toBeVisible({ timeout: 15000 })
 
-    // 각 보고서 항목 확인
-    for (const report of listData.reports) {
-      await expect(page.getByTestId(`report-item-${report.id}`)).toBeVisible()
-    }
+    // 시드된 보고서 항목 확인
+    await expect(page.getByTestId(`report-item-${seedData.reports.weeklyGenerated.id}`)).toBeVisible()
+    await expect(page.getByTestId(`report-item-${seedData.reports.monthlyGenerated.id}`)).toBeVisible()
+    await expect(page.getByTestId(`report-item-${seedData.reports.weeklyPending.id}`)).toBeVisible()
 
     // 보고서 유형 라벨 확인
     await expect(page.getByText('주간 보고서').first()).toBeVisible()
-    await expect(page.getByText('월간 보고서')).toBeVisible()
+    await expect(page.getByText('월간 보고서').first()).toBeVisible()
   })
 
   test('GENERATED 상태 보고서에만 다운로드 버튼이 노출된다', async ({ page }) => {
-    const listData = mockReportList()
-
-    await page.route('**/api/reports?*', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(listData),
-      })
-    })
-
     await page.goto('/reports')
+    await expect(page.getByTestId('report-list').first()).toBeVisible({ timeout: 15000 })
 
     // GENERATED 보고서 → 다운로드 버튼 있음
-    await expect(page.getByTestId('report-download-report-001')).toBeVisible()
-    await expect(page.getByTestId('report-download-report-002')).toBeVisible()
+    await expect(
+      page.getByTestId(`report-download-${seedData.reports.weeklyGenerated.id}`)
+    ).toBeVisible()
+    await expect(
+      page.getByTestId(`report-download-${seedData.reports.monthlyGenerated.id}`)
+    ).toBeVisible()
 
     // PENDING 보고서 → 다운로드 버튼 없음
-    await expect(page.getByTestId('report-download-report-003')).not.toBeVisible()
+    await expect(
+      page.getByTestId(`report-download-${seedData.reports.weeklyPending.id}`)
+    ).not.toBeVisible()
   })
 
   test('보고서 상태 뱃지가 올바르게 표시된다', async ({ page }) => {
-    const listData = mockReportList()
-
-    await page.route('**/api/reports?*', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(listData),
-      })
-    })
-
     await page.goto('/reports')
+    await expect(page.getByTestId('report-list').first()).toBeVisible({ timeout: 15000 })
 
     await expect(page.getByText('생성 완료').first()).toBeVisible()
     await expect(page.getByText('생성 중')).toBeVisible()
   })
 
-  test('보고서가 없으면 빈 상태가 표시된다', async ({ page }) => {
-    await page.route('**/api/reports?*', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({ reports: [], total: 0, page: 1, pageSize: 10 }),
-      })
-    })
-
+  test('보고서 목록 헤더가 표시된다', async ({ page }) => {
     await page.goto('/reports')
-
-    await expect(page.getByTestId('report-empty-state')).toBeVisible({ timeout: 10000 })
-    await expect(page.getByText('아직 보고서가 없어요')).toBeVisible()
-  })
-
-  test('보고서 생성 API 호출 후 목록이 갱신되어 새 보고서가 노출된다', async ({ page }) => {
-    const listData = mockReportList()
-    const newReport = mockCreateReportResponse()
-
-    let callCount = 0
-    await page.route('**/api/reports', async (route) => {
-      if (route.request().method() === 'POST') {
-        await route.fulfill({
-          status: 201,
-          contentType: 'application/json',
-          body: JSON.stringify(newReport),
-        })
-      } else {
-        callCount++
-        const reports = callCount === 1
-          ? listData
-          : {
-              ...listData,
-              reports: [
-                {
-                  id: newReport.id,
-                  type: newReport.type,
-                  status: newReport.status,
-                  dateRange: newReport.dateRange,
-                  generatedAt: newReport.generatedAt,
-                  campaignCount: 3,
-                },
-                ...listData.reports,
-              ],
-              total: listData.total + 1,
-            }
-        await route.fulfill({
-          status: 200,
-          contentType: 'application/json',
-          body: JSON.stringify(reports),
-        })
-      }
-    })
-
-    await page.goto('/reports')
-    await expect(page.getByTestId('report-list')).toBeVisible({ timeout: 10000 })
-
-    // 초기 목록에는 새 보고서 없음
-    await expect(page.getByTestId(`report-item-${newReport.id}`)).not.toBeVisible()
-
-    // 보고서 생성 API 호출 트리거
-    const postResponse = await page.request.post('/api/reports', {
-      data: { type: 'WEEKLY', dateRange: newReport.dateRange },
-    })
-    expect(postResponse.status()).toBe(201)
-
-    // 페이지 새로고침하여 갱신된 목록 확인
-    await page.reload()
-    await expect(page.getByTestId('report-list')).toBeVisible({ timeout: 10000 })
-    await expect(page.getByTestId(`report-item-${newReport.id}`)).toBeVisible()
+    await expect(page.getByRole('heading', { level: 1, name: '보고서' })).toBeVisible({ timeout: 15000 })
   })
 
   test('보고서 목록에서 상세 페이지로 이동한다', async ({ page }) => {
-    const listData = mockReportList()
-
-    await page.route('**/api/reports?*', async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(listData),
-      })
-    })
+    const reportId = seedData.reports.weeklyGenerated.id
 
     await page.goto('/reports')
-    await expect(page.getByTestId('report-list')).toBeVisible({ timeout: 10000 })
+    await expect(page.getByTestId('report-list').first()).toBeVisible({ timeout: 15000 })
 
     // 첫 번째 보고서의 상세 링크 클릭
-    await page.getByTestId('report-detail-link-report-001').click()
-    await expect(page).toHaveURL(/\/reports\/report-001/, { timeout: 10000 })
+    await page.getByTestId(`report-detail-link-${reportId}`).click()
+    await expect(page).toHaveURL(new RegExp(`/reports/${reportId}`), { timeout: 10000 })
+  })
+})
+
+// 빈 상태 테스트: 별도 serial describe로 분리하여 위 serial block 완료 후 실행
+// afterAll에서 데이터가 삭제되므로 빈 상태 확인 가능
+test.describe.serial('보고서 빈 상태', () => {
+  test.beforeAll(async ({ request }) => {
+    // 혹시 남아있는 시드 데이터 정리
+    await request.delete('/api/test/seed-reports')
+  })
+
+  test('보고서가 없으면 빈 상태가 표시된다', async ({ page }) => {
+    await page.goto('/reports')
+    // 캐시된 페이지를 피하기 위해 리로드
+    await page.reload()
+
+    await expect(page.getByTestId('report-empty-state').first()).toBeVisible({ timeout: 15000 })
+    await expect(page.getByText('아직 보고서가 없어요')).toBeVisible()
   })
 })

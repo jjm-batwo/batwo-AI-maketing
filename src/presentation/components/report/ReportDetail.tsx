@@ -129,39 +129,57 @@ export function ReportDetail({
         <div data-testid="report-enhanced-sections">
           {/* Enhanced 9-Section View */}
           {report.overallSummary && (
-            <div data-testid="section-overall-summary"><OverallSummarySection data={report.overallSummary} /></div>
+            <div data-testid="section-overall-summary">
+              <OverallSummarySection data={report.overallSummary} />
+            </div>
           )}
 
           {report.dailyTrend && (
-            <div data-testid="section-daily-trend"><DailyTrendSection data={report.dailyTrend} /></div>
+            <div data-testid="section-daily-trend">
+              <DailyTrendSection data={report.dailyTrend} />
+            </div>
           )}
 
           {report.campaignPerformance && (
-            <div data-testid="section-campaign-performance"><CampaignPerformanceSection data={report.campaignPerformance} /></div>
+            <div data-testid="section-campaign-performance">
+              <CampaignPerformanceSection data={report.campaignPerformance} />
+            </div>
           )}
 
           {report.creativePerformance && (
-            <div data-testid="section-creative-performance"><CreativePerformanceSection data={report.creativePerformance} /></div>
+            <div data-testid="section-creative-performance">
+              <CreativePerformanceSection data={report.creativePerformance} />
+            </div>
           )}
 
           {report.creativeFatigue && (
-            <div data-testid="section-creative-fatigue"><CreativeFatigueSection data={report.creativeFatigue} /></div>
+            <div data-testid="section-creative-fatigue">
+              <CreativeFatigueSection data={report.creativeFatigue} />
+            </div>
           )}
 
           {report.formatComparison && (
-            <div data-testid="section-format-comparison"><FormatComparisonSection data={report.formatComparison} /></div>
+            <div data-testid="section-format-comparison">
+              <FormatComparisonSection data={report.formatComparison} />
+            </div>
           )}
 
           {report.funnelPerformance && (
-            <div data-testid="section-funnel-performance"><FunnelPerformanceSection data={report.funnelPerformance} /></div>
+            <div data-testid="section-funnel-performance">
+              <FunnelPerformanceSection data={report.funnelPerformance} />
+            </div>
           )}
 
           {report.performanceAnalysis && (
-            <div data-testid="section-performance-analysis"><PerformanceAnalysisSection data={report.performanceAnalysis} /></div>
+            <div data-testid="section-performance-analysis">
+              <PerformanceAnalysisSection data={report.performanceAnalysis} />
+            </div>
           )}
 
           {report.recommendations && (
-            <div data-testid="section-recommendations"><RecommendationsSection data={report.recommendations} /></div>
+            <div data-testid="section-recommendations">
+              <RecommendationsSection data={report.recommendations} />
+            </div>
           )}
         </div>
       ) : (

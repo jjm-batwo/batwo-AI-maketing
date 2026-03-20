@@ -97,8 +97,19 @@ export function ShareReportButton({
           {existingShareUrl ? (
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
-                <Input id="link" defaultValue={existingShareUrl} readOnly className="w-full" data-testid="share-url-input" />
-                <Button size="sm" className="px-3" onClick={handleCopy} data-testid="share-copy-btn">
+                <Input
+                  id="link"
+                  defaultValue={existingShareUrl}
+                  readOnly
+                  className="w-full"
+                  data-testid="share-url-input"
+                />
+                <Button
+                  size="sm"
+                  className="px-3"
+                  onClick={handleCopy}
+                  data-testid="share-copy-btn"
+                >
                   {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </Button>
               </div>
@@ -117,7 +128,11 @@ export function ShareReportButton({
               </Button>
             </div>
           ) : (
-            <Button onClick={handleGenerateLink} disabled={isLoading} data-testid="share-generate-btn">
+            <Button
+              onClick={handleGenerateLink}
+              disabled={isLoading}
+              data-testid="share-generate-btn"
+            >
               <Link className="mr-2 h-4 w-4" />
               {isLoading ? '생성 중...' : '퍼블릭 공유 링크 생성'}
             </Button>

@@ -355,7 +355,7 @@ export function mockReportDetail(id: string = 'report-001'): ReportDetailData {
 /**
  * Mock 공유 링크 생성 응답
  */
-export function mockShareResponse(reportId: string): ShareResponse {
+export function mockShareResponse(_reportId: string): ShareResponse {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
   return {
     shareToken: 'test-share-token-abc123',
